@@ -16,23 +16,20 @@ public interface Inventory {
 	 *            Obfuscated shadow_id value
 	 * @return Deobfuscated asset_id value
 	 */
-	public static UUID DecryptShadowID(UUID shadowID)
-	{
+	public static UUID DecryptShadowID(UUID shadowID) {
 		UUID uuid = new UUID(shadowID);
 		uuid.XOr(MAGIC_ID);
 		return uuid;
 	}
 
 	/**
-	 * Does a cheesy XORing with a fixed UUID to convert an asset_id to a
-	 * shadow_id
+	 * Does a cheesy XORing with a fixed UUID to convert an asset_id to a shadow_id
 	 * 
 	 * @param assetID
 	 *            asset_id value to obfuscate
 	 * @return Obfuscated shadow_id value
 	 */
-	public static UUID EncryptAssetID(UUID assetID)
-	{
+	public static UUID EncryptAssetID(UUID assetID) {
 		UUID uuid = new UUID(assetID);
 		uuid.XOr(MAGIC_ID);
 		return uuid;

@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -34,31 +34,29 @@ import java.util.Map.Entry;
 
 import libomv.utils.Callback;
 
-public class CallbackHandler<T>
-{
-	/* This hash list needs to be of a type that guarantees the same iteration
-	 * order than in which the items were inserted. Otherwise we get race situations
-	 * with user callbacks being added after the library callbacks but depending on
-	 * information in the library that has been inserted by the library callback. */
+public class CallbackHandler<T> {
+	/*
+	 * This hash list needs to be of a type that guarantees the same iteration order
+	 * than in which the items were inserted. Otherwise we get race situations with
+	 * user callbacks being added after the library callbacks but depending on
+	 * information in the library that has been inserted by the library callback.
+	 */
 	private LinkedHashMap<Callback<T>, Boolean> callbackHandlers = null;
 
-	public synchronized int count()
-	{
-		if (callbackHandlers != null)
-		{
+	public synchronized int count() {
+		if (callbackHandlers != null) {
 			return callbackHandlers.size();
 		}
 		return 0;
 	}
 
-	public boolean add(Callback<T> handler)
-	{
+	public boolean add(Callback<T> handler) {
 		return add(handler, false);
 	}
 
 	/**
 	 * Add a callback handler to the list of handlers
-	 * 
+	 *
 	 * @param handler
 	 *            The callback handler to add to the list
 	 * @param autoremove
@@ -67,10 +65,8 @@ public class CallbackHandler<T>
 	 * @return True when the callback handler replaced an earlier instance of
 	 *         itself, false otherwise
 	 */
-	public synchronized boolean add(Callback<T> handler, boolean autoremove)
-	{
-		if (handler != null)
-		{
+	public synchronized boolean add(Callback<T> handler, boolean autoremove) {
+		if (handler != null) {
 			if (callbackHandlers == null)
 				callbackHandlers = new LinkedHashMap<Callback<T>, Boolean>();
 
@@ -81,7 +77,7 @@ public class CallbackHandler<T>
 
 	/**
 	 * Remove a callback handler from the list of handlers
-	 * 
+	 *
 	 * @param handler
 	 *            The callback handler to add to the list
 	 * @param autoremove
@@ -90,10 +86,8 @@ public class CallbackHandler<T>
 	 * @return True when the callback handler was removed, false when it didn't
 	 *         exist
 	 */
-	public synchronized boolean remove(Callback<T> handler)
-	{
-		if (handler != null && callbackHandlers != null)
-		{
+	public synchronized boolean remove(Callback<T> handler) {
+		if (handler != null && callbackHandlers != null) {
 			return (callbackHandlers.remove(handler) != null);
 		}
 		return false;
@@ -101,26 +95,22 @@ public class CallbackHandler<T>
 
 	/**
 	 * Dispatches a callback to all registered handlers
-	 * 
+	 *
 	 * @param args
 	 *            The argument class to pass to the callback handlers
 	 * @return The number of callback handlers that got invoked
 	 */
-	public synchronized  int dispatch(T args)
-	{
+	public synchronized int dispatch(T args) {
 		int count = 0;
 
-		if (callbackHandlers != null)
-		{
+		if (callbackHandlers != null) {
 			Iterator<Entry<Callback<T>, Boolean>> iter = callbackHandlers.entrySet().iterator();
-			while (iter.hasNext())
-			{
+			while (iter.hasNext()) {
 				Entry<Callback<T>, Boolean> entry = iter.next();
 				Callback<T> handler = entry.getKey();
 				boolean remove = false;
-				
-				synchronized (handler)
-				{
+
+				synchronized (handler) {
 					remove = handler.callback(args);
 					handler.notifyAll();
 				}

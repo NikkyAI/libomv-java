@@ -6,7 +6,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -39,8 +39,7 @@ import libomv.types.UUID;
 import libomv.utils.Helpers;
 
 // Extended properties to describe an object
-public class ObjectProperties
-{
+public class ObjectProperties {
 	public UUID ObjectID;
 	public Date CreationDate;
 	public Permissions Permissions;
@@ -62,16 +61,14 @@ public class ObjectProperties
 	public UUID[] TextureIDs;
 
 	// Default constructor
-	public ObjectProperties()
-	{
+	public ObjectProperties() {
 		Name = Helpers.EmptyString;
 		Description = Helpers.EmptyString;
 		TouchName = Helpers.EmptyString;
 		SitName = Helpers.EmptyString;
 	}
 
-	public ObjectProperties(ObjectProperties p)
-	{
+	public ObjectProperties(ObjectProperties p) {
 		ObjectID = p.ObjectID;
 		CreationDate = p.CreationDate;
 		Permissions = new Permissions(p.Permissions);
@@ -97,13 +94,12 @@ public class ObjectProperties
 
 	/**
 	 * Set the properties that are set in an ObjectPropertiesFamily packet
-	 * 
+	 *
 	 * @param props
 	 *            {@link ObjectProperties} that has been partially filled by an
 	 *            ObjectPropertiesFamily packet
 	 */
-	public void SetFamilyProperties(ObjectProperties props)
-	{
+	public void SetFamilyProperties(ObjectProperties props) {
 		ObjectID = props.ObjectID;
 		Permissions = props.Permissions;
 		OwnershipCost = props.OwnershipCost;
@@ -114,8 +110,7 @@ public class ObjectProperties
 		Description = props.Description;
 	}
 
-	public byte[] GetTextureIDBytes()
-	{
+	public byte[] GetTextureIDBytes() {
 		if (TextureIDs == null || TextureIDs.length == 0)
 			return Helpers.EmptyBytes;
 

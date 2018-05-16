@@ -34,7 +34,6 @@ import java.awt.event.ActionListener;
  * This is a UI less intermediate controller that implements an ActionListener to serve as central
  * message dispatcher during a particular state. Currently offline and online state are distinguished
  */
-public interface StateController extends ActionListener
-{
+public interface StateController extends ActionListener {
 	public void dispose();
 }

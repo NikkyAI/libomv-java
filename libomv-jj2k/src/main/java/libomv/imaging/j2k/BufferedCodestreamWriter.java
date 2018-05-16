@@ -135,8 +135,8 @@ class BufferedCodestreamWriter extends CodestreamWriter {
 	}
 
 	/**
-	 * Performs the initialisation of the arrays that are used to store the
-	 * values used to write SOP and EPH markers
+	 * Performs the initialisation of the arrays that are used to store the values
+	 * used to write SOP and EPH markers
 	 */
 	private void initSOP_EPHArrays() {
 

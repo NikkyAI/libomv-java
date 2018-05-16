@@ -8,8 +8,7 @@ public interface Parcel {
 
 	/** Type of return to use when returning objects from a parcel */
 	// [Flags]
-	public static class ObjectReturnType
-	{
+	public static class ObjectReturnType {
 		//
 		public static final byte None = 0;
 		// Return objects owned by parcel owner
@@ -23,13 +22,11 @@ public interface Parcel {
 		// Return objects that are marked for-sale
 		public static final byte Sell = 1 << 5;
 
-		public static byte setValue(int value)
-		{
+		public static byte setValue(int value) {
 			return (byte) (value & _mask);
 		}
 
-		public static int getValue(byte value)
-		{
+		public static int getValue(byte value) {
 			return value & _mask;
 		}
 
@@ -37,8 +34,7 @@ public interface Parcel {
 	}
 
 	/** Type of teleport landing for a parcel */
-	public enum LandingTypeEnum
-	{
+	public enum LandingTypeEnum {
 		// Unset, simulator default
 		None,
 		// Specific landing point set for this parcel
@@ -46,20 +42,17 @@ public interface Parcel {
 		// No landing point set, direct teleports enabled for this parcel
 		Direct;
 
-		public static LandingTypeEnum setValue(int value)
-		{
+		public static LandingTypeEnum setValue(int value) {
 			return values()[value];
 		}
 
-		public byte getValue()
-		{
+		public byte getValue() {
 			return (byte) ordinal();
 		}
 	}
 
 	/** Category parcel is listed in under search */
-	public enum ParcelCategory
-	{
+	public enum ParcelCategory {
 		// No assigned category
 		None(0),
 		// Linden Infohub or public area
@@ -91,32 +84,27 @@ public interface Parcel {
 		// Not an actual category, only used for queries
 		Any(-1);
 
-		public static ParcelCategory setValue(int value)
-		{
-			for (ParcelCategory e : values())
-			{
+		public static ParcelCategory setValue(int value) {
+			for (ParcelCategory e : values()) {
 				if (e._value == value)
 					return e;
 			}
 			return None;
 		}
 
-		public byte getValue()
-		{
+		public byte getValue() {
 			return _value;
 		}
 
 		private byte _value;
 
-		private ParcelCategory(int value)
-		{
+		private ParcelCategory(int value) {
 			this._value = (byte) value;
 		}
 	}
 
 	/** Various parcel properties */
-	public static class ParcelFlags
-	{
+	public static class ParcelFlags {
 		// No flags set
 		public static final int None = 0;
 		// Allow avatars to fly = a client-side only restriction)
@@ -191,13 +179,11 @@ public interface Parcel {
 		// Deny Age Unverified Users
 		public static final int DenyAgeUnverified = 1 << 31;
 
-		public static int setValue(int value)
-		{
+		public static int setValue(int value) {
 			return value & _mask;
 		}
 
-		public static int getValue(int value)
-		{
+		public static int getValue(int value) {
 			return value & _mask;
 		}
 
@@ -205,8 +191,7 @@ public interface Parcel {
 	}
 
 	// Parcel Media Information
-	public final class ParcelMedia
-	{
+	public final class ParcelMedia {
 		// A byte, if 0x1 viewer should auto scale media to fit object
 		public boolean MediaAutoScale;
 		// A boolean, if true the viewer should loop the media
@@ -227,8 +212,7 @@ public interface Parcel {
 	}
 
 	/** The result of a request for parcel properties */
-	public enum ParcelResult
-	{
+	public enum ParcelResult {
 		// No matches were found for the request
 		NoData(-1),
 		// Request matched a single parcel
@@ -236,32 +220,27 @@ public interface Parcel {
 		// Request matched multiple parcels
 		Multiple(1);
 
-		public static ParcelResult setValue(int value)
-		{
-			for (ParcelResult e : values())
-			{
+		public static ParcelResult setValue(int value) {
+			for (ParcelResult e : values()) {
 				if (e._value == value)
 					return e;
 			}
 			return NoData;
 		}
 
-		public byte getValue()
-		{
+		public byte getValue() {
 			return _value;
 		}
 
 		private byte _value;
 
-		private ParcelResult(int value)
-		{
+		private ParcelResult(int value) {
 			this._value = (byte) value;
 		}
 	}
 
 	/** Parcel ownership status */
-	public enum ParcelStatus
-	{
+	public enum ParcelStatus {
 		// Placeholder
 		None(-1),
 		// Parcel is leased (owned) by an avatar or group
@@ -272,28 +251,23 @@ public interface Parcel {
 		// Parcel has been abandoned back to Governor Linden
 		Abandoned(2);
 
-		public static ParcelStatus setValue(int value)
-		{
-			for (ParcelStatus e : values())
-			{
+		public static ParcelStatus setValue(int value) {
+			for (ParcelStatus e : values()) {
 				if (e._value == value)
 					return e;
 			}
 			return None;
 		}
 
-		public byte getValue()
-		{
+		public byte getValue() {
 			return _value;
 		}
 
 		private byte _value;
 
-		private ParcelStatus(int value)
-		{
+		private ParcelStatus(int value) {
 			this._value = (byte) value;
 		}
 	}
-
 
 }

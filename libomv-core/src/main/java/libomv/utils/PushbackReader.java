@@ -1,7 +1,7 @@
 /**
  * Copyright 2002-2004 The Apache Software Foundation.
  * Copyright (c) 2009-2017, Frederick Martian
- *  
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,8 +30,7 @@ import java.io.Reader;
  * specified during construction. If the buffer of pushed back bytes is empty,
  * characters are read from the underlying reader.
  */
-public class PushbackReader extends FilterReader
-{
+public class PushbackReader extends FilterReader {
 	/**
 	 * The {@code char} array containing the chars to read.
 	 */
@@ -39,50 +38,47 @@ public class PushbackReader extends FilterReader
 
 	/**
 	 * The current position within the char array {@code buf}. A value equal to
-	 * buf.length indicates no chars available. A value of 0 indicates the
-	 * buffer is full.
+	 * buf.length indicates no chars available. A value of 0 indicates the buffer is
+	 * full.
 	 */
 	int pos;
 
 	int bytes;
 
-	public int getBytePosition()
-	{
+	public int getBytePosition() {
 		return bytes;
 	}
 
 	/**
-	 * Constructs a new {@code PushbackReader} with {@code in} as source reader.
-	 * The size of the pushback buffer is set to the default value of 1 character.
-	 * 
+	 * Constructs a new {@code PushbackReader} with {@code in} as source reader. The
+	 * size of the pushback buffer is set to the default value of 1 character.
+	 *
 	 * @param in
 	 *            the source reader.
 	 */
-	public PushbackReader(Reader in)
-	{
+	public PushbackReader(Reader in) {
 		this(in, 0, 1);
 	}
 
 	/**
-	 * Constructs a new {@code PushbackReader} with {@code in} as source reader.
-	 * The size of the pushback buffer is set to the default value of 1 character.
-	 * 
+	 * Constructs a new {@code PushbackReader} with {@code in} as source reader. The
+	 * size of the pushback buffer is set to the default value of 1 character.
+	 *
 	 * @param in
 	 *            the source reader.
 	 * @param offset
 	 *            the offset in characters into the original reader data
 	 * @throws IllegalArgumentException
-	 *            if {@code offset} is negative..
+	 *             if {@code offset} is negative..
 	 */
-	public PushbackReader(Reader in, int offset)
-	{
+	public PushbackReader(Reader in, int offset) {
 		this(in, offset, 1);
 	}
-	
+
 	/**
-	 * Constructs a new {@code PushbackReader} with {@code in} as source reader.
-	 * The size of the pushback buffer is set to {@code size}.
-	 * 
+	 * Constructs a new {@code PushbackReader} with {@code in} as source reader. The
+	 * size of the pushback buffer is set to {@code size}.
+	 *
 	 * @param in
 	 *            the source reader.
 	 * @param offset
@@ -90,17 +86,15 @@ public class PushbackReader extends FilterReader
 	 * @param size
 	 *            the size of the pushback buffer.
 	 * @throws IllegalArgumentException
-	 *            if {@code size} is zero or negative or if {@code offset} is negative..
+	 *             if {@code size} is zero or negative or if {@code offset} is
+	 *             negative..
 	 */
-	public PushbackReader(Reader in, int offset, int size)
-	{
+	public PushbackReader(Reader in, int offset, int size) {
 		super(in);
-		if (size <= 0)
-		{
+		if (size <= 0) {
 			throw new IllegalArgumentException("size <= 0");
 		}
-		if (offset < 0)
-		{
+		if (offset < 0) {
 			throw new IllegalArgumentException("offset < 0");
 		}
 		buf = new char[size];
@@ -109,62 +103,57 @@ public class PushbackReader extends FilterReader
 	}
 
 	/**
-	 * Closes this reader. This implementation closes the source reader and
-	 * releases the pushback buffer.
-	 * 
+	 * Closes this reader. This implementation closes the source reader and releases
+	 * the pushback buffer.
+	 *
 	 * @throws IOException
 	 *             if an error occurs while closing this reader.
 	 */
 	@Override
-	public void close() throws IOException
-	{
-		synchronized (lock)
-		{
+	public void close() throws IOException {
+		synchronized (lock) {
 			buf = null;
 			super.close();
 		}
 	}
 
 	/**
-	 * Marks the current position in this stream. Setting a mark is not
-	 * supported in this class; this implementation always throws an
-	 * {@code IOException}.
-	 * 
+	 * Marks the current position in this stream. Setting a mark is not supported in
+	 * this class; this implementation always throws an {@code IOException}.
+	 *
 	 * @param readAheadLimit
-	 *            the number of character that can be read from this reader
-	 *            before the mark is invalidated; this parameter is ignored.
+	 *            the number of character that can be read from this reader before
+	 *            the mark is invalidated; this parameter is ignored.
 	 * @throws IOException
 	 *             if this method is called.
 	 */
 	@Override
-	public void mark(int readAheadLimit) throws IOException
-	{
+	public void mark(int readAheadLimit) throws IOException {
 		throw new IOException("Not Supported");
 	}
 
 	/**
 	 * Indicates whether this reader supports the {@code mark(int)} and
-	 * {@code reset()} methods. {@code PushbackReader} does not support them, so
-	 * it returns {@code false}.
-	 * 
+	 * {@code reset()} methods. {@code PushbackReader} does not support them, so it
+	 * returns {@code false}.
+	 *
 	 * @return always {@code false}.
 	 * @see #mark(int)
 	 * @see #reset()
 	 */
 	@Override
-	public boolean markSupported()
-	{
+	public boolean markSupported() {
 		return false;
 	}
 
 	/**
-	 * Reads a single character from this reader and returns it as an integer
-	 * with the two higher-order bytes set to 0. Returns -1 if the end of the
-	 * reader has been reached. If the pushback buffer does not contain any
-	 * available characters then a character from the source reader is returned.
-	 * Blocks until one character has been read, the end of the source reader is
-	 * detected or an exception is thrown.
-	 * 
+	 * Reads a single character from this reader and returns it as an integer with
+	 * the two higher-order bytes set to 0. Returns -1 if the end of the reader has
+	 * been reached. If the pushback buffer does not contain any available
+	 * characters then a character from the source reader is returned. Blocks until
+	 * one character has been read, the end of the source reader is detected or an
+	 * exception is thrown.
+	 *
 	 * @return the character read or -1 if the end of the source reader has been
 	 *         reached.
 	 * @throws IOException
@@ -172,23 +161,19 @@ public class PushbackReader extends FilterReader
 	 *             from this reader.
 	 */
 	@Override
-	public int read() throws IOException
-	{
-		synchronized (lock)
-		{
-			if (buf == null)
-			{
+	public int read() throws IOException {
+		synchronized (lock) {
+			if (buf == null) {
 				throw new IOException("Reader closed");
 			}
 			/* Is there a pushback character available? */
-			if (pos < buf.length)
-			{
+			if (pos < buf.length) {
 				bytes++;
 				return buf[pos++];
 			}
 			/**
-			 * Assume read() in the InputStream will return 2 lowest-order bytes
-			 * or -1 if end of stream.
+			 * Assume read() in the InputStream will return 2 lowest-order bytes or -1 if
+			 * end of stream.
 			 */
 			int read = super.read();
 			if (read > 0)
@@ -198,22 +183,21 @@ public class PushbackReader extends FilterReader
 	}
 
 	/**
-	 * Reads at most {@code length} bytes from this reader and stores them in
-	 * byte array {@code buffer} starting at {@code offset}. Characters are read
-	 * from the pushback buffer first, then from the source reader if more bytes
-	 * are required. Blocks until {@code count} characters have been read, the
-	 * end of the source reader is detected or an exception is thrown.
-	 * 
+	 * Reads at most {@code length} bytes from this reader and stores them in byte
+	 * array {@code buffer} starting at {@code offset}. Characters are read from the
+	 * pushback buffer first, then from the source reader if more bytes are
+	 * required. Blocks until {@code count} characters have been read, the end of
+	 * the source reader is detected or an exception is thrown.
+	 *
 	 * @param buffer
-	 *            the array in which to store the characters read from this
-	 *            reader.
+	 *            the array in which to store the characters read from this reader.
 	 * @param offset
 	 *            the initial position in {@code buffer} to store the characters
 	 *            read from this reader.
 	 * @param count
 	 *            the maximum number of bytes to store in {@code buffer}.
-	 * @return the number of bytes read or -1 if the end of the source reader
-	 *         has been reached.
+	 * @return the number of bytes read or -1 if the end of the source reader has
+	 *         been reached.
 	 * @throws IndexOutOfBoundsException
 	 *             if {@code offset < 0} or {@code count < 0}, or if
 	 *             {@code offset + count} is greater than the length of
@@ -223,18 +207,14 @@ public class PushbackReader extends FilterReader
 	 *             reading from this reader.
 	 */
 	@Override
-	public int read(char[] buffer, int offset, int count) throws IOException
-	{
-		synchronized (lock)
-		{
-			if (null == buf)
-			{
+	public int read(char[] buffer, int offset, int count) throws IOException {
+		synchronized (lock) {
+			if (null == buf) {
 				throw new IOException("Reader closed");
 			}
 
 			// avoid int overflow
-			if (offset < 0 || count < 0 || offset > buffer.length - count)
-			{
+			if (offset < 0 || count < 0 || offset > buffer.length - count) {
 				throw new IndexOutOfBoundsException();
 			}
 
@@ -242,8 +222,7 @@ public class PushbackReader extends FilterReader
 			int copyLength = 0;
 			int newOffset = offset;
 			/* Are there pushback chars available? */
-			if (pos < buf.length)
-			{
+			if (pos < buf.length) {
 				copyLength = (buf.length - pos >= count) ? count : buf.length - pos;
 				System.arraycopy(buf, pos, buffer, newOffset, copyLength);
 				newOffset += copyLength;
@@ -253,18 +232,15 @@ public class PushbackReader extends FilterReader
 				bytes += copyLength;
 			}
 			/* Have we copied enough? */
-			if (copyLength == count)
-			{
+			if (copyLength == count) {
 				return count;
 			}
 			int inCopied = super.read(buffer, newOffset, count - copiedChars);
-			if (inCopied > 0)
-			{
+			if (inCopied > 0) {
 				bytes += copiedChars;
 				return inCopied + copiedChars;
 			}
-			if (copiedChars == 0)
-			{
+			if (copiedChars == 0) {
 				return inCopied;
 			}
 			return copiedChars;
@@ -272,24 +248,21 @@ public class PushbackReader extends FilterReader
 	}
 
 	/**
-	 * Indicates whether this reader is ready to be read without blocking.
-	 * Returns {@code true} if this reader will not block when {@code read} is
-	 * called, {@code false} if unknown or blocking will occur.
-	 * 
-	 * @return {@code true} if the receiver will not block when {@code read()}
-	 *         is called, {@code false} if unknown or blocking will occur.
+	 * Indicates whether this reader is ready to be read without blocking. Returns
+	 * {@code true} if this reader will not block when {@code read} is called,
+	 * {@code false} if unknown or blocking will occur.
+	 *
+	 * @return {@code true} if the receiver will not block when {@code read()} is
+	 *         called, {@code false} if unknown or blocking will occur.
 	 * @throws IOException
 	 *             if this reader is closed or some other I/O error occurs.
 	 * @see #read()
 	 * @see #read(char[], int, int)
 	 */
 	@Override
-	public boolean ready() throws IOException
-	{
-		synchronized (lock)
-		{
-			if (buf == null)
-			{
+	public boolean ready() throws IOException {
+		synchronized (lock) {
+			if (buf == null) {
 				throw new IOException("Reader closed");
 			}
 			return (buf.length - pos > 0 || super.ready());
@@ -297,56 +270,51 @@ public class PushbackReader extends FilterReader
 	}
 
 	/**
-	 * Resets this reader to the last marked position. Resetting the reader is
-	 * not supported in this class; this implementation always throws an
+	 * Resets this reader to the last marked position. Resetting the reader is not
+	 * supported in this class; this implementation always throws an
 	 * {@code IOException}.
-	 * 
+	 *
 	 * @throws IOException
 	 *             if this method is called.
 	 */
 	@Override
-	public void reset() throws IOException
-	{
+	public void reset() throws IOException {
 		throw new IOException("mark/reset not supported");
 	}
 
 	/**
 	 * Pushes all the characters in {@code buffer} back to this reader. The
-	 * characters are pushed back in such a way that the next character read
-	 * from this reader is buffer[0], then buffer[1] and so on.
+	 * characters are pushed back in such a way that the next character read from
+	 * this reader is buffer[0], then buffer[1] and so on.
 	 * <p>
-	 * If this reader's internal pushback buffer cannot store the entire
-	 * contents of {@code buffer}, an {@code IOException} is thrown.
-	 * 
+	 * If this reader's internal pushback buffer cannot store the entire contents of
+	 * {@code buffer}, an {@code IOException} is thrown.
+	 *
 	 * @param buffer
-	 *            the buffer containing the characters to push back to this
-	 *            reader.
+	 *            the buffer containing the characters to push back to this reader.
 	 * @throws IOException
 	 *             if this reader is closed or the free space in the internal
 	 *             pushback buffer is not sufficient to store the contents of
 	 *             {@code buffer}.
 	 */
-	public void unread(char[] buffer) throws IOException
-	{
+	public void unread(char[] buffer) throws IOException {
 		unread(buffer, 0, buffer.length);
 	}
 
 	/**
-	 * Pushes a subset of the characters in {@code buffer} back to this reader.
-	 * The subset is defined by the start position {@code offset} within
-	 * {@code buffer} and the number of characters specified by {@code length}.
-	 * The characters are pushed back in such a way that the next byte read from
-	 * this reader is {@code buffer[offset]}, then {@code buffer[1]} and so on.
+	 * Pushes a subset of the characters in {@code buffer} back to this reader. The
+	 * subset is defined by the start position {@code offset} within {@code buffer}
+	 * and the number of characters specified by {@code length}. The characters are
+	 * pushed back in such a way that the next byte read from this reader is
+	 * {@code buffer[offset]}, then {@code buffer[1]} and so on.
 	 * <p>
-	 * If this reader's internal pushback buffer cannot store the selected
-	 * subset of {@code buffer}, an {@code IOException} is thrown.
-	 * 
+	 * If this reader's internal pushback buffer cannot store the selected subset of
+	 * {@code buffer}, an {@code IOException} is thrown.
+	 *
 	 * @param buffer
-	 *            the buffer containing the characters to push back to this
-	 *            reader.
+	 *            the buffer containing the characters to push back to this reader.
 	 * @param offset
-	 *            the index of the first character in {@code buffer} to push
-	 *            back.
+	 *            the index of the first character in {@code buffer} to push back.
 	 * @param length
 	 *            the number of bytes to push back.
 	 * @throws IndexOutOfBoundsException
@@ -355,43 +323,35 @@ public class PushbackReader extends FilterReader
 	 *             {@code buffer}.
 	 * @throws IOException
 	 *             if this reader is closed or the free space in the internal
-	 *             pushback buffer is not sufficient to store the selected
-	 *             contents of {@code buffer}.
+	 *             pushback buffer is not sufficient to store the selected contents
+	 *             of {@code buffer}.
 	 * @throws NullPointerException
 	 *             if {@code buffer} is {@code null}.
 	 */
-	public void unread(char[] buffer, int offset, int length) throws IOException
-	{
-		synchronized (lock)
-		{
-			if (buf == null)
-			{
+	public void unread(char[] buffer, int offset, int length) throws IOException {
+		synchronized (lock) {
+			if (buf == null) {
 				throw new IOException("Stream closed");
 			}
 
-			if (length > pos)
-			{
+			if (length > pos) {
 				throw new IOException("Push back buffer is full");
 			}
 
 			// Force buffer null check first!
-			if (offset > buffer.length - length || offset < 0)
-			{
+			if (offset > buffer.length - length || offset < 0) {
 				throw new ArrayIndexOutOfBoundsException("Offset out of bounds");
 			}
 
-			if (length < 0)
-			{
+			if (length < 0) {
 				throw new ArrayIndexOutOfBoundsException("Length out of bounds");
 			}
 
-			if (length > pos)
-			{
+			if (length > pos) {
 				throw new IOException("Push back buffer is full");
 			}
 
-			for (int i = offset + length - 1; i >= offset; i--)
-			{
+			for (int i = offset + length - 1; i >= offset; i--) {
 				buf[--pos] = buffer[i];
 			}
 			pos -= length;
@@ -400,30 +360,25 @@ public class PushbackReader extends FilterReader
 	}
 
 	/**
-	 * Pushes the specified character {@code oneChar} back to this reader. This
-	 * is done in such a way that the next character read from this reader is
+	 * Pushes the specified character {@code oneChar} back to this reader. This is
+	 * done in such a way that the next character read from this reader is
 	 * {@code (char) oneChar}.
 	 * <p>
 	 * If this reader's internal pushback buffer cannot store the character, an
 	 * {@code IOException} is thrown.
-	 * 
+	 *
 	 * @param oneChar
 	 *            the character to push back to this stream.
 	 * @throws IOException
-	 *             if this reader is closed or the internal pushback buffer is
-	 *             full.
+	 *             if this reader is closed or the internal pushback buffer is full.
 	 */
-	public void unread(int oneChar) throws IOException
-	{
-		synchronized (lock)
-		{
-			if (buf == null)
-			{
+	public void unread(int oneChar) throws IOException {
+		synchronized (lock) {
+			if (buf == null) {
 				throw new IOException("Stream closed");
 			}
 
-			if (pos == 0)
-			{
+			if (pos == 0) {
 				throw new IOException("Push back buffer is full");
 			}
 
@@ -436,7 +391,7 @@ public class PushbackReader extends FilterReader
 	 * Skips {@code count} characters in this reader. This implementation skips
 	 * characters in the pushback buffer first and then in the source reader if
 	 * necessary.
-	 * 
+	 *
 	 * @param count
 	 *            the number of characters to skip.
 	 * @return the number of characters actually skipped.
@@ -446,36 +401,28 @@ public class PushbackReader extends FilterReader
 	 *             if this reader is closed or another I/O error occurs.
 	 */
 	@Override
-	public long skip(long count) throws IOException
-	{
-		if (count < 0)
-		{
+	public long skip(long count) throws IOException {
+		if (count < 0) {
 			throw new IllegalArgumentException();
 		}
 
-		synchronized (lock)
-		{
-			if (buf == null)
-			{
+		synchronized (lock) {
+			if (buf == null) {
 				throw new IOException("Stream closed");
 			}
-			if (count == 0)
-			{
+			if (count == 0) {
 				return 0;
 			}
 
 			long pskip = buf.length - pos;
-			if (pskip > 0)
-			{
-				if (count < pskip)
-				{
+			if (pskip > 0) {
+				if (count < pskip) {
 					pskip = count;
 				}
 				pos += pskip;
 				count -= pskip;
 			}
-			if (count > 0)
-			{
+			if (count > 0) {
 				pskip += super.skip(count);
 			}
 			bytes -= pskip;

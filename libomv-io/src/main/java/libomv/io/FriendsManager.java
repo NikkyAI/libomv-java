@@ -69,12 +69,10 @@ import libomv.utils.Helpers;
  * This class is used to add and remove avatars from your friends list and to
  * manage their permission.
  */
-public class FriendsManager implements PacketCallback, libomv.model.Friend
-{
+public class FriendsManager implements PacketCallback, libomv.model.Friend {
 	private static final Logger logger = Logger.getLogger(FriendsManager.class);
-	
-	public static class FriendRights
-	{
+
+	public static class FriendRights {
 		/** The avatar has no rights */
 		public static final byte None = 0;
 		/** The avatar can see the online status of the target avatar */
@@ -86,29 +84,24 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 
 		private static final String[] _names = new String[] { "None", "SeeOnline", "SeeOnMap", "ModifyObjects" };
 
-		public static String toString(byte value)
-		{
+		public static String toString(byte value) {
 			if ((value & _mask) == 0)
 				return _names[0];
 
 			String rights = "";
-			for (int i = 1; i < _names.length; i++)
-			{
-				if ((value & (1 << (i - 1))) != 0)
-				{
+			for (int i = 1; i < _names.length; i++) {
+				if ((value & (1 << (i - 1))) != 0) {
 					rights.concat(_names[i] + ", ");
 				}
 			}
 			return rights.substring(0, rights.length() - 2);
 		}
 
-		public static byte setValue(int value)
-		{
+		public static byte setValue(int value) {
 			return (byte) (value & _mask);
 		}
 
-		public static int getValue(int value)
-		{
+		public static int getValue(int value) {
 			return value;
 		}
 
@@ -116,14 +109,13 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	}
 
 	/**
-	 * This class holds information about an avatar in the friends list. There
-	 * are two ways to interface to this class. The first is through the set of
-	 * boolean properties. This is the typical way clients of this class will
-	 * use it. The second interface is through two bitflag properties,
-	 * TheirFriendsRights and MyFriendsRights
+	 * This class holds information about an avatar in the friends list. There are
+	 * two ways to interface to this class. The first is through the set of boolean
+	 * properties. This is the typical way clients of this class will use it. The
+	 * second interface is through two bitflag properties, TheirFriendsRights and
+	 * MyFriendsRights
 	 */
-	public class FriendInfo
-	{
+	public class FriendInfo {
 		private UUID ID;
 		private String name;
 		private boolean isOnline;
@@ -131,47 +123,37 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 		private byte theirRights;
 
 		/* System ID of the avatar */
-		public final UUID getID()
-		{
+		public final UUID getID() {
 			return ID;
 		}
 
 		/* full name of the avatar */
-		public final String getName()
-		{
+		public final String getName() {
 			return name;
 		}
 
-		public final void setName(String name)
-		{
+		public final void setName(String name) {
 			this.name = name;
 		}
 
 		/* True if the avatar is online */
-		public final boolean getIsOnline()
-		{
+		public final boolean getIsOnline() {
 			return isOnline;
 		}
 
-		public final void setIsOnline(boolean value)
-		{
+		public final void setIsOnline(boolean value) {
 			isOnline = value;
 		}
 
 		/* True if the friend can see if I am online */
-		public final boolean getCanSeeMeOnline()
-		{
+		public final boolean getCanSeeMeOnline() {
 			return (theirRights & FriendRights.CanSeeOnline) != 0;
 		}
 
-		public final void setCanSeeMeOnline(boolean value)
-		{
-			if (value)
-			{
+		public final void setCanSeeMeOnline(boolean value) {
+			if (value) {
 				theirRights |= FriendRights.CanSeeOnline;
-			}
-			else
-			{
+			} else {
 				// if they can't see me online, then they also can't see me on
 				// the map
 				theirRights &= ~(FriendRights.CanSeeOnline | FriendRights.CanSeeOnMap);
@@ -179,13 +161,11 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 		}
 
 		/* True if the friend can see me on the map */
-		public final boolean getCanSeeMeOnMap()
-		{
+		public final boolean getCanSeeMeOnMap() {
 			return (theirRights & FriendRights.CanSeeOnMap) != 0;
 		}
 
-		public final void setCanSeeMeOnMap(boolean value)
-		{
+		public final void setCanSeeMeOnMap(boolean value) {
 			if (value)
 				theirRights |= FriendRights.CanSeeOnMap;
 			else
@@ -194,13 +174,11 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 		}
 
 		/* True if the friend can modify my objects */
-		public final boolean getCanModifyMyObjects()
-		{
+		public final boolean getCanModifyMyObjects() {
 			return (theirRights & FriendRights.CanModifyObjects) != 0;
 		}
 
-		public final void setCanModifyMyObjects(boolean value)
-		{
+		public final void setCanModifyMyObjects(boolean value) {
 			if (value)
 				theirRights |= FriendRights.CanModifyObjects;
 			else
@@ -208,57 +186,48 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 		}
 
 		/* True if I can see if my friend is online */
-		public final boolean getCanSeeThemOnline()
-		{
+		public final boolean getCanSeeThemOnline() {
 			return (myRights & FriendRights.CanSeeOnline) != 0;
 		}
 
 		/* True if I can see if my friend is on the map */
-		public final boolean getCanSeeThemOnMap()
-		{
+		public final boolean getCanSeeThemOnMap() {
 			return (myRights & FriendRights.CanSeeOnMap) != 0;
 		}
 
 		/* True if I can modify my friend's objects */
-		public final boolean getCanModifyTheirObjects()
-		{
+		public final boolean getCanModifyTheirObjects() {
 			return (myRights & FriendRights.CanModifyObjects) != 0;
 		}
 
 		/**
-		 * Used internally when building the initial list of friends at login
-		 * time
+		 * Used internally when building the initial list of friends at login time
 		 * 
 		 * @param id
 		 *            System ID of the avatar being prepesented
 		 * @param buddy_rights_given
-		 *            Rights the friend has to see you online and to modify your
-		 *            objects
+		 *            Rights the friend has to see you online and to modify your objects
 		 * @param buddy_rights_has
-		 *            Rights you have to see your friend online and to modify
-		 *            their objects
+		 *            Rights you have to see your friend online and to modify their
+		 *            objects
 		 */
-		public FriendInfo(UUID id, int buddy_rights_given, int buddy_rights_has)
-		{
+		public FriendInfo(UUID id, int buddy_rights_given, int buddy_rights_has) {
 			ID = id;
 			this.theirRights = (byte) buddy_rights_given;
 			this.myRights = (byte) buddy_rights_has;
 		}
 
-		public boolean equals(FriendInfo o)
-		{
+		public boolean equals(FriendInfo o) {
 			return ID.equals(o.getID());
 		}
 
 		@Override
-		public boolean equals(Object o)
-		{
+		public boolean equals(Object o) {
 			return (o != null && o instanceof FriendInfo) ? equals((FriendInfo) o) : false;
 		}
 
 		@Override
-		public int hashCode()
-		{
+		public int hashCode() {
 			return ID.hashCode();
 		}
 
@@ -268,8 +237,7 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 		 * @return A string reprentation of both my rights and my friends rights
 		 */
 		@Override
-		public String toString()
-		{
+		public String toString() {
 			return String.format("%f (Their Rights: %1x, My Rights: %1x)", getName(),
 					FriendRights.toString(theirRights), FriendRights.toString(myRights));
 		}
@@ -278,84 +246,70 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	// #region callback handlers
 
 	// Triggered whenever a friend comes online or goes offline
-	public class FriendNotificationCallbackArgs implements CallbackArgs
-	{
+	public class FriendNotificationCallbackArgs implements CallbackArgs {
 		private final UUID[] agentIDs;
 		private final boolean online;
 
-		public UUID[] getAgentID()
-		{
+		public UUID[] getAgentID() {
 			return agentIDs;
 		}
 
-		public boolean getOnline()
-		{
+		public boolean getOnline() {
 			return online;
 		}
 
-		public FriendNotificationCallbackArgs(UUID[] agentIDs, boolean online)
-		{
+		public FriendNotificationCallbackArgs(UUID[] agentIDs, boolean online) {
 			this.agentIDs = agentIDs;
 			this.online = online;
 		}
 	}
 
-	public abstract class FriendNotificationCallback implements Callback<FriendNotificationCallbackArgs>
-	{
+	public abstract class FriendNotificationCallback implements Callback<FriendNotificationCallbackArgs> {
 		@Override
 		public abstract boolean callback(FriendNotificationCallbackArgs params);
 	}
 
 	public final CallbackHandler<FriendNotificationCallbackArgs> OnFriendNotification = new CallbackHandler<FriendNotificationCallbackArgs>();
 
-	public class FriendListChangedCallbackArgs implements CallbackArgs
-	{
+	public class FriendListChangedCallbackArgs implements CallbackArgs {
 		private final FriendInfo info;
 		private final boolean added;
-		
-		public FriendInfo getFriendInfo()
-		{
+
+		public FriendInfo getFriendInfo() {
 			return info;
 		}
 
-		public boolean getIsAdded()
-		{
+		public boolean getIsAdded() {
 			return added;
 		}
 
-		public FriendListChangedCallbackArgs(FriendInfo info, boolean added)
-		{
+		public FriendListChangedCallbackArgs(FriendInfo info, boolean added) {
 			this.info = info;
 			this.added = added;
 		}
 	}
 
-	public abstract class FriendListChangedCallback implements Callback<FriendListChangedCallbackArgs>
-	{
+	public abstract class FriendListChangedCallback implements Callback<FriendListChangedCallbackArgs> {
 		@Override
 		public abstract boolean callback(FriendListChangedCallbackArgs params);
 	}
 
 	public final CallbackHandler<FriendListChangedCallbackArgs> OnFriendListChanged = new CallbackHandler<FriendListChangedCallbackArgs>();
-	
+
 	// Triggered when a friends rights changed
-	public class FriendRightsCallbackArgs implements CallbackArgs
-	{
+	public class FriendRightsCallbackArgs implements CallbackArgs {
 		private final FriendInfo friendInfo;
 
-		public FriendInfo getFriendInfo()
-		{
+		public FriendInfo getFriendInfo() {
 			return friendInfo;
 		}
 
-		public FriendRightsCallbackArgs(FriendInfo friendInfo)
-		{
+		public FriendRightsCallbackArgs(FriendInfo friendInfo) {
 			this.friendInfo = friendInfo;
 		}
 	}
 
-	public abstract class FriendRightsCallback implements Callback<FriendRightsCallbackArgs>
-	{
+	public abstract class FriendRightsCallback implements Callback<FriendRightsCallbackArgs> {
 		@Override
 		public abstract boolean callback(FriendRightsCallbackArgs params);
 	}
@@ -363,37 +317,31 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	public final CallbackHandler<FriendRightsCallbackArgs> OnFriendRights = new CallbackHandler<FriendRightsCallbackArgs>();
 
 	// Triggered when a map request for a friend is answered
-	public class FriendFoundReplyCallbackArgs implements CallbackArgs
-	{
+	public class FriendFoundReplyCallbackArgs implements CallbackArgs {
 		private final UUID agentID;
 		private final long regionHandle;
 		private final Vector3 location;
 
-		public UUID getAgentID()
-		{
+		public UUID getAgentID() {
 			return agentID;
 		}
 
-		public long getRegionHandle()
-		{
+		public long getRegionHandle() {
 			return regionHandle;
 		}
 
-		public Vector3 getLocation()
-		{
+		public Vector3 getLocation() {
 			return location;
 		}
 
-		public FriendFoundReplyCallbackArgs(UUID agentID, long regionHandle, Vector3 location)
-		{
+		public FriendFoundReplyCallbackArgs(UUID agentID, long regionHandle, Vector3 location) {
 			this.agentID = agentID;
 			this.regionHandle = regionHandle;
 			this.location = location;
 		}
 	}
 
-	public abstract class FriendFoundReplyCallback implements Callback<FriendFoundReplyCallbackArgs>
-	{
+	public abstract class FriendFoundReplyCallback implements Callback<FriendFoundReplyCallbackArgs> {
 		@Override
 		public abstract boolean callback(FriendFoundReplyCallbackArgs params);
 	}
@@ -401,37 +349,31 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	public CallbackHandler<FriendFoundReplyCallbackArgs> OnFriendFoundReply = new CallbackHandler<FriendFoundReplyCallbackArgs>();
 
 	/* Triggered when someone offers us friendship */
-	public class FriendshipOfferedCallbackArgs implements CallbackArgs
-	{
+	public class FriendshipOfferedCallbackArgs implements CallbackArgs {
 		private final UUID friendID;
 		private final String name;
 		private final UUID sessionID;
 
-		public UUID getFriendID()
-		{
+		public UUID getFriendID() {
 			return friendID;
 		}
 
-		public String getName()
-		{
+		public String getName() {
 			return name;
 		}
 
-		public UUID getSessionID()
-		{
+		public UUID getSessionID() {
 			return sessionID;
 		}
 
-		public FriendshipOfferedCallbackArgs(UUID friendID, String name, UUID sessionID)
-		{
+		public FriendshipOfferedCallbackArgs(UUID friendID, String name, UUID sessionID) {
 			this.friendID = friendID;
 			this.name = name;
 			this.sessionID = sessionID;
 		}
 	}
 
-	public abstract class FriendshipOfferedCallback implements Callback<FriendshipOfferedCallbackArgs>
-	{
+	public abstract class FriendshipOfferedCallback implements Callback<FriendshipOfferedCallbackArgs> {
 		@Override
 		public abstract boolean callback(FriendshipOfferedCallbackArgs params);
 	}
@@ -439,37 +381,31 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	public CallbackHandler<FriendshipOfferedCallbackArgs> OnFriendshipOffered = new CallbackHandler<FriendshipOfferedCallbackArgs>();
 
 	/* Triggered when someone accepts or rejects a friendship request */
-	public class FriendshipResponseCallbackArgs implements CallbackArgs
-	{
+	public class FriendshipResponseCallbackArgs implements CallbackArgs {
 		private final UUID agentID;
 		private final String name;
 		private final boolean accepted;
 
-		public UUID getAgentID()
-		{
+		public UUID getAgentID() {
 			return agentID;
 		}
 
-		public String getName()
-		{
+		public String getName() {
 			return name;
 		}
 
-		public boolean getAccepted()
-		{
+		public boolean getAccepted() {
 			return accepted;
 		}
 
-		public FriendshipResponseCallbackArgs(UUID agentID, String name, boolean accepted)
-		{
+		public FriendshipResponseCallbackArgs(UUID agentID, String name, boolean accepted) {
 			this.agentID = agentID;
 			this.name = name;
 			this.accepted = accepted;
 		}
 	}
 
-	public abstract class FriendshipResponseCallback implements Callback<FriendshipResponseCallbackArgs>
-	{
+	public abstract class FriendshipResponseCallback implements Callback<FriendshipResponseCallbackArgs> {
 		@Override
 		public abstract boolean callback(FriendshipResponseCallbackArgs params);
 	}
@@ -477,30 +413,25 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	public CallbackHandler<FriendshipResponseCallbackArgs> OnFriendshipResponse = new CallbackHandler<FriendshipResponseCallbackArgs>();
 
 	/* Triggered when someone terminated friendship with us */
-	public class FriendshipTerminatedCallbackArgs implements CallbackArgs
-	{
+	public class FriendshipTerminatedCallbackArgs implements CallbackArgs {
 		private final UUID otherID;
 		private final String name;
 
-		public UUID getOtherID()
-		{
+		public UUID getOtherID() {
 			return otherID;
 		}
 
-		public String getName()
-		{
+		public String getName() {
 			return name;
 		}
 
-		public FriendshipTerminatedCallbackArgs(UUID otherID, String name)
-		{
+		public FriendshipTerminatedCallbackArgs(UUID otherID, String name) {
 			this.otherID = otherID;
 			this.name = name;
 		}
 	}
 
-	public abstract class FriendshipTerminatedCallback implements Callback<FriendshipTerminatedCallbackArgs>
-	{
+	public abstract class FriendshipTerminatedCallback implements Callback<FriendshipTerminatedCallbackArgs> {
 		@Override
 		public abstract boolean callback(FriendshipTerminatedCallbackArgs params);
 	}
@@ -513,66 +444,54 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	/**
 	 * A dictionary of key/value pairs containing known friends of this avatar.
 	 * 
-	 * The Key is the {@link UUID} of the friend, the value is a
-	 * {@link FriendInfo} object that contains detailed information including
-	 * permissions you have and have given to the friend
+	 * The Key is the {@link UUID} of the friend, the value is a {@link FriendInfo}
+	 * object that contains detailed information including permissions you have and
+	 * have given to the friend
 	 */
 	private HashList<UUID, FriendInfo> _FriendList = new HashList<UUID, FriendInfo>();
 
-	public HashList<UUID, FriendInfo> getFriendList()
-	{
+	public HashList<UUID, FriendInfo> getFriendList() {
 		return _FriendList;
 	}
 
-	private void addFriend(FriendInfo info)
-	{
-		synchronized (_FriendList)
-		{
-			if (!_FriendList.containsKey(info.getID()))
-			{
+	private void addFriend(FriendInfo info) {
+		synchronized (_FriendList) {
+			if (!_FriendList.containsKey(info.getID())) {
 				_FriendList.put(info.getID(), info);
 
 				OnFriendListChanged.dispatch(new FriendListChangedCallbackArgs(info, true));
 			}
 		}
 	}
-	
-	private FriendInfo removeFriend(UUID uuid)
-	{
-		synchronized (_FriendList)
-		{
-			if (_FriendList.containsKey(uuid))
-			{
+
+	private FriendInfo removeFriend(UUID uuid) {
+		synchronized (_FriendList) {
+			if (_FriendList.containsKey(uuid)) {
 				FriendInfo info = _FriendList.get(uuid);
 				OnFriendListChanged.dispatch(new FriendListChangedCallbackArgs(info, false));
-			    return _FriendList.remove(uuid);
+				return _FriendList.remove(uuid);
 			}
 		}
 		return null;
 	}
-	
-	public int getFriendIndex(UUID uuid)
-	{
-		synchronized (_FriendList)
-		{
+
+	public int getFriendIndex(UUID uuid) {
+		synchronized (_FriendList) {
 			return _FriendList.getKeyPosition(uuid);
 		}
 	}
-	
-	public FriendInfo getFriend(int index)
-	{
-		synchronized (_FriendList)
-		{
+
+	public FriendInfo getFriend(int index) {
+		synchronized (_FriendList) {
 			return _FriendList.get(index);
 		}
 	}
 
 	/**
-	 * A Dictionary of key/value pairs containing current pending friendship
-	 * offers.
+	 * A Dictionary of key/value pairs containing current pending friendship offers.
 	 * 
-	 * The key is the {@link UUID} of the avatar making the request, the value
-	 * is the {@link UUID} of the request which is used to accept or decline the
+	 * The key is the {@link UUID} of the avatar making the request, the value is
+	 * the {@link UUID} of the request which is used to accept or decline the
 	 * friendship offer
 	 */
 	private HashMap<UUID, UUID> _FriendRequests = new HashMap<UUID, UUID>();
@@ -583,8 +502,7 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	 * @param client
 	 *            A reference to the ClientManager Object
 	 */
-	public FriendsManager(GridClient client)
-	{
+	public FriendsManager(GridClient client) {
 		_Client = client;
 
 		_Client.Self.OnInstantMessage.add(new Self_OnInstantMessage());
@@ -601,28 +519,26 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	}
 
 	@Override
-	public void packetCallback(Packet packet, Simulator simulator) throws Exception
-	{
-		switch (packet.getType())
-		{
-			case OnlineNotification:
-			case OfflineNotification:
-				HandleFriendNotification(packet, simulator);
-				break;
-			case ChangeUserRights:
-				HandleChangeUserRights(packet, simulator);
-				break;
-			case TerminateFriendship:
-				HandleTerminateFriendship(packet, simulator);
-				break;
-			case FindAgent:
-				HandleFindAgentReply(packet, simulator);
-				break;
-			case UUIDNameReply:
-				HandleUUIDNameReply(packet, simulator);
-				break;
-			default:
-				break;
+	public void packetCallback(Packet packet, Simulator simulator) throws Exception {
+		switch (packet.getType()) {
+		case OnlineNotification:
+		case OfflineNotification:
+			HandleFriendNotification(packet, simulator);
+			break;
+		case ChangeUserRights:
+			HandleChangeUserRights(packet, simulator);
+			break;
+		case TerminateFriendship:
+			HandleTerminateFriendship(packet, simulator);
+			break;
+		case FindAgent:
+			HandleFindAgentReply(packet, simulator);
+			break;
+		case UUIDNameReply:
+			HandleUUIDNameReply(packet, simulator);
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -636,8 +552,7 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	 * @throws Exception
 	 * @throws InventoryException
 	 */
-	public final void AcceptFriendship(UUID fromAgentID, UUID imSessionID) throws Exception, InventoryException
-	{
+	public final void AcceptFriendship(UUID fromAgentID, UUID imSessionID) throws Exception, InventoryException {
 		if (_Client.Inventory == null)
 			throw new InventoryException(
 					"Inventory not instantiated. Need to lookup CallingCard folder in order to accept a friendship request.");
@@ -655,8 +570,7 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 
 		addFriend(new FriendInfo(fromAgentID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline));
 
-		synchronized (_FriendRequests)
-		{
+		synchronized (_FriendRequests) {
 			_FriendRequests.remove(fromAgentID);
 		}
 
@@ -672,16 +586,14 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	 *            imSessionID of the friendship request message
 	 * @throws Exception
 	 */
-	public final void DeclineFriendship(UUID fromAgentID, UUID imSessionID) throws Exception
-	{
+	public final void DeclineFriendship(UUID fromAgentID, UUID imSessionID) throws Exception {
 		DeclineFriendshipPacket request = new DeclineFriendshipPacket();
 		request.AgentData.AgentID = _Client.Self.getAgentID();
 		request.AgentData.SessionID = _Client.Self.getSessionID();
 		request.TransactionID = imSessionID;
 		_Client.Network.sendPacket(request);
 
-		synchronized (_FriendRequests)
-		{
+		synchronized (_FriendRequests) {
 			_FriendRequests.remove(fromAgentID);
 		}
 	}
@@ -693,8 +605,7 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	 *            System ID of the avatar you are offering friendship to
 	 * @throws Exception
 	 */
-	public final void OfferFriendship(UUID agentID) throws Exception
-	{
+	public final void OfferFriendship(UUID agentID) throws Exception {
 		OfferFriendship(agentID, "Do you want to be my friend?");
 	}
 
@@ -707,8 +618,7 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	 *            A message to send with the request
 	 * @throws Exception
 	 */
-	public final void OfferFriendship(UUID agentID, String message) throws Exception
-	{
+	public final void OfferFriendship(UUID agentID, String message) throws Exception {
 		if (_Client.Inventory == null)
 			throw new InventoryException(
 					"Inventory not instantiated. Need to lookup CallingCard folder in order to offer friendship.");
@@ -722,15 +632,12 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	 * Terminate a friendship with an avatar
 	 * 
 	 * @param agentID
-	 *            System ID of the avatar you are terminating the friendship
-	 *            with
+	 *            System ID of the avatar you are terminating the friendship with
 	 * @throws Exception
 	 */
-	public final void TerminateFriendship(UUID agentID) throws Exception
-	{
-		FriendInfo friend = removeFriend(agentID);	
-		if (friend != null)
-		{
+	public final void TerminateFriendship(UUID agentID) throws Exception {
+		FriendInfo friend = removeFriend(agentID);
+		if (friend != null) {
 			TerminateFriendshipPacket request = new TerminateFriendshipPacket();
 			request.AgentData.AgentID = _Client.Self.getAgentID();
 			request.AgentData.SessionID = _Client.Self.getSessionID();
@@ -748,13 +655,12 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	 * @param e
 	 *            The EventArgs object containing the packet data
 	 */
-	private void HandleTerminateFriendship(Packet packet, Simulator simulator)
-	{
+	private void HandleTerminateFriendship(Packet packet, Simulator simulator) {
 		TerminateFriendshipPacket itsOver = (TerminateFriendshipPacket) packet;
 		FriendInfo friend = removeFriend(itsOver.OtherID);
 
-		OnFriendshipTerminated.dispatch(new FriendshipTerminatedCallbackArgs(itsOver.OtherID,
-				friend != null ? friend.getName() : null));
+		OnFriendshipTerminated.dispatch(
+				new FriendshipTerminatedCallbackArgs(itsOver.OtherID, friend != null ? friend.getName() : null));
 	}
 
 	/**
@@ -764,14 +670,13 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	 *            the {@link FriendInfo} of the friend
 	 * @throws Exception
 	 * 
-	 * This method will implicitly set the rights to those contained in
-	 * the info parameter.
+	 *             This method will implicitly set the rights to those contained in
+	 *             the info parameter.
 	 */
-	public final void GrantRights(FriendInfo info) throws Exception
-	{
+	public final void GrantRights(FriendInfo info) throws Exception {
 		GrantRights(info.ID, info.theirRights);
 	}
-		
+
 	/**
 	 * Change the rights of a friend avatar.
 	 * 
@@ -781,11 +686,10 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	 *            the new rights to give the friend
 	 * @throws Exception
 	 * 
-	 * This method will implicitly set the rights to those passed in
-	 * the rights parameter.
+	 *             This method will implicitly set the rights to those passed in the
+	 *             rights parameter.
 	 */
-	public final void GrantRights(UUID friendID, byte rights) throws Exception
-	{
+	public final void GrantRights(UUID friendID, byte rights) throws Exception {
 		GrantUserRightsPacket request = new GrantUserRightsPacket();
 		request.AgentData.AgentID = _Client.Self.getAgentID();
 		request.AgentData.SessionID = _Client.Self.getSessionID();
@@ -806,8 +710,7 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	 * 
 	 *             {@link E:OnFriendFound}
 	 */
-	public final void MapFriend(UUID friendID) throws Exception
-	{
+	public final void MapFriend(UUID friendID) throws Exception {
 		FindAgentPacket stalk = new FindAgentPacket();
 		stalk.AgentBlock.Hunter = _Client.Self.getAgentID();
 		stalk.AgentBlock.Prey = friendID;
@@ -827,8 +730,7 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	 *            Friends Key
 	 * @throws Exception
 	 */
-	public final void TrackFriend(UUID friendID) throws Exception
-	{
+	public final void TrackFriend(UUID friendID) throws Exception {
 		TrackAgentPacket stalk = new TrackAgentPacket();
 		stalk.AgentData.AgentID = _Client.Self.getAgentID();
 		stalk.AgentData.SessionID = _Client.Self.getSessionID();
@@ -844,8 +746,7 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	 *            Friend's UUID
 	 * @throws Exception
 	 */
-	public final void RequestOnlineNotification(UUID friendID) throws Exception
-	{
+	public final void RequestOnlineNotification(UUID friendID) throws Exception {
 		GenericMessagePacket gmp = new GenericMessagePacket();
 		gmp.AgentData.AgentID = _Client.Self.getAgentID();
 		gmp.AgentData.SessionID = _Client.Self.getSessionID();
@@ -868,55 +769,41 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	 * @param simulator
 	 *            The simulator for which the even the packet data is
 	 */
-	private void HandleFriendNotification(Packet packet, Simulator simulator) throws Exception
-	{
+	private void HandleFriendNotification(Packet packet, Simulator simulator) throws Exception {
 		ArrayList<UUID> requestids = new ArrayList<UUID>();
 		FriendInfo friend = null;
 		UUID[] agentIDs = null;
 		boolean doNotify = false;
 
-		if (packet.getType() == PacketType.OnlineNotification)
-		{
+		if (packet.getType() == PacketType.OnlineNotification) {
 			OnlineNotificationPacket notification = (OnlineNotificationPacket) packet;
 			agentIDs = notification.AgentID;
-			for (UUID agentID : notification.AgentID)
-			{
-				synchronized (_FriendList)
-				{
-					if (!_FriendList.containsKey(agentID))
-					{
+			for (UUID agentID : notification.AgentID) {
+				synchronized (_FriendList) {
+					if (!_FriendList.containsKey(agentID)) {
 						// Mark this friend for a name request
 						requestids.add(agentID);
 						friend = new FriendInfo(agentID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
 						addFriend(friend);
-					}
-					else
-					{
+					} else {
 						friend = _FriendList.get(agentID);
 					}
 				}
 				doNotify |= !friend.getIsOnline();
 				friend.setIsOnline(true);
 			}
-		}
-		else if (packet.getType() == PacketType.OfflineNotification)
-		{
+		} else if (packet.getType() == PacketType.OfflineNotification) {
 			OfflineNotificationPacket notification = (OfflineNotificationPacket) packet;
 			agentIDs = notification.AgentID;
-			for (UUID agentID : notification.AgentID)
-			{
-				synchronized (_FriendList)
-				{
-					if (!_FriendList.containsKey(agentID))
-					{
+			for (UUID agentID : notification.AgentID) {
+				synchronized (_FriendList) {
+					if (!_FriendList.containsKey(agentID)) {
 						// Mark this friend for a name request
 						requestids.add(agentID);
 
 						friend = new FriendInfo(agentID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
 						addFriend(friend);
-					}
-					else
-					{
+					} else {
 						friend = _FriendList.get(agentID);
 					}
 				}
@@ -927,10 +814,10 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 
 		// Only notify when there was a change in online status
 		if (doNotify)
-			OnFriendNotification.dispatch(new FriendNotificationCallbackArgs(agentIDs, packet.getType() == PacketType.OnlineNotification));
+			OnFriendNotification.dispatch(
+					new FriendNotificationCallbackArgs(agentIDs, packet.getType() == PacketType.OnlineNotification));
 
-		if (requestids.size() > 0)
-		{
+		if (requestids.size() > 0) {
 			_Client.Avatars.RequestAvatarNames(requestids, null);
 		}
 	}
@@ -943,28 +830,20 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	 * @param simulator
 	 *            The simulator for which the even the packet data is
 	 */
-	private void HandleChangeUserRights(Packet packet, Simulator simulator) throws Exception
-	{
-		if (packet.getType() == PacketType.ChangeUserRights)
-		{
+	private void HandleChangeUserRights(Packet packet, Simulator simulator) throws Exception {
+		if (packet.getType() == PacketType.ChangeUserRights) {
 			FriendInfo friend;
 			ChangeUserRightsPacket rights = (ChangeUserRightsPacket) packet;
 
-			synchronized (_FriendList)
-			{
-				for (ChangeUserRightsPacket.RightsBlock block : rights.Rights)
-				{
-					if (_FriendList.containsKey(block.AgentRelated))
-					{
+			synchronized (_FriendList) {
+				for (ChangeUserRightsPacket.RightsBlock block : rights.Rights) {
+					if (_FriendList.containsKey(block.AgentRelated)) {
 						friend = _FriendList.get(block.AgentRelated);
 						friend.theirRights = FriendRights.setValue(block.RelatedRights);
 
 						OnFriendRights.dispatch(new FriendRightsCallbackArgs(friend));
-					}
-					else if (block.AgentRelated.equals(_Client.Self.getAgentID()))
-					{
-						if (_FriendList.containsKey(rights.AgentID))
-						{
+					} else if (block.AgentRelated.equals(_Client.Self.getAgentID())) {
+						if (_FriendList.containsKey(rights.AgentID)) {
 							friend = _FriendList.get(rights.AgentID);
 							friend.myRights = FriendRights.setValue(block.RelatedRights);
 
@@ -984,19 +863,17 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	 * @param simulator
 	 *            The simulator for which the packet data is
 	 */
-	private void HandleFindAgentReply(Packet packet, Simulator simulator) throws Exception
-	{
-		if (OnFriendFoundReply.count() > 0)
-		{
+	private void HandleFindAgentReply(Packet packet, Simulator simulator) throws Exception {
+		if (OnFriendFoundReply.count() > 0) {
 			FindAgentPacket reply = (FindAgentPacket) packet;
 
 			UUID prey = reply.AgentBlock.Prey;
 			float values[] = new float[2];
 			long regionHandle = Helpers.GlobalPosToRegionHandle((float) reply.LocationBlock[0].GlobalX,
-					                                            (float) reply.LocationBlock[0].GlobalY, values);
+					(float) reply.LocationBlock[0].GlobalY, values);
 
-			OnFriendFoundReply.dispatch(new FriendFoundReplyCallbackArgs(prey, regionHandle, new Vector3(values[0],
-					values[1], 0f)));
+			OnFriendFoundReply.dispatch(
+					new FriendFoundReplyCallbackArgs(prey, regionHandle, new Vector3(values[0], values[1], 0f)));
 		}
 	}
 
@@ -1009,85 +886,66 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 	 * @param simulator
 	 *            Unused
 	 */
-	private void HandleUUIDNameReply(Packet packet, Simulator simulator) throws Exception
-	{
+	private void HandleUUIDNameReply(Packet packet, Simulator simulator) throws Exception {
 		UUIDNameReplyPacket reply = (UUIDNameReplyPacket) packet;
 
-		for (UUIDNameReplyPacket.UUIDNameBlockBlock block : reply.UUIDNameBlock)
-		{
-			synchronized (_FriendList)
-			{
-				if (_FriendList.containsKey(block.ID))
-				{
-					_FriendList.get(block.ID).setName(Helpers.BytesToString(block.getFirstName()) + " " +
-					                                  Helpers.BytesToString(block.getLastName()));
+		for (UUIDNameReplyPacket.UUIDNameBlockBlock block : reply.UUIDNameBlock) {
+			synchronized (_FriendList) {
+				if (_FriendList.containsKey(block.ID)) {
+					_FriendList.get(block.ID).setName(Helpers.BytesToString(block.getFirstName()) + " "
+							+ Helpers.BytesToString(block.getLastName()));
 				}
 			}
 		}
 	}
 
-	private class Self_OnInstantMessage implements Callback<InstantMessageCallbackArgs>
-	{
+	private class Self_OnInstantMessage implements Callback<InstantMessageCallbackArgs> {
 		@Override
-		public boolean callback(InstantMessageCallbackArgs e)
-		{
+		public boolean callback(InstantMessageCallbackArgs e) {
 			UUID friendID = e.getIM().FromAgentID;
 			String name = e.getIM().FromAgentName;
 
-			switch (e.getIM().Dialog)
-			{
-				case FriendshipOffered:
-					UUID sessionID = e.getIM().IMSessionID;
-					synchronized (_FriendRequests)
-					{
-						_FriendRequests.put(friendID, sessionID);
-					}
-					OnFriendshipOffered.dispatch(new FriendshipOfferedCallbackArgs(friendID, name, sessionID));
-					break;
-				case FriendshipAccepted:
-					FriendInfo friend = new FriendInfo(friendID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
-					friend.setName(name);
-					addFriend(friend);
-					OnFriendshipResponse.dispatch(new FriendshipResponseCallbackArgs(friendID, name, true));
-					try
-					{
-						RequestOnlineNotification(friendID);
-					}
-					catch (Exception ex)
-					{
-						logger.error(GridClient.Log("Error requesting online notification", _Client), ex);
-					}
-					break;
-				case FriendshipDeclined:
-					OnFriendshipResponse.dispatch(new FriendshipResponseCallbackArgs(friendID, name, false));
-					break;
-				default:
-					break;
+			switch (e.getIM().Dialog) {
+			case FriendshipOffered:
+				UUID sessionID = e.getIM().IMSessionID;
+				synchronized (_FriendRequests) {
+					_FriendRequests.put(friendID, sessionID);
+				}
+				OnFriendshipOffered.dispatch(new FriendshipOfferedCallbackArgs(friendID, name, sessionID));
+				break;
+			case FriendshipAccepted:
+				FriendInfo friend = new FriendInfo(friendID, FriendRights.CanSeeOnline, FriendRights.CanSeeOnline);
+				friend.setName(name);
+				addFriend(friend);
+				OnFriendshipResponse.dispatch(new FriendshipResponseCallbackArgs(friendID, name, true));
+				try {
+					RequestOnlineNotification(friendID);
+				} catch (Exception ex) {
+					logger.error(GridClient.Log("Error requesting online notification", _Client), ex);
+				}
+				break;
+			case FriendshipDeclined:
+				OnFriendshipResponse.dispatch(new FriendshipResponseCallbackArgs(friendID, name, false));
+				break;
+			default:
+				break;
 			}
 			return false;
 		}
 	}
 
 	/**
-	 * Populate FriendList {@link InternalDictionary} with data from the login
-	 * reply
+	 * Populate FriendList {@link InternalDictionary} with data from the login reply
 	 */
-	private class Network_OnConnect implements Callback<LoginProgressCallbackArgs>
-	{
+	private class Network_OnConnect implements Callback<LoginProgressCallbackArgs> {
 		@Override
-		public boolean callback(LoginProgressCallbackArgs e)
-		{
-			if (e.getStatus() == LoginStatus.Success)
-			{
-				if (e.getReply().BuddyList != null)
-				{
-					synchronized (_FriendList)
-					{
-						for (BuddyListEntry buddy : e.getReply().BuddyList)
-						{
+		public boolean callback(LoginProgressCallbackArgs e) {
+			if (e.getStatus() == LoginStatus.Success) {
+				if (e.getReply().BuddyList != null) {
+					synchronized (_FriendList) {
+						for (BuddyListEntry buddy : e.getReply().BuddyList) {
 							UUID bubid = UUID.parse(buddy.buddy_id);
-							if (!_FriendList.containsKey(bubid))
-							{
+							if (!_FriendList.containsKey(bubid)) {
 								addFriend(new FriendInfo(bubid, buddy.buddy_rights_given, buddy.buddy_rights_has));
 							}
 						}
@@ -1095,29 +953,21 @@ public class FriendsManager implements PacketCallback, libomv.model.Friend
 				}
 				ArrayList<UUID> request = new ArrayList<UUID>();
 
-				synchronized (_FriendList)
-				{
-					if (_FriendList.size() > 0)
-					{
-						for (FriendInfo kvp : _FriendList.values())
-						{
-							if (kvp.getName() == null || kvp.getName().isEmpty())
-							{
+				synchronized (_FriendList) {
+					if (_FriendList.size() > 0) {
+						for (FriendInfo kvp : _FriendList.values()) {
+							if (kvp.getName() == null || kvp.getName().isEmpty()) {
 								request.add(kvp.getID());
 							}
 						}
 						OnFriendListChanged.dispatch(new FriendListChangedCallbackArgs(null, true));
 					}
 				}
-				
-				if (request.size() > 0)
-				{
-					try
-					{
+
+				if (request.size() > 0) {
+					try {
 						_Client.Avatars.RequestAvatarNames(request, null);
-					}
-					catch (Exception e1)
-					{
+					} catch (Exception e1) {
 					}
 				}
 			}

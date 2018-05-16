@@ -5,8 +5,7 @@ import libomv.utils.Helpers;
 public interface Asset {
 
 	/** The different types of grid assets */
-	public enum AssetType
-	{
+	public enum AssetType {
 		/** Unknown asset type */
 		Unknown(-1),
 		/** Texture asset, stores in JPEG2000 J2C stream format */
@@ -54,60 +53,58 @@ public interface Asset {
 		/** Marketplace Folder. Same as an Category but different display methods */
 		MarketplaceFolder(26),
 		/** Linden mesh format */
-        Mesh(49);
+		Mesh(49);
 
-
-		private static final String[] _AssetTypeNames = new String[] {
-			"texture",    // 0
-			"sound",      // 1
-			"callcard",   // 2
-			"landmark",   // 3
-			"script",     // 4
-			"clothing",   // 5
-			"object",     // 6
-			"notecard",   // 7
-			"category",   // 8
-			Helpers.EmptyString, // 9
-			"lsltext",    // 10
-			"lslbyte",    // 11
-			"txtr_tga",   // 12
-			"bodypart",   // 13
-			Helpers.EmptyString, // 14
-			Helpers.EmptyString, // 15
-			Helpers.EmptyString, // 16
-			"snd_wav",    // 17
-			"img_tga",    // 18
-			"jpeg",       // 19
-			"animatn",    // 20
-			"gesture",    // 21
-			"simstate",   // 22
-			Helpers.EmptyString, // 23
-			"link",       // 24
-			"link_f",     // 25
-			Helpers.EmptyString, // 26
-	        Helpers.EmptyString, // 27
-	        Helpers.EmptyString, // 28
-	        Helpers.EmptyString, // 29
-	        Helpers.EmptyString, // 30
-	        Helpers.EmptyString, // 31
-	        Helpers.EmptyString, // 32
-	        Helpers.EmptyString, // 33
-	        Helpers.EmptyString, // 34
-	        Helpers.EmptyString, // 35
-	        Helpers.EmptyString, // 36
-	        Helpers.EmptyString, // 37
-	        Helpers.EmptyString, // 38
-	        Helpers.EmptyString, // 39
-	        Helpers.EmptyString, // 40
-	        Helpers.EmptyString, // 41
-	        Helpers.EmptyString, // 42
-	        Helpers.EmptyString, // 43
-	        Helpers.EmptyString, // 44
-	        Helpers.EmptyString, // 45
-	        Helpers.EmptyString, // 46
-	        Helpers.EmptyString, // 47
-	        Helpers.EmptyString, // 48
-	        "mesh",       // 49
+		private static final String[] _AssetTypeNames = new String[] { "texture", // 0
+				"sound", // 1
+				"callcard", // 2
+				"landmark", // 3
+				"script", // 4
+				"clothing", // 5
+				"object", // 6
+				"notecard", // 7
+				"category", // 8
+				Helpers.EmptyString, // 9
+				"lsltext", // 10
+				"lslbyte", // 11
+				"txtr_tga", // 12
+				"bodypart", // 13
+				Helpers.EmptyString, // 14
+				Helpers.EmptyString, // 15
+				Helpers.EmptyString, // 16
+				"snd_wav", // 17
+				"img_tga", // 18
+				"jpeg", // 19
+				"animatn", // 20
+				"gesture", // 21
+				"simstate", // 22
+				Helpers.EmptyString, // 23
+				"link", // 24
+				"link_f", // 25
+				Helpers.EmptyString, // 26
+				Helpers.EmptyString, // 27
+				Helpers.EmptyString, // 28
+				Helpers.EmptyString, // 29
+				Helpers.EmptyString, // 30
+				Helpers.EmptyString, // 31
+				Helpers.EmptyString, // 32
+				Helpers.EmptyString, // 33
+				Helpers.EmptyString, // 34
+				Helpers.EmptyString, // 35
+				Helpers.EmptyString, // 36
+				Helpers.EmptyString, // 37
+				Helpers.EmptyString, // 38
+				Helpers.EmptyString, // 39
+				Helpers.EmptyString, // 40
+				Helpers.EmptyString, // 41
+				Helpers.EmptyString, // 42
+				Helpers.EmptyString, // 43
+				Helpers.EmptyString, // 44
+				Helpers.EmptyString, // 45
+				Helpers.EmptyString, // 46
+				Helpers.EmptyString, // 47
+				Helpers.EmptyString, // 48
+				"mesh", // 49
 		};
 
 		/**
@@ -115,25 +112,20 @@ public interface Asset {
 		 * 
 		 * @param type
 		 *            A string containing the AssetType name
-		 * @return The AssetType which matches the string name, or
-		 *         AssetType.Unknown if no match was found
+		 * @return The AssetType which matches the string name, or AssetType.Unknown if
+		 *         no match was found
 		 */
-		public static AssetType setValue(String value)
-		{
-			if (value != null)
-			{
-				try
-				{
+		public static AssetType setValue(String value) {
+			if (value != null) {
+				try {
 					return setValue(Integer.parseInt(value, 10));
+				} catch (NumberFormatException ex) {
 				}
-				catch (NumberFormatException ex) {}
-				
+
 				int i = 0;
-				for (String name : _AssetTypeNames)
-				{
+				for (String name : _AssetTypeNames) {
 					i++;
-					if (name.compareToIgnoreCase(value) == 0)
-					{
+					if (name.compareToIgnoreCase(value) == 0) {
 						return values()[i];
 					}
 				}
@@ -141,24 +133,20 @@ public interface Asset {
 			return Unknown;
 		}
 
-		public static AssetType setValue(int value)
-		{
-			for (AssetType e : values())
-			{
+		public static AssetType setValue(int value) {
+			for (AssetType e : values()) {
 				if (e._value == value)
 					return e;
 			}
 			return Unknown;
 		}
 
-		public byte getValue()
-		{
+		public byte getValue() {
 			return _value;
 		}
 
 		@Override
-		public String toString()
-		{
+		public String toString() {
 			int i = ordinal() - 1;
 			if (i >= 0 && ordinal() < _AssetTypeNames.length)
 				return _AssetTypeNames[i];
@@ -167,8 +155,7 @@ public interface Asset {
 
 		private final byte _value;
 
-		private AssetType(int value)
-		{
+		private AssetType(int value) {
 			this._value = (byte) value;
 		}
 	}

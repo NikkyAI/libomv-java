@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -32,37 +32,35 @@ package libomv.assets;
 import libomv.types.UUID;
 
 /** Represents mutable asset */
-public class AssetMutable extends AssetItem
-{
+public class AssetMutable extends AssetItem {
 	private AssetType type;
-	
+
 	@Override
-	public AssetType getAssetType()
-	{
+	public AssetType getAssetType() {
 		return type;
 	}
-	
+
 	/**
 	 * Construct an Asset object of a mutable type
-	 * 
-	 * @param type the @see AssetType of this asset
-	 * @param assetID A unique @see UUID specific to this asset
-	 * @param assetData A byte array containing the raw asset data
+	 *
+	 * @param type
+	 *            the @see AssetType of this asset
+	 * @param assetID
+	 *            A unique @see UUID specific to this asset
+	 * @param assetData
+	 *            A byte array containing the raw asset data
 	 */
-	public AssetMutable(AssetType type, UUID assetID, byte[] assetData)
-	{
+	public AssetMutable(AssetType type, UUID assetID, byte[] assetData) {
 		super(assetID, assetData);
 		this.type = type;
 	}
 
 	@Override
-	protected void encode()
-	{
+	protected void encode() {
 	}
 
 	@Override
-	protected boolean decode()
-	{
+	protected boolean decode() {
 		return true;
 	}
 

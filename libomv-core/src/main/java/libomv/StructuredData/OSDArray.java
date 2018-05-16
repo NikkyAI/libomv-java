@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -43,73 +43,59 @@ import libomv.types.Vector3;
 import libomv.types.Vector3d;
 import libomv.types.Vector4;
 
-public class OSDArray extends OSD implements List<OSD>
-{
+public class OSDArray extends OSD implements List<OSD> {
 	private ArrayList<OSD> value;
 
 	@Override
-	public OSDType getType()
-	{
+	public OSDType getType() {
 		return OSDType.Array;
 	}
 
-	public OSDArray()
-	{
+	public OSDArray() {
 		value = new ArrayList<OSD>();
 	}
 
-	public OSDArray(int capacity)
-	{
+	public OSDArray(int capacity) {
 		value = new ArrayList<OSD>(capacity);
 	}
 
-	public OSDArray(ArrayList<OSD> value)
-	{
+	public OSDArray(ArrayList<OSD> value) {
 		this.value = new ArrayList<OSD>(value);
 	}
 
 	@Override
-	public boolean add(OSD osd)
-	{
+	public boolean add(OSD osd) {
 		return value.add(osd);
 	}
 
 	@Override
-	public void add(int index, OSD osd)
-	{
+	public void add(int index, OSD osd) {
 		value.add(index, osd);
 	}
 
 	@Override
-	public boolean addAll(Collection<? extends OSD> coll)
-	{
+	public boolean addAll(Collection<? extends OSD> coll) {
 		return value.addAll(coll);
 	}
 
 	@Override
-	public boolean addAll(int index, Collection<? extends OSD> coll)
-	{
+	public boolean addAll(int index, Collection<? extends OSD> coll) {
 		return value.addAll(index, coll);
 	}
 
 	@Override
-	public final void clear()
-	{
+	public final void clear() {
 		value.clear();
 	}
 
 	@Override
-	public boolean contains(Object obj)
-	{
+	public boolean contains(Object obj) {
 		return value.contains(obj);
 	}
 
-	public final boolean contains(String element)
-	{
-		for (int i = 0; i < value.size(); i++)
-		{
-			if (value.get(i).getType() == OSDType.String && value.get(i).AsString() == element)
-			{
+	public final boolean contains(String element) {
+		for (int i = 0; i < value.size(); i++) {
+			if (value.get(i).getType() == OSDType.String && value.get(i).AsString() == element) {
 				return true;
 			}
 		}
@@ -118,152 +104,127 @@ public class OSDArray extends OSD implements List<OSD>
 	}
 
 	@Override
-	public boolean containsAll(Collection<?> objs)
-	{
+	public boolean containsAll(Collection<?> objs) {
 		return value.containsAll(objs);
 	}
 
 	@Override
-	public OSD get(int index)
-	{
+	public OSD get(int index) {
 		return value.get(index);
 	}
 
 	@Override
-	public int indexOf(Object obj)
-	{
+	public int indexOf(Object obj) {
 		return value.indexOf(obj);
 	}
 
 	@Override
-	public boolean isEmpty()
-	{
+	public boolean isEmpty() {
 		return size() == 0;
 	}
 
 	@Override
-	public Iterator<OSD> iterator()
-	{
+	public Iterator<OSD> iterator() {
 		return value.iterator();
 	}
 
 	@Override
-	public int lastIndexOf(Object obj)
-	{
+	public int lastIndexOf(Object obj) {
 		return value.lastIndexOf(obj);
 	}
 
 	@Override
-	public ListIterator<OSD> listIterator()
-	{
+	public ListIterator<OSD> listIterator() {
 		return value.listIterator();
 	}
 
 	@Override
-	public ListIterator<OSD> listIterator(int index)
-	{
+	public ListIterator<OSD> listIterator(int index) {
 		return value.listIterator(index);
 	}
 
 	@Override
-	public boolean remove(Object key)
-	{
+	public boolean remove(Object key) {
 		return value.remove(key);
 	}
 
-	public final boolean remove(OSD osd)
-	{
+	public final boolean remove(OSD osd) {
 		return value.remove(osd);
 	}
 
 	@Override
-	public OSD remove(int key)
-	{
+	public OSD remove(int key) {
 		return value.remove(key);
 	}
 
 	@Override
-	public boolean removeAll(Collection<?> values)
-	{
+	public boolean removeAll(Collection<?> values) {
 		return value.removeAll(values);
 	}
 
 	@Override
-	public boolean retainAll(Collection<?> values)
-	{
+	public boolean retainAll(Collection<?> values) {
 		return value.retainAll(values);
 	}
 
 	@Override
-	public OSD set(int index, OSD osd)
-	{
+	public OSD set(int index, OSD osd) {
 		return value.set(index, osd);
 	}
 
 	@Override
-	public int size()
-	{
+	public int size() {
 		return value.size();
 	}
 
 	@Override
-	public List<OSD> subList(int from, int to)
-	{
+	public List<OSD> subList(int from, int to) {
 		return value.subList(from, to);
 	}
 
 	@Override
-	public Object[] toArray()
-	{
+	public Object[] toArray() {
 		return value.toArray();
 	}
 
 	@Override
-	public <T> T[] toArray(T[] arg)
-	{
+	public <T> T[] toArray(T[] arg) {
 		return value.toArray(arg);
 	}
 
 	@Override
-	public byte[] AsBinary()
-	{
+	public byte[] AsBinary() {
 		byte[] binary = new byte[value.size()];
 
-		for (int i = 0; i < value.size(); i++)
-		{
+		for (int i = 0; i < value.size(); i++) {
 			binary[i] = (byte) value.get(i).AsInteger();
 		}
 		return binary;
 	}
 
 	@Override
-	public long AsLong()
-	{
+	public long AsLong() {
 		OSDBinary binary = new OSDBinary(AsBinary());
 		return binary.AsLong();
 	}
 
 	@Override
-	public long AsULong()
-	{
+	public long AsULong() {
 		OSDBinary binary = new OSDBinary(AsBinary());
 		return binary.AsULong();
 	}
 
 	@Override
-	public int AsUInteger()
-	{
+	public int AsUInteger() {
 		OSDBinary binary = new OSDBinary(AsBinary());
 		return binary.AsUInteger();
 	}
 
 	@Override
-	public Vector2 AsVector2()
-	{
+	public Vector2 AsVector2() {
 		Vector2 vector = new Vector2(Vector2.Zero);
 
-		if (this.size() == 2)
-		{
+		if (this.size() == 2) {
 			vector.X = (float) this.get(0).AsReal();
 			vector.Y = (float) this.get(1).AsReal();
 		}
@@ -272,12 +233,10 @@ public class OSDArray extends OSD implements List<OSD>
 	}
 
 	@Override
-	public Vector3 AsVector3()
-	{
+	public Vector3 AsVector3() {
 		Vector3 vector = new Vector3(Vector3.Zero);
 
-		if (this.size() == 3)
-		{
+		if (this.size() == 3) {
 			vector.X = (float) this.get(0).AsReal();
 			vector.Y = (float) this.get(1).AsReal();
 			vector.Z = (float) this.get(2).AsReal();
@@ -287,12 +246,10 @@ public class OSDArray extends OSD implements List<OSD>
 	}
 
 	@Override
-	public Vector3d AsVector3d()
-	{
+	public Vector3d AsVector3d() {
 		Vector3d vector = new Vector3d(Vector3d.Zero);
 
-		if (this.size() == 3)
-		{
+		if (this.size() == 3) {
 			vector.X = this.get(0).AsReal();
 			vector.Y = this.get(1).AsReal();
 			vector.Z = this.get(2).AsReal();
@@ -302,12 +259,10 @@ public class OSDArray extends OSD implements List<OSD>
 	}
 
 	@Override
-	public Vector4 AsVector4()
-	{
+	public Vector4 AsVector4() {
 		Vector4 vector = new Vector4(Vector4.Zero);
 
-		if (this.size() == 4)
-		{
+		if (this.size() == 4) {
 			vector.X = (float) this.get(0).AsReal();
 			vector.Y = (float) this.get(1).AsReal();
 			vector.Z = (float) this.get(2).AsReal();
@@ -317,12 +272,10 @@ public class OSDArray extends OSD implements List<OSD>
 	}
 
 	@Override
-	public Quaternion AsQuaternion()
-	{
+	public Quaternion AsQuaternion() {
 		Quaternion quaternion = new Quaternion(Quaternion.Identity);
 
-		if (this.size() == 4)
-		{
+		if (this.size() == 4) {
 			quaternion.X = (float) this.get(0).AsReal();
 			quaternion.Y = (float) this.get(1).AsReal();
 			quaternion.Z = (float) this.get(2).AsReal();
@@ -332,12 +285,10 @@ public class OSDArray extends OSD implements List<OSD>
 	}
 
 	@Override
-	public Color4 AsColor4()
-	{
+	public Color4 AsColor4() {
 		Color4 color = new Color4(Color4.Black);
 
-		if (this.size() == 4)
-		{
+		if (this.size() == 4) {
 			color.R = (float) this.get(0).AsReal();
 			color.G = (float) this.get(1).AsReal();
 			color.B = (float) this.get(2).AsReal();
@@ -347,44 +298,35 @@ public class OSDArray extends OSD implements List<OSD>
 	}
 
 	@Override
-	public boolean AsBoolean()
-	{
+	public boolean AsBoolean() {
 		return value.size() > 0;
 	}
 
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		return value.hashCode();
 	}
-	
+
 	@Override
-	public boolean equals(Object obj)
-	{
-		return obj != null && obj instanceof OSD && equals((OSD)obj);
+	public boolean equals(Object obj) {
+		return obj != null && obj instanceof OSD && equals((OSD) obj);
 	}
 
-	public boolean equals(OSD osd)
-	{
-		return osd != null && osd.getType() == OSDType.Array && ((OSDArray)osd).value.equals(value);
+	public boolean equals(OSD osd) {
+		return osd != null && osd.getType() == OSDType.Array && ((OSDArray) osd).value.equals(value);
 	}
 
-	public OSD clone()
-	{
-		OSDArray osd = (OSDArray)super.clone();
+	public OSD clone() {
+		OSDArray osd = (OSDArray) super.clone();
 		osd.value = new ArrayList<OSD>(this.value);
 		return osd;
 	}
 
 	@Override
-	public String toString()
-	{
-		try
-		{
+	public String toString() {
+		try {
 			return OSDParser.serializeToString(this, OSDFormat.Notation);
-		}
-		catch (IOException ex)
-		{
+		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 		return null;

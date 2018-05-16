@@ -28,234 +28,7 @@ import jj2000.j2k.wavelet.synthesis.InverseWT;
 public class ImgDecoder {
 	private static final Logger logger = Logger.getLogger(ImgDecoder.class);
 
-	private ParameterList pl;
-	private HeaderInfo hi;
-	private ColorSpace csMap = null;
-
-	public ImgDecoder(ParameterList parameterList) {
-		this.pl = parameterList;
-	}
-
-	/**
-	 * Returns the parameters that are used in this class. It returns a 2D
-	 * String array. Each of the 1D arrays is for a different option, and they
-	 * have 3 elements. The first element is the option name, the second one is
-	 * the synopsis and the third one is a long description of what the
-	 * parameter is. The synopsis or description may be 'null', in which case it
-	 * is assumed that there is no synopsis or description of the option,
-	 * respectively.
-	 * 
-	 * @return the options name, their synopsis and their explanation.
-	 */
-	private static String[][] getParameterInfo() {
-		return pinfo;
-	}
-
-	/**
-	 * Returns all the parameters used in the decoding chain. It calls parameter
-	 * from each module and store them in one array (one row per parameter and 4
-	 * columns).
-	 * 
-	 * @return All decoding parameters
-	 * 
-	 * @see #getParameterInfo
-	 */
-	public static String[][] getAllParameters() {
-		Vector<String[]> vec = new Vector<String[]>();
-		int i;
-
-		String[][] str = BitstreamReaderAgent.getParameterInfo();
-		if (str != null)
-			for (i = str.length - 1; i >= 0; i--)
-				vec.addElement(str[i]);
-
-		str = EntropyDecoder.getParameterInfo();
-		if (str != null)
-			for (i = str.length - 1; i >= 0; i--)
-				vec.addElement(str[i]);
-
-		str = ROIDeScaler.getParameterInfo();
-		if (str != null)
-			for (i = str.length - 1; i >= 0; i--)
-				vec.addElement(str[i]);
-
-		str = Dequantizer.getParameterInfo();
-		if (str != null)
-			for (i = str.length - 1; i >= 0; i--)
-				vec.addElement(str[i]);
-
-		str = InvCompTransf.getParameterInfo();
-		if (str != null)
-			for (i = str.length - 1; i >= 0; i--)
-				vec.addElement(str[i]);
-
-		str = HeaderDecoder.getParameterInfo();
-		if (str != null)
-			for (i = str.length - 1; i >= 0; i--)
-				vec.addElement(str[i]);
-
-		str = ICCProfiler.getParameterInfo();
-		if (str != null)
-			for (i = str.length - 1; i >= 0; i--)
-				vec.addElement(str[i]);
-
-		str = getParameterInfo();
-		if (str != null)
-			for (i = str.length - 1; i >= 0; i--)
-				vec.addElement(str[i]);
-
-		str = new String[vec.size()][4];
-		for (i = str.length - 1; i >= 0; i--)
-			str[i] = vec.elementAt(i);
-
-		return str;
-	}
-
-	public BlkImgDataSrc decode(RandomAccessIO in, FileFormatReader ff, boolean verbose)
-			throws IOException, ICCProfileException {
-		HeaderDecoder hd;
-		DecoderSpecs decSpec = null;
-		int[] depth;
-		BitstreamReaderAgent breader;
-		EntropyDecoder entdec;
-		ROIDeScaler roids;
-		Dequantizer deq;
-		InverseWT invWT;
-		ImgDataConverter converter;
-		InvCompTransf ictransf;
-		BlkImgDataSrc channels;
-		BlkImgDataSrc resampled;
-		BlkImgDataSrc palettized;
-		BlkImgDataSrc color;
-
-		// +----------------------------+
-		// | Instantiate decoding chain |
-		// +----------------------------+
-
-		// **** Header decoder ****
-		// Instantiate header decoder and read main header
-		hi = new HeaderInfo();
-		try {
-			hd = new HeaderDecoder(in, pl, hi);
-		} catch (EOFException e) {
-			logger.error("Codestream too short or bad header, " + "unable to decode.");
-			return null;
-		}
-
-		int nCompCod = hd.getNumComps();
-		int nTiles = hi.siz.getNumTiles();
-		decSpec = hd.getDecoderSpecs();
-
-		// Report information
-		if (verbose) {
-			String info = nCompCod + " component(s) in codestream, " + nTiles + " tile(s)\n";
-			info += "Image dimension: ";
-			for (int c = 0; c < nCompCod; c++) {
-				info += hi.siz.getCompImgWidth(c) + "x" + hi.siz.getCompImgHeight(c) + " ";
-			}
-
-			if (nTiles != 1) {
-				info += "\nNom. Tile dim. (in canvas): " + hi.siz.xtsiz + "x" + hi.siz.ytsiz;
-			}
-			logger.info(info);
-		}
-		if (pl.getBooleanParameter("cdstr_info")) {
-			logger.info("Main header:\n" + hi.toStringMainHeader());
-		}
-
-		// Get demixed bitdepths
-		depth = new int[nCompCod];
-		for (int i = 0; i < nCompCod; i++) {
-			depth[i] = hd.getOriginalBitDepth(i);
-		}
-
-		// **** Bit stream reader ****
-		try {
-			breader = BitstreamReaderAgent.createInstance(in, hd, pl, decSpec, pl.getBooleanParameter("cdstr_info"),
-					hi);
-		} catch (IOException e) {
-			logger.error("Error while reading bit stream header or parsing packets", e);
-			return null;
-		} catch (IllegalArgumentException e) {
-			logger.error("Cannot instantiate bit stream reader", e);
-			return null;
-		}
-
-		// **** Entropy decoder ****
-		try {
-			entdec = hd.createEntropyDecoder(breader, pl);
-		} catch (IllegalArgumentException e) {
-			logger.error("Cannot instantiate entropy decoder", e);
-			return null;
-		}
-
-		// **** ROI de-scaler ****
-		try {
-			roids = hd.createROIDeScaler(entdec, pl, decSpec);
-		} catch (IllegalArgumentException e) {
-			logger.error("Cannot instantiate roi de-scaler.", e);
-			return null;
-		}
-
-		// **** Dequantizer ****
-		try {
-			deq = hd.createDequantizer(roids, depth, decSpec);
-		} catch (IllegalArgumentException e) {
-			logger.error("Cannot instantiate dequantizer", e);
-			return null;
-		}
-
-		// **** Inverse wavelet transform ***
-		try {
-			// full page inverse wavelet transform
-			invWT = InverseWT.createInstance(deq, decSpec);
-		} catch (IllegalArgumentException e) {
-			logger.error("Cannot instantiate inverse wavelet transform", e);
-			return null;
-		}
-
-		int res = breader.getImgRes();
-		invWT.setImgResLevel(res);
-
-		// **** Data converter **** (after inverse transform module)
-		converter = new ImgDataConverter(invWT, 0);
-
-		// **** Inverse component transformation ****
-		ictransf = new InvCompTransf(converter, decSpec, depth, pl);
-
-		// **** Color space mapping ****
-		if (ff.JP2FFUsed && pl.getParameter("nocolorspace").equals("off")) {
-			try {
-				csMap = new ColorSpace(in, hd, pl);
-				channels = hd.createChannelDefinitionMapper(ictransf, csMap);
-				resampled = hd.createResampler(channels, csMap);
-				palettized = hd.createPalettizedColorSpaceMapper(resampled, csMap);
-				color = hd.createColorSpaceMapper(palettized, csMap);
-
-				if (csMap.debugging()) {
-					logger.error("" + csMap);
-					logger.error("" + channels);
-					logger.error("" + resampled);
-					logger.error("" + palettized);
-					logger.error("" + color);
-				}
-			} catch (IllegalArgumentException e) {
-				logger.error("Could not instantiate ICC profiler", e);
-				return null;
-			} catch (ColorSpaceException e) {
-				logger.error("error processing jp2 colorspace information", e);
-				return null;
-			}
-		} else { // Skip colorspace mapping
-			return ictransf;
-		}
-
-		// This is the last image in the decoding chain and should be
-		// assigned by the last transformation:
-		return color != null ? color : ictransf;
-	}
-
-	private final static String[][] pinfo = {
+	private static final String[][] pinfo = {
 			{ "u", "[on|off]", "Prints usage information. If specified all other arguments (except 'v') are ignored",
 					"off" },
 			{ "v", "[on|off]", "Prints version and copyright information", "off" },
@@ -349,5 +122,231 @@ public class ImgDecoder {
 					"off" },
 			{ "nocolorspace", null, "Ignore any colorspace information in the image.", "off" }, { "colorspace_debug",
 					null, "Print debugging messages when an error is encountered in the colorspace module.", "off" } };
+
+	private ParameterList pl;
+	private HeaderInfo hi;
+	private ColorSpace csMap;
+
+	public ImgDecoder(ParameterList parameterList) {
+		this.pl = parameterList;
+	}
+
+	/**
+	 * Returns the parameters that are used in this class. It returns a 2D String
+	 * array. Each of the 1D arrays is for a different option, and they have 3
+	 * elements. The first element is the option name, the second one is the
+	 * synopsis and the third one is a long description of what the parameter is.
+	 * The synopsis or description may be 'null', in which case it is assumed that
+	 * there is no synopsis or description of the option, respectively.
+	 *
+	 * @return the options name, their synopsis and their explanation.
+	 */
+	private static String[][] getParameterInfo() {
+		return pinfo;
+	}
+
+	/**
+	 * Returns all the parameters used in the decoding chain. It calls parameter
+	 * from each module and store them in one array (one row per parameter and 4
+	 * columns).
+	 *
+	 * @return All decoding parameters
+	 *
+	 * @see #getParameterInfo
+	 */
+	public static String[][] getAllParameters() {
+		Vector<String[]> vec = new Vector<String[]>();
+		int i;
+
+		String[][] str = BitstreamReaderAgent.getParameterInfo();
+		if (str != null)
+			for (i = str.length - 1; i >= 0; i--)
+				vec.addElement(str[i]);
+
+		str = EntropyDecoder.getParameterInfo();
+		if (str != null)
+			for (i = str.length - 1; i >= 0; i--)
+				vec.addElement(str[i]);
+
+		str = ROIDeScaler.getParameterInfo();
+		if (str != null)
+			for (i = str.length - 1; i >= 0; i--)
+				vec.addElement(str[i]);
+
+		str = Dequantizer.getParameterInfo();
+		if (str != null)
+			for (i = str.length - 1; i >= 0; i--)
+				vec.addElement(str[i]);
+
+		str = InvCompTransf.getParameterInfo();
+		if (str != null)
+			for (i = str.length - 1; i >= 0; i--)
+				vec.addElement(str[i]);
+
+		str = HeaderDecoder.getParameterInfo();
+		if (str != null)
+			for (i = str.length - 1; i >= 0; i--)
+				vec.addElement(str[i]);
+
+		str = ICCProfiler.getParameterInfo();
+		if (str != null)
+			for (i = str.length - 1; i >= 0; i--)
+				vec.addElement(str[i]);
+
+		str = getParameterInfo();
+		if (str != null)
+			for (i = str.length - 1; i >= 0; i--)
+				vec.addElement(str[i]);
+
+		str = new String[vec.size()][4];
+		for (i = str.length - 1; i >= 0; i--)
+			str[i] = vec.elementAt(i);
+
+		return str;
+	}
+
+	public BlkImgDataSrc decode(RandomAccessIO in, FileFormatReader ff, boolean verbose)
+			throws IOException, ICCProfileException {
+		HeaderDecoder hd;
+		DecoderSpecs decSpec;
+		int[] depth;
+		BitstreamReaderAgent breader;
+		EntropyDecoder entdec;
+		ROIDeScaler roids;
+		Dequantizer deq;
+		InverseWT invWT;
+		ImgDataConverter converter;
+		InvCompTransf ictransf;
+		BlkImgDataSrc channels;
+		BlkImgDataSrc resampled;
+		BlkImgDataSrc palettized;
+		BlkImgDataSrc color;
+
+		// +----------------------------+
+		// | Instantiate decoding chain |
+		// +----------------------------+
+
+		// **** Header decoder ****
+		// Instantiate header decoder and read main header
+		hi = new HeaderInfo();
+		try {
+			hd = new HeaderDecoder(in, pl, hi);
+		} catch (EOFException e) {
+			logger.error("Codestream too short or bad header, " + "unable to decode.", e);
+			return null;
+		}
+
+		int nCompCod = hd.getNumComps();
+		int nTiles = hi.siz.getNumTiles();
+		decSpec = hd.getDecoderSpecs();
+
+		// Report information
+		if (verbose) {
+			String info = nCompCod + " component(s) in codestream, " + nTiles + " tile(s)\n";
+			info += "Image dimension: ";
+			for (int c = 0; c < nCompCod; c++) {
+				info += hi.siz.getCompImgWidth(c) + "x" + hi.siz.getCompImgHeight(c) + " ";
+			}
+
+			if (nTiles != 1) {
+				info += "\nNom. Tile dim. (in canvas): " + hi.siz.xtsiz + "x" + hi.siz.ytsiz;
+			}
+			logger.info(info);
+		}
+		if (pl.getBooleanParameter("cdstr_info")) {
+			logger.info("Main header:\n" + hi.toStringMainHeader());
+		}
+
+		// Get demixed bitdepths
+		depth = new int[nCompCod];
+		for (int i = 0; i < nCompCod; i++) {
+			depth[i] = hd.getOriginalBitDepth(i);
+		}
+
+		// **** Bit stream reader ****
+		try {
+			breader = BitstreamReaderAgent.createInstance(in, hd, pl, decSpec, pl.getBooleanParameter("cdstr_info"),
+					hi);
+		} catch (IOException e) {
+			logger.error("Error while reading bit stream header or parsing packets", e);
+			return null;
+		} catch (IllegalArgumentException e) {
+			logger.error("Cannot instantiate bit stream reader", e);
+			return null;
+		}
+
+		// **** Entropy decoder ****
+		try {
+			entdec = hd.createEntropyDecoder(breader, pl);
+		} catch (IllegalArgumentException e) {
+			logger.error("Cannot instantiate entropy decoder", e);
+			return null;
+		}
+
+		// **** ROI de-scaler ****
+		try {
+			roids = hd.createROIDeScaler(entdec, pl, decSpec);
+		} catch (IllegalArgumentException e) {
+			logger.error("Cannot instantiate roi de-scaler.", e);
+			return null;
+		}
+
+		// **** Dequantizer ****
+		try {
+			deq = hd.createDequantizer(roids, depth, decSpec);
+		} catch (IllegalArgumentException e) {
+			logger.error("Cannot instantiate dequantizer", e);
+			return null;
+		}
+
+		// **** Inverse wavelet transform ***
+		try {
+			// full page inverse wavelet transform
+			invWT = InverseWT.createInstance(deq, decSpec);
+		} catch (IllegalArgumentException e) {
+			logger.error("Cannot instantiate inverse wavelet transform", e);
+			return null;
+		}
+
+		int res = breader.getImgRes();
+		invWT.setImgResLevel(res);
+
+		// **** Data converter **** (after inverse transform module)
+		converter = new ImgDataConverter(invWT, 0);
+
+		// **** Inverse component transformation ****
+		ictransf = new InvCompTransf(converter, decSpec, depth, pl);
+
+		// **** Color space mapping ****
+		if (ff.JP2FFUsed && "off".equals(pl.getParameter("nocolorspace"))) {
+			try {
+				csMap = new ColorSpace(in, hd, pl);
+				channels = hd.createChannelDefinitionMapper(ictransf, csMap);
+				resampled = hd.createResampler(channels, csMap);
+				palettized = hd.createPalettizedColorSpaceMapper(resampled, csMap);
+				color = hd.createColorSpaceMapper(palettized, csMap);
+
+				if (csMap.debugging()) {
+					logger.error("" + csMap);
+					logger.error("" + channels);
+					logger.error("" + resampled);
+					logger.error("" + palettized);
+					logger.error("" + color);
+				}
+			} catch (IllegalArgumentException e) {
+				logger.error("Could not instantiate ICC profiler", e);
+				return null;
+			} catch (ColorSpaceException e) {
+				logger.error("error processing jp2 colorspace information", e);
+				return null;
+			}
+		} else { // Skip colorspace mapping
+			return ictransf;
+		}
+
+		// This is the last image in the decoding chain and should be
+		// assigned by the last transformation:
+		return color != null ? color : ictransf;
+	}
 
 }

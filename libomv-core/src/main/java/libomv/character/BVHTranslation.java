@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -31,22 +31,20 @@ package libomv.character;
 import libomv.types.Matrix4;
 import libomv.types.Vector3;
 
-public class BVHTranslation
-{
-	String		mOutName;
-	boolean		mIgnore;
-	boolean		mIgnorePositions;
-	boolean		mRelativePositionKey;
-	boolean		mRelativeRotationKey;
-	Matrix4		mFrameMatrix;
-	Matrix4		mOffsetMatrix;
-	Vector3		mRelativePosition;
-	String		mMergeParentName;
-	String		mMergeChildName;
-	int			mPriorityModifier;
-	 
-	public BVHTranslation()
-	{
+public class BVHTranslation {
+	String mOutName;
+	boolean mIgnore;
+	boolean mIgnorePositions;
+	boolean mRelativePositionKey;
+	boolean mRelativeRotationKey;
+	Matrix4 mFrameMatrix;
+	Matrix4 mOffsetMatrix;
+	Vector3 mRelativePosition;
+	String mMergeParentName;
+	String mMergeChildName;
+	int mPriorityModifier;
+
+	public BVHTranslation() {
 		mIgnore = false;
 		mRelativePositionKey = false;
 		mRelativeRotationKey = false;

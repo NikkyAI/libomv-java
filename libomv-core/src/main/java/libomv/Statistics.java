@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -31,23 +31,19 @@ package libomv;
 
 import java.util.HashMap;
 
-public class Statistics
-{
-	public enum Type
-	{
+public class Statistics {
+	public enum Type {
 		Packet, Message
 	}
 
-	public class Stat
-	{
+	public class Stat {
 		public Type Type;
 		public long TxCount;
 		public long RxCount;
 		public long TxBytes;
 		public long RxBytes;
 
-		public Stat(Type type, long txCount, long rxCount, long txBytes, long rxBytes)
-		{
+		public Stat(Type type, long txCount, long rxCount, long txBytes, long rxBytes) {
 			this.Type = type;
 			this.TxCount = txCount;
 			this.RxCount = rxCount;
@@ -58,33 +54,25 @@ public class Statistics
 
 	private HashMap<String, Stat> m_StatsCollection;
 
-	public Statistics()
-	{
+	public Statistics() {
 		m_StatsCollection = new HashMap<String, Stat>();
 	}
 
-	public void updateNetStats(String key, Type Type, long txBytes, long rxBytes)
-	{
-		synchronized (m_StatsCollection)
-		{
+	public void updateNetStats(String key, Type Type, long txBytes, long rxBytes) {
+		synchronized (m_StatsCollection) {
 			Stat stat = m_StatsCollection.get(key);
-			if (stat != null)
-			{			
-				if (rxBytes > 0)
-				{
+			if (stat != null) {
+				if (rxBytes > 0) {
 					stat.RxCount++;
 					stat.RxBytes += rxBytes;
 				}
 
-				if (txBytes > 0)
-				{
+				if (txBytes > 0) {
 					stat.TxCount++;
 					stat.TxBytes += txBytes;
 				}
 
-			}
-			else
-			{
+			} else {
 				if (txBytes > 0)
 					stat = new Stat(Type, 1, 0, txBytes, 0);
 				else
@@ -95,11 +83,9 @@ public class Statistics
 		}
 	}
 
-	public HashMap<String, Stat> getStatistics()
-    {
-        synchronized(m_StatsCollection)
-        {
-            return new HashMap<String, Stat>(m_StatsCollection);
-        }
-    }
+	public HashMap<String, Stat> getStatistics() {
+		synchronized (m_StatsCollection) {
+			return new HashMap<String, Stat>(m_StatsCollection);
+		}
+	}
 }

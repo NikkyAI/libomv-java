@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import java.util.ArrayList;
@@ -19,15 +18,17 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
 /**
  * 
- * 			A texture sampler for depth maps.
- * 			
+ * A texture sampler for depth maps.
  * 
- * <p>Java class for fx_samplerDEPTH_common complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * Java class for fx_samplerDEPTH_common complex type.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="fx_samplerDEPTH_common">
@@ -49,185 +50,160 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "fx_samplerDEPTH_common", propOrder = {
-    "source",
-    "wrapS",
-    "wrapT",
-    "minfilter",
-    "magfilter",
-    "extra"
-})
-@XmlSeeAlso({
-    CgSamplerDEPTH.class,
-    GlSamplerDEPTH.class
-})
+@XmlType(name = "fx_samplerDEPTH_common", propOrder = { "source", "wrapS", "wrapT", "minfilter", "magfilter", "extra" })
+@XmlSeeAlso({ CgSamplerDEPTH.class, GlSamplerDEPTH.class })
 public class FxSamplerDEPTHCommon {
 
-    @XmlElement(required = true)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlSchemaType(name = "NCName")
-    protected String source;
-    @XmlElement(name = "wrap_s", defaultValue = "WRAP")
-    @XmlSchemaType(name = "NMTOKEN")
-    protected FxSamplerWrapCommon wrapS;
-    @XmlElement(name = "wrap_t", defaultValue = "WRAP")
-    @XmlSchemaType(name = "NMTOKEN")
-    protected FxSamplerWrapCommon wrapT;
-    @XmlElement(defaultValue = "NONE")
-    @XmlSchemaType(name = "NMTOKEN")
-    protected FxSamplerFilterCommon minfilter;
-    @XmlElement(defaultValue = "NONE")
-    @XmlSchemaType(name = "NMTOKEN")
-    protected FxSamplerFilterCommon magfilter;
-    protected List<Extra> extra;
+	@XmlElement(required = true)
+	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+	@XmlSchemaType(name = "NCName")
+	protected String source;
+	@XmlElement(name = "wrap_s", defaultValue = "WRAP")
+	@XmlSchemaType(name = "NMTOKEN")
+	protected FxSamplerWrapCommon wrapS;
+	@XmlElement(name = "wrap_t", defaultValue = "WRAP")
+	@XmlSchemaType(name = "NMTOKEN")
+	protected FxSamplerWrapCommon wrapT;
+	@XmlElement(defaultValue = "NONE")
+	@XmlSchemaType(name = "NMTOKEN")
+	protected FxSamplerFilterCommon minfilter;
+	@XmlElement(defaultValue = "NONE")
+	@XmlSchemaType(name = "NMTOKEN")
+	protected FxSamplerFilterCommon magfilter;
+	protected List<Extra> extra;
 
-    /**
-     * Gets the value of the source property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getSource() {
-        return source;
-    }
+	/**
+	 * Gets the value of the source property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getSource() {
+		return source;
+	}
 
-    /**
-     * Sets the value of the source property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setSource(String value) {
-        this.source = value;
-    }
+	/**
+	 * Sets the value of the source property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setSource(String value) {
+		this.source = value;
+	}
 
-    /**
-     * Gets the value of the wrapS property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FxSamplerWrapCommon }
-     *     
-     */
-    public FxSamplerWrapCommon getWrapS() {
-        return wrapS;
-    }
+	/**
+	 * Gets the value of the wrapS property.
+	 * 
+	 * @return possible object is {@link FxSamplerWrapCommon }
+	 * 
+	 */
+	public FxSamplerWrapCommon getWrapS() {
+		return wrapS;
+	}
 
-    /**
-     * Sets the value of the wrapS property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FxSamplerWrapCommon }
-     *     
-     */
-    public void setWrapS(FxSamplerWrapCommon value) {
-        this.wrapS = value;
-    }
+	/**
+	 * Sets the value of the wrapS property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link FxSamplerWrapCommon }
+	 * 
+	 */
+	public void setWrapS(FxSamplerWrapCommon value) {
+		this.wrapS = value;
+	}
 
-    /**
-     * Gets the value of the wrapT property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FxSamplerWrapCommon }
-     *     
-     */
-    public FxSamplerWrapCommon getWrapT() {
-        return wrapT;
-    }
+	/**
+	 * Gets the value of the wrapT property.
+	 * 
+	 * @return possible object is {@link FxSamplerWrapCommon }
+	 * 
+	 */
+	public FxSamplerWrapCommon getWrapT() {
+		return wrapT;
+	}
 
-    /**
-     * Sets the value of the wrapT property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FxSamplerWrapCommon }
-     *     
-     */
-    public void setWrapT(FxSamplerWrapCommon value) {
-        this.wrapT = value;
-    }
+	/**
+	 * Sets the value of the wrapT property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link FxSamplerWrapCommon }
+	 * 
+	 */
+	public void setWrapT(FxSamplerWrapCommon value) {
+		this.wrapT = value;
+	}
 
-    /**
-     * Gets the value of the minfilter property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FxSamplerFilterCommon }
-     *     
-     */
-    public FxSamplerFilterCommon getMinfilter() {
-        return minfilter;
-    }
+	/**
+	 * Gets the value of the minfilter property.
+	 * 
+	 * @return possible object is {@link FxSamplerFilterCommon }
+	 * 
+	 */
+	public FxSamplerFilterCommon getMinfilter() {
+		return minfilter;
+	}
 
-    /**
-     * Sets the value of the minfilter property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FxSamplerFilterCommon }
-     *     
-     */
-    public void setMinfilter(FxSamplerFilterCommon value) {
-        this.minfilter = value;
-    }
+	/**
+	 * Sets the value of the minfilter property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link FxSamplerFilterCommon }
+	 * 
+	 */
+	public void setMinfilter(FxSamplerFilterCommon value) {
+		this.minfilter = value;
+	}
 
-    /**
-     * Gets the value of the magfilter property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FxSamplerFilterCommon }
-     *     
-     */
-    public FxSamplerFilterCommon getMagfilter() {
-        return magfilter;
-    }
+	/**
+	 * Gets the value of the magfilter property.
+	 * 
+	 * @return possible object is {@link FxSamplerFilterCommon }
+	 * 
+	 */
+	public FxSamplerFilterCommon getMagfilter() {
+		return magfilter;
+	}
 
-    /**
-     * Sets the value of the magfilter property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FxSamplerFilterCommon }
-     *     
-     */
-    public void setMagfilter(FxSamplerFilterCommon value) {
-        this.magfilter = value;
-    }
+	/**
+	 * Sets the value of the magfilter property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link FxSamplerFilterCommon }
+	 * 
+	 */
+	public void setMagfilter(FxSamplerFilterCommon value) {
+		this.magfilter = value;
+	}
 
-    /**
-     * Gets the value of the extra property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the extra property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getExtra().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Extra }
-     * 
-     * 
-     */
-    public List<Extra> getExtra() {
-        if (extra == null) {
-            extra = new ArrayList<Extra>();
-        }
-        return this.extra;
-    }
+	/**
+	 * Gets the value of the extra property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the extra property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getExtra().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link Extra }
+	 * 
+	 * 
+	 */
+	public List<Extra> getExtra() {
+		if (extra == null) {
+			extra = new ArrayList<Extra>();
+		}
+		return this.extra;
+	}
 
 }

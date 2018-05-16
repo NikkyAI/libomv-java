@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -43,99 +43,86 @@ import libomv.types.UUID;
 import libomv.utils.Helpers;
 
 // Represents Mesh asset
-public class AssetMesh extends AssetItem
-{
+public class AssetMesh extends AssetItem {
 	private static final Logger logger = Logger.getLogger(AssetMesh.class);
 
-    // Decoded mesh data
-    private OSDMap MeshData;
+	// Decoded mesh data
+	private OSDMap MeshData;
 
-    public OSDMap getMeshData()
-    {
-    	return MeshData;
-    }
-    
-    public void setMeshData(OSDMap meshData)
-    {
-    	invalidateAssetData();
-    	MeshData = meshData;
-    }
+	public OSDMap getMeshData() {
+		return MeshData;
+	}
 
-    // Override the base classes AssetType
+	public void setMeshData(OSDMap meshData) {
+		invalidateAssetData();
+		MeshData = meshData;
+	}
+
+	// Override the base classes AssetType
 	@Override
-	public AssetItem.AssetType getAssetType()
-	{
+	public AssetItem.AssetType getAssetType() {
 		return AssetItem.AssetType.Mesh;
 	}
 
-    /**
-     * Initializes a new instance of an AssetMesh object with parameters
-     *
-     * @param assetID A unique <see cref="UUID"/> specific to this asset
-     * @param assetData A byte array containing the raw asset data
-     */
-    public AssetMesh(UUID assetID, byte[] assetData)
-    {
-        super(assetID, assetData);
-    }
-
-    // TODO: Encodes Collada file into LLMesh format
-	@Override
-	protected void encode()
-	{
+	/**
+	 * Initializes a new instance of an AssetMesh object with parameters
+	 *
+	 * @param assetID
+	 *            A unique <see cref="UUID"/> specific to this asset
+	 * @param assetData
+	 *            A byte array containing the raw asset data
+	 */
+	public AssetMesh(UUID assetID, byte[] assetData) {
+		super(assetID, assetData);
 	}
 
-    /**
-     * Decodes mesh asset. See <see cref="OpenMetaverse.Rendering.FacetedMesh.TryDecodeFromAsset"
-     * to further decode it for rendering
-     * 
-     * @returns true
-     */
+	// TODO: Encodes Collada file into LLMesh format
 	@Override
-	protected boolean decode()
-    {
-        MeshData = new OSDMap();
+	protected void encode() {
+	}
 
-        if (AssetData == null)
+	/**
+	 * Decodes mesh asset. See <see
+	 * cref="OpenMetaverse.Rendering.FacetedMesh.TryDecodeFromAsset" to further
+	 * decode it for rendering
+	 * 
+	 * @returns true
+	 */
+	@Override
+	protected boolean decode() {
+		MeshData = new OSDMap();
+
+		if (AssetData == null)
 			return false;
 
 		InputStream data = new ByteArrayInputStream(AssetData);
-        try
-        {
-            OSDMap header = (OSDMap)OSDParser.deserialize(data, Helpers.UTF8_ENCODING);
-            MeshData.put("asset_header", header);
-            data.mark(AssetData.length);
+		try {
+			OSDMap header = (OSDMap) OSDParser.deserialize(data, Helpers.UTF8_ENCODING);
+			MeshData.put("asset_header", header);
+			data.mark(AssetData.length);
 
-            for (String partName : header.keySet())
-            {
-              	OSD value = header.get(partName);
-                if (value.getType() == OSDType.Map)
-                {
-                    OSDMap partInfo = (OSDMap)value;
-                    int offset = partInfo.get("offset").AsInteger(), size = partInfo.get("size").AsInteger();
-                    if (offset >= 0 && size > 0)
-                    {
-                        data.reset();
-                        data.skip(offset);
-                        value = Helpers.ZDecompressOSD(data);
-                    }
-                }
-                MeshData.put(partName, value);
-            }
-            return true;
-        }
-        catch (Exception ex)
-        {
-            logger.error("Failed to decode mesh asset", ex);
-            return false;
-        }
-        finally
-        {
-        	try
-        	{
-				data.close();
+			for (String partName : header.keySet()) {
+				OSD value = header.get(partName);
+				if (value.getType() == OSDType.Map) {
+					OSDMap partInfo = (OSDMap) value;
+					int offset = partInfo.get("offset").AsInteger(), size = partInfo.get("size").AsInteger();
+					if (offset >= 0 && size > 0) {
+						data.reset();
+						data.skip(offset);
+						value = Helpers.ZDecompressOSD(data);
+					}
+				}
+				MeshData.put(partName, value);
 			}
-        	catch (IOException e) {}
-        }
-    }
+			return true;
+		} catch (Exception ex) {
+			logger.error("Failed to decode mesh asset", ex);
+			return false;
+		} finally {
+			try {
+				data.close();
+			} catch (IOException e) {
+			}
+		}
+	}
 }

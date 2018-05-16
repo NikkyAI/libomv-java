@@ -5,18 +5,20 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for cg_pipeline_stage.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
+ * Java class for cg_pipeline_stage.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ * <p>
+ * 
  * <pre>
  * &lt;simpleType name="cg_pipeline_stage">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -31,15 +33,14 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum CgPipelineStage {
 
-    VERTEX,
-    FRAGMENT;
+	VERTEX, FRAGMENT;
 
-    public String value() {
-        return name();
-    }
+	public String value() {
+		return name();
+	}
 
-    public static CgPipelineStage fromValue(String v) {
-        return valueOf(v);
-    }
+	public static CgPipelineStage fromValue(String v) {
+		return valueOf(v);
+	}
 
 }

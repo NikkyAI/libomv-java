@@ -50,32 +50,34 @@ import libomv.utils.Settings;
  * runtime won't do any good. Non-readonly values may affect things that
  * happen at login or dynamically
  */
-public class LibSettings extends Settings implements PacketCallback
-{
+public class LibSettings extends Settings implements PacketCallback {
 	private static final Logger logger = Logger.getLogger(LibSettings.class);
 
 	/* Main grid login server */
-    public static String AGNI_LOGIN_SERVER = "https://login.agni.lindenlab.com/cgi-bin/login.cgi";
+	public static String AGNI_LOGIN_SERVER = "https://login.agni.lindenlab.com/cgi-bin/login.cgi";
 
-    /* Beta grid login server */
-    public static String ADITI_LOGIN_SERVER = "https://login.aditi.lindenlab.com/cgi-bin/login.cgi";
+	/* Beta grid login server */
+	public static String ADITI_LOGIN_SERVER = "https://login.aditi.lindenlab.com/cgi-bin/login.cgi";
 
-    // #region Application Settings
+	// #region Application Settings
 
 	/* Application name */
 	public static final String LIBRARY_NAME = "libomv-java";
 
 	/* Application Version */
 	public static final String LIBRARY_VERSION = "0.7.0 alpha 1";
-	
-	/* The relative directory where external avatar resources are kept, default "character" */
+
+	/*
+	 * The relative directory where external avatar resources are kept, default
+	 * "character"
+	 */
 	public static final String CHARACTER_DIR = "characterDir";
 
 	/* The relative directory where cached data are kept, default "libomv" */
 	public static final String RESOURCE_DIR = "resourceDir";
 
 	// #region manager control
-	
+
 	/* Initialize Appearncew Manager */
 	public static final String ENABLE_APPEARANCE_MANAGER = "enableAppearanceMgr";
 
@@ -99,7 +101,7 @@ public class LibSettings extends Settings implements PacketCallback
 
 	/* Initialize Parcel Manager */
 	public static final String ENABLE_PARCEL_MANAGER = "enableParcelMgr";
-	
+
 	/* Initialize Terrain Manager */
 	public static final String ENABLE_TERRAIN_MANAGER = "enableTerrainMgr";
 
@@ -127,7 +129,7 @@ public class LibSettings extends Settings implements PacketCallback
 
 	// Use Caps for fetching inventory where available
 	public static final String HTTP_INVENTORY = "httpInventory";
-	
+
 	// #region Timeouts and Intervals
 
 	/* Number of milliseconds before an asset transfer will time out */
@@ -140,8 +142,8 @@ public class LibSettings extends Settings implements PacketCallback
 	public int LOGOUT_TIMEOUT = 5 * 1000;
 
 	/*
-	 * Number of milliseconds before a CAPS call will time out Setting this too
-	 * low will cause web requests time out and possibly retry repeatedly
+	 * Number of milliseconds before a CAPS call will time out Setting this too low
+	 * will cause web requests time out and possibly retry repeatedly
 	 */
 	public int CAPS_TIMEOUT = 60 * 1000;
 
@@ -152,14 +154,13 @@ public class LibSettings extends Settings implements PacketCallback
 	public int RESEND_TIMEOUT = 4000;
 
 	/*
-	 * Milliseconds without receiving a packet before the connection to a
-	 * simulator is assumed lost
+	 * Milliseconds without receiving a packet before the connection to a simulator
+	 * is assumed lost
 	 */
 	public int SIMULATOR_TIMEOUT = 30 * 1000;
 
 	/*
-	 * Milliseconds to wait for a simulator info request through the grid
-	 * interface
+	 * Milliseconds to wait for a simulator info request through the grid interface
 	 */
 	public int MAP_REQUEST_TIMEOUT = 5 * 1000;
 
@@ -176,8 +177,8 @@ public class LibSettings extends Settings implements PacketCallback
 	public static final int INTERPOLATION_INTERVAL = 250;
 
 	/*
-	 * Millisecond interval between ticks, where all ACKs are sent out and the
-	 * age of unACKed packets is checked
+	 * Millisecond interval between ticks, where all ACKs are sent out and the age
+	 * of unACKed packets is checked
 	 */
 	public static final int NETWORK_TICK_INTERVAL = 500;
 
@@ -185,16 +186,16 @@ public class LibSettings extends Settings implements PacketCallback
 
 	public static boolean OUTPUT_TIMING_STATS = false;
 	/*
-	 * The initial size of the packet inbox and outbox, where packets are stored before
-	 * processing
+	 * The initial size of the packet inbox and outbox, where packets are stored
+	 * before processing
 	 */
 	public static final int PACKET_INBOX_SIZE = 300;
 	public static final int PACKET_OUTBOX_SIZE = 100;
 	/* Maximum size of packet that we want to send over the wire */
 	public static final int MAX_PACKET_SIZE = 1200;
 	/*
-	 * The maximum value of a packet sequence number before it rolls over back
-	 * to one
+	 * The maximum value of a packet sequence number before it rolls over back to
+	 * one
 	 */
 	public static final int MAX_SEQUENCE = 0xFFFFFF;
 	/*
@@ -212,8 +213,8 @@ public class LibSettings extends Settings implements PacketCallback
 	// /#region Configuration options (mostly booleans)
 
 	/*
-	 * Enable to process packets synchronously, where all of the callbacks for
-	 * each packet must return before the next packet is processed. This is an
+	 * Enable to process packets synchronously, where all of the callbacks for each
+	 * packet must return before the next packet is processed. This is an
 	 * experimental feature and is not completely reliable yet. Ideally it would
 	 * reduce context switches and thread overhead, but several calls currently
 	 * block for a long time and would need to be rewritten as asynchronous code
@@ -230,17 +231,17 @@ public class LibSettings extends Settings implements PacketCallback
 	public static final String SEND_AGENT_UPDATES = "sendAgentUpdates";
 
 	/*
-	 * Enable/disable automatically setting agent appearance at login and after
-	 * sim crossing
+	 * Enable/disable automatically setting agent appearance at login and after sim
+	 * crossing
 	 */
 	public static final String SEND_AGENT_APPEARANCE = "sendAgentAppearance";
 
 	/*
-	 * Enable/disable automatically setting the bandwidth throttle after
-	 * connecting to each simulator The default throttle uses the equivalent of
-	 * the maximum bandwidth setting in the official client. If you do not set a
-	 * throttle your connection will by default be throttled well below the
-	 * minimum values and you may experience connection problems
+	 * Enable/disable automatically setting the bandwidth throttle after connecting
+	 * to each simulator The default throttle uses the equivalent of the maximum
+	 * bandwidth setting in the official client. If you do not set a throttle your
+	 * connection will by default be throttled well below the minimum values and you
+	 * may experience connection problems
 	 */
 	public static final String SEND_AGENT_THROTTLE = "sendAgentThrottle";
 
@@ -250,17 +251,17 @@ public class LibSettings extends Settings implements PacketCallback
 	public boolean SEND_PINGS = true;
 
 	/*
-	 * Should we connect to multiple sims? This will allow viewing in to
-	 * neighboring simulators and sim crossings (Experimental)
+	 * Should we connect to multiple sims? This will allow viewing in to neighboring
+	 * simulators and sim crossings (Experimental)
 	 */
 	public static final String MULTIPLE_SIMS = "multipleSims";
 
 	/*
-	 * If true, all object update packets will be decoded in to native objects.
-	 * If false, only updates for our own agent will be decoded. Registering an
-	 * event handler will force objects for that type to always be decoded. If
-	 * this is disabled the object tracking will have missing or partial prim
-	 * and avatar information
+	 * If true, all object update packets will be decoded in to native objects. If
+	 * false, only updates for our own agent will be decoded. Registering an event
+	 * handler will force objects for that type to always be decoded. If this is
+	 * disabled the object tracking will have missing or partial prim and avatar
+	 * information
 	 */
 	public static final String ALWAYS_DECODE_OBJECTS = "alwaysDecodeObjects";
 
@@ -271,8 +272,7 @@ public class LibSettings extends Settings implements PacketCallback
 	public static final String ALWAYS_REQUEST_OBJECTS = "alwaysRequestObjects";
 
 	/*
-	 * Whether to establish connections to HTTP capabilities servers for
-	 * simulators
+	 * Whether to establish connections to HTTP capabilities servers for simulators
 	 */
 	public static final String ENABLE_CAPS = "enableCaps";
 
@@ -280,15 +280,15 @@ public class LibSettings extends Settings implements PacketCallback
 	public static final String ENABLE_SIMSTATS = "enableSimStats";
 
 	/*
-	 * The capabilities servers are currently designed to periodically return a
-	 * 502 error which signals for the client to re-establish a connection. Set
-	 * this to true to log those 502 errors
+	 * The capabilities servers are currently designed to periodically return a 502
+	 * error which signals for the client to re-establish a connection. Set this to
+	 * true to log those 502 errors
 	 */
 	public boolean LOG_ALL_CAPS_ERRORS = false;
 
 	/*
-	 * If true, any reference received for a folder or item the library is not
-	 * aware of will automatically be fetched
+	 * If true, any reference received for a folder or item the library is not aware
+	 * of will automatically be fetched
 	 */
 	public boolean FETCH_MISSING_INVENTORY = true;
 
@@ -308,30 +308,29 @@ public class LibSettings extends Settings implements PacketCallback
 
 	/*
 	 * If true, currently visible avatars will be stored in dictionaries inside
-	 * <code>Simulator.ObjectPrimitives</code>. If false, a new Avatar or
-	 * Primitive object will be created each time an object update packet is
-	 * received
+	 * <code>Simulator.ObjectPrimitives</code>. If false, a new Avatar or Primitive
+	 * object will be created each time an object update packet is received
 	 */
 	public static final String OBJECT_TRACKING = "objectTracking";
 
 	/*
 	 * If true, position and velocity will periodically be interpolated
-	 * (extrapolated, technically) for objects and avatars that are being
-	 * tracked by the library. This is necessary to increase the accuracy of
-	 * speed and position estimates for simulated objects
+	 * (extrapolated, technically) for objects and avatars that are being tracked by
+	 * the library. This is necessary to increase the accuracy of speed and position
+	 * estimates for simulated objects
 	 */
 	public static final String USE_INTERPOLATION_TIMER = "useInterpolationTimer";
 
 	/*
-	 * If true, utilization statistics will be tracked. There is a minor penalty
-	 * in CPU time for enabling this option.
+	 * If true, utilization statistics will be tracked. There is a minor penalty in
+	 * CPU time for enabling this option.
 	 */
 	public static final String TRACK_UTILIZATION = "trackUtilization";
 	// #region Parcel Tracking
 
 	/*
-	 * If true, parcel details will be stored in the
-	 * <code>Simulator.Parcels</code> dictionary as they are received
+	 * If true, parcel details will be stored in the <code>Simulator.Parcels</code>
+	 * dictionary as they are received
 	 */
 	public boolean PARCEL_TRACKING = true;
 
@@ -350,8 +349,8 @@ public class LibSettings extends Settings implements PacketCallback
 	// #region Asset Cache
 
 	/*
-	 * If true, images, and other assets downloaded from the server will be
-	 * cached in a local directory
+	 * If true, images, and other assets downloaded from the server will be cached
+	 * in a local directory
 	 */
 	public static final String USE_ASSET_CACHE = "useAssetCache";
 
@@ -378,15 +377,15 @@ public class LibSettings extends Settings implements PacketCallback
 	// #region Texture Pipeline
 
 	/*
-	 * The maximum number of concurrent texture downloads allowed Increasing
-	 * this number will not necessarily increase texture retrieval times due to
-	 * simulator throttles
+	 * The maximum number of concurrent texture downloads allowed Increasing this
+	 * number will not necessarily increase texture retrieval times due to simulator
+	 * throttles
 	 */
 	public int MAX_CONCURRENT_TEXTURE_DOWNLOADS = 4;
 
 	/*
-	 * The Refresh timer inteval is used to set the delay between checks for
-	 * stalled texture downloads
+	 * The Refresh timer inteval is used to set the delay between checks for stalled
+	 * texture downloads
 	 * 
 	 * This is a static variable which applies to all instances
 	 */
@@ -407,97 +406,72 @@ public class LibSettings extends Settings implements PacketCallback
 
 	// #region Private Fields
 	/*
-	 * Cost of uploading an asset, Read-only since this value is dynamically fetched at login
+	 * Cost of uploading an asset, Read-only since this value is dynamically fetched
+	 * at login
 	 */
 	private int priceUpload = 0;
-	public int getUploadPrice()
-	{
+
+	public int getUploadPrice() {
 		return priceUpload;
 	}
-	
-    // #region Default settings
-    private DefaultSetting[] defaults =
-    {
-            new DefaultSetting(ENABLE_APPEARANCE_MANAGER, false),
-            new DefaultSetting(ENABLE_AVATAR_MANAGER, true),
-            new DefaultSetting(ENABLE_INVENTORY_MANAGER, true),
-            new DefaultSetting(ENABLE_DIRECTORY_MANAGER, false),
-            new DefaultSetting(ENABLE_SOUND_MANAGER, true),
-            new DefaultSetting(ENABLE_ASSET_MANAGER, false),
-            new DefaultSetting(ENABLE_OBJECT_MANAGER, false),
-            new DefaultSetting(ENABLE_PARCEL_MANAGER, false),
-            new DefaultSetting(ENABLE_TERRAIN_MANAGER, false),
-            new DefaultSetting(ENABLE_SOUND_MANAGER, false),
-            new DefaultSetting(MULTIPLE_SIMS, true),
-            new DefaultSetting(SEND_AGENT_THROTTLE, true),
-            new DefaultSetting(ENABLE_CAPS, true),
-            new DefaultSetting(ENABLE_SIMSTATS, true),
-            new DefaultSetting(RESOURCE_DIR, "libomv"),
-            new DefaultSetting(CHARACTER_DIR, "character"),
-            new DefaultSetting(USE_LLSD_LOGIN, false),
-            new DefaultSetting(USE_HTTP_TEXTURES, true),
-            new DefaultSetting(SEND_AGENT_UPDATES, true),
-            new DefaultSetting(SYNC_PACKETCALLBACKS, false),
-            new DefaultSetting(LOG_RAW_PACKET_BYTES, false),
-            new DefaultSetting(STORE_LAND_PATCHES, false),
-            new DefaultSetting(SEND_AGENT_APPEARANCE, true),
-            new DefaultSetting(ENABLE_INVENTORY_STORE, true),
-            new DefaultSetting(ENABLE_LIBRARY_STORE, true),
-            new DefaultSetting(HTTP_INVENTORY, true),
-            new DefaultSetting(AVATAR_TRACKING, true),
-            new DefaultSetting(ALWAYS_DECODE_OBJECTS, true),
-            new DefaultSetting(ALWAYS_REQUEST_OBJECTS, true),
-            new DefaultSetting(OBJECT_TRACKING, true),
-            new DefaultSetting(USE_INTERPOLATION_TIMER, true),
-            new DefaultSetting(TRACK_UTILIZATION, false),
-            new DefaultSetting(THROTTLE_OUTGOING_PACKETS, true),
-            new DefaultSetting(USE_ASSET_CACHE, true),
-            new DefaultSetting(ASSET_CACHE_DIR, "cache"),
-            new DefaultSetting(ASSET_CACHE_MAX_SIZE, (long)1024 * 1024 * 1024), // 1GB
-            new DefaultSetting(PACKET_ARCHIVE_SIZE, 1000),
+
+	// #region Default settings
+	private DefaultSetting[] defaults = { new DefaultSetting(ENABLE_APPEARANCE_MANAGER, false),
+			new DefaultSetting(ENABLE_AVATAR_MANAGER, true), new DefaultSetting(ENABLE_INVENTORY_MANAGER, true),
+			new DefaultSetting(ENABLE_DIRECTORY_MANAGER, false), new DefaultSetting(ENABLE_SOUND_MANAGER, true),
+			new DefaultSetting(ENABLE_ASSET_MANAGER, false), new DefaultSetting(ENABLE_OBJECT_MANAGER, false),
+			new DefaultSetting(ENABLE_PARCEL_MANAGER, false), new DefaultSetting(ENABLE_TERRAIN_MANAGER, false),
+			new DefaultSetting(ENABLE_SOUND_MANAGER, false), new DefaultSetting(MULTIPLE_SIMS, true),
+			new DefaultSetting(SEND_AGENT_THROTTLE, true), new DefaultSetting(ENABLE_CAPS, true),
+			new DefaultSetting(ENABLE_SIMSTATS, true), new DefaultSetting(RESOURCE_DIR, "libomv"),
+			new DefaultSetting(CHARACTER_DIR, "character"), new DefaultSetting(USE_LLSD_LOGIN, false),
+			new DefaultSetting(USE_HTTP_TEXTURES, true), new DefaultSetting(SEND_AGENT_UPDATES, true),
+			new DefaultSetting(SYNC_PACKETCALLBACKS, false), new DefaultSetting(LOG_RAW_PACKET_BYTES, false),
+			new DefaultSetting(STORE_LAND_PATCHES, false), new DefaultSetting(SEND_AGENT_APPEARANCE, true),
+			new DefaultSetting(ENABLE_INVENTORY_STORE, true), new DefaultSetting(ENABLE_LIBRARY_STORE, true),
+			new DefaultSetting(HTTP_INVENTORY, true), new DefaultSetting(AVATAR_TRACKING, true),
+			new DefaultSetting(ALWAYS_DECODE_OBJECTS, true), new DefaultSetting(ALWAYS_REQUEST_OBJECTS, true),
+			new DefaultSetting(OBJECT_TRACKING, true), new DefaultSetting(USE_INTERPOLATION_TIMER, true),
+			new DefaultSetting(TRACK_UTILIZATION, false), new DefaultSetting(THROTTLE_OUTGOING_PACKETS, true),
+			new DefaultSetting(USE_ASSET_CACHE, true), new DefaultSetting(ASSET_CACHE_DIR, "cache"),
+			new DefaultSetting(ASSET_CACHE_MAX_SIZE, (long) 1024 * 1024 * 1024), // 1GB
+			new DefaultSetting(PACKET_ARCHIVE_SIZE, 1000),
 
 	};
+
 	/**
 	 * Starts the settings update
 	 * 
 	 * @param client
 	 *            Reference to a GridClient object
 	 */
-    public LibSettings()
-    {
+	public LibSettings() {
 		super("_libomv/settings.lib");
 		setDefaults(defaults);
 	}
-    
-    public LibSettings initialize()
-    {
-    	try
-    	{
-    		load();
-    	}
-    	catch (Exception ex)
-    	{
-			logger.error("Failed to load settings", ex);
-    	}
-    	return this;
-    }
 
-    public void startup(GridClient client)
-	{
+	public LibSettings initialize() {
+		try {
+			load();
+		} catch (Exception ex) {
+			logger.error("Failed to load settings", ex);
+		}
+		return this;
+	}
+
+	public void startup(GridClient client) {
 		client.Network.RegisterCallback(PacketType.EconomyData, this);
 	}
 
 	@Override
-	public void packetCallback(Packet packet, Simulator simulator) throws Exception
-	{
-		switch (packet.getType())
-		{
-			case EconomyData:
-				EconomyDataPacket econ = (EconomyDataPacket) packet;
-				priceUpload = econ.Info.PriceUpload;
-				break;
-			default:
-				break;
+	public void packetCallback(Packet packet, Simulator simulator) throws Exception {
+		switch (packet.getType()) {
+		case EconomyData:
+			EconomyDataPacket econ = (EconomyDataPacket) packet;
+			priceUpload = econ.Info.PriceUpload;
+			break;
+		default:
+			break;
 		}
 	}
 }

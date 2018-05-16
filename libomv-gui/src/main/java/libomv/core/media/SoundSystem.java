@@ -41,51 +41,40 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import libomv.types.Vector3;
 
-public class SoundSystem
-{
-	public class SoundInfo
-	{
-		
+public class SoundSystem {
+	public class SoundInfo {
+
 	}
-		
-	public static SoundSource createSound(InputStream in, SoundInfo info) throws UnsupportedAudioFileException, IOException
-	{
-        AudioInputStream is = AudioSystem.getAudioInputStream(in);
-        if (in != null)
-        {
-            AudioFormat baseFormat = is.getFormat();
-            AudioFormat decodedFormat = new AudioFormat(
-                    AudioFormat.Encoding.PCM_SIGNED,
-                    baseFormat.getSampleRate(),
-                    16,
-                    baseFormat.getChannels(),
-                    baseFormat.getChannels() * 2,
-                    baseFormat.getSampleRate(),
-                    false);
-            // Get AudioInputStream that will be decoded by underlying VorbisSPI and create a source
-            return new SoundSource(AudioSystem.getAudioInputStream(decodedFormat, is));
-        }
+
+	public static SoundSource createSound(InputStream in, SoundInfo info)
+			throws UnsupportedAudioFileException, IOException {
+		AudioInputStream is = AudioSystem.getAudioInputStream(in);
+		if (in != null) {
+			AudioFormat baseFormat = is.getFormat();
+			AudioFormat decodedFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, baseFormat.getSampleRate(), 16,
+					baseFormat.getChannels(), baseFormat.getChannels() * 2, baseFormat.getSampleRate(), false);
+			// Get AudioInputStream that will be decoded by underlying VorbisSPI and create
+			// a source
+			return new SoundSource(AudioSystem.getAudioInputStream(decodedFormat, is));
+		}
 		return null;
 	}
 
-	public static SoundChannel playSound(int index, SoundSource sound, boolean paused) throws LineUnavailableException, IOException
-	{
-        DataLine.Info info = new DataLine.Info(SourceDataLine.class, sound.getFormat());
- 		SoundChannel channel = new SoundChannel(sound, info);
-		if (!paused)
-		{
+	public static SoundChannel playSound(int index, SoundSource sound, boolean paused)
+			throws LineUnavailableException, IOException {
+		DataLine.Info info = new DataLine.Info(SourceDataLine.class, sound.getFormat());
+		SoundChannel channel = new SoundChannel(sound, info);
+		if (!paused) {
 			channel.start();
 		}
 		return channel;
 	}
-	
-	public void set3DListenerAttributes(Vector3 position, Vector3 velocity, Vector3 facing, Vector3 head)
-	{
-		
+
+	public void set3DListenerAttributes(Vector3 position, Vector3 velocity, Vector3 facing, Vector3 head) {
+
 	}
-	
-	public void update()
-	{
-		
+
+	public void update() {
+
 	}
 }

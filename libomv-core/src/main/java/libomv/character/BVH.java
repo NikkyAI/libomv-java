@@ -20,104 +20,86 @@ package libomv.character;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BVH
-{
+public class BVH {
 	private BVHNode hiearchy;
 	private BVHMotion motion;
 	private int skips = 1;
 
 	public static final double FPS_30 = 0.033;
-	public int getSkips()
-	{
+
+	public int getSkips() {
 		return skips;
 	}
 
-	public void setSkips(int skips)
-	{
+	public void setSkips(int skips) {
 		this.skips = skips;
 	}
 
-	public BVHMotion getMotion()
-	{
+	public BVHMotion getMotion() {
 		return motion;
 	}
 
-	public void setMotion(BVHMotion motion)
-	{
+	public void setMotion(BVHMotion motion) {
 		this.motion = motion;
 	}
 
-	public BVHNode getHiearchy()
-	{
+	public BVHNode getHiearchy() {
 		return hiearchy;
 	}
 
-	public void setHiearchy(BVHNode hiearchy)
-	{
+	public void setHiearchy(BVHNode hiearchy) {
 		this.hiearchy = hiearchy;
 	}
-	
+
 	public List<NameAndChannel> nameAndChannels = new ArrayList<NameAndChannel>();
-	public List<NameAndChannel> getNameAndChannels()
-	{
+
+	public List<NameAndChannel> getNameAndChannels() {
 		return nameAndChannels;
 	}
 
-	public void add(NameAndChannel nc)
-	{
+	public void add(NameAndChannel nc) {
 		nameAndChannels.add(nc);
 	}
 
-	public int getFrames()
-	{
+	public int getFrames() {
 		int f = motion.getFrames();
-		if (f == 0)
-		{
+		if (f == 0) {
 			return 0;
 		}
-		if (skips == 0)
-		{
+		if (skips == 0) {
 			return f;
 		}
 		int fs = (f - 1) / skips;
 		return fs + 1; // +first frame
 	}
-	
-	public double getFrameTime()
-	{
+
+	public double getFrameTime() {
 		double f = motion.getFrameTime();
-		if (f == 0)
-		{
+		if (f == 0) {
 			return 0;
 		}
-		if (skips == 0)
-		{
+		if (skips == 0) {
 			return f;
 		}
 		return f * skips;
 	}
 
-	public float[] getFrameAt(int index)
-	{
-		if (skips == 0)
-		{
+	public float[] getFrameAt(int index) {
+		if (skips == 0) {
 			return motion.getMotions().get(index);
 		}
 		return motion.getMotions().get(index * skips);
 	}
 
-	public List<BVHNode> getNodeList()
-	{
+	public List<BVHNode> getNodeList() {
 		List<BVHNode> nodes = new ArrayList<BVHNode>();
 		addNode(nodes, getHiearchy());
 		return nodes;
 	}
-	
-	private void addNode(List<BVHNode> nodes, BVHNode node)
-	{
+
+	private void addNode(List<BVHNode> nodes, BVHNode node) {
 		nodes.add(node);
-		for (BVHNode child : node.getJoints())
-		{
+		for (BVHNode child : node.getJoints()) {
 			child.setParentName(node.getName());
 			addNode(nodes, child);
 		}

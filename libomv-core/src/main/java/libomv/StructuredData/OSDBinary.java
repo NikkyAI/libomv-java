@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -36,132 +36,105 @@ import java.net.UnknownHostException;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
 
-public class OSDBinary extends OSD
-{
+public class OSDBinary extends OSD {
 	private byte[] value;
 
 	@Override
-	public OSDType getType()
-	{
+	public OSDType getType() {
 		return OSDType.Binary;
 	}
 
-	public OSDBinary(OSDBinary value)
-	{
-		if (value != null)
-		{
+	public OSDBinary(OSDBinary value) {
+		if (value != null) {
 			this.value = value.value;
-		}
-		else
-		{
+		} else {
 			this.value = Helpers.EmptyBytes;
 		}
 	}
 
-	public OSDBinary(byte[] value)
-	{
-		if (value != null)
-		{
+	public OSDBinary(byte[] value) {
+		if (value != null) {
 			this.value = value;
-		}
-		else
-		{
+		} else {
 			this.value = Helpers.EmptyBytes;
 		}
 	}
 
-	public OSDBinary(int value)
-	{
+	public OSDBinary(int value) {
 		this.value = Helpers.Int32ToBytesB(value);
 	}
 
-	public OSDBinary(long value)
-	{
+	public OSDBinary(long value) {
 		this.value = Helpers.Int64ToBytesB(value);
 	}
 
 	@Override
-	public String AsString()
-	{
+	public String AsString() {
 		try {
 			return Helpers.BytesToString(value);
+		} catch (UnsupportedEncodingException e) {
 		}
-		catch (UnsupportedEncodingException e) { }
 		return null;
 	}
 
 	@Override
-	public byte[] AsBinary()
-	{
+	public byte[] AsBinary() {
 		return value;
 	}
 
 	@Override
-	public InetAddress AsInetAddress()
-	{
-		try
-		{
+	public InetAddress AsInetAddress() {
+		try {
 			return InetAddress.getByAddress(value);
-		}
-		catch (UnknownHostException e)
-		{
+		} catch (UnknownHostException e) {
 			return null;
 		}
 	}
 
 	@Override
-	public UUID AsUUID()
-	{
+	public UUID AsUUID() {
 		return new UUID(value);
 	}
 
 	@Override
-	public int AsUInteger()
-	{
+	public int AsUInteger() {
 		return (int) Helpers.BytesToUInt32B(value);
 	}
 
 	@Override
-	public long AsLong()
-	{
+	public long AsLong() {
 		return Helpers.BytesToInt64B(value);
 	}
 
 	@Override
-	public long AsULong()
-	{
+	public long AsULong() {
 		return Helpers.BytesToUInt64B(value);
 	}
 
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		return value.hashCode();
 	}
-	
+
 	@Override
-	public boolean equals(Object obj)
-	{
-		return obj != null && obj instanceof OSD && equals((OSD)obj);
+	public boolean equals(Object obj) {
+		return obj != null && obj instanceof OSD && equals((OSD) obj);
 	}
 
-	public boolean equals(OSD osd)
-	{
-		return osd != null && osd.getType() == OSDType.Binary && ((OSDBinary)osd).value.equals(value);
+	public boolean equals(OSD osd) {
+		return osd != null && osd.getType() == OSDType.Binary && ((OSDBinary) osd).value.equals(value);
 	}
 
 	@Override
-	public OSD clone()
-	{
-		OSDBinary osd = (OSDBinary)super.clone();
+	public OSD clone() {
+		OSDBinary osd = (OSDBinary) super.clone();
 		osd.value = new byte[this.value.length];
 		System.arraycopy(this.value, 0, osd.value, 0, this.value.length);
 		return osd;
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return Helpers.BytesToHexString(value, null);
 	}
 }

@@ -36,139 +36,125 @@ import javax.sound.sampled.LineListener;
 import libomv.types.UUID;
 import libomv.types.Vector3;
 
-public class MediaObject
-{
-    protected static MediaManager manager;
-    protected static HashMap<UUID, BufferSound> allBuffers;
+public class MediaObject {
+	protected static MediaManager manager;
+	protected static HashMap<UUID, BufferSound> allBuffers;
 	protected static LineListener lineCallback;
 
-    /* Indicates if this object's resources have already been disposed */
-    private boolean disposed = false;
-    public boolean getDisposed()
-    {
-    	return disposed;
-    }
-    protected boolean finished = false;
+	/* Indicates if this object's resources have already been disposed */
+	private boolean disposed = false;
 
-    // A SoundSource represents the data (buffer or stream)
-    protected SoundSource sound = null;
-    public SoundSource getSoundSource()
-    {
-    	return sound;
-    }
+	public boolean getDisposed() {
+		return disposed;
+	}
 
-    // A SoundChannel represents a playback instance of a sound.
-    protected SoundChannel channel = null;
-    public SoundChannel getSoundChannel()
-    {
-    	return channel;
-    }
+	protected boolean finished = false;
 
-    protected boolean cloned = false;
-    public void dispose()
-    {
-    	if (!cloned && sound != null)
-        {
-            sound.dispose();
-            sound = null;
-        }
-        disposed = true;
-    }
+	// A SoundSource represents the data (buffer or stream)
+	protected SoundSource sound = null;
 
-    public boolean getActive()
-    {
-    	return (sound != null);
-    }
+	public SoundSource getSoundSource() {
+		return sound;
+	}
 
-    /* Change a playback volume */
-    protected float volume = 0.8f;
-    public float getVolume()
-    {
-        return volume;
-    }
- 
-    public void setVolume(float value)
-    {
-        volume = value;
-        if (channel == null)
-        	return;
+	// A SoundChannel represents a playback instance of a sound.
+	protected SoundChannel channel = null;
 
-        channel.setVolume(volume);
-    }
+	public SoundChannel getSoundChannel() {
+		return channel;
+	}
 
-    /* Update the 3D position of a sound source */
-    protected Vector3 position;
-    public void setPosition(Vector3 value)
-    {
-        position = value;
-        if (channel == null)
-        	return;
+	protected boolean cloned = false;
 
-        channel.set3DAttributes(position, null);
-    }
-
-    /**
-     * Control the volume of all inworld sounds
-     */
-    protected static float allObjectVolume = 0.8f;
-    
-    public void stop()
-    {
-        if (channel != null)
-        {
-            channel.stop();
-        }
-    }
-
-    /**
-     * A callback for asynchronous FMOD calls.
-     * 
-     * Note: Subclasses override these methods to handle callbacks.
-     * 
-     * @return true on success, false otherwise
-     */
-    protected class DispatchEndCallback implements LineListener
-    {
-		@Override
-		public void update(LineEvent event)
-		{
-			LineEvent.Type type = event.getType();
-			if (type == LineEvent.Type.CLOSE)
-	        {
-                if (allChannels.containsKey(event.getSource()))
-                {
-                    MediaObject sndobj = allChannels.get(event.getSource());
-                    sndobj.endCallbackHandler();
-                }
-	        }
+	public void dispose() {
+		if (!cloned && sound != null) {
+			sound.dispose();
+			sound = null;
 		}
-    }
-    
-    protected boolean endCallbackHandler()
-    {
-    	return true;
-    }
+		disposed = true;
+	}
 
-    protected static HashMap<SoundSource, MediaObject> allSounds;
-    protected static HashMap<SoundChannel, MediaObject> allChannels;
-    
-    protected void registerSound(SoundSource sound)
-    {
-        allSounds.put(sound, this);
-    }
+	public boolean getActive() {
+		return (sound != null);
+	}
 
-    protected void registerChannel(SoundChannel channel)
-    {
-        allChannels.put(channel, this);
-    }
-    
-    protected void unregisterSound()
-    {
-        allSounds.remove(sound);
-    }
-    
-    protected void unregisterChannel()
-    {
-        allChannels.remove(channel);
-    }
+	/* Change a playback volume */
+	protected float volume = 0.8f;
+
+	public float getVolume() {
+		return volume;
+	}
+
+	public void setVolume(float value) {
+		volume = value;
+		if (channel == null)
+			return;
+
+		channel.setVolume(volume);
+	}
+
+	/* Update the 3D position of a sound source */
+	protected Vector3 position;
+
+	public void setPosition(Vector3 value) {
+		position = value;
+		if (channel == null)
+			return;
+
+		channel.set3DAttributes(position, null);
+	}
+
+	/**
+	 * Control the volume of all inworld sounds
+	 */
+	protected static float allObjectVolume = 0.8f;
+
+	public void stop() {
+		if (channel != null) {
+			channel.stop();
+		}
+	}
+
+	/**
+	 * A callback for asynchronous FMOD calls.
+	 * 
+	 * Note: Subclasses override these methods to handle callbacks.
+	 * 
+	 * @return true on success, false otherwise
+	 */
+	protected class DispatchEndCallback implements LineListener {
+		@Override
+		public void update(LineEvent event) {
+			LineEvent.Type type = event.getType();
+			if (type == LineEvent.Type.CLOSE) {
+				if (allChannels.containsKey(event.getSource())) {
+					MediaObject sndobj = allChannels.get(event.getSource());
+					sndobj.endCallbackHandler();
+				}
+			}
+		}
+	}
+
+	protected boolean endCallbackHandler() {
+		return true;
+	}
+
+	protected static HashMap<SoundSource, MediaObject> allSounds;
+	protected static HashMap<SoundChannel, MediaObject> allChannels;
+
+	protected void registerSound(SoundSource sound) {
+		allSounds.put(sound, this);
+	}
+
+	protected void registerChannel(SoundChannel channel) {
+		allChannels.put(channel, this);
+	}
+
+	protected void unregisterSound() {
+		allSounds.remove(sound);
+	}
+
+	protected void unregisterChannel() {
+		allChannels.remove(channel);
+	}
 }

@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -33,78 +33,72 @@ import java.util.ArrayList;
 
 import libomv.types.Vector3;
 
-public class Face
-{
-    public int primFace;
+public class Face {
+	public int primFace;
 
-    // vertices
-    public int v1;
-    public int v2;
-    public int v3;
+	// vertices
+	public int v1;
+	public int v2;
+	public int v3;
 
-    //normals
-    public int n1;
-    public int n2;
-    public int n3;
+	// normals
+	public int n1;
+	public int n2;
+	public int n3;
 
-    // uvs
-    public int uv1;
-    public int uv2;
-    public int uv3;
+	// uvs
+	public int uv1;
+	public int uv2;
+	public int uv3;
 
-    public Face()
-    {
-    	this(0, 0, 0);
-    }
-    
-    public Face(int v1, int v2, int v3)
-    {
-        this(v1, v2, v3, 0, 0, 0);
-    }
+	public Face() {
+		this(0, 0, 0);
+	}
 
-    public Face(int v1, int v2, int v3, int n1, int n2, int n3)
-    {
-        primFace = 0;
+	public Face(int v1, int v2, int v3) {
+		this(v1, v2, v3, 0, 0, 0);
+	}
 
-        this.v1 = v1;
-        this.v2 = v2;
-        this.v3 = v3;
+	public Face(int v1, int v2, int v3, int n1, int n2, int n3) {
+		primFace = 0;
 
-        this.n1 = n1;
-        this.n2 = n2;
-        this.n3 = n3;
+		this.v1 = v1;
+		this.v2 = v2;
+		this.v3 = v3;
 
-        this.uv1 = 0;
-        this.uv2 = 0;
-        this.uv3 = 0;
-    }
+		this.n1 = n1;
+		this.n2 = n2;
+		this.n3 = n3;
 
-    public Face(Face face)
-    {
-        primFace = face.primFace;
+		this.uv1 = 0;
+		this.uv2 = 0;
+		this.uv3 = 0;
+	}
 
-        this.v1 = face.v1;
-        this.v2 = face.v2;
-        this.v3 = face.v3;
+	public Face(Face face) {
+		primFace = face.primFace;
 
-        this.n1 = face.n1;
-        this.n2 = face.n2;
-        this.n3 = face.n3;
+		this.v1 = face.v1;
+		this.v2 = face.v2;
+		this.v3 = face.v3;
 
-        this.uv1 = face.uv1;
-        this.uv2 = face.uv2;
-        this.uv3 = face.uv3;
-    }
+		this.n1 = face.n1;
+		this.n2 = face.n2;
+		this.n3 = face.n3;
 
-    public Vector3 surfaceNormal(ArrayList<Vector3> coordList)
-    {
-    	Vector3 c1 = coordList.get(this.v1);
-    	Vector3 c2 = coordList.get(this.v2);
-    	Vector3 c3 = coordList.get(this.v3);
+		this.uv1 = face.uv1;
+		this.uv2 = face.uv2;
+		this.uv3 = face.uv3;
+	}
 
-    	Vector3 edge1 = new Vector3(c2.X - c1.X, c2.Y - c1.Y, c2.Z - c1.Z);
-    	Vector3 edge2 = new Vector3(c3.X - c1.X, c3.Y - c1.Y, c3.Z - c1.Z);
+	public Vector3 surfaceNormal(ArrayList<Vector3> coordList) {
+		Vector3 c1 = coordList.get(this.v1);
+		Vector3 c2 = coordList.get(this.v2);
+		Vector3 c3 = coordList.get(this.v3);
 
-        return edge1.cross(edge2).normalize();
-    }
+		Vector3 edge1 = new Vector3(c2.X - c1.X, c2.Y - c1.Y, c2.Z - c1.Z);
+		Vector3 edge2 = new Vector3(c3.X - c1.X, c3.Y - c1.Y, c3.Z - c1.Z);
+
+		return edge1.cross(edge2).normalize();
+	}
 }

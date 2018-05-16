@@ -17,67 +17,55 @@
  */
 package libomv.character;
 
-public class BVHWriter
-{
-	public String writeToString(BVH bvh)
-	{
+public class BVHWriter {
+	public String writeToString(BVH bvh) {
 		StringBuilder buffer = new StringBuilder();
-		//hierachy
+		// hierachy
 		buffer.append("HIERARCHY\n");
 		writeTo(bvh.getHiearchy(), buffer, 0);
 
-		//MOTION
+		// MOTION
 		int frames = bvh.getFrames();
 		buffer.append("MOTION\n");
 		buffer.append("Frames: " + frames + "\n");
 		buffer.append("Frame Time: " + bvh.getFrameTime() + "\n");
 
-		for(int i = 0; i < frames; i++)
-		{
+		for (int i = 0; i < frames; i++) {
 			float[] values = bvh.getFrameAt(i);
 			String v = "";
-			for(int j = 0; j < values.length; j++)
-			{
+			for (int j = 0; j < values.length; j++) {
 				v += values[j];
-				if (j != values.length - 1)
-				{
+				if (j != values.length - 1) {
 					v += " ";
 				}
 			}
 			buffer.append(v + "\n");
 		}
-		//return text;
+		// return text;
 		return buffer.toString();
 	}
-	
-	private void writeTo(BVHNode node, StringBuilder buffer, int indent)
-	{
+
+	private void writeTo(BVHNode node, StringBuilder buffer, int indent) {
 		String indentText = "";
-		for (int i = 0; i < indent; i++)
-		{
+		for (int i = 0; i < indent; i++) {
 			indentText += "\t";
 		}
-		if (indent == 0)
-		{
+		if (indent == 0) {
 			buffer.append("ROOT " + node.getName() + "\n");
-		}
-		else
-		{
+		} else {
 			buffer.append(indentText + "JOINT " + node.getName() + "\n");
 		}
 		buffer.append(indentText + "{" + "\n");
-		//offset
+		// offset
 		buffer.append("\t" + indentText + node.getOffset().toString() + "\n");
-		//channel
+		// channel
 		buffer.append("\t" + indentText + node.getChannels().toString() + "\n");
-		//joint
-		for (int i = 0; i < node.getJoints().size(); i++)
-		{
+		// joint
+		for (int i = 0; i < node.getJoints().size(); i++) {
 			writeTo(node.getJoints().get(i), buffer, indent + 1);
 		}
-		//endsite
-		if (node.getEndSite() != null)
-		{
+		// endsite
+		if (node.getEndSite() != null) {
 			buffer.append("\t" + indentText + "End Site" + "\n");
 			buffer.append("\t" + indentText + "{" + "\n");
 			buffer.append("\t" + indentText + "\t" + node.getEndSite().toString() + "\n");

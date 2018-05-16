@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -32,25 +32,22 @@ package libomv.inventory;
 import libomv.types.UUID;
 
 /** InventoryCallingCard Class, contains information on another avatar */
-public class InventoryCallingCard extends InventoryItem
-{
+public class InventoryCallingCard extends InventoryItem {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Construct an InventoryCallingCard object
-	 * 
+	 *
 	 * @param itemID
 	 *            A {@link OpenMetaverse.UUID} which becomes the
 	 *            {@link OpenMetaverse.InventoryItem} objects AssetUUID
 	 */
-	public InventoryCallingCard(UUID itemID)
-	{
+	public InventoryCallingCard(UUID itemID) {
 		super(itemID);
 	}
-	
+
 	@Override
-	public InventoryType getType()
-	{
+	public InventoryType getType() {
 		return InventoryType.CallingCard;
 	}
 }

@@ -5,18 +5,20 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for fx_surface_format_hint_precision_enum.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
+ * Java class for fx_surface_format_hint_precision_enum.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ * <p>
+ * 
  * <pre>
  * &lt;simpleType name="fx_surface_format_hint_precision_enum">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -32,31 +34,32 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum FxSurfaceFormatHintPrecisionEnum {
 
+	/**
+	 * For integers this typically represents 8 bits. For floats typically 16 bits.
+	 * 
+	 */
+	LOW,
 
-    /**
-     * For integers this typically represents 8 bits.  For floats typically 16 bits.
-     * 
-     */
-    LOW,
+	/**
+	 * For integers this typically represents 8 to 24 bits. For floats typically 16
+	 * to 32 bits.
+	 * 
+	 */
+	MID,
 
-    /**
-     * For integers this typically represents 8 to 24 bits.  For floats typically 16 to 32 bits.
-     * 
-     */
-    MID,
+	/**
+	 * For integers this typically represents 16 to 32 bits. For floats typically 24
+	 * to 32 bits.
+	 * 
+	 */
+	HIGH;
 
-    /**
-     * For integers this typically represents 16 to 32 bits.  For floats typically 24 to 32 bits.
-     * 
-     */
-    HIGH;
+	public String value() {
+		return name();
+	}
 
-    public String value() {
-        return name();
-    }
-
-    public static FxSurfaceFormatHintPrecisionEnum fromValue(String v) {
-        return valueOf(v);
-    }
+	public static FxSurfaceFormatHintPrecisionEnum fromValue(String v) {
+		return valueOf(v);
+	}
 
 }

@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import java.math.BigInteger;
@@ -18,11 +17,13 @@ import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
 /**
- * <p>Java class for fx_colortarget_common complex type.
+ * <p>
+ * Java class for fx_colortarget_common complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="fx_colortarget_common">
@@ -40,161 +41,144 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "fx_colortarget_common", propOrder = {
-    "value"
-})
+@XmlType(name = "fx_colortarget_common", propOrder = { "value" })
 public class FxColortargetCommon {
 
-    @XmlValue
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlSchemaType(name = "NCName")
-    protected String value;
-    @XmlAttribute(name = "index")
-    @XmlSchemaType(name = "nonNegativeInteger")
-    protected BigInteger index;
-    @XmlAttribute(name = "face")
-    protected FxSurfaceFaceEnum face;
-    @XmlAttribute(name = "mip")
-    @XmlSchemaType(name = "nonNegativeInteger")
-    protected BigInteger mip;
-    @XmlAttribute(name = "slice")
-    @XmlSchemaType(name = "nonNegativeInteger")
-    protected BigInteger slice;
+	@XmlValue
+	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+	@XmlSchemaType(name = "NCName")
+	protected String value;
+	@XmlAttribute(name = "index")
+	@XmlSchemaType(name = "nonNegativeInteger")
+	protected BigInteger index;
+	@XmlAttribute(name = "face")
+	protected FxSurfaceFaceEnum face;
+	@XmlAttribute(name = "mip")
+	@XmlSchemaType(name = "nonNegativeInteger")
+	protected BigInteger mip;
+	@XmlAttribute(name = "slice")
+	@XmlSchemaType(name = "nonNegativeInteger")
+	protected BigInteger slice;
 
-    /**
-     * Gets the value of the value property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getValue() {
-        return value;
-    }
+	/**
+	 * Gets the value of the value property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getValue() {
+		return value;
+	}
 
-    /**
-     * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
+	/**
+	 * Sets the value of the value property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setValue(String value) {
+		this.value = value;
+	}
 
-    /**
-     * Gets the value of the index property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
-     */
-    public BigInteger getIndex() {
-        if (index == null) {
-            return new BigInteger("0");
-        } else {
-            return index;
-        }
-    }
+	/**
+	 * Gets the value of the index property.
+	 * 
+	 * @return possible object is {@link BigInteger }
+	 * 
+	 */
+	public BigInteger getIndex() {
+		if (index == null) {
+			return new BigInteger("0");
+		} else {
+			return index;
+		}
+	}
 
-    /**
-     * Sets the value of the index property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
-     */
-    public void setIndex(BigInteger value) {
-        this.index = value;
-    }
+	/**
+	 * Sets the value of the index property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link BigInteger }
+	 * 
+	 */
+	public void setIndex(BigInteger value) {
+		this.index = value;
+	}
 
-    /**
-     * Gets the value of the face property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FxSurfaceFaceEnum }
-     *     
-     */
-    public FxSurfaceFaceEnum getFace() {
-        if (face == null) {
-            return FxSurfaceFaceEnum.POSITIVE_X;
-        } else {
-            return face;
-        }
-    }
+	/**
+	 * Gets the value of the face property.
+	 * 
+	 * @return possible object is {@link FxSurfaceFaceEnum }
+	 * 
+	 */
+	public FxSurfaceFaceEnum getFace() {
+		if (face == null) {
+			return FxSurfaceFaceEnum.POSITIVE_X;
+		} else {
+			return face;
+		}
+	}
 
-    /**
-     * Sets the value of the face property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FxSurfaceFaceEnum }
-     *     
-     */
-    public void setFace(FxSurfaceFaceEnum value) {
-        this.face = value;
-    }
+	/**
+	 * Sets the value of the face property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link FxSurfaceFaceEnum }
+	 * 
+	 */
+	public void setFace(FxSurfaceFaceEnum value) {
+		this.face = value;
+	}
 
-    /**
-     * Gets the value of the mip property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
-     */
-    public BigInteger getMip() {
-        if (mip == null) {
-            return new BigInteger("0");
-        } else {
-            return mip;
-        }
-    }
+	/**
+	 * Gets the value of the mip property.
+	 * 
+	 * @return possible object is {@link BigInteger }
+	 * 
+	 */
+	public BigInteger getMip() {
+		if (mip == null) {
+			return new BigInteger("0");
+		} else {
+			return mip;
+		}
+	}
 
-    /**
-     * Sets the value of the mip property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
-     */
-    public void setMip(BigInteger value) {
-        this.mip = value;
-    }
+	/**
+	 * Sets the value of the mip property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link BigInteger }
+	 * 
+	 */
+	public void setMip(BigInteger value) {
+		this.mip = value;
+	}
 
-    /**
-     * Gets the value of the slice property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
-     */
-    public BigInteger getSlice() {
-        if (slice == null) {
-            return new BigInteger("0");
-        } else {
-            return slice;
-        }
-    }
+	/**
+	 * Gets the value of the slice property.
+	 * 
+	 * @return possible object is {@link BigInteger }
+	 * 
+	 */
+	public BigInteger getSlice() {
+		if (slice == null) {
+			return new BigInteger("0");
+		} else {
+			return slice;
+		}
+	}
 
-    /**
-     * Sets the value of the slice property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
-     */
-    public void setSlice(BigInteger value) {
-        this.slice = value;
-    }
+	/**
+	 * Sets the value of the slice property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link BigInteger }
+	 * 
+	 */
+	public void setSlice(BigInteger value) {
+		this.slice = value;
+	}
 
 }

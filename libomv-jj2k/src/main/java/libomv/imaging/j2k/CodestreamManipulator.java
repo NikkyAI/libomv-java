@@ -150,8 +150,8 @@ class CodestreamManipulator {
 	}
 
 	/**
-	 * This method performs the actual manipulation of the codestream which is
-	 * the reparsing for tile parts and packed packet headers
+	 * This method performs the actual manipulation of the codestream which is the
+	 * reparsing for tile parts and packed packet headers
 	 *
 	 * @return The number of bytes that the file has increased by
 	 *
@@ -159,7 +159,7 @@ class CodestreamManipulator {
 	 *                If an I/O error occurred.
 	 */
 	public int doCodestreamManipulation() throws IOException {
-		int addedHeaderBytes = 0;
+		int addedHeaderBytes;
 		ppt = new int[nt];
 		tileParts = new byte[nt][][];
 		tileHeaders = new byte[nt][];
@@ -193,9 +193,8 @@ class CodestreamManipulator {
 	}
 
 	/**
-	 * This method parses the codestream for SOT, SOP and EPH markers and
-	 * removes header bits signalling SOP and EPH markers if packed packet
-	 * headers are used
+	 * This method parses the codestream for SOT, SOP and EPH markers and removes
+	 * header bits signalling SOP and EPH markers if packed packet headers are used
 	 *
 	 * @param fi
 	 *            The file to parse the markers from

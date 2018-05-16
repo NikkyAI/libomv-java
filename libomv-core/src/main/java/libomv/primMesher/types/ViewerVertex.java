@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -32,20 +32,17 @@ package libomv.primMesher.types;
 import libomv.types.Vector2;
 import libomv.types.Vector3;
 
-public class ViewerVertex
-{
-    public Vector3 v;
-    public Vector3 n;
-    public Vector2 uv;
+public class ViewerVertex {
+	public Vector3 v;
+	public Vector3 n;
+	public Vector2 uv;
 
-    public ViewerVertex()
-    {
-    }
+	public ViewerVertex() {
+	}
 
-    public ViewerVertex(Vector3 coord, Vector3 normal, Vector2 uv)
-    {
-        this.v = coord;
-        this.n = normal;
-        this.uv = uv;
-    }
+	public ViewerVertex(Vector3 coord, Vector3 normal, Vector2 uv) {
+		this.v = coord;
+		this.n = normal;
+		this.uv = uv;
+	}
 }

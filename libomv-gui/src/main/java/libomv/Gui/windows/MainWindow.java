@@ -53,8 +53,7 @@ import libomv.Gui.dialogs.AboutDialog;
 import libomv.io.GridClient;
 import libomv.utils.Settings;
 
-public class MainWindow extends JFrame implements MainControl
-{
+public class MainWindow extends JFrame implements MainControl {
 	private static final Logger logger = Logger.getLogger(MainWindow.class);
 	private static final long serialVersionUID = 1L;
 
@@ -69,181 +68,138 @@ public class MainWindow extends JFrame implements MainControl
 	/**
 	 * This is the default constructor
 	 */
-	public MainWindow(GridClient client)
-	{
+	public MainWindow(GridClient client) {
 		super();
-/*
-		try
-		{
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		}
-		catch (Exception ex)
-		{
-			System.out.println("Error setting native LAF: " + ex);
-		}
- */
-		
+		/*
+		 * try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); }
+		 * catch (Exception ex) { System.out.println("Error setting native LAF: " + ex);
+		 * }
+		 */
+
 		_Client = client;
 		_Settings = new AppSettings(client);
-		
+
 		setTitle("Libomv-Java Client");
 		setSize(1024, 800);
 		setPreferredSize(new Dimension(640, 480));
 		setMinimumSize(new Dimension(640, 480));
-        addWindowListener(new WindowAdapter()
-        {
+		addWindowListener(new WindowAdapter() {
 			@Override
-            public void windowClosing(WindowEvent e)
-            {
-               	actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, cmdQuit));
-            }
-        });
+			public void windowClosing(WindowEvent e) {
+				actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, cmdQuit));
+			}
+		});
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		_State = new StateController(this);
 	}
-	
-	protected void finalize() throws Throwable
-	{
+
+	protected void finalize() throws Throwable {
 		_State.dispose();
 		_State = null;
 		super.finalize();
 	}
-	
-	public JFrame getJFrame()
-	{
+
+	public JFrame getJFrame() {
 		return this;
 	}
-	
-	public GridClient getGridClient()
-	{
+
+	public GridClient getGridClient() {
 		return _Client;
 	}
-	
-	public Settings getAppSettings()
-	{
+
+	public Settings getAppSettings() {
 		return _Settings;
 	}
-	
-	public StateController getStateControl()
-	{
+
+	public StateController getStateControl() {
 		return _State;
 	}
-	
+
 	/* Convinience methods */
-	static public void setAction(AbstractButton comp, ActionListener actionListener, String actionCommand)
-	{
-		if (actionCommand != null)
-		{
+	static public void setAction(AbstractButton comp, ActionListener actionListener, String actionCommand) {
+		if (actionCommand != null) {
 			comp.setActionCommand(actionCommand);
 		}
 		comp.addActionListener(actionListener);
 	}
 
-	static public void setAction(JTextField comp, ActionListener actionListener, String actionCommand)
-	{
-		if (actionCommand != null)
-		{
+	static public void setAction(JTextField comp, ActionListener actionListener, String actionCommand) {
+		if (actionCommand != null) {
 			comp.setActionCommand(actionCommand);
 		}
 		comp.addActionListener(actionListener);
 	}
 
-	static public void setAction(JComboBox<?> comp, ActionListener actionListener, String actionCommand)
-	{
-		if (actionCommand != null)
-		{
+	static public void setAction(JComboBox<?> comp, ActionListener actionListener, String actionCommand) {
+		if (actionCommand != null) {
 			comp.setActionCommand(actionCommand);
 		}
 		comp.addActionListener(actionListener);
 	}
 
-	static public JMenuItem newMenuItem(String label, ActionListener actionListener, String actionCommand)
-	{
+	static public JMenuItem newMenuItem(String label, ActionListener actionListener, String actionCommand) {
 		JMenuItem item = new JMenuItem(label);
 		setAction(item, actionListener, actionCommand);
 		return item;
 	}
 
-	public void setJMenuBar(JMenuBar menuBar)
-	{
-		if (jMenuBar != null)
-		{
+	public void setJMenuBar(JMenuBar menuBar) {
+		if (jMenuBar != null) {
 			remove(jMenuBar);
 		}
-		if (menuBar != null)
-		{
+		if (menuBar != null) {
 			super.setJMenuBar(menuBar);
 		}
 		jMenuBar = menuBar;
 	}
 
-	public void setContentPane(Component component)
-	{
-		if (jPContent != null)
-		{
+	public void setContentPane(Component component) {
+		if (jPContent != null) {
 			getContentPane().remove(jPContent);
 		}
-		if (component != null)
-		{
+		if (component != null) {
 			getContentPane().add(component, BorderLayout.CENTER);
 		}
 		jPContent = component;
 	}
 
-	public void setControlPane(JPanel panel)
-	{
-		if (jPSouth != null)
-		{
-			getContentPane().remove(jPSouth);			
+	public void setControlPane(JPanel panel) {
+		if (jPSouth != null) {
+			getContentPane().remove(jPSouth);
 		}
-		if (panel != null)
-		{
+		if (panel != null) {
 			getContentPane().add(panel, BorderLayout.SOUTH);
 		}
 		jPSouth = panel;
 	}
-	
+
 	@Override
-	public void actionPerformed(ActionEvent e)
-	{
+	public void actionPerformed(ActionEvent e) {
 		String action = e.getActionCommand();
-		if (action.equals(MainControl.cmdAbout))
-		{
+		if (action.equals(MainControl.cmdAbout)) {
 			AboutDialog about = new AboutDialog(this);
-			about.setVisible(true);			
-		}
-		else if (action.equals(MainControl.cmdSettings))
-		{
+			about.setVisible(true);
+		} else if (action.equals(MainControl.cmdSettings)) {
 			PreferenceWindow pref = new PreferenceWindow(this);
-			pref.setVisible(true);			
-		}
-		else if (action.equals(MainControl.cmdQuit))
-		{
-			if (_Client.Network.getConnected())
-			{
-                int confirm = JOptionPane.showOptionDialog(MainWindow.this,
-                        "Are You sure you want to Logout from the network and close this Application?",
-                        "Quit Confirmation", JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE, null, null, null);
-                if (confirm == JOptionPane.YES_OPTION)
-                {
-         		    try
-        		    {
-        				_Client.Network.Logout();
-        			}
-        		    catch (Exception ex)
-        			{
+			pref.setVisible(true);
+		} else if (action.equals(MainControl.cmdQuit)) {
+			if (_Client.Network.getConnected()) {
+				int confirm = JOptionPane.showOptionDialog(MainWindow.this,
+						"Are You sure you want to Logout from the network and close this Application?",
+						"Quit Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+				if (confirm == JOptionPane.YES_OPTION) {
+					try {
+						_Client.Network.Logout();
+					} catch (Exception ex) {
 						logger.error(GridClient.Log("Response to teleportation invite failed", _Client), ex);
-        			}
-                }
-                else
-                {
-                	return;
-                }
+					}
+				} else {
+					return;
+				}
 			}
 			_State.dispose();
-			System.exit(0);			
+			System.exit(0);
 		}
 	}
 }

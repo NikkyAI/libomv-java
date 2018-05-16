@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -16,15 +15,18 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
 /**
  * 
- * 			The include element is used to import source code or precompiled binary shaders into the FX Runtime by referencing an external resource.
- * 			
+ * The include element is used to import source code or precompiled binary
+ * shaders into the FX Runtime by referencing an external resource.
  * 
- * <p>Java class for fx_include_common complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * Java class for fx_include_common complex type.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="fx_include_common">
@@ -43,60 +45,54 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(name = "fx_include_common")
 public class FxIncludeCommon {
 
-    @XmlAttribute(name = "sid", required = true)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlSchemaType(name = "NCName")
-    protected String sid;
-    @XmlAttribute(name = "url", required = true)
-    @XmlSchemaType(name = "anyURI")
-    protected String url;
+	@XmlAttribute(name = "sid", required = true)
+	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+	@XmlSchemaType(name = "NCName")
+	protected String sid;
+	@XmlAttribute(name = "url", required = true)
+	@XmlSchemaType(name = "anyURI")
+	protected String url;
 
-    /**
-     * Gets the value of the sid property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getSid() {
-        return sid;
-    }
+	/**
+	 * Gets the value of the sid property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getSid() {
+		return sid;
+	}
 
-    /**
-     * Sets the value of the sid property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setSid(String value) {
-        this.sid = value;
-    }
+	/**
+	 * Sets the value of the sid property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setSid(String value) {
+		this.sid = value;
+	}
 
-    /**
-     * Gets the value of the url property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getUrl() {
-        return url;
-    }
+	/**
+	 * Gets the value of the url property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getUrl() {
+		return url;
+	}
 
-    /**
-     * Sets the value of the url property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setUrl(String value) {
-        this.url = value;
-    }
+	/**
+	 * Sets the value of the url property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setUrl(String value) {
+		this.url = value;
+	}
 
 }

@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -32,25 +32,22 @@ package libomv.inventory;
 import libomv.types.UUID;
 
 /** InventoryLSL Class, represents a Linden Scripting Language object */
-public class InventoryLSL extends InventoryItem
-{
+public class InventoryLSL extends InventoryItem {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Construct an InventoryLSL object
-	 * 
+	 *
 	 * @param itemID
 	 *            A {@link OpenMetaverse.UUID} which becomes the
 	 *            {@link OpenMetaverse.InventoryItem} objects AssetUUID
 	 */
-	public InventoryLSL(UUID itemID)
-	{
+	public InventoryLSL(UUID itemID) {
 		super(itemID);
 	}
 
 	@Override
-	public InventoryType getType()
-	{
+	public InventoryType getType() {
 		return InventoryType.LSL;
 	}
 }

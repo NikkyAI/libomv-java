@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import java.math.BigInteger;
@@ -22,11 +21,13 @@ import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -45,185 +46,168 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "value"
-})
+@XmlType(name = "", propOrder = { "value" })
 @XmlRootElement(name = "int_array")
 public class IntArray {
 
-    @XmlValue
-    protected List<Long> value;
-    @XmlAttribute(name = "id")
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlID
-    @XmlSchemaType(name = "ID")
-    protected String id;
-    @XmlAttribute(name = "name")
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlSchemaType(name = "NCName")
-    protected String name;
-    @XmlAttribute(name = "count", required = true)
-    protected BigInteger count;
-    @XmlAttribute(name = "minInclusive")
-    protected BigInteger minInclusive;
-    @XmlAttribute(name = "maxInclusive")
-    protected BigInteger maxInclusive;
+	@XmlValue
+	protected List<Long> value;
+	@XmlAttribute(name = "id")
+	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+	@XmlID
+	@XmlSchemaType(name = "ID")
+	protected String id;
+	@XmlAttribute(name = "name")
+	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+	@XmlSchemaType(name = "NCName")
+	protected String name;
+	@XmlAttribute(name = "count", required = true)
+	protected BigInteger count;
+	@XmlAttribute(name = "minInclusive")
+	protected BigInteger minInclusive;
+	@XmlAttribute(name = "maxInclusive")
+	protected BigInteger maxInclusive;
 
-    /**
-     * Gets the value of the value property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the value property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getValue().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Long }
-     * 
-     * 
-     */
-    public List<Long> getValue() {
-        if (value == null) {
-            value = new ArrayList<Long>();
-        }
-        return this.value;
-    }
+	/**
+	 * Gets the value of the value property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the value property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getValue().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link Long }
+	 * 
+	 * 
+	 */
+	public List<Long> getValue() {
+		if (value == null) {
+			value = new ArrayList<Long>();
+		}
+		return this.value;
+	}
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getId() {
-        return id;
-    }
+	/**
+	 * Gets the value of the id property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getId() {
+		return id;
+	}
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setId(String value) {
-        this.id = value;
-    }
+	/**
+	 * Sets the value of the id property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setId(String value) {
+		this.id = value;
+	}
 
-    /**
-     * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getName() {
-        return name;
-    }
+	/**
+	 * Gets the value of the name property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
+	/**
+	 * Sets the value of the name property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setName(String value) {
+		this.name = value;
+	}
 
-    /**
-     * Gets the value of the count property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
-     */
-    public BigInteger getCount() {
-        return count;
-    }
+	/**
+	 * Gets the value of the count property.
+	 * 
+	 * @return possible object is {@link BigInteger }
+	 * 
+	 */
+	public BigInteger getCount() {
+		return count;
+	}
 
-    /**
-     * Sets the value of the count property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
-     */
-    public void setCount(BigInteger value) {
-        this.count = value;
-    }
+	/**
+	 * Sets the value of the count property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link BigInteger }
+	 * 
+	 */
+	public void setCount(BigInteger value) {
+		this.count = value;
+	}
 
-    /**
-     * Gets the value of the minInclusive property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
-     */
-    public BigInteger getMinInclusive() {
-        if (minInclusive == null) {
-            return new BigInteger("-2147483648");
-        } else {
-            return minInclusive;
-        }
-    }
+	/**
+	 * Gets the value of the minInclusive property.
+	 * 
+	 * @return possible object is {@link BigInteger }
+	 * 
+	 */
+	public BigInteger getMinInclusive() {
+		if (minInclusive == null) {
+			return new BigInteger("-2147483648");
+		} else {
+			return minInclusive;
+		}
+	}
 
-    /**
-     * Sets the value of the minInclusive property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
-     */
-    public void setMinInclusive(BigInteger value) {
-        this.minInclusive = value;
-    }
+	/**
+	 * Sets the value of the minInclusive property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link BigInteger }
+	 * 
+	 */
+	public void setMinInclusive(BigInteger value) {
+		this.minInclusive = value;
+	}
 
-    /**
-     * Gets the value of the maxInclusive property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
-     */
-    public BigInteger getMaxInclusive() {
-        if (maxInclusive == null) {
-            return new BigInteger("2147483647");
-        } else {
-            return maxInclusive;
-        }
-    }
+	/**
+	 * Gets the value of the maxInclusive property.
+	 * 
+	 * @return possible object is {@link BigInteger }
+	 * 
+	 */
+	public BigInteger getMaxInclusive() {
+		if (maxInclusive == null) {
+			return new BigInteger("2147483647");
+		} else {
+			return maxInclusive;
+		}
+	}
 
-    /**
-     * Sets the value of the maxInclusive property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
-     */
-    public void setMaxInclusive(BigInteger value) {
-        this.maxInclusive = value;
-    }
+	/**
+	 * Sets the value of the maxInclusive property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link BigInteger }
+	 * 
+	 */
+	public void setMaxInclusive(BigInteger value) {
+		this.maxInclusive = value;
+	}
 
 }

@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,11 +12,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for common_transparent_type complex type.
+ * <p>
+ * Java class for common_transparent_type complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="common_transparent_type">
@@ -33,39 +34,34 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "common_transparent_type")
-public class CommonTransparentType
-    extends CommonColorOrTextureType
-{
+public class CommonTransparentType extends CommonColorOrTextureType {
 
-    @XmlAttribute(name = "opaque")
-    protected FxOpaqueEnum opaque;
+	@XmlAttribute(name = "opaque")
+	protected FxOpaqueEnum opaque;
 
-    /**
-     * Gets the value of the opaque property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FxOpaqueEnum }
-     *     
-     */
-    public FxOpaqueEnum getOpaque() {
-        if (opaque == null) {
-            return FxOpaqueEnum.A_ONE;
-        } else {
-            return opaque;
-        }
-    }
+	/**
+	 * Gets the value of the opaque property.
+	 * 
+	 * @return possible object is {@link FxOpaqueEnum }
+	 * 
+	 */
+	public FxOpaqueEnum getOpaque() {
+		if (opaque == null) {
+			return FxOpaqueEnum.A_ONE;
+		} else {
+			return opaque;
+		}
+	}
 
-    /**
-     * Sets the value of the opaque property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FxOpaqueEnum }
-     *     
-     */
-    public void setOpaque(FxOpaqueEnum value) {
-        this.opaque = value;
-    }
+	/**
+	 * Sets the value of the opaque property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link FxOpaqueEnum }
+	 * 
+	 */
+	public void setOpaque(FxOpaqueEnum value) {
+		this.opaque = value;
+	}
 
 }

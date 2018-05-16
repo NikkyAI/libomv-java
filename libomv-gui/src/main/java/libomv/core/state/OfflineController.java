@@ -47,15 +47,13 @@ import libomv.io.LoginManager.LoginProgressCallbackArgs;
 import libomv.io.LoginManager.LoginStatus;
 import libomv.utils.Callback;
 
-public class OfflineController implements StateController
-{
+public class OfflineController implements StateController {
 	private MainControl _Main;
 	private GridClient _Client;
 	private Browser _Browser;
 	private JMenuBar jMbMain;
-	
-	public OfflineController(MainControl main)
-	{
+
+	public OfflineController(MainControl main) {
 		_Main = main;
 		_Client = _Main.getGridClient();
 
@@ -64,70 +62,52 @@ public class OfflineController implements StateController
 		main.setControlPane(new LoginPane(_Main, getJBrowser()));
 		main.getJFrame().validate();
 	}
-		
+
 	@Override
-	public void finalize() throws Throwable
-	{
+	public void finalize() throws Throwable {
 		dispose();
 		super.finalize();
 	}
-	
+
 	@Override
-	public void actionPerformed(ActionEvent e)
-	{
-		if (e.getActionCommand().equals(MainControl.cmdLogin))
-		{
-			try
-			{
+	public void actionPerformed(ActionEvent e) {
+		if (e.getActionCommand().equals(MainControl.cmdLogin)) {
+			try {
 				_Main.setControlPane(new ProgressPane(_Main));
 				_Client.Login.RequestLogin(_Client.Login.new LoginParams(_Client), new LoginProgressHandler());
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		}
-		if (e.getActionCommand().equals(MainControl.cmdCancel))
-		{
-			_Client.Login.AbortLogin();			
+		if (e.getActionCommand().equals(MainControl.cmdCancel)) {
+			_Client.Login.AbortLogin();
 			_Main.setControlPane(new LoginPane(_Main, getJBrowser()));
-		}
-		else
-		{
+		} else {
 			_Main.actionPerformed(e);
 		}
 	}
 
-	public void dispose()
-	{
+	public void dispose() {
 		_Main.setContentPane(null);
 		_Main.setControlPane(null);
-		if (_Browser != null)
-		{
+		if (_Browser != null) {
 			_Browser.dispose();
 			_Browser = null;
-		}		
+		}
 	}
 
-	public class LoginProgressHandler implements Callback<LoginProgressCallbackArgs>
-	{
+	public class LoginProgressHandler implements Callback<LoginProgressCallbackArgs> {
 		@Override
-		public boolean callback(LoginProgressCallbackArgs e)
-		{
-			if (e.getStatus() == LoginStatus.Success)
-			{
+		public boolean callback(LoginProgressCallbackArgs e) {
+			if (e.getStatus() == LoginStatus.Success) {
 				// Login was successful
 				System.out.println("JOMV: Message of the day: " + e.getMessage());
 				_Main.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, MainControl.cmdLogin));
 				return true;
-			}
-			else if (e.getStatus() == LoginStatus.Redirecting)
-			{
+			} else if (e.getStatus() == LoginStatus.Redirecting) {
 				// Server requested redirection
 				System.out.println("JOMV: Server requested redirection: " + e.getReason());
-			}
-			else if (e.getStatus() == LoginStatus.Failed)
-			{
+			} else if (e.getStatus() == LoginStatus.Failed) {
 				System.out.println("JOMV: Error logging in: " + e.getReason() + " : " + e.getMessage());
 				_Main.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, MainControl.cmdLogout));
 				return true;
@@ -136,24 +116,22 @@ public class OfflineController implements StateController
 		}
 	}
 
-	private JMenuBar getJMenuBar()
-	{
-		if (jMbMain == null)
-		{
+	private JMenuBar getJMenuBar() {
+		if (jMbMain == null) {
 			jMbMain = new JMenuBar();
 
 			JMenu file = new JMenu("File");
-			
+
 			JMenuItem jMiSettings = MainWindow.newMenuItem("Settings...", this, MainControl.cmdSettings);
 			file.add(jMiSettings);
-			
+
 			file.addSeparator();
 
 			JMenuItem jMiQuit = MainWindow.newMenuItem("Quit...", this, MainControl.cmdQuit);
 			file.add(jMiQuit);
 
 			jMbMain.add(file);
-			
+
 			JMenu help = new JMenu("Help");
 
 			JMenuItem jMiBugReports = MainWindow.newMenuItem("Bugs/Feature Request...", this, MainControl.cmdBugs);
@@ -163,39 +141,37 @@ public class OfflineController implements StateController
 			help.add(jMiUpdates);
 
 			help.addSeparator();
-			
+
 			JMenuItem jMiAbout = MainWindow.newMenuItem("About Libomv Client...", this, MainControl.cmdAbout);
 			help.add(jMiAbout);
 
 			jMbMain.add(help);
-//			jMbMain.setHelpMenu(help); // needed for portability (Motif, etc.).
+			// jMbMain.setHelpMenu(help); // needed for portability (Motif, etc.).
 
 			JPanel panel = new JPanel();
 			jMbMain.add(panel);
 		}
 		return jMbMain;
 	}
-	
-	private Browser getJBrowser()
-	{
-		if (_Browser == null)
-		{
+
+	private Browser getJBrowser() {
+		if (_Browser == null) {
 			BrowserType type = BrowserType.getCrossPlatformBrowser();
-//			BrowserType type = BrowserType.getDefault();
+			// BrowserType type = BrowserType.getDefault();
 			String os = System.getProperty("os.name");
 			String arch = System.getProperty("os.arch");
 			if (os.contains("Windows") && (arch.indexOf("64") != -1))
 				type = BrowserType.IE;
 			_Browser = BrowserFactory.createBrowser(type);
-//			_Browser = new Browser(type);
+			// _Browser = new Browser(type);
 		}
 		return _Browser;
 	}
-	
-//	private BrowserView getBrowserView() {
-//		if (_BrowserView == null) {
-//			_BrowserView = new BrowserView(getJBrowser());
-//		}
-//		return _BrowserView;
-//	}
+
+	// private BrowserView getBrowserView() {
+	// if (_BrowserView == null) {
+	// _BrowserView = new BrowserView(getJBrowser());
+	// }
+	// return _BrowserView;
+	// }
 }

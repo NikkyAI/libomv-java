@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -34,26 +34,22 @@ import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 
-public class MediaEntry
-{
+public class MediaEntry {
 	// #region enums
 	// Permissions for control of object media
 	// [Flags]
-	public static class MediaPermission
-	{
+	public static class MediaPermission {
 		public static final byte None = 0;
 		public static final byte Owner = 1;
 		public static final byte Group = 2;
 		public static final byte Anyone = 4;
 		public static final byte All = Owner | Group | Anyone;
 
-		public static byte setValue(int value)
-		{
+		public static byte setValue(int value) {
 			return (byte) (value & _mask);
 		}
 
-		public static byte getValue(byte value)
-		{
+		public static byte getValue(byte value) {
 			return (byte) (value & _mask);
 		}
 
@@ -61,17 +57,14 @@ public class MediaEntry
 	}
 
 	// Style of cotrols that shold be displayed to the user
-	public enum MediaControls
-	{
+	public enum MediaControls {
 		Standard, Mini;
 
-		public byte getValue()
-		{
+		public byte getValue() {
 			return (byte) ordinal();
 		}
 
-		public static MediaControls setValue(int value)
-		{
+		public static MediaControls setValue(int value) {
 			if (value > 0 && value < values().length)
 				return values()[value];
 			return null;
@@ -127,23 +120,20 @@ public class MediaEntry
 	// Array of URLs that are whitelisted
 	public String[] WhiteList;
 
-	public MediaEntry()
-	{
+	public MediaEntry() {
 
 	}
 
-	public MediaEntry(OSD osd)
-	{
+	public MediaEntry(OSD osd) {
 		fromOSD(osd);
 	}
 
 	/**
 	 * Serialize to OSD
-	 * 
+	 *
 	 * @return OSDMap with the serialized data
 	 */
-	public OSDMap Serialize()
-	{
+	public OSDMap Serialize() {
 		OSDMap map = new OSDMap();
 
 		map.put("alt_image_enable", OSD.FromBoolean(EnableAlterntiveImage));
@@ -160,8 +150,7 @@ public class MediaEntry
 		map.put("perms_interact", OSD.FromInteger(InteractPermissions));
 
 		OSDArray wl = new OSDArray();
-		if (WhiteList != null && WhiteList.length > 0)
-		{
+		if (WhiteList != null && WhiteList.length > 0) {
 			for (int i = 0; i < WhiteList.length; i++)
 				wl.add(OSD.FromString(WhiteList[i]));
 		}
@@ -175,15 +164,13 @@ public class MediaEntry
 
 	/**
 	 * Deserialize from OSD data
-	 * 
+	 *
 	 * @param osd
 	 *            Serialized OSD data
 	 * @return Deserialized object
 	 */
-	public void fromOSD(OSD osd)
-	{
-		if (osd instanceof OSDMap)
-		{
+	public void fromOSD(OSD osd) {
+		if (osd instanceof OSDMap) {
 			OSDMap map = (OSDMap) osd;
 
 			EnableAlterntiveImage = map.get("alt_image_enable").AsBoolean();
@@ -199,14 +186,11 @@ public class MediaEntry
 			ControlPermissions = MediaPermission.setValue(map.get("perms_control").AsInteger());
 			InteractPermissions = MediaPermission.setValue(map.get("perms_interact").AsInteger());
 
-			if (map.get("whitelist").getType() == OSDType.Array)
-			{
+			if (map.get("whitelist").getType() == OSDType.Array) {
 				OSDArray wl = (OSDArray) map.get("whitelist");
-				if (wl.size() > 0)
-				{
+				if (wl.size() > 0) {
 					WhiteList = new String[wl.size()];
-					for (int i = 0; i < wl.size(); i++)
-					{
+					for (int i = 0; i < wl.size(); i++) {
 						WhiteList[i] = wl.get(i).AsString();
 					}
 				}

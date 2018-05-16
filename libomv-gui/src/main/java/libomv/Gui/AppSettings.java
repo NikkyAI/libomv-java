@@ -33,30 +33,23 @@ import org.apache.log4j.Logger;
 import libomv.io.GridClient;
 import libomv.utils.Settings;
 
-public class AppSettings extends Settings
-{
+public class AppSettings extends Settings {
 	private static final Logger logger = Logger.getLogger(AppSettings.class);
 	public static String disableSound = "disabledSound";
 
 	/* Initialize Restrained Love Manager */
 	public static final String ENABLE_RLV_MANAGER = "rlv_enabled";
-	
-	DefaultSetting[] defaults = {
-			new DefaultSetting(disableSound, true),
-			new DefaultSetting(ENABLE_RLV_MANAGER, false),
-	};
-	
-	public AppSettings(GridClient client)
-	{
+
+	DefaultSetting[] defaults = { new DefaultSetting(disableSound, true),
+			new DefaultSetting(ENABLE_RLV_MANAGER, false), };
+
+	public AppSettings(GridClient client) {
 		super("_libomv/settings.app");
 		setDefaults(defaults);
-		
-		try
-		{
+
+		try {
 			load();
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			logger.error("Failed to load settings", ex);
 		}
 	}

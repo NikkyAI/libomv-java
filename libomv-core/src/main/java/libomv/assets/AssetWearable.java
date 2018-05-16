@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -40,45 +40,35 @@ import libomv.types.UUID;
 import libomv.utils.Helpers;
 
 // Represents a Wearable Asset, Clothing, Hair, Skin, Etc
-public abstract class AssetWearable extends AssetItem
-{
+public abstract class AssetWearable extends AssetItem {
 	private static final Logger logger = Logger.getLogger(AssetWearable.class);
 
 	// Index of TextureEntry slots for avatar appearances
-	public enum AvatarTextureIndex
-	{
-		Unknown, HeadBodypaint, UpperShirt, LowerPants, EyesIris, Hair,	UpperBodypaint, LowerBodypaint,
-		LowerShoes, HeadBaked, UpperBaked, LowerBaked, EyesBaked, LowerSocks, UpperJacket, LowerJacket,
-		UpperGloves, UpperUndershirt, LowerUnderpants, Skirt, SkirtBaked, HairBaked,
-        LowerAlpha, UpperAlpha, HeadAlpha, EyesAlpha, HairAlpha, HeadTattoo, UpperTattoo, LowerTattoo;
+	public enum AvatarTextureIndex {
+		Unknown, HeadBodypaint, UpperShirt, LowerPants, EyesIris, Hair, UpperBodypaint, LowerBodypaint, LowerShoes, HeadBaked, UpperBaked, LowerBaked, EyesBaked, LowerSocks, UpperJacket, LowerJacket, UpperGloves, UpperUndershirt, LowerUnderpants, Skirt, SkirtBaked, HairBaked, LowerAlpha, UpperAlpha, HeadAlpha, EyesAlpha, HairAlpha, HeadTattoo, UpperTattoo, LowerTattoo;
 
-		public static AvatarTextureIndex setValue(int value)
-		{
+		public static AvatarTextureIndex setValue(int value) {
 			value++;
-			if (value > 0 && value < values().length )
+			if (value > 0 && value < values().length)
 				return values()[value];
 			return Unknown;
 		}
 
-		public static byte getValue(AvatarTextureIndex value)
-		{
+		public static byte getValue(AvatarTextureIndex value) {
 			return (byte) (value.ordinal() - 1);
 		}
 
-		public static int getNumValues()
-		{
+		public static int getNumValues() {
 			return values().length - 1;
 		}
-		
-		public byte getValue()
-		{
+
+		public byte getValue() {
 			return (byte) (ordinal() - 1);
 		}
 	}
 
 	/** Types of wearable assets */
-	public static enum WearableType
-	{
+	public static enum WearableType {
 		/** Invalid wearable asset */
 		Invalid,
 		/** Body shape */
@@ -113,52 +103,43 @@ public abstract class AssetWearable extends AssetItem
 		Tattoo,
 		/** Physics */
 		Physics;
-		
-		static String strings[] = {"Invalid", "Shape", "Skin", "Hair", "Eyes", "Shirt", "Pants", "Shoes", "Socks", "Jacket",
-				                   "Gloves", "Undershirt", "Underpants", "Skirt", "Alpha", "Tattoo", "Physics"};
 
-		public static WearableType setValue(String value)
-		{
-			for (int i = 0; i < values().length; i++)
-			{
-				if (value.equals(strings[i]))
-				{
+		static String strings[] = { "Invalid", "Shape", "Skin", "Hair", "Eyes", "Shirt", "Pants", "Shoes", "Socks",
+				"Jacket", "Gloves", "Undershirt", "Underpants", "Skirt", "Alpha", "Tattoo", "Physics" };
+
+		public static WearableType setValue(String value) {
+			for (int i = 0; i < values().length; i++) {
+				if (value.equals(strings[i])) {
 					return values()[i];
 				}
 			}
 			return Invalid;
 		}
 
-		public static WearableType setValue(int value)
-		{
+		public static WearableType setValue(int value) {
 			if (value >= 0 && value < values().length - 1)
-			    return values()[value + 1];
+				return values()[value + 1];
 			return Invalid;
 		}
 
-		public static byte getValue(WearableType value)
-		{
-			return (byte)((value == Invalid) ? 255 : (value.ordinal() - 1));
+		public static byte getValue(WearableType value) {
+			return (byte) ((value == Invalid) ? 255 : (value.ordinal() - 1));
 		}
 
-		public byte getValue()
-		{
-			return (byte)(ordinal() - 1);
+		public byte getValue() {
+			return (byte) (ordinal() - 1);
 		}
-		
+
 		@Override
-		public String toString()
-		{
+		public String toString() {
 			return toString(this);
 		}
 
-		public static String toString(WearableType point)
-		{
+		public static String toString(WearableType point) {
 			return strings[point.ordinal()];
 		}
 
-		public static int getNumValues()
-		{
+		public static int getNumValues() {
 			return values().length - 1;
 		}
 	}
@@ -193,81 +174,66 @@ public abstract class AssetWearable extends AssetItem
 
 	/**
 	 * Initializes a new instance of an AssetWearable object with parameters
-	 * 
+	 *
 	 * @param assetID
 	 *            A unique <see cref="UUID"/> specific to this asset
 	 * @param assetData
 	 *            A byte array containing the raw asset data
 	 */
-	public AssetWearable(UUID assetID, byte[] assetData)
-	{
+	public AssetWearable(UUID assetID, byte[] assetData) {
 		super(assetID, assetData);
 	}
 
 	/**
 	 * Decode an assets byte encoded data to a string
-	 * 
+	 *
 	 * @return true if the asset data was decoded successfully
 	 */
 	@Override
-	protected boolean decode()
-	{
+	protected boolean decode() {
 		/* Initialize certain values to some sensible default values */
-		Name =  Helpers.EmptyString;
+		Name = Helpers.EmptyString;
 		Description = Helpers.EmptyString;
 		wearableType = WearableType.Shape;
 		Permissions = new Permissions();
 
-        if (AssetData == null)
+		if (AssetData == null)
 			return false;
 
-		try
-		{
+		try {
 			String data = Helpers.BytesToString(AssetData);
 
 			data = data.replace("\r", Helpers.EmptyString);
 			String[] lines = data.split("\n");
-			for (int stri = 0; stri < lines.length; stri++)
-			{
-				if (stri == 0)
-				{
+			for (int stri = 0; stri < lines.length; stri++) {
+				if (stri == 0) {
 					int version = -1;
 					String versionstring = lines[stri];
 					if (versionstring.split(" ").length == 1)
-                        version = Integer.parseInt(versionstring);
-                    else
-    					version = Integer.parseInt(versionstring.split(" ")[2]);
+						version = Integer.parseInt(versionstring);
+					else
+						version = Integer.parseInt(versionstring.split(" ")[2]);
 
-					if (version != 22 && version != 18 && version != 16 && version != 15)
-					{
+					if (version != 22 && version != 18 && version != 16 && version != 15) {
 						logger.debug("Unsupported asset wearable version " + version);
 						return false;
 					}
-				}
-				else if (stri == 1)
-				{
+				} else if (stri == 1) {
 					Name = lines[stri];
-				}
-				else if (stri == 2)
-				{
+				} else if (stri == 2) {
 					Description = lines[stri];
-				}
-				else
-				{
+				} else {
 					String line = lines[stri].trim();
 					String[] fields = line.split("\t");
 
-					if (fields.length == 1)
-					{
+					if (fields.length == 1) {
 						fields = line.split(" ");
-						if (fields[0].equals("parameters"))
-						{
+						if (fields[0].equals("parameters")) {
 							if (Params == null)
 								Params = new HashMap<Integer, Float>();
 
 							int count = Integer.parseInt(fields[1]) + stri;
-							for (; stri < count;)
-							{
+							for (; stri < count;) {
 								stri++;
 								line = lines[stri].trim();
 								fields = line.split(" ");
@@ -287,15 +253,12 @@ public abstract class AssetWearable extends AssetItem
 
 								Params.put(id, weight);
 							}
-						}
-						else if (fields[0].equals("textures"))
-						{
+						} else if (fields[0].equals("textures")) {
 							if (Textures == null)
 								Textures = new HashMap<AvatarTextureIndex, UUID>();
 
 							int count = Integer.parseInt(fields[1]) + stri;
-							for (; stri < count;)
-							{
+							for (; stri < count;) {
 								stri++;
 								line = lines[stri].trim();
 								fields = line.split(" ");
@@ -305,85 +268,49 @@ public abstract class AssetWearable extends AssetItem
 
 								Textures.put(id, texture);
 							}
-						}
-						else if (fields[0].equals("type"))
-						{
+						} else if (fields[0].equals("type")) {
 							wearableType = WearableType.setValue(Helpers.TryParseInt(fields[1]));
 						}
 
-					}
-					else if (fields.length == 2)
-					{
-						if (fields[0].equals("creator_mask"))
-						{
+					} else if (fields.length == 2) {
+						if (fields[0].equals("creator_mask")) {
 							// Deprecated, apply this as the base mask
 							Permissions.BaseMask = (int) Helpers.TryParseHex(fields[1]);
-						}
-						else if (fields[0].equals("base_mask"))
-						{
+						} else if (fields[0].equals("base_mask")) {
 							Permissions.BaseMask = (int) Helpers.TryParseHex(fields[1]);
-						}
-						else if (fields[0].equals("owner_mask"))
-						{
+						} else if (fields[0].equals("owner_mask")) {
 							Permissions.OwnerMask = (int) Helpers.TryParseHex(fields[1]);
-						}
-						else if (fields[0].equals("group_mask"))
-						{
+						} else if (fields[0].equals("group_mask")) {
 							Permissions.GroupMask = (int) Helpers.TryParseHex(fields[1]);
-						}
-						else if (fields[0].equals("everyone_mask"))
-						{
+						} else if (fields[0].equals("everyone_mask")) {
 							Permissions.EveryoneMask = (int) Helpers.TryParseHex(fields[1]);
-						}
-						else if (fields[0].equals("next_owner_mask"))
-						{
+						} else if (fields[0].equals("next_owner_mask")) {
 							Permissions.NextOwnerMask = (int) Helpers.TryParseHex(fields[1]);
-						}
-						else if (fields[0].equals("creator_id"))
-						{
+						} else if (fields[0].equals("creator_id")) {
 							Creator = new UUID(fields[1]);
-						}
-						else if (fields[0].equals("owner_id"))
-						{
+						} else if (fields[0].equals("owner_id")) {
 							Owner = new UUID(fields[1]);
-						}
-						else if (fields[0].equals("last_owner_id"))
-						{
+						} else if (fields[0].equals("last_owner_id")) {
 							LastOwner = new UUID(fields[1]);
-						}
-						else if (fields[0].equals("group_id"))
-						{
+						} else if (fields[0].equals("group_id")) {
 							Group = new UUID(fields[1]);
-						}
-						else if (fields[0].equals("group_owned"))
-						{
+						} else if (fields[0].equals("group_owned")) {
 							GroupOwned = (Integer.parseInt(fields[1]) != 0);
-						}
-						else if (fields[0].equals("sale_type"))
-						{
+						} else if (fields[0].equals("sale_type")) {
 							ForSale = SaleType.setValue(fields[1]);
-						}
-						else if (fields[0].equals("sale_price"))
-						{
+						} else if (fields[0].equals("sale_price")) {
 							SalePrice = Integer.parseInt(fields[1]);
-						}
-						else if (fields[0].equals("sale_info"))
-						{
+						} else if (fields[0].equals("sale_info")) {
 							// Container for sale_type and sale_price, ignore
-						}
-						else if (fields[0].equals("perm_mask"))
-						{
+						} else if (fields[0].equals("perm_mask")) {
 							// Deprecated, apply this as the next owner mask
 							Permissions.NextOwnerMask = (int) Helpers.TryParseHex(fields[1]);
-						}
-						else
+						} else
 							return false;
 					}
 				}
 			}
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			logger.warn("Failed decoding wearable asset " + AssetID + ": " + ex.getMessage());
 			return false;
 		}
@@ -393,8 +320,7 @@ public abstract class AssetWearable extends AssetItem
 	// Encode the assets string represantion into a format consumable by the
 	// asset server
 	@Override
-	protected void encode()
-	{
+	protected void encode() {
 		StringBuilder data = new StringBuilder("LLWearable version 22\n");
 		data.append(Name + "\n\n");
 		data.append("\tpermissions 0\n\t{\n");
@@ -418,14 +344,12 @@ public abstract class AssetWearable extends AssetItem
 		data.append("type " + WearableType.getValue(wearableType) + "\n");
 
 		data.append("parameters " + Params.size() + "\n");
-		for (Entry<Integer, Float> param : Params.entrySet())
-		{
+		for (Entry<Integer, Float> param : Params.entrySet()) {
 			data.append(param.getKey() + " " + Helpers.FloatToTerseString(param.getValue()) + "\n");
 		}
 
 		data.append("textures " + Textures.size() + "\n");
-		for (Entry<AvatarTextureIndex, UUID> texture : Textures.entrySet())
-		{
+		for (Entry<AvatarTextureIndex, UUID> texture : Textures.entrySet()) {
 			data.append(texture.getKey().getValue() + " " + texture.getValue().toString() + "\n");
 		}
 

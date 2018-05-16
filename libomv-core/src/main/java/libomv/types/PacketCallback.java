@@ -6,7 +6,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -33,7 +33,6 @@ package libomv.types;
 import libomv.model.Simulator;
 import libomv.packets.Packet;
 
-public interface PacketCallback
-{
+public interface PacketCallback {
 	public void packetCallback(Packet packet, Simulator simulator) throws Exception;
 }

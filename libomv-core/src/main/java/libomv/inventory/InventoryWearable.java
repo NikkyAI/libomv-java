@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -33,36 +33,31 @@ import libomv.assets.AssetWearable.WearableType;
 import libomv.types.UUID;
 
 /** InventoryWearable Class, details on a clothing item or body part */
-public class InventoryWearable extends InventoryItem
-{
+public class InventoryWearable extends InventoryItem {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Construct an InventoryWearable object
-	 * 
+	 *
 	 * @param itemID
 	 *            A {@link OpenMetaverse.UUID} which becomes the
 	 *            {@link OpenMetaverse.InventoryItem} objects AssetUUID
 	 */
-	public InventoryWearable(UUID itemID)
-	{
+	public InventoryWearable(UUID itemID) {
 		super(itemID);
 	}
-	
+
 	@Override
-	public InventoryType getType()
-	{
+	public InventoryType getType() {
 		return InventoryType.Wearable;
 	}
 
 	/** The {@link OpenMetaverse.WearableType} , Skin, Shape, Skirt, Etc */
-	public final WearableType getWearableType()
-	{
+	public final WearableType getWearableType() {
 		return WearableType.setValue(ItemFlags & 0xFF);
 	}
 
-	public final void setWearableType(WearableType value)
-	{
+	public final void setWearableType(WearableType value) {
 		ItemFlags = WearableType.getValue(value) | (ItemFlags & ~0xFF);
 	}
 }

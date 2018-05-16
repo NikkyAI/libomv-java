@@ -60,8 +60,7 @@ import libomv.utils.Helpers;
  * This is a UI less intermediate controller that implements an ActionListener to serve as central
  * message dispatcher during a particular state. Currently offline and online state are distinguished
  */
-public class StateController implements ActionListener
-{
+public class StateController implements ActionListener {
 	public static final String cmdFriends = "friends";
 	public static final String cmdGroups = "groups";
 	public static final String cmdInventory = "inventory";
@@ -79,13 +78,12 @@ public class StateController implements ActionListener
 
 	private CommWindow Comm;
 	public RLVManager RLV;
-	
+
 	private JLabel jMiAmount;
 
 	private Callback<BalanceCallbackArgs> balanceUpdateCallback = new BalanceUpdateCallback();
 
-	public StateController(MainControl main)
-	{
+	public StateController(MainControl main) {
 		_Main = main;
 		_Client = _Main.getGridClient();
 
@@ -95,99 +93,79 @@ public class StateController implements ActionListener
 	}
 
 	@Override
-	public void finalize() throws Throwable
-	{
+	public void finalize() throws Throwable {
 		dispose();
 		super.finalize();
 	}
-	
+
 	@Override
-	public void actionPerformed(ActionEvent e)
-	{
+	public void actionPerformed(ActionEvent e) {
 		/* Handle local events */
-		String action = e.getActionCommand();	
-		if (action.equals(MainControl.cmdLogin))
-		{
+		String action = e.getActionCommand();
+		if (action.equals(MainControl.cmdLogin)) {
 			_Client.Self.OnBalanceUpdated.add(balanceUpdateCallback);
 			_Progress = new ProgressPane(_Main);
 			_Main.setControlPane(_Progress);
 			_Main.getJFrame().validate();
 			_Progress.updateProgress(0, "Preparing to login...", "");
-			try
-			{
+			try {
 				_Client.Login.RequestLogin(_Client.Login.new LoginParams(_Client), new LoginProgressHandler());
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-		}
-		else if (e.getActionCommand().equals(MainControl.cmdCancel))
-		{
+		} else if (e.getActionCommand().equals(MainControl.cmdCancel)) {
 			_Client.Login.AbortLogin();
 			// Browser and offline menu should still be assigned
 			_Main.setControlPane(new LoginPane(_Main, getBrowser()));
 			_Main.getJFrame().validate();
-		}
-		else if (e.getActionCommand().equals(MainControl.cmdLogout))
-		{
+		} else if (e.getActionCommand().equals(MainControl.cmdLogout)) {
 			_Main.setJMenuBar(getOfflineMenuBar());
 			_Main.setContentPane(getBrowser().getComponent());
 			_Main.setControlPane(new LoginPane(_Main, getBrowser()));
 			_Main.getJFrame().validate();
-		}
-		else if (action.equals(cmdFriends) ||
-			     action.equals(cmdGroups))
-		{
+		} else if (action.equals(cmdFriends) || action.equals(cmdGroups)) {
 			Comm.setFocus(e.getActionCommand(), null);
 			Comm.setVisible(true);
-		}
-		else if (action.equals(cmdInventory))
-		{
-			
-		}
-		else
-		{
+		} else if (action.equals(cmdInventory)) {
+
+		} else {
 			/* Pass to main window to be handled */
 			_Main.actionPerformed(e);
 		}
 	}
 
-	public void dispose()
-	{
+	public void dispose() {
 		_Main.setContentPane(null);
 		_Main.setControlPane(null);
 
 		Comm = null;
 		RLV = null;
-		
+
 		/* Make sure to unregister any callbacks */
 		_Client.Self.OnBalanceUpdated.remove(balanceUpdateCallback);
-		
+
 		/* Dispose of Browser instance if it exists to avoid crash in native code */
-		if (_Browser != null)
-		{
+		if (_Browser != null) {
 			_Browser.dispose();
 			_Browser = null;
-		}		
+		}
 	}
-	
-	private JMenuBar getOfflineMenuBar()
-	{
+
+	private JMenuBar getOfflineMenuBar() {
 		JMenuBar jMbMain = new JMenuBar();
 
 		JMenu file = new JMenu("File");
-		
+
 		JMenuItem jMiSettings = MainWindow.newMenuItem("Settings...", this, MainControl.cmdSettings);
 		file.add(jMiSettings);
-		
+
 		file.addSeparator();
 
 		JMenuItem jMiQuit = MainWindow.newMenuItem("Quit...", this, MainControl.cmdQuit);
 		file.add(jMiQuit);
 
 		jMbMain.add(file);
-		
+
 		JMenu help = new JMenu("Help");
 
 		JMenuItem jMiBugReports = MainWindow.newMenuItem("Bugs/Feature Request...", this, MainControl.cmdBugs);
@@ -197,21 +175,20 @@ public class StateController implements ActionListener
 		help.add(jMiUpdates);
 
 		help.addSeparator();
-		
+
 		JMenuItem jMiAbout = MainWindow.newMenuItem("About Libomv Client...", this, MainControl.cmdAbout);
 		help.add(jMiAbout);
 
 		jMbMain.add(help);
-//		jMbMain.setHelpMenu(help); // needed for portability (Motif, etc.).
+		// jMbMain.setHelpMenu(help); // needed for portability (Motif, etc.).
 		return jMbMain;
 	}
 
-	private JMenuBar getOnlineMenuBar()
-	{
+	private JMenuBar getOnlineMenuBar() {
 		JMenuBar jMbMain = new JMenuBar();
 
 		JMenu file = new JMenu("File");
-		
+
 		JMenuItem jMiFileOpen = MainWindow.newMenuItem("Open...", this, "open");
 		file.add(jMiFileOpen);
 		file.addSeparator();
@@ -219,7 +196,7 @@ public class StateController implements ActionListener
 		JMenuItem jMiSettings = MainWindow.newMenuItem("Settings...", this, MainControl.cmdSettings);
 		file.add(jMiSettings);
 		file.addSeparator();
-		
+
 		JMenuItem jMiFileQuit = MainWindow.newMenuItem("Quit", this, MainControl.cmdQuit);
 		file.add(jMiFileQuit);
 
@@ -231,16 +208,16 @@ public class StateController implements ActionListener
 
 		JMenuItem jMiGroups = MainWindow.newMenuItem("Groups", this, cmdGroups);
 		world.add(jMiGroups);
-		
+
 		JMenuItem jMiInventory = MainWindow.newMenuItem("Inventory", this, cmdInventory);
 		world.add(jMiInventory);
-		
+
 		JMenuItem jMiSearch = MainWindow.newMenuItem("Search", this, cmdSearch);
 		world.add(jMiSearch);
-		
+
 		JMenuItem jMiMap = MainWindow.newMenuItem("Map", this, cmdMaps);
 		world.add(jMiMap);
-		
+
 		JMenuItem jMiObjects = MainWindow.newMenuItem("Objects", this, cmdObjects);
 		world.add(jMiObjects);
 
@@ -268,7 +245,7 @@ public class StateController implements ActionListener
 		help.add(jMiAbout);
 		jMbMain.add(help);
 		// jMbMain.setHelpMenu(help); // needed for portability (Motif, etc.).
-		
+
 		jMbMain.add(Box.createGlue());
 
 		jMbMain.add(getJAmount());
@@ -276,91 +253,73 @@ public class StateController implements ActionListener
 		return jMbMain;
 	}
 
-	private Browser getBrowser()
-	{
-		if (_Browser == null)
-		{
+	private Browser getBrowser() {
+		if (_Browser == null) {
 			String os = System.getProperty("os.name").toLowerCase();
 			String ar = System.getProperty("os.arch").toLowerCase();
-//			BrowserType type = BrowserType.getDefault();
+			// BrowserType type = BrowserType.getDefault();
 			BrowserType type = BrowserType.getCrossPlatformBrowser();
-			
-//			if (os.startsWith("windows") /* && ar.contains("amd64") */)
-//			{
-				type = BrowserType.IE;
-//			}			
-	        _Browser = BrowserFactory.createBrowser(type);		
-//	        _Browser = new Browser(type);
+
+			// if (os.startsWith("windows") /* && ar.contains("amd64") */)
+			// {
+			type = BrowserType.IE;
+			// }
+			_Browser = BrowserFactory.createBrowser(type);
+			// _Browser = new Browser(type);
 		}
 		return _Browser;
-	}	
+	}
 
-//	private BrowserView getBrowserView() {
-//		if (_BrowserView == null) {
-//			_BrowserView = new BrowserView(getBrowser());
-//		}
-//		return _BrowserView;
-//	}
-//	
-	private JLabel getJAmount()
-	{
-		if (jMiAmount == null)
-		{
+	// private BrowserView getBrowserView() {
+	// if (_BrowserView == null) {
+	// _BrowserView = new BrowserView(getBrowser());
+	// }
+	// return _BrowserView;
+	// }
+	//
+	private JLabel getJAmount() {
+		if (jMiAmount == null) {
 			_Main.getGridClient().Self.getBalance();
-			jMiAmount = new JLabel(String.format("%s %s", _Main.getGridClient().getGrid(null).currencySym, _Main.getGridClient().Self.getBalance()));
+			jMiAmount = new JLabel(String.format("%s %s", _Main.getGridClient().getGrid(null).currencySym,
+					_Main.getGridClient().Self.getBalance()));
 		}
 		return jMiAmount;
 	}
 
-	public class LoginProgressHandler implements Callback<LoginProgressCallbackArgs>
-	{
+	public class LoginProgressHandler implements Callback<LoginProgressCallbackArgs> {
 		@Override
-		public boolean callback(LoginProgressCallbackArgs e)
-		{
-			if (e.getStatus() == LoginStatus.ConnectingToLogin)
-			{
+		public boolean callback(LoginProgressCallbackArgs e) {
+			if (e.getStatus() == LoginStatus.ConnectingToLogin) {
 				_Progress.updateProgress(10, "Logging in...", Helpers.EmptyString);
-			}
-			else if (e.getStatus() == LoginStatus.Redirecting)
-			{
+			} else if (e.getStatus() == LoginStatus.Redirecting) {
 				// Server requested redirection
 				_Progress.updateProgress(20, "Server requested redirection...", e.getReply().NextUrl);
-			}
-			else if (e.getStatus() == LoginStatus.ReadingResponse)
-			{
+			} else if (e.getStatus() == LoginStatus.ReadingResponse) {
 				_Progress.updateProgress(30, "Reading response...", null);
-			}
-			else if (e.getStatus() == LoginStatus.ConnectingToSim)
-			{
+			} else if (e.getStatus() == LoginStatus.ConnectingToSim) {
 				_Progress.updateProgress(40, e.getMessage(), e.getReply().Message);
-			}
-			else if (e.getStatus() == LoginStatus.Failed)
-			{
+			} else if (e.getStatus() == LoginStatus.Failed) {
 				_Progress.updateProgress(90, "Login failed...", e.getReason());
 				actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, MainControl.cmdCancel));
 				return true;
-			}
-			else if (e.getStatus() == LoginStatus.Success)
-			{
+			} else if (e.getStatus() == LoginStatus.Success) {
 				// Login was successful
 				_Progress.updateProgress(50, "Authentification succeed...", e.getReply().Message);
 
-				// Create the CommWindow as hidden window as it is also our communication manager
+				// Create the CommWindow as hidden window as it is also our communication
+				// manager
 				Comm = new CommWindow(_Main);
 				// Create the RLV manager
 				RLV = new RLVManager(_Main);
-				
-				try
-				{
+
+				try {
 					_Client.Self.RequestMuteList();
 					_Client.Self.RetrieveInstantMessages();
-//					_Client.Appearance.RequestSetAppearance();
+					// _Client.Appearance.RequestSetAppearance();
+				} catch (Exception ex) {
+
 				}
-				catch (Exception ex)
-				{
-					
-				}
-				
+
 				_Main.setJMenuBar(getOnlineMenuBar());
 				_Main.setContentPane(null);
 				_Main.setControlPane(new OnlinePane(_Main));
@@ -373,25 +332,18 @@ public class StateController implements ActionListener
 		}
 	}
 
-	private class BalanceUpdateCallback implements Callback<BalanceCallbackArgs>
-	{
+	private class BalanceUpdateCallback implements Callback<BalanceCallbackArgs> {
 		@Override
-		public boolean callback(final BalanceCallbackArgs params)
-		{
-			EventQueue.invokeLater(new Runnable()
-			{
-				public void run()
-				{
+		public boolean callback(final BalanceCallbackArgs params) {
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
 					String symbol = _Client.getGrid(null).currencySym;
-					getJAmount().setText(String.format("%s %s", symbol == null || symbol.isEmpty() ? "$" : symbol, params.getBalance()));
-					if (!params.getFirst() && params.getDelta() > 50)
-					{
-						if (params.getDelta() < 0)
-						{
+					getJAmount().setText(String.format("%s %s", symbol == null || symbol.isEmpty() ? "$" : symbol,
+							params.getBalance()));
+					if (!params.getFirst() && params.getDelta() > 50) {
+						if (params.getDelta() < 0) {
 							/* Create money gone sound */
-						}
-						else
-						{
+						} else {
 							/* Create cash register sound */
 						}
 					}

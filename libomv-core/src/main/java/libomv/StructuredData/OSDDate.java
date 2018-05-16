@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -35,85 +35,71 @@ import java.util.TimeZone;
 
 import libomv.utils.Helpers;
 
-public class OSDDate extends OSD
-{
+public class OSDDate extends OSD {
 	private long value;
 
 	@Override
-	public OSDType getType()
-	{
+	public OSDType getType() {
 		return OSDType.Date;
 	}
 
-	public OSDDate(Date value)
-	{
+	public OSDDate(Date value) {
 		this.value = value.getTime();
 	}
 
 	@Override
-	public String AsString()
-	{
+	public String AsString() {
 		SimpleDateFormat df = new SimpleDateFormat(FRACT_DATE_FMT);
 		df.setTimeZone(TimeZone.getTimeZone("UTC"));
 		return df.format(new Date(value));
 	}
 
 	@Override
-	public int AsInteger()
-	{
+	public int AsInteger() {
 		return (int) value / 1000;
 	}
 
 	@Override
-	public int AsUInteger()
-	{
-		return (int)(value / 1000) & 0xffffffff;
+	public int AsUInteger() {
+		return (int) (value / 1000) & 0xffffffff;
 	}
 
 	@Override
-	public long AsLong()
-	{
+	public long AsLong() {
 		return (value / 1000);
 	}
 
 	@Override
-	public long AsULong()
-	{
+	public long AsULong() {
 		return (value / 1000) & 0xffffffffffffffffl;
 	}
 
 	@Override
-	public byte[] AsBinary()
-	{
+	public byte[] AsBinary() {
 		return Helpers.DoubleToBytesL(value / 1000.0);
 	}
 
 	@Override
-	public Date AsDate()
-	{
+	public Date AsDate() {
 		return new Date(value);
 	}
 
 	@Override
-	public int hashCode()
-	{
-		return (int)value | (int)(value >> 32);
-	}
-	
-	@Override
-	public boolean equals(Object obj)
-	{
-		return obj != null && obj instanceof OSD && equals((OSD)obj);
+	public int hashCode() {
+		return (int) value | (int) (value >> 32);
 	}
 
-	public boolean equals(OSD osd)
-	{
+	@Override
+	public boolean equals(Object obj) {
+		return obj != null && obj instanceof OSD && equals((OSD) obj);
+	}
+
+	public boolean equals(OSD osd) {
 		return osd != null && osd.AsLong() == value;
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return AsString();
 	}
 }

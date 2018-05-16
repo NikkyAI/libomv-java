@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -31,73 +31,61 @@ package libomv.StructuredData;
 
 import libomv.types.UUID;
 
-public class OSDUUID extends OSD
-{
+public class OSDUUID extends OSD {
 	private UUID value;
 
 	@Override
-	public OSDType getType()
-	{
+	public OSDType getType() {
 		return OSDType.UUID;
 	}
 
-	public OSDUUID(UUID value)
-	{
+	public OSDUUID(UUID value) {
 		this.value = value;
 	}
 
 	@Override
-	public boolean AsBoolean()
-	{
+	public boolean AsBoolean() {
 		return (value == null || value.equals(UUID.Zero)) ? false : true;
 	}
 
 	@Override
-	public String AsString()
-	{
+	public String AsString() {
 		return value.toString();
 	}
 
 	@Override
-	public UUID AsUUID()
-	{
+	public UUID AsUUID() {
 		return value;
 	}
 
 	@Override
-	public byte[] AsBinary()
-	{
+	public byte[] AsBinary() {
 		return value.getBytes();
 	}
 
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		return value.hashCode();
 	}
-	
+
 	@Override
-	public boolean equals(Object obj)
-	{
-		return obj != null && obj instanceof OSD && equals((OSD)obj);
+	public boolean equals(Object obj) {
+		return obj != null && obj instanceof OSD && equals((OSD) obj);
 	}
 
-	public boolean equals(OSD osd)
-	{
+	public boolean equals(OSD osd) {
 		return osd != null && osd.AsUUID().equals(value);
 	}
 
 	@Override
-	public OSD clone()
-	{
-		OSDUUID osd = (OSDUUID)super.clone();
+	public OSD clone() {
+		OSDUUID osd = (OSDUUID) super.clone();
 		osd.value = new UUID(this.value);
 		return osd;
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return AsString();
 	}
 }

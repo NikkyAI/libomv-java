@@ -6,7 +6,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -46,12 +46,10 @@ import org.apache.log4j.Logger;
 import libomv.types.PacketFrequency;
 import libomv.utils.HashMapInt;
 
-public class ProtocolManager
-{
+public class ProtocolManager {
 	private static final Logger logger = Logger.getLogger(ProtocolManager.class);
-	
-	public static class FieldType
-	{
+
+	public static class FieldType {
 		public static final int U8 = 0;
 
 		public static final int U16 = 1;
@@ -89,42 +87,24 @@ public class ProtocolManager
 		public static final int IPPORT = 17;
 
 		public static final int Variable = 18;
-		
+
 		public static final int Fixed = 19;
-		
+
 		public static final int NumTypes = 20;
 
-		public static final String[] TypeNames = { "U8", "U16", "U32", "U64", "S8", "S16", "S32", "S64", "F32", "F64", "LLUUID",
-				"BOOL", "LLVector3", "LLVector3d", "LLVector4", "LLQuaternion", "IPADDR", "IPPORT", "Variable", "Fixed"};
-		
-		public static final short[] TypeSizes = { 1 /* U8 */,
-			                                      2 /* U16 */,
-			                                      4 /* U32 */,
-			                                      8 /* U64 */,
-			                                      1 /* I8 */,
-			                                      2 /* I16 */, 
-			                                      4 /* I32 */,
-			                                      8 /* I64 */,
-			                                      4 /* F32 */, 
-			                                      8 /* F64 */,
-			                                      16 /* UUID */,
-								  				  1 /* BOOL */,
-									  			  12 /* Vector3 */,
-												  24 /* Vector3d */,
-												  16 /* Vector4 */,
-												  16 /* Quaternion */,
-												  4 /* IPADDR */,
-												  2 /* IPPORT */,
-												  0 /* Variable */,
-												  0 /* Fixed */};
-		
-		public static int getFieldType(String token)
-		{
+		public static final String[] TypeNames = { "U8", "U16", "U32", "U64", "S8", "S16", "S32", "S64", "F32", "F64",
+				"LLUUID", "BOOL", "LLVector3", "LLVector3d", "LLVector4", "LLQuaternion", "IPADDR", "IPPORT",
+				"Variable", "Fixed" };
+
+		public static final short[] TypeSizes = { 1 /* U8 */, 2 /* U16 */, 4 /* U32 */, 8 /* U64 */, 1 /* I8 */,
+				2 /* I16 */, 4 /* I32 */, 8 /* I64 */, 4 /* F32 */, 8 /* F64 */, 16 /* UUID */, 1 /* BOOL */,
+				12 /* Vector3 */, 24 /* Vector3d */, 16 /* Vector4 */, 16 /* Quaternion */, 4 /* IPADDR */,
+				2 /* IPPORT */, 0 /* Variable */, 0 /* Fixed */ };
+
+		public static int getFieldType(String token) {
 			int value = 0;
-			for (int i = 0; i < TypeNames.length; i++)
-			{
-				if (FieldType.TypeNames[i].equals(token))
-				{
+			for (int i = 0; i < TypeNames.length; i++) {
+				if (FieldType.TypeNames[i].equals(token)) {
 					value = i;
 					break;
 				}
@@ -133,8 +113,7 @@ public class ProtocolManager
 		}
 	}
 
-	public class MapField implements Comparable<Object>, Cloneable
-	{
+	public class MapField implements Comparable<Object>, Cloneable {
 		public int keywordIndex;
 
 		public short offset;
@@ -144,59 +123,47 @@ public class ProtocolManager
 		public short count;
 
 		@Override
-		public Object clone()
-		{
-			try
-			{
+		public Object clone() {
+			try {
 				return super.clone();
-			}
-			catch (CloneNotSupportedException e)
-			{
+			} catch (CloneNotSupportedException e) {
 				return null;
 			}
 		}
 
 		@Override
-		public int compareTo(Object obj)
-		{
+		public int compareTo(Object obj) {
 			MapField temp = (MapField) obj;
 			return keywordPosition(this.keywordIndex).compareTo(keywordPosition(temp.keywordIndex));
 		}
 	}
 
-	public class MapBlock implements Comparable<Object>, Cloneable
-	{
+	public class MapBlock implements Comparable<Object>, Cloneable {
 		public int keywordIndex;
-		
+
 		public short size;
 
 		public short count;
 
 		public ArrayList<MapField> Fields;
-		
+
 		@Override
-		public Object clone()
-		{
-			try
-			{
+		public Object clone() {
+			try {
 				return super.clone();
-			}
-			catch (CloneNotSupportedException e)
-			{
+			} catch (CloneNotSupportedException e) {
 				return null;
 			}
 		}
 
 		@Override
-		public int compareTo(Object obj)
-		{
+		public int compareTo(Object obj) {
 			MapBlock temp = (MapBlock) obj;
 			return keywordPosition(this.keywordIndex).compareTo(keywordPosition(temp.keywordIndex));
 		}
 	}
 
-	public class MapPacket
-	{
+	public class MapPacket {
 
 		public int ID;
 
@@ -213,33 +180,28 @@ public class ProtocolManager
 		public ArrayList<MapBlock> Blocks;
 	}
 
-	public class MapPacketMap
-	{
+	public class MapPacketMap {
 		public ArrayList<MapPacket> mapPackets;
 
 		public HashMap<Integer, MapPacket> commandMapPacket;
 
 		public Hashtable<String, MapPacket> nameMapPacket;
 
-		public MapPacketMap(int size)
-		{
+		public MapPacketMap(int size) {
 			mapPackets = new ArrayList<MapPacket>(size);
 			commandMapPacket = new HashMap<Integer, MapPacket>(size);
 			nameMapPacket = new Hashtable<String, MapPacket>(size);
 		}
 
-		public MapPacket getMapPacketByName(String name)
-		{
+		public MapPacket getMapPacketByName(String name) {
 			return nameMapPacket.get(name);
 		}
 
-		public MapPacket getMapPacketByCommand(int command)
-		{
+		public MapPacket getMapPacketByCommand(int command) {
 			return commandMapPacket.get(command);
 		}
 
-		public void addPacket(int id, MapPacket packet)
-		{
+		public void addPacket(int id, MapPacket packet) {
 			mapPackets.add(packet);
 			commandMapPacket.put(id, packet);
 			nameMapPacket.put(packet.Name, packet);
@@ -257,34 +219,28 @@ public class ProtocolManager
 
 	private boolean Sort;
 
-	public ProtocolManager(String mapFile, boolean sort) throws Exception
-	{
+	public ProtocolManager(String mapFile, boolean sort) throws Exception {
 		Sort = sort;
 
 		// Initialize the map arrays
 		LowMaps = new MapPacketMap(256);
 		MediumMaps = new MapPacketMap(256);
 		HighMaps = new MapPacketMap(256);
-		
+
 		KeywordPositions = new HashMapInt<String>();
 		KeywordList = new ArrayList<String>();
 		LoadMapFile(mapFile);
 	}
 
-	public MapPacket Command(String command) throws Exception
-	{
+	public MapPacket Command(String command) throws Exception {
 		// TODO: Get a hashtable in here quick!
 
 		MapPacket map = HighMaps.getMapPacketByName(command);
-		if (map == null)
-		{
+		if (map == null) {
 			map = MediumMaps.getMapPacketByName(command);
-			if (map == null)
-			{
+			if (map == null) {
 				map = LowMaps.getMapPacketByName(command);
-			}
-			else
-			{
+			} else {
 				throw new Exception("Cannot find map for command \"" + command + "\"");
 			}
 		}
@@ -295,19 +251,15 @@ public class ProtocolManager
 		 */
 	}
 
-	public MapPacket Command(byte[] data) throws Exception
-	{
+	public MapPacket Command(byte[] data) throws Exception {
 		int command;
 
-		if (data.length < 7)
-		{
+		if (data.length < 7) {
 			return null;
 		}
 
-		if (data[6] == (byte) 0xFF)
-		{
-			if (data[7] == (byte) 0xFF)
-			{
+		if (data[6] == (byte) 0xFF) {
+			if (data[7] == (byte) 0xFF) {
 				// Low frequency
 				command = (data[8] * 256 + data[9]);
 				return Command(command, PacketFrequency.Low);
@@ -323,95 +275,78 @@ public class ProtocolManager
 		return Command(command, PacketFrequency.High);
 	}
 
-	public MapPacket Command(int command, int frequency) throws Exception
-	{
-		switch (frequency)
-		{
-			case PacketFrequency.High:
-				return HighMaps.getMapPacketByCommand(command);
-			case PacketFrequency.Medium:
-				return MediumMaps.getMapPacketByCommand(command);
-			case PacketFrequency.Low:
-				return LowMaps.getMapPacketByCommand(command);
-            default:
-            	break;
+	public MapPacket Command(int command, int frequency) throws Exception {
+		switch (frequency) {
+		case PacketFrequency.High:
+			return HighMaps.getMapPacketByCommand(command);
+		case PacketFrequency.Medium:
+			return MediumMaps.getMapPacketByCommand(command);
+		case PacketFrequency.Low:
+			return LowMaps.getMapPacketByCommand(command);
+		default:
+			break;
 		}
 
 		throw new Exception("Cannot find map for command \"" + command + "\" with frequency \"" + frequency + "\"");
 	}
 
-	public void PrintMap()
-	{
+	public void PrintMap() {
 		PrintOneMap(LowMaps, "Low   ");
 		PrintOneMap(MediumMaps, "Medium");
 		PrintOneMap(HighMaps, "High  ");
 	}
 
-	private void PrintOneMap(MapPacketMap map, String frequency)
-	{
+	private void PrintOneMap(MapPacketMap map, String frequency) {
 		int i;
 
-		for (i = 0; i < map.mapPackets.size(); ++i)
-		{
+		for (i = 0; i < map.mapPackets.size(); ++i) {
 			MapPacket map_packet = map.mapPackets.get(i);
-			if (map_packet != null)
-			{
-				System.out.format("%s %d %d %4x - %s - %s - %s\n", frequency, i, map_packet.ID, map_packet.Frequency, map_packet.Name,
-						map_packet.Trusted ? "Trusted" : "Untrusted", map_packet.Encoded ? "Unencoded" : "Zerocoded");
+			if (map_packet != null) {
+				System.out.format("%s %d %d %4x - %s - %s - %s\n", frequency, i, map_packet.ID, map_packet.Frequency,
+						map_packet.Name, map_packet.Trusted ? "Trusted" : "Untrusted",
+						map_packet.Encoded ? "Unencoded" : "Zerocoded");
 
-				for (int j = 0; j < map_packet.Blocks.size(); j++)
-				{
+				for (int j = 0; j < map_packet.Blocks.size(); j++) {
 					MapBlock block = map_packet.Blocks.get(j);
-					if (block.count == -1)
-					{
-						System.out.format("\t%4d %s (Variable)\n", block.keywordIndex, keywordPosition(block.keywordIndex));
-					}
-					else
-					{
-						System.out.format("\t%4d %s (%d)\n", block.keywordIndex, keywordPosition(block.keywordIndex), block.count);
+					if (block.count == -1) {
+						System.out.format("\t%4d %s (Variable)\n", block.keywordIndex,
+								keywordPosition(block.keywordIndex));
+					} else {
+						System.out.format("\t%4d %s (%d)\n", block.keywordIndex, keywordPosition(block.keywordIndex),
+								block.count);
 					}
 
-					for (int k = 0; k < block.Fields.size(); k++)
-					{
+					for (int k = 0; k < block.Fields.size(); k++) {
 						MapField field = block.Fields.get(k);
-						System.out.format("\t\t%4d %s (%d / %d)", field.keywordIndex, keywordPosition(block.keywordIndex), field.type,
-								field.count);
+						System.out.format("\t\t%4d %s (%d / %d)", field.keywordIndex,
+								keywordPosition(block.keywordIndex), field.type, field.count);
 					}
 				}
 			}
 		}
 	}
 
-	public static void DecodeMapFile(String mapFile, String outputFile) throws Exception
-	{
+	public static void DecodeMapFile(String mapFile, String outputFile) throws Exception {
 		byte magicKey = 0;
 		byte[] buffer = new byte[2048];
 		int nread;
 		InputStream map;
 		OutputStream output;
 
-		try
-		{
+		try {
 			map = new FileInputStream(mapFile);
-			try
-			{
+			try {
 				output = new FileOutputStream(outputFile);
-			}
-			catch (Exception e)
-			{
+			} catch (Exception e) {
 				map.close();
 				throw new Exception("Map file error, can't create output file", e);
 			}
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			throw new Exception("Map file error, can't open map file", e);
 		}
 
-		while ((nread = map.read(buffer, 0, 2048)) != 0)
-		{
-			for (int i = 0; i < nread; ++i)
-			{
+		while ((nread = map.read(buffer, 0, 2048)) != 0) {
+			for (int i = 0; i < nread; ++i) {
 				buffer[i] ^= magicKey;
 				magicKey += 43;
 			}
@@ -423,25 +358,20 @@ public class ProtocolManager
 		output.close();
 	}
 
-	private void LoadMapFile(String mapFile) throws Exception
-	{
+	private void LoadMapFile(String mapFile) throws Exception {
 		FileReader map;
 		int low = 1;
 		int medium = 1;
 		int high = 1;
 
 		// Load the protocol map file
-		try
-		{
+		try {
 			map = new FileReader(mapFile);
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			throw new Exception("Map file error", e);
 		}
 
-		try
-		{
+		try {
 			BufferedReader r = new BufferedReader(map);
 			String newline;
 			String trimmedline;
@@ -451,59 +381,43 @@ public class ProtocolManager
 			MapBlock currentBlock = null;
 			short fieldOffset = 0;
 
-			while (r.ready())
-			{
+			while (r.ready()) {
 				newline = r.readLine();
 				trimmedline = newline.trim();
 
-				if (!inPacket)
-				{
+				if (!inPacket) {
 					// Outside of all packet blocks
 
-					if (trimmedline.equals("{"))
-					{
+					if (trimmedline.equals("{")) {
 						inPacket = true;
 					}
-				}
-				else
-				{
+				} else {
 					// Inside of a packet block
 
-					if (!inBlock)
-					{
+					if (!inBlock) {
 						// Inside a packet block, outside of the blocks
 
-						if (trimmedline.equals("{"))
-						{
+						if (trimmedline.equals("{")) {
 							inBlock = true;
 							fieldOffset = 0;
-						}
-						else if (trimmedline.equals("}"))
-						{
+						} else if (trimmedline.equals("}")) {
 							// Reached the end of the packet
 							if (Sort)
 								Collections.sort(currentPacket.Blocks);
 							inPacket = false;
-						}
-						else if (trimmedline.startsWith("//"))
-						{
+						} else if (trimmedline.startsWith("//")) {
 							// ignore comment lines
-						}
-						else
-						{
+						} else {
 							// The packet header
 							// #region ParsePacketHeader
 
 							// Splice the String in to tokens
 							String[] tokens = trimmedline.split("\\s+");
 
-							if (tokens.length > 3)
-							{
-								if (tokens[1].equals("Fixed"))
-								{
+							if (tokens.length > 3) {
+								if (tokens[1].equals("Fixed")) {
 									// Remove the leading "0x"
-									if (tokens[2].substring(0, 2).equals("0x"))
-									{
+									if (tokens[2].substring(0, 2).equals("0x")) {
 										tokens[2] = tokens[2].substring(2, tokens[2].length());
 									}
 
@@ -520,9 +434,7 @@ public class ProtocolManager
 											: false;
 									currentPacket.Blocks = new ArrayList<MapBlock>();
 									LowMaps.addPacket(fixedID, currentPacket);
-								}
-								else if (tokens[1].equals("Low"))
-								{
+								} else if (tokens[1].equals("Low")) {
 									currentPacket = new MapPacket();
 									currentPacket.ID = low;
 									currentPacket.Frequency = PacketFrequency.Low;
@@ -534,9 +446,7 @@ public class ProtocolManager
 									currentPacket.Blocks = new ArrayList<MapBlock>();
 									LowMaps.addPacket(low, currentPacket);
 									low++;
-								}
-								else if (tokens[1].equals("Medium"))
-								{
+								} else if (tokens[1].equals("Medium")) {
 									currentPacket = new MapPacket();
 									currentPacket.ID = medium;
 									currentPacket.Frequency = PacketFrequency.Medium;
@@ -549,9 +459,7 @@ public class ProtocolManager
 									MediumMaps.addPacket(medium, currentPacket);
 
 									medium++;
-								}
-								else if (tokens[1].equals("High"))
-								{
+								} else if (tokens[1].equals("High")) {
 									currentPacket = new MapPacket();
 									currentPacket.ID = high;
 									currentPacket.Frequency = PacketFrequency.High;
@@ -564,18 +472,13 @@ public class ProtocolManager
 									HighMaps.addPacket(high, currentPacket);
 
 									high++;
-								}
-								else
-								{
+								} else {
 									logger.error("Unknown packet frequency : " + tokens[1]);
 								}
 							}
 						}
-					}
-					else
-					{
-						if (trimmedline.length() > 0 && trimmedline.substring(0, 1).equals("{"))
-						{
+					} else {
+						if (trimmedline.length() > 0 && trimmedline.substring(0, 1).equals("{")) {
 							// A field
 							MapField field = new MapField();
 
@@ -586,38 +489,29 @@ public class ProtocolManager
 							field.type = FieldType.getFieldType(tokens[2]);
 							field.offset = fieldOffset;
 
-							if (tokens[3].equals("}"))
-							{
+							if (tokens[3].equals("}")) {
 								field.count = 1;
-								if (fieldOffset >= 0)
-								{
-									fieldOffset = getFieldSize(field, null, (short)0);
+								if (fieldOffset >= 0) {
+									fieldOffset = getFieldSize(field, null, (short) 0);
 								}
-							}
-							else
-							{
+							} else {
 								field.count = Short.parseShort(tokens[3]);
-								if (fieldOffset >= 0)
-								{
-								    if (field.type == FieldType.Variable)
-								    	fieldOffset = -1;
-								    else if (field.type == FieldType.Fixed)
-								    	fieldOffset += field.count;
+								if (fieldOffset >= 0) {
+									if (field.type == FieldType.Variable)
+										fieldOffset = -1;
+									else if (field.type == FieldType.Fixed)
+										fieldOffset += field.count;
 								}
 							}
 
 							// Save this field to the current block
 							currentBlock.Fields.add(field);
-						}
-						else if (trimmedline.equals("}"))
-						{
+						} else if (trimmedline.equals("}")) {
 							if (Sort)
 								Collections.sort(currentBlock.Fields);
 							currentBlock.size = fieldOffset;
 							inBlock = false;
-						}
-						else if (trimmedline.length() != 0 && trimmedline.substring(0, 2).equals("//") == false)
-						{
+						} else if (trimmedline.length() != 0 && trimmedline.substring(0, 2).equals("//") == false) {
 							// The block header
 							// #region ParseBlockHeader
 
@@ -630,20 +524,13 @@ public class ProtocolManager
 							currentBlock.Fields = new ArrayList<MapField>();
 							currentPacket.Blocks.add(currentBlock);
 
-							if (tokens[1].equals("Single"))
-							{
+							if (tokens[1].equals("Single")) {
 								currentBlock.count = 1;
-							}
-							else if (tokens[1].equals("Multiple"))
-							{
+							} else if (tokens[1].equals("Multiple")) {
 								currentBlock.count = Short.parseShort(tokens[2]);
-							}
-							else if (tokens[1].equals("Variable"))
-							{
+							} else if (tokens[1].equals("Variable")) {
 								currentBlock.count = -1;
-							}
-							else
-							{
+							} else {
 								logger.error("Unknown block frequency");
 							}
 							// #endregion
@@ -656,50 +543,36 @@ public class ProtocolManager
 
 			r.close();
 			map.close();
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			throw e;
 		}
 	}
 
-	private short getBlockSize(ArrayList<MapField> fields, byte[] message, short offset) throws Exception
-	{
+	private short getBlockSize(ArrayList<MapField> fields, byte[] message, short offset) throws Exception {
 		short start = offset;
-		for (MapField field : fields)
-		{
+		for (MapField field : fields) {
 			offset += getFieldSize(field, message, offset);
 		}
-		return (short)(offset - start);
+		return (short) (offset - start);
 	}
 
-	public short getBlockNum(MapPacket packet, byte[] message, int blockIndex) throws Exception
-	{
+	public short getBlockNum(MapPacket packet, byte[] message, int blockIndex) throws Exception {
 		short blocks, offset = 0;
-		for (MapBlock block : packet.Blocks)
-		{
-			if (block.count >= 0)
-			{
+		for (MapBlock block : packet.Blocks) {
+			if (block.count >= 0) {
 				blocks = block.count;
-			}
-			else
-			{
+			} else {
 				blocks = message[offset++];
 			}
-			
-			if (block.keywordIndex == blockIndex)
-			{
+
+			if (block.keywordIndex == blockIndex) {
 				return blocks;
 			}
 
-			if (block.size >= 0)
-			{
+			if (block.size >= 0) {
 				offset += block.size * blocks;
-			}
-			else
-			{
-				for (int j = 0; j < blocks; j++)
-				{
+			} else {
+				for (int j = 0; j < blocks; j++) {
 					offset += getBlockSize(block.Fields, message, offset);
 				}
 			}
@@ -707,69 +580,52 @@ public class ProtocolManager
 		throw new Exception("Block index not found!");
 	}
 
-	public MapField getFieldOffset(MapPacket packet, byte[] message, int blockIndex, int fieldIndex, short blockNumber) throws Exception
-	{
+	public MapField getFieldOffset(MapPacket packet, byte[] message, int blockIndex, int fieldIndex, short blockNumber)
+			throws Exception {
 		short blocks, offset = 0;
-		for (MapBlock block : packet.Blocks)
-		{
-			if (block.count >= 0)
-			{
+		for (MapBlock block : packet.Blocks) {
+			if (block.count >= 0) {
 				blocks = block.count;
-			}
-			else
-			{
+			} else {
 				blocks = message[offset++];
 			}
-			
-			if (block.keywordIndex == blockIndex && blockNumber < blocks)
-			{
+
+			if (block.keywordIndex == blockIndex && blockNumber < blocks) {
 				blocks = blockNumber;
 			}
-			
-			if (blocks > 0)
-			{
-				if (block.size >= 0)
-				{
+
+			if (blocks > 0) {
+				if (block.size >= 0) {
 					offset += block.size * blocks;
-				}
-				else
-				{
-					for (int j = 0; j < blocks; j++)
-					{
+				} else {
+					for (int j = 0; j < blocks; j++) {
 						offset += getBlockSize(block.Fields, message, offset);
 					}
 				}
 			}
 
-			if (block.keywordIndex == blockIndex)
-			{
+			if (block.keywordIndex == blockIndex) {
 				MapField result = null;
-				for (MapField field : block.Fields)
-				{
-					if (field.keywordIndex == fieldIndex)
-					{
-						result = (MapField)field.clone();
+				for (MapField field : block.Fields) {
+					if (field.keywordIndex == fieldIndex) {
+						result = (MapField) field.clone();
 						result.offset = offset;
 						break;
 					}
-					offset += getFieldSize(field, message, offset);					
+					offset += getFieldSize(field, message, offset);
 				}
 				return result;
 			}
 		}
 		throw new Exception("Block and or Field index not found!");
 	}
-	
-	public short getFieldSize(MapField field, byte[] message, short offset) throws Exception
-	{
-		if (field.type == FieldType.Fixed)
-		{
+
+	public short getFieldSize(MapField field, byte[] message, short offset) throws Exception {
+		if (field.type == FieldType.Fixed) {
 			return field.count;
-		}
-		else if (field.type == FieldType.Variable)
-		{
+		} else if (field.type == FieldType.Variable) {
 			if (field.count == 1)
-				return (short)(message[offset] + 1);
+				return (short) (message[offset] + 1);
 			else if (field.count == 2)
 				return (short) (BytesToInt16L(message, offset) + 2);
 			else
@@ -778,19 +634,15 @@ public class ProtocolManager
 		return FieldType.TypeSizes[field.type];
 	}
 
-	public String keywordPosition(int position)
-	{
-		if (position >= 0 && position < KeywordList.size())
-		{
+	public String keywordPosition(int position) {
+		if (position >= 0 && position < KeywordList.size()) {
 			return KeywordList.get(position);
 		}
 		return null;
 	}
 
-	public int keywordPosition(String keyword)
-	{
-		if (KeywordPositions.containsKey(keyword))
-		{
+	public int keywordPosition(String keyword) {
+		if (KeywordPositions.containsKey(keyword)) {
 			return KeywordPositions.get(keyword);
 		}
 
@@ -801,20 +653,18 @@ public class ProtocolManager
 	}
 
 	/**
-	 * Convert the first two bytes starting at the given position in little
-	 * endian ordering to a signed short integer
-	 * 
+	 * Convert the first two bytes starting at the given position in little endian
+	 * ordering to a signed short integer
+	 *
 	 * @param bytes
 	 *            An array two bytes or longer
 	 * @param pos
 	 *            Position in the array to start reading
-	 * @return A signed short integer, will be zero if a short can't be read at
-	 *         the given position
+	 * @return A signed short integer, will be zero if a short can't be read at the
+	 *         given position
 	 */
-	public static short BytesToInt16L(byte[] bytes, int pos)
-	{
-		if (bytes.length < pos + 2)
-		{
+	public static short BytesToInt16L(byte[] bytes, int pos) {
+		if (bytes.length < pos + 2) {
 			return 0;
 		}
 		return (short) (((bytes[pos + 0] & 0xff) << 0) + ((bytes[pos + 1] & 0xff) << 8));

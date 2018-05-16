@@ -69,8 +69,7 @@ import libomv.io.GridClient;
 import libomv.io.GridClient.GridInfo;
 import libomv.utils.Helpers;
 
-public class GridEditor extends JDialog
-{
+public class GridEditor extends JDialog {
 	private static final Logger logger = Logger.getLogger(GridEditor.class);
 	private static final long serialVersionUID = 1L;
 
@@ -102,8 +101,7 @@ public class GridEditor extends JDialog
 	private JButton jBtnRemove;
 	private JButton jBtnSetDefault;
 
-	public GridEditor(MainControl main, String title, boolean modal)
-	{
+	public GridEditor(MainControl main, String title, boolean modal) {
 		// Super constructor
 		super(main.getJFrame(), title, modal);
 
@@ -129,7 +127,8 @@ public class GridEditor extends JDialog
 		gridBagLayout.columnWidths = new int[] { 1, 2, 3, 1, 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 };
 		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
-		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+				Double.MIN_VALUE };
 		jEditPanel.setLayout(gridBagLayout);
 
 		JLabel jLblName = new JLabel("Name");
@@ -309,22 +308,15 @@ public class GridEditor extends JDialog
 		updateGridProperties(_Client.getDefaultGrid(), false);
 	}
 
-	private JButton getJBtnSetup()
-	{
-		if (jBtnSetup == null)
-		{
+	private JButton getJBtnSetup() {
+		if (jBtnSetup == null) {
 			jBtnSetup = new JButton("Get Grid Info");
-			jBtnSetup.addActionListener(new ActionListener()
-			{
+			jBtnSetup.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent arg0)
-				{
-					try
-					{
+				public void actionPerformed(ActionEvent arg0) {
+					try {
 						updateGridProperties(_Client.queryGridInfo(getJLsGridNames().getSelectedValue()), false);
-					}
-					catch (Exception e)
-					{
+					} catch (Exception e) {
 					}
 				}
 			});
@@ -332,16 +324,12 @@ public class GridEditor extends JDialog
 		return jBtnSetup;
 	}
 
-	private JButton getJBtnClearGridInfo()
-	{
-		if (jBtnClearGridInfo == null)
-		{
+	private JButton getJBtnClearGridInfo() {
+		if (jBtnClearGridInfo == null) {
 			jBtnClearGridInfo = new JButton("Clear Grid Info");
-			jBtnClearGridInfo.addActionListener(new ActionListener()
-			{
+			jBtnClearGridInfo.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent arg0)
-				{
+				public void actionPerformed(ActionEvent arg0) {
 					updateGridProperties(null, false);
 				}
 			});
@@ -349,16 +337,12 @@ public class GridEditor extends JDialog
 		return jBtnClearGridInfo;
 	}
 
-	private JButton getJBtnApply()
-	{
-		if (jBtnApply == null)
-		{
+	private JButton getJBtnApply() {
+		if (jBtnApply == null) {
 			jBtnApply = new JButton("Apply");
-			jBtnApply.addActionListener(new ActionListener()
-			{
+			jBtnApply.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent arg0)
-				{
+				public void actionPerformed(ActionEvent arg0) {
 					updateGridProperties(getJLsGridNames().getSelectedValue(), true);
 				}
 			});
@@ -366,10 +350,8 @@ public class GridEditor extends JDialog
 		return jBtnApply;
 	}
 
-	private JPanel getGridBtnPanel()
-	{
-		if (jPaneGridBtnPanel == null)
-		{
+	private JPanel getGridBtnPanel() {
+		if (jPaneGridBtnPanel == null) {
 			jPaneGridBtnPanel = new JPanel();
 			FlowLayout flowLayout = (FlowLayout) jPaneGridBtnPanel.getLayout();
 			flowLayout.setVgap(0);
@@ -381,16 +363,12 @@ public class GridEditor extends JDialog
 		return jPaneGridBtnPanel;
 	}
 
-	private JButton getJBtnAdd()
-	{
-		if (jBtnAdd == null)
-		{
+	private JButton getJBtnAdd() {
+		if (jBtnAdd == null) {
 			jBtnAdd = new JButton("Add Grid");
-			jBtnAdd.addActionListener(new ActionListener()
-			{
+			jBtnAdd.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent arg0)
-				{
+				public void actionPerformed(ActionEvent arg0) {
 					getJLsModel().add(getJLsGridNames().getSelectedIndex(),
 							updateGridProperties(_Client.new GridInfo(), true));
 				}
@@ -399,16 +377,12 @@ public class GridEditor extends JDialog
 		return jBtnAdd;
 	}
 
-	private JButton getJBtnRemove()
-	{
-		if (jBtnRemove == null)
-		{
+	private JButton getJBtnRemove() {
+		if (jBtnRemove == null) {
 			jBtnRemove = new JButton("Remove Grid");
-			jBtnRemove.addActionListener(new ActionListener()
-			{
+			jBtnRemove.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent arg0)
-				{
+				public void actionPerformed(ActionEvent arg0) {
 					getJLsModel().remove(getJLsGridNames().getSelectedIndex());
 				}
 			});
@@ -416,16 +390,12 @@ public class GridEditor extends JDialog
 		return jBtnRemove;
 	}
 
-	private JButton getJBtnSetDefault()
-	{
-		if (jBtnSetDefault == null)
-		{
+	private JButton getJBtnSetDefault() {
+		if (jBtnSetDefault == null) {
 			jBtnSetDefault = new JButton("Set Default");
-			jBtnSetDefault.addActionListener(new ActionListener()
-			{
+			jBtnSetDefault.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent arg0)
-				{
+				public void actionPerformed(ActionEvent arg0) {
 					_Client.setDefaultGrid(getJLsGridNames().getSelectedValue());
 					jLsGridNames.setCellRenderer(new MyListCellRenderer(_Client.getDefaultGrid()));
 				}
@@ -434,30 +404,22 @@ public class GridEditor extends JDialog
 		return jBtnSetDefault;
 	}
 
-	private JButton getJBtnOk()
-	{
-		if (jBtnOk == null)
-		{
+	private JButton getJBtnOk() {
+		if (jBtnOk == null) {
 			jBtnOk = new JButton("Ok");
-			jBtnOk.addActionListener(new ActionListener()
-			{
+			jBtnOk.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent arg0)
-				{
+				public void actionPerformed(ActionEvent arg0) {
 					_Client.clearGrids(false);
 					// Get number of items in the list
 					int size = getJLsGridNames().getModel().getSize();
 					// Get all item objects
-					for (int i = 0; i < size; i++)
-					{
+					for (int i = 0; i < size; i++) {
 						_Client.addGrid(getJLsGridNames().getModel().getElementAt(i), false);
 					}
-					try
-					{
+					try {
 						_Client.saveList();
-					}
-					catch (Exception ex)
-					{
+					} catch (Exception ex) {
 						logger.error(GridClient.Log("Saving GridInfo list failed", _Client), ex);
 					}
 					dispose();
@@ -467,16 +429,12 @@ public class GridEditor extends JDialog
 		return jBtnOk;
 	}
 
-	private JButton getJBtnCancel()
-	{
-		if (jBtnCancel == null)
-		{
+	private JButton getJBtnCancel() {
+		if (jBtnCancel == null) {
 			jBtnCancel = new JButton("Cancel");
-			jBtnCancel.addActionListener(new ActionListener()
-			{
+			jBtnCancel.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent arg0)
-				{
+				public void actionPerformed(ActionEvent arg0) {
 					dispose();
 				}
 			});
@@ -484,10 +442,8 @@ public class GridEditor extends JDialog
 		return jBtnCancel;
 	}
 
-	private JPanel getButtonPanel()
-	{
-		if (jBtnPanel == null)
-		{
+	private JPanel getButtonPanel() {
+		if (jBtnPanel == null) {
 			jBtnPanel = new JPanel();
 			jBtnPanel.setBorder(new MatteBorder(5, 5, 5, 5, SystemColor.control));
 			jBtnPanel.setLayout(new GridLayout(1, 6, 10, 0));
@@ -501,15 +457,12 @@ public class GridEditor extends JDialog
 		return jBtnPanel;
 	}
 
-	private JTextField getJTxtName()
-	{
-		if (jTxtName == null)
-		{
+	private JTextField getJTxtName() {
+		if (jTxtName == null) {
 			jTxtName = new JTextField();
 			jTxtName.setColumns(20);
 			// Add a focus listener
-			jTxtName.addFocusListener(new FocusAdapter()
-			{
+			jTxtName.addFocusListener(new FocusAdapter() {
 				/**
 				 * Called when focus is gained
 				 * 
@@ -517,16 +470,14 @@ public class GridEditor extends JDialog
 				 *            The FocusEvent
 				 */
 				@Override
-				public void focusGained(FocusEvent e)
-				{
+				public void focusGained(FocusEvent e) {
 					// Select all
 					getJTxtName().selectAll();
 				}
 			});
 
 			// Add a key listener
-			jTxtName.addKeyListener(new KeyAdapter()
-			{
+			jTxtName.addKeyListener(new KeyAdapter() {
 				/**
 				 * Called when a key is pressed
 				 * 
@@ -534,10 +485,8 @@ public class GridEditor extends JDialog
 				 *            The KeyEvent
 				 */
 				@Override
-				public void keyPressed(KeyEvent e)
-				{
-					if (e.getKeyCode() == KeyEvent.VK_ENTER)
-					{
+				public void keyPressed(KeyEvent e) {
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 						getJTxtNick().requestFocus();
 					}
 				}
@@ -546,15 +495,12 @@ public class GridEditor extends JDialog
 		return jTxtName;
 	}
 
-	private JTextField getJTxtNick()
-	{
-		if (jTxtNick == null)
-		{
+	private JTextField getJTxtNick() {
+		if (jTxtNick == null) {
 			jTxtNick = new JTextField();
 			jTxtNick.setColumns(20);
 			// Add a focus listener
-			jTxtNick.addFocusListener(new FocusAdapter()
-			{
+			jTxtNick.addFocusListener(new FocusAdapter() {
 				/**
 				 * Called when focus is gained
 				 * 
@@ -562,16 +508,14 @@ public class GridEditor extends JDialog
 				 *            The FocusEvent
 				 */
 				@Override
-				public void focusGained(FocusEvent e)
-				{
+				public void focusGained(FocusEvent e) {
 					// Select all
 					getJTxtNick().selectAll();
 				}
 			});
 
 			// Add a key listener
-			jTxtNick.addKeyListener(new KeyAdapter()
-			{
+			jTxtNick.addKeyListener(new KeyAdapter() {
 				/**
 				 * Called when a key is pressed
 				 * 
@@ -579,10 +523,8 @@ public class GridEditor extends JDialog
 				 *            The KeyEvent
 				 */
 				@Override
-				public void keyPressed(KeyEvent e)
-				{
-					if (e.getKeyCode() == KeyEvent.VK_ENTER)
-					{
+				public void keyPressed(KeyEvent e) {
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 						getJTxtStartUrl().requestFocus();
 					}
 				}
@@ -591,15 +533,12 @@ public class GridEditor extends JDialog
 		return jTxtNick;
 	}
 
-	private JTextField getJTxtStartUrl()
-	{
-		if (jTxtStartUrl == null)
-		{
+	private JTextField getJTxtStartUrl() {
+		if (jTxtStartUrl == null) {
 			jTxtStartUrl = new JTextField();
 			jTxtStartUrl.setColumns(20);
 			// Add a focus listener
-			jTxtStartUrl.addFocusListener(new FocusAdapter()
-			{
+			jTxtStartUrl.addFocusListener(new FocusAdapter() {
 				/**
 				 * Called when focus is gained
 				 * 
@@ -607,16 +546,14 @@ public class GridEditor extends JDialog
 				 *            The FocusEvent
 				 */
 				@Override
-				public void focusGained(FocusEvent e)
-				{
+				public void focusGained(FocusEvent e) {
 					// Select all
 					getJTxtStartUrl().selectAll();
 				}
 			});
 
 			// Add a key listener
-			jTxtStartUrl.addKeyListener(new KeyAdapter()
-			{
+			jTxtStartUrl.addKeyListener(new KeyAdapter() {
 				/**
 				 * Called when a key is pressed
 				 * 
@@ -624,10 +561,8 @@ public class GridEditor extends JDialog
 				 *            The KeyEvent
 				 */
 				@Override
-				public void keyPressed(KeyEvent e)
-				{
-					if (e.getKeyCode() == KeyEvent.VK_ENTER)
-					{
+				public void keyPressed(KeyEvent e) {
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 						getJTxtLoginUrl().requestFocus();
 					}
 				}
@@ -636,15 +571,12 @@ public class GridEditor extends JDialog
 		return jTxtStartUrl;
 	}
 
-	private JTextField getJTxtLoginUrl()
-	{
-		if (jTxtLoginUrl == null)
-		{
+	private JTextField getJTxtLoginUrl() {
+		if (jTxtLoginUrl == null) {
 			jTxtLoginUrl = new JTextField();
 			jTxtLoginUrl.setColumns(20);
 			// Add a focus listener
-			jTxtLoginUrl.addFocusListener(new FocusAdapter()
-			{
+			jTxtLoginUrl.addFocusListener(new FocusAdapter() {
 				/**
 				 * Called when focus is gained
 				 * 
@@ -652,16 +584,14 @@ public class GridEditor extends JDialog
 				 *            The FocusEvent
 				 */
 				@Override
-				public void focusGained(FocusEvent e)
-				{
+				public void focusGained(FocusEvent e) {
 					// Select all
 					getJTxtLoginUrl().selectAll();
 				}
 			});
 
 			// Add a key listener
-			jTxtLoginUrl.addKeyListener(new KeyAdapter()
-			{
+			jTxtLoginUrl.addKeyListener(new KeyAdapter() {
 				/**
 				 * Called when a key is pressed
 				 * 
@@ -669,10 +599,8 @@ public class GridEditor extends JDialog
 				 *            The KeyEvent
 				 */
 				@Override
-				public void keyPressed(KeyEvent e)
-				{
-					if (e.getKeyCode() == KeyEvent.VK_ENTER)
-					{
+				public void keyPressed(KeyEvent e) {
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 						getJTxtHelperUrl().requestFocus();
 					}
 				}
@@ -681,15 +609,12 @@ public class GridEditor extends JDialog
 		return jTxtLoginUrl;
 	}
 
-	private JTextField getJTxtHelperUrl()
-	{
-		if (jTxtHelperUrl == null)
-		{
+	private JTextField getJTxtHelperUrl() {
+		if (jTxtHelperUrl == null) {
 			jTxtHelperUrl = new JTextField();
 			jTxtHelperUrl.setColumns(20);
 			// Add a focus listener
-			jTxtHelperUrl.addFocusListener(new FocusAdapter()
-			{
+			jTxtHelperUrl.addFocusListener(new FocusAdapter() {
 				/**
 				 * Called when focus is gained
 				 * 
@@ -697,16 +622,14 @@ public class GridEditor extends JDialog
 				 *            The FocusEvent
 				 */
 				@Override
-				public void focusGained(FocusEvent e)
-				{
+				public void focusGained(FocusEvent e) {
 					// Select all
 					getJTxtHelperUrl().selectAll();
 				}
 			});
 
 			// Add a key listener
-			jTxtHelperUrl.addKeyListener(new KeyAdapter()
-			{
+			jTxtHelperUrl.addKeyListener(new KeyAdapter() {
 				/**
 				 * Called when a key is pressed
 				 * 
@@ -714,10 +637,8 @@ public class GridEditor extends JDialog
 				 *            The KeyEvent
 				 */
 				@Override
-				public void keyPressed(KeyEvent e)
-				{
-					if (e.getKeyCode() == KeyEvent.VK_ENTER)
-					{
+				public void keyPressed(KeyEvent e) {
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 						getJTxtWebsiteUrl().requestFocus();
 					}
 				}
@@ -726,15 +647,12 @@ public class GridEditor extends JDialog
 		return jTxtHelperUrl;
 	}
 
-	private JTextField getJTxtWebsiteUrl()
-	{
-		if (jTxtWebsiteUrl == null)
-		{
+	private JTextField getJTxtWebsiteUrl() {
+		if (jTxtWebsiteUrl == null) {
 			jTxtWebsiteUrl = new JTextField();
 			jTxtWebsiteUrl.setColumns(20);
 			// Add a focus listener
-			jTxtWebsiteUrl.addFocusListener(new FocusAdapter()
-			{
+			jTxtWebsiteUrl.addFocusListener(new FocusAdapter() {
 				/**
 				 * Called when focus is gained
 				 * 
@@ -742,16 +660,14 @@ public class GridEditor extends JDialog
 				 *            The FocusEvent
 				 */
 				@Override
-				public void focusGained(FocusEvent e)
-				{
+				public void focusGained(FocusEvent e) {
 					// Select all
 					getJTxtWebsiteUrl().selectAll();
 				}
 			});
 
 			// Add a key listener
-			jTxtWebsiteUrl.addKeyListener(new KeyAdapter()
-			{
+			jTxtWebsiteUrl.addKeyListener(new KeyAdapter() {
 				/**
 				 * Called when a key is pressed
 				 * 
@@ -759,10 +675,8 @@ public class GridEditor extends JDialog
 				 *            The KeyEvent
 				 */
 				@Override
-				public void keyPressed(KeyEvent e)
-				{
-					if (e.getKeyCode() == KeyEvent.VK_ENTER)
-					{
+				public void keyPressed(KeyEvent e) {
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 						getJTxtSupportUrl().requestFocus();
 					}
 				}
@@ -771,15 +685,12 @@ public class GridEditor extends JDialog
 		return jTxtWebsiteUrl;
 	}
 
-	private JTextField getJTxtSupportUrl()
-	{
-		if (jTxtSupportUrl == null)
-		{
+	private JTextField getJTxtSupportUrl() {
+		if (jTxtSupportUrl == null) {
 			jTxtSupportUrl = new JTextField();
 			jTxtSupportUrl.setColumns(20);
 			// Add a focus listener
-			jTxtSupportUrl.addFocusListener(new FocusAdapter()
-			{
+			jTxtSupportUrl.addFocusListener(new FocusAdapter() {
 				/**
 				 * Called when focus is gained
 				 * 
@@ -787,16 +698,14 @@ public class GridEditor extends JDialog
 				 *            The FocusEvent
 				 */
 				@Override
-				public void focusGained(FocusEvent e)
-				{
+				public void focusGained(FocusEvent e) {
 					// Select all
 					getJTxtSupportUrl().selectAll();
 				}
 			});
 
 			// Add a key listener
-			jTxtSupportUrl.addKeyListener(new KeyAdapter()
-			{
+			jTxtSupportUrl.addKeyListener(new KeyAdapter() {
 				/**
 				 * Called when a key is pressed
 				 * 
@@ -804,10 +713,8 @@ public class GridEditor extends JDialog
 				 *            The KeyEvent
 				 */
 				@Override
-				public void keyPressed(KeyEvent e)
-				{
-					if (e.getKeyCode() == KeyEvent.VK_ENTER)
-					{
+				public void keyPressed(KeyEvent e) {
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 						getJTxtRegisterUrl().requestFocus();
 					}
 				}
@@ -816,15 +723,12 @@ public class GridEditor extends JDialog
 		return jTxtSupportUrl;
 	}
 
-	private JTextField getJTxtRegisterUrl()
-	{
-		if (jTxtRegisterUrl == null)
-		{
+	private JTextField getJTxtRegisterUrl() {
+		if (jTxtRegisterUrl == null) {
 			jTxtRegisterUrl = new JTextField();
 			jTxtRegisterUrl.setColumns(20);
 			// Add a focus listener
-			jTxtRegisterUrl.addFocusListener(new FocusAdapter()
-			{
+			jTxtRegisterUrl.addFocusListener(new FocusAdapter() {
 				/**
 				 * Called when focus is gained
 				 * 
@@ -832,16 +736,14 @@ public class GridEditor extends JDialog
 				 *            The FocusEvent
 				 */
 				@Override
-				public void focusGained(FocusEvent e)
-				{
+				public void focusGained(FocusEvent e) {
 					// Select all
 					getJTxtRegisterUrl().selectAll();
 				}
 			});
 
 			// Add a key listener
-			jTxtRegisterUrl.addKeyListener(new KeyAdapter()
-			{
+			jTxtRegisterUrl.addKeyListener(new KeyAdapter() {
 				/**
 				 * Called when a key is pressed
 				 * 
@@ -849,10 +751,8 @@ public class GridEditor extends JDialog
 				 *            The KeyEvent
 				 */
 				@Override
-				public void keyPressed(KeyEvent e)
-				{
-					if (e.getKeyCode() == KeyEvent.VK_ENTER)
-					{
+				public void keyPressed(KeyEvent e) {
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 						getJTxtRegisterUrl().requestFocus();
 					}
 				}
@@ -861,93 +761,74 @@ public class GridEditor extends JDialog
 		return jTxtRegisterUrl;
 	}
 
-	private JTextField getJTxtPasswordUrl()
-	{
-		if (jTxtPasswordUrl == null)
-		{
+	private JTextField getJTxtPasswordUrl() {
+		if (jTxtPasswordUrl == null) {
 			jTxtPasswordUrl = new JTextField();
 			jTxtPasswordUrl.setColumns(10);
 		}
 		return jTxtPasswordUrl;
 	}
 
-	private JTextField getJTxtSearchUrl()
-	{
-		if (jTxtSearchUrl == null)
-		{
+	private JTextField getJTxtSearchUrl() {
+		if (jTxtSearchUrl == null) {
 			jTxtSearchUrl = new JTextField();
 			jTxtSearchUrl.setColumns(10);
 		}
 		return jTxtSearchUrl;
 	}
 
-	private JTextField getJTxtCurrencySym()
-	{
-		if (jTxtCurrencySym == null)
-		{
+	private JTextField getJTxtCurrencySym() {
+		if (jTxtCurrencySym == null) {
 			jTxtCurrencySym = new JTextField();
 			jTxtCurrencySym.setColumns(10);
 		}
 		return jTxtCurrencySym;
 	}
 
-	private DefaultListModel<GridInfo> getJLsModel()
-	{
-		if (jLsModel == null)
-		{
+	private DefaultListModel<GridInfo> getJLsModel() {
+		if (jLsModel == null) {
 			int i = 0;
 			jLsModel = new DefaultListModel<GridInfo>();
 			Set<String> nicks = _Client.getGridNames();
-			for (String nick : nicks)
-			{
+			for (String nick : nicks) {
 				jLsModel.add(i, _Client.getGrid(nick).clone());
 			}
 		}
 		return jLsModel;
 	}
 
-	private class MyListCellRenderer extends DefaultListCellRenderer
-	{
+	private class MyListCellRenderer extends DefaultListCellRenderer {
 		private static final long serialVersionUID = 1L;
 		private GridInfo defaultItem;
 
-		MyListCellRenderer(GridInfo defaultItem)
-		{
+		MyListCellRenderer(GridInfo defaultItem) {
 			this.defaultItem = defaultItem;
 		}
 
 		@Override
 		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-				boolean cellHasFocus)
-		{
+				boolean cellHasFocus) {
 			JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-			if (defaultItem.equals(value))
-			{
+			if (defaultItem.equals(value)) {
 				label.setFont(list.getFont().deriveFont(Font.BOLD));
-			}
-			else
-			{
+			} else {
 				label.setFont(list.getFont());
 			}
 			return label;
 		}
 	}
 
-	private JList<GridInfo> getJLsGridNames()
-	{
-		if (jLsGridNames == null)
-		{
+	private JList<GridInfo> getJLsGridNames() {
+		if (jLsGridNames == null) {
 			jLsGridNames = new JList<GridInfo>(getJLsModel());
 			jLsGridNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jLsGridNames.setLayoutOrientation(JList.VERTICAL);
 			jLsGridNames.setVisibleRowCount(-1);
 			jLsGridNames.setCellRenderer(new MyListCellRenderer(_Client.getDefaultGrid()));
 			jLsGridNames.setSelectedValue(_Client.getDefaultGrid(), true);
-			jLsGridNames.addListSelectionListener(new ListSelectionListener()
-			{
+			jLsGridNames.addListSelectionListener(new ListSelectionListener() {
 				@Override
-				public void valueChanged(ListSelectionEvent e)
-				{
+				public void valueChanged(ListSelectionEvent e) {
 					updateGridProperties(getJLsGridNames().getSelectedValue(), false);
 				}
 			});
@@ -955,20 +836,16 @@ public class GridEditor extends JDialog
 		return jLsGridNames;
 	}
 
-	private JScrollPane getJSpGridNames()
-	{
-		if (jSpGridNames == null)
-		{
+	private JScrollPane getJSpGridNames() {
+		if (jSpGridNames == null) {
 			jSpGridNames = new JScrollPane(getJLsGridNames());
 			jSpGridNames.setPreferredSize(new Dimension(250, 100));
 		}
 		return jSpGridNames;
 	}
 
-	private GridInfo updateGridProperties(GridInfo grid, boolean set)
-	{
-		if (set)
-		{
+	private GridInfo updateGridProperties(GridInfo grid, boolean set) {
+		if (set) {
 			grid.gridname = getJTxtName().getText();
 			grid.gridnick = getJTxtNick().getText();
 			grid.loginpage = getJTxtStartUrl().getText();
@@ -980,11 +857,8 @@ public class GridEditor extends JDialog
 			grid.passworduri = getJTxtPasswordUrl().getText();
 			grid.searchurl = getJTxtSearchUrl().getText();
 			grid.currencySym = getJTxtCurrencySym().getText();
-		}
-		else
-		{
-			if (grid != null)
-			{
+		} else {
+			if (grid != null) {
 				getJTxtName().setText(grid.gridname);
 				getJTxtNick().setText(grid.gridnick);
 				getJTxtStartUrl().setText(grid.loginpage);

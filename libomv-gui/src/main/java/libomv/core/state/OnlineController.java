@@ -44,8 +44,7 @@ import libomv.Gui.windows.MainWindow;
 import libomv.io.AgentManager.BalanceCallbackArgs;
 import libomv.utils.Callback;
 
-public class OnlineController implements StateController
-{
+public class OnlineController implements StateController {
 	public static final String cmdFriends = "friends";
 	public static final String cmdGroups = "groups";
 	public static final String cmdInventory = "inventory";
@@ -60,62 +59,53 @@ public class OnlineController implements StateController
 	private JMenuBar jMbMain;
 	private JLabel jMiAmount;
 	private CommWindow _Comm;
-	
+
 	private Callback<BalanceCallbackArgs> balanceUpdateCallback = new BalanceUpdateCallback();
 
-	public OnlineController(MainControl main)
-	{
+	public OnlineController(MainControl main) {
 		_Main = main;
 		_Main.getGridClient().Self.OnBalanceUpdated.add(balanceUpdateCallback);
 
-		// Create the CommWindow right away as hidden window as it is also our communication manager
+		// Create the CommWindow right away as hidden window as it is also our
+		// communication manager
 		_Comm = new CommWindow(_Main);
 
 		main.setJMenuBar(getJMenuBar());
-//		main.setContentPane(new SceneViewer());
+		// main.setContentPane(new SceneViewer());
 		main.setControlPane(new OnlinePane(_Main));
 		main.getJFrame().validate();
 	}
 
 	@Override
-	public void finalize() throws Throwable
-	{
+	public void finalize() throws Throwable {
 		dispose();
 		super.finalize();
 	}
-	
+
 	@Override
-	public void actionPerformed(ActionEvent e)
-	{
+	public void actionPerformed(ActionEvent e) {
 		/* Handle local events */
-		if (e.getActionCommand().equals(cmdFriends) ||
-			e.getActionCommand().equals(cmdGroups))
-		{
+		if (e.getActionCommand().equals(cmdFriends) || e.getActionCommand().equals(cmdGroups)) {
 			_Comm.setFocus(e.getActionCommand(), null);
 			_Comm.setVisible(true);
-		}
-		else if (e.getActionCommand().equals(cmdInventory))
-		{
-			
+		} else if (e.getActionCommand().equals(cmdInventory)) {
+
 		}
 		/* Pass to main window to be handled */
 		_Main.actionPerformed(e);
 	}
 
-	public void dispose()
-	{
+	public void dispose() {
 		_Main.getGridClient().Self.OnBalanceUpdated.remove(balanceUpdateCallback);
 		_Comm.dispose();
 	}
-	
-	private JMenuBar getJMenuBar()
-	{
-		if (jMbMain == null)
-		{
+
+	private JMenuBar getJMenuBar() {
+		if (jMbMain == null) {
 			jMbMain = new JMenuBar();
 
 			JMenu file = new JMenu("File");
-			
+
 			JMenuItem jMiFileOpen = MainWindow.newMenuItem("Open...", this, "open");
 			file.add(jMiFileOpen);
 			file.addSeparator();
@@ -123,7 +113,7 @@ public class OnlineController implements StateController
 			JMenuItem jMiSettings = MainWindow.newMenuItem("Settings...", this, MainControl.cmdSettings);
 			file.add(jMiSettings);
 			file.addSeparator();
-			
+
 			JMenuItem jMiFileQuit = MainWindow.newMenuItem("Quit", this, MainControl.cmdQuit);
 			file.add(jMiFileQuit);
 
@@ -135,16 +125,16 @@ public class OnlineController implements StateController
 
 			JMenuItem jMiGroups = MainWindow.newMenuItem("Groups", this, cmdGroups);
 			world.add(jMiGroups);
-			
+
 			JMenuItem jMiInventory = MainWindow.newMenuItem("Inventory", this, cmdInventory);
 			world.add(jMiInventory);
-			
+
 			JMenuItem jMiSearch = MainWindow.newMenuItem("Search", this, cmdSearch);
 			world.add(jMiSearch);
-			
+
 			JMenuItem jMiMap = MainWindow.newMenuItem("Map", this, cmdMaps);
 			world.add(jMiMap);
-			
+
 			JMenuItem jMiObjects = MainWindow.newMenuItem("Objects", this, cmdObjects);
 			world.add(jMiObjects);
 
@@ -172,7 +162,7 @@ public class OnlineController implements StateController
 			help.add(jMiAbout);
 			jMbMain.add(help);
 			// jMbMain.setHelpMenu(help); // needed for portability (Motif, etc.).
-			
+
 			jMbMain.add(Box.createGlue());
 
 			jMbMain.add(getJAmount());
@@ -180,35 +170,27 @@ public class OnlineController implements StateController
 		return jMbMain;
 	}
 
-	private JLabel getJAmount()
-	{
-		if (jMiAmount == null)
-		{
+	private JLabel getJAmount() {
+		if (jMiAmount == null) {
 			_Main.getGridClient().Self.getBalance();
-			jMiAmount = new JLabel(String.format("%s %s", _Main.getGridClient().getGrid(null).currencySym, _Main.getGridClient().Self.getBalance()));
+			jMiAmount = new JLabel(String.format("%s %s", _Main.getGridClient().getGrid(null).currencySym,
+					_Main.getGridClient().Self.getBalance()));
 		}
 		return jMiAmount;
 	}
 
-	private class BalanceUpdateCallback implements Callback<BalanceCallbackArgs>
-	{
+	private class BalanceUpdateCallback implements Callback<BalanceCallbackArgs> {
 		@Override
-		public boolean callback(final BalanceCallbackArgs params)
-		{
-			EventQueue.invokeLater(new Runnable()
-			{
-				public void run()
-				{
+		public boolean callback(final BalanceCallbackArgs params) {
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
 					String symbol = _Main.getGridClient().getGrid(null).currencySym;
-					getJAmount().setText(String.format("%s %s", symbol == null || symbol.isEmpty() ? "$" : symbol, params.getBalance()));
-					if (!params.getFirst() && params.getDelta() > 50)
-					{
-						if (params.getDelta() < 0)
-						{
+					getJAmount().setText(String.format("%s %s", symbol == null || symbol.isEmpty() ? "$" : symbol,
+							params.getBalance()));
+					if (!params.getFirst() && params.getDelta() > 50) {
+						if (params.getDelta() < 0) {
 							/* Create money gone sound */
-						}
-						else
-						{
+						} else {
 							/* Create cash register sound */
 						}
 					}
@@ -216,6 +198,6 @@ public class OnlineController implements StateController
 			});
 			return false;
 		}
-		
+
 	}
 }

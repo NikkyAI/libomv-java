@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import java.math.BigInteger;
@@ -17,15 +16,18 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
 /**
  * 
- * 			The InputLocalOffset type is used to represent indexed inputs that can only reference resources declared in the same document.
- * 			
+ * The InputLocalOffset type is used to represent indexed inputs that can only
+ * reference resources declared in the same document.
  * 
- * <p>Java class for InputLocalOffset complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * Java class for InputLocalOffset complex type.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="InputLocalOffset">
@@ -46,111 +48,99 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(name = "InputLocalOffset")
 public class InputLocalOffset {
 
-    @XmlAttribute(name = "offset", required = true)
-    protected BigInteger offset;
-    @XmlAttribute(name = "semantic", required = true)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlSchemaType(name = "NMTOKEN")
-    protected String semantic;
-    @XmlAttribute(name = "source", required = true)
-    protected String source;
-    @XmlAttribute(name = "set")
-    protected BigInteger set;
+	@XmlAttribute(name = "offset", required = true)
+	protected BigInteger offset;
+	@XmlAttribute(name = "semantic", required = true)
+	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+	@XmlSchemaType(name = "NMTOKEN")
+	protected String semantic;
+	@XmlAttribute(name = "source", required = true)
+	protected String source;
+	@XmlAttribute(name = "set")
+	protected BigInteger set;
 
-    /**
-     * Gets the value of the offset property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
-     */
-    public BigInteger getOffset() {
-        return offset;
-    }
+	/**
+	 * Gets the value of the offset property.
+	 * 
+	 * @return possible object is {@link BigInteger }
+	 * 
+	 */
+	public BigInteger getOffset() {
+		return offset;
+	}
 
-    /**
-     * Sets the value of the offset property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
-     */
-    public void setOffset(BigInteger value) {
-        this.offset = value;
-    }
+	/**
+	 * Sets the value of the offset property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link BigInteger }
+	 * 
+	 */
+	public void setOffset(BigInteger value) {
+		this.offset = value;
+	}
 
-    /**
-     * Gets the value of the semantic property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getSemantic() {
-        return semantic;
-    }
+	/**
+	 * Gets the value of the semantic property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getSemantic() {
+		return semantic;
+	}
 
-    /**
-     * Sets the value of the semantic property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setSemantic(String value) {
-        this.semantic = value;
-    }
+	/**
+	 * Sets the value of the semantic property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setSemantic(String value) {
+		this.semantic = value;
+	}
 
-    /**
-     * Gets the value of the source property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getSource() {
-        return source;
-    }
+	/**
+	 * Gets the value of the source property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getSource() {
+		return source;
+	}
 
-    /**
-     * Sets the value of the source property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setSource(String value) {
-        this.source = value;
-    }
+	/**
+	 * Sets the value of the source property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setSource(String value) {
+		this.source = value;
+	}
 
-    /**
-     * Gets the value of the set property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
-     */
-    public BigInteger getSet() {
-        return set;
-    }
+	/**
+	 * Gets the value of the set property.
+	 * 
+	 * @return possible object is {@link BigInteger }
+	 * 
+	 */
+	public BigInteger getSet() {
+		return set;
+	}
 
-    /**
-     * Sets the value of the set property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
-     */
-    public void setSet(BigInteger value) {
-        this.set = value;
-    }
+	/**
+	 * Sets the value of the set property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link BigInteger }
+	 * 
+	 */
+	public void setSet(BigInteger value) {
+		this.set = value;
+	}
 
 }

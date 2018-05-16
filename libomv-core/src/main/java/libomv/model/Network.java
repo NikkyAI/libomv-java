@@ -9,8 +9,7 @@ import libomv.packets.PacketType;
 public interface Network {
 
 	/** Explains why a simulator or the grid disconnected from us */
-	public enum DisconnectType
-	{
+	public enum DisconnectType {
 		/** The client requested the logout or simulator disconnect */
 		ClientInitiated,
 		/** The server notified us that it is disconnecting */
@@ -22,11 +21,10 @@ public interface Network {
 	}
 
 	/**
-	 * Holds a simulator reference and a decoded packet, these structs are put
-	 * in the packet inbox for event handling
+	 * Holds a simulator reference and a decoded packet, these structs are put in
+	 * the packet inbox for event handling
 	 */
-	public final class IncomingPacket
-	{
+	public final class IncomingPacket {
 		/** Reference to the simulator that this packet came from */
 		public Simulator Simulator;
 		/** Packet that needs to be processed */
@@ -34,25 +32,22 @@ public interface Network {
 		/** CapsMessage that needs to be processed */
 		public IMessage Message;
 
-		public IncomingPacket(Simulator simulator, Packet packet)
-		{
+		public IncomingPacket(Simulator simulator, Packet packet) {
 			Simulator = simulator;
 			Packet = packet;
 		}
 
-		public IncomingPacket(Simulator simulator, IMessage message)
-		{
+		public IncomingPacket(Simulator simulator, IMessage message) {
 			Simulator = simulator;
 			Message = message;
 		}
 	}
 
 	/**
-	 * Holds a simulator reference and a serialized packet, these structs are
-	 * put in the packet outbox for sending
+	 * Holds a simulator reference and a serialized packet, these structs are put in
+	 * the packet outbox for sending
 	 */
-	public class OutgoingPacket
-	{
+	public class OutgoingPacket {
 		/** Reference to the simulator this packet is destined for */
 		public final Simulator Simulator;
 		/** Packet that needs to be sent */
@@ -66,8 +61,7 @@ public interface Network {
 		/** Environment.TickCount when this packet was last sent over the wire */
 		public long TickCount;
 
-		public OutgoingPacket(Simulator simulator, PacketType type, ByteBuffer buffer)
-		{
+		public OutgoingPacket(Simulator simulator, PacketType type, ByteBuffer buffer) {
 			Simulator = simulator;
 			Type = type;
 			Buffer = buffer;

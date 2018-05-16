@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import java.math.BigInteger;
@@ -20,15 +19,18 @@ import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
  * 
- * 			The glsl_newarray_type is used to creates a parameter of a one-dimensional array type.
- * 			
+ * The glsl_newarray_type is used to creates a parameter of a one-dimensional
+ * array type.
  * 
- * <p>Java class for glsl_newarray_type complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * Java class for glsl_newarray_type complex type.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="glsl_newarray_type">
@@ -47,116 +49,113 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "glsl_newarray_type", propOrder = {
-    "boolOrBool2OrBool3"
-})
+@XmlType(name = "glsl_newarray_type", propOrder = { "boolOrBool2OrBool3" })
 public class GlslNewarrayType {
 
-    @XmlElementRefs({
-        @XmlElementRef(name = "float4x4", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "sampler1D", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "sampler3D", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "int3", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "sampler2D", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "array", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "samplerCUBE", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "int", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "surface", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "int4", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "enum", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "samplerRECT", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "bool2", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "bool", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "float3", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "float", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "float2x2", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "samplerDEPTH", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "bool3", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "float4", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "float3x3", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "int2", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "bool4", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "float2", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false)
-    })
-    protected List<JAXBElement<?>> boolOrBool2OrBool3;
-    @XmlAttribute(name = "length", required = true)
-    @XmlSchemaType(name = "positiveInteger")
-    protected BigInteger length;
+	@XmlElementRefs({
+			@XmlElementRef(name = "float4x4", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "sampler1D", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "sampler3D", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "int3", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "sampler2D", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "array", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "samplerCUBE", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "int", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "surface", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "int4", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "enum", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "samplerRECT", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "bool2", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "bool", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "float3", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "float", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "float2x2", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "samplerDEPTH", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "bool3", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "float4", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "float3x3", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "int2", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "bool4", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+			@XmlElementRef(name = "float2", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false) })
+	protected List<JAXBElement<?>> boolOrBool2OrBool3;
+	@XmlAttribute(name = "length", required = true)
+	@XmlSchemaType(name = "positiveInteger")
+	protected BigInteger length;
 
-    /**
-     * Gets the value of the boolOrBool2OrBool3 property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the boolOrBool2OrBool3 property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getBoolOrBool2OrBool3().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link JAXBElement }{@code <}{@link List }{@code <}{@link Float }{@code >}{@code >}
-     * {@link JAXBElement }{@code <}{@link GlSampler1D }{@code >}
-     * {@link JAXBElement }{@code <}{@link GlSampler3D }{@code >}
-     * {@link JAXBElement }{@code <}{@link List }{@code <}{@link Integer }{@code >}{@code >}
-     * {@link JAXBElement }{@code <}{@link GlSampler2D }{@code >}
-     * {@link JAXBElement }{@code <}{@link GlslNewarrayType }{@code >}
-     * {@link JAXBElement }{@code <}{@link GlSamplerCUBE }{@code >}
-     * {@link JAXBElement }{@code <}{@link Integer }{@code >}
-     * {@link JAXBElement }{@code <}{@link GlslSurfaceType }{@code >}
-     * {@link JAXBElement }{@code <}{@link List }{@code <}{@link Integer }{@code >}{@code >}
-     * {@link JAXBElement }{@code <}{@link String }{@code >}
-     * {@link JAXBElement }{@code <}{@link GlSamplerRECT }{@code >}
-     * {@link JAXBElement }{@code <}{@link List }{@code <}{@link Boolean }{@code >}{@code >}
-     * {@link JAXBElement }{@code <}{@link Boolean }{@code >}
-     * {@link JAXBElement }{@code <}{@link List }{@code <}{@link Float }{@code >}{@code >}
-     * {@link JAXBElement }{@code <}{@link Float }{@code >}
-     * {@link JAXBElement }{@code <}{@link List }{@code <}{@link Float }{@code >}{@code >}
-     * {@link JAXBElement }{@code <}{@link GlSamplerDEPTH }{@code >}
-     * {@link JAXBElement }{@code <}{@link List }{@code <}{@link Boolean }{@code >}{@code >}
-     * {@link JAXBElement }{@code <}{@link List }{@code <}{@link Float }{@code >}{@code >}
-     * {@link JAXBElement }{@code <}{@link List }{@code <}{@link Float }{@code >}{@code >}
-     * {@link JAXBElement }{@code <}{@link List }{@code <}{@link Integer }{@code >}{@code >}
-     * {@link JAXBElement }{@code <}{@link List }{@code <}{@link Boolean }{@code >}{@code >}
-     * {@link JAXBElement }{@code <}{@link List }{@code <}{@link Float }{@code >}{@code >}
-     * 
-     * 
-     */
-    public List<JAXBElement<?>> getBoolOrBool2OrBool3() {
-        if (boolOrBool2OrBool3 == null) {
-            boolOrBool2OrBool3 = new ArrayList<JAXBElement<?>>();
-        }
-        return this.boolOrBool2OrBool3;
-    }
+	/**
+	 * Gets the value of the boolOrBool2OrBool3 property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the boolOrBool2OrBool3 property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getBoolOrBool2OrBool3().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link JAXBElement
+	 * }{@code <}{@link List }{@code <}{@link Float }{@code >}{@code >}
+	 * {@link JAXBElement }{@code <}{@link GlSampler1D }{@code >} {@link JAXBElement
+	 * }{@code <}{@link GlSampler3D }{@code >} {@link JAXBElement
+	 * }{@code <}{@link List }{@code <}{@link Integer }{@code >}{@code >}
+	 * {@link JAXBElement }{@code <}{@link GlSampler2D }{@code >} {@link JAXBElement
+	 * }{@code <}{@link GlslNewarrayType }{@code >} {@link JAXBElement
+	 * }{@code <}{@link GlSamplerCUBE }{@code >} {@link JAXBElement
+	 * }{@code <}{@link Integer }{@code >} {@link JAXBElement
+	 * }{@code <}{@link GlslSurfaceType }{@code >} {@link JAXBElement
+	 * }{@code <}{@link List }{@code <}{@link Integer }{@code >}{@code >}
+	 * {@link JAXBElement }{@code <}{@link String }{@code >} {@link JAXBElement
+	 * }{@code <}{@link GlSamplerRECT }{@code >} {@link JAXBElement
+	 * }{@code <}{@link List }{@code <}{@link Boolean }{@code >}{@code >}
+	 * {@link JAXBElement }{@code <}{@link Boolean }{@code >} {@link JAXBElement
+	 * }{@code <}{@link List }{@code <}{@link Float }{@code >}{@code >}
+	 * {@link JAXBElement }{@code <}{@link Float }{@code >} {@link JAXBElement
+	 * }{@code <}{@link List }{@code <}{@link Float }{@code >}{@code >}
+	 * {@link JAXBElement }{@code <}{@link GlSamplerDEPTH }{@code >}
+	 * {@link JAXBElement }{@code <}{@link List }{@code <}{@link Boolean
+	 * }{@code >}{@code >} {@link JAXBElement }{@code <}{@link List
+	 * }{@code <}{@link Float }{@code >}{@code >} {@link JAXBElement
+	 * }{@code <}{@link List }{@code <}{@link Float }{@code >}{@code >}
+	 * {@link JAXBElement }{@code <}{@link List }{@code <}{@link Integer
+	 * }{@code >}{@code >} {@link JAXBElement }{@code <}{@link List
+	 * }{@code <}{@link Boolean }{@code >}{@code >} {@link JAXBElement
+	 * }{@code <}{@link List }{@code <}{@link Float }{@code >}{@code >}
+	 * 
+	 * 
+	 */
+	public List<JAXBElement<?>> getBoolOrBool2OrBool3() {
+		if (boolOrBool2OrBool3 == null) {
+			boolOrBool2OrBool3 = new ArrayList<JAXBElement<?>>();
+		}
+		return this.boolOrBool2OrBool3;
+	}
 
-    /**
-     * Gets the value of the length property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
-     */
-    public BigInteger getLength() {
-        return length;
-    }
+	/**
+	 * Gets the value of the length property.
+	 * 
+	 * @return possible object is {@link BigInteger }
+	 * 
+	 */
+	public BigInteger getLength() {
+		return length;
+	}
 
-    /**
-     * Sets the value of the length property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
-     */
-    public void setLength(BigInteger value) {
-        this.length = value;
-    }
+	/**
+	 * Sets the value of the length property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link BigInteger }
+	 * 
+	 */
+	public void setLength(BigInteger value) {
+		this.length = value;
+	}
 
 }

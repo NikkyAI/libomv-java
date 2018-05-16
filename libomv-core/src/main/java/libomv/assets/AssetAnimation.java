@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -32,36 +32,31 @@ package libomv.assets;
 import libomv.types.UUID;
 
 /** Represents an Animation */
-public class AssetAnimation extends AssetItem
-{
+public class AssetAnimation extends AssetItem {
 	// Override the base classes AssetType
 	@Override
-	public AssetItem.AssetType getAssetType()
-	{
+	public AssetItem.AssetType getAssetType() {
 		return AssetItem.AssetType.Animation;
 	}
 
 	/**
 	 * Construct an Asset object of type Animation
-	 * 
+	 *
 	 * @param assetID
 	 *            A unique <see cref="UUID"/> specific to this asset
 	 * @param assetData
 	 *            A byte array containing the raw asset data
 	 */
-	public AssetAnimation(UUID assetID, byte[] assetData)
-	{
+	public AssetAnimation(UUID assetID, byte[] assetData) {
 		super(assetID, assetData);
 	}
 
 	@Override
-	protected void encode()
-	{
+	protected void encode() {
 	}
 
 	@Override
-	protected boolean decode()
-	{
+	protected boolean decode() {
 		return true;
 	}
 }

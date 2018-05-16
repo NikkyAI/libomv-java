@@ -6,7 +6,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -75,14 +75,13 @@ import libomv.types.UUID;
 import libomv.types.Vector3;
 import libomv.types.Vector3d;
 
-public class Helpers
-{
+public class Helpers {
 	public static final double DOUBLE_MAG_THRESHOLD = 1E-14f;
 	public static final float FLOAT_MAG_THRESHOLD = 1E-7f;
-//	public static final float E = (float) Math.E;
+	// public static final float E = (float) Math.E;
 	public static final float LOG10E = 0.4342945f;
 	public static final float LOG2E = 1.442695f;
-//	public static final float PI = (float) Math.PI;
+	// public static final float PI = (float) Math.PI;
 	public static final float TWO_PI = (float) (Math.PI * 2.0d);
 	public static final float PI_OVER_TWO = (float) (Math.PI / 2.0d);
 	public static final float PI_OVER_FOUR = (float) (Math.PI / 4.0d);
@@ -91,8 +90,8 @@ public class Helpers
 	public static final float RAD_TO_DEG = (float) (180.0d / Math.PI);
 
 	/**
-	 * Provide a single instance of the Locale class to help parsing in
-	 * situations where the grid assumes an en-us culture
+	 * Provide a single instance of the Locale class to help parsing in situations
+	 * where the grid assumes an en-us culture
 	 */
 	public static final Locale EnUsCulture = new Locale("en", "us");
 
@@ -112,35 +111,30 @@ public class Helpers
 
 	/**
 	 * Calculate the MD5 hash of a given string
-	 * 
+	 *
 	 * @param password
 	 *            The password to hash
 	 * @return An MD5 hash in string format, with $1$ prepended
 	 */
-	public static String MD5Password(String password)
-	{
+	public static String MD5Password(String password) {
 		StringBuilder digest = new StringBuilder(32);
-		try
-		{
+		try {
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			byte[] hash = md.digest(password.getBytes("ASCII"));
 
 			// Convert the hash to a hex string
-			for (byte b : hash)
-			{
+			for (byte b : hash) {
 				digest.append(String.format(EnUsCulture, "%02x", b));
 			}
 			return "$1$" + digest.toString();
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 		}
 		return EmptyString;
 	}
 
 	/**
 	 * Clamp a given value between a range
-	 * 
+	 *
 	 * @param value
 	 *            Value to clamp
 	 * @param min
@@ -149,8 +143,7 @@ public class Helpers
 	 *            Maximum allowable value
 	 * @return A value inclusively between lower and upper
 	 */
-	public static float Clamp(float value, float min, float max)
-	{
+	public static float Clamp(float value, float min, float max) {
 		// First we check to see if we're greater than the max
 		value = (value > max) ? max : value;
 
@@ -163,7 +156,7 @@ public class Helpers
 
 	/**
 	 * Clamp a given value between a range
-	 * 
+	 *
 	 * @param value
 	 *            Value to clamp
 	 * @param min
@@ -172,8 +165,7 @@ public class Helpers
 	 *            Maximum allowable value
 	 * @return A value inclusively between lower and upper
 	 */
-	public static double Clamp(double value, double min, double max)
-	{
+	public static double Clamp(double value, double min, double max) {
 		// First we check to see if we're greater than the max
 		value = (value > max) ? max : value;
 
@@ -186,7 +178,7 @@ public class Helpers
 
 	/**
 	 * Clamp a given value between a range
-	 * 
+	 *
 	 * @param value
 	 *            Value to clamp
 	 * @param min
@@ -195,8 +187,7 @@ public class Helpers
 	 *            Maximum allowable value
 	 * @return A value inclusively between lower and upper
 	 */
-	public static int Clamp(int value, int min, int max)
-	{
+	public static int Clamp(int value, int min, int max) {
 		// First we check to see if we're greater than the max
 		value = (value > max) ? max : value;
 
@@ -209,53 +200,47 @@ public class Helpers
 
 	/**
 	 * Round a floating-point value away from zero to the nearest integer
-	 * 
+	 *
 	 * @param val
 	 *            Floating point number to round
 	 * @return Integer
 	 */
-	public static int roundFromZero(float val)
-	{
+	public static int roundFromZero(float val) {
 		if (val < 0)
 			return (int) Math.ceil(val - 0.5f);
 		return (int) Math.floor(val + 0.5f);
 	}
 
-	public static int roundFromZero(double val)
-	{
+	public static int roundFromZero(double val) {
 		if (val < 0)
 			return (int) Math.ceil(val - 0.5f);
 		return (int) Math.floor(val + 0.5f);
 	}
 
 	/** Test if a single precision float is a finite number */
-	public static boolean IsFinite(float value)
-	{
+	public static boolean IsFinite(float value) {
 		return !(Float.isNaN(value) || Float.isInfinite(value));
 	}
 
 	/** Test if a double precision float is a finite number */
-	public static boolean IsFinite(double value)
-	{
+	public static boolean IsFinite(double value) {
 		return !(Double.isNaN(value) || Double.isInfinite(value));
 	}
 
 	/**
 	 * Get the distance between two floating-point values
-	 * 
+	 *
 	 * @param value1
 	 *            First value
 	 * @param value2
 	 *            Second value
 	 * @return The distance between the two values
 	 */
-	public static float Distance(float value1, float value2)
-	{
+	public static float Distance(float value1, float value2) {
 		return Math.abs(value1 - value2);
 	}
 
-	public static float Hermite(float value1, float tangent1, float value2, float tangent2, float amount)
-	{
+	public static float Hermite(float value1, float tangent1, float value2, float tangent2, float amount) {
 		// All transformed to double not to lose precision
 		// Otherwise, for high numbers of param:amount the result is NaN instead
 		// of Infinity
@@ -263,24 +248,18 @@ public class Helpers
 		double sCubed = s * s * s;
 		double sSquared = s * s;
 
-		if (amount == 0f)
-		{
+		if (amount == 0f) {
 			result = value1;
-		}
-		else if (amount == 1f)
-		{
+		} else if (amount == 1f) {
 			result = value2;
-		}
-		else
-		{
+		} else {
 			result = (2d * v1 - 2d * v2 + t2 + t1) * sCubed + (3d * v2 - 3d * v1 - 2d * t1 - t2) * sSquared + t1 * s
 					+ v1;
 		}
 		return (float) result;
 	}
 
-	public static double Hermite(double value1, double tangent1, double value2, double tangent2, double amount)
-	{
+	public static double Hermite(double value1, double tangent1, double value2, double tangent2, double amount) {
 		// All transformed to double not to lose precision
 		// Otherwise, for high numbers of param:amount the result is NaN instead
 		// of Infinity
@@ -288,34 +267,26 @@ public class Helpers
 		double sCubed = s * s * s;
 		double sSquared = s * s;
 
-		if (amount == 0d)
-		{
+		if (amount == 0d) {
 			result = value1;
-		}
-		else if (amount == 1f)
-		{
+		} else if (amount == 1f) {
 			result = value2;
-		}
-		else
-		{
+		} else {
 			result = (2d * v1 - 2d * v2 + t2 + t1) * sCubed + (3d * v2 - 3d * v1 - 2d * t1 - t2) * sSquared + t1 * s
 					+ v1;
 		}
 		return result;
 	}
 
-	public static float Lerp(float value1, float value2, float amount)
-	{
+	public static float Lerp(float value1, float value2, float amount) {
 		return value1 + (value2 - value1) * amount;
 	}
 
-	public static double Lerp(double value1, double value2, double amount)
-	{
+	public static double Lerp(double value1, double value2, double amount) {
 		return value1 + (value2 - value1) * amount;
 	}
 
-	public static float SmoothStep(float value1, float value2, float amount)
-	{
+	public static float SmoothStep(float value1, float value2, float amount) {
 		// It is expected that 0 < amount < 1
 		// If amount < 0, return value1
 		// If amount > 1, return value2
@@ -323,8 +294,7 @@ public class Helpers
 		return Hermite(value1, 0f, value2, 0f, result);
 	}
 
-	public static double SmoothStep(double value1, double value2, double amount)
-	{
+	public static double SmoothStep(double value1, double value2, double amount) {
 		// It is expected that 0 < amount < 1
 		// If amount < 0, return value1
 		// If amount > 1, return value2
@@ -332,16 +302,14 @@ public class Helpers
 		return Hermite(value1, 0f, value2, 0f, result);
 	}
 
-	public static float ToDegrees(float radians)
-	{
+	public static float ToDegrees(float radians) {
 		// This method uses double precission internally,
 		// though it returns single float
 		// Factor = 180 / pi
 		return (float) (radians * 57.295779513082320876798154814105);
 	}
 
-	public static float ToRadians(float degrees)
-	{
+	public static float ToRadians(float degrees) {
 		// This method uses double precission internally,
 		// though it returns single float
 		// Factor = pi / 180
@@ -354,8 +322,7 @@ public class Helpers
 	// <param name="b">The right-hand (or Y) value</param>
 	// <returns>A 64-bit integer containing the two 32-bit input
 	// values</returns>
-	public static long IntsToLong(int a, int b)
-	{
+	public static long IntsToLong(int a, int b) {
 		return (((long) a << 32) + b);
 	}
 
@@ -363,8 +330,7 @@ public class Helpers
 	// // <param name="a">The 64-bit input integer</param>// <param name="b">The
 	// left-hand (or X) output value</param>// <param name="c">The right-hand
 	// (or Y) output value</param>
-	public static void LongToUInts(long a, int[] b)
-	{
+	public static void LongToUInts(long a, int[] b) {
 		b[0] = (int) (a >> 32);
 		b[1] = (int) (a & 0x00000000FFFFFFFFL);
 	}
@@ -372,15 +338,13 @@ public class Helpers
 	/**
 	 * Converts a floating point number to a terse string format used for
 	 * transmitting numbers in wearable asset files
-	 * 
+	 *
 	 * @param val
 	 *            Floating point number to convert to a string
 	 * @return A terse string representation of the input number
 	 */
-	public static String FloatToTerseString(float val)
-	{
-		if (val == 0)
-		{
+	public static String FloatToTerseString(float val) {
+		if (val == 0) {
 			return ".00";
 		}
 		String s = String.format(Locale.ENGLISH, "%f", val);
@@ -392,18 +356,15 @@ public class Helpers
 		s = s.substring(0, i);
 
 		// Remove superfluous decimal places after the trim
-		if (s.charAt(i - 1) == '.')
-		{
+		if (s.charAt(i - 1) == '.') {
 			s = s.substring(0, --i);
 		}
 		// Remove leading zeroes after a negative sign
-		else if (s.charAt(0) == '-' && s.charAt(1) == '0')
-		{
+		else if (s.charAt(0) == '-' && s.charAt(1) == '0') {
 			s = "-" + s.substring(2, i);
 		}
 		// Remove leading zeroes in positive numbers
-		else if (s.charAt(0) == '0')
-		{
+		else if (s.charAt(0) == '0') {
 			s = s.substring(1, i);
 		}
 		return s;
@@ -415,8 +376,7 @@ public class Helpers
 	// hex dump will be put in the String instead</remarks>
 	// <param name="bytes">The byte array to convert to a String</param>
 	// <returns>A UTF8 String, minus the null terminator</returns>
-	public static String FieldToString(byte[] bytes) throws Exception
-	{
+	public static String FieldToString(byte[] bytes) throws Exception {
 		return FieldToString(bytes, "");
 	}
 
@@ -429,74 +389,55 @@ public class Helpers
 	// <param name="fieldName">A field name to prepend to each line of
 	// output</param>
 	// <returns>A UTF8 String, minus the null terminator</returns>
-	public static String FieldToString(byte[] bytes, String fieldName) throws Exception
-	{
+	public static String FieldToString(byte[] bytes, String fieldName) throws Exception {
 		String output = "";
 		boolean printable = true;
 
-		for (byte element : bytes)
-		{
+		for (byte element : bytes) {
 			// Check if there are any unprintable characters in the array
 			if ((element < 0x20 || element > 0x7E) && element != 0x09 && element != 0x0D && element != 0x0A
-					&& element != 0x00)
-			{
+					&& element != 0x00) {
 				printable = false;
 				break;
 			}
 		}
 
-		if (printable)
-		{
+		if (printable) {
 			int length = bytes.length;
-			if (length > 0)
-			{
+			if (length > 0) {
 				output += fieldName + ": ";
 			}
 			if (bytes[length - 1] == 0)
 				output += new String(bytes, 0, length - 1, UTF8_ENCODING);
 			else
 				output += new String(bytes, UTF8_ENCODING);
-		}
-		else
-		{
-			for (int i = 0; i < bytes.length; i += 16)
-			{
-				if (i != 0)
-				{
+		} else {
+			for (int i = 0; i < bytes.length; i += 16) {
+				if (i != 0) {
 					output += "\n";
 				}
-				if (fieldName != "")
-				{
+				if (fieldName != "") {
 					output += fieldName + ": ";
 				}
 
-				for (int j = 0; j < 16; j++)
-				{
-					if ((i + j) < bytes.length)
-					{
+				for (int j = 0; j < 16; j++) {
+					if ((i + j) < bytes.length) {
 						String s = Integer.toHexString(bytes[i + j]);
 						// String s = String.Format("{0:X} ", bytes[i + j]);
-						if (s.length() == 2)
-						{
+						if (s.length() == 2) {
 							s = "0" + s;
 						}
 
 						output += s;
-					}
-					else
-					{
+					} else {
 						output += "   ";
 					}
 				}
 
-				for (int j = 0; j < 16 && (i + j) < bytes.length; j++)
-				{
-					if (bytes[i + j] >= 0x20 && bytes[i + j] < 0x7E)
-					{
+				for (int j = 0; j < 16 && (i + j) < bytes.length; j++) {
+					if (bytes[i + j] >= 0x20 && bytes[i + j] < 0x7E) {
 						output += (char) bytes[i + j];
-					}
-					else
-					{
+					} else {
 						output += ".";
 					}
 				}
@@ -508,16 +449,14 @@ public class Helpers
 
 	/**
 	 * Convert a UTF8 String to a byte array
-	 * 
+	 *
 	 * @param str
 	 *            The String to convert to a byte array
 	 * @return A null-terminated byte array
 	 * @throws Exception
 	 */
-	public static byte[] StringToField(String str) throws Exception
-	{
-		if (!str.endsWith("\0"))
-		{
+	public static byte[] StringToField(String str) throws Exception {
+		if (!str.endsWith("\0")) {
 			str += "\0";
 		}
 		return str.getBytes(UTF8_ENCODING);
@@ -526,37 +465,30 @@ public class Helpers
 	/**
 	 * Converts a struct or class object containing fields only into a key value
 	 * separated string
-	 * 
+	 *
 	 * @param t
 	 *            The struct object
 	 * @return A string containing the struct fields as the keys, and the field
 	 *         value as the value separated <example> <code>
 	 *  // Add the following code to any struct or class containing only fields to override the toString()
 	 *  // method to display the values of the passed object
-	 * 
+	 *
 	 *  /** Print the struct data as a string
 	 *   *  @return A string containing the field names, and field values
 	 *   * /
-	 * @Override public override string toString() { return
+	 * &#64;Override public override string toString() { return
 	 *           Helpers.StructToString(this); } </code> </example>
 	 */
-	public static String StructToString(Object t)
-	{
+	public static String StructToString(Object t) {
 		StringBuilder result = new StringBuilder();
 		java.lang.Class<?> structType = t.getClass();
 
-		for (Field field : structType.getDeclaredFields())
-		{
-			try
-			{
+		for (Field field : structType.getDeclaredFields()) {
+			try {
 				result.append(field.getName() + ": " + field.get(t).toString() + " ");
-			}
-			catch (IllegalArgumentException e)
-			{
+			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
-			}
-			catch (IllegalAccessException e)
-			{
+			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
 		}
@@ -564,46 +496,36 @@ public class Helpers
 		return result.toString().trim();
 	}
 
-	public static double getUnixTime()
-	{
+	public static double getUnixTime() {
 		return Epoch.getTime() / 1000.0;
 	}
 
-	public static double DateTimeToUnixTime(Date date)
-	{
+	public static double DateTimeToUnixTime(Date date) {
 		return date.getTime() / 1000.0;
 	}
 
-	public static Date UnixTimeToDateTime(double time)
-	{
+	public static Date UnixTimeToDateTime(double time) {
 		return new Date(Math.round(time * 1000.0));
 	}
 
-	public static Date StringToDate(String string)
-	{
+	public static Date StringToDate(String string) {
 		SimpleDateFormat df = new SimpleDateFormat(FRACT_DATE_FMT);
-		try
-		{
+		try {
 			return df.parse(string);
-		}
-		catch (ParseException ex1)
-		{
-			try
-			{
+		} catch (ParseException ex1) {
+			try {
 				df.applyPattern(WHOLE_DATE_FMT);
 				return df.parse(string);
-			}
-			catch (ParseException ex2)
-			{
+			} catch (ParseException ex2) {
 			}
 		}
 		return Helpers.Epoch;
 	}
 
 	/**
-	 * Given an X/Y location in absolute (grid-relative) terms, a region handle
-	 * is returned along with the local X/Y location in that region
-	 * 
+	 * Given an X/Y location in absolute (grid-relative) terms, a region handle is
+	 * returned along with the local X/Y location in that region
+	 *
 	 * @param globalX
 	 *            The absolute X location, a number such as 255360.35
 	 * @param globalY
@@ -614,8 +536,7 @@ public class Helpers
 	 *            [1] The returned sim-local Y position of the global Y
 	 * @return A 64-bit region handle that can be used to teleport to
 	 */
-	public static long GlobalPosToRegionHandle(float globalX, float globalY, float[] locals)
-	{
+	public static long GlobalPosToRegionHandle(float globalX, float globalY, float[] locals) {
 		int x = ((int) globalX >> 8) << 8;
 		int y = ((int) globalY >> 8) << 8;
 		locals[0] = globalX - x;
@@ -623,8 +544,7 @@ public class Helpers
 		return IntsToLong(x, y);
 	}
 
-	public static Vector3d RegionHandleToGlobalPos(long regionHandle, Vector3 local)
-	{
+	public static Vector3d RegionHandleToGlobalPos(long regionHandle, Vector3 local) {
 		int[] globals = new int[2];
 		LongToUInts(regionHandle, globals);
 		return new Vector3d(globals[0] + local.X, globals[1] + local.Y, local.Z);
@@ -649,10 +569,9 @@ public class Helpers
 	// <param name="groupMask">Group mask (permissions)</param>
 	// <param name="ownerMask">Owner mask (permisions)</param>
 	// <returns>The calculated CRC</returns>
-	public static int InventoryCRC(int creationDate, byte saleType, byte invType, byte type, UUID assetID,
-			UUID groupID, int salePrice, UUID ownerID, UUID creatorID, UUID itemID, UUID folderID, int everyoneMask,
-			int flags, int nextOwnerMask, int groupMask, int ownerMask)
-	{
+	public static int InventoryCRC(int creationDate, byte saleType, byte invType, byte type, UUID assetID, UUID groupID,
+			int salePrice, UUID ownerID, UUID creatorID, UUID itemID, UUID folderID, int everyoneMask, int flags,
+			int nextOwnerMask, int groupMask, int ownerMask) {
 		int CRC = 0;
 
 		// IDs
@@ -683,16 +602,13 @@ public class Helpers
 		return CRC;
 	}
 
-	public static String toHexText(byte[] raw_digest)
-	{
+	public static String toHexText(byte[] raw_digest) {
 		// and convert it to hex-text
 		StringBuffer checksum = new StringBuffer(raw_digest.length * 2);
-		for (byte element : raw_digest)
-		{
+		for (byte element : raw_digest) {
 			int b = element & 0xFF;
 			String hex_value = Integer.toHexString(b);
-			if (hex_value.length() == 1)
-			{
+			if (hex_value.length() == 1) {
 				// the Java function returns a single digit if hex is < 0x10
 				checksum.append("0");
 			}
@@ -701,40 +617,32 @@ public class Helpers
 		return checksum.toString();
 	}
 
-	public static Vector<String> split(String s, String c)
-	{
+	public static Vector<String> split(String s, String c) {
 		Vector<String> v = new Vector<String>();
 		StringTokenizer tokens = new StringTokenizer(s, c);
-		while (tokens.hasMoreTokens())
-		{
+		while (tokens.hasMoreTokens()) {
 			v.addElement(tokens.nextToken());
 		}
 		return v;
 	}
 
-	public static String replaceAll(String line, String from, String to)
-	{
-		if (line == null)
-		{
+	public static String replaceAll(String line, String from, String to) {
+		if (line == null) {
 			return null;
 		}
-		if (from == null || from.equals(""))
-		{
+		if (from == null || from.equals("")) {
 			return "";
 		}
 		StringBuffer buf = new StringBuffer();
 		int line_pos = 0;
-		do
-		{
+		do {
 			int pos = line.indexOf(from, line_pos);
-			if (pos == -1)
-			{
+			if (pos == -1) {
 				pos = line.length();
 			}
 			String chunk = line.substring(line_pos, pos);
 			buf.append(chunk);
-			if (pos != line.length())
-			{
+			if (pos != line.length()) {
 				buf.append(to);
 			}
 			line_pos += chunk.length() + from.length();
@@ -742,19 +650,16 @@ public class Helpers
 		return buf.toString();
 	}
 
-	public static String join(String delimiter, String[] strings)
-	{
+	public static String join(String delimiter, String[] strings) {
 		if (strings.length == 0)
 			return EmptyString;
 		int capacity = (strings.length - 1) * delimiter.length();
-		for (String s : strings)
-		{
+		for (String s : strings) {
 			capacity += s.length();
 		}
 
 		StringBuilder buffer = new StringBuilder(capacity);
-		for (String s : strings)
-		{
+		for (String s : strings) {
 			if (capacity < 0)
 				buffer.append(delimiter);
 			buffer.append(s);
@@ -766,215 +671,195 @@ public class Helpers
 	/**
 	 * Convert the first two bytes starting in the byte array in little endian
 	 * ordering to a signed short integer
-	 * 
+	 *
 	 * @param bytes
 	 *            An array two bytes or longer
-	 * @return A signed short integer, will be zero if a short can't be read at
-	 *         the given position
+	 * @return A signed short integer, will be zero if a short can't be read at the
+	 *         given position
 	 */
-	public static short BytesToInt16L(byte[] bytes)
-	{
+	public static short BytesToInt16L(byte[] bytes) {
 		return BytesToInt16L(bytes, 0);
 	}
 
 	/**
-	 * Convert the first two bytes starting at the given position in little
-	 * endian ordering to a signed short integer
-	 * 
+	 * Convert the first two bytes starting at the given position in little endian
+	 * ordering to a signed short integer
+	 *
 	 * @param bytes
 	 *            An array two bytes or longer
 	 * @param pos
 	 *            Position in the array to start reading
-	 * @return A signed short integer, will be zero if a short can't be read at
-	 *         the given position
+	 * @return A signed short integer, will be zero if a short can't be read at the
+	 *         given position
 	 */
-	public static short BytesToInt16L(byte[] bytes, int pos)
-	{
-		if (bytes.length < pos + 2)
-		{
+	public static short BytesToInt16L(byte[] bytes, int pos) {
+		if (bytes.length < pos + 2) {
 			return 0;
 		}
 		return (short) (((bytes[pos + 0] & 0xff) << 0) + ((bytes[pos + 1] & 0xff) << 8));
 	}
 
-	public static short BytesToInt16B(byte[] bytes)
-	{
+	public static short BytesToInt16B(byte[] bytes) {
 		return BytesToInt16B(bytes, 0);
 	}
 
-	public static short BytesToInt16B(byte[] bytes, int pos)
-	{
-		if (bytes.length < pos + 2)
-		{
+	public static short BytesToInt16B(byte[] bytes, int pos) {
+		if (bytes.length < pos + 2) {
 			return 0;
 		}
 		return (short) (((bytes[pos + 0] & 0xff) << 8) + ((bytes[pos + 1] & 0xff) << 0));
 	}
 
 	/**
-	 * Convert the first four bytes of the given array in little endian ordering
-	 * to a signed integer
-	 * 
+	 * Convert the first four bytes of the given array in little endian ordering to
+	 * a signed integer
+	 *
 	 * @param bytes
 	 *            An array four bytes or longer
-	 * @return A signed integer, will be zero if the array contains less than
-	 *         four bytes
+	 * @return A signed integer, will be zero if the array contains less than four
+	 *         bytes
 	 */
-	public static int BytesToInt32L(byte[] bytes)
-	{
+	public static int BytesToInt32L(byte[] bytes) {
 		return BytesToInt32L(bytes, 0);
 	}
 
 	/**
-	 * Convert the first four bytes starting at the given position in little
-	 * endian ordering to a signed integer
-	 * 
+	 * Convert the first four bytes starting at the given position in little endian
+	 * ordering to a signed integer
+	 *
 	 * @param bytes
 	 *            An array four bytes or longer
 	 * @param pos
 	 *            Position to start reading the int from
-	 * @return A signed integer, will be zero if an int can't be read at the
-	 *         given position
+	 * @return A signed integer, will be zero if an int can't be read at the given
+	 *         position
 	 */
-	public static int BytesToInt32L(byte[] bytes, int pos)
-	{
-		if (bytes.length < pos + 4)
-		{
+	public static int BytesToInt32L(byte[] bytes, int pos) {
+		if (bytes.length < pos + 4) {
 			return 0;
 		}
-		return ((bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16) + ((bytes[pos + 3] & 0xff) << 24));
+		return ((bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16)
+				+ ((bytes[pos + 3] & 0xff) << 24));
 	}
 
-	public static int BytesToInt32B(byte[] bytes)
-	{
+	public static int BytesToInt32B(byte[] bytes) {
 		return BytesToInt32B(bytes, 0);
 	}
 
-	public static int BytesToInt32B(byte[] bytes, int pos)
-	{
-		if (bytes.length < pos + 4)
-		{
+	public static int BytesToInt32B(byte[] bytes, int pos) {
+		if (bytes.length < pos + 4) {
 			return 0;
 		}
-		return (((bytes[pos + 0] & 0xff) << 24) + ((bytes[pos + 1] & 0xff) << 16) + ((bytes[pos + 2] & 0xff) << 8) + (bytes[pos + 3] & 0xff));
+		return (((bytes[pos + 0] & 0xff) << 24) + ((bytes[pos + 1] & 0xff) << 16) + ((bytes[pos + 2] & 0xff) << 8)
+				+ (bytes[pos + 3] & 0xff));
 	}
 
 	/**
-	 * Convert the first eight bytes of the given array in little endian
-	 * ordering to a signed long integer
-	 * 
+	 * Convert the first eight bytes of the given array in little endian ordering to
+	 * a signed long integer
+	 *
 	 * @param bytes
 	 *            An array eight bytes or longer
-	 * @return A signed long integer, will be zero if the array contains less
-	 *         than eight bytes
+	 * @return A signed long integer, will be zero if the array contains less than
+	 *         eight bytes
 	 */
-	public static long BytesToInt64L(byte[] bytes)
-	{
+	public static long BytesToInt64L(byte[] bytes) {
 		return BytesToInt64L(bytes, 0);
 	}
 
 	/**
-	 * Convert the first eight bytes starting at the given position in little
-	 * endian ordering to a signed long integer
-	 * 
+	 * Convert the first eight bytes starting at the given position in little endian
+	 * ordering to a signed long integer
+	 *
 	 * @param bytes
 	 *            An array eight bytes or longer
 	 * @param pos
 	 *            Position to start reading the long from
-	 * @return A signed long integer, will be zero if a long can't be read at
-	 *         the given position
+	 * @return A signed long integer, will be zero if a long can't be read at the
+	 *         given position
 	 */
-	public static long BytesToInt64L(byte[] bytes, int pos)
-	{
-		if (bytes.length < 8)
-		{
+	public static long BytesToInt64L(byte[] bytes, int pos) {
+		if (bytes.length < 8) {
 			return 0;
 		}
-		long low = ((bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16) + ((bytes[pos + 3] & 0xff) << 24));
-		long high = ((bytes[pos + 4] & 0xff) + ((bytes[pos + 5] & 0xff) << 8) + ((bytes[pos + 6] & 0xff) << 16) + ((bytes[pos + 7] & 0xff) << 24));
+		long low = ((bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16)
+				+ ((bytes[pos + 3] & 0xff) << 24));
+		long high = ((bytes[pos + 4] & 0xff) + ((bytes[pos + 5] & 0xff) << 8) + ((bytes[pos + 6] & 0xff) << 16)
+				+ ((bytes[pos + 7] & 0xff) << 24));
 		return (high << 32) + (low & 0xffffffffL);
 	}
 
-	public static long BytesToInt64B(byte[] bytes)
-	{
+	public static long BytesToInt64B(byte[] bytes) {
 		return BytesToInt64B(bytes, 0);
 	}
 
-	public static long BytesToInt64B(byte[] bytes, int pos)
-	{
-		if (bytes.length < 8)
-		{
+	public static long BytesToInt64B(byte[] bytes, int pos) {
+		if (bytes.length < 8) {
 			return 0;
 		}
-		long high = (((bytes[pos + 0] & 0xff) << 24) + ((bytes[pos + 1] & 0xff) << 16) + ((bytes[pos + 2] & 0xff) << 8) + (bytes[pos + 3] & 0xff));
-		long low = (((bytes[pos + 4] & 0xff) << 24) + ((bytes[pos + 5] & 0xff) << 16) + ((bytes[pos + 6] & 0xff) << 8) + (bytes[pos + 7] & 0xff));
+		long high = (((bytes[pos + 0] & 0xff) << 24) + ((bytes[pos + 1] & 0xff) << 16) + ((bytes[pos + 2] & 0xff) << 8)
+				+ (bytes[pos + 3] & 0xff));
+		long low = (((bytes[pos + 4] & 0xff) << 24) + ((bytes[pos + 5] & 0xff) << 16) + ((bytes[pos + 6] & 0xff) << 8)
+				+ (bytes[pos + 7] & 0xff));
 		return (high << 32) + (low & 0xffffffffL);
 	}
 
 	/**
 	 * Convert two bytes in little endian ordering to an int
-	 * 
+	 *
 	 * @param bytes
 	 *            Byte array containing the ushort
 	 * @return An int, will be zero if a ushort can't be read
 	 */
-	public static int BytesToUInt16L(byte[] bytes)
-	{
+	public static int BytesToUInt16L(byte[] bytes) {
 		return BytesToUInt16L(bytes, 0);
 	}
 
 	/**
-	 * Convert the first two bytes starting at the given position in little
-	 * endian ordering to an int
-	 * 
+	 * Convert the first two bytes starting at the given position in little endian
+	 * ordering to an int
+	 *
 	 * @param bytes
 	 *            Byte array containing the ushort
 	 * @param pos
 	 *            Position to start reading the ushort from
-	 * @return An int, will be zero if a ushort can't be read at the given
-	 *         position
+	 * @return An int, will be zero if a ushort can't be read at the given position
 	 */
-	public static int BytesToUInt16L(byte[] bytes, int pos)
-	{
-		if (bytes.length < pos + 2)
-		{
+	public static int BytesToUInt16L(byte[] bytes, int pos) {
+		if (bytes.length < pos + 2) {
 			return 0;
 		}
 		return ((bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8));
 	}
 
-	public static int BytesToUInt16B(byte[] bytes)
-	{
+	public static int BytesToUInt16B(byte[] bytes) {
 		return BytesToUInt16B(bytes, 0);
 	}
 
-	public static int BytesToUInt16B(byte[] bytes, int pos)
-	{
-		if (bytes.length < pos + 2)
-		{
+	public static int BytesToUInt16B(byte[] bytes, int pos) {
+		if (bytes.length < pos + 2) {
 			return 0;
 		}
 		return (((bytes[pos + 0] & 0xff) << 8) + (bytes[pos + 1] & 0xff));
 	}
 
 	/**
-	 * Convert the first four bytes of the given array in little endian ordering
-	 * to long
-	 * 
+	 * Convert the first four bytes of the given array in little endian ordering to
+	 * long
+	 *
 	 * @param bytes
 	 *            An array four bytes or longer
 	 * @return An unsigned integer, will be zero if the array contains less than
 	 *         four bytes
 	 */
-	public static long BytesToUInt32L(byte[] bytes)
-	{
+	public static long BytesToUInt32L(byte[] bytes) {
 		return BytesToUInt32L(bytes, 0);
 	}
 
 	/**
-	 * Convert the first four bytes starting at the given position in little
-	 * endian ordering to a long
-	 * 
+	 * Convert the first four bytes starting at the given position in little endian
+	 * ordering to a long
+	 *
 	 * @param bytes
 	 *            Byte array containing the uint
 	 * @param pos
@@ -982,10 +867,8 @@ public class Helpers
 	 * @return An unsigned integer, will be zero if a uint can't be read at the
 	 *         given position
 	 */
-	public static long BytesToUInt32L(byte[] bytes, int pos)
-	{
-		if (bytes.length < pos + 4)
-		{
+	public static long BytesToUInt32L(byte[] bytes, int pos) {
+		if (bytes.length < pos + 4) {
 			return 0;
 		}
 		long low = ((bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16));
@@ -993,15 +876,12 @@ public class Helpers
 		return (high << 24) + (0xffffffffL & low);
 	}
 
-	public static long BytesToUInt32B(byte[] bytes)
-	{
+	public static long BytesToUInt32B(byte[] bytes) {
 		return BytesToUInt32B(bytes, 0);
 	}
 
-	public static long BytesToUInt32B(byte[] bytes, int pos)
-	{
-		if (bytes.length < pos + 4)
-		{
+	public static long BytesToUInt32B(byte[] bytes, int pos) {
+		if (bytes.length < pos + 4) {
 			return 0;
 		}
 		long low = ((bytes[pos + 3] & 0xff) + ((bytes[pos + 2] & 0xff) << 8) + ((bytes[pos + 1] & 0xff) << 16));
@@ -1010,269 +890,228 @@ public class Helpers
 	}
 
 	/**
-	 * Convert the first eight bytes of the given array in little endian
-	 * ordering to a constrained long
-	 * 
+	 * Convert the first eight bytes of the given array in little endian ordering to
+	 * a constrained long
+	 *
 	 * @param bytes
 	 *            An array eight bytes or longer
-	 * @return An unsigned 64-bit integer, will be zero if the array contains
-	 *         less than eight bytes
+	 * @return An unsigned 64-bit integer, will be zero if the array contains less
+	 *         than eight bytes
 	 */
-	public static long BytesToUInt64L(byte[] bytes)
-	{
+	public static long BytesToUInt64L(byte[] bytes) {
 		return BytesToUInt64L(bytes, 0);
 	}
 
 	/**
-	 * Convert the first eight bytes starting at the given position in little
-	 * endian ordering to a constrained long
-	 * 
+	 * Convert the first eight bytes starting at the given position in little endian
+	 * ordering to a constrained long
+	 *
 	 * @param bytes
 	 *            An array eight bytes or longer
-	 * @return A long integer, will be zero if the array contains less than
-	 *         eight bytes and 0x7fffffff if the resulting value would exceed
-	 *         the positive limit of a long
+	 * @return A long integer, will be zero if the array contains less than eight
+	 *         bytes and 0x7fffffff if the resulting value would exceed the positive
+	 *         limit of a long
 	 */
-	public static long BytesToUInt64L(byte[] bytes, int pos)
-	{
-		if (bytes.length < 8)
-		{
+	public static long BytesToUInt64L(byte[] bytes, int pos) {
+		if (bytes.length < 8) {
 			return 0;
 		}
 
-		if ((bytes[pos + 7] & 0xff) < 0)
-		{
+		if ((bytes[pos + 7] & 0xff) < 0) {
 			return 0x7fffffff;
 		}
-		long low = ((bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16) + ((bytes[pos + 3] & 0xff) << 24));
-		long high = ((bytes[pos + 4] & 0xff) + ((bytes[pos + 5] & 0xff) << 8) + ((bytes[pos + 6] & 0xff) << 16) + ((bytes[pos + 7] & 0xff) << 24));
+		long low = ((bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16)
+				+ ((bytes[pos + 3] & 0xff) << 24));
+		long high = ((bytes[pos + 4] & 0xff) + ((bytes[pos + 5] & 0xff) << 8) + ((bytes[pos + 6] & 0xff) << 16)
+				+ ((bytes[pos + 7] & 0xff) << 24));
 		return (high << 32) + (low & 0xffffffff);
 	}
 
-	public static long BytesToUInt64B(byte[] bytes)
-	{
+	public static long BytesToUInt64B(byte[] bytes) {
 		return BytesToUInt64B(bytes, 0);
 	}
 
-	public static long BytesToUInt64B(byte[] bytes, int pos)
-	{
-		if (bytes.length < 8)
-		{
+	public static long BytesToUInt64B(byte[] bytes, int pos) {
+		if (bytes.length < 8) {
 			return 0;
 		}
 
-		if ((bytes[pos + 0] & 0xff) < 0)
-		{
+		if ((bytes[pos + 0] & 0xff) < 0) {
 			return 0x7fffffff;
 		}
-		long high = (((bytes[pos + 0] & 0xff) << 24) + ((bytes[pos + 1] & 0xff) << 16) + ((bytes[pos + 2] & 0xff) << 8) + (bytes[pos + 3] & 0xff));
-		long low = (((bytes[pos + 4] & 0xff) << 24) + ((bytes[pos + 5] & 0xff) << 16) + ((bytes[pos + 6] & 0xff) << 8) + (bytes[pos + 7] & 0xff));
+		long high = (((bytes[pos + 0] & 0xff) << 24) + ((bytes[pos + 1] & 0xff) << 16) + ((bytes[pos + 2] & 0xff) << 8)
+				+ (bytes[pos + 3] & 0xff));
+		long low = (((bytes[pos + 4] & 0xff) << 24) + ((bytes[pos + 5] & 0xff) << 16) + ((bytes[pos + 6] & 0xff) << 8)
+				+ (bytes[pos + 7] & 0xff));
 		return (high << 32) + (low & 0xffffffff);
 	}
 
 	/**
-	 * Convert four bytes starting at the given position in little endian
-	 * ordering to a floating point value
-	 * 
+	 * Convert four bytes starting at the given position in little endian ordering
+	 * to a floating point value
+	 *
 	 * @param bytes
 	 *            Byte array containing a little ending floating point value
 	 * @param pos
-	 *            Starting position of the floating point value in the byte
-	 *            array
+	 *            Starting position of the floating point value in the byte array
 	 * @return Single precision value
 	 */
-	public static float BytesToFloatL(byte[] bytes, int pos)
-	{
+	public static float BytesToFloatL(byte[] bytes, int pos) {
 		return Float.intBitsToFloat(BytesToInt32L(bytes, pos));
 	}
 
-	public static float BytesToFloatB(byte[] bytes, int pos)
-	{
+	public static float BytesToFloatB(byte[] bytes, int pos) {
 		return Float.intBitsToFloat(BytesToInt32B(bytes, pos));
 	}
 
 	/**
-	 * Convert eight bytes starting at the given position in little endian
-	 * ordering to a double floating point value
-	 * 
+	 * Convert eight bytes starting at the given position in little endian ordering
+	 * to a double floating point value
+	 *
 	 * @param bytes
-	 *            Byte array containing a little ending double floating point
-	 *            value
+	 *            Byte array containing a little ending double floating point value
 	 * @param pos
-	 *            Starting position of the double floating point value in the
-	 *            byte array
+	 *            Starting position of the double floating point value in the byte
+	 *            array
 	 * @return Double precision value
 	 */
-	public static double BytesToDoubleL(byte[] bytes, int pos)
-	{
+	public static double BytesToDoubleL(byte[] bytes, int pos) {
 		return Double.longBitsToDouble(BytesToInt64L(bytes, pos));
 	}
 
-	public static double BytesToDoubleB(byte[] bytes, int pos)
-	{
+	public static double BytesToDoubleB(byte[] bytes, int pos) {
 		return Double.longBitsToDouble(BytesToInt64B(bytes, pos));
 	}
 
 	/**
-	 * Convert a fixed point binary value in a byte array into a floating point value
+	 * Convert a fixed point binary value in a byte array into a floating point
+	 * value
+	 *
+	 * Note: This is a specific floating point format used by the Second Life
+	 * protocol and works somewhat different for signed numbers, than what IEEE-754
+	 * derived schemes would use.
+	 *
+	 * number SL-FP IEEE-754 MIN_NUM 000000000 11111111111 0.0 100000000 00000000000
+	 * MAX_NUM 111111111 01111111111
 	 * 
-	 * Note: This is a specific floating point format used by the Second Life protocol
-	 * and works somewhat different for signed numbers, than what IEEE-754 derived schemes
-	 * would use.
-	 * 
-	 * number          SL-FP               IEEE-754
-	 *   MIN_NUM       000000000           11111111111
-	 *   0.0           100000000           00000000000
-	 *   MAX_NUM       111111111           01111111111
-	 *   
 	 * @param fixedVal
 	 * @param signed
 	 * @param intBits
 	 * @param fracBits
 	 * @return
 	 */
-	private static float FixedToFloat(long fixedVal, boolean signed, int intBits, int fracBits)
-	{
+	private static float FixedToFloat(long fixedVal, boolean signed, int intBits, int fracBits) {
 		int maxVal = 1 << intBits;
 		double floatVal = fixedVal / (1 << fracBits);
 
-		if (signed)
-		{
+		if (signed) {
 			floatVal -= maxVal;
 		}
-		return (float)floatVal;
+		return (float) floatVal;
 	}
 
-	public static float BytesToFixedL(byte[] bytes, int pos, boolean signed, int intBits, int fracBits)
-	{
+	public static float BytesToFixedL(byte[] bytes, int pos, boolean signed, int intBits, int fracBits) {
 		int totalBits = intBits + fracBits;
 		long fixedVal, mask;
 
-		if (signed)
-		{
+		if (signed) {
 			totalBits++;
 		}
 
 		mask = (1 << totalBits) - 1;
-		if (totalBits <= 8)
-		{
+		if (totalBits <= 8) {
 			fixedVal = bytes[pos] & mask;
-		}
-		else if (totalBits <= 16)
-		{
+		} else if (totalBits <= 16) {
 			fixedVal = BytesToUInt16L(bytes, pos) & mask;
-		}
-		else if (totalBits <= 32)
-		{
+		} else if (totalBits <= 32) {
 			fixedVal = BytesToUInt32L(bytes, pos) & mask;
-		}
-		else
-		{
+		} else {
 			return 0.0f;
 		}
 		return FixedToFloat(fixedVal, signed, intBits, fracBits);
 	}
 
-	public static float BytesToFixedB(byte[] bytes, int pos, boolean signed, int intBits, int fracBits)
-	{
+	public static float BytesToFixedB(byte[] bytes, int pos, boolean signed, int intBits, int fracBits) {
 		int totalBits = intBits + fracBits;
 		long fixedVal, mask;
 
-		if (signed)
-		{
+		if (signed) {
 			totalBits++;
 		}
 
 		mask = (1 << totalBits) - 1;
-		if (totalBits <= 8)
-		{
+		if (totalBits <= 8) {
 			fixedVal = bytes[pos] & mask;
-		}
-		else if (totalBits <= 16)
-		{
+		} else if (totalBits <= 16) {
 			fixedVal = BytesToUInt16B(bytes, pos) & mask;
-		}
-		else if (totalBits <= 32)
-		{
+		} else if (totalBits <= 32) {
 			fixedVal = BytesToUInt32B(bytes, pos) & mask;
-		}
-		else
-		{
+		} else {
 			return 0.0f;
 		}
 		return FixedToFloat(fixedVal, signed, intBits, fracBits);
 	}
 
-	public static int Int8ToBytes(byte value, byte[] dest, int pos)
-	{
+	public static int Int8ToBytes(byte value, byte[] dest, int pos) {
 		dest[pos + 0] = value;
 		return 1;
 	}
 
-	public static int UInt8ToBytes(byte value, byte[] dest, int pos)
-	{
+	public static int UInt8ToBytes(byte value, byte[] dest, int pos) {
 		dest[pos + 0] = value;
 		return 1;
 	}
 
 	/**
 	 * Convert a short to a byte array in little endian format
-	 * 
+	 *
 	 * @param value
 	 *            The short to convert
 	 * @return A four byte little endian array
 	 */
-	public static byte[] Int16ToBytesL(short value)
-	{
+	public static byte[] Int16ToBytesL(short value) {
 		byte[] bytes = new byte[2];
 		Int16ToBytesL(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int Int16ToBytesL(short value, byte[] dest, int pos)
-	{
+	public static int Int16ToBytesL(short value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 0) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 8) & 0xff);
 		return 2;
 	}
 
-	public static byte[] Int16ToBytesB(short value)
-	{
+	public static byte[] Int16ToBytesB(short value) {
 		byte[] bytes = new byte[2];
 		Int16ToBytesB(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int Int16ToBytesB(short value, byte[] dest, int pos)
-	{
+	public static int Int16ToBytesB(short value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 8) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 0) & 0xff);
 		return 2;
 	}
 
-	public static byte[] UInt16ToBytesL(int value)
-	{
+	public static byte[] UInt16ToBytesL(int value) {
 		byte[] bytes = new byte[2];
 		UInt16ToBytesL(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int UInt16ToBytesL(int value, byte[] dest, int pos)
-	{
+	public static int UInt16ToBytesL(int value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 0) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 8) & 0xff);
 		return 2;
 	}
 
-	public static byte[] UInt16ToBytesB(int value)
-	{
+	public static byte[] UInt16ToBytesB(int value) {
 		byte[] bytes = new byte[2];
 		UInt16ToBytesB(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int UInt16ToBytesB(int value, byte[] dest, int pos)
-	{
+	public static int UInt16ToBytesB(int value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 8) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 0) & 0xff);
 		return 2;
@@ -1280,20 +1119,18 @@ public class Helpers
 
 	/**
 	 * Convert an integer to a byte array in little endian format
-	 * 
+	 *
 	 * @param value
 	 *            The integer to convert
 	 * @return A four byte little endian array
 	 */
-	public static byte[] Int32ToBytesL(int value)
-	{
+	public static byte[] Int32ToBytesL(int value) {
 		byte[] bytes = new byte[4];
 		Int32ToBytesL(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int Int32ToBytesL(int value, byte[] dest, int pos)
-	{
+	public static int Int32ToBytesL(int value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 0) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 8) & 0xff);
 		dest[pos + 2] = (byte) ((value >> 16) & 0xff);
@@ -1301,15 +1138,13 @@ public class Helpers
 		return 4;
 	}
 
-	public static byte[] Int32ToBytesB(int value)
-	{
+	public static byte[] Int32ToBytesB(int value) {
 		byte[] bytes = new byte[4];
 		Int32ToBytesB(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int Int32ToBytesB(int value, byte[] dest, int pos)
-	{
+	public static int Int32ToBytesB(int value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 24) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 16) & 0xff);
 		dest[pos + 2] = (byte) ((value >> 8) & 0xff);
@@ -1317,15 +1152,13 @@ public class Helpers
 		return 4;
 	}
 
-	public static byte[] UInt32ToBytesL(long value)
-	{
+	public static byte[] UInt32ToBytesL(long value) {
 		byte[] bytes = new byte[4];
 		UInt32ToBytesL(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int UInt32ToBytesL(long value, byte[] dest, int pos)
-	{
+	public static int UInt32ToBytesL(long value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 0) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 8) & 0xff);
 		dest[pos + 2] = (byte) ((value >> 16) & 0xff);
@@ -1333,15 +1166,13 @@ public class Helpers
 		return 4;
 	}
 
-	public static byte[] UInt32ToBytesB(long value)
-	{
+	public static byte[] UInt32ToBytesB(long value) {
 		byte[] bytes = new byte[4];
 		UInt32ToBytesB(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int UInt32ToBytesB(long value, byte[] dest, int pos)
-	{
+	public static int UInt32ToBytesB(long value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 24) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 16) & 0xff);
 		dest[pos + 2] = (byte) ((value >> 8) & 0xff);
@@ -1351,20 +1182,18 @@ public class Helpers
 
 	/**
 	 * Convert a 64-bit integer to a byte array in little endian format
-	 * 
+	 *
 	 * @param value
 	 *            The value to convert
 	 * @return An 8 byte little endian array
 	 */
-	public static byte[] Int64ToBytesL(long value)
-	{
+	public static byte[] Int64ToBytesL(long value) {
 		byte[] bytes = new byte[8];
 		Int64ToBytesL(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int Int64ToBytesL(long value, byte[] dest, int pos)
-	{
+	public static int Int64ToBytesL(long value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 0) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 8) & 0xff);
 		dest[pos + 2] = (byte) ((value >> 16) & 0xff);
@@ -1376,15 +1205,13 @@ public class Helpers
 		return 8;
 	}
 
-	public static byte[] Int64ToBytesB(long value)
-	{
+	public static byte[] Int64ToBytesB(long value) {
 		byte[] bytes = new byte[8];
 		Int64ToBytesB(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int Int64ToBytesB(long value, byte[] dest, int pos)
-	{
+	public static int Int64ToBytesB(long value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 56) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 48) & 0xff);
 		dest[pos + 2] = (byte) ((value >> 40) & 0xff);
@@ -1398,20 +1225,18 @@ public class Helpers
 
 	/**
 	 * Convert a 64-bit unsigned integer to a byte array in little endian format
-	 * 
+	 *
 	 * @param value
 	 *            The value to convert
 	 * @return An 8 byte little endian array
 	 */
-	public static byte[] UInt64ToBytesL(long value)
-	{
+	public static byte[] UInt64ToBytesL(long value) {
 		byte[] bytes = new byte[8];
 		UInt64ToBytesL(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int UInt64ToBytesL(long value, byte[] dest, int pos)
-	{
+	public static int UInt64ToBytesL(long value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 0) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 8) & 0xff);
 		dest[pos + 2] = (byte) ((value >> 16) & 0xff);
@@ -1423,15 +1248,13 @@ public class Helpers
 		return 8;
 	}
 
-	public static byte[] UInt64ToBytesB(long value)
-	{
+	public static byte[] UInt64ToBytesB(long value) {
 		byte[] bytes = new byte[8];
 		UInt64ToBytesB(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int UInt64ToBytesB(long value, byte[] dest, int pos)
-	{
+	public static int UInt64ToBytesB(long value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 56) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 48) & 0xff);
 		dest[pos + 2] = (byte) ((value >> 40) & 0xff);
@@ -1445,137 +1268,106 @@ public class Helpers
 
 	/**
 	 * Convert a floating point value to four bytes in little endian ordering
-	 * 
+	 *
 	 * @param value
 	 *            A floating point value
 	 * @return A four byte array containing the value in little endian ordering
 	 */
-	public static byte[] FloatToBytesL(float value)
-	{
+	public static byte[] FloatToBytesL(float value) {
 		byte[] bytes = new byte[4];
 		Int32ToBytesL(Float.floatToIntBits(value), bytes, 0);
 		return bytes;
 	}
 
-	public static int FloatToBytesL(float value, byte[] dest, int pos)
-	{
+	public static int FloatToBytesL(float value, byte[] dest, int pos) {
 		return Int32ToBytesL(Float.floatToIntBits(value), dest, pos);
 	}
 
-	public static byte[] FloatToBytesB(float value)
-	{
+	public static byte[] FloatToBytesB(float value) {
 		byte[] bytes = new byte[4];
 		Int32ToBytesB(Float.floatToIntBits(value), bytes, 0);
 		return bytes;
 	}
 
-	public static int FloatToBytesB(float value, byte[] dest, int pos)
-	{
+	public static int FloatToBytesB(float value, byte[] dest, int pos) {
 		return Int32ToBytesB(Float.floatToIntBits(value), dest, pos);
 	}
 
-	public static byte[] DoubleToBytesL(double value)
-	{
+	public static byte[] DoubleToBytesL(double value) {
 		byte[] bytes = new byte[8];
 		Int64ToBytesL(Double.doubleToLongBits(value), bytes, 0);
 		return bytes;
 	}
 
-	public static int DoubleToBytesL(double value, byte[] dest, int pos)
-	{
+	public static int DoubleToBytesL(double value, byte[] dest, int pos) {
 		return Int64ToBytesL(Double.doubleToLongBits(value), dest, pos);
 	}
 
-	public static byte[] DoubleToBytesB(double value)
-	{
+	public static byte[] DoubleToBytesB(double value) {
 		byte[] bytes = new byte[8];
 		Int64ToBytesB(Double.doubleToLongBits(value), bytes, 0);
 		return bytes;
 	}
 
-	public static int DoubleToBytesB(double value, byte[] dest, int pos)
-	{
+	public static int DoubleToBytesB(double value, byte[] dest, int pos) {
 		return Int64ToBytesB(Double.doubleToLongBits(value), dest, pos);
 	}
 
-	private static float FloatToFixed(float data, boolean isSigned, int intBits, int fracBits)
-	{
+	private static float FloatToFixed(float data, boolean isSigned, int intBits, int fracBits) {
 		int min, max = 1 << intBits;
 
-		if (isSigned)
-		{
+		if (isSigned) {
 			min = 1 << intBits;
 			min *= -1;
-		}
-		else
-		{
+		} else {
 			min = 0;
 		}
 
 		float fixedVal = Clamp(data, min, max);
-		if (isSigned)
-		{
+		if (isSigned) {
 			fixedVal += max;
 		}
 		fixedVal *= 1 << fracBits;
 		return fixedVal;
 	}
 
-	public static int FixedToBytesL(byte[] dest, int pos, float data, boolean isSigned, int intBits, int fracBits)
-	{
+	public static int FixedToBytesL(byte[] dest, int pos, float data, boolean isSigned, int intBits, int fracBits) {
 		int totalBits = intBits + fracBits;
-		if (isSigned)
-		{
+		if (isSigned) {
 			totalBits++;
 		}
 
-		if (totalBits <= 8)
-		{
+		if (totalBits <= 8) {
 			dest[pos] = (byte) FloatToFixed(data, isSigned, intBits, fracBits);
 			return 1;
-		}
-		else if (totalBits <= 16)
-		{
+		} else if (totalBits <= 16) {
 			UInt16ToBytesL((int) FloatToFixed(data, isSigned, intBits, fracBits), dest, pos);
 			return 2;
-		}
-		else if (totalBits <= 31)
-		{
+		} else if (totalBits <= 31) {
 			UInt32ToBytesL((long) FloatToFixed(data, isSigned, intBits, fracBits), dest, pos);
 			return 4;
-		}
-		else
-		{
+		} else {
 			UInt64ToBytesL((long) FloatToFixed(data, isSigned, intBits, fracBits), dest, pos);
 			return 8;
 		}
 	}
 
-	public static int FixedToBytesB(byte[] dest, int pos, float data, boolean isSigned, int intBits, int fracBits)
-	{
+	public static int FixedToBytesB(byte[] dest, int pos, float data, boolean isSigned, int intBits, int fracBits) {
 		int totalBits = intBits + fracBits;
-		if (isSigned)
-		{
+		if (isSigned) {
 			totalBits++;
 		}
 
-		if (totalBits <= 8)
-		{
+		if (totalBits <= 8) {
 			dest[pos] = (byte) FloatToFixed(data, isSigned, intBits, fracBits);
 			return 1;
-		}
-		else if (totalBits <= 16)
-		{
+		} else if (totalBits <= 16) {
 			UInt16ToBytesB((int) FloatToFixed(data, isSigned, intBits, fracBits), dest, pos);
 			return 2;
-		}
-		else if (totalBits <= 31)
-		{
+		} else if (totalBits <= 31) {
 			UInt32ToBytesB((long) FloatToFixed(data, isSigned, intBits, fracBits), dest, pos);
 			return 4;
-		}
-		else
-		{
+		} else {
 			UInt64ToBytesB((long) FloatToFixed(data, isSigned, intBits, fracBits), dest, pos);
 			return 8;
 		}
@@ -1583,21 +1375,20 @@ public class Helpers
 
 	/**
 	 * Packs two 32-bit unsigned integers in to a 64-bit unsigned integer
-	 * 
+	 *
 	 * @param a
 	 *            The left-hand (or X) value
 	 * @param b
 	 *            The right-hand (or Y) value
 	 * @return A 64-bit integer containing the two 32-bit input values
 	 */
-	public static long UIntsToLong(int a, int b)
-	{
+	public static long UIntsToLong(int a, int b) {
 		return ((long) a << 32) | b;
 	}
 
 	/**
 	 * Unpacks two 32-bit unsigned integers from a 64-bit unsigned integer
-	 * 
+	 *
 	 * @param a
 	 *            The 64-bit input integer
 	 * @param b
@@ -1605,73 +1396,66 @@ public class Helpers
 	 * @param c
 	 *            The right-hand (or Y) output value
 	 */
-	public static void LongToUInts(long a, RefObject<Integer> b, RefObject<Integer> c)
-	{
+	public static void LongToUInts(long a, RefObject<Integer> b, RefObject<Integer> c) {
 		b.argvalue = (int) (a >> 32);
 		c.argvalue = (int) (a & 0x00000000FFFFFFFF);
 	}
 
 	/**
 	 * Swaps the high and low nibbles in a byte. Converts aaaabbbb to bbbbaaaa
-	 * 
+	 *
 	 * @param value
 	 *            Byte to swap the nibbles in
 	 * @return Byte value with the nibbles swapped
 	 */
-	public static byte SwapNibbles(byte value)
-	{
+	public static byte SwapNibbles(byte value) {
 		return (byte) (((value & 0xF0) >> 4) | ((value & 0x0F) << 4));
 	}
 
 	/**
 	 * Converts an unsigned integer to a hexadecimal string
-	 * 
+	 *
 	 * @param i
 	 *            An unsigned integer to convert to a string
-	 * @return A hexadecimal string 10 characters long
-	 *         <example>0x7fffffff</example>
+	 * @return A hexadecimal string 10 characters long <example>0x7fffffff</example>
 	 */
-	public static String UInt32ToHexString(long i)
-	{
+	public static String UInt32ToHexString(long i) {
 		return String.format("%#08x", i);
 	}
 
-	public static String LocalIDToString(int localID)
-	{
+	public static String LocalIDToString(int localID) {
 		return Long.toString(localID & 0xFFFFFFFFL);
 	}
 
 	/**
-	 * read a variable length UTF8 byte array to a string, consuming  len characters
-	 * 
+	 * read a variable length UTF8 byte array to a string, consuming len characters
+	 *
 	 * @param bytes
 	 *            The UTF8 encoded byte array to convert
 	 * @return The decoded string
 	 * @throws UnsupportedEncodingException
 	 */
-	public static String readString(InputStream is, int len) throws IOException
-	{
+	public static String readString(InputStream is, int len) throws IOException {
 		byte[] bytes = new byte[len];
 		is.read(bytes);
 		return BytesToString(bytes, 0, len, UTF8_ENCODING);
 	}
-	
+
 	/**
 	 * Convert a variable length UTF8 byte array to a string
-	 * 
+	 *
 	 * @param bytes
 	 *            The UTF8 encoded byte array to convert
 	 * @return The decoded string
 	 * @throws UnsupportedEncodingException
 	 */
-	public static String BytesToString(byte[] bytes) throws UnsupportedEncodingException
-	{
+	public static String BytesToString(byte[] bytes) throws UnsupportedEncodingException {
 		return BytesToString(bytes, 0, bytes.length, UTF8_ENCODING);
 	}
 
 	/**
 	 * Convert a variable length UTF8 byte array to a string
-	 * 
+	 *
 	 * @param bytes
 	 *            The UTF8 encoded byte array to convert
 	 * @param offset
@@ -1682,23 +1466,18 @@ public class Helpers
 	 * @return The decoded string
 	 * @throws UnsupportedEncodingException
 	 */
-	public static String BytesToString(byte[] bytes, int offset, int length) throws UnsupportedEncodingException
-	{
+	public static String BytesToString(byte[] bytes, int offset, int length) throws UnsupportedEncodingException {
 		return BytesToString(bytes, offset, length, UTF8_ENCODING);
 	}
-	
-	public static String BytesToString(byte[] bytes, int offset, int length, String encoding) throws UnsupportedEncodingException
-	{
-		if (bytes != null)
-		{
-			if (length < 0)
-			{
+
+	public static String BytesToString(byte[] bytes, int offset, int length, String encoding)
+			throws UnsupportedEncodingException {
+		if (bytes != null) {
+			if (length < 0) {
 				/* Search for the null terminating byte */
 				for (length = 0; bytes[offset + length] != 0; length++)
 					;
-			}
-			else if (length > 0)
-			{
+			} else if (length > 0) {
 				/* Backtrack possible null terminating bytes */
 				for (; length > 0 && bytes[offset + length - 1] == 0; length--)
 					;
@@ -1714,22 +1493,21 @@ public class Helpers
 
 	/**
 	 * Converts a byte array to a string containing hexadecimal characters
-	 * 
+	 *
 	 * @param bytes
 	 *            The byte array to convert to a string
 	 * @param fieldName
 	 *            The name of the field to prepend to each line of the string
-	 * @return A string containing hexadecimal characters on multiple lines.
-	 *         Each line is prepended with the field name
+	 * @return A string containing hexadecimal characters on multiple lines. Each
+	 *         line is prepended with the field name
 	 */
-	public static String BytesToHexString(byte[] bytes, String fieldName)
-	{
+	public static String BytesToHexString(byte[] bytes, String fieldName) {
 		return BytesToHexString(bytes, 0, bytes.length, fieldName);
 	}
 
 	/**
 	 * Converts a byte array to a string containing hexadecimal characters
-	 * 
+	 *
 	 * @param bytes
 	 *            The byte array to convert to a string
 	 * @param offset
@@ -1738,32 +1516,25 @@ public class Helpers
 	 *            Number of bytes in the array to parse
 	 * @param fieldName
 	 *            A string to prepend to each line of the hex dump
-	 * @return A string containing hexadecimal characters on multiple lines.
-	 *         Each line is prepended with the field name
+	 * @return A string containing hexadecimal characters on multiple lines. Each
+	 *         line is prepended with the field name
 	 */
-	public static String BytesToHexString(byte[] bytes, int offset, int length, String fieldName)
-	{
+	public static String BytesToHexString(byte[] bytes, int offset, int length, String fieldName) {
 		StringBuilder output = new StringBuilder();
 
-		for (int i = 0; i < length; i += 16)
-		{
-			if (i != 0)
-			{
+		for (int i = 0; i < length; i += 16) {
+			if (i != 0) {
 				output.append('\n');
 			}
 
-			if (fieldName.length() > 0)
-			{
+			if (fieldName.length() > 0) {
 				output.append(fieldName);
 				output.append(": ");
 			}
 
-			for (int j = 0; j < 16; j++)
-			{
-				if ((i + j) < length)
-				{
-					if (j != 0)
-					{
+			for (int j = 0; j < 16; j++) {
+				if ((i + j) < length) {
+					if (j != 0) {
 						output.append(' ');
 					}
 					output.append(String.format("%2x", bytes[offset + i + j]));
@@ -1775,65 +1546,54 @@ public class Helpers
 
 	/**
 	 * Convert a string to a UTF8 encoded byte array
-	 * 
+	 *
 	 * @param str
 	 *            The string to convert
 	 * @return A null-terminated UTF8 byte array
 	 */
-	public static byte[] StringToBytes(String str)
-	{
+	public static byte[] StringToBytes(String str) {
 		return StringToBytes(str, UTF8_ENCODING);
 	}
-	
-	public static byte[] StringToBytes(String str, String encoding)
-	{
-		if (Helpers.isEmpty(str))
-		{
+
+	public static byte[] StringToBytes(String str, String encoding) {
+		if (Helpers.isEmpty(str)) {
 			return Helpers.EmptyBytes;
 		}
 
-		try
-		{
+		try {
 			byte[] string = str.getBytes(encoding);
 			byte[] bytes = new byte[string.length + 1];
 			System.arraycopy(string, 0, bytes, 0, string.length);
 			return bytes;
-		}
-		catch (UnsupportedEncodingException ex)
-		{
+		} catch (UnsupportedEncodingException ex) {
 			return new byte[0];
 		}
 	}
 
 	/**
 	 * Converts a string containing hexadecimal characters to a byte array
-	 * 
+	 *
 	 * @param hexString
 	 *            String containing hexadecimal characters
 	 * @param handleDirty
-	 *            If true, gracefully handles null, empty and uneven strings as
-	 *            well as stripping unconvertable characters
+	 *            If true, gracefully handles null, empty and uneven strings as well
+	 *            as stripping unconvertable characters
 	 * @return The converted byte array
 	 * @throws Exception
 	 */
-	public static byte[] HexStringToBytes(String hexString, boolean handleDirty) throws Exception
-	{
-		if (Helpers.isEmpty(hexString))
-		{
+	public static byte[] HexStringToBytes(String hexString, boolean handleDirty) throws Exception {
+		if (Helpers.isEmpty(hexString)) {
 			return Helpers.EmptyBytes;
 		}
 
-		if (handleDirty)
-		{
+		if (handleDirty) {
 			StringBuilder stripped = new StringBuilder(hexString.length());
 			char c;
 
 			// remove all non A-F, 0-9, characters
-			for (int i = 0; i < hexString.length(); i++)
-			{
+			for (int i = 0; i < hexString.length(); i++) {
 				c = hexString.charAt(i);
-				if (IsHexDigit(c))
-				{
+				if (IsHexDigit(c)) {
 					stripped.append(c);
 				}
 			}
@@ -1841,8 +1601,7 @@ public class Helpers
 			hexString = stripped.toString();
 
 			// if odd number of characters, discard last character
-			if (hexString.length() % 2 != 0)
-			{
+			if (hexString.length() % 2 != 0) {
 				hexString = hexString.substring(0, hexString.length() - 1);
 			}
 		}
@@ -1851,8 +1610,7 @@ public class Helpers
 		byte[] bytes = new byte[byteLength];
 		int j = 0;
 
-		for (int i = 0; i < bytes.length; i++)
-		{
+		for (int i = 0; i < bytes.length; i++) {
 			bytes[i] = HexToByte(hexString.substring(j, 2));
 			j += 2;
 		}
@@ -1861,43 +1619,43 @@ public class Helpers
 
 	/**
 	 * Returns true if c is a hexadecimal digit (A-F, a-f, 0-9)
-	 * 
+	 *
 	 * @param c
 	 *            Character to test
 	 * @return true if hex digit, false if not
 	 */
-	private static boolean IsHexDigit(char c)
-	{
+	private static boolean IsHexDigit(char c) {
 		return Character.digit(c, 16) >= 0;
 	}
 
 	/**
 	 * Converts 1 or 2 character string into equivalant byte value
-	 * 
+	 *
 	 * @param hex
 	 *            1 or 2 character string
 	 * @return byte
 	 * @throws Exception
 	 */
-	private static byte HexToByte(String hex) throws Exception
-	{
-		if (Helpers.isEmpty(hex) || hex.length() > 2 || hex.length() <= 0)
-		{
+	private static byte HexToByte(String hex) throws Exception {
+		if (Helpers.isEmpty(hex) || hex.length() > 2 || hex.length() <= 0) {
 			throw new Exception("hex must be 1 or 2 characters in length");
 		}
 		return Byte.parseByte(hex, 16);
 	}
 
 	/**
-	 * Convert a float value to an unsigned byte value given a minimum and maximum range
-	 * 
-	 * @param val Value to convert to a byte
-	 * @param lower Minimum value range
-	 * @param upper Maximum value range
+	 * Convert a float value to an unsigned byte value given a minimum and maximum
+	 * range
+	 *
+	 * @param val
+	 *            Value to convert to a byte
+	 * @param lower
+	 *            Minimum value range
+	 * @param upper
+	 *            Maximum value range
 	 * @return A single byte representing the original float value
 	 */
-	public static byte FloatToByte(float val, float lower, float upper)
-	{
+	public static byte FloatToByte(float val, float lower, float upper) {
 		val = Helpers.Clamp(val, lower, upper);
 		// Normalize the value
 		val -= lower;
@@ -1908,17 +1666,19 @@ public class Helpers
 
 	/**
 	 * Convert an unsigned byte to a float value given a minimum and maximum range
-	 * 
-	 * @param bytes Byte array to get the unsigned byte from
-	 * @param pos Position in the byte array the desired byte is at
-	 * @param lower Minimum value range
-	 * @param upper Maximum value range
+	 *
+	 * @param bytes
+	 *            Byte array to get the unsigned byte from
+	 * @param pos
+	 *            Position in the byte array the desired byte is at
+	 * @param lower
+	 *            Minimum value range
+	 * @param upper
+	 *            Maximum value range
 	 * @return A float value inclusively between lower and upper
 	 */
-	public static float ByteToFloat(byte[] bytes, int pos, float lower, float upper)
-	{
-		if (bytes.length <= pos)
-		{
+	public static float ByteToFloat(byte[] bytes, int pos, float lower, float upper) {
+		if (bytes.length <= pos) {
 			return 0;
 		}
 		return ByteToFloat(bytes[pos] & 0xFF, lower, upper);
@@ -1926,14 +1686,16 @@ public class Helpers
 
 	/**
 	 * Convert a unsigned byte to a float value given a minimum and maximum range
-	 * 
-	 * @param val Unsigned byte to convert to a float value
-	 * @param lower Minimum value range
-	 * @param upper Maximum value range
+	 *
+	 * @param val
+	 *            Unsigned byte to convert to a float value
+	 * @param lower
+	 *            Minimum value range
+	 * @param upper
+	 *            Maximum value range
 	 * @return A float value inclusively between lower and upper
 	 */
-	public static float ByteToFloat(int val, float lower, float upper)
-	{
+	public static float ByteToFloat(int val, float lower, float upper) {
 		float fval = val / 255.0f;
 		float delta = (upper - lower);
 		fval *= delta;
@@ -1941,8 +1703,7 @@ public class Helpers
 
 		// Test for values very close to zero
 		float error = delta / 255.0f;
-		if (Math.abs(fval) < error)
-		{
+		if (Math.abs(fval) < error) {
 			fval = 0.0f;
 		}
 
@@ -1951,28 +1712,32 @@ public class Helpers
 
 	/**
 	 * Convert an unsigned short to a float value given a minimum and maximum range
-	 * 
-	 * @param bytes Byte array to get the unsigned short from
-	 * @param lower Minimum value range
-	 * @param upper Maximum value range
+	 *
+	 * @param bytes
+	 *            Byte array to get the unsigned short from
+	 * @param lower
+	 *            Minimum value range
+	 * @param upper
+	 *            Maximum value range
 	 * @return A float value inclusively between lower and upper
 	 */
-	public static float UInt16ToFloatL(byte[] bytes, int pos, float lower, float upper)
-	{
+	public static float UInt16ToFloatL(byte[] bytes, int pos, float lower, float upper) {
 		int val = BytesToUInt16L(bytes, pos);
 		return UInt16ToFloat(val, lower, upper);
 	}
 
 	/**
 	 * Convert a unsigned short to a float value given a minimum and maximum range
-	 * 
-	 * @param val Unsigned short to convert to a float value
-	 * @param lower Minimum value range
-	 * @param upper Maximum value range
+	 *
+	 * @param val
+	 *            Unsigned short to convert to a float value
+	 * @param lower
+	 *            Minimum value range
+	 * @param upper
+	 *            Maximum value range
 	 * @return A float value inclusively between lower and upper
 	 */
-	public static float UInt16ToFloat(int val, float lower, float upper)
-	{
+	public static float UInt16ToFloat(int val, float lower, float upper) {
 		float fval = val / 65535.0f;
 		float delta = upper - lower;
 		fval *= delta;
@@ -1980,15 +1745,13 @@ public class Helpers
 
 		// Make sure zeroes come through as zero
 		float maxError = delta / 65535.0f;
-		if (Math.abs(fval) < maxError)
-		{
+		if (Math.abs(fval) < maxError) {
 			fval = 0.0f;
 		}
 		return fval;
 	}
 
-	public static int FloatToUInt16(float value, float lower, float upper)
-	{
+	public static int FloatToUInt16(float value, float lower, float upper) {
 		float delta = upper - lower;
 		value -= lower;
 		value /= delta;
@@ -1996,125 +1759,98 @@ public class Helpers
 		return (int) value;
 	}
 
-	public static byte[] TEOffsetShort(float offset)
-	{
+	public static byte[] TEOffsetShort(float offset) {
 		offset = Helpers.Clamp(offset, -1.0f, 1.0f);
 		offset *= 32767.0f;
 		return Int16ToBytesL((short) roundFromZero(offset));
 	}
 
-	public static float TEOffsetFloat(byte[] bytes, int pos)
-	{
+	public static float TEOffsetFloat(byte[] bytes, int pos) {
 		float offset = BytesToInt16L(bytes, pos);
 		return offset / 32767.0f;
 	}
 
-	public static byte[] TERotationShort(float rotation)
-	{
+	public static byte[] TERotationShort(float rotation) {
 		final double TWO_PI = 6.283185307179586476925286766559d;
 		double remainder = Math.IEEEremainder(rotation, TWO_PI);
 		return Int16ToBytesL((short) roundFromZero((remainder / TWO_PI) * 32767.0f));
 	}
 
-	public static float TERotationFloat(byte[] bytes, int pos)
-	{
+	public static float TERotationFloat(byte[] bytes, int pos) {
 		final float TWO_PI = 6.283185307179586476925286766559f;
 		int tmp = BytesToInt16L(bytes, pos);
-		return tmp * TWO_PI / 32767.0f ;
+		return tmp * TWO_PI / 32767.0f;
 	}
 
-	public static byte TEGlowByte(float glow)
-	{
+	public static byte TEGlowByte(float glow) {
 		return (byte) (glow * 255.0f);
 	}
 
-	public static float TEGlowFloat(byte[] bytes, int pos)
-	{
+	public static float TEGlowFloat(byte[] bytes, int pos) {
 		return bytes[pos] / 255.0f;
 	}
 
-	public static void skipElement(XmlPullParser parser) throws XmlPullParserException, IOException
-	{
+	public static void skipElement(XmlPullParser parser) throws XmlPullParserException, IOException {
 		int depth = 1;
-		do
-		{
+		do {
 			int tag = parser.next();
-			if (tag == XmlPullParser.START_TAG)
-			{
+			if (tag == XmlPullParser.START_TAG) {
 				depth++;
-			}
-			else if (tag == XmlPullParser.END_TAG)
-			{
+			} else if (tag == XmlPullParser.END_TAG) {
 				depth--;
 			}
 		} while (depth > 0);
 	}
 
-	public static boolean TryParseBoolean(String s)
-	{
-		if (s != null && !s.isEmpty())
-		{
-			try
-			{
+	public static boolean TryParseBoolean(String s) {
+		if (s != null && !s.isEmpty()) {
+			try {
 				return Boolean.parseBoolean(s);
+			} catch (Throwable t) {
 			}
-			catch (Throwable t)	{ }
 		}
 		return false;
 	}
 
-	public static int TryParseInt(String s)
-	{
-		if (s != null && !s.isEmpty())
-		{
-			try
-			{
+	public static int TryParseInt(String s) {
+		if (s != null && !s.isEmpty()) {
+			try {
 				return Integer.parseInt(s);
+			} catch (Throwable t) {
 			}
-			catch (Throwable t) { }
 		}
 		return 0;
 	}
 
-	public static float TryParseFloat(String s)
-	{
-		if (s != null && !s.isEmpty())
-		{
-			try
-			{
+	public static float TryParseFloat(String s) {
+		if (s != null && !s.isEmpty()) {
+			try {
 				return Float.parseFloat(s);
-			}
-			catch (Throwable t)
-			{
+			} catch (Throwable t) {
 				s = s.toLowerCase();
-				if	(s.equals("nan"))
+				if (s.equals("nan"))
 					return Float.NaN;
-				else if	(s.contains("inf"))
+				else if (s.contains("inf"))
 					if (s.charAt(0) == '-')
 						return Float.NEGATIVE_INFINITY;
-					return Float.POSITIVE_INFINITY;
+				return Float.POSITIVE_INFINITY;
 			}
 		}
 		return 0.0f;
 	}
 
-	public static double TryParseDouble(String s)
-	{
-		if (s != null && !s.isEmpty())
-		{
-			try
-			{
+	public static double TryParseDouble(String s) {
+		if (s != null && !s.isEmpty()) {
+			try {
 				return Double.parseDouble(s);
-			}
-			catch (Throwable t)
-			{
+			} catch (Throwable t) {
 				s = s.toLowerCase();
-				if	(s.equals("nan"))
+				if (s.equals("nan"))
 					return Double.NaN;
-				else if	(s.contains("inf"))
+				else if (s.contains("inf"))
 					if (s.charAt(0) == '-')
 						return Double.NEGATIVE_INFINITY;
-					return Double.POSITIVE_INFINITY;
+				return Double.POSITIVE_INFINITY;
 			}
 		}
 		return 0.0d;
@@ -2122,54 +1858,46 @@ public class Helpers
 
 	/**
 	 * Tries to parse an unsigned 32-bit integer from a hexadecimal string
-	 * 
+	 *
 	 * @param s
 	 *            String to parse
 	 * @param result
 	 *            Resulting integer
 	 * @return True if the parse was successful, otherwise false
 	 */
-	public static long TryParseHex(String s)
-	{
-		if (s != null && !s.isEmpty())
-		{
-			try
-			{
+	public static long TryParseHex(String s) {
+		if (s != null && !s.isEmpty()) {
+			try {
 				return Long.parseLong(s, 16);
+			} catch (Throwable t) {
 			}
-			catch (Throwable t) { }
 		}
 		return 0L;
 	}
 
-	public static long TryParseLong(String s)
-	{
-		if (s != null && !s.isEmpty())
-		{
-			try
-			{
+	public static long TryParseLong(String s) {
+		if (s != null && !s.isEmpty()) {
+			try {
 				return Long.parseLong(s, 10);
+			} catch (Throwable t) {
 			}
-			catch (Throwable t) { }
 		}
 		return 0L;
 	}
 
 	/**
 	 * Returns text specified in EnumInfo attribute of the enumerator To add the
-	 * text use [EnumInfo(Text = "Some nice text here")] before declaration of
-	 * enum values
-	 * 
+	 * text use [EnumInfo(Text = "Some nice text here")] before declaration of enum
+	 * values
+	 *
 	 * @param value
 	 *            Enum value
 	 * @return Text representation of the enum
 	 */
-	public static String EnumToText(Enum<?> value)
-	{
+	public static String EnumToText(Enum<?> value) {
 		// Get the type
 		Class<?> type = value.getClass();
-		if (!type.isEnum())
-		{
+		if (!type.isEnum()) {
 			return EmptyString;
 		}
 		return value.toString();
@@ -2179,17 +1907,15 @@ public class Helpers
 	 * <p>
 	 * Find the first index of any of a set of potential substrings.
 	 * </p>
-	 * 
+	 *
 	 * @param str
 	 *            the String to check, may be null
 	 * @param searchStrs
 	 *            the Strings to search for, may be null
 	 * @return the first index of any of the searchStrs in str, -1 if no match
 	 */
-	public static int indexOfAny(String str, String[] searchStrs)
-	{
-		if ((str == null) || (searchStrs == null))
-		{
+	public static int indexOfAny(String str, String[] searchStrs) {
+		if ((str == null) || (searchStrs == null)) {
 			return -1;
 		}
 		int sz = searchStrs.length;
@@ -2198,21 +1924,17 @@ public class Helpers
 		int ret = Integer.MAX_VALUE;
 
 		int tmp = 0;
-		for (int i = 0; i < sz; i++)
-		{
+		for (int i = 0; i < sz; i++) {
 			String search = searchStrs[i];
-			if (search == null)
-			{
+			if (search == null) {
 				continue;
 			}
 			tmp = str.indexOf(search);
-			if (tmp == -1)
-			{
+			if (tmp == -1) {
 				continue;
 			}
 
-			if (tmp < ret)
-			{
+			if (tmp < ret) {
 				ret = tmp;
 			}
 		}
@@ -2224,17 +1946,15 @@ public class Helpers
 	 * <p>
 	 * Find the first index of any of a set of potential chars.
 	 * </p>
-	 * 
+	 *
 	 * @param str
 	 *            the String to check, may be null
 	 * @param searchStrs
 	 *            the Strings to search for, may be null
 	 * @return the first index of any of the searchStrs in str, -1 if no match
 	 */
-	public static int indexOfAny(String str, char[] searchChars)
-	{
-		if ((str == null) || (searchChars == null))
-		{
+	public static int indexOfAny(String str, char[] searchChars) {
+		if ((str == null) || (searchChars == null)) {
 			return -1;
 		}
 		int sz = searchChars.length;
@@ -2243,16 +1963,13 @@ public class Helpers
 		int ret = Integer.MAX_VALUE;
 
 		int tmp = 0;
-		for (int i = 0; i < sz; i++)
-		{
+		for (int i = 0; i < sz; i++) {
 			tmp = str.indexOf(searchChars[i]);
-			if (tmp == -1)
-			{
+			if (tmp == -1) {
 				continue;
 			}
 
-			if (tmp < ret)
-			{
+			if (tmp < ret) {
 				ret = tmp;
 			}
 		}
@@ -2264,67 +1981,60 @@ public class Helpers
 	 * <p>
 	 * Checks if a character array is empty or <code>null</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param array
 	 *            the array to test
 	 * @return <code>true</code> if the array is empty or <code>null</code>
 	 */
-	public static boolean isEmpty(char[] array)
-	{
+	public static boolean isEmpty(char[] array) {
 		return ((array == null) || (array.length == 0));
 	}
 
 	/**
 	 * Checks if a String is empty ("") or null.
-	 * 
+	 *
 	 * @param str
 	 *            the String to check, may be null
 	 *
 	 * @return <code>true</code> if the String is empty or null
 	 */
-	public static boolean isEmpty(String str)
-	{
+	public static boolean isEmpty(String str) {
 		return ((str == null) || str.isEmpty());
 	}
 
 	/**
 	 * Generates a String with n times the input string str repeated
-	 * 
+	 *
 	 * @param str
 	 *            the String to repeat n times
 	 * @param n
 	 *            the number of repetitions of string str
-	 *            
+	 * 
 	 * @return <code>true</code> if the String is empty or null
 	 */
-	public static String repeat(String str, int n)
-	{
+	public static String repeat(String str, int n) {
 		if (n < 0 || str == null)
-		    throw new IllegalArgumentException(
-		        "the given repetition count is smaller than zero!");
+			throw new IllegalArgumentException("the given repetition count is smaller than zero!");
 		else if (n == 0)
-		    return "";
+			return "";
 		else if (n == 1)
-		    return str;
-		else if (n % 2 == 0)
-		{
-		    String s = repeat(str, n / 2);
-		    return s.concat(s);
-		}
-		else
-		{
-		    return str.concat(repeat(str, n - 1));
+			return str;
+		else if (n % 2 == 0) {
+			String s = repeat(str, n / 2);
+			return s.concat(s);
+		} else {
+			return str.concat(repeat(str, n - 1));
 		}
 	}
+
 	/**
 	 * Get current OS
-	 * 
+	 *
 	 * @return either "win", "mac", "lnx", "bsd", "sun", or "unx"
 	 */
-	public static String getPlatform()
-	{
+	public static String getPlatform() {
 		String platform = System.getProperty("os.name").toLowerCase();
-		
+
 		if (platform.contains("windows"))
 			return "win";
 		else if (platform.contains("mac"))
@@ -2332,7 +2042,7 @@ public class Helpers
 		else if (platform.contains("sun") || platform.contains("solaris"))
 			return "sun";
 		else if (platform.contains("linux"))
-		    return "lnx";
+			return "lnx";
 		else if (platform.contains("freebsd"))
 			return "bsd";
 		else if (platform.contains("unix") || platform.contains("aix") || platform.contains("hp-ux"))
@@ -2340,135 +2050,108 @@ public class Helpers
 		return "unk";
 	}
 
-	public static String getPlatformVersion()
-	{
+	public static String getPlatformVersion() {
 		return System.getProperty("os.version");
 	}
-	
-	public static OSD ZDecompressOSD(InputStream in) throws IOException, ParseException
-	{
+
+	public static OSD ZDecompressOSD(InputStream in) throws IOException, ParseException {
 		InflaterInputStream inflate = new InflaterInputStream(in);
-		try
-		{
+		try {
 			return OSDParser.deserialize(inflate);
-		}
-		finally
-		{
+		} finally {
 			inflate.close();
 		}
 	}
 
-	public static byte[] ZCompressOSD(OSD osd) throws IOException
-	{
+	public static byte[] ZCompressOSD(OSD osd) throws IOException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		DeflaterOutputStream deflate = new DeflaterOutputStream(out);
-		try
-		{
+		try {
 			OSDParser.serialize(deflate, osd, OSD.OSDFormat.Binary);
 			return out.toByteArray();
-		}
-		finally
-		{
+		} finally {
 			deflate.close();
 		}
 	}
 
 	/**
 	 * Get clients default Mac Address
-	 * 
+	 *
 	 * @return A string containing the first found Mac Address
 	 * @throws SocketException
 	 */
-	public static String getMAC()
-	{
-		try
-		{
+	public static String getMAC() {
+		try {
 			StringBuilder sb = new StringBuilder("");
 
 			/*
-			 * Extract each array of mac address and convert it to hexa with the
-			 * following format 08:00:27:DC:4A:9E.
+			 * Extract each array of mac address and convert it to hexa with the following
+			 * format 08:00:27:DC:4A:9E.
 			 */
-			for (Enumeration<NetworkInterface> nis = NetworkInterface.getNetworkInterfaces(); nis.hasMoreElements();)
-			{
+			for (Enumeration<NetworkInterface> nis = NetworkInterface.getNetworkInterfaces(); nis.hasMoreElements();) {
 				NetworkInterface ni = nis.nextElement();
-				if (ni != null)
-				{
+				if (ni != null) {
 					byte[] mac = ni.getHardwareAddress();
-					if (mac != null && mac.length >= 6)
-					{
-						for (int i = 0; i < mac.length; i++)
-						{
+					if (mac != null && mac.length >= 6) {
+						for (int i = 0; i < mac.length; i++) {
 							sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? ":" : ""));
 						}
 						break;
 					}
-					if (nis.hasMoreElements())
-					{
+					if (nis.hasMoreElements()) {
 						sb.append(" ");
 					}
 				}
 			}
 			return sb.toString().trim();
-		}
-		catch (SocketException ex)
-		{
+		} catch (SocketException ex) {
 			return EmptyString;
 		}
 	}
 
 	/**
 	 * Get the file name suffix of the filename if any.
-	 * 
-	 * @param fileName The filename to get the suffix from
+	 *
+	 * @param fileName
+	 *            The filename to get the suffix from
 	 * @return The suffix if it exists or null otherwise
 	 */
-	public static String getFileExtension(String fileName)
-	{
+	public static String getFileExtension(String fileName) {
 		return getFileExtension(fileName, '.');
 	}
 
-	public static String getFileExtension(String fileName, char seperator)
-	{
-	    if (fileName == null)
-	    {
-	        throw new IllegalArgumentException("file name == null");
-	    }
-	    int pos = fileName.lastIndexOf(seperator) + 1;
-	    if (pos >= 0 && pos < fileName.length())
-	    {
-	        return fileName.substring(pos, fileName.length());
-	    }
-	    return null;
+	public static String getFileExtension(String fileName, char seperator) {
+		if (fileName == null) {
+			throw new IllegalArgumentException("file name == null");
+		}
+		int pos = fileName.lastIndexOf(seperator) + 1;
+		if (pos >= 0 && pos < fileName.length()) {
+			return fileName.substring(pos, fileName.length());
+		}
+		return null;
 	}
 
-	public static String skipElementDebug(XmlPullParser parser) throws XmlPullParserException, IOException
-	{
+	public static String skipElementDebug(XmlPullParser parser) throws XmlPullParserException, IOException {
 		StringBuilder sb = new StringBuilder();
 		int depth = 0;
 		int tag = parser.getEventType();
-		do
-		{
-			switch (tag)
-			{
-			    case XmlPullParser.START_TAG:
-			    	if (!parser.isEmptyElementTag())
-			    	{
-			    		sb.append("<" + parser.getName() + ">");
-				    	depth++;
-			    	}
-			    	else
-			    	{
-			    		sb.append("<" + parser.getName() + " />");			    		
-			    	}
-				    break;
-			    case XmlPullParser.TEXT:
-			    	sb.append(parser.nextText());
-			    	break;
-			    case XmlPullParser.END_TAG:
-				    sb.append("</" + parser.getName() + ">\n");
-				    depth--;
-				    break;
+		do {
+			switch (tag) {
+			case XmlPullParser.START_TAG:
+				if (!parser.isEmptyElementTag()) {
+					sb.append("<" + parser.getName() + ">");
+					depth++;
+				} else {
+					sb.append("<" + parser.getName() + " />");
+				}
+				break;
+			case XmlPullParser.TEXT:
+				sb.append(parser.nextText());
+				break;
+			case XmlPullParser.END_TAG:
+				sb.append("</" + parser.getName() + ">\n");
+				depth--;
+				break;
 			}
 			tag = parser.next();
 		} while (depth > 0);
@@ -2477,82 +2160,86 @@ public class Helpers
 
 	/**
 	 * Get the file name without suffix of the filename if any.
-	 * 
-	 * @param fileName The filename to strip the suffix from
-	 * @return The filename without suffix if a suffix exists or the entire name otherwise
+	 *
+	 * @param fileName
+	 *            The filename to strip the suffix from
+	 * @return The filename without suffix if a suffix exists or the entire name
+	 *         otherwise
 	 */
-	public static String getBaseFileName(String fileName) throws IllegalArgumentException
-	{
+	public static String getBaseFileName(String fileName) throws IllegalArgumentException {
 		return getBaseFileName(fileName, '.');
 	}
-	
-	public static String getBaseFileName(String fileName, char separater) throws IllegalArgumentException
-	{
-	    if (fileName == null)
-	    {
-	        throw new IllegalArgumentException("file name == null");
-	    }
-	    int pos = fileName.lastIndexOf(separater);
-	    if (pos > 0 && pos < fileName.length() - 1)
-	    {
-	        return fileName.substring(0, pos);
-	    }
-	    return fileName;
+
+	public static String getBaseFileName(String fileName, char separater) throws IllegalArgumentException {
+		if (fileName == null) {
+			throw new IllegalArgumentException("file name == null");
+		}
+		int pos = fileName.lastIndexOf(separater);
+		if (pos > 0 && pos < fileName.length() - 1) {
+			return fileName.substring(0, pos);
+		}
+		return fileName;
 	}
 
 	/**
 	 * Get the base path of the source for the code containing the specified class.
 	 * This can be both a path to a file directory (usually the bin directroy) when
-	 * running in the IDE, or the actual JAR file the code is located in.
-	 * Note: Security manager limitations may apply!
+	 * running in the IDE, or the actual JAR file the code is located in. Note:
+	 * Security manager limitations may apply!
 	 *
-	 * @param clazz the class to get the code source for
+	 * @param clazz
+	 *            the class to get the code source for
 	 * @return the URL for the code source
 	 */
-	public static URL getBaseFileURL(Class<?> clazz) throws SecurityException
-	{
-		Class<?> temp = clazz != null ?  clazz : Helpers.class;
+	public static URL getBaseFileURL(Class<?> clazz) throws SecurityException {
+		Class<?> temp = clazz != null ? clazz : Helpers.class;
 		CodeSource codeSource = temp.getProtectionDomain().getCodeSource();
 		return codeSource.getLocation();
 	}
-	
+
 	/**
-	 * Get the base directory of the source for the code containing the specified class.
-	 * This should be always a file directory for disk based applications, returning 
-	 * the parent directory of the code source (e.g. where the jar file resides).
-	 * Note: Security manager limitations may apply!
+	 * Get the base directory of the source for the code containing the specified
+	 * class. This should be always a file directory for disk based applications,
+	 * returning the parent directory of the code source (e.g. where the jar file
+	 * resides). Note: Security manager limitations may apply!
 	 *
-	 * @param clazz the class to get the code source for
+	 * @param clazz
+	 *            the class to get the code source for
 	 * @return the File for the parent of the code source
 	 * @throws URISyntaxException
 	 */
-	public static File getBaseDirectory(Class<?> clazz) throws URISyntaxException
-	{
+	public static File getBaseDirectory(Class<?> clazz) throws URISyntaxException {
 		URL baseUrl = getBaseFileURL(clazz);
 		return new File(baseUrl.toURI()).getParentFile();
 	}
 
 	/**
 	 * List directory contents for a resource folder. Not recursive. This is
-	 * basically a brute-force implementation. Works for regular files and also JARs.
-	 * 
+	 * basically a brute-force implementation. Works for regular files and also
+	 * JARs.
+	 *
 	 * @author Greg Briggs
-	 * @param clazz Any java class that lives in the same place as the resources you want.
-	 * @param regex A regex which the resource names must match or null to return all file names 
-	 * @param excludeDirs If true only file entries will be returned	
-	 * @param path The relative directory path to enumerate. Should end with "/", but not start with one.
+	 * @param clazz
+	 *            Any java class that lives in the same place as the resources you
+	 *            want.
+	 * @param regex
+	 *            A regex which the resource names must match or null to return all
+	 *            file names
+	 * @param excludeDirs
+	 *            If true only file entries will be returned
+	 * @param path
+	 *            The relative directory path to enumerate. Should end with "/", but
+	 *            not start with one.
 	 * @return Just the name of each member item, not the full paths.
 	 * @throws URISyntaxException
 	 * @throws IOException
 	 */
-	public static String[] getResourceListing(Class<?> clazz, final String regex, final boolean excludeDirs, String path) throws URISyntaxException, IOException
-	{
+	public static String[] getResourceListing(Class<?> clazz, final String regex, final boolean excludeDirs,
+			String path) throws URISyntaxException, IOException {
 		// File filter checking the file names to be part of the hostname
-		FileFilter filter = new FileFilter()
-		{
+		FileFilter filter = new FileFilter() {
 			@Override
-			public boolean accept(File file)
-			{
+			public boolean accept(File file) {
 				if (excludeDirs && file.isDirectory())
 					return false;
 				return regex == null || file.getName().matches(regex);
@@ -2560,51 +2247,44 @@ public class Helpers
 		};
 
 		URL dirURL = getBaseFileURL(clazz);
-		if (dirURL != null && dirURL.getProtocol().equals("file"))
-		{
+		if (dirURL != null && dirURL.getProtocol().equals("file")) {
 			/* A file path: easy enough */
 			File filepath = new File(dirURL.toURI().resolve(path));
 			if (excludeDirs && regex == null)
 				return filepath.list();
-			
+
 			File[] files = filepath.listFiles(filter);
 			String[] names = new String[files.length];
-			for (int i = 0; i < files.length; i++)
-			{
+			for (int i = 0; i < files.length; i++) {
 				names[i] = files[i].getName();
 			}
 			return names;
 		}
 
-		if (dirURL == null)
-		{
+		if (dirURL == null) {
 			/*
-			 * In case of a jar file, we can't actually find a directory. Have
-			 * to assume the same jar as clazz.
+			 * In case of a jar file, we can't actually find a directory. Have to assume the
+			 * same jar as clazz.
 			 */
 			String me = clazz.getName().replace(".", "/") + ".class";
 			dirURL = clazz.getClassLoader().getResource(me);
 		}
 
-		if (dirURL.getProtocol().equals("jar"))
-		{
+		if (dirURL.getProtocol().equals("jar")) {
 			/* A JAR path, strip out only the JAR file */
-			String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!")); 
+			String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!"));
 			JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
 			Enumeration<JarEntry> entries = jar.entries(); // gives ALL entries in jar
-			Set<String> result = new HashSet<String>();    // avoid duplicates in case it is a subdirectory
-			while (entries.hasMoreElements())
-			{
+			Set<String> result = new HashSet<String>(); // avoid duplicates in case it is a subdirectory
+			while (entries.hasMoreElements()) {
 				String name = entries.nextElement().getName();
-				if (name.startsWith(path))
-				{ // filter according to the path
+				if (name.startsWith(path)) { // filter according to the path
 					String entry = name.substring(path.length());
 					int checkSubdir = entry.indexOf("/");
-					if (checkSubdir >= 0)
-					{
+					if (checkSubdir >= 0) {
 						if (excludeDirs)
 							continue;
-						
+
 						// if it is a subdirectory, we just return the directory name
 						entry = entry.substring(0, checkSubdir);
 					}
@@ -2620,79 +2300,59 @@ public class Helpers
 
 	/**
 	 * Retrieves the default keystore
-	 * 
+	 *
 	 * @return The current KeyStore
 	 * @throws IOException
 	 * @throws KeyStoreException
 	 * @throws CertificateException
 	 * @throws NoSuchAlgorithmException
 	 */
-	public static KeyStore getExtendedKeyStore() throws KeyStoreException, IOException, NoSuchAlgorithmException,
-			CertificateException
-	{
+	public static KeyStore getExtendedKeyStore()
+			throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
 		KeyStore ks = null;
 
 		File file = new File("jssecacerts");
-		if (file.isFile() == false)
-		{
+		if (file.isFile() == false) {
 			char SEP = File.separatorChar;
 			File dir = new File(System.getProperty("java.home") + SEP + "lib" + SEP + "security");
 			file = new File(dir, "jssecacerts");
-			if (file.isFile() == false)
-			{
+			if (file.isFile() == false) {
 				file = new File(dir, "cacerts");
 			}
 		}
 
 		ks = KeyStore.getInstance(KeyStore.getDefaultType());
 		InputStream in = new FileInputStream(file);
-		try
-		{
+		try {
 			ks.load(in, null);
-		}
-		catch (IOException ex)
-		{
+		} catch (IOException ex) {
 			throw ex;
-		}
-		catch (NoSuchAlgorithmException ex)
-		{
+		} catch (NoSuchAlgorithmException ex) {
 			throw ex;
-		}
-		catch (CertificateException ex)
-		{
+		} catch (CertificateException ex) {
 			throw ex;
-		}
-		finally
-		{
+		} finally {
 			in.close();
 		}
 		return ks;
 	}
 
-	public static X509Certificate getCertificate(final String hostname) throws CertificateException, IOException,
-			URISyntaxException
-	{
+	public static X509Certificate getCertificate(final String hostname)
+			throws CertificateException, IOException, URISyntaxException {
 		CertificateFactory cf = CertificateFactory.getInstance("X.509");
 		X509Certificate cert = null;
 		String[] names = getResourceListing(Helpers.class, ".+\\.cert", true, "res/");
 
-		for (String name : names)
-		{
+		for (String name : names) {
 			// - 5 is to remove the .cert extension
-			if (hostname.contains(name.substring(0, name.length() - 5)))
-			{
+			if (hostname.contains(name.substring(0, name.length() - 5))) {
 				InputStream is = Helpers.class.getClassLoader().getResourceAsStream("res/" + name);
 				BufferedInputStream bis = new BufferedInputStream(is);
-				try
-				{
+				try {
 					cert = (X509Certificate) cf.generateCertificate(bis);
-				}
-				catch (CertificateException ex)
-				{
+				} catch (CertificateException ex) {
 					throw ex;
-				}
-				finally
-				{
+				} finally {
 					bis.close();
 					is.close();
 				}

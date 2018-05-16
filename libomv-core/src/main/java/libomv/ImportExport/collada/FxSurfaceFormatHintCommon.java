@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import java.util.ArrayList;
@@ -16,13 +15,17 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * If the exact format cannot be resolve via other methods then the format_hint will describe the important features of the format so that the application may select a compatable or close format
+ * If the exact format cannot be resolve via other methods then the format_hint
+ * will describe the important features of the format so that the application
+ * may select a compatable or close format
  * 
- * <p>Java class for fx_surface_format_hint_common complex type.
+ * <p>
+ * Java class for fx_surface_format_hint_common complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="fx_surface_format_hint_common">
@@ -43,155 +46,141 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "fx_surface_format_hint_common", propOrder = {
-    "channels",
-    "range",
-    "precision",
-    "option",
-    "extra"
-})
+@XmlType(name = "fx_surface_format_hint_common", propOrder = { "channels", "range", "precision", "option", "extra" })
 public class FxSurfaceFormatHintCommon {
 
-    @XmlElement(required = true)
-    @XmlSchemaType(name = "string")
-    protected FxSurfaceFormatHintChannelsEnum channels;
-    @XmlElement(required = true)
-    @XmlSchemaType(name = "string")
-    protected FxSurfaceFormatHintRangeEnum range;
-    @XmlSchemaType(name = "string")
-    protected FxSurfaceFormatHintPrecisionEnum precision;
-    @XmlSchemaType(name = "string")
-    protected List<FxSurfaceFormatHintOptionEnum> option;
-    protected List<Extra> extra;
+	@XmlElement(required = true)
+	@XmlSchemaType(name = "string")
+	protected FxSurfaceFormatHintChannelsEnum channels;
+	@XmlElement(required = true)
+	@XmlSchemaType(name = "string")
+	protected FxSurfaceFormatHintRangeEnum range;
+	@XmlSchemaType(name = "string")
+	protected FxSurfaceFormatHintPrecisionEnum precision;
+	@XmlSchemaType(name = "string")
+	protected List<FxSurfaceFormatHintOptionEnum> option;
+	protected List<Extra> extra;
 
-    /**
-     * Gets the value of the channels property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FxSurfaceFormatHintChannelsEnum }
-     *     
-     */
-    public FxSurfaceFormatHintChannelsEnum getChannels() {
-        return channels;
-    }
+	/**
+	 * Gets the value of the channels property.
+	 * 
+	 * @return possible object is {@link FxSurfaceFormatHintChannelsEnum }
+	 * 
+	 */
+	public FxSurfaceFormatHintChannelsEnum getChannels() {
+		return channels;
+	}
 
-    /**
-     * Sets the value of the channels property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FxSurfaceFormatHintChannelsEnum }
-     *     
-     */
-    public void setChannels(FxSurfaceFormatHintChannelsEnum value) {
-        this.channels = value;
-    }
+	/**
+	 * Sets the value of the channels property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link FxSurfaceFormatHintChannelsEnum }
+	 * 
+	 */
+	public void setChannels(FxSurfaceFormatHintChannelsEnum value) {
+		this.channels = value;
+	}
 
-    /**
-     * Gets the value of the range property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FxSurfaceFormatHintRangeEnum }
-     *     
-     */
-    public FxSurfaceFormatHintRangeEnum getRange() {
-        return range;
-    }
+	/**
+	 * Gets the value of the range property.
+	 * 
+	 * @return possible object is {@link FxSurfaceFormatHintRangeEnum }
+	 * 
+	 */
+	public FxSurfaceFormatHintRangeEnum getRange() {
+		return range;
+	}
 
-    /**
-     * Sets the value of the range property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FxSurfaceFormatHintRangeEnum }
-     *     
-     */
-    public void setRange(FxSurfaceFormatHintRangeEnum value) {
-        this.range = value;
-    }
+	/**
+	 * Sets the value of the range property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link FxSurfaceFormatHintRangeEnum }
+	 * 
+	 */
+	public void setRange(FxSurfaceFormatHintRangeEnum value) {
+		this.range = value;
+	}
 
-    /**
-     * Gets the value of the precision property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FxSurfaceFormatHintPrecisionEnum }
-     *     
-     */
-    public FxSurfaceFormatHintPrecisionEnum getPrecision() {
-        return precision;
-    }
+	/**
+	 * Gets the value of the precision property.
+	 * 
+	 * @return possible object is {@link FxSurfaceFormatHintPrecisionEnum }
+	 * 
+	 */
+	public FxSurfaceFormatHintPrecisionEnum getPrecision() {
+		return precision;
+	}
 
-    /**
-     * Sets the value of the precision property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FxSurfaceFormatHintPrecisionEnum }
-     *     
-     */
-    public void setPrecision(FxSurfaceFormatHintPrecisionEnum value) {
-        this.precision = value;
-    }
+	/**
+	 * Sets the value of the precision property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link FxSurfaceFormatHintPrecisionEnum }
+	 * 
+	 */
+	public void setPrecision(FxSurfaceFormatHintPrecisionEnum value) {
+		this.precision = value;
+	}
 
-    /**
-     * Gets the value of the option property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the option property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getOption().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FxSurfaceFormatHintOptionEnum }
-     * 
-     * 
-     */
-    public List<FxSurfaceFormatHintOptionEnum> getOption() {
-        if (option == null) {
-            option = new ArrayList<FxSurfaceFormatHintOptionEnum>();
-        }
-        return this.option;
-    }
+	/**
+	 * Gets the value of the option property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the option property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getOption().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list
+	 * {@link FxSurfaceFormatHintOptionEnum }
+	 * 
+	 * 
+	 */
+	public List<FxSurfaceFormatHintOptionEnum> getOption() {
+		if (option == null) {
+			option = new ArrayList<FxSurfaceFormatHintOptionEnum>();
+		}
+		return this.option;
+	}
 
-    /**
-     * Gets the value of the extra property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the extra property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getExtra().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Extra }
-     * 
-     * 
-     */
-    public List<Extra> getExtra() {
-        if (extra == null) {
-            extra = new ArrayList<Extra>();
-        }
-        return this.extra;
-    }
+	/**
+	 * Gets the value of the extra property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the extra property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getExtra().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link Extra }
+	 * 
+	 * 
+	 */
+	public List<Extra> getExtra() {
+		if (extra == null) {
+			extra = new ArrayList<Extra>();
+		}
+		return this.extra;
+	}
 
 }

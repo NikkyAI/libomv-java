@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -33,11 +33,9 @@ import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDMap;
 
 // Describes physics attributes of the prim
-public class PhysicsProperties
-{
+public class PhysicsProperties {
 	// Type of physics representation used for this prim in the simulator
-	public enum PhysicsShapeType
-	{
+	public enum PhysicsShapeType {
 		// Use prim physics form this object
 		Prim,
 		// No physics, prim doesn't collide
@@ -45,20 +43,17 @@ public class PhysicsProperties
 		// Use convex hull represantion of this prim
 		ConvexHull;
 
-		public static PhysicsShapeType setValue(int value)
-		{
+		public static PhysicsShapeType setValue(int value) {
 			if (value <= ConvexHull.getValue())
 				return values()[value];
 			return Prim;
 		}
 
-		public static byte getValue(PhysicsShapeType value)
-		{
+		public static byte getValue(PhysicsShapeType value) {
 			return (byte) value.ordinal();
 		}
 
-		public byte getValue()
-		{
+		public byte getValue() {
 			return (byte) ordinal();
 		}
 	}
@@ -78,14 +73,12 @@ public class PhysicsProperties
 
 	/**
 	 * Creates PhysicsProperties from OSD
-	 * 
+	 *
 	 * @param name
 	 *            OSDMap with incoming data</param>
 	 */
-	public PhysicsProperties(OSD osd)
-	{
-		if (osd instanceof OSDMap)
-		{
+	public PhysicsProperties(OSD osd) {
+		if (osd instanceof OSDMap) {
 			OSDMap map = (OSDMap) osd;
 			LocalID = map.get("LocalID").AsUInteger();
 			Density = (float) map.get("Density").AsReal();
@@ -98,11 +91,10 @@ public class PhysicsProperties
 
 	/**
 	 * Serializes PhysicsProperties to OSD
-	 * 
+	 *
 	 * @returns OSDMap with serialized PhysicsProperties data
 	 */
-	public OSDMap getOSD()
-	{
+	public OSDMap getOSD() {
 		OSDMap map = new OSDMap(6);
 		map.put("LocalID", OSD.FromUInteger(LocalID));
 		map.put("Density", OSD.FromReal(Density));

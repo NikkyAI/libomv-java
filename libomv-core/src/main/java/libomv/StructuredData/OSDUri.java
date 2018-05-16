@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -33,67 +33,56 @@ import java.net.URI;
 
 import libomv.utils.Helpers;
 
-public class OSDUri extends OSD
-{
+public class OSDUri extends OSD {
 	private URI value;
 
 	@Override
-	public OSDType getType()
-	{
+	public OSDType getType() {
 		return OSDType.URI;
 	}
 
-	public OSDUri(URI value)
-	{
+	public OSDUri(URI value) {
 		this.value = value;
 	}
 
 	@Override
-	public String AsString()
-	{
+	public String AsString() {
 		return value != null ? value.toString() : Helpers.EmptyString;
 	}
 
 	@Override
-	public URI AsUri()
-	{
+	public URI AsUri() {
 		return value;
 	}
 
 	@Override
-	public byte[] AsBinary()
-	{
+	public byte[] AsBinary() {
 		return AsString().getBytes();
 	}
 
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		return value.hashCode();
 	}
-	
+
 	@Override
-	public boolean equals(Object obj)
-	{
-		return obj != null && obj instanceof OSD && equals((OSD)obj);
+	public boolean equals(Object obj) {
+		return obj != null && obj instanceof OSD && equals((OSD) obj);
 	}
 
-	public boolean equals(OSD osd)
-	{
+	public boolean equals(OSD osd) {
 		return osd != null && osd.AsUri().equals(value);
 	}
-	
+
 	@Override
-	public OSD clone()
-	{
-		OSDUri osd = (OSDUri)super.clone();
+	public OSD clone() {
+		OSDUri osd = (OSDUri) super.clone();
 		osd.value = URI.create(this.value.toString());
 		return osd;
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return AsString();
 	}
 }

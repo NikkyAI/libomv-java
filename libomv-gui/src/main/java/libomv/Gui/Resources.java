@@ -41,8 +41,7 @@ import org.apache.log4j.Logger;
 import libomv.utils.Helpers;
 
 // This class holds the GUI resource locations
-public final class Resources
-{
+public final class Resources {
 	private static final Logger logger = Logger.getLogger(Resources.class);
 	// The 16x16 application icon
 	public static final String ICON_APPLICATION = "images/app-logo.png";
@@ -51,17 +50,21 @@ public final class Resources
 	public static final String ICON_ONLINE = "images/user-online.png";
 	// The 16x16 offline icon for displaying next to a name in lists
 	public static final String ICON_OFFLINE = "images/user-offline.png";
-	// The 16x16 can see online status icon for displaying next to a name in friends list
+	// The 16x16 can see online status icon for displaying next to a name in friends
+	// list
 	public static final String ICON_VISIBLE_ONLINE = "images/ff_visible_online.png";
 	// The 16x16 can map status icon for displaying next to a name in friends list
 	public static final String ICON_VISIBLE_MAP = "images/ff_visible_map.png";
-	// The 16x16 can edit mine status icon for displaying next to a name in friends list
+	// The 16x16 can edit mine status icon for displaying next to a name in friends
+	// list
 	public static final String ICON_EDIT_MINE = "images/ff_edit_mine.png";
-	// The 16x16 can edit theirs status icon for displaying next to a name in friends list
+	// The 16x16 can edit theirs status icon for displaying next to a name in
+	// friends list
 	public static final String ICON_EDIT_THEIRS = "images/ff_edit_theirs.png";
 	// The 16x16 close tab icon for displaying next to a closable tab name
 	public static final String ICON_CLOSE_TAB = "images/";
-	// The 16x16 typing icon for displaying next to an agent's name when they are typing
+	// The 16x16 typing icon for displaying next to an agent's name when they are
+	// typing
 	public static final String ICON_TYPING = "images/avatar_typing.png";
 	// The 16x16 "message pending" icon for displaying next to an agent's name
 	// when there are pending messages
@@ -117,14 +120,14 @@ public final class Resources
 	public static final String INV_ITEM_TEXTURE = "images/inv_item_texture.png";
 	public static final String INV_ITEM_UNDERPANTS = "images/inv_item_underpants.png";
 	public static final String INV_ITEM_UNDERSHIRT = "images/inv_item_undershirt.png";
-	
+
 	// The exit button icon
 	public static final String ICON_BUTTON_EXIT = "images/";
 	// The logout button icon
 	public static final String ICON_BUTTON_LOGOUT = "images/";
 	// The login button icon
 	public static final String ICON_BUTTON_LOGIN = "images/";
-	
+
 	public static final String ICON_BUTTON_CURRENCY = "images/status_buy_currency.png";
 
 	// The 32x32 alert image
@@ -146,79 +149,56 @@ public final class Resources
 	// The image to show for busy status
 	public static final String IMAGE_WORKING = "images/process-working.png";
 
-	public static BufferedImage loadImage(String location)
-	{
+	public static BufferedImage loadImage(String location) {
 		InputStream is = Resources.class.getClassLoader().getResourceAsStream(location);
-		try
-		{
+		try {
 			return ImageIO.read(is);
-		}
-		catch (IOException ex)
-		{
+		} catch (IOException ex) {
 			logger.debug("Couldn't load image resource " + location, ex);
-		}
-		finally
-		{
-			try
-			{
+		} finally {
+			try {
 				is.close();
+			} catch (IOException e) {
 			}
-			catch (IOException e) { }
-		}
-		return null;
-	}
-	
-	public static ImageIcon loadIcon(String location)
-	{
-			return loadIcon(location, location);
-	}
-	
-	public static ImageIcon loadIcon(String location, String name)
-	{
-		InputStream is = Resources.class.getClassLoader().getResourceAsStream(location);
-		try
-		{
-			return new ImageIcon(ImageIO.read(is), name);
-		}
-		catch (IOException ex)
-		{
-			logger.debug("Couldn't load icon resource " + name, ex);
-		}
-		finally
-		{
-			try
-			{
-				is.close();
-			}
-			catch (IOException e) { }
 		}
 		return null;
 	}
 
-	public static String loadTextFile(String location)
-	{
+	public static ImageIcon loadIcon(String location) {
+		return loadIcon(location, location);
+	}
+
+	public static ImageIcon loadIcon(String location, String name) {
 		InputStream is = Resources.class.getClassLoader().getResourceAsStream(location);
-		try
-		{
-			return loadTextFile(is);
-		}
-		catch (SecurityException ex)
-		{
-			logger.debug("Couldn't load resource " + location, ex);
-		}
-		finally
-		{
-			try
-			{
+		try {
+			return new ImageIcon(ImageIO.read(is), name);
+		} catch (IOException ex) {
+			logger.debug("Couldn't load icon resource " + name, ex);
+		} finally {
+			try {
 				is.close();
+			} catch (IOException e) {
 			}
-			catch (IOException e) { }
+		}
+		return null;
+	}
+
+	public static String loadTextFile(String location) {
+		InputStream is = Resources.class.getClassLoader().getResourceAsStream(location);
+		try {
+			return loadTextFile(is);
+		} catch (SecurityException ex) {
+			logger.debug("Couldn't load resource " + location, ex);
+		} finally {
+			try {
+				is.close();
+			} catch (IOException e) {
+			}
 		}
 		return Helpers.EmptyString;
 	}
-	
-	private static String loadTextFile(InputStream is)
-	{
+
+	private static String loadTextFile(InputStream is) {
 		String retval = Helpers.EmptyString;
 		Scanner scanner = new Scanner(is, Helpers.UTF8_ENCODING);
 		scanner.useDelimiter("\\A");

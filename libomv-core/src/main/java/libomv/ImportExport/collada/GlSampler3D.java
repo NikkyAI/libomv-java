@@ -5,22 +5,23 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
  * 
- * 			A three-dimensional texture sampler for the GLSL profile.
- * 			
+ * A three-dimensional texture sampler for the GLSL profile.
  * 
- * <p>Java class for gl_sampler3D complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * Java class for gl_sampler3D complex type.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="gl_sampler3D">
@@ -35,9 +36,6 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "gl_sampler3D")
-public class GlSampler3D
-    extends FxSampler3DCommon
-{
-
+public class GlSampler3D extends FxSampler3DCommon {
 
 }

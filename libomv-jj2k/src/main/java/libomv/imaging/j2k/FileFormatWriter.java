@@ -297,8 +297,8 @@ class FileFormatWriter implements FileFormatBoxes {
 
 	/**
 	 * This method writes the Contiguous codestream box header which is directly
-	 * followed by the codestream data Call this function with the actual number
-	 * of codestream data bytes after the codestream has been written
+	 * followed by the codestream data Call this function with the actual number of
+	 * codestream data bytes after the codestream has been written
 	 *
 	 * @param clength
 	 *            The contiguous codestream length

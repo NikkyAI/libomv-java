@@ -34,174 +34,125 @@ import libomv.utils.Helpers;
 
 // Throttles the network traffic for various different traffic types.
 // Access this class through GridClient.Throttle
-public class AgentThrottle
-{
+public class AgentThrottle {
 	// Maximum bits per second for resending unacknowledged packets
-	public final float getResend()
-	{
+	public final float getResend() {
 		return resend;
 	}
 
-	public final void setResend(float value)
-	{
-		if (value > 150000.0f)
-		{
+	public final void setResend(float value) {
+		if (value > 150000.0f) {
 			resend = 150000.0f;
-		}
-		else if (value < 10000.0f)
-		{
+		} else if (value < 10000.0f) {
 			resend = 10000.0f;
-		}
-		else
-		{
+		} else {
 			resend = value;
 		}
 	}
 
 	// Maximum bits per second for LayerData terrain
-	public final float getLand()
-	{
+	public final float getLand() {
 		return land;
 	}
 
-	public final void setLand(float value)
-	{
-		if (value > 170000.0f)
-		{
+	public final void setLand(float value) {
+		if (value > 170000.0f) {
 			land = 170000.0f;
-		}
-		else if (value < 0.0f) // We don't have control of these so allow
-								// throttling to 0
+		} else if (value < 0.0f) // We don't have control of these so allow
+									// throttling to 0
 		{
 			land = 0.0f;
-		}
-		else
-		{
+		} else {
 			land = value;
 		}
 	}
 
 	// Maximum bits per second for LayerData wind data
-	public final float getWind()
-	{
+	public final float getWind() {
 		return wind;
 	}
 
-	public final void setWind(float value)
-	{
-		if (value > 34000.0f)
-		{
+	public final void setWind(float value) {
+		if (value > 34000.0f) {
 			wind = 34000.0f;
-		}
-		else if (value < 0.0f) // We don't have control of these so allow
-								// throttling to 0
+		} else if (value < 0.0f) // We don't have control of these so allow
+									// throttling to 0
 		{
 			wind = 0.0f;
-		}
-		else
-		{
+		} else {
 			wind = value;
 		}
 	}
 
 	// Maximum bits per second for LayerData clouds
-	public final float getCloud()
-	{
+	public final float getCloud() {
 		return cloud;
 	}
 
-	public final void setCloud(float value)
-	{
-		if (value > 34000.0f)
-		{
+	public final void setCloud(float value) {
+		if (value > 34000.0f) {
 			cloud = 34000.0f;
-		}
-		else if (value < 0.0f) // We don't have control of these so allow
-								// throttling to 0
+		} else if (value < 0.0f) // We don't have control of these so allow
+									// throttling to 0
 		{
 			cloud = 0.0f;
-		}
-		else
-		{
+		} else {
 			cloud = value;
 		}
 	}
 
 	// Unknown, includes object data
-	public final float getTask()
-	{
+	public final float getTask() {
 		return task;
 	}
 
-	public final void setTask(float value)
-	{
-		if (value > 446000.0f)
-		{
+	public final void setTask(float value) {
+		if (value > 446000.0f) {
 			task = 446000.0f;
-		}
-		else if (value < 4000.0f)
-		{
+		} else if (value < 4000.0f) {
 			task = 4000.0f;
-		}
-		else
-		{
+		} else {
 			task = value;
 		}
 	}
 
 	// Maximum bits per second for textures
-	public final float getTexture()
-	{
+	public final float getTexture() {
 		return texture;
 	}
 
-	public final void setTexture(float value)
-	{
-		if (value > 446000.0f)
-		{
+	public final void setTexture(float value) {
+		if (value > 446000.0f) {
 			texture = 446000.0f;
-		}
-		else if (value < 4000.0f)
-		{
+		} else if (value < 4000.0f) {
 			texture = 4000.0f;
-		}
-		else
-		{
+		} else {
 			texture = value;
 		}
 	}
 
 	// Maximum bits per second for downloaded assets
-	public final float getAsset()
-	{
+	public final float getAsset() {
 		return asset;
 	}
 
-	public final void setAsset(float value)
-	{
-		if (value > 220000.0f)
-		{
+	public final void setAsset(float value) {
+		if (value > 220000.0f) {
 			asset = 220000.0f;
-		}
-		else if (value < 10000.0f)
-		{
+		} else if (value < 10000.0f) {
 			asset = 10000.0f;
-		}
-		else
-		{
+		} else {
 			asset = value;
 		}
 	}
 
 	// Maximum bits per second the entire connection, divided up between
 	// invidiual streams using default multipliers
-	public final float getTotal()
-	{
+	public final float getTotal() {
 		return resend + land + wind + cloud + task + texture + asset;
 	}
 
-	public final void setTotal(float value)
-	{
+	public final void setTotal(float value) {
 		// Sane initial values
 		resend = (value * 0.1f);
 		land = (value * 0.52f / 3f);
@@ -222,25 +173,23 @@ public class AgentThrottle
 	private float asset;
 
 	// Default constructor, uses a default high total of 1500 KBps (1536000)
-	public AgentThrottle(GridClient client)
-	{
+	public AgentThrottle(GridClient client) {
 		Client = client;
 		setTotal(1536000.0f);
 	}
 
 	/**
-	 * Constructor that decodes an existing AgentThrottle packet in to
-	 * individual values
+	 * Constructor that decodes an existing AgentThrottle packet in to individual
+	 * values
 	 * 
 	 * @param data
 	 *            Reference to the throttle data in an AgentThrottle packet
 	 * @param pos
-	 *            Offset position to start reading at in the throttle data This
-	 *            is generally not needed in clients as the server will never
-	 *            send a throttle packet to the client
+	 *            Offset position to start reading at in the throttle data This is
+	 *            generally not needed in clients as the server will never send a
+	 *            throttle packet to the client
 	 */
-	public AgentThrottle(byte[] data, int pos)
-	{
+	public AgentThrottle(byte[] data, int pos) {
 		resend = Helpers.BytesToFloatL(data, pos);
 		pos += 4;
 		land = Helpers.BytesToFloatL(data, pos);
@@ -257,26 +206,22 @@ public class AgentThrottle
 	}
 
 	/**
-	 * Send an AgentThrottle packet to the current server using the current
-	 * values
+	 * Send an AgentThrottle packet to the current server using the current values
 	 * 
 	 * @throws Exception
 	 */
-	public final void Set() throws Exception
-	{
+	public final void Set() throws Exception {
 		Set(null);
 	}
 
 	/**
-	 * Send an AgentThrottle packet to the specified server using the current
-	 * values
+	 * Send an AgentThrottle packet to the specified server using the current values
 	 * 
 	 * @param simulator
 	 *            the simulator to which to send the packet
 	 * @throws Exception
 	 */
-	public final void Set(SimulatorManager simulator) throws Exception
-	{
+	public final void Set(SimulatorManager simulator) throws Exception {
 		AgentThrottlePacket throttle = new AgentThrottlePacket();
 		throttle.AgentData.AgentID = Client.Self.getAgentID();
 		throttle.AgentData.SessionID = Client.Self.getSessionID();
@@ -293,8 +238,7 @@ public class AgentThrottle
 	 * 
 	 * @return Byte array containing all the throttle values
 	 */
-	public final byte[] ToBytes()
-	{
+	public final byte[] ToBytes() {
 		byte[] data = new byte[7 * 4];
 		int i = Helpers.FloatToBytesL(resend, data, 0);
 		i += Helpers.FloatToBytesL(land, data, i);

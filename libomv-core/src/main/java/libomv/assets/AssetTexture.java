@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -41,42 +41,35 @@ import libomv.imaging.J2KImage;
 import libomv.imaging.J2KImage.J2KLayerInfo;
 import libomv.types.UUID;
 
-public class AssetTexture extends AssetItem
-{
+public class AssetTexture extends AssetItem {
 	private static final Logger logger = Logger.getLogger(AssetTexture.class);
 
 	// Override the base classes AssetType
 	@Override
-	public AssetType getAssetType()
-	{
+	public AssetType getAssetType() {
 		return AssetType.Texture;
 	}
 
 	// A {@link Image} object containing image data
 	private ManagedImage Image;
 
-	public ManagedImage getImage()
-	{
+	public ManagedImage getImage() {
 		return Image;
 	}
 
-	public void setImage(ManagedImage image)
-	{
+	public void setImage(ManagedImage image) {
 		invalidateAssetData();
 		Image = image;
 	}
 
 	private J2KLayerInfo[] LayerInfo;
 
-	public J2KLayerInfo[] getLayerInfo()
-	{
+	public J2KLayerInfo[] getLayerInfo() {
 		return LayerInfo;
 	}
 
-	public int getComponents()
-	{
-		if (Image != null)
-		{
+	public int getComponents() {
+		if (Image != null) {
 			int components = 0;
 
 			if ((Image.getChannels() & ManagedImage.ImageChannels.Color) != 0)
@@ -96,25 +89,23 @@ public class AssetTexture extends AssetItem
 
 	/**
 	 * Initializes a new instance of an AssetTexture object
-	 * 
+	 *
 	 * @param assetID
 	 *            A unique <see cref="UUID"/> specific to this asset
 	 * @param assetData
 	 *            A byte array containing the raw asset data
 	 */
-	public AssetTexture(UUID assetID, byte[] assetData)
-	{
+	public AssetTexture(UUID assetID, byte[] assetData) {
 		super(assetID, assetData);
 	}
 
 	/**
 	 * Initializes a new instance of an AssetTexture object
-	 * 
+	 *
 	 * @param image
 	 *            A {@link ManagedImage} object containing texture data
 	 */
-	public AssetTexture(ManagedImage image)
-	{
+	public AssetTexture(ManagedImage image) {
 		super(null, null);
 		Image = image;
 	}
@@ -124,73 +115,56 @@ public class AssetTexture extends AssetItem
 	 * created from the data in {@link Image}
 	 */
 	@Override
-	protected void encode()
-	{
+	protected void encode() {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try
-		{
+		try {
 			J2KImage.encode(bos, Image, false);
 			AssetData = bos.toByteArray();
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			logger.error("Failed to encode JPEG2000 image", ex);
-		}
-		finally
-		{
-			try
-			{
+		} finally {
+			try {
 				bos.close();
+			} catch (IOException e) {
 			}
-			catch (IOException e)
-			{ }
 		}
 	}
 
 	/**
 	 * Decodes the JPEG2000 data in <code>AssetData</code> to the
 	 * {@link ManagedImage} object {@link Image}
-	 * 
+	 *
 	 * @return True if the decoding was successful, otherwise false
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@Override
-	protected boolean decode()
-	{
+	protected boolean decode() {
 		Image = null;
 
-        if (AssetData == null)
+		if (AssetData == null)
 			return false;
 
 		InputStream is = new ByteArrayInputStream(AssetData);
-		try
-		{
+		try {
 			Image = J2KImage.decode(is);
 			return true;
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			logger.error("Error decoding asset texture data", ex);
-		}
-		finally
-		{
-			try
-			{
+		} finally {
+			try {
 				is.close();
+			} catch (IOException e) {
 			}
-			catch (IOException e)
-			{ }
 		}
 		return false;
 	}
 
 	/**
 	 * Decodes the begin and end byte positions for each quality layer in the image
-	 * 
+	 *
 	 * @return
 	 */
-	public boolean decodeLayerBoundaries()
-	{
+	public boolean decodeLayerBoundaries() {
 		if (AssetData == null)
 			encode();
 

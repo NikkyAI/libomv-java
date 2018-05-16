@@ -60,8 +60,8 @@ import jj2000.j2k.io.RandomAccessIO;
 interface OSRandomAccessIO extends RandomAccessIO {
 
 	/**
-	 * Writes a byte array to the stream. Prior to writing, the stream is
-	 * realigned at the byte level.
+	 * Writes a byte array to the stream. Prior to writing, the stream is realigned
+	 * at the byte level.
 	 *
 	 * @param b
 	 *            The byte array to write. The lower 8 bits of <tt>b</tt> are
@@ -73,8 +73,8 @@ interface OSRandomAccessIO extends RandomAccessIO {
 	public void write(byte[] b) throws IOException;
 
 	/**
-	 * Writes a byte array to the stream. Prior to writing, the stream is
-	 * realigned at the byte level.
+	 * Writes a byte array to the stream. Prior to writing, the stream is realigned
+	 * at the byte level.
 	 *
 	 * @param b
 	 *            The byte array to write. The lower 8 bits of <tt>b</tt> are

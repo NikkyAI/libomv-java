@@ -39,171 +39,121 @@ import libomv.types.Color4;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
 
-public class PrimObjectTest extends TestCase
-{
-    public void testPathBegin()
-    {
-        for (byte i = 0; i < Byte.MAX_VALUE; i++)
-        {
-            float floatValue = Primitive.UnpackBeginCut(i);
-            short result = Primitive.PackBeginCut(floatValue);
+public class PrimObjectTest extends TestCase {
+	public void testPathBegin() {
+		for (byte i = 0; i < Byte.MAX_VALUE; i++) {
+			float floatValue = Primitive.UnpackBeginCut(i);
+			short result = Primitive.PackBeginCut(floatValue);
 
-            assertTrue("Started with " + i + ", float value was " + floatValue +
-                ", and ended up with " + result, result == i);
-        }
-    }
+			assertTrue("Started with " + i + ", float value was " + floatValue + ", and ended up with " + result,
+					result == i);
+		}
+	}
 
-    public void testPathEnd()
-    {
-        for (byte i = 0; i < Byte.MAX_VALUE; i++)
-        {
-            float floatValue = Primitive.UnpackEndCut(i);
-            short result = Primitive.PackEndCut(floatValue);
+	public void testPathEnd() {
+		for (byte i = 0; i < Byte.MAX_VALUE; i++) {
+			float floatValue = Primitive.UnpackEndCut(i);
+			short result = Primitive.PackEndCut(floatValue);
 
-            assertTrue("Started with " + i + ", float value was " + floatValue +
-                ", and ended up with " + result, result == i);
-        }
-    }
+			assertTrue("Started with " + i + ", float value was " + floatValue + ", and ended up with " + result,
+					result == i);
+		}
+	}
 
-    public void testPathRevolutions()
-    {
-        for (byte i = 0; i < Byte.MAX_VALUE; i++)
-        {
-            float floatValue = Primitive.UnpackPathRevolutions(i);
-            byte result = Primitive.PackPathRevolutions(floatValue);
+	public void testPathRevolutions() {
+		for (byte i = 0; i < Byte.MAX_VALUE; i++) {
+			float floatValue = Primitive.UnpackPathRevolutions(i);
+			byte result = Primitive.PackPathRevolutions(floatValue);
 
-            assertTrue("Started with " + i + ", float value was " + floatValue +
-                ", and ended up with " + result, result == i);
-        }
-    }
+			assertTrue("Started with " + i + ", float value was " + floatValue + ", and ended up with " + result,
+					result == i);
+		}
+	}
 
-    public void testPathScale()
-    {
-        for (byte i = 0; i < Byte.MAX_VALUE; i++)
-        {
-            float floatValue = Primitive.UnpackPathScale(i);
-            byte result = Primitive.PackPathScale(floatValue);
+	public void testPathScale() {
+		for (byte i = 0; i < Byte.MAX_VALUE; i++) {
+			float floatValue = Primitive.UnpackPathScale(i);
+			byte result = Primitive.PackPathScale(floatValue);
 
-            assertTrue("Started with " + i + ", float value was " + floatValue +
-                ", and ended up with " + result, result == i);
-        }
-    }
+			assertTrue("Started with " + i + ", float value was " + floatValue + ", and ended up with " + result,
+					result == i);
+		}
+	}
 
-    public void testPathShear()
-    {
-        for (byte i = 0; i < Byte.MAX_VALUE; i++)
-        {
-            float floatValue = Primitive.UnpackPathShear(i);
-            byte result = Primitive.PackPathShear(floatValue);
+	public void testPathShear() {
+		for (byte i = 0; i < Byte.MAX_VALUE; i++) {
+			float floatValue = Primitive.UnpackPathShear(i);
+			byte result = Primitive.PackPathShear(floatValue);
 
-            assertTrue("Started with " + i + ", float value was " + floatValue +
-            ", and ended up with " + result, result == i);
-        }
-    }
+			assertTrue("Started with " + i + ", float value was " + floatValue + ", and ended up with " + result,
+					result == i);
+		}
+	}
 
-    public void testPathTaper()
-    {
-        for (byte i = Byte.MIN_VALUE; i < Byte.MAX_VALUE; i++)
-        {
-            float floatValue = Primitive.UnpackPathTaper(i);
-            byte result = Primitive.PackPathTaper(floatValue);
+	public void testPathTaper() {
+		for (byte i = Byte.MIN_VALUE; i < Byte.MAX_VALUE; i++) {
+			float floatValue = Primitive.UnpackPathTaper(i);
+			byte result = Primitive.PackPathTaper(floatValue);
 
-            assertTrue("Started with " + i + ", float value was " + floatValue +
-            ", and ended up with " + result, result == i);
-        }
-    }
+			assertTrue("Started with " + i + ", float value was " + floatValue + ", and ended up with " + result,
+					result == i);
+		}
+	}
 
-    public void testTextureEntryOffsets()
-    {
-        for (int i = -1000; i <= 1000; i++)
-        {
-            float f = (float)i / 1000;
+	public void testTextureEntryOffsets() {
+		for (int i = -1000; i <= 1000; i++) {
+			float f = (float) i / 1000;
 
-            byte[] offset = Helpers.TEOffsetShort(f);
-            float foffset = Helpers.TEOffsetFloat(offset, 0);
+			byte[] offset = Helpers.TEOffsetShort(f);
+			float foffset = Helpers.TEOffsetFloat(offset, 0);
 
-            assertTrue(foffset + " is not equal to " + f, foffset - f < 0.0001);
-        }
-    }
+			assertTrue(foffset + " is not equal to " + f, foffset - f < 0.0001);
+		}
+	}
 
-    public void testTextureEntry() throws IOException
-    {
-    	byte[] teTest = {-38, -78, 80, 125, 122, -42, 66, 54, -100, -40, 1, -66, 106, -116, 25, -39,
-    			          1,
-    	/* 17: */         94, -61, 38, -36, 26, -123, 75, 14, -109, -124, 111, 77, 106, 44, 59, -68,
-    			          0,
-        /* 34: Color */   0, 0, 0, 0,
-    			          1,
-    			          -1, -64, 64, 0,
-    			          0,
-    	/* 44: RepeatU */ 0, 0, -128, 63,
-    			          1,
-    			          0, 0, 64, 64,
-    			          0,
-    	/* 54: RepeatV */ 0, 0, -128, 63,
-    			          1,
-    			          0, 0, -128, 64,		         
-    			          0,
-    	/* 64: OffsetU */ 0, 0,
-    			          1,
-    			          0, 64,
-    			          0,
-        /* 70: OffsetV */ 0, 0,
-    			          1,
-    			          0, -64,
-    			          0,
-        /* 76: Rotation */ 0, 0,
-    			          1,
-    			          -113, 30,
-    			          0,
-    	/* 82: Material */ 0,
-    			          1,
-    			          -89,
-    			          0,
-    	/* 86: Media */   0,
-    			          1,
-    			          3,
-    			          0,
-    	/* 90: Glow */    0};
+	public void testTextureEntry() throws IOException {
+		byte[] teTest = { -38, -78, 80, 125, 122, -42, 66, 54, -100, -40, 1, -66, 106, -116, 25, -39, 1, /* 17: */ 94,
+				-61, 38, -36, 26, -123, 75, 14, -109, -124, 111, 77, 106, 44, 59, -68, 0, /* 34: Color */ 0, 0, 0, 0, 1,
+				-1, -64, 64, 0, 0, /* 44: RepeatU */ 0, 0, -128, 63, 1, 0, 0, 64, 64, 0, /* 54: RepeatV */ 0, 0, -128,
+				63, 1, 0, 0, -128, 64, 0, /* 64: OffsetU */ 0, 0, 1, 0, 64, 0, /* 70: OffsetV */ 0, 0, 1, 0, -64, 0,
+				/* 76: Rotation */ 0, 0, 1, -113, 30, 0, /* 82: Material */ 0, 1, -89, 0, /* 86: Media */ 0, 1, 3, 0,
+				/* 90: Glow */ 0 };
 
-        TextureEntry te = new TextureEntry(new UUID("dab2507d-7ad6-4236-9cd8-01be6a8c19d9"));
-        TextureEntryFace face = te.createFace(0);
-        face.setBump(Bumpiness.Concrete);
-        face.setFullbright(true);
-        face.setMediaFlags(true);
-        face.setOffsetU(0.5f);
-        face.setOffsetV(-0.5f);
-        face.setRepeatU(3.0f);
-        face.setRepeatV(4.0f);
-        face.setRGBA(new Color4(0f, 0.25f, 0.75f, 1f));
-        face.setRotation(1.5f);
-        face.setShiny(Shininess.Medium);
-        face.setTexMapType(MappingType.Planar);
-        face.setTextureID(new UUID("5ec326dc-1a85-4b0e-9384-6f4d6a2c3bbc"));
+		TextureEntry te = new TextureEntry(new UUID("dab2507d-7ad6-4236-9cd8-01be6a8c19d9"));
+		TextureEntryFace face = te.createFace(0);
+		face.setBump(Bumpiness.Concrete);
+		face.setFullbright(true);
+		face.setMediaFlags(true);
+		face.setOffsetU(0.5f);
+		face.setOffsetV(-0.5f);
+		face.setRepeatU(3.0f);
+		face.setRepeatV(4.0f);
+		face.setRGBA(new Color4(0f, 0.25f, 0.75f, 1f));
+		face.setRotation(1.5f);
+		face.setShiny(Shininess.Medium);
+		face.setTexMapType(MappingType.Planar);
+		face.setTextureID(new UUID("5ec326dc-1a85-4b0e-9384-6f4d6a2c3bbc"));
 
-        byte[] teBytes = te.getBytes();
+		byte[] teBytes = te.getBytes();
 
-        assertTrue(teBytes.length == teTest.length);
+		assertTrue(teBytes.length == teTest.length);
 
-        for (int i = 0; i < teBytes.length; i++)
-        {
-            assertTrue("Byte " + i + " is not equal", teBytes[i] == teTest[i]);
-        }
+		for (int i = 0; i < teBytes.length; i++) {
+			assertTrue("Byte " + i + " is not equal", teBytes[i] == teTest[i]);
+		}
 
-        TextureEntry te2 = new TextureEntry(teBytes, 0, teBytes.length);
+		TextureEntry te2 = new TextureEntry(teBytes, 0, teBytes.length);
 
-        byte[] teBytes2 = te2.getBytes();
+		byte[] teBytes2 = te2.getBytes();
 
-        assertTrue(teBytes.length == teBytes2.length);
+		assertTrue(teBytes.length == teBytes2.length);
 
-        for (int i = 0; i < teBytes.length; i++)
-        {
-            assertTrue("Byte " + i + " is not equal", teBytes[i] == teBytes2[i]);
-        }
-    }
- 
-    public void testPrimObject() throws IOException
-    {
-    	
-    }
- }
+		for (int i = 0; i < teBytes.length; i++) {
+			assertTrue("Byte " + i + " is not equal", teBytes[i] == teBytes2[i]);
+		}
+	}
+
+	public void testPrimObject() throws IOException {
+
+	}
+}

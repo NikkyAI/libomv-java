@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -15,15 +14,17 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
 /**
  * 
- * 			Creates a symbolic connection between two previously defined parameters.
- * 			
+ * Creates a symbolic connection between two previously defined parameters.
  * 
- * <p>Java class for cg_connect_param complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * Java class for cg_connect_param complex type.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="cg_connect_param">
@@ -41,32 +42,29 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(name = "cg_connect_param")
 public class CgConnectParam {
 
-    @XmlAttribute(name = "ref", required = true)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String ref;
+	@XmlAttribute(name = "ref", required = true)
+	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+	protected String ref;
 
-    /**
-     * Gets the value of the ref property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getRef() {
-        return ref;
-    }
+	/**
+	 * Gets the value of the ref property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getRef() {
+		return ref;
+	}
 
-    /**
-     * Sets the value of the ref property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setRef(String value) {
-        this.ref = value;
-    }
+	/**
+	 * Sets the value of the ref property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setRef(String value) {
+		this.ref = value;
+	}
 
 }

@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import java.math.BigInteger;
@@ -16,11 +15,13 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
-
 /**
- * <p>Java class for fx_cleardepth_common complex type.
+ * <p>
+ * Java class for fx_cleardepth_common complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="fx_cleardepth_common">
@@ -35,59 +36,54 @@ import javax.xml.bind.annotation.XmlValue;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "fx_cleardepth_common", propOrder = {
-    "value"
-})
+@XmlType(name = "fx_cleardepth_common", propOrder = { "value" })
 public class FxCleardepthCommon {
 
-    @XmlValue
-    protected double value;
-    @XmlAttribute(name = "index")
-    @XmlSchemaType(name = "nonNegativeInteger")
-    protected BigInteger index;
+	@XmlValue
+	protected double value;
+	@XmlAttribute(name = "index")
+	@XmlSchemaType(name = "nonNegativeInteger")
+	protected BigInteger index;
 
-    /**
-     * Gets the value of the value property.
-     * 
-     */
-    public double getValue() {
-        return value;
-    }
+	/**
+	 * Gets the value of the value property.
+	 * 
+	 */
+	public double getValue() {
+		return value;
+	}
 
-    /**
-     * Sets the value of the value property.
-     * 
-     */
-    public void setValue(double value) {
-        this.value = value;
-    }
+	/**
+	 * Sets the value of the value property.
+	 * 
+	 */
+	public void setValue(double value) {
+		this.value = value;
+	}
 
-    /**
-     * Gets the value of the index property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
-     */
-    public BigInteger getIndex() {
-        if (index == null) {
-            return new BigInteger("0");
-        } else {
-            return index;
-        }
-    }
+	/**
+	 * Gets the value of the index property.
+	 * 
+	 * @return possible object is {@link BigInteger }
+	 * 
+	 */
+	public BigInteger getIndex() {
+		if (index == null) {
+			return new BigInteger("0");
+		} else {
+			return index;
+		}
+	}
 
-    /**
-     * Sets the value of the index property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
-     */
-    public void setIndex(BigInteger value) {
-        this.index = value;
-    }
+	/**
+	 * Sets the value of the index property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link BigInteger }
+	 * 
+	 */
+	public void setIndex(BigInteger value) {
+		this.index = value;
+	}
 
 }

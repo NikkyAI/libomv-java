@@ -36,113 +36,93 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.SourceDataLine;
 
 // A SoundSource represents the data (buffer or stream)
-public class SoundSource
-{
-    private AudioInputStream din = null;
+public class SoundSource {
+	private AudioInputStream din = null;
 	private float minDistance = 1.0f;
 	private float maxDistance = 10000.0f;
-    private int loopCount = -1;
+	private int loopCount = -1;
 	private int loopStart;
 	private int loopEnd;
 	private int bufOffset;
 	private int bufLength;
 	private byte[] data;
-    
-    public SoundSource(AudioInputStream din)
-    {
-    	this.din = din;
-    	data = new byte[4096];
-    }
-    
-    public void dispose()
-    {
-		if (din != null)
-		{
-			try
-			{
+
+	public SoundSource(AudioInputStream din) {
+		this.din = din;
+		data = new byte[4096];
+	}
+
+	public void dispose() {
+		if (din != null) {
+			try {
 				din.close();
+			} catch (IOException ex) {
 			}
-			catch (IOException ex) { }
 			din = null;
 		}
 		data = null;
-    }
-    
-	public AudioFormat getFormat()
-	{
-		return din.getFormat();	
 	}
-	
-    public int getFrameLength()
-	{
+
+	public AudioFormat getFormat() {
+		return din.getFormat();
+	}
+
+	public int getFrameLength() {
 		if (din != null)
-			return (int)din.getFrameLength();
+			return (int) din.getFrameLength();
 		return (bufLength % din.getFormat().getFrameSize());
- 	}
-	
-	public void setLoopPoints(int start, int end)
-	{
+	}
+
+	public void setLoopPoints(int start, int end) {
 		loopStart = start;
 		loopEnd = end;
 	}
-	
-	public void setLoopCount(int number)
-	{
+
+	public void setLoopCount(int number) {
 		loopCount = number;
 	}
-	
-	public int getLoopCount()
-	{
+
+	public int getLoopCount() {
 		return loopCount;
 	}
 
-	public void set3DMinMaxDistance(float minDistance, float maxDistance)
-	{
+	public void set3DMinMaxDistance(float minDistance, float maxDistance) {
 		this.minDistance = minDistance;
 		this.maxDistance = maxDistance;
 	}
 
-	public float get3DMinDistance()
-	{
+	public float get3DMinDistance() {
 		return this.minDistance;
 	}
 
-	public float get3DMaxDistance()
-	{
+	public float get3DMaxDistance() {
 		return this.maxDistance;
 	}
 
-	public int write(SourceDataLine line, int length) throws IOException
-	{
+	public int write(SourceDataLine line, int length) throws IOException {
 		int bytesRead = 0, bytesWritten = 0, localLength = length;
-		if (loopCount < 0 || loopCount > 1)
-		{
+		if (loopCount < 0 || loopCount > 1) {
 			/* We are supposed to be looping */
-			if (din != null)
-			{
-				/* First time executing, read the input stream and store it in our internal buffer */
-		        int newcount = bufLength + localLength;
-				if (newcount > data.length)
-				{
-		            data = Arrays.copyOf(data, Math.max(data.length << 1, newcount));
+			if (din != null) {
+				/*
+				 * First time executing, read the input stream and store it in our internal
+				 * buffer
+				 */
+				int newcount = bufLength + localLength;
+				if (newcount > data.length) {
+					data = Arrays.copyOf(data, Math.max(data.length << 1, newcount));
 				}
 				bytesRead = din.read(data, bufLength, localLength);
-				if (bytesRead >= 0)
-				{
+				if (bytesRead >= 0) {
 					bufLength += bytesRead;
-				}
-				else
-				{
+				} else {
 					din.close();
 					din = null;
 				}
 			}
-			if (bufOffset < bufLength)
-			{
+			if (bufOffset < bufLength) {
 				localLength = Math.min(length, bufLength - bufOffset);
-			}
-			else
-			{
+			} else {
 				if (loopStart > 0)
 					bufOffset = loopStart * din.getFormat().getFrameSize();
 				else
@@ -150,15 +130,13 @@ public class SoundSource
 
 				if (loopEnd > 0)
 					bufLength = loopEnd * din.getFormat().getFrameSize();
-				
+
 				if (loopCount > 0)
 					loopCount--;
 			}
-			if (loopCount != 0)
-			{
+			if (loopCount != 0) {
 				bytesWritten = line.write(data, bufOffset, localLength);
-				if (bytesWritten > 0)
-				{
+				if (bytesWritten > 0) {
 					bufOffset += bytesWritten;
 				}
 				return bytesWritten;
@@ -168,16 +146,15 @@ public class SoundSource
 
 		{
 			bytesRead = din.read(data, 0, Math.min(data.length, localLength));
-			if (bytesRead > 0)
-			{
+			if (bytesRead > 0) {
 				bytesRead = line.write(data, 0, bytesRead);
-				if (bytesRead > 0)
-				{
+				if (bytesRead > 0) {
 					bytesWritten += bytesRead;
 				}
 			}
 		}
-		while (bytesRead > 0 && bytesWritten < localLength);
+		while (bytesRead > 0 && bytesWritten < localLength)
+			;
 		return bytesWritten;
 	}
 }

@@ -40,106 +40,87 @@ import libomv.types.UUID;
 import libomv.utils.Callback;
 import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 
-public class RLVManager
-{
-    public class RLVRule
-    {
-        public String Behaviour;
-        public String Option;
-        public String Param;
-        public UUID Sender;
-        public String SenderName;
+public class RLVManager {
+	public class RLVRule {
+		public String Behaviour;
+		public String Option;
+		public String Param;
+		public UUID Sender;
+		public String SenderName;
 
-        public String SoString()
-        {
-            return String.format("%s: %s:%s=%s [%s]", SenderName, Behaviour, Option, Param, Sender);
-        }
-    }
+		public String SoString() {
+			return String.format("%s: %s:%s=%s [%s]", SenderName, Behaviour, Option, Param, Sender);
+		}
+	}
 
-    private MainControl _Main;
-	
-    private List<RLVRule> rules = new ArrayList<RLVRule>();   
-    
-    Pattern pattern = Pattern.compile("");
-/*
- *  syntax:
- *  
- *  <behaviour>[:<option>]=<param>
- */     
-    private Pattern rlv_regex = Pattern.compile("([^:=]+)(:([^=]+))?=(\\w+)");
- 
-    
+	private MainControl _Main;
+
+	private List<RLVRule> rules = new ArrayList<RLVRule>();
+
+	Pattern pattern = Pattern.compile("");
+	/*
+	 * syntax:
+	 * 
+	 * <behaviour>[:<option>]=<param>
+	 */
+	private Pattern rlv_regex = Pattern.compile("([^:=]+)(:([^=]+))?=(\\w+)");
+
 	private Callback<SettingsUpdateCallbackArgs> settingsUpdate = new SettingsUpdateCallback();
-	
-	private class SettingsUpdateCallback implements Callback<SettingsUpdateCallbackArgs>
-	{
+
+	private class SettingsUpdateCallback implements Callback<SettingsUpdateCallbackArgs> {
 		@Override
-		public boolean callback(SettingsUpdateCallbackArgs params)
-		{
-			if (params.getName() == null)
-			{
+		public boolean callback(SettingsUpdateCallbackArgs params) {
+			if (params.getName() == null) {
 				enabled = _Main.getAppSettings().getBool(AppSettings.ENABLE_RLV_MANAGER);
-			}
-			else
-			{
+			} else {
 				enabled = params.getValue().AsBoolean();
 			}
 			return false;
 		}
 	}
-	
-	public RLVManager(MainControl main)
-	{
+
+	public RLVManager(MainControl main) {
 		_Main = main;
-		
+
 		_Main.getAppSettings().OnSettingsUpdate.add(settingsUpdate);
 		enabled = _Main.getAppSettings().get(AppSettings.ENABLE_RLV_MANAGER, false);
 	}
-	
-	protected void finalized() throws Throwable
-	{
+
+	protected void finalized() throws Throwable {
 		_Main.getAppSettings().OnSettingsUpdate.remove(settingsUpdate);
 		super.finalize();
 	}
 
 	private boolean enabled;
-	public boolean isEnabled()
-	{
+
+	public boolean isEnabled() {
 		return enabled;
 	}
-	
-	public boolean restrictionActive(String name, UUID value)
-	{
-		if (isEnabled())
-		{
-			
+
+	public boolean restrictionActive(String name, UUID value) {
+		if (isEnabled()) {
+
 		}
 		return false;
 	}
 
-	public boolean restrictionActive(String name, String value)
-	{
-		if (isEnabled())
-		{
-			
+	public boolean restrictionActive(String name, String value) {
+		if (isEnabled()) {
+
 		}
 		return false;
 	}
-	
-	public boolean tryProcessCommand(ChatCallbackArgs cmd)
-	{
-		if (isEnabled())
-		{
-			
+
+	public boolean tryProcessCommand(ChatCallbackArgs cmd) {
+		if (isEnabled()) {
+
 		}
 		return false;
 	}
-	
-	public boolean autoAcceptTP(UUID fromID)
-	{
-		if (isEnabled())
-		{
-			
+
+	public boolean autoAcceptTP(UUID fromID) {
+		if (isEnabled()) {
+
 		}
 		return false;
 	}

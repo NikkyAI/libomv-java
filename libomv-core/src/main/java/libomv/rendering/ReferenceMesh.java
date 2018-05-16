@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -42,99 +42,111 @@ import org.apache.commons.io.input.SwappedDataInputStream;
 /**
  * A reference mesh is one way to implement level of detail
  *
- * @remarks
- * Reference meshes are supplemental meshes to full meshes. For all practical
- * purposes almost all lod meshes are implemented as reference meshes, except for 
- * 'avatar_eye_1.llm' which for some reason is implemented as a full mesh.
+ * @remarks Reference meshes are supplemental meshes to full meshes. For all
+ *          practical purposes almost all lod meshes are implemented as
+ *          reference meshes, except for 'avatar_eye_1.llm' which for some
+ *          reason is implemented as a full mesh.
  */
-public class ReferenceMesh
-{
-    static final protected String MESH_HEADER = "Linden Binary Mesh 1.0";
-    static final protected String MORPH_FOOTER = "End Morphs";
+public class ReferenceMesh {
+	static final protected String MESH_HEADER = "Linden Binary Mesh 1.0";
+	static final protected String MORPH_FOOTER = "End Morphs";
 
-    public class Face
-    {
-        public short Indices1;
-        public short Indices2;
-        public short Indices3;
-        
-        public Face(ShortBuffer indices, int idx)
-        {
-        	Indices1 = indices.get(idx++);
-        	Indices2 = indices.get(idx++);
-        	Indices3 = indices.get(idx++);
-        }
-    }
+	public class Face {
+		public short Indices1;
+		public short Indices2;
+		public short Indices3;
 
-    public float MinPixelWidth;
+		public Face(ShortBuffer indices, int idx) {
+			Indices1 = indices.get(idx++);
+			Indices2 = indices.get(idx++);
+			Indices3 = indices.get(idx++);
+		}
+	}
 
-    protected String _header;
-    protected boolean _hasWeights;
-    protected boolean _hasDetailTexCoords;
-    protected Vector3 _position;
-    protected Vector3 _rotationAngles;
-    protected byte _rotationOrder;
-    protected Vector3 _scale;
-    protected short _numFaces;
-    public ShortBuffer Indices;
+	public float MinPixelWidth;
 
-    public String getHeader() { return _header; }
-    public boolean getHasWeights() { return _hasWeights; }
-    public boolean getHasDetailTexCoords() { return _hasDetailTexCoords; }
-    public Vector3 getPosition() { return _position; }
-    public Vector3 getRotationAngles() { return _rotationAngles; }
-    public byte getRotationOrder() { return _rotationOrder; }
-    public Vector3 getScale() { return _scale; }
+	protected String _header;
+	protected boolean _hasWeights;
+	protected boolean _hasDetailTexCoords;
+	protected Vector3 _position;
+	protected Vector3 _rotationAngles;
+	protected byte _rotationOrder;
+	protected Vector3 _scale;
+	protected short _numFaces;
+	public ShortBuffer Indices;
 
-    public short getNumFaces() { return _numFaces; }
-    public Face getFace(int index)
-    {
-    	if (index >= _numFaces)
-    		return null;
+	public String getHeader() {
+		return _header;
+	}
+
+	public boolean getHasWeights() {
+		return _hasWeights;
+	}
+
+	public boolean getHasDetailTexCoords() {
+		return _hasDetailTexCoords;
+	}
+
+	public Vector3 getPosition() {
+		return _position;
+	}
+
+	public Vector3 getRotationAngles() {
+		return _rotationAngles;
+	}
+
+	public byte getRotationOrder() {
+		return _rotationOrder;
+	}
+
+	public Vector3 getScale() {
+		return _scale;
+	}
+
+	public short getNumFaces() {
+		return _numFaces;
+	}
+
+	public Face getFace(int index) {
+		if (index >= _numFaces)
+			return null;
 		return new Face(Indices, index * 3);
-    }
+	}
 
-    public void load(String filename) throws IOException
-    {
-    	InputStream stream = new FileInputStream(filename);
-    	try
-    	{
-    		load(stream);
-    	}
-    	finally
-    	{
-    		stream.close();
-    	}
-    }
-    
-    public void load(InputStream stream) throws IOException
-    {
-    	SwappedDataInputStream fis = new SwappedDataInputStream(stream);
+	public void load(String filename) throws IOException {
+		InputStream stream = new FileInputStream(filename);
+		try {
+			load(stream);
+		} finally {
+			stream.close();
+		}
+	}
 
-    	load(fis);
-        
-        _numFaces = fis.readShort();
-   		Indices = ShortBuffer.allocate(3 * _numFaces);
-        for (int i = 0; i < _numFaces; i++)
-        {
-        	Indices.put(fis.readShort());
-        	Indices.put(fis.readShort());
-        	Indices.put(fis.readShort());
-        }
-    }
-    
-    protected void load(SwappedDataInputStream fis) throws IOException
-    {
-    	_header = Helpers.readString(fis, 24);
-        if (!_header.equals(MESH_HEADER))
-            throw new IOException("Unrecognized mesh format");
+	public void load(InputStream stream) throws IOException {
+		SwappedDataInputStream fis = new SwappedDataInputStream(stream);
 
-        // Populate base mesh variables
-        _hasWeights = fis.readByte() != 1;
-        _hasDetailTexCoords = fis.readByte() != 1;
-        _position = new Vector3(fis);
-        _rotationAngles = new Vector3(fis);
-        _rotationOrder = fis.readByte();
-        _scale = new Vector3(fis);
-    }
+		load(fis);
+
+		_numFaces = fis.readShort();
+		Indices = ShortBuffer.allocate(3 * _numFaces);
+		for (int i = 0; i < _numFaces; i++) {
+			Indices.put(fis.readShort());
+			Indices.put(fis.readShort());
+			Indices.put(fis.readShort());
+		}
+	}
+
+	protected void load(SwappedDataInputStream fis) throws IOException {
+		_header = Helpers.readString(fis, 24);
+		if (!_header.equals(MESH_HEADER))
+			throw new IOException("Unrecognized mesh format");
+
+		// Populate base mesh variables
+		_hasWeights = fis.readByte() != 1;
+		_hasDetailTexCoords = fis.readByte() != 1;
+		_position = new Vector3(fis);
+		_rotationAngles = new Vector3(fis);
+		_rotationOrder = fis.readByte();
+		_scale = new Vector3(fis);
+	}
 }

@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -42,89 +42,84 @@ import libomv.assets.AssetItem;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
 
-public class AssetsArchiver
-{
+public class AssetsArchiver {
 	private static final Logger logger = Logger.getLogger(AssetsArchiver.class);
 
-    ///// Post a message to the log every x assets as a progress bar
-    //static int LOG_ASSET_LOAD_NOTIFICATION_INTERVAL = 50;
+	///// Post a message to the log every x assets as a progress bar
+	// static int LOG_ASSET_LOAD_NOTIFICATION_INTERVAL = 50;
 
-    /// Archive assets
-    protected Map<UUID, AssetItem> m_assets;
+	/// Archive assets
+	protected Map<UUID, AssetItem> m_assets;
 
-    public AssetsArchiver(Map<UUID, AssetItem> assets)
-    {
-        m_assets = assets;
-    }
+	public AssetsArchiver(Map<UUID, AssetItem> assets) {
+		m_assets = assets;
+	}
 
-    /// Archive the assets given to this archiver to the given archive.
-    /// <param name="archive"></param>
-    public void Archive(TarArchiveWriter archive) throws IOException
-    {
-        //WriteMetadata(archive);
-        writeData(archive);
-    }
+	/// Archive the assets given to this archiver to the given archive.
+	/// <param name="archive"></param>
+	public void Archive(TarArchiveWriter archive) throws IOException {
+		// WriteMetadata(archive);
+		writeData(archive);
+	}
 
-    /// Write an assets metadata file to the given archive
-    /// <param name="archive"></param>
-    protected void writeMetadata(TarArchiveWriter archive) throws XmlPullParserException, IllegalArgumentException, IllegalStateException, IOException
-    {
-        StringWriter sw = new StringWriter();
+	/// Write an assets metadata file to the given archive
+	/// <param name="archive"></param>
+	protected void writeMetadata(TarArchiveWriter archive)
+			throws XmlPullParserException, IllegalArgumentException, IllegalStateException, IOException {
+		StringWriter sw = new StringWriter();
 		XmlSerializer writer = XmlPullParserFactory.newInstance().newSerializer();
 		writer.setProperty("http://xmlpull.org/v1/doc/properties.html#serializer-indentation", "  ");
 		writer.setOutput(sw);
 		writer.startDocument(Helpers.ASCII_ENCODING, null);
 		writer.startTag(null, "assets");
 
-        for (UUID uuid : m_assets.keySet())
-        {
-            AssetItem asset = m_assets.get(uuid);
+		for (UUID uuid : m_assets.keySet()) {
+			AssetItem asset = m_assets.get(uuid);
 
-            if (asset != null)
-            {
-            	writer.startTag(null, "asset");
+			if (asset != null) {
+				writer.startTag(null, "asset");
 
 				String extension = ArchiveConstants.getExtensionForType(asset.getAssetType());
 
-                writeString(writer, "filename", uuid.toString() + extension);
+				writeString(writer, "filename", uuid.toString() + extension);
 
-                writeString(writer, "name", uuid.toString());
-                writeString(writer, "description", Helpers.EmptyString);
-                writeString(writer, "asset-type", asset.getAssetType().toString());
-                writer.endTag(null, "asset");
-            }
-        }
+				writeString(writer, "name", uuid.toString());
+				writeString(writer, "description", Helpers.EmptyString);
+				writeString(writer, "asset-type", asset.getAssetType().toString());
+				writer.endTag(null, "asset");
+			}
+		}
 
-        writer.endTag(null,  "assets");
-        writer.endDocument();
-        archive.writeFile("assets.xml", sw.toString());
-    }
+		writer.endTag(null, "assets");
+		writer.endDocument();
+		archive.writeFile("assets.xml", sw.toString());
+	}
 
-    /// <summary>
-    /// Write asset data files to the given archive
-    /// </summary>
-    /// <param name="archive"></param>
-    protected void writeData(TarArchiveWriter archive) throws IOException
-    {
-        // It appears that gtar, at least, doesn't need the intermediate directory entries in the tar
-        //archive.AddDir("assets");
-        for (UUID uuid : m_assets.keySet())
-        {
-            AssetItem asset = m_assets.get(uuid);
+	/// <summary>
+	/// Write asset data files to the given archive
+	/// </summary>
+	/// <param name="archive"></param>
+	protected void writeData(TarArchiveWriter archive) throws IOException {
+		// It appears that gtar, at least, doesn't need the intermediate directory
+		// entries in the tar
+		// archive.AddDir("assets");
+		for (UUID uuid : m_assets.keySet()) {
+			AssetItem asset = m_assets.get(uuid);
 
 			String extension = ArchiveConstants.getExtensionForType(asset.getAssetType());
-            if (extension == null);
-            {
-                logger.warn(String.format(
-                    "Unrecognized asset type %s with uuid %s. This asset will be saved but unable to be reloaded",
-                    asset.getAssetType(), asset.getAssetID()));
-            }
-            archive.writeFile(ArchiveConstants.ASSETS_PATH + uuid.toString() + extension, asset.getAssetData());
-        }
-    }
-    
-	protected void writeString(XmlSerializer writer, String tag, String text) throws IllegalArgumentException, IllegalStateException, IOException
-	{
-        writer.startTag(null, tag).text(text).endTag(null, tag);	
-	} 
+			if (extension == null)
+				;
+			{
+				logger.warn(String.format(
+						"Unrecognized asset type %s with uuid %s. This asset will be saved but unable to be reloaded",
+						asset.getAssetType(), asset.getAssetID()));
+			}
+			archive.writeFile(ArchiveConstants.ASSETS_PATH + uuid.toString() + extension, asset.getAssetData());
+		}
+	}
+
+	protected void writeString(XmlSerializer writer, String tag, String text)
+			throws IllegalArgumentException, IllegalStateException, IOException {
+		writer.startTag(null, tag).text(text).endTag(null, tag);
+	}
 }

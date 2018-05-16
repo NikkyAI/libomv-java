@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -28,58 +28,55 @@
  */
 package libomv.utils;
 
-public class TimeoutEvent<T>
-{
+public class TimeoutEvent<T> {
 	private boolean fired = false;
 	private T object = null;
 
 	/**
-	 * Reset the state of the timeout event to untriggered and the object to undefined
+	 * Reset the state of the timeout event to untriggered and the object to
+	 * undefined
 	 */
-	public synchronized void reset()
-	{
+	public synchronized void reset() {
 		this.fired = false;
 		this.object = null;
 		this.notifyAll();
 	}
 
 	/**
-	 * Reset the state of the timeout event to untriggered and the object to the object parameter
+	 * Reset the state of the timeout event to untriggered and the object to the
+	 * object parameter
 	 */
-	public synchronized void reset(T object)
-	{
+	public synchronized void reset(T object) {
 		this.fired = false;
 		this.object = object;
 		this.notifyAll();
 	}
 
-	public synchronized void set(T object)
-	{
+	public synchronized void set(T object) {
 		this.object = object;
 		this.fired = (object != null);
 		this.notifyAll();
 	}
-	
-	public synchronized T get()
-	{
+
+	public synchronized T get() {
 		return this.object;
 	}
 
-	public T waitOne(long timeout) throws InterruptedException
-	{
+	public T waitOne(long timeout) throws InterruptedException {
 		return waitOne(timeout, false);
 	}
 
 	/**
 	 * Wait on the timeout to be triggered or until the timeout occurred
-	 * 
-	 * @param timeout The amount of milliseconds to wait. -1 will wait indefinitely
-	 * @param reset Reset the event just before returning
-	 * @return 
+	 *
+	 * @param timeout
+	 *            The amount of milliseconds to wait. -1 will wait indefinitely
+	 * @param reset
+	 *            Reset the event just before returning
+	 * @return
 	 * @throws InterruptedException
 	 */
-	public synchronized T waitOne(long timeout, boolean reset) throws InterruptedException
-	{
+	public synchronized T waitOne(long timeout, boolean reset) throws InterruptedException {
 		if (!fired)
 			if (timeout >= 0)
 				wait(timeout);

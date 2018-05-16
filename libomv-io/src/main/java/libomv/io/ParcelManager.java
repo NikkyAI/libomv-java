@@ -91,36 +91,31 @@ import libomv.utils.Helpers;
 import libomv.utils.RefObject;
 import libomv.utils.TimeoutEvent;
 
-public class ParcelManager implements PacketCallback, CapsCallback, libomv.model.Parcel
-{
+public class ParcelManager implements PacketCallback, CapsCallback, libomv.model.Parcel {
 	private static final Logger logger = Logger.getLogger(ParcelManager.class);
-	
+
 	/** Blacklist/Whitelist flags used in parcels Access List */
-	public enum ParcelAccessFlags
-	{
+	public enum ParcelAccessFlags {
 		// Agent is denied access
 		NoAccess,
 		// Agent is granted access
 		Access;
 
-		public static ParcelAccessFlags setValue(int value)
-		{
+		public static ParcelAccessFlags setValue(int value) {
 			return values()[value];
 		}
 
-		public byte getValue()
-		{
+		public byte getValue() {
 			return (byte) ordinal();
 		}
 	}
 
 	/**
-	 * Flags used in the ParcelAccessListRequest packet to specify whether we
-	 * want the access list (whitelist), ban list (blacklist), or both
+	 * Flags used in the ParcelAccessListRequest packet to specify whether we want
+	 * the access list (whitelist), ban list (blacklist), or both
 	 */
 	// [Flags]
-	public static class AccessList
-	{
+	public static class AccessList {
 		// Request the access list
 		public static final byte Access = 0x1;
 		// Request the ban list
@@ -128,13 +123,11 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		// Request both White and Black lists
 		public static final byte Both = 0x3;
 
-		public static byte setValue(int value)
-		{
+		public static byte setValue(int value) {
 			return (byte) (value & _mask);
 		}
 
-		public static int getValue(byte value)
-		{
+		public static int getValue(byte value) {
 			return value & _mask;
 		}
 
@@ -142,11 +135,10 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	}
 
 	/**
-	 * Sequence ID in ParcelPropertiesReply packets (sent when avatar tries to
-	 * cross a parcel border)
+	 * Sequence ID in ParcelPropertiesReply packets (sent when avatar tries to cross
+	 * a parcel border)
 	 */
-	public enum ParcelPropertiesStatus
-	{
+	public enum ParcelPropertiesStatus {
 		None(0),
 		// Parcel is currently selected
 		ParcelSelected(-10000),
@@ -159,32 +151,27 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		// Response to hovering over a parcel
 		HoveredOverParcel(-50000);
 
-		public static ParcelPropertiesStatus setValue(int value)
-		{
-			for (ParcelPropertiesStatus e : values())
-			{
+		public static ParcelPropertiesStatus setValue(int value) {
+			for (ParcelPropertiesStatus e : values()) {
 				if (e._value == value)
 					return e;
 			}
 			return None;
 		}
 
-		public int getValue()
-		{
+		public int getValue() {
 			return _value;
 		}
 
 		private int _value;
 
-		ParcelPropertiesStatus(int value)
-		{
+		ParcelPropertiesStatus(int value) {
 			this._value = value;
 		}
 	}
 
 	/** The tool to use when modifying terrain levels */
-	public enum TerraformAction
-	{
+	public enum TerraformAction {
 		// Level the terrain
 		Level,
 		// Raise the terrain
@@ -198,22 +185,19 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		// Revert terrain to simulator default
 		Revert;
 
-		public static TerraformAction setValue(int value)
-		{
+		public static TerraformAction setValue(int value) {
 			return values()[value];
 		}
 
-		public byte getValue()
-		{
+		public byte getValue() {
 			return (byte) ordinal();
 		}
 	}
 
 	/** The tool size to use when changing terrain levels */
 	// [Flags]
-	public static class TerraformBrushSize
-	{
-		static float LAND_BRUSH_SIZE[] = {1.0f, 2.0f, 4.0f};
+	public static class TerraformBrushSize {
+		static float LAND_BRUSH_SIZE[] = { 1.0f, 2.0f, 4.0f };
 
 		// Small
 		public static final byte Small = 1 << 0;
@@ -222,25 +206,20 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		// Large
 		public static final byte Large = 1 << 2;
 
-		public static byte getIndex(float value)
-		{
-			for (byte i = 2; i >= 0; i--)
-			{
-				if (value > LAND_BRUSH_SIZE[i])
-				{
+		public static byte getIndex(float value) {
+			for (byte i = 2; i >= 0; i--) {
+				if (value > LAND_BRUSH_SIZE[i]) {
 					return i;
 				}
 			}
 			return 0;
 		}
 
-		public static byte setValue(int value)
-		{
+		public static byte setValue(int value) {
 			return (byte) (value & _mask);
 		}
 
-		public static int getValue(byte value)
-		{
+		public static int getValue(byte value) {
 			return value & _mask;
 		}
 
@@ -248,8 +227,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	}
 
 	/** Reasons agent is denied access to a parcel on the simulator */
-	public enum AccessDeniedReason
-	{
+	public enum AccessDeniedReason {
 		// Agent is not denied, access is granted
 		NotDenied,
 		// Agent is not a member of the group set for the parcel, or which owns
@@ -265,13 +243,11 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		// verified avatars
 		NotAgeVerified;
 
-		public static AccessDeniedReason setValue(int value)
-		{
+		public static AccessDeniedReason setValue(int value) {
 			return values()[value];
 		}
 
-		public byte getValue()
-		{
+		public byte getValue() {
 			return (byte) ordinal();
 		}
 	}
@@ -280,14 +256,13 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 * Parcel overlay type. This is used primarily for highlighting and coloring
 	 * which is why it is a single integer instead of a set of flags
 	 * 
-	 * These values seem to be poorly thought out. The first three bits
-	 * represent a single value, not flags. For example Auction (0x05) is not a
-	 * combination of OwnedByOther (0x01) and ForSale(0x04). However, the
-	 * BorderWest and BorderSouth values are bit flags that get attached to the
-	 * value stored in the first three bits. Bits four, five, and six are unused
+	 * These values seem to be poorly thought out. The first three bits represent a
+	 * single value, not flags. For example Auction (0x05) is not a combination of
+	 * OwnedByOther (0x01) and ForSale(0x04). However, the BorderWest and
+	 * BorderSouth values are bit flags that get attached to the value stored in the
+	 * first three bits. Bits four, five, and six are unused
 	 */
-	public enum ParcelOverlayType
-	{
+	public enum ParcelOverlayType {
 		// Public land
 		Public(0),
 		// Land is owned by another avatar
@@ -300,39 +275,34 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		ForSale(4),
 		// Land is being auctioned
 		Auction(5),
-        // Land is private
-        Private(32),
+		// Land is private
+		Private(32),
 		// To the west of this area is a parcel border
 		BorderWest(64),
 		// To the south of this area is a parcel border
 		BorderSouth(128);
 
-		public static ParcelOverlayType setValue(int value)
-		{
-			for (ParcelOverlayType e : values())
-			{
+		public static ParcelOverlayType setValue(int value) {
+			for (ParcelOverlayType e : values()) {
 				if (e._value == value)
 					return e;
 			}
 			return Public;
 		}
 
-		public byte getValue()
-		{
+		public byte getValue() {
 			return _value;
 		}
 
 		private byte _value;
 
-		private ParcelOverlayType(int value)
-		{
+		private ParcelOverlayType(int value) {
 			this._value = (byte) value;
 		}
 	}
 
 	/** Parcel Media Command used in ParcelMediaCommandMessage */
-	public enum ParcelMediaCommand
-	{
+	public enum ParcelMediaCommand {
 		// Stop the media stream and go back to the first frame
 		Stop,
 		// Pause the media stream (stop playing but stay on current frame)
@@ -377,13 +347,11 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		// later only).
 		Desc;
 
-		public static ParcelMediaCommand setValue(int value)
-		{
+		public static ParcelMediaCommand setValue(int value) {
 			return values()[value];
 		}
 
-		public byte getValue()
-		{
+		public byte getValue() {
 			return (byte) ordinal();
 		}
 	}
@@ -392,8 +360,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	// Some information about a parcel of land returned from a DirectoryManager
 	// search
-	public final class ParcelInfo
-	{
+	public final class ParcelInfo {
 		// Global Key of record
 		public UUID ID;
 		// Parcel Owners {@link UUID}
@@ -428,9 +395,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		public int AuctionID;
 	}
 
-
-	public final class ParcelAccessEntry
-	{
+	public final class ParcelAccessEntry {
 		// Agents {@link T:OpenMetaverse.UUID}
 		public UUID AgentID;
 		//
@@ -440,8 +405,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	}
 
 	// Owners of primitives on parcel
-	public final class ParcelPrimOwners
-	{
+	public final class ParcelPrimOwners {
 		// Prim Owners {@link T:OpenMetaverse.UUID}
 		public UUID OwnerID;
 		// True of owner is group
@@ -458,27 +422,23 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	// Contains a parcels dwell data returned from the simulator in response to
 	// an <see cref="RequestParcelDwell"/>
-	public class ParcelDwellReplyCallbackArgs implements CallbackArgs
-	{
+	public class ParcelDwellReplyCallbackArgs implements CallbackArgs {
 		private final UUID m_ParcelID;
 		private final int m_LocalID;
 		private final float m_Dwell;
 
 		// Get the global ID of the parcel
-		public final UUID getParcelID()
-		{
+		public final UUID getParcelID() {
 			return m_ParcelID;
 		}
 
 		// Get the simulator specific ID of the parcel
-		public final int getLocalID()
-		{
+		public final int getLocalID() {
 			return m_LocalID;
 		}
 
 		// Get the calculated dwell
-		public final float getDwell()
-		{
+		public final float getDwell() {
 			return m_Dwell;
 		}
 
@@ -492,8 +452,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		 * @param dwell
 		 *            The calculated dwell for the parcel
 		 */
-		public ParcelDwellReplyCallbackArgs(UUID parcelID, int localID, float dwell)
-		{
+		public ParcelDwellReplyCallbackArgs(UUID parcelID, int localID, float dwell) {
 			this.m_ParcelID = parcelID;
 			this.m_LocalID = localID;
 			this.m_Dwell = dwell;
@@ -504,13 +463,11 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	// Contains basic parcel information data returned from the simulator in
 	// response to an <see cref="RequestParcelInfo"/> request
-	public class ParcelInfoReplyCallbackArgs implements CallbackArgs
-	{
+	public class ParcelInfoReplyCallbackArgs implements CallbackArgs {
 		private final ParcelInfo m_Parcel;
 
 		// Get the <see cref="ParcelInfo"/> object containing basic parcel info
-		public final ParcelInfo getParcel()
-		{
+		public final ParcelInfo getParcel() {
 			return m_Parcel;
 		}
 
@@ -518,11 +475,9 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		 * Construct a new instance of the ParcelInfoReplyCallbackArgs class
 		 * 
 		 * @param parcel
-		 *            The <see cref="ParcelInfo"/> object containing basic
-		 *            parcel info
+		 *            The <see cref="ParcelInfo"/> object containing basic parcel info
 		 */
-		public ParcelInfoReplyCallbackArgs(ParcelInfo parcel)
-		{
+		public ParcelInfoReplyCallbackArgs(ParcelInfo parcel) {
 			this.m_Parcel = parcel;
 		}
 	}
@@ -531,8 +486,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	// Contains basic parcel information data returned from the simulator in
 	// response to an <see cref="RequestParcelInfo"/> request
-	public class ParcelPropertiesCallbackArgs implements CallbackArgs
-	{
+	public class ParcelPropertiesCallbackArgs implements CallbackArgs {
 		private final Simulator m_Simulator;
 		private Parcel m_Parcel;
 		private final ParcelResult m_Result;
@@ -541,41 +495,35 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		private final boolean m_SnapSelection;
 
 		// Get the simulator the parcel is located in
-		public final Simulator getSimulator()
-		{
+		public final Simulator getSimulator() {
 			return m_Simulator;
 		}
 
 		// Get the <see cref="Parcel"/> object containing the details. If Result
 		// is NoData, this object will not contain valid data
-		public final Parcel getParcel()
-		{
+		public final Parcel getParcel() {
 			return m_Parcel;
 		}
 
 		// Get the result of the request
-		public final ParcelResult getResult()
-		{
+		public final ParcelResult getResult() {
 			return m_Result;
 		}
 
 		// Get the number of primitieves your agent is currently selecting and
 		// or sitting on in this parcel
-		public final int getSelectedPrims()
-		{
+		public final int getSelectedPrims() {
 			return m_SelectedPrims;
 		}
 
 		// Get the user assigned ID used to correlate a request with these
 		// results
-		public final int getSequenceID()
-		{
+		public final int getSequenceID() {
 			return m_SequenceID;
 		}
 
 		// TODO:
-		public final boolean getSnapSelection()
-		{
+		public final boolean getSnapSelection() {
 			return m_SnapSelection;
 		}
 
@@ -589,17 +537,16 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		 * @param result
 		 *            The result of the request
 		 * @param selectedPrims
-		 *            The number of primitieves your agent is currently
-		 *            selecting and or sitting on in this parcel
+		 *            The number of primitieves your agent is currently selecting and or
+		 *            sitting on in this parcel
 		 * @param sequenceID
-		 *            The user assigned ID used to correlate a request with
-		 *            these results
+		 *            The user assigned ID used to correlate a request with these
+		 *            results
 		 * @param snapSelection
 		 *            TODO:
 		 */
 		public ParcelPropertiesCallbackArgs(Simulator simulator, Parcel parcel, ParcelResult result, int selectedPrims,
-				int sequenceID, boolean snapSelection)
-		{
+				int sequenceID, boolean snapSelection) {
 			this.m_Simulator = simulator;
 			this.m_Parcel = parcel;
 			this.m_Result = result;
@@ -613,8 +560,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	// Contains blacklist and whitelist data returned from the simulator in
 	// response to an <see cref="RequestParcelAccesslist"/> request
-	public class ParcelAccessListReplyCallbackArgs implements CallbackArgs
-	{
+	public class ParcelAccessListReplyCallbackArgs implements CallbackArgs {
 		private final Simulator m_Simulator;
 		private final int m_SequenceID;
 		private final int m_LocalID;
@@ -622,56 +568,48 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		private final ArrayList<ParcelManager.ParcelAccessEntry> m_AccessList;
 
 		// Get the simulator the parcel is located in
-		public final Simulator getSimulator()
-		{
+		public final Simulator getSimulator() {
 			return m_Simulator;
 		}
 
 		// Get the user assigned ID used to correlate a request with these
 		// results
-		public final int getSequenceID()
-		{
+		public final int getSequenceID() {
 			return m_SequenceID;
 		}
 
 		// Get the simulator specific ID of the parcel
-		public final int getLocalID()
-		{
+		public final int getLocalID() {
 			return m_LocalID;
 		}
 
 		// TODO:
-		public final int getFlags()
-		{
+		public final int getFlags() {
 			return m_Flags;
 		}
 
 		// Get the list containing the white/blacklisted agents for the parcel
-		public final ArrayList<ParcelManager.ParcelAccessEntry> getAccessList()
-		{
+		public final ArrayList<ParcelManager.ParcelAccessEntry> getAccessList() {
 			return m_AccessList;
 		}
 
 		/**
-		 * Construct a new instance of the ParcelAccessListReplyCallbackArgs
-		 * class
+		 * Construct a new instance of the ParcelAccessListReplyCallbackArgs class
 		 * 
 		 * @param simulator
 		 *            The simulator the parcel is located in
 		 * @param sequenceID
-		 *            The user assigned ID used to correlate a request with
-		 *            these results
+		 *            The user assigned ID used to correlate a request with these
+		 *            results
 		 * @param localID
 		 *            The simulator specific ID of the parcel
 		 * @param flags
 		 *            TODO:
 		 * @param accessEntries
-		 *            The list containing the white/blacklisted agents for the
-		 *            parcel
+		 *            The list containing the white/blacklisted agents for the parcel
 		 */
 		public ParcelAccessListReplyCallbackArgs(Simulator simulator, int sequenceID, int localID, int flags,
-				ArrayList<ParcelManager.ParcelAccessEntry> accessEntries)
-		{
+				ArrayList<ParcelManager.ParcelAccessEntry> accessEntries) {
 			this.m_Simulator = simulator;
 			this.m_SequenceID = sequenceID;
 			this.m_LocalID = localID;
@@ -684,26 +622,22 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	// Contains blacklist and whitelist data returned from the simulator in
 	// response to an <see cref="RequestParcelAccesslist"/> request
-	public class ParcelObjectOwnersReplyCallbackArgs implements CallbackArgs
-	{
+	public class ParcelObjectOwnersReplyCallbackArgs implements CallbackArgs {
 		private final Simulator m_Simulator;
 		private final java.util.ArrayList<ParcelManager.ParcelPrimOwners> m_Owners;
 
 		// Get the simulator the parcel is located in
-		public final Simulator getSimulator()
-		{
+		public final Simulator getSimulator() {
 			return m_Simulator;
 		}
 
 		// Get the list containing prim ownership counts
-		public final java.util.ArrayList<ParcelManager.ParcelPrimOwners> getPrimOwners()
-		{
+		public final java.util.ArrayList<ParcelManager.ParcelPrimOwners> getPrimOwners() {
 			return m_Owners;
 		}
 
 		/**
-		 * Construct a new instance of the ParcelObjectOwnersReplyCallbackArgs
-		 * class
+		 * Construct a new instance of the ParcelObjectOwnersReplyCallbackArgs class
 		 * 
 		 * @param simulator
 		 *            The simulator the parcel is located in
@@ -711,8 +645,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		 *            The list containing prim ownership counts
 		 */
 		public ParcelObjectOwnersReplyCallbackArgs(Simulator simulator,
-				java.util.ArrayList<ParcelManager.ParcelPrimOwners> primOwners)
-		{
+				java.util.ArrayList<ParcelManager.ParcelPrimOwners> primOwners) {
 			this.m_Simulator = simulator;
 			this.m_Owners = primOwners;
 		}
@@ -722,46 +655,40 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	// Contains the data returned when all parcel data has been retrieved from a
 	// simulator
-	public class SimParcelsDownloadedCallbackArgs implements CallbackArgs
-	{
+	public class SimParcelsDownloadedCallbackArgs implements CallbackArgs {
 		private final Simulator m_Simulator;
 		private final HashMap<Integer, Parcel> m_Parcels;
 		private final int[] m_ParcelMap;
 
 		// Get the simulator the parcel data was retrieved from
-		public final Simulator getSimulator()
-		{
+		public final Simulator getSimulator() {
 			return m_Simulator;
 		}
 
 		// A dictionary containing the parcel data where the key correlates to
 		// the ParcelMap entry
-		public final HashMap<Integer, Parcel> getParcels()
-		{
+		public final HashMap<Integer, Parcel> getParcels() {
 			return m_Parcels;
 		}
 
 		// Get the multidimensional array containing a x,y grid mapped to each
 		// 64x64 parcel's LocalID.
-		public final int[] getParcelMap()
-		{
+		public final int[] getParcelMap() {
 			return m_ParcelMap;
 		}
 
 		/**
-		 * Construct a new instance of the SimParcelsDownloadedCallbackArgs
-		 * class
+		 * Construct a new instance of the SimParcelsDownloadedCallbackArgs class
 		 * 
 		 * @param simulator
 		 *            The simulator the parcel data was retrieved from
 		 * @param simParcels
 		 *            The dictionary containing the parcel data
 		 * @param is
-		 *            The multidimensional array containing a x,y grid mapped to
-		 *            each 64x64 parcel's LocalID.
+		 *            The multidimensional array containing a x,y grid mapped to each
+		 *            64x64 parcel's LocalID.
 		 */
-		public SimParcelsDownloadedCallbackArgs(Simulator simulator, HashMap<Integer, Parcel> simParcels, int[] is)
-		{
+		public SimParcelsDownloadedCallbackArgs(Simulator simulator, HashMap<Integer, Parcel> simParcels, int[] is) {
 			this.m_Simulator = simulator;
 			this.m_Parcels = simParcels;
 			this.m_ParcelMap = is;
@@ -772,45 +699,39 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	// Contains the data returned when a <see cref="RequestForceSelectObjects"/>
 	// request
-	public class ForceSelectObjectsReplyCallbackArgs implements CallbackArgs
-	{
+	public class ForceSelectObjectsReplyCallbackArgs implements CallbackArgs {
 		private final Simulator m_Simulator;
 		private final int[] m_ObjectIDs;
 		private final boolean m_ResetList;
 
 		// Get the simulator the parcel data was retrieved from
-		public final Simulator getSimulator()
-		{
+		public final Simulator getSimulator() {
 			return m_Simulator;
 		}
 
 		// Get the list of primitive IDs
-		public final int[] getObjectIDs()
-		{
+		public final int[] getObjectIDs() {
 			return m_ObjectIDs;
 		}
 
 		// true if the list is clean and contains the information only for a
 		// given request
-		public final boolean getResetList()
-		{
+		public final boolean getResetList() {
 			return m_ResetList;
 		}
 
 		/**
-		 * Construct a new instance of the ForceSelectObjectsReplyCallbackArgs
-		 * class
+		 * Construct a new instance of the ForceSelectObjectsReplyCallbackArgs class
 		 * 
 		 * @param simulator
 		 *            The simulator the parcel data was retrieved from
 		 * @param objectIDs
 		 *            The list of primitive IDs
 		 * @param resetList
-		 *            true if the list is clean and contains the information
-		 *            only for a given request
+		 *            true if the list is clean and contains the information only for a
+		 *            given request
 		 */
-		public ForceSelectObjectsReplyCallbackArgs(Simulator simulator, int[] objectIDs, boolean resetList)
-		{
+		public ForceSelectObjectsReplyCallbackArgs(Simulator simulator, int[] objectIDs, boolean resetList) {
 			this.m_Simulator = simulator;
 			this.m_ObjectIDs = objectIDs;
 			this.m_ResetList = resetList;
@@ -820,34 +741,29 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	public CallbackHandler<ForceSelectObjectsReplyCallbackArgs> OnForceSelectObjectsReply = new CallbackHandler<ForceSelectObjectsReplyCallbackArgs>();
 
 	// Contains data when the media data for a parcel the avatar is on changes
-	public class ParcelMediaUpdateReplyCallbackArgs implements CallbackArgs
-	{
+	public class ParcelMediaUpdateReplyCallbackArgs implements CallbackArgs {
 		private final Simulator m_Simulator;
 		private final ParcelMedia m_ParcelMedia;
 
 		// Get the simulator the parcel media data was updated in
-		public final Simulator getSimulator()
-		{
+		public final Simulator getSimulator() {
 			return m_Simulator;
 		}
 
 		// Get the updated media information
-		public final ParcelMedia getMedia()
-		{
+		public final ParcelMedia getMedia() {
 			return m_ParcelMedia;
 		}
 
 		/**
-		 * Construct a new instance of the ParcelMediaUpdateReplyCallbackArgs
-		 * class
+		 * Construct a new instance of the ParcelMediaUpdateReplyCallbackArgs class
 		 * 
 		 * @param simulator
 		 *            the simulator the parcel media data was updated in
 		 * @param media
 		 *            The updated media information
 		 */
-		public ParcelMediaUpdateReplyCallbackArgs(Simulator simulator, ParcelMedia media)
-		{
+		public ParcelMediaUpdateReplyCallbackArgs(Simulator simulator, ParcelMedia media) {
 			this.m_Simulator = simulator;
 			this.m_ParcelMedia = media;
 		}
@@ -856,8 +772,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	public CallbackHandler<ParcelMediaUpdateReplyCallbackArgs> OnParcelMediaUpdateReply = new CallbackHandler<ParcelMediaUpdateReplyCallbackArgs>();
 
 	// Contains the media command for a parcel the agent is currently on
-	public class ParcelMediaCommandCallbackArgs implements CallbackArgs
-	{
+	public class ParcelMediaCommandCallbackArgs implements CallbackArgs {
 		private final Simulator m_Simulator;
 		private final int m_Sequence;
 		private final int m_ParcelFlags;
@@ -865,29 +780,24 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		private final float m_Time;
 
 		// Get the simulator the parcel media command was issued in
-		public final Simulator getSimulator()
-		{
+		public final Simulator getSimulator() {
 			return m_Simulator;
 		}
 
-		public final int getSequence()
-		{
+		public final int getSequence() {
 			return m_Sequence;
 		}
 
-		public final int getParcelFlags()
-		{
+		public final int getParcelFlags() {
 			return m_ParcelFlags;
 		}
 
 		// Get the media command that was sent
-		public final ParcelMediaCommand getMediaCommand()
-		{
+		public final ParcelMediaCommand getMediaCommand() {
 			return m_MediaCommand;
 		}
 
-		public final float getTime()
-		{
+		public final float getTime() {
 			return m_Time;
 		}
 
@@ -903,8 +813,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		 * @param time
 		 */
 		public ParcelMediaCommandCallbackArgs(Simulator simulator, int sequence, int flags, ParcelMediaCommand command,
-				float time)
-		{
+				float time) {
 			this.m_Simulator = simulator;
 			this.m_Sequence = sequence;
 			this.m_ParcelFlags = flags;
@@ -919,8 +828,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	private GridClient _Client;
 	private TimeoutEvent<Boolean> WaitForSimParcel;
 
-	public ParcelManager(GridClient client)
-	{
+	public ParcelManager(GridClient client) {
 		_Client = client;
 
 		// Setup the callbacks
@@ -938,52 +846,48 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	}
 
 	@Override
-	public void packetCallback(Packet packet, Simulator simulator) throws Exception
-	{
-		switch (packet.getType())
-		{
-			case ParcelInfoReply:
-				HandleParcelInfoReply(packet, simulator);
-				break;
-			case ParcelDwellReply:
-				HandleParcelDwellReply(packet, simulator);
-				break;
-			case ParcelAccessListReply:
-				HandleParcelAccessListReply(packet, simulator);
-				break;
-			case ForceObjectSelect:
-				HandleSelectParcelObjectsReply(packet, simulator);
-				break;
-			case ParcelMediaUpdate:
-				HandleParcelMediaUpdate(packet, simulator);
-				break;
-			case ParcelOverlay:
-				HandleParcelOverlay(packet, simulator);
-				break;
-			case ParcelMediaCommandMessage:
-				HandleParcelMediaCommandMessagePacket(packet, simulator);
-				break;
-			case ParcelObjectOwnersReply:
-				HandleParcelObjectOwnersReply(packet, simulator);
-				break;				
-			default:
-				break;
+	public void packetCallback(Packet packet, Simulator simulator) throws Exception {
+		switch (packet.getType()) {
+		case ParcelInfoReply:
+			HandleParcelInfoReply(packet, simulator);
+			break;
+		case ParcelDwellReply:
+			HandleParcelDwellReply(packet, simulator);
+			break;
+		case ParcelAccessListReply:
+			HandleParcelAccessListReply(packet, simulator);
+			break;
+		case ForceObjectSelect:
+			HandleSelectParcelObjectsReply(packet, simulator);
+			break;
+		case ParcelMediaUpdate:
+			HandleParcelMediaUpdate(packet, simulator);
+			break;
+		case ParcelOverlay:
+			HandleParcelOverlay(packet, simulator);
+			break;
+		case ParcelMediaCommandMessage:
+			HandleParcelMediaCommandMessagePacket(packet, simulator);
+			break;
+		case ParcelObjectOwnersReply:
+			HandleParcelObjectOwnersReply(packet, simulator);
+			break;
+		default:
+			break;
 		}
 	}
 
 	@Override
-	public void capsCallback(IMessage message, SimulatorManager simulator) throws Exception
-	{
-		switch (message.getType())
-		{
-			case ParcelObjectOwnersReply:
-				HandleParcelObjectOwnersReply(message, simulator);
-				break;
-			case ParcelProperties:
-				HandleParcelPropertiesReply(message, simulator);
-				break;
-			default:
-				break;
+	public void capsCallback(IMessage message, SimulatorManager simulator) throws Exception {
+		switch (message.getType()) {
+		case ParcelObjectOwnersReply:
+			HandleParcelObjectOwnersReply(message, simulator);
+			break;
+		case ParcelProperties:
+			HandleParcelPropertiesReply(message, simulator);
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -996,8 +900,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 *            Simulator-local ID of the parcel
 	 * @throws Exception
 	 */
-	public final void RequestParcelInfo(UUID parcelID) throws Exception
-	{
+	public final void RequestParcelInfo(UUID parcelID) throws Exception {
 		ParcelInfoRequestPacket request = new ParcelInfoRequestPacket();
 		request.AgentData.AgentID = _Client.Self.getAgentID();
 		request.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1015,12 +918,11 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 *            Simulator-local ID of the parcel
 	 * @param sequenceID
 	 *            An arbitrary integer that will be returned with the
-	 *            ParcelProperties reply, useful for distinguishing between
-	 *            multiple simultaneous requests
+	 *            ParcelProperties reply, useful for distinguishing between multiple
+	 *            simultaneous requests
 	 * @throws Exception
 	 */
-	public final void RequestParcelProperties(Simulator simulator, int localID, int sequenceID) throws Exception
-	{
+	public final void RequestParcelProperties(Simulator simulator, int localID, int sequenceID) throws Exception {
 		ParcelPropertiesRequestByIDPacket request = new ParcelPropertiesRequestByIDPacket();
 
 		request.AgentData.AgentID = _Client.Self.getAgentID();
@@ -1041,14 +943,13 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 *            Simulator-local ID of the parcel
 	 * @param sequenceID
 	 *            An arbitrary integer that will be returned with the
-	 *            ParcelAccessList reply, useful for distinguishing between
-	 *            multiple simultaneous requests
+	 *            ParcelAccessList reply, useful for distinguishing between multiple
+	 *            simultaneous requests
 	 * @param flags
 	 * @throws Exception
 	 */
 	public final void RequestParcelAccessList(Simulator simulator, int localID, byte flags, int sequenceID)
-			throws Exception
-	{
+			throws Exception {
 		ParcelAccessListRequestPacket request = new ParcelAccessListRequestPacket();
 
 		request.AgentData.AgentID = _Client.Self.getAgentID();
@@ -1078,13 +979,12 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 *            ParcelProperties reply, useful for distinguishing between
 	 *            different types of parcel property requests
 	 * @param snapSelection
-	 *            A boolean that is returned with the ParcelProperties reply,
-	 *            useful for snapping focus to a single parcel
+	 *            A boolean that is returned with the ParcelProperties reply, useful
+	 *            for snapping focus to a single parcel
 	 * @throws Exception
 	 */
 	public final void RequestParcelProperties(Simulator simulator, float north, float east, float south, float west,
-			int sequenceID, boolean snapSelection) throws Exception
-	{
+			int sequenceID, boolean snapSelection) throws Exception {
 		ParcelPropertiesRequestPacket request = new ParcelPropertiesRequestPacket();
 
 		request.AgentData.AgentID = _Client.Self.getAgentID();
@@ -1107,8 +1007,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 *            Simulator to request parcels from (must be connected)
 	 * @throws Exception
 	 */
-	public final void RequestAllSimParcels(SimulatorManager simulator) throws Exception
-	{
+	public final void RequestAllSimParcels(SimulatorManager simulator) throws Exception {
 		RequestAllSimParcels(simulator, false, 750);
 	}
 
@@ -1125,61 +1024,47 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 * @throws Exception
 	 */
 	public final void RequestAllSimParcels(final SimulatorManager simulator, boolean refresh, final int msDelay)
-			throws Exception
-	{
-		if (simulator.getDownloadingParcelMap())
-		{
+			throws Exception {
+		if (simulator.getDownloadingParcelMap()) {
 			logger.info(GridClient.Log("Already downloading parcels in " + simulator.getName(), _Client));
 			return;
 		}
 		simulator.setDownloadingParcelMap(true);
 		WaitForSimParcel = new TimeoutEvent<Boolean>();
 
-		if (refresh)
-		{
+		if (refresh) {
 			simulator.clearParcelMap();
 		}
 
 		// Wait the given amount of time for a reply before sending the next
 		// request
-		Thread thread = new Thread()
-		{
+		Thread thread = new Thread() {
 			@Override
-			public void run()
-			{
-				if (!_Client.Network.getConnected())
-				{
+			public void run() {
+				if (!_Client.Network.getConnected()) {
 					return;
 				}
 
 				int count = 0, timeouts = 0, y, x;
-				for (y = 0; y < 64; y++)
-				{
-					for (x = 0; x < 64; x++)
-					{
+				for (y = 0; y < 64; y++) {
+					for (x = 0; x < 64; x++) {
 
-						if (simulator.getParcelMap(y, x) == 0)
-						{
-							try
-							{
+						if (simulator.getParcelMap(y, x) == 0) {
+							try {
 								RequestParcelProperties(simulator, (y + 1) * 4.0f, (x + 1) * 4.0f, y * 4.0f, x * 4.0f,
 										Integer.MAX_VALUE, false);
-								if (WaitForSimParcel.waitOne(msDelay) == null)
-								{
+								if (WaitForSimParcel.waitOne(msDelay) == null) {
 									++timeouts;
 								}
-							}
-							catch (Exception e)
-							{
+							} catch (Exception e) {
 							}
 							++count;
 						}
 					}
 				}
-				logger.info(GridClient.Log(
-						String.format(
-								"Full simulator parcel information retrieved. Sent %d parcel requests. Current outgoing queue: %d, Retry Count %d",
-								count, _Client.Network.getOutboxCount(), timeouts), _Client));
+				logger.info(GridClient.Log(String.format(
+						"Full simulator parcel information retrieved. Sent %d parcel requests. Current outgoing queue: %d, Retry Count %d",
+						count, _Client.Network.getOutboxCount(), timeouts), _Client));
 				WaitForSimParcel = null;
 				simulator.setDownloadingParcelMap(false);
 			}
@@ -1196,8 +1081,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 *            Simulator-local ID of the parcel
 	 * @throws Exception
 	 */
-	public final void RequestDwell(Simulator simulator, int localID) throws Exception
-	{
+	public final void RequestDwell(Simulator simulator, int localID) throws Exception {
 		ParcelDwellRequestPacket request = new ParcelDwellRequestPacket();
 		request.AgentData.AgentID = _Client.Self.getAgentID();
 		request.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1227,8 +1111,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 * @throws Exception
 	 */
 	public final void Buy(Simulator simulator, int localID, boolean forGroup, UUID groupID, boolean removeContribution,
-			int parcelArea, int parcelPrice) throws Exception
-	{
+			int parcelArea, int parcelPrice) throws Exception {
 		ParcelBuyPacket request = new ParcelBuyPacket();
 
 		request.AgentData.AgentID = _Client.Self.getAgentID();
@@ -1255,8 +1138,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 *            The parcels region specific local ID
 	 * @throws Exception
 	 */
-	public final void Reclaim(Simulator simulator, int localID) throws Exception
-	{
+	public final void Reclaim(Simulator simulator, int localID) throws Exception {
 		ParcelReclaimPacket request = new ParcelReclaimPacket();
 		request.AgentData.AgentID = _Client.Self.getAgentID();
 		request.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1277,8 +1159,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 *            The groups {@link T:OpenMetaverse.UUID}
 	 * @throws Exception
 	 */
-	public final void DeedToGroup(Simulator simulator, int localID, UUID groupID) throws Exception
-	{
+	public final void DeedToGroup(Simulator simulator, int localID, UUID groupID) throws Exception {
 		ParcelDeedToGroupPacket request = new ParcelDeedToGroupPacket();
 		request.AgentData.AgentID = _Client.Self.getAgentID();
 		request.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1298,8 +1179,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 *            The parcels region specific local ID
 	 * @throws Exception
 	 */
-	public final void RequestObjectOwners(Simulator simulator, int localID) throws Exception
-	{
+	public final void RequestObjectOwners(Simulator simulator, int localID) throws Exception {
 		ParcelObjectOwnersRequestPacket request = new ParcelObjectOwnersRequestPacket();
 
 		request.AgentData.AgentID = _Client.Self.getAgentID();
@@ -1320,12 +1200,11 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 *            the type of objects to return, {@link T
 	 *            :OpenMetaverse.ObjectReturnType}
 	 * @param ownerIDs
-	 *            A list containing object owners {@link OpenMetaverse.UUID} s
-	 *            to return
+	 *            A list containing object owners {@link OpenMetaverse.UUID} s to
+	 *            return
 	 * @throws Exception
 	 */
-	public final void ReturnObjects(Simulator simulator, int localID, byte type, UUID[] ownerIDs) throws Exception
-	{
+	public final void ReturnObjects(Simulator simulator, int localID, byte type, UUID[] ownerIDs) throws Exception {
 		ParcelReturnObjectsPacket request = new ParcelReturnObjectsPacket();
 		request.AgentData.AgentID = _Client.Self.getAgentID();
 		request.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1338,17 +1217,13 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		request.TaskID[0] = UUID.Zero;
 
 		// Convert the list of owner UUIDs to packet blocks if a list is given
-		if (ownerIDs != null)
-		{
+		if (ownerIDs != null) {
 			request.OwnerID = new UUID[ownerIDs.length];
 
-			for (int i = 0; i < ownerIDs.length; i++)
-			{
+			for (int i = 0; i < ownerIDs.length; i++) {
 				request.OwnerID[i] = ownerIDs[i];
 			}
-		}
-		else
-		{
+		} else {
 			request.OwnerID = new UUID[0];
 		}
 
@@ -1366,8 +1241,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 * @throws Exception
 	 */
 	public final void ParcelSubdivide(Simulator simulator, float west, float south, float east, float north)
-			throws Exception
-	{
+			throws Exception {
 		ParcelDividePacket divide = new ParcelDividePacket();
 		divide.AgentData.AgentID = _Client.Self.getAgentID();
 		divide.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1390,8 +1264,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 * @throws Exception
 	 */
 	public final void ParcelJoin(Simulator simulator, float west, float south, float east, float north)
-			throws Exception
-	{
+			throws Exception {
 		ParcelJoinPacket join = new ParcelJoinPacket();
 		join.AgentData.AgentID = _Client.Self.getAgentID();
 		join.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1411,20 +1284,18 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 * @param position
 	 *            Vector3 position in simulator (Z not used)
 	 * @return 0 on failure, or parcel LocalID on success. A call to
-	 *         <code>Parcels.RequestAllSimParcels</code> is required to populate
-	 *         map and dictionary.
+	 *         <code>Parcels.RequestAllSimParcels</code> is required to populate map
+	 *         and dictionary.
 	 */
-	public final int GetParcelLocalID(SimulatorManager simulator, Vector3 position)
-	{
-		int value = simulator.getParcelMap((int)position.X / 4, (int)position.Y / 4);
-		if (value > 0)
-		{
+	public final int GetParcelLocalID(SimulatorManager simulator, Vector3 position) {
+		int value = simulator.getParcelMap((int) position.X / 4, (int) position.Y / 4);
+		if (value > 0) {
 			return value;
 		}
 
 		logger.warn(String.format(
-						"ParcelMap returned an default/invalid value for location %d/%d Did you use RequestAllSimParcels() to populate the dictionaries?",
-						(int)position.X / 4, (int)position.Y / 4));
+				"ParcelMap returned an default/invalid value for location %d/%d Did you use RequestAllSimParcels() to populate the dictionaries?",
+				(int) position.X / 4, (int) position.Y / 4));
 		return 0;
 	}
 
@@ -1439,14 +1310,13 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 *            From Enum, Raise, Lower, Level, Smooth, Etc.
 	 * @param brushSize
 	 *            Size of area to modify
-	 * @return true on successful request sent. Settings.STORE_LAND_PATCHES must
-	 *         be true, Parcel information must be downloaded using
+	 * @return true on successful request sent. Settings.STORE_LAND_PATCHES must be
+	 *         true, Parcel information must be downloaded using
 	 *         <code>RequestAllSimParcels()</code>
 	 * @throws Exception
 	 */
 	public final boolean Terraform(SimulatorManager simulator, int localID, TerraformAction action, float brushSize)
-			throws Exception
-	{
+			throws Exception {
 		return Terraform(simulator, localID, 0f, 0f, 0f, 0f, action, brushSize, 1);
 	}
 
@@ -1467,14 +1337,13 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 *            From Enum, Raise, Lower, Level, Smooth, Etc.
 	 * @param brushSize
 	 *            Size of area to modify
-	 * @return true on successful request sent. Settings.STORE_LAND_PATCHES must
-	 *         be true, Parcel information must be downloaded using
+	 * @return true on successful request sent. Settings.STORE_LAND_PATCHES must be
+	 *         true, Parcel information must be downloaded using
 	 *         <code>RequestAllSimParcels()</code>
 	 * @throws Exception
 	 */
 	public final boolean Terraform(SimulatorManager simulator, float west, float south, float east, float north,
-			TerraformAction action, float brushSize) throws Exception
-	{
+			TerraformAction action, float brushSize) throws Exception {
 		return Terraform(simulator, -1, west, south, east, north, action, brushSize, 1);
 	}
 
@@ -1499,27 +1368,23 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 *            Size of area to modify
 	 * @param seconds
 	 *            How many meters + or - to lower, 1 = 1 meter
-	 * @return true on successful request sent. Settings.STORE_LAND_PATCHES must
-	 *         be true, Parcel information must be downloaded using
+	 * @return true on successful request sent. Settings.STORE_LAND_PATCHES must be
+	 *         true, Parcel information must be downloaded using
 	 *         <code>RequestAllSimParcels()</code>
 	 * @throws Exception
 	 */
-	public final boolean Terraform(SimulatorManager simulator, int localID, float west, float south, float east, float north,
-			TerraformAction action, float brushSize, int seconds) throws Exception
-	{
+	public final boolean Terraform(SimulatorManager simulator, int localID, float west, float south, float east,
+			float north, TerraformAction action, float brushSize, int seconds) throws Exception {
 		float height = 0f;
 		int x, y;
-		if (localID == -1)
-		{
+		if (localID == -1) {
 			x = (int) east - (int) west / 2;
 			y = (int) north - (int) south / 2;
-		}
-		else
-		{
+		} else {
 			ParcelImpl p;
-			if (!simulator.Parcels.containsKey(localID))
-			{
-				logger.warn(GridClient.Log(String.format("Can't find parcel %d in simulator %s", localID, simulator), _Client));
+			if (!simulator.Parcels.containsKey(localID)) {
+				logger.warn(GridClient.Log(String.format("Can't find parcel %d in simulator %s", localID, simulator),
+						_Client));
 				return false;
 			}
 			p = (ParcelImpl) simulator.getParcels().get(localID);
@@ -1527,8 +1392,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 			y = (int) p.AABBMax.Y - (int) p.AABBMin.Y / 2;
 		}
 		RefObject<Float> ref = new RefObject<Float>(height);
-		if (Float.isNaN(simulator.TerrainHeightAtPoint(x, y)))
-		{
+		if (Float.isNaN(simulator.TerrainHeightAtPoint(x, y))) {
 			logger.warn(GridClient.Log("Land Patch not stored for location", _Client));
 			return false;
 		}
@@ -1563,8 +1427,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 * @throws Exception
 	 */
 	public final void Terraform(Simulator simulator, int localID, float west, float south, float east, float north,
-			TerraformAction action, float brushSize, int seconds, float height) throws Exception
-	{
+			TerraformAction action, float brushSize, int seconds, float height) throws Exception {
 		ModifyLandPacket land = new ModifyLandPacket();
 		land.AgentData.AgentID = _Client.Self.getAgentID();
 		land.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1584,7 +1447,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 		land.BrushSize = new float[1];
 		land.BrushSize[0] = brushSize;
-		
+
 		simulator.sendPacket(land);
 	}
 
@@ -1597,13 +1460,11 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 * @param selectType
 	 *            Owners, Others, Etc
 	 * @param ownerID
-	 *            List containing keys of avatars objects to select; if List is
-	 *            null will return Objects of type <c>selectType</c> Response
-	 *            data is returned in the event {@link E
-	 *            :OnParcelSelectedObjects}
+	 *            List containing keys of avatars objects to select; if List is null
+	 *            will return Objects of type <c>selectType</c> Response data is
+	 *            returned in the event {@link E :OnParcelSelectedObjects}
 	 */
-	public final void RequestSelectObjects(int localID, byte selectType, UUID ownerID) throws Exception
-	{
+	public final void RequestSelectObjects(int localID, byte selectType, UUID ownerID) throws Exception {
 		ParcelSelectObjectsPacket select = new ParcelSelectObjectsPacket();
 		select.AgentData.AgentID = _Client.Self.getAgentID();
 		select.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1625,18 +1486,14 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 * @param ban
 	 *            true to also ban target
 	 */
-	public final void EjectUser(UUID targetID, boolean ban) throws Exception
-	{
+	public final void EjectUser(UUID targetID, boolean ban) throws Exception {
 		EjectUserPacket eject = new EjectUserPacket();
 		eject.AgentData.AgentID = _Client.Self.getAgentID();
 		eject.AgentData.SessionID = _Client.Self.getSessionID();
 		eject.Data.TargetID = targetID;
-		if (ban)
-		{
+		if (ban) {
 			eject.Data.Flags = 1;
-		}
-		else
-		{
+		} else {
 			eject.Data.Flags = 0;
 		}
 		_Client.Network.sendPacket(eject);
@@ -1650,18 +1507,14 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 * @param freeze
 	 *            true to freeze, false to unfreeze
 	 */
-	public final void FreezeUser(UUID targetID, boolean freeze) throws Exception
-	{
+	public final void FreezeUser(UUID targetID, boolean freeze) throws Exception {
 		FreezeUserPacket frz = new FreezeUserPacket();
 		frz.AgentData.AgentID = _Client.Self.getAgentID();
 		frz.AgentData.SessionID = _Client.Self.getSessionID();
 		frz.Data.TargetID = targetID;
-		if (freeze)
-		{
+		if (freeze) {
 			frz.Data.Flags = 0;
-		}
-		else
-		{
+		} else {
 			frz.Data.Flags = 1;
 		}
 
@@ -1676,8 +1529,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 * @param localID
 	 *            Simulator local ID of parcel
 	 */
-	public final void ReleaseParcel(Simulator simulator, int localID) throws Exception
-	{
+	public final void ReleaseParcel(Simulator simulator, int localID) throws Exception {
 		ParcelReleasePacket abandon = new ParcelReleasePacket();
 		abandon.AgentData.AgentID = _Client.Self.getAgentID();
 		abandon.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1687,8 +1539,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	}
 
 	/**
-	 * Requests the UUID of the parcel in a remote region at a specified
-	 * location
+	 * Requests the UUID of the parcel in a remote region at a specified location
 	 * 
 	 * @param location
 	 *            Location of the parcel in the remote region
@@ -1698,24 +1549,21 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 *            Remote region UUID
 	 * @return If successful UUID of the remote parcel, UUID.Zero otherwise
 	 */
-	public final UUID RequestRemoteParcelID(Vector3 location, long regionHandle, UUID regionID)
-	{
+	public final UUID RequestRemoteParcelID(Vector3 location, long regionHandle, UUID regionID) {
 		URI url = _Client.Network.getCapabilityURI("RemoteParcelRequest");
-		if (url != null)
-		{
+		if (url != null) {
 			RemoteParcelRequestRequest req = _Client.Messages.new RemoteParcelRequestRequest();
 			req.Location = location;
 			req.RegionHandle = regionHandle;
 			req.RegionID = regionID;
 
-			try
-			{
-				OSD result = new CapsClient(_Client, "RequestRemoteParcelID").getResponse(url, req, null, _Client.Settings.CAPS_TIMEOUT);
-				RemoteParcelRequestMessage response = (RemoteParcelRequestMessage) _Client.Messages.DecodeEvent(CapsEventType.RemoteParcelRequest, (OSDMap) result);
+			try {
+				OSD result = new CapsClient(_Client, "RequestRemoteParcelID").getResponse(url, req, null,
+						_Client.Settings.CAPS_TIMEOUT);
+				RemoteParcelRequestMessage response = (RemoteParcelRequestMessage) _Client.Messages
+						.DecodeEvent(CapsEventType.RemoteParcelRequest, (OSDMap) result);
 				return ((RemoteParcelRequestReply) response.Request).ParcelID;
-			}
-			catch (Throwable t)
-			{
+			} catch (Throwable t) {
 				logger.debug(GridClient.Log("Failed to fetch remote parcel ID", _Client));
 			}
 		}
@@ -1724,8 +1572,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	}
 
-	public interface LandResourcesInfoCallback
-	{
+	public interface LandResourcesInfoCallback {
 		public void callback(boolean success, LandResourcesInfo info);
 	}
 
@@ -1739,19 +1586,16 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 * @param callback
 	 *            Callback invoked when the request failed or is complete
 	 */
-	public final void GetParcelResouces(UUID parcelID, boolean getDetails, LandResourcesInfoCallback callback)
-	{
-		try
-		{
+	public final void GetParcelResouces(UUID parcelID, boolean getDetails, LandResourcesInfoCallback callback) {
+		try {
 			URI url = _Client.Network.getCapabilityURI(CapsEventType.LandResources.toString());
 			CapsClient request = new CapsClient(_Client, CapsEventType.LandResources.toString());
 			LandResourcesRequest req = _Client.Messages.new LandResourcesRequest();
 			req.ParcelID = parcelID;
-			request.executeHttpPost(url, req, new LandResourcesMessageHandler(getDetails, callback), _Client.Settings.CAPS_TIMEOUT);
+			request.executeHttpPost(url, req, new LandResourcesMessageHandler(getDetails, callback),
+					_Client.Settings.CAPS_TIMEOUT);
 
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			logger.error(GridClient.Log("Failed fetching land resources:", _Client), ex);
 			callback.callback(false, null);
 		}
@@ -1759,80 +1603,67 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	// #endregion Public Methods
 
-	private class LandResourcesMessageHandler implements FutureCallback<OSD>
-	{
+	private class LandResourcesMessageHandler implements FutureCallback<OSD> {
 		private final LandResourcesInfoCallback callback;
 		private final boolean getDetails;
 
-		public LandResourcesMessageHandler(boolean getDetails, LandResourcesInfoCallback callback)
-		{
+		public LandResourcesMessageHandler(boolean getDetails, LandResourcesInfoCallback callback) {
 			this.getDetails = getDetails;
 			this.callback = callback;
 		}
 
 		@Override
-		public void completed(OSD result)
-		{
-			try
-			{
-				if (result == null)
-				{
+		public void completed(OSD result) {
+			try {
+				if (result == null) {
 					callback.callback(false, null);
 				}
 				LandResourcesMessage response = _Client.Messages.new LandResourcesMessage();
 				response.Deserialize((OSDMap) result);
-				OSD osd = new CapsClient(_Client, CapsEventType.LandResources.toString()).getResponse(response.ScriptResourceSummary, Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT);
+				OSD osd = new CapsClient(_Client, CapsEventType.LandResources.toString()).getResponse(
+						response.ScriptResourceSummary, Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT);
 
 				LandResourcesInfo info = _Client.Messages.new LandResourcesInfo();
-				info.Deserialize((OSDMap)osd);
-				if (response.ScriptResourceDetails != null && getDetails)
-				{
-					osd = new CapsClient(_Client, CapsEventType.LandResources.toString()).getResponse(response.ScriptResourceDetails, Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT);
-					info.Deserialize((OSDMap)osd);
+				info.Deserialize((OSDMap) osd);
+				if (response.ScriptResourceDetails != null && getDetails) {
+					osd = new CapsClient(_Client, CapsEventType.LandResources.toString()).getResponse(
+							response.ScriptResourceDetails, Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT);
+					info.Deserialize((OSDMap) osd);
 				}
 				callback.callback(true, info);
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				failed(ex);
 			}
 		}
 
 		@Override
-		public void cancelled()
-		{
+		public void cancelled() {
 			logger.error(GridClient.Log("Fetching land resources was cancelled", _Client));
 			callback.callback(false, null);
 		}
 
 		@Override
-		public void failed(Exception ex)
-		{
+		public void failed(Exception ex) {
 			logger.error(GridClient.Log("Failed fetching land resources", _Client), ex);
 			callback.callback(false, null);
 		}
 
 	}
 
-	private final void HandleParcelDwellReply(Packet packet, Simulator simulator)
-	{
+	private final void HandleParcelDwellReply(Packet packet, Simulator simulator) {
 		ParcelDwellReplyPacket dwell = (ParcelDwellReplyPacket) packet;
 
-		synchronized (simulator.getParcels())
-		{
-			if (dwell.Data.Dwell != 0.0F && simulator.getParcels().containsKey(dwell.Data.LocalID))
-			{
+		synchronized (simulator.getParcels()) {
+			if (dwell.Data.Dwell != 0.0F && simulator.getParcels().containsKey(dwell.Data.LocalID)) {
 				((ParcelImpl) simulator.getParcels().get(dwell.Data.LocalID)).Dwell = dwell.Data.Dwell;
 			}
 		}
-		OnParcelDwellReply.dispatch(new ParcelDwellReplyCallbackArgs(dwell.Data.ParcelID, dwell.Data.LocalID,
-				dwell.Data.Dwell));
+		OnParcelDwellReply
+				.dispatch(new ParcelDwellReplyCallbackArgs(dwell.Data.ParcelID, dwell.Data.LocalID, dwell.Data.Dwell));
 	}
 
-	private final void HandleParcelPropertiesReply(IMessage message, SimulatorManager simulator) throws Exception
-	{
-		if (OnParcelProperties.count() > 0 || _Client.Settings.PARCEL_TRACKING == true)
-		{
+	private final void HandleParcelPropertiesReply(IMessage message, SimulatorManager simulator) throws Exception {
+		if (OnParcelProperties.count() > 0 || _Client.Settings.PARCEL_TRACKING == true) {
 			ParcelPropertiesMessage msg = (ParcelPropertiesMessage) message;
 
 			ParcelImpl parcel = new ParcelImpl(msg.LocalID);
@@ -1895,75 +1726,63 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 			parcel.AnyAVSounds = msg.AnyAVSounds;
 			parcel.GroupAVSounds = msg.GroupAVSounds;
 
-			if (_Client.Settings.PARCEL_TRACKING)
-			{
-				synchronized (simulator.getParcels())
-				{
+			if (_Client.Settings.PARCEL_TRACKING) {
+				synchronized (simulator.getParcels()) {
 					simulator.getParcels().put(parcel.LocalID, parcel);
 				}
 
 				boolean set = false;
 				int y, x, index, bit;
-				for (y = 0; y < 64; y++)
-				{
-					for (x = 0; x < 64; x++)
-					{
+				for (y = 0; y < 64; y++) {
+					for (x = 0; x < 64; x++) {
 						index = (y * 64) + x;
 						bit = index % 8;
 						index >>= 3;
 
-						if ((parcel.Bitmap[index] & (1 << bit)) != 0)
-						{
+						if ((parcel.Bitmap[index] & (1 << bit)) != 0) {
 							simulator.setParcelMap(y, x, parcel.LocalID);
 							set = true;
 						}
 					}
 				}
 
-				if (!set)
-				{
+				if (!set) {
 					logger.warn("Received a parcel with a bitmap that did not map to any locations");
 				}
 			}
 
-			if (((Integer) sequenceID).equals(Integer.MAX_VALUE) && WaitForSimParcel != null)
-			{
+			if (((Integer) sequenceID).equals(Integer.MAX_VALUE) && WaitForSimParcel != null) {
 				WaitForSimParcel.set(true);
 			}
 
 			// auto request acl, will be stored in parcel tracking dictionary if
 			// enabled
-			if (_Client.Settings.ALWAYS_REQUEST_PARCEL_ACL)
-			{
+			if (_Client.Settings.ALWAYS_REQUEST_PARCEL_ACL) {
 				RequestParcelAccessList(simulator, parcel.LocalID, AccessList.Both, sequenceID);
 			}
 
 			// auto request dwell, will be stored in parcel tracking dictionary
 			// if enables
-			if (_Client.Settings.ALWAYS_REQUEST_PARCEL_DWELL)
-			{
+			if (_Client.Settings.ALWAYS_REQUEST_PARCEL_DWELL) {
 				RequestDwell(simulator, parcel.LocalID);
 			}
 
 			// Fire the callback for parcel properties being received
-			if (OnParcelProperties != null)
-			{
+			if (OnParcelProperties != null) {
 				OnParcelProperties.dispatch(new ParcelPropertiesCallbackArgs(simulator, parcel, result, selectedPrims,
 						sequenceID, snapSelection));
 			}
 
 			// Check if all of the simulator parcels have been retrieved, if so
 			// fire another callback
-			if (simulator.IsParcelMapFull() && OnSimParcelsDownloaded.count() > 0)
-			{
-				OnSimParcelsDownloaded.dispatch(new SimParcelsDownloadedCallbackArgs(simulator, simulator.Parcels,
-						simulator.getParcelMap()));
+			if (simulator.IsParcelMapFull() && OnSimParcelsDownloaded.count() > 0) {
+				OnSimParcelsDownloaded.dispatch(
+						new SimParcelsDownloadedCallbackArgs(simulator, simulator.Parcels, simulator.getParcelMap()));
 			}
 		}
 	}
 
-	private final void HandleParcelInfoReply(Packet packet, Simulator simulator) throws Exception
-	{
+	private final void HandleParcelInfoReply(Packet packet, Simulator simulator) throws Exception {
 		ParcelInfoReplyPacket info = (ParcelInfoReplyPacket) packet;
 
 		ParcelInfo parcelInfo = new ParcelInfo();
@@ -1992,16 +1811,13 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 * 
 	 * Raises the <see cref="ParcelAccessListReply"/> event
 	 */
-	private final void HandleParcelAccessListReply(Packet packet, Simulator simulator)
-	{
-		if (OnParcelAccessListReply.count() > 0 || _Client.Settings.ALWAYS_REQUEST_PARCEL_ACL)
-		{
+	private final void HandleParcelAccessListReply(Packet packet, Simulator simulator) {
+		if (OnParcelAccessListReply.count() > 0 || _Client.Settings.ALWAYS_REQUEST_PARCEL_ACL) {
 			ParcelAccessListReplyPacket reply = (ParcelAccessListReplyPacket) packet;
 
 			ArrayList<ParcelAccessEntry> accessList = new ArrayList<ParcelAccessEntry>(reply.List.length);
 
-			for (int i = 0; i < reply.List.length; i++)
-			{
+			for (int i = 0; i < reply.List.length; i++) {
 				ParcelAccessEntry pae = new ParcelAccessEntry();
 				pae.AgentID = reply.List[i].ID;
 				pae.Time = Helpers.UnixTimeToDateTime(reply.List[i].Time);
@@ -2010,17 +1826,12 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 				accessList.add(pae);
 			}
 
-			synchronized (simulator.getParcels())
-			{
-				if (simulator.getParcels().containsKey(reply.Data.LocalID))
-				{
+			synchronized (simulator.getParcels()) {
+				if (simulator.getParcels().containsKey(reply.Data.LocalID)) {
 					ParcelImpl parcel = (ParcelImpl) simulator.getParcels().get(reply.Data.LocalID);
-					if (reply.Data.Flags == AccessList.Ban)
-					{
+					if (reply.Data.Flags == AccessList.Ban) {
 						parcel.AccessBlackList = accessList;
-					}
-					else
-					{
+					} else {
 						parcel.AccessWhiteList = accessList;
 					}
 
@@ -2032,16 +1843,13 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		}
 	}
 
-	private final void HandleParcelObjectOwnersReply(Packet packet, Simulator simulator)
-	{
-		if (OnParcelObjectOwnersReply.count() > 0)
-		{
+	private final void HandleParcelObjectOwnersReply(Packet packet, Simulator simulator) {
+		if (OnParcelObjectOwnersReply.count() > 0) {
 			ArrayList<ParcelPrimOwners> primOwners = new ArrayList<ParcelPrimOwners>();
 
-			ParcelObjectOwnersReplyPacket msg = (ParcelObjectOwnersReplyPacket)packet;
+			ParcelObjectOwnersReplyPacket msg = (ParcelObjectOwnersReplyPacket) packet;
 
-			for (int i = 0; i < msg.Data.length; i++)
-			{
+			for (int i = 0; i < msg.Data.length; i++) {
 				ParcelPrimOwners primOwner = new ParcelPrimOwners();
 				primOwner.OwnerID = msg.Data[i].OwnerID;
 				primOwner.Count = msg.Data[i].Count;
@@ -2056,16 +1864,13 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		}
 	}
 
-	private final void HandleParcelObjectOwnersReply(IMessage message, Simulator simulator)
-	{
-		if (OnParcelObjectOwnersReply.count() > 0)
-		{
+	private final void HandleParcelObjectOwnersReply(IMessage message, Simulator simulator) {
+		if (OnParcelObjectOwnersReply.count() > 0) {
 			ArrayList<ParcelPrimOwners> primOwners = new ArrayList<ParcelPrimOwners>();
 
 			ParcelObjectOwnersReplyMessage msg = (ParcelObjectOwnersReplyMessage) message;
 
-			for (int i = 0; i < msg.PrimOwnersBlock.length; i++)
-			{
+			for (int i = 0; i < msg.PrimOwnersBlock.length; i++) {
 				ParcelPrimOwners primOwner = new ParcelPrimOwners();
 				primOwner.OwnerID = msg.PrimOwnersBlock[i].OwnerID;
 				primOwner.Count = msg.PrimOwnersBlock[i].Count;
@@ -2084,18 +1889,16 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 * 
 	 * Raises the <see cref="ForceSelectObjectsReply"/> event
 	 */
-	private final void HandleSelectParcelObjectsReply(Packet packet, Simulator simulator)
-	{
-		if (OnForceSelectObjectsReply.count() > 0)
-		{
+	private final void HandleSelectParcelObjectsReply(Packet packet, Simulator simulator) {
+		if (OnForceSelectObjectsReply.count() > 0) {
 			ForceObjectSelectPacket reply = (ForceObjectSelectPacket) packet;
 			int[] objectIDs = new int[reply.LocalID.length];
 
-			for (int i = 0; i < reply.LocalID.length; i++)
-			{
+			for (int i = 0; i < reply.LocalID.length; i++) {
 				objectIDs[i] = reply.LocalID[i];
 			}
-			OnForceSelectObjectsReply.dispatch(new ForceSelectObjectsReplyCallbackArgs(simulator, objectIDs, reply.ResetList));
+			OnForceSelectObjectsReply
+					.dispatch(new ForceSelectObjectsReplyCallbackArgs(simulator, objectIDs, reply.ResetList));
 		}
 	}
 
@@ -2106,10 +1909,8 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 * 
 	 * @throws Exception
 	 */
-	private final void HandleParcelMediaUpdate(Packet packet, Simulator simulator) throws Exception
-	{
-		if (OnParcelMediaUpdateReply != null)
-		{
+	private final void HandleParcelMediaUpdate(Packet packet, Simulator simulator) throws Exception {
+		if (OnParcelMediaUpdateReply != null) {
 			ParcelMediaUpdatePacket reply = (ParcelMediaUpdatePacket) packet;
 			ParcelMedia media = new ParcelMedia();
 
@@ -2126,32 +1927,27 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		}
 	}
 
-	private final void HandleParcelOverlay(Packet packet, Simulator sim)
-	{
+	private final void HandleParcelOverlay(Packet packet, Simulator sim) {
 		final int OVERLAY_COUNT = 4;
 		ParcelOverlayPacket overlay = (ParcelOverlayPacket) packet;
 		SimulatorManager simulator = (SimulatorManager) sim;
-		
-		if (overlay.ParcelData.SequenceID >= 0 && overlay.ParcelData.SequenceID < OVERLAY_COUNT)
-		{
+
+		if (overlay.ParcelData.SequenceID >= 0 && overlay.ParcelData.SequenceID < OVERLAY_COUNT) {
 			int length = overlay.ParcelData.getData().length;
 
-			System.arraycopy(overlay.ParcelData.getData(), 0, simulator.ParcelOverlay, overlay.ParcelData.SequenceID
-					* length, length);
+			System.arraycopy(overlay.ParcelData.getData(), 0, simulator.ParcelOverlay,
+					overlay.ParcelData.SequenceID * length, length);
 			simulator.ParcelOverlaysReceived++;
 
-			if (simulator.ParcelOverlaysReceived >= OVERLAY_COUNT)
-			{
+			if (simulator.ParcelOverlaysReceived >= OVERLAY_COUNT) {
 				// TODO: ParcelOverlaysReceived should become internal, and
 				// reset to zero every time it hits four. Also need a callback
 				// here
 				logger.info("Finished building the " + simulator.getName() + " parcel overlay");
 			}
-		}
-		else
-		{
-			logger.warn(GridClient.Log("Parcel overlay with sequence ID of " + overlay.ParcelData.SequenceID + " received from "
-					+ simulator.toString(), _Client));
+		} else {
+			logger.warn(GridClient.Log("Parcel overlay with sequence ID of " + overlay.ParcelData.SequenceID
+					+ " received from " + simulator.toString(), _Client));
 		}
 	}
 
@@ -2160,10 +1956,8 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	 * 
 	 * Raises the <see cref="ParcelMediaCommand"/> event
 	 */
-	private final void HandleParcelMediaCommandMessagePacket(Packet packet, Simulator simulator)
-	{
-		if (OnParcelMediaCommand != null)
-		{
+	private final void HandleParcelMediaCommandMessagePacket(Packet packet, Simulator simulator) {
+		if (OnParcelMediaCommand != null) {
 			ParcelMediaCommandMessagePacket pmc = (ParcelMediaCommandMessagePacket) packet;
 			ParcelMediaCommandMessagePacket.CommandBlockBlock block = pmc.CommandBlock;
 

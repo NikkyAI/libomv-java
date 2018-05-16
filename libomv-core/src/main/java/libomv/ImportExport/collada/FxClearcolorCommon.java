@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import java.math.BigInteger;
@@ -18,11 +17,13 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
-
 /**
- * <p>Java class for fx_clearcolor_common complex type.
+ * <p>
+ * Java class for fx_clearcolor_common complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="fx_clearcolor_common">
@@ -37,72 +38,67 @@ import javax.xml.bind.annotation.XmlValue;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "fx_clearcolor_common", propOrder = {
-    "value"
-})
+@XmlType(name = "fx_clearcolor_common", propOrder = { "value" })
 public class FxClearcolorCommon {
 
-    @XmlValue
-    protected List<Double> value;
-    @XmlAttribute(name = "index")
-    @XmlSchemaType(name = "nonNegativeInteger")
-    protected BigInteger index;
+	@XmlValue
+	protected List<Double> value;
+	@XmlAttribute(name = "index")
+	@XmlSchemaType(name = "nonNegativeInteger")
+	protected BigInteger index;
 
-    /**
-     * Gets the value of the value property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the value property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getValue().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Double }
-     * 
-     * 
-     */
-    public List<Double> getValue() {
-        if (value == null) {
-            value = new ArrayList<Double>();
-        }
-        return this.value;
-    }
+	/**
+	 * Gets the value of the value property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the value property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getValue().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link Double }
+	 * 
+	 * 
+	 */
+	public List<Double> getValue() {
+		if (value == null) {
+			value = new ArrayList<Double>();
+		}
+		return this.value;
+	}
 
-    /**
-     * Gets the value of the index property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
-     */
-    public BigInteger getIndex() {
-        if (index == null) {
-            return new BigInteger("0");
-        } else {
-            return index;
-        }
-    }
+	/**
+	 * Gets the value of the index property.
+	 * 
+	 * @return possible object is {@link BigInteger }
+	 * 
+	 */
+	public BigInteger getIndex() {
+		if (index == null) {
+			return new BigInteger("0");
+		} else {
+			return index;
+		}
+	}
 
-    /**
-     * Sets the value of the index property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
-     */
-    public void setIndex(BigInteger value) {
-        this.index = value;
-    }
+	/**
+	 * Sets the value of the index property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link BigInteger }
+	 * 
+	 */
+	public void setIndex(BigInteger value) {
+		this.index = value;
+	}
 
 }

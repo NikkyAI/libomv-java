@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -33,8 +33,7 @@ import libomv.model.Asset;
 import libomv.types.UUID;
 
 /** Base class for all Asset types */
-public abstract class AssetItem implements Asset
-{
+public abstract class AssetItem implements Asset {
 
 	/** True if the asset is only stored on the server temporarily */
 	public boolean Temporary;
@@ -43,57 +42,57 @@ public abstract class AssetItem implements Asset
 	/** A byte array containing the raw asset data */
 	public byte[] AssetData;
 
-	public UUID getAssetID()
-	{
+	public UUID getAssetID() {
 		return AssetID;
 	}
 
-	public void setAssetID(UUID value)
-	{
+	public void setAssetID(UUID value) {
 		AssetID = value;
 	}
 
-	/** retrieve the binary asset data byte stream and create it if it is not available */
-	public byte[] getAssetData()
-	{
+	/**
+	 * retrieve the binary asset data byte stream and create it if it is not
+	 * available
+	 */
+	public byte[] getAssetData() {
 		if (AssetData == null)
 			encode();
 		return AssetData;
 	}
-	
-	/** invalidate the binary asset data byte stream. This should be called whenever
-	 *  something in a derived class is changed that would change the binary asset data 
+
+	/**
+	 * invalidate the binary asset data byte stream. This should be called whenever
+	 * something in a derived class is changed that would change the binary asset
+	 * data
 	 */
-	public void invalidateAssetData()
-	{
+	public void invalidateAssetData() {
 		AssetData = null;
 	}
 
 	/**
 	 * Construct a new Asset object
-	 * 
+	 *
 	 * @param assetID
 	 *            A unique <see cref="UUID"/> specific to this asset
 	 * @param assetData
 	 *            A byte array containing the raw asset data
 	 */
-	public AssetItem(UUID assetID, byte[] assetData)
-	{
+	public AssetItem(UUID assetID, byte[] assetData) {
 		AssetID = assetID;
 		AssetData = assetData;
 		decode();
 	}
-	
+
 	/**
-	 * Regenerates the <code>AssetData</code> byte array from the properties of
-	 * the derived class.
+	 * Regenerates the <code>AssetData</code> byte array from the properties of the
+	 * derived class.
 	 */
 	protected abstract void encode();
 
 	/**
-	 * Decodes the AssetData, placing it in appropriate properties of the
-	 * derived class.
-	 * 
+	 * Decodes the AssetData, placing it in appropriate properties of the derived
+	 * class.
+	 *
 	 * @return True if the asset decoding succeeded, otherwise false
 	 */
 	protected abstract boolean decode();

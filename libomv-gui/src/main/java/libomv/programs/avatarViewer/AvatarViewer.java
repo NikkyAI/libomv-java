@@ -36,50 +36,39 @@ import javax.swing.JPopupMenu;
 
 import libomv.Gui.components.AvatarPanel;
 
-public class AvatarViewer
-{
-    private static JFrame frame = new AvatarPanel(null);
+public class AvatarViewer {
+	private static JFrame frame = new AvatarPanel(null);
 
-	private static void createAndShowGUI() throws Exception
-	{
+	private static void createAndShowGUI() throws Exception {
 		JPopupMenu.setDefaultLightWeightPopupEnabled(false);
-        frame.setSize(800, 480);
-        frame.setUndecorated(false);
-        frame.addWindowListener(new WindowAdapter()
-        {
-            @Override
-			public void windowClosing(WindowEvent e)
-            {
-                exit();
-            }
-        });
+		frame.setSize(800, 480);
+		frame.setUndecorated(false);
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				exit();
+			}
+		});
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
+		frame.setVisible(true);
 	}
-	
-    static public void main(String[] args)
-	{
-    	System.setProperty("teamdev.license.info", "true");
-		java.awt.EventQueue.invokeLater(new Runnable()
-	    {
-	    	@Override
-			public void run()
-	    	{
-	    		try
-				{
+
+	static public void main(String[] args) {
+		System.setProperty("teamdev.license.info", "true");
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
 					createAndShowGUI();
-				}
-				catch (Exception e)
-				{
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
-	        }
-	    });
+			}
+		});
 	}
 
-    public static void exit()
-    {
-        frame.dispose();
-        System.exit(0);
-    } 
+	public static void exit() {
+		frame.dispose();
+		System.exit(0);
+	}
 }

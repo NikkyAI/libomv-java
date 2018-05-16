@@ -81,8 +81,7 @@ import libomv.utils.Callback;
 import libomv.utils.Helpers;
 
 // List to display the friends
-public class FriendList extends JPanel implements ActionListener
-{
+public class FriendList extends JPanel implements ActionListener {
 	private static final Logger logger = Logger.getLogger(FriendList.class);
 
 	private static final long serialVersionUID = 1L;
@@ -94,7 +93,7 @@ public class FriendList extends JPanel implements ActionListener
 	private static final String cmdTeleportAsk = "teleportAsk";
 	private static final String cmdAutopilotTo = "autopilotTo";
 	private static final String cmdFriendRemove = "friendRemove";
-	
+
 	private static ImageIcon empty;
 	private static ImageIcon offline;
 	private static ImageIcon online;
@@ -122,12 +121,11 @@ public class FriendList extends JPanel implements ActionListener
 	private Callback<FriendRightsCallbackArgs> friendRightsCallback = new FriendRightsChanged();
 	private Callback<FriendNotificationCallbackArgs> friendNotificationCallback = new FriendNotification();
 	private Callback<FriendListChangedCallbackArgs> friendListChangedCallback = new FriendListChanged();
-	
+
 	/**
 	 * Constructs a list to display
 	 */
-	public FriendList(MainControl main, CommWindow comm)
-	{
+	public FriendList(MainControl main, CommWindow comm) {
 		super();
 		_Main = main;
 		_Comm = comm;
@@ -148,60 +146,56 @@ public class FriendList extends JPanel implements ActionListener
 		canMap = Resources.loadIcon(Resources.ICON_VISIBLE_MAP);
 		canEditMine = Resources.loadIcon(Resources.ICON_EDIT_MINE);
 		canEditTheirs = Resources.loadIcon(Resources.ICON_EDIT_THEIRS);
-		
+
 		// Choose a sensible minimum size.
 		setPreferredSize(new Dimension(290, 400));
 
-        GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWidths = new int[]{200, 90, 0};
-        gridBagLayout.rowHeights = new int[]{400, 0};
-        gridBagLayout.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
-        gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};    
-        setLayout(gridBagLayout);
-		
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.columnWidths = new int[] { 200, 90, 0 };
+		gridBagLayout.rowHeights = new int[] { 400, 0 };
+		gridBagLayout.columnWeights = new double[] { 1.0, 0.0, Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
+		setLayout(gridBagLayout);
+
 		GridBagConstraints gbConstraint = new GridBagConstraints();
 		gbConstraint.fill = GridBagConstraints.BOTH;
-        gbConstraint.insets = new Insets(0, 0, 0, 5);
+		gbConstraint.insets = new Insets(0, 0, 0, 5);
 		gbConstraint.gridx = 0;
 		gbConstraint.gridy = 0;
 		add(getJScrollPane(), gbConstraint);
-		
+
 		gbConstraint = new GridBagConstraints();
 		gbConstraint.fill = GridBagConstraints.VERTICAL;
 		gbConstraint.gridx = 1;
 		gbConstraint.gridy = 0;
 		add(getButtonPanel(), gbConstraint);
 	}
-	
-	protected void finalize() throws Throwable
-	{
+
+	protected void finalize() throws Throwable {
 		_Friends.OnFriendRights.remove(friendRightsCallback);
 		_Friends.OnFriendNotification.remove(friendNotificationCallback);
 		_Friends.OnFriendListChanged.remove(friendListChangedCallback);
 
 		super.finalize();
-	} 
-	
-	public void selectEntry(UUID uuid)
-	{
+	}
+
+	public void selectEntry(UUID uuid) {
 		int rowIndex = _Friends.getFriendIndex(uuid);
 		rowIndex = getJFriendsList().convertColumnIndexToView(rowIndex);
 		getJFriendsList().changeSelection(rowIndex, -1, false, false);
 	}
-	
-	private JPanel getButtonPanel()
-	{
-		if (jButtonPanel == null)
-		{
+
+	private JPanel getButtonPanel() {
+		if (jButtonPanel == null) {
 			jButtonPanel = new JPanel();
 			jButtonPanel.setBorder(new EmptyBorder(12, 12, 5, 12));
 			jButtonPanel.setLayout(new GridLayout(12, 1, 0, 10));
-		
+
 			jBtnSendMessage = new JButton("Send message");
 			jBtnSendMessage.setEnabled(false);
 			MainWindow.setAction(jBtnSendMessage, this, cmdStartIM);
 			jButtonPanel.add(jBtnSendMessage);
-			
+
 			jBtnProfile = new JButton("Profile ..");
 			jBtnProfile.setEnabled(false);
 			MainWindow.setAction(jBtnProfile, this, cmdProfile);
@@ -223,7 +217,7 @@ public class FriendList extends JPanel implements ActionListener
 			jBtnRemove = new JButton("Remove ..");
 			jBtnRemove.setEnabled(false);
 			MainWindow.setAction(jBtnRemove, this, cmdFriendRemove);
-			jButtonPanel.add(jBtnRemove);		
+			jButtonPanel.add(jBtnRemove);
 
 			JLabel lblSpacer2 = new JLabel("");
 			jButtonPanel.add(lblSpacer2);
@@ -240,335 +234,281 @@ public class FriendList extends JPanel implements ActionListener
 		}
 		return jButtonPanel;
 	}
-	
-	private JScrollPane getJScrollPane()
-	{
-		if (jScrollPane == null)
-		{
-			jScrollPane = new JScrollPane(getJFriendsList(),
-					                      ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-					                      ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-	        jScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+	private JScrollPane getJScrollPane() {
+		if (jScrollPane == null) {
+			jScrollPane = new JScrollPane(getJFriendsList(), ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+					ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+			jScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 			getJFriendsList().setFillsViewportHeight(true);
 		}
 		return jScrollPane;
 	}
 
-    private class FriendsTableData extends AbstractTableModel
-    {
+	private class FriendsTableData extends AbstractTableModel {
 		private static final long serialVersionUID = 1L;
 
-		private String[] columnNames = {"Online",
-                                        "Name",
-                                        "Can see me",
-                                        "Can map me",
-                                        "Can edit mine",
-                                        "Can see them",
-                                        "Can map them",
-                                        "Can edit theirs"};
-		
-        public int getColumnCount()
-        {
-            return 8;
-        }
- 
-        public int getRowCount()
-        {
-            return _Friends.getFriendList().size();
-        }
- 
-        public String getColumnName(int col)
-        {
-            return columnNames[col];
-        }
- 
-        public Object getValueAt(int row, int col)
-        {
-            FriendInfo info = _Main.getGridClient().Friends.getFriend(row);
-            if (info != null)
-            {
-            	switch (col)
-            	{
-            		case 0:
-            			return info.getIsOnline() ? online : empty;
-                	case 1:
-                		return info.getName();
-                	case 2:
-                		return info.getCanSeeMeOnline();
-                	case 3:
-                		return info.getCanSeeMeOnMap();
-                	case 4:
-                		return info.getCanModifyMyObjects();
-                	case 5:
-                		return info.getCanSeeThemOnline();
-                	case 6:
-                		return info.getCanSeeThemOnMap();
-                	case 7:
-                		return info.getCanModifyTheirObjects();
-                	default:
-                }
-            }
-            return null;
-        }
-        
-        /* JTable uses this method to determine the default renderer/editor for each cell. */
-        public Class<?> getColumnClass(int c)
-        {
-            switch (c)
-            {
-            	case 0:
-            		return ImageIcon.class;
-            	case 1:
-            		return String.class;
-            	default:
-            		return Boolean.class;
-            }
-        }
-        
-        /*
-         * Don't need to implement this method unless your table's editable.
-         */
-        public boolean isCellEditable(int row, int col)
-        {
-            //Note that the data/cell address is constant,
-            //no matter where the cell appears onscreen.
-            return (col >= 2 && col <= 4);
-        }
+		private String[] columnNames = { "Online", "Name", "Can see me", "Can map me", "Can edit mine", "Can see them",
+				"Can map them", "Can edit theirs" };
 
-        private void updateRights(FriendInfo info, int row, int col)
-        {
-			try
-			{
-				_Friends.GrantRights(info);
-                fireTableCellUpdated(row, col);
+		public int getColumnCount() {
+			return 8;
+		}
+
+		public int getRowCount() {
+			return _Friends.getFriendList().size();
+		}
+
+		public String getColumnName(int col) {
+			return columnNames[col];
+		}
+
+		public Object getValueAt(int row, int col) {
+			FriendInfo info = _Main.getGridClient().Friends.getFriend(row);
+			if (info != null) {
+				switch (col) {
+				case 0:
+					return info.getIsOnline() ? online : empty;
+				case 1:
+					return info.getName();
+				case 2:
+					return info.getCanSeeMeOnline();
+				case 3:
+					return info.getCanSeeMeOnMap();
+				case 4:
+					return info.getCanModifyMyObjects();
+				case 5:
+					return info.getCanSeeThemOnline();
+				case 6:
+					return info.getCanSeeThemOnMap();
+				case 7:
+					return info.getCanModifyTheirObjects();
+				default:
+				}
 			}
-			catch (Exception ex)
-			{
+			return null;
+		}
+
+		/*
+		 * JTable uses this method to determine the default renderer/editor for each
+		 * cell.
+		 */
+		public Class<?> getColumnClass(int c) {
+			switch (c) {
+			case 0:
+				return ImageIcon.class;
+			case 1:
+				return String.class;
+			default:
+				return Boolean.class;
+			}
+		}
+
+		/*
+		 * Don't need to implement this method unless your table's editable.
+		 */
+		public boolean isCellEditable(int row, int col) {
+			// Note that the data/cell address is constant,
+			// no matter where the cell appears onscreen.
+			return (col >= 2 && col <= 4);
+		}
+
+		private void updateRights(FriendInfo info, int row, int col) {
+			try {
+				_Friends.GrantRights(info);
+				fireTableCellUpdated(row, col);
+			} catch (Exception ex) {
 				logger.error(GridClient.Log("Exception sending friend rights update", _Client), ex);
 			}
-        }
-        
-        /*
-         * Don't need to implement this method unless your table's
-         * data can change.
-         */
-        public void setValueAt(Object value, final int row, final int col)
-        {
-            final FriendInfo info = _Friends.getFriend(row);
-            if (info != null)
-            {
-            	final boolean set = (Boolean)value;
-            	switch (col)
-            	{
-                	case 2:
-                		info.setCanSeeMeOnline(set);
-            			updateRights(info, row, col);
-                		break;
-                	case 3:
-                		info.setCanSeeMeOnMap(set);
-            			updateRights(info, row, col);
-                		break;
-                	case 4:
-                		if (!set ||
-                            JOptionPane.OK_OPTION == JOptionPane.showConfirmDialog(_Main.getJFrame(), "Do you really want to enable object modifications for " + 
-                		                                               info.getName() + "? This allows the person to modify, delete and take ownership " +
-                					                                   "of any inworld objects you own!", "Warning", JOptionPane.YES_NO_OPTION))
-                		{
-		               		info.setCanModifyMyObjects(set);
-                			updateRights(info, row, col);
-                		}
-                		break;
-                	default:
-             	}
-            }
-        }
-    }
+		}
 
-    // This customized renderer can render objects of the type Text and Icon
-    private class HeaderCellRenderer extends DefaultTableCellRenderer
-    {
-    	private static final long serialVersionUID = 1L;
-    
-        public Component getTableCellRendererComponent(JTable table, Object value,
-                boolean isSelected, boolean hasFocus, int row, int column)
-        {
-            // Inherit the colors and font from the header component
-            if (table != null)
-            {
-                JTableHeader header = table.getTableHeader();
-                if (header != null)
-                {
-                    setForeground(header.getForeground());
-                    setBackground(header.getBackground());
-                    setFont(header.getFont());
-                }
-            }
+		/*
+		 * Don't need to implement this method unless your table's data can change.
+		 */
+		public void setValueAt(Object value, final int row, final int col) {
+			final FriendInfo info = _Friends.getFriend(row);
+			if (info != null) {
+				final boolean set = (Boolean) value;
+				switch (col) {
+				case 2:
+					info.setCanSeeMeOnline(set);
+					updateRights(info, row, col);
+					break;
+				case 3:
+					info.setCanSeeMeOnMap(set);
+					updateRights(info, row, col);
+					break;
+				case 4:
+					if (!set || JOptionPane.OK_OPTION == JOptionPane.showConfirmDialog(_Main.getJFrame(),
+							"Do you really want to enable object modifications for " + info.getName()
+									+ "? This allows the person to modify, delete and take ownership "
+									+ "of any inworld objects you own!",
+							"Warning", JOptionPane.YES_NO_OPTION)) {
+						info.setCanModifyMyObjects(set);
+						updateRights(info, row, col);
+					}
+					break;
+				default:
+				}
+			}
+		}
+	}
 
-            if (value instanceof ImageIcon)
-            {
-                setIcon((ImageIcon)value);
-                setText(Helpers.EmptyString);
-            }
-            else
-            {
-                setText((value == null) ? "" : value.toString());
-                setIcon(null);
-            }
-            setBorder(UIManager.getBorder("TableHeader.cellBorder"));
-            setHorizontalAlignment(JLabel.CENTER);
-            return this;
-        }
-    };
+	// This customized renderer can render objects of the type Text and Icon
+	private class HeaderCellRenderer extends DefaultTableCellRenderer {
+		private static final long serialVersionUID = 1L;
 
-    private final JTable getJFriendsList()
-	{
-		if (jLFriendsList == null)
-		{
-			jLFriendsList = new JTable(new FriendsTableData())
-			{
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+				int row, int column) {
+			// Inherit the colors and font from the header component
+			if (table != null) {
+				JTableHeader header = table.getTableHeader();
+				if (header != null) {
+					setForeground(header.getForeground());
+					setBackground(header.getBackground());
+					setFont(header.getFont());
+				}
+			}
+
+			if (value instanceof ImageIcon) {
+				setIcon((ImageIcon) value);
+				setText(Helpers.EmptyString);
+			} else {
+				setText((value == null) ? "" : value.toString());
+				setIcon(null);
+			}
+			setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+			setHorizontalAlignment(JLabel.CENTER);
+			return this;
+		}
+	};
+
+	private final JTable getJFriendsList() {
+		if (jLFriendsList == null) {
+			jLFriendsList = new JTable(new FriendsTableData()) {
 				private static final long serialVersionUID = 1L;
 
-				//Implement table header tool tips.
-			    protected JTableHeader createDefaultTableHeader()
-			    {
-			        return new JTableHeader(columnModel)
-			        {
+				// Implement table header tool tips.
+				protected JTableHeader createDefaultTableHeader() {
+					return new JTableHeader(columnModel) {
 						private static final long serialVersionUID = 1L;
 
-					    protected TableCellRenderer createDefaultRenderer()
-					    {
-					    	return new HeaderCellRenderer();
-					    }
-					    
-			            public String getToolTipText(MouseEvent e)
-			            {
-			                java.awt.Point p = e.getPoint();
-			                int index = columnModel.getColumnIndexAtX(p.x);
-			                int realIndex = columnModel.getColumn(index).getModelIndex();
-			                return jLFriendsList.getColumnName(realIndex);
-			            }
-			        };
-			    }			
+						protected TableCellRenderer createDefaultRenderer() {
+							return new HeaderCellRenderer();
+						}
+
+						public String getToolTipText(MouseEvent e) {
+							java.awt.Point p = e.getPoint();
+							int index = columnModel.getColumnIndexAtX(p.x);
+							int realIndex = columnModel.getColumn(index).getModelIndex();
+							return jLFriendsList.getColumnName(realIndex);
+						}
+					};
+				}
 			};
-			
+
 			jLFriendsList.setPreferredScrollableViewportSize(new Dimension(200, 400));
 			jLFriendsList.setFillsViewportHeight(true);
 			jLFriendsList.setShowVerticalLines(true);
 
 			// only allow single selections.
 			jLFriendsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			
-	        int headerWidth = 0;
-	        int cellWidth = 0;
-	        Component comp = null;
-	        TableColumn column = null;
-	        TableModel model = jLFriendsList.getModel();
-	        TableCellRenderer headerRenderer = jLFriendsList.getTableHeader().getDefaultRenderer();
-	        for (int i = 0; i < 8; i++)
-	        {
-	            column = jLFriendsList.getColumnModel().getColumn(i);
-	 
-	            switch (i)
-	            {
-	            	case 0:
-	            		column.setHeaderValue(offline);
-	            		break;
-	            	case 2:
-	            		column.setHeaderValue(canSee);
-	            		break;
-	            	case 3:
-	            		column.setHeaderValue(canMap);
-	            		break;
-	            	case 4:
-	            		column.setHeaderValue(canEditMine);
-	            		break;
-	            	case 5:
-	            		column.setHeaderValue(canSee);
-	            		break;
-	            	case 6:
-	            		column.setHeaderValue(canMap);
-	            		break;
-	            	case 7:
-	            		column.setHeaderValue(canEditTheirs);
-	            		break;
-	            	default:
-	            		break;
-	            }
-	            if (i != 1)
-	            {
-	            	comp = headerRenderer.getTableCellRendererComponent(null, column.getHeaderValue(), false, false, 0, 0);
-	            	headerWidth = comp.getPreferredSize().width;
-	 
-	            	comp = jLFriendsList.getDefaultRenderer(model.getColumnClass(i)).
-	            			             getTableCellRendererComponent(jLFriendsList, model.getValueAt(0, i), false, false, 0, i);
-	            	cellWidth = comp.getPreferredSize().width;
-	            	column.setMaxWidth(Math.max(headerWidth, cellWidth));
-	            }
-	            else
-	            {
-	            	comp = jLFriendsList.getDefaultRenderer(model.getColumnClass(i)).
-	            			             getTableCellRendererComponent(jLFriendsList, "A very long name that should fill out", false, false, 0, i);
-	            	cellWidth = comp.getPreferredSize().width;
-	            	column.setPreferredWidth(Math.max(headerWidth, cellWidth));
-	            }
-	            	
-	        }
-			
+
+			int headerWidth = 0;
+			int cellWidth = 0;
+			Component comp = null;
+			TableColumn column = null;
+			TableModel model = jLFriendsList.getModel();
+			TableCellRenderer headerRenderer = jLFriendsList.getTableHeader().getDefaultRenderer();
+			for (int i = 0; i < 8; i++) {
+				column = jLFriendsList.getColumnModel().getColumn(i);
+
+				switch (i) {
+				case 0:
+					column.setHeaderValue(offline);
+					break;
+				case 2:
+					column.setHeaderValue(canSee);
+					break;
+				case 3:
+					column.setHeaderValue(canMap);
+					break;
+				case 4:
+					column.setHeaderValue(canEditMine);
+					break;
+				case 5:
+					column.setHeaderValue(canSee);
+					break;
+				case 6:
+					column.setHeaderValue(canMap);
+					break;
+				case 7:
+					column.setHeaderValue(canEditTheirs);
+					break;
+				default:
+					break;
+				}
+				if (i != 1) {
+					comp = headerRenderer.getTableCellRendererComponent(null, column.getHeaderValue(), false, false, 0,
+							0);
+					headerWidth = comp.getPreferredSize().width;
+
+					comp = jLFriendsList.getDefaultRenderer(model.getColumnClass(i))
+							.getTableCellRendererComponent(jLFriendsList, model.getValueAt(0, i), false, false, 0, i);
+					cellWidth = comp.getPreferredSize().width;
+					column.setMaxWidth(Math.max(headerWidth, cellWidth));
+				} else {
+					comp = jLFriendsList.getDefaultRenderer(model.getColumnClass(i)).getTableCellRendererComponent(
+							jLFriendsList, "A very long name that should fill out", false, false, 0, i);
+					cellWidth = comp.getPreferredSize().width;
+					column.setPreferredWidth(Math.max(headerWidth, cellWidth));
+				}
+
+			}
+
 			// install a mouse handler
-			jLFriendsList.addMouseListener(new MouseAdapter()
-			{
+			jLFriendsList.addMouseListener(new MouseAdapter() {
 				@Override
-				public void mouseClicked(MouseEvent e)
-				{
+				public void mouseClicked(MouseEvent e) {
 					// If an index is selected...
-					if (jLFriendsList.getSelectedRow() >= 0)
-					{
+					if (jLFriendsList.getSelectedRow() >= 0) {
 						// If the left mouse button was pressed
-						if (SwingUtilities.isLeftMouseButton(e))
-						{
+						if (SwingUtilities.isLeftMouseButton(e)) {
 							// Look for a double click.
-							if (e.getClickCount() >= 2)
-							{
-								actionPerformed(new ActionEvent(jLFriendsList, ActionEvent.ACTION_PERFORMED, cmdStartIM));
+							if (e.getClickCount() >= 2) {
+								actionPerformed(
+										new ActionEvent(jLFriendsList, ActionEvent.ACTION_PERFORMED, cmdStartIM));
 							}
 						}
 						// If the right mouse button was pressed...
-						else if (SwingUtilities.isRightMouseButton(e))
-						{
+						else if (SwingUtilities.isRightMouseButton(e)) {
 							FriendPopupMenu fpm = new FriendPopupMenu(getSelectedFriendRow());
 							fpm.show(jLFriendsList, e.getX(), e.getY());
 						}
 					}
 				}
 			});
-			
-			jLFriendsList.getSelectionModel().addListSelectionListener(new ListSelectionListener()
-			{
-			    public void valueChanged(ListSelectionEvent e)
-			    {
-			    	boolean enable = e.getFirstIndex() >= 0;
+
+			jLFriendsList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+				public void valueChanged(ListSelectionEvent e) {
+					boolean enable = e.getFirstIndex() >= 0;
 					for (Component comp : getButtonPanel().getComponents())
 						comp.setEnabled(enable);
-				
-					if (enable)
-					{
+
+					if (enable) {
 						FriendInfo info = _Friends.getFriend(e.getFirstIndex());
 						enable = info.getIsOnline();
-						if (!enable)
-						{
+						if (!enable) {
 							jBtnTpOffer.setEnabled(false);
-						}
-						else
-						{
+						} else {
 							enable = _Client.Network.getCurrentSim().getAvatarPositions().containsKey(info.getID());
-						}						
-						if (!enable)
-						{
+						}
+						if (!enable) {
 							jBtnTeleportTo.setEnabled(false);
-							jBtnAutopilotTo.setEnabled(false);					
+							jBtnAutopilotTo.setEnabled(false);
 						}
 					}
-			    }
+				}
 			});
 		}
 		return jLFriendsList;
@@ -577,13 +517,11 @@ public class FriendList extends JPanel implements ActionListener
 	/**
 	 * Triggered when the other avatar has changed our rights
 	 */
-	private class FriendRightsChanged implements Callback<FriendRightsCallbackArgs>
-	{
+	private class FriendRightsChanged implements Callback<FriendRightsCallbackArgs> {
 		@Override
-		public boolean callback(FriendRightsCallbackArgs e)
-		{
+		public boolean callback(FriendRightsCallbackArgs e) {
 			int index = _Friends.getFriendIndex(e.getFriendInfo().getID());
-			((AbstractTableModel)getJFriendsList().getModel()).fireTableRowsUpdated(index, index);
+			((AbstractTableModel) getJFriendsList().getModel()).fireTableRowsUpdated(index, index);
 			return false;
 		}
 	}
@@ -591,54 +529,41 @@ public class FriendList extends JPanel implements ActionListener
 	/**
 	 * Triggered when online status changes are reported
 	 */
-	private class FriendNotification implements Callback<FriendNotificationCallbackArgs>
-	{
+	private class FriendNotification implements Callback<FriendNotificationCallbackArgs> {
 		@Override
-		public boolean callback(FriendNotificationCallbackArgs e)
-		{
-			for (UUID uuid : e.getAgentID())
-			{
+		public boolean callback(FriendNotificationCallbackArgs e) {
+			for (UUID uuid : e.getAgentID()) {
 				int index = _Friends.getFriendIndex(uuid);
-				((AbstractTableModel)getJFriendsList().getModel()).fireTableRowsUpdated(index, index);
+				((AbstractTableModel) getJFriendsList().getModel()).fireTableRowsUpdated(index, index);
 			}
 			return false;
 		}
 	}
 
-	private class FriendListChanged implements Callback<FriendListChangedCallbackArgs>
-	{
+	private class FriendListChanged implements Callback<FriendListChangedCallbackArgs> {
 		@Override
-		public boolean callback(FriendListChangedCallbackArgs e)
-		{
+		public boolean callback(FriendListChangedCallbackArgs e) {
 			FriendInfo info = e.getFriendInfo();
-			if (info != null)
-			{
+			if (info != null) {
 				int index = _Friends.getFriendIndex(info.getID());
-				if (e.getIsAdded())
-				{
-					((AbstractTableModel)getJFriendsList().getModel()).fireTableRowsInserted(index, index);
+				if (e.getIsAdded()) {
+					((AbstractTableModel) getJFriendsList().getModel()).fireTableRowsInserted(index, index);
+				} else {
+					((AbstractTableModel) getJFriendsList().getModel()).fireTableRowsDeleted(index, index);
 				}
-				else
-				{
-					((AbstractTableModel)getJFriendsList().getModel()).fireTableRowsDeleted(index, index);					
-				}
-			}
-			else
-			{
+			} else {
 				/* more than one element was added or removed rebuild entire list */
-				((AbstractTableModel)getJFriendsList().getModel()).fireTableDataChanged();					
+				((AbstractTableModel) getJFriendsList().getModel()).fireTableDataChanged();
 			}
 			return false;
 		}
 	}
-	
-	private FriendInfo getSelectedFriendRow()
-	{
+
+	private FriendInfo getSelectedFriendRow() {
 		return _Friends.getFriend(jLFriendsList.convertRowIndexToModel(jLFriendsList.getSelectedRow()));
 	}
 
-	private class FriendPopupMenu extends JPopupMenu
-	{
+	private class FriendPopupMenu extends JPopupMenu {
 		private static final long serialVersionUID = 1L;
 		// The friend associated with the menu
 		private FriendInfo _Info;
@@ -664,10 +589,9 @@ public class FriendList extends JPanel implements ActionListener
 		 * @param info
 		 *            The friend to generate the menu for.
 		 */
-		public FriendPopupMenu(FriendInfo info)
-		{
+		public FriendPopupMenu(FriendInfo info) {
 			super();
-			
+
 			int selected = getJFriendsList().getSelectedColumnCount();
 
 			// Send message
@@ -676,12 +600,10 @@ public class FriendList extends JPanel implements ActionListener
 			add(getJmiProfile());
 			// Send money transfer
 			add(getJmiMoneyTransfer());
-			if (info.getIsOnline())
-			{
+			if (info.getIsOnline()) {
 				// Offer teleport.
 				add(getJmiOfferTeleport());
-				if (_Client.Network.getCurrentSim().getAvatarPositions().containsKey(_Info.getID()))
-				{
+				if (_Client.Network.getCurrentSim().getAvatarPositions().containsKey(_Info.getID())) {
 					add(new JPopupMenu.Separator());
 					// Allow teleporting to the agent
 					add(getJmiTeleportTo());
@@ -700,10 +622,8 @@ public class FriendList extends JPanel implements ActionListener
 		 * 
 		 * @return The "send message" menu item
 		 */
-		private JMenuItem getJmiSendMessage(FriendInfo info)
-		{
-			if (jmiSendMessage == null)
-			{
+		private JMenuItem getJmiSendMessage(FriendInfo info) {
+			if (jmiSendMessage == null) {
 				jmiSendMessage = MainWindow.newMenuItem("Send message", FriendList.this, cmdStartIM);
 			}
 			if (info.getName() == null || info.getName().isEmpty())
@@ -716,10 +636,8 @@ public class FriendList extends JPanel implements ActionListener
 		 * 
 		 * @return The "profile" menu item
 		 */
-		private JMenuItem getJmiProfile()
-		{
-			if (jmiProfile == null)
-			{
+		private JMenuItem getJmiProfile() {
+			if (jmiProfile == null) {
 				jmiProfile = MainWindow.newMenuItem("Profile ..", FriendList.this, cmdProfile);
 			}
 			return jmiProfile;
@@ -730,10 +648,8 @@ public class FriendList extends JPanel implements ActionListener
 		 * 
 		 * @return The "pay" menu item
 		 */
-		private JMenuItem getJmiMoneyTransfer()
-		{
-			if (jmiMoneyTransfer == null)
-			{
+		private JMenuItem getJmiMoneyTransfer() {
+			if (jmiMoneyTransfer == null) {
 				jmiMoneyTransfer = MainWindow.newMenuItem("Pay ..", FriendList.this, cmdPayTo);
 			}
 			return jmiMoneyTransfer;
@@ -744,10 +660,8 @@ public class FriendList extends JPanel implements ActionListener
 		 * 
 		 * @return The teleport offer menu item.
 		 */
-		private JMenuItem getJmiOfferTeleport()
-		{
-			if (jmiOfferTeleport == null)
-			{
+		private JMenuItem getJmiOfferTeleport() {
+			if (jmiOfferTeleport == null) {
 				jmiOfferTeleport = MainWindow.newMenuItem("Offer Teleport ..", FriendList.this, cmdTeleportAsk);
 			}
 			return jmiOfferTeleport;
@@ -758,10 +672,8 @@ public class FriendList extends JPanel implements ActionListener
 		 * 
 		 * @return The remove as friend menu item
 		 */
-		private JMenuItem getJmiRemoveAsFriend()
-		{
-			if (jmiRemoveAsFriend == null)
-			{
+		private JMenuItem getJmiRemoveAsFriend() {
+			if (jmiRemoveAsFriend == null) {
 				jmiRemoveAsFriend = MainWindow.newMenuItem("Remove ..", FriendList.this, cmdFriendRemove);
 			}
 			return jmiRemoveAsFriend;
@@ -772,10 +684,8 @@ public class FriendList extends JPanel implements ActionListener
 		 * 
 		 * @return The teleport to menu item
 		 */
-		private JMenuItem getJmiTeleportTo()
-		{
-			if (jmiTeleportTo == null)
-			{
+		private JMenuItem getJmiTeleportTo() {
+			if (jmiTeleportTo == null) {
 				jmiTeleportTo = MainWindow.newMenuItem("Teleport to", FriendList.this, cmdTeleportTo);
 			}
 			return jmiTeleportTo;
@@ -787,115 +697,80 @@ public class FriendList extends JPanel implements ActionListener
 		 * 
 		 * @return The autopilot to menu item.
 		 */
-		private JMenuItem getJmiAutopilotTo()
-		{
-			if (jmiAutopilotTo == null)
-			{
+		private JMenuItem getJmiAutopilotTo() {
+			if (jmiAutopilotTo == null) {
 				jmiAutopilotTo = MainWindow.newMenuItem("Autopilot to", FriendList.this, cmdAutopilotTo);
 			}
 			return jmiAutopilotTo;
 		}
 	}
-	
+
 	@Override
-	public void actionPerformed(ActionEvent e)
-	{
+	public void actionPerformed(ActionEvent e) {
 		FriendInfo info = getSelectedFriendRow();
-		if (info != null)
-		{
-			if (e.getActionCommand().equals(cmdPayTo))
-			{
-				// TODO: open a money transfer dialog			
-			}
-			else if (e.getActionCommand().equals(cmdProfile))
-			{
-				// TODO: open avatar profile dialog			
-			}
-			else if (e.getActionCommand().equals(cmdStartIM))
-			{
+		if (info != null) {
+			if (e.getActionCommand().equals(cmdPayTo)) {
+				// TODO: open a money transfer dialog
+			} else if (e.getActionCommand().equals(cmdProfile)) {
+				// TODO: open avatar profile dialog
+			} else if (e.getActionCommand().equals(cmdStartIM)) {
 				int selected = getJFriendsList().getSelectedColumnCount();
-				if (selected == 1)
-				{
+				if (selected == 1) {
 					// Only allow creation of a chat window if the avatar name is resolved.
-					if (info.getName() != null && !info.getName().isEmpty())
-					{
-						if (_Comm.getChannel(info.getID()) == null)
-						{
-							PrivateChannel channel = new PrivateChannel(_Main, info.getName(), info.getID(), new UUID());
+					if (info.getName() != null && !info.getName().isEmpty()) {
+						if (_Comm.getChannel(info.getID()) == null) {
+							PrivateChannel channel = new PrivateChannel(_Main, info.getName(), info.getID(),
+									new UUID());
 							_Comm.addChannel(channel);
 						}
 						_Comm.setFocus(null, info.getID());
 					}
-				}
-				else if (selected > 0)
-				{
-					for (int selection : getJFriendsList().getSelectedColumns())
-					{
+				} else if (selected > 0) {
+					for (int selection : getJFriendsList().getSelectedColumns()) {
 						info = _Friends.getFriend(jLFriendsList.convertRowIndexToModel(selection));
 						// Only allow creation of a chat window if the avatar name is resolved.
-						if (info.getName() != null && !info.getName().isEmpty())
-						{
-							if (_Comm.getChannel(info.getID()) == null)
-							{
-								PrivateChannel channel = new PrivateChannel(_Main, info.getName(), info.getID(), new UUID());
+						if (info.getName() != null && !info.getName().isEmpty()) {
+							if (_Comm.getChannel(info.getID()) == null) {
+								PrivateChannel channel = new PrivateChannel(_Main, info.getName(), info.getID(),
+										new UUID());
 								_Comm.addChannel(channel);
 							}
 							_Comm.setFocus(null, info.getID());
-						}						
+						}
 					}
 				}
-			}
-			else if (e.getActionCommand().equals(cmdFriendRemove))
-			{
-				int result = JOptionPane.showConfirmDialog(_Main.getJFrame(), "Do you really want to remove " + info.getName() + 
-						                                   " as friend?", "Remove Friend", JOptionPane.YES_NO_OPTION);		
-				if (result == JOptionPane.OK_OPTION)
-				{
-					try
-					{
+			} else if (e.getActionCommand().equals(cmdFriendRemove)) {
+				int result = JOptionPane.showConfirmDialog(_Main.getJFrame(),
+						"Do you really want to remove " + info.getName() + " as friend?", "Remove Friend",
+						JOptionPane.YES_NO_OPTION);
+				if (result == JOptionPane.OK_OPTION) {
+					try {
 						_Friends.TerminateFriendship(info.getID());
-					}
-					catch (Exception ex)
-					{
+					} catch (Exception ex) {
 						logger.error(GridClient.Log("TerminateFriendship failed", _Client), ex);
-					}	
-				}
-			}
-			else if (e.getActionCommand().equals(cmdTeleportAsk))
-			{
-				try
-				{
-					for (int selection : getJFriendsList().getSelectedColumns())
-					{
-						_Client.Self.SendTeleportLure(_Friends.getFriend(getJFriendsList().convertRowIndexToModel(selection)).getID());
 					}
 				}
-				catch (Exception ex)
-				{
+			} else if (e.getActionCommand().equals(cmdTeleportAsk)) {
+				try {
+					for (int selection : getJFriendsList().getSelectedColumns()) {
+						_Client.Self.SendTeleportLure(
+								_Friends.getFriend(getJFriendsList().convertRowIndexToModel(selection)).getID());
+					}
+				} catch (Exception ex) {
 					logger.error(GridClient.Log("SendTeleportLure failed", _Client), ex);
 				}
-			}
-			else if (e.getActionCommand().equals(cmdTeleportTo))
-			{
-				try
-				{
+			} else if (e.getActionCommand().equals(cmdTeleportTo)) {
+				try {
 					Vector3 pos = _Client.Network.getCurrentSim().getAvatarPositions().get(info.getID());
 					_Client.Self.Teleport(_Client.Network.getCurrentSim().getName(), pos);
-				}
-				catch (Exception ex)
-				{
+				} catch (Exception ex) {
 					logger.error(GridClient.Log("Teleporting to " + info.getName() + " failed", _Client), ex);
 				}
-			}
-			else if (e.getActionCommand().equals(cmdAutopilotTo))
-			{
-				try
-				{
+			} else if (e.getActionCommand().equals(cmdAutopilotTo)) {
+				try {
 					Vector3 pos = _Client.Network.getCurrentSim().getAvatarPositions().get(info.getID());
 					_Client.Self.AutoPilotLocal((int) pos.X, (int) pos.Y, pos.Y);
-				}
-				catch (Exception ex)
-				{
+				} catch (Exception ex) {
 					logger.error(GridClient.Log("Autopiloting to " + info.getName() + " failed", _Client), ex);
 				}
 			}

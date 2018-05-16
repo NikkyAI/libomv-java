@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import java.util.ArrayList;
@@ -24,11 +23,13 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -132,777 +133,750 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "asset",
-    "optics",
-    "imager",
-    "extra"
-})
+@XmlType(name = "", propOrder = { "asset", "optics", "imager", "extra" })
 @XmlRootElement(name = "camera")
 public class Camera {
 
-    protected Asset asset;
-    @XmlElement(required = true)
-    protected Camera.Optics optics;
-    protected Camera.Imager imager;
-    protected List<Extra> extra;
-    @XmlAttribute(name = "id")
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlID
-    @XmlSchemaType(name = "ID")
-    protected String id;
-    @XmlAttribute(name = "name")
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlSchemaType(name = "NCName")
-    protected String name;
+	protected Asset asset;
+	@XmlElement(required = true)
+	protected Camera.Optics optics;
+	protected Camera.Imager imager;
+	protected List<Extra> extra;
+	@XmlAttribute(name = "id")
+	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+	@XmlID
+	@XmlSchemaType(name = "ID")
+	protected String id;
+	@XmlAttribute(name = "name")
+	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+	@XmlSchemaType(name = "NCName")
+	protected String name;
 
-    /**
-     * 
-     * 						The camera element may contain an asset element.
-     * 						
-     * 
-     * @return
-     *     possible object is
-     *     {@link Asset }
-     *     
-     */
-    public Asset getAsset() {
-        return asset;
-    }
+	/**
+	 * 
+	 * The camera element may contain an asset element.
+	 * 
+	 * 
+	 * @return possible object is {@link Asset }
+	 * 
+	 */
+	public Asset getAsset() {
+		return asset;
+	}
 
-    /**
-     * Sets the value of the asset property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Asset }
-     *     
-     */
-    public void setAsset(Asset value) {
-        this.asset = value;
-    }
+	/**
+	 * Sets the value of the asset property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link Asset }
+	 * 
+	 */
+	public void setAsset(Asset value) {
+		this.asset = value;
+	}
 
-    /**
-     * Gets the value of the optics property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Camera.Optics }
-     *     
-     */
-    public Camera.Optics getOptics() {
-        return optics;
-    }
+	/**
+	 * Gets the value of the optics property.
+	 * 
+	 * @return possible object is {@link Camera.Optics }
+	 * 
+	 */
+	public Camera.Optics getOptics() {
+		return optics;
+	}
 
-    /**
-     * Sets the value of the optics property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Camera.Optics }
-     *     
-     */
-    public void setOptics(Camera.Optics value) {
-        this.optics = value;
-    }
+	/**
+	 * Sets the value of the optics property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link Camera.Optics }
+	 * 
+	 */
+	public void setOptics(Camera.Optics value) {
+		this.optics = value;
+	}
 
-    /**
-     * Gets the value of the imager property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Camera.Imager }
-     *     
-     */
-    public Camera.Imager getImager() {
-        return imager;
-    }
+	/**
+	 * Gets the value of the imager property.
+	 * 
+	 * @return possible object is {@link Camera.Imager }
+	 * 
+	 */
+	public Camera.Imager getImager() {
+		return imager;
+	}
 
-    /**
-     * Sets the value of the imager property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Camera.Imager }
-     *     
-     */
-    public void setImager(Camera.Imager value) {
-        this.imager = value;
-    }
+	/**
+	 * Sets the value of the imager property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link Camera.Imager }
+	 * 
+	 */
+	public void setImager(Camera.Imager value) {
+		this.imager = value;
+	}
 
-    /**
-     * 
-     * 						The extra element may appear any number of times.
-     * 						Gets the value of the extra property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the extra property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getExtra().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Extra }
-     * 
-     * 
-     */
-    public List<Extra> getExtra() {
-        if (extra == null) {
-            extra = new ArrayList<Extra>();
-        }
-        return this.extra;
-    }
+	/**
+	 * 
+	 * The extra element may appear any number of times. Gets the value of the extra
+	 * property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the extra property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getExtra().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link Extra }
+	 * 
+	 * 
+	 */
+	public List<Extra> getExtra() {
+		if (extra == null) {
+			extra = new ArrayList<Extra>();
+		}
+		return this.extra;
+	}
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getId() {
-        return id;
-    }
+	/**
+	 * Gets the value of the id property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getId() {
+		return id;
+	}
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setId(String value) {
-        this.id = value;
-    }
+	/**
+	 * Sets the value of the id property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setId(String value) {
+		this.id = value;
+	}
 
-    /**
-     * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getName() {
-        return name;
-    }
+	/**
+	 * Gets the value of the name property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
+	/**
+	 * Sets the value of the name property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setName(String value) {
+		this.name = value;
+	}
 
+	/**
+	 * <p>
+	 * Java class for anonymous complex type.
+	 * 
+	 * <p>
+	 * The following schema fragment specifies the expected content contained within
+	 * this class.
+	 * 
+	 * <pre>
+	 * &lt;complexType>
+	 *   &lt;complexContent>
+	 *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+	 *       &lt;sequence>
+	 *         &lt;element ref="{http://www.collada.org/2005/11/COLLADASchema}technique" maxOccurs="unbounded"/>
+	 *         &lt;element ref="{http://www.collada.org/2005/11/COLLADASchema}extra" maxOccurs="unbounded" minOccurs="0"/>
+	 *       &lt;/sequence>
+	 *     &lt;/restriction>
+	 *   &lt;/complexContent>
+	 * &lt;/complexType>
+	 * </pre>
+	 * 
+	 * 
+	 */
+	@XmlAccessorType(XmlAccessType.FIELD)
+	@XmlType(name = "", propOrder = { "technique", "extra" })
+	public static class Imager {
 
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element ref="{http://www.collada.org/2005/11/COLLADASchema}technique" maxOccurs="unbounded"/>
-     *         &lt;element ref="{http://www.collada.org/2005/11/COLLADASchema}extra" maxOccurs="unbounded" minOccurs="0"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "technique",
-        "extra"
-    })
-    public static class Imager {
+		@XmlElement(required = true)
+		protected List<Technique> technique;
+		protected List<Extra> extra;
 
-        @XmlElement(required = true)
-        protected List<Technique> technique;
-        protected List<Extra> extra;
+		/**
+		 * 
+		 * This element may contain any number of non-common profile techniques. There
+		 * is no common technique for imager. Gets the value of the technique property.
+		 * 
+		 * <p>
+		 * This accessor method returns a reference to the live list, not a snapshot.
+		 * Therefore any modification you make to the returned list will be present
+		 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+		 * for the technique property.
+		 * 
+		 * <p>
+		 * For example, to add a new item, do as follows:
+		 * 
+		 * <pre>
+		 * getTechnique().add(newItem);
+		 * </pre>
+		 * 
+		 * 
+		 * <p>
+		 * Objects of the following type(s) are allowed in the list {@link Technique }
+		 * 
+		 * 
+		 */
+		public List<Technique> getTechnique() {
+			if (technique == null) {
+				technique = new ArrayList<Technique>();
+			}
+			return this.technique;
+		}
 
-        /**
-         * 
-         * 									This element may contain any number of non-common profile techniques.
-         * 									There is no common technique for imager.
-         * 									Gets the value of the technique property.
-         * 
-         * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the technique property.
-         * 
-         * <p>
-         * For example, to add a new item, do as follows:
-         * <pre>
-         *    getTechnique().add(newItem);
-         * </pre>
-         * 
-         * 
-         * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link Technique }
-         * 
-         * 
-         */
-        public List<Technique> getTechnique() {
-            if (technique == null) {
-                technique = new ArrayList<Technique>();
-            }
-            return this.technique;
-        }
+		/**
+		 * 
+		 * The extra element may appear any number of times. Gets the value of the extra
+		 * property.
+		 * 
+		 * <p>
+		 * This accessor method returns a reference to the live list, not a snapshot.
+		 * Therefore any modification you make to the returned list will be present
+		 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+		 * for the extra property.
+		 * 
+		 * <p>
+		 * For example, to add a new item, do as follows:
+		 * 
+		 * <pre>
+		 * getExtra().add(newItem);
+		 * </pre>
+		 * 
+		 * 
+		 * <p>
+		 * Objects of the following type(s) are allowed in the list {@link Extra }
+		 * 
+		 * 
+		 */
+		public List<Extra> getExtra() {
+			if (extra == null) {
+				extra = new ArrayList<Extra>();
+			}
+			return this.extra;
+		}
 
-        /**
-         * 
-         * 									The extra element may appear any number of times.
-         * 									Gets the value of the extra property.
-         * 
-         * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the extra property.
-         * 
-         * <p>
-         * For example, to add a new item, do as follows:
-         * <pre>
-         *    getExtra().add(newItem);
-         * </pre>
-         * 
-         * 
-         * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link Extra }
-         * 
-         * 
-         */
-        public List<Extra> getExtra() {
-            if (extra == null) {
-                extra = new ArrayList<Extra>();
-            }
-            return this.extra;
-        }
+	}
 
-    }
+	/**
+	 * <p>
+	 * Java class for anonymous complex type.
+	 * 
+	 * <p>
+	 * The following schema fragment specifies the expected content contained within
+	 * this class.
+	 * 
+	 * <pre>
+	 * &lt;complexType>
+	 *   &lt;complexContent>
+	 *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+	 *       &lt;sequence>
+	 *         &lt;element name="technique_common">
+	 *           &lt;complexType>
+	 *             &lt;complexContent>
+	 *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+	 *                 &lt;choice>
+	 *                   &lt;element name="orthographic">
+	 *                     &lt;complexType>
+	 *                       &lt;complexContent>
+	 *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+	 *                           &lt;sequence>
+	 *                             &lt;choice>
+	 *                               &lt;sequence>
+	 *                                 &lt;element name="xmag" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+	 *                                 &lt;choice minOccurs="0">
+	 *                                   &lt;element name="ymag" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+	 *                                   &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+	 *                                 &lt;/choice>
+	 *                               &lt;/sequence>
+	 *                               &lt;sequence>
+	 *                                 &lt;element name="ymag" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+	 *                                 &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat" minOccurs="0"/>
+	 *                               &lt;/sequence>
+	 *                             &lt;/choice>
+	 *                             &lt;element name="znear" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+	 *                             &lt;element name="zfar" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+	 *                           &lt;/sequence>
+	 *                         &lt;/restriction>
+	 *                       &lt;/complexContent>
+	 *                     &lt;/complexType>
+	 *                   &lt;/element>
+	 *                   &lt;element name="perspective">
+	 *                     &lt;complexType>
+	 *                       &lt;complexContent>
+	 *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+	 *                           &lt;sequence>
+	 *                             &lt;choice>
+	 *                               &lt;sequence>
+	 *                                 &lt;element name="xfov" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+	 *                                 &lt;choice minOccurs="0">
+	 *                                   &lt;element name="yfov" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+	 *                                   &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+	 *                                 &lt;/choice>
+	 *                               &lt;/sequence>
+	 *                               &lt;sequence>
+	 *                                 &lt;element name="yfov" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+	 *                                 &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat" minOccurs="0"/>
+	 *                               &lt;/sequence>
+	 *                             &lt;/choice>
+	 *                             &lt;element name="znear" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+	 *                             &lt;element name="zfar" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+	 *                           &lt;/sequence>
+	 *                         &lt;/restriction>
+	 *                       &lt;/complexContent>
+	 *                     &lt;/complexType>
+	 *                   &lt;/element>
+	 *                 &lt;/choice>
+	 *               &lt;/restriction>
+	 *             &lt;/complexContent>
+	 *           &lt;/complexType>
+	 *         &lt;/element>
+	 *         &lt;element ref="{http://www.collada.org/2005/11/COLLADASchema}technique" maxOccurs="unbounded" minOccurs="0"/>
+	 *         &lt;element ref="{http://www.collada.org/2005/11/COLLADASchema}extra" maxOccurs="unbounded" minOccurs="0"/>
+	 *       &lt;/sequence>
+	 *     &lt;/restriction>
+	 *   &lt;/complexContent>
+	 * &lt;/complexType>
+	 * </pre>
+	 * 
+	 * 
+	 */
+	@XmlAccessorType(XmlAccessType.FIELD)
+	@XmlType(name = "", propOrder = { "techniqueCommon", "technique", "extra" })
+	public static class Optics {
 
+		@XmlElement(name = "technique_common", required = true)
+		protected Camera.Optics.TechniqueCommon techniqueCommon;
+		protected List<Technique> technique;
+		protected List<Extra> extra;
 
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element name="technique_common">
-     *           &lt;complexType>
-     *             &lt;complexContent>
-     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                 &lt;choice>
-     *                   &lt;element name="orthographic">
-     *                     &lt;complexType>
-     *                       &lt;complexContent>
-     *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                           &lt;sequence>
-     *                             &lt;choice>
-     *                               &lt;sequence>
-     *                                 &lt;element name="xmag" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-     *                                 &lt;choice minOccurs="0">
-     *                                   &lt;element name="ymag" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-     *                                   &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-     *                                 &lt;/choice>
-     *                               &lt;/sequence>
-     *                               &lt;sequence>
-     *                                 &lt;element name="ymag" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-     *                                 &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat" minOccurs="0"/>
-     *                               &lt;/sequence>
-     *                             &lt;/choice>
-     *                             &lt;element name="znear" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-     *                             &lt;element name="zfar" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-     *                           &lt;/sequence>
-     *                         &lt;/restriction>
-     *                       &lt;/complexContent>
-     *                     &lt;/complexType>
-     *                   &lt;/element>
-     *                   &lt;element name="perspective">
-     *                     &lt;complexType>
-     *                       &lt;complexContent>
-     *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                           &lt;sequence>
-     *                             &lt;choice>
-     *                               &lt;sequence>
-     *                                 &lt;element name="xfov" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-     *                                 &lt;choice minOccurs="0">
-     *                                   &lt;element name="yfov" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-     *                                   &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-     *                                 &lt;/choice>
-     *                               &lt;/sequence>
-     *                               &lt;sequence>
-     *                                 &lt;element name="yfov" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-     *                                 &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat" minOccurs="0"/>
-     *                               &lt;/sequence>
-     *                             &lt;/choice>
-     *                             &lt;element name="znear" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-     *                             &lt;element name="zfar" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-     *                           &lt;/sequence>
-     *                         &lt;/restriction>
-     *                       &lt;/complexContent>
-     *                     &lt;/complexType>
-     *                   &lt;/element>
-     *                 &lt;/choice>
-     *               &lt;/restriction>
-     *             &lt;/complexContent>
-     *           &lt;/complexType>
-     *         &lt;/element>
-     *         &lt;element ref="{http://www.collada.org/2005/11/COLLADASchema}technique" maxOccurs="unbounded" minOccurs="0"/>
-     *         &lt;element ref="{http://www.collada.org/2005/11/COLLADASchema}extra" maxOccurs="unbounded" minOccurs="0"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "techniqueCommon",
-        "technique",
-        "extra"
-    })
-    public static class Optics {
+		/**
+		 * Gets the value of the techniqueCommon property.
+		 * 
+		 * @return possible object is {@link Camera.Optics.TechniqueCommon }
+		 * 
+		 */
+		public Camera.Optics.TechniqueCommon getTechniqueCommon() {
+			return techniqueCommon;
+		}
 
-        @XmlElement(name = "technique_common", required = true)
-        protected Camera.Optics.TechniqueCommon techniqueCommon;
-        protected List<Technique> technique;
-        protected List<Extra> extra;
+		/**
+		 * Sets the value of the techniqueCommon property.
+		 * 
+		 * @param value
+		 *            allowed object is {@link Camera.Optics.TechniqueCommon }
+		 * 
+		 */
+		public void setTechniqueCommon(Camera.Optics.TechniqueCommon value) {
+			this.techniqueCommon = value;
+		}
 
-        /**
-         * Gets the value of the techniqueCommon property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Camera.Optics.TechniqueCommon }
-         *     
-         */
-        public Camera.Optics.TechniqueCommon getTechniqueCommon() {
-            return techniqueCommon;
-        }
+		/**
+		 * 
+		 * This element may contain any number of non-common profile techniques. Gets
+		 * the value of the technique property.
+		 * 
+		 * <p>
+		 * This accessor method returns a reference to the live list, not a snapshot.
+		 * Therefore any modification you make to the returned list will be present
+		 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+		 * for the technique property.
+		 * 
+		 * <p>
+		 * For example, to add a new item, do as follows:
+		 * 
+		 * <pre>
+		 * getTechnique().add(newItem);
+		 * </pre>
+		 * 
+		 * 
+		 * <p>
+		 * Objects of the following type(s) are allowed in the list {@link Technique }
+		 * 
+		 * 
+		 */
+		public List<Technique> getTechnique() {
+			if (technique == null) {
+				technique = new ArrayList<Technique>();
+			}
+			return this.technique;
+		}
 
-        /**
-         * Sets the value of the techniqueCommon property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Camera.Optics.TechniqueCommon }
-         *     
-         */
-        public void setTechniqueCommon(Camera.Optics.TechniqueCommon value) {
-            this.techniqueCommon = value;
-        }
+		/**
+		 * 
+		 * The extra element may appear any number of times. Gets the value of the extra
+		 * property.
+		 * 
+		 * <p>
+		 * This accessor method returns a reference to the live list, not a snapshot.
+		 * Therefore any modification you make to the returned list will be present
+		 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+		 * for the extra property.
+		 * 
+		 * <p>
+		 * For example, to add a new item, do as follows:
+		 * 
+		 * <pre>
+		 * getExtra().add(newItem);
+		 * </pre>
+		 * 
+		 * 
+		 * <p>
+		 * Objects of the following type(s) are allowed in the list {@link Extra }
+		 * 
+		 * 
+		 */
+		public List<Extra> getExtra() {
+			if (extra == null) {
+				extra = new ArrayList<Extra>();
+			}
+			return this.extra;
+		}
 
-        /**
-         * 
-         * 									This element may contain any number of non-common profile techniques.
-         * 									Gets the value of the technique property.
-         * 
-         * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the technique property.
-         * 
-         * <p>
-         * For example, to add a new item, do as follows:
-         * <pre>
-         *    getTechnique().add(newItem);
-         * </pre>
-         * 
-         * 
-         * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link Technique }
-         * 
-         * 
-         */
-        public List<Technique> getTechnique() {
-            if (technique == null) {
-                technique = new ArrayList<Technique>();
-            }
-            return this.technique;
-        }
+		/**
+		 * <p>
+		 * Java class for anonymous complex type.
+		 * 
+		 * <p>
+		 * The following schema fragment specifies the expected content contained within
+		 * this class.
+		 * 
+		 * <pre>
+		 * &lt;complexType>
+		 *   &lt;complexContent>
+		 *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+		 *       &lt;choice>
+		 *         &lt;element name="orthographic">
+		 *           &lt;complexType>
+		 *             &lt;complexContent>
+		 *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+		 *                 &lt;sequence>
+		 *                   &lt;choice>
+		 *                     &lt;sequence>
+		 *                       &lt;element name="xmag" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+		 *                       &lt;choice minOccurs="0">
+		 *                         &lt;element name="ymag" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+		 *                         &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+		 *                       &lt;/choice>
+		 *                     &lt;/sequence>
+		 *                     &lt;sequence>
+		 *                       &lt;element name="ymag" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+		 *                       &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat" minOccurs="0"/>
+		 *                     &lt;/sequence>
+		 *                   &lt;/choice>
+		 *                   &lt;element name="znear" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+		 *                   &lt;element name="zfar" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+		 *                 &lt;/sequence>
+		 *               &lt;/restriction>
+		 *             &lt;/complexContent>
+		 *           &lt;/complexType>
+		 *         &lt;/element>
+		 *         &lt;element name="perspective">
+		 *           &lt;complexType>
+		 *             &lt;complexContent>
+		 *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+		 *                 &lt;sequence>
+		 *                   &lt;choice>
+		 *                     &lt;sequence>
+		 *                       &lt;element name="xfov" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+		 *                       &lt;choice minOccurs="0">
+		 *                         &lt;element name="yfov" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+		 *                         &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+		 *                       &lt;/choice>
+		 *                     &lt;/sequence>
+		 *                     &lt;sequence>
+		 *                       &lt;element name="yfov" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+		 *                       &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat" minOccurs="0"/>
+		 *                     &lt;/sequence>
+		 *                   &lt;/choice>
+		 *                   &lt;element name="znear" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+		 *                   &lt;element name="zfar" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+		 *                 &lt;/sequence>
+		 *               &lt;/restriction>
+		 *             &lt;/complexContent>
+		 *           &lt;/complexType>
+		 *         &lt;/element>
+		 *       &lt;/choice>
+		 *     &lt;/restriction>
+		 *   &lt;/complexContent>
+		 * &lt;/complexType>
+		 * </pre>
+		 * 
+		 * 
+		 */
+		@XmlAccessorType(XmlAccessType.FIELD)
+		@XmlType(name = "", propOrder = { "orthographic", "perspective" })
+		public static class TechniqueCommon {
 
-        /**
-         * 
-         * 									The extra element may appear any number of times.
-         * 									Gets the value of the extra property.
-         * 
-         * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the extra property.
-         * 
-         * <p>
-         * For example, to add a new item, do as follows:
-         * <pre>
-         *    getExtra().add(newItem);
-         * </pre>
-         * 
-         * 
-         * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link Extra }
-         * 
-         * 
-         */
-        public List<Extra> getExtra() {
-            if (extra == null) {
-                extra = new ArrayList<Extra>();
-            }
-            return this.extra;
-        }
+			protected Camera.Optics.TechniqueCommon.Orthographic orthographic;
+			protected Camera.Optics.TechniqueCommon.Perspective perspective;
 
+			/**
+			 * Gets the value of the orthographic property.
+			 * 
+			 * @return possible object is
+			 *         {@link Camera.Optics.TechniqueCommon.Orthographic }
+			 * 
+			 */
+			public Camera.Optics.TechniqueCommon.Orthographic getOrthographic() {
+				return orthographic;
+			}
 
-        /**
-         * <p>Java class for anonymous complex type.
-         * 
-         * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
-         * <pre>
-         * &lt;complexType>
-         *   &lt;complexContent>
-         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *       &lt;choice>
-         *         &lt;element name="orthographic">
-         *           &lt;complexType>
-         *             &lt;complexContent>
-         *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                 &lt;sequence>
-         *                   &lt;choice>
-         *                     &lt;sequence>
-         *                       &lt;element name="xmag" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-         *                       &lt;choice minOccurs="0">
-         *                         &lt;element name="ymag" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-         *                         &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-         *                       &lt;/choice>
-         *                     &lt;/sequence>
-         *                     &lt;sequence>
-         *                       &lt;element name="ymag" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-         *                       &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat" minOccurs="0"/>
-         *                     &lt;/sequence>
-         *                   &lt;/choice>
-         *                   &lt;element name="znear" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-         *                   &lt;element name="zfar" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-         *                 &lt;/sequence>
-         *               &lt;/restriction>
-         *             &lt;/complexContent>
-         *           &lt;/complexType>
-         *         &lt;/element>
-         *         &lt;element name="perspective">
-         *           &lt;complexType>
-         *             &lt;complexContent>
-         *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                 &lt;sequence>
-         *                   &lt;choice>
-         *                     &lt;sequence>
-         *                       &lt;element name="xfov" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-         *                       &lt;choice minOccurs="0">
-         *                         &lt;element name="yfov" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-         *                         &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-         *                       &lt;/choice>
-         *                     &lt;/sequence>
-         *                     &lt;sequence>
-         *                       &lt;element name="yfov" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-         *                       &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat" minOccurs="0"/>
-         *                     &lt;/sequence>
-         *                   &lt;/choice>
-         *                   &lt;element name="znear" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-         *                   &lt;element name="zfar" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-         *                 &lt;/sequence>
-         *               &lt;/restriction>
-         *             &lt;/complexContent>
-         *           &lt;/complexType>
-         *         &lt;/element>
-         *       &lt;/choice>
-         *     &lt;/restriction>
-         *   &lt;/complexContent>
-         * &lt;/complexType>
-         * </pre>
-         * 
-         * 
-         */
-        @XmlAccessorType(XmlAccessType.FIELD)
-        @XmlType(name = "", propOrder = {
-            "orthographic",
-            "perspective"
-        })
-        public static class TechniqueCommon {
+			/**
+			 * Sets the value of the orthographic property.
+			 * 
+			 * @param value
+			 *            allowed object is
+			 *            {@link Camera.Optics.TechniqueCommon.Orthographic }
+			 * 
+			 */
+			public void setOrthographic(Camera.Optics.TechniqueCommon.Orthographic value) {
+				this.orthographic = value;
+			}
 
-            protected Camera.Optics.TechniqueCommon.Orthographic orthographic;
-            protected Camera.Optics.TechniqueCommon.Perspective perspective;
+			/**
+			 * Gets the value of the perspective property.
+			 * 
+			 * @return possible object is {@link Camera.Optics.TechniqueCommon.Perspective }
+			 * 
+			 */
+			public Camera.Optics.TechniqueCommon.Perspective getPerspective() {
+				return perspective;
+			}
 
-            /**
-             * Gets the value of the orthographic property.
-             * 
-             * @return
-             *     possible object is
-             *     {@link Camera.Optics.TechniqueCommon.Orthographic }
-             *     
-             */
-            public Camera.Optics.TechniqueCommon.Orthographic getOrthographic() {
-                return orthographic;
-            }
+			/**
+			 * Sets the value of the perspective property.
+			 * 
+			 * @param value
+			 *            allowed object is
+			 *            {@link Camera.Optics.TechniqueCommon.Perspective }
+			 * 
+			 */
+			public void setPerspective(Camera.Optics.TechniqueCommon.Perspective value) {
+				this.perspective = value;
+			}
 
-            /**
-             * Sets the value of the orthographic property.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link Camera.Optics.TechniqueCommon.Orthographic }
-             *     
-             */
-            public void setOrthographic(Camera.Optics.TechniqueCommon.Orthographic value) {
-                this.orthographic = value;
-            }
+			/**
+			 * <p>
+			 * Java class for anonymous complex type.
+			 * 
+			 * <p>
+			 * The following schema fragment specifies the expected content contained within
+			 * this class.
+			 * 
+			 * <pre>
+			 * &lt;complexType>
+			 *   &lt;complexContent>
+			 *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+			 *       &lt;sequence>
+			 *         &lt;choice>
+			 *           &lt;sequence>
+			 *             &lt;element name="xmag" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+			 *             &lt;choice minOccurs="0">
+			 *               &lt;element name="ymag" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+			 *               &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+			 *             &lt;/choice>
+			 *           &lt;/sequence>
+			 *           &lt;sequence>
+			 *             &lt;element name="ymag" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+			 *             &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat" minOccurs="0"/>
+			 *           &lt;/sequence>
+			 *         &lt;/choice>
+			 *         &lt;element name="znear" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+			 *         &lt;element name="zfar" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+			 *       &lt;/sequence>
+			 *     &lt;/restriction>
+			 *   &lt;/complexContent>
+			 * &lt;/complexType>
+			 * </pre>
+			 * 
+			 * 
+			 */
+			@XmlAccessorType(XmlAccessType.FIELD)
+			@XmlType(name = "", propOrder = { "content" })
+			public static class Orthographic {
 
-            /**
-             * Gets the value of the perspective property.
-             * 
-             * @return
-             *     possible object is
-             *     {@link Camera.Optics.TechniqueCommon.Perspective }
-             *     
-             */
-            public Camera.Optics.TechniqueCommon.Perspective getPerspective() {
-                return perspective;
-            }
+				@XmlElementRefs({
+						@XmlElementRef(name = "aspect_ratio", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+						@XmlElementRef(name = "xmag", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+						@XmlElementRef(name = "znear", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+						@XmlElementRef(name = "ymag", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+						@XmlElementRef(name = "zfar", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false) })
+				protected List<JAXBElement<TargetableFloat>> content;
 
-            /**
-             * Sets the value of the perspective property.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link Camera.Optics.TechniqueCommon.Perspective }
-             *     
-             */
-            public void setPerspective(Camera.Optics.TechniqueCommon.Perspective value) {
-                this.perspective = value;
-            }
+				/**
+				 * Gets the rest of the content model.
+				 * 
+				 * <p>
+				 * You are getting this "catch-all" property because of the following reason:
+				 * The field name "Ymag" is used by two different parts of a schema. See: line
+				 * 2234 of
+				 * file:/C:/Users/ROKA/workspace/collada%20lib/src/collada_schema_1_4.xsd line
+				 * 2214 of
+				 * file:/C:/Users/ROKA/workspace/collada%20lib/src/collada_schema_1_4.xsd
+				 * <p>
+				 * To get rid of this property, apply a property customization to one of both of
+				 * the following declarations to change their names: Gets the value of the
+				 * content property.
+				 * 
+				 * <p>
+				 * This accessor method returns a reference to the live list, not a snapshot.
+				 * Therefore any modification you make to the returned list will be present
+				 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+				 * for the content property.
+				 * 
+				 * <p>
+				 * For example, to add a new item, do as follows:
+				 * 
+				 * <pre>
+				 * getContent().add(newItem);
+				 * </pre>
+				 * 
+				 * 
+				 * <p>
+				 * Objects of the following type(s) are allowed in the list {@link JAXBElement
+				 * }{@code <}{@link TargetableFloat }{@code >} {@link JAXBElement
+				 * }{@code <}{@link TargetableFloat }{@code >} {@link JAXBElement
+				 * }{@code <}{@link TargetableFloat }{@code >} {@link JAXBElement
+				 * }{@code <}{@link TargetableFloat }{@code >} {@link JAXBElement
+				 * }{@code <}{@link TargetableFloat }{@code >}
+				 * 
+				 * 
+				 */
+				public List<JAXBElement<TargetableFloat>> getContent() {
+					if (content == null) {
+						content = new ArrayList<JAXBElement<TargetableFloat>>();
+					}
+					return this.content;
+				}
 
+			}
 
-            /**
-             * <p>Java class for anonymous complex type.
-             * 
-             * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
-             * <pre>
-             * &lt;complexType>
-             *   &lt;complexContent>
-             *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *       &lt;sequence>
-             *         &lt;choice>
-             *           &lt;sequence>
-             *             &lt;element name="xmag" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-             *             &lt;choice minOccurs="0">
-             *               &lt;element name="ymag" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-             *               &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-             *             &lt;/choice>
-             *           &lt;/sequence>
-             *           &lt;sequence>
-             *             &lt;element name="ymag" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-             *             &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat" minOccurs="0"/>
-             *           &lt;/sequence>
-             *         &lt;/choice>
-             *         &lt;element name="znear" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-             *         &lt;element name="zfar" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-             *       &lt;/sequence>
-             *     &lt;/restriction>
-             *   &lt;/complexContent>
-             * &lt;/complexType>
-             * </pre>
-             * 
-             * 
-             */
-            @XmlAccessorType(XmlAccessType.FIELD)
-            @XmlType(name = "", propOrder = {
-                "content"
-            })
-            public static class Orthographic {
+			/**
+			 * <p>
+			 * Java class for anonymous complex type.
+			 * 
+			 * <p>
+			 * The following schema fragment specifies the expected content contained within
+			 * this class.
+			 * 
+			 * <pre>
+			 * &lt;complexType>
+			 *   &lt;complexContent>
+			 *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+			 *       &lt;sequence>
+			 *         &lt;choice>
+			 *           &lt;sequence>
+			 *             &lt;element name="xfov" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+			 *             &lt;choice minOccurs="0">
+			 *               &lt;element name="yfov" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+			 *               &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+			 *             &lt;/choice>
+			 *           &lt;/sequence>
+			 *           &lt;sequence>
+			 *             &lt;element name="yfov" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+			 *             &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat" minOccurs="0"/>
+			 *           &lt;/sequence>
+			 *         &lt;/choice>
+			 *         &lt;element name="znear" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+			 *         &lt;element name="zfar" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
+			 *       &lt;/sequence>
+			 *     &lt;/restriction>
+			 *   &lt;/complexContent>
+			 * &lt;/complexType>
+			 * </pre>
+			 * 
+			 * 
+			 */
+			@XmlAccessorType(XmlAccessType.FIELD)
+			@XmlType(name = "", propOrder = { "content" })
+			public static class Perspective {
 
-                @XmlElementRefs({
-                    @XmlElementRef(name = "aspect_ratio", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-                    @XmlElementRef(name = "xmag", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-                    @XmlElementRef(name = "znear", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-                    @XmlElementRef(name = "ymag", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-                    @XmlElementRef(name = "zfar", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false)
-                })
-                protected List<JAXBElement<TargetableFloat>> content;
+				@XmlElementRefs({
+						@XmlElementRef(name = "aspect_ratio", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+						@XmlElementRef(name = "xfov", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+						@XmlElementRef(name = "znear", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+						@XmlElementRef(name = "zfar", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
+						@XmlElementRef(name = "yfov", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false) })
+				protected List<JAXBElement<TargetableFloat>> content;
 
-                /**
-                 * Gets the rest of the content model. 
-                 * 
-                 * <p>
-                 * You are getting this "catch-all" property because of the following reason: 
-                 * The field name "Ymag" is used by two different parts of a schema. See: 
-                 * line 2234 of file:/C:/Users/ROKA/workspace/collada%20lib/src/collada_schema_1_4.xsd
-                 * line 2214 of file:/C:/Users/ROKA/workspace/collada%20lib/src/collada_schema_1_4.xsd
-                 * <p>
-                 * To get rid of this property, apply a property customization to one 
-                 * of both of the following declarations to change their names: 
-                 * Gets the value of the content property.
-                 * 
-                 * <p>
-                 * This accessor method returns a reference to the live list,
-                 * not a snapshot. Therefore any modification you make to the
-                 * returned list will be present inside the JAXB object.
-                 * This is why there is not a <CODE>set</CODE> method for the content property.
-                 * 
-                 * <p>
-                 * For example, to add a new item, do as follows:
-                 * <pre>
-                 *    getContent().add(newItem);
-                 * </pre>
-                 * 
-                 * 
-                 * <p>
-                 * Objects of the following type(s) are allowed in the list
-                 * {@link JAXBElement }{@code <}{@link TargetableFloat }{@code >}
-                 * {@link JAXBElement }{@code <}{@link TargetableFloat }{@code >}
-                 * {@link JAXBElement }{@code <}{@link TargetableFloat }{@code >}
-                 * {@link JAXBElement }{@code <}{@link TargetableFloat }{@code >}
-                 * {@link JAXBElement }{@code <}{@link TargetableFloat }{@code >}
-                 * 
-                 * 
-                 */
-                public List<JAXBElement<TargetableFloat>> getContent() {
-                    if (content == null) {
-                        content = new ArrayList<JAXBElement<TargetableFloat>>();
-                    }
-                    return this.content;
-                }
+				/**
+				 * Gets the rest of the content model.
+				 * 
+				 * <p>
+				 * You are getting this "catch-all" property because of the following reason:
+				 * The field name "Yfov" is used by two different parts of a schema. See: line
+				 * 2294 of
+				 * file:/C:/Users/ROKA/workspace/collada%20lib/src/collada_schema_1_4.xsd line
+				 * 2275 of
+				 * file:/C:/Users/ROKA/workspace/collada%20lib/src/collada_schema_1_4.xsd
+				 * <p>
+				 * To get rid of this property, apply a property customization to one of both of
+				 * the following declarations to change their names: Gets the value of the
+				 * content property.
+				 * 
+				 * <p>
+				 * This accessor method returns a reference to the live list, not a snapshot.
+				 * Therefore any modification you make to the returned list will be present
+				 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+				 * for the content property.
+				 * 
+				 * <p>
+				 * For example, to add a new item, do as follows:
+				 * 
+				 * <pre>
+				 * getContent().add(newItem);
+				 * </pre>
+				 * 
+				 * 
+				 * <p>
+				 * Objects of the following type(s) are allowed in the list {@link JAXBElement
+				 * }{@code <}{@link TargetableFloat }{@code >} {@link JAXBElement
+				 * }{@code <}{@link TargetableFloat }{@code >} {@link JAXBElement
+				 * }{@code <}{@link TargetableFloat }{@code >} {@link JAXBElement
+				 * }{@code <}{@link TargetableFloat }{@code >} {@link JAXBElement
+				 * }{@code <}{@link TargetableFloat }{@code >}
+				 * 
+				 * 
+				 */
+				public List<JAXBElement<TargetableFloat>> getContent() {
+					if (content == null) {
+						content = new ArrayList<JAXBElement<TargetableFloat>>();
+					}
+					return this.content;
+				}
 
-            }
+			}
 
+		}
 
-            /**
-             * <p>Java class for anonymous complex type.
-             * 
-             * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
-             * <pre>
-             * &lt;complexType>
-             *   &lt;complexContent>
-             *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *       &lt;sequence>
-             *         &lt;choice>
-             *           &lt;sequence>
-             *             &lt;element name="xfov" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-             *             &lt;choice minOccurs="0">
-             *               &lt;element name="yfov" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-             *               &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-             *             &lt;/choice>
-             *           &lt;/sequence>
-             *           &lt;sequence>
-             *             &lt;element name="yfov" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-             *             &lt;element name="aspect_ratio" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat" minOccurs="0"/>
-             *           &lt;/sequence>
-             *         &lt;/choice>
-             *         &lt;element name="znear" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-             *         &lt;element name="zfar" type="{http://www.collada.org/2005/11/COLLADASchema}TargetableFloat"/>
-             *       &lt;/sequence>
-             *     &lt;/restriction>
-             *   &lt;/complexContent>
-             * &lt;/complexType>
-             * </pre>
-             * 
-             * 
-             */
-            @XmlAccessorType(XmlAccessType.FIELD)
-            @XmlType(name = "", propOrder = {
-                "content"
-            })
-            public static class Perspective {
-
-                @XmlElementRefs({
-                    @XmlElementRef(name = "aspect_ratio", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-                    @XmlElementRef(name = "xfov", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-                    @XmlElementRef(name = "znear", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-                    @XmlElementRef(name = "zfar", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false),
-                    @XmlElementRef(name = "yfov", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class, required = false)
-                })
-                protected List<JAXBElement<TargetableFloat>> content;
-
-                /**
-                 * Gets the rest of the content model. 
-                 * 
-                 * <p>
-                 * You are getting this "catch-all" property because of the following reason: 
-                 * The field name "Yfov" is used by two different parts of a schema. See: 
-                 * line 2294 of file:/C:/Users/ROKA/workspace/collada%20lib/src/collada_schema_1_4.xsd
-                 * line 2275 of file:/C:/Users/ROKA/workspace/collada%20lib/src/collada_schema_1_4.xsd
-                 * <p>
-                 * To get rid of this property, apply a property customization to one 
-                 * of both of the following declarations to change their names: 
-                 * Gets the value of the content property.
-                 * 
-                 * <p>
-                 * This accessor method returns a reference to the live list,
-                 * not a snapshot. Therefore any modification you make to the
-                 * returned list will be present inside the JAXB object.
-                 * This is why there is not a <CODE>set</CODE> method for the content property.
-                 * 
-                 * <p>
-                 * For example, to add a new item, do as follows:
-                 * <pre>
-                 *    getContent().add(newItem);
-                 * </pre>
-                 * 
-                 * 
-                 * <p>
-                 * Objects of the following type(s) are allowed in the list
-                 * {@link JAXBElement }{@code <}{@link TargetableFloat }{@code >}
-                 * {@link JAXBElement }{@code <}{@link TargetableFloat }{@code >}
-                 * {@link JAXBElement }{@code <}{@link TargetableFloat }{@code >}
-                 * {@link JAXBElement }{@code <}{@link TargetableFloat }{@code >}
-                 * {@link JAXBElement }{@code <}{@link TargetableFloat }{@code >}
-                 * 
-                 * 
-                 */
-                public List<JAXBElement<TargetableFloat>> getContent() {
-                    if (content == null) {
-                        content = new ArrayList<JAXBElement<TargetableFloat>>();
-                    }
-                    return this.content;
-                }
-
-            }
-
-        }
-
-    }
+	}
 
 }

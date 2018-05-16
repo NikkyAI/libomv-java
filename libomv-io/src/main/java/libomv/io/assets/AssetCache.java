@@ -50,13 +50,11 @@ import libomv.utils.Callback;
 import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 
 // Class that handles the local asset cache
-public class AssetCache
-{
+public class AssetCache {
 	private static final Logger logger = Logger.getLogger(AssetCache.class);
-	
+
 	// User can plug in a routine to compute the asset cache location
-	public interface ComputeAssetCacheFilenameDelegate
-	{
+	public interface ComputeAssetCacheFilenameDelegate {
 		public File callback(String cacheDir, UUID assetID, String suffix);
 	}
 
@@ -70,34 +68,27 @@ public class AssetCache
 
 	// Allows setting weather to periodically prune the cache if it grows too big
 	// Default is enabled, when caching is enabled
-	public final void setAutoPruneEnabled(boolean value)
-	{
+	public final void setAutoPruneEnabled(boolean value) {
 		autoPruneEnabled = value;
 
-		if (autoPruneEnabled)
-		{
+		if (autoPruneEnabled) {
 			SetupTimer();
-		}
-		else
-		{
+		} else {
 			DestroyTimer();
 		}
 	}
 
-	public final boolean getAutoPruneEnabled()
-	{
+	public final boolean getAutoPruneEnabled() {
 		return autoPruneEnabled;
 	}
 
 	// How long (in ms) between cache checks (default is 5 min.)
-	public final void setAutoPruneInterval(long value)
-	{
+	public final void setAutoPruneInterval(long value) {
 		pruneInterval = value;
 		SetupTimer();
 	}
 
-	public final long getAutoPruneInterval()
-	{
+	public final long getAutoPruneInterval() {
 		return pruneInterval;
 	}
 
@@ -113,52 +104,39 @@ public class AssetCache
 	private File cacheAssetPath;
 	private File cacheStaticPath;
 
-	private void setResourcePath(String path)
-	{
+	private void setResourcePath(String path) {
 		resourcePath = new File(path).getAbsoluteFile();
 		cacheStaticPath = new File(resourcePath, "static_assets");
-		
+
 		settingsPath = new File(System.getProperty("user.home"), "." + path);
 		settingsPath.mkdir();
 	}
 
-	private void setAssetPath(String path)
-	{
+	private void setAssetPath(String path) {
 		if (path != null)
 			cacheAssetDir = path;
 		cacheAssetPath = new File(settingsPath, cacheAssetDir); // &(APPDATA)/_libomv/cache
 		cacheAssetPath.mkdir();
 	}
 
-	private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs>
-	{
+	private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs> {
 		@Override
-		public boolean callback(SettingsUpdateCallbackArgs params)
-		{
+		public boolean callback(SettingsUpdateCallbackArgs params) {
 			String key = params.getName();
-			if (key == null)
-			{
+			if (key == null) {
 				useAssetCache = _Client.Settings.getBool(LibSettings.USE_ASSET_CACHE);
 				cacheAssetMaxSize = _Client.Settings.getLong(LibSettings.ASSET_CACHE_MAX_SIZE);
 				setResourcePath(_Client.Settings.getString(LibSettings.RESOURCE_DIR));
 				setAssetPath(_Client.Settings.getString(LibSettings.ASSET_CACHE_DIR));
-			}
-			else if (key.equals(LibSettings.USE_ASSET_CACHE))
-			{
+			} else if (key.equals(LibSettings.USE_ASSET_CACHE)) {
 				useAssetCache = params.getValue().AsBoolean();
-			}
-			else if (key.equals(LibSettings.USE_ASSET_CACHE))
-			{
+			} else if (key.equals(LibSettings.USE_ASSET_CACHE)) {
 				cacheAssetMaxSize = params.getValue().AsLong();
-			}
-			else if (key.equals(LibSettings.ASSET_CACHE_DIR))
-			{
+			} else if (key.equals(LibSettings.ASSET_CACHE_DIR)) {
 				setAssetPath(params.getValue().AsString());
-			}
-			else if (key.equals(LibSettings.RESOURCE_DIR))
-			{
+			} else if (key.equals(LibSettings.RESOURCE_DIR)) {
 				setResourcePath(params.getValue().AsString());
-			 	setAssetPath(null);
+				setAssetPath(null);
 			}
 			return false;
 		}
@@ -167,11 +145,12 @@ public class AssetCache
 	/**
 	 * Default constructor
 	 * 
-	 * @param client A reference to the GridClient object
-	 * @param manager A reference to the AssetManager
+	 * @param client
+	 *            A reference to the GridClient object
+	 * @param manager
+	 *            A reference to the AssetManager
 	 */
-	public AssetCache(GridClient client)
-	{
+	public AssetCache(GridClient client) {
 		_Client = client;
 
 		_Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
@@ -184,50 +163,39 @@ public class AssetCache
 		_Client.Network.OnDisconnected.add(new Network_Disconnected(), true);
 	}
 
-	private class Network_LoginProgress implements Callback<LoginProgressCallbackArgs>
-	{
+	private class Network_LoginProgress implements Callback<LoginProgressCallbackArgs> {
 		@Override
-		public boolean callback(LoginProgressCallbackArgs e)
-		{
-			if (e.getStatus() == LoginStatus.Success)
-			{
+		public boolean callback(LoginProgressCallbackArgs e) {
+			if (e.getStatus() == LoginStatus.Success) {
 				SetupTimer();
 			}
 			return false;
 		}
 	}
 
-	private class Network_Disconnected implements Callback<DisconnectedCallbackArgs>
-	{
+	private class Network_Disconnected implements Callback<DisconnectedCallbackArgs> {
 		@Override
-		public boolean callback(DisconnectedCallbackArgs e)
-		{
+		public boolean callback(DisconnectedCallbackArgs e) {
 			DestroyTimer();
 			return false;
 		}
 	}
 
 	// Disposes cleanup timer
-	private void DestroyTimer()
-	{
-		if (cleanerTimer != null)
-		{
+	private void DestroyTimer() {
+		if (cleanerTimer != null) {
 			cleanerTimer.cancel();
 			cleanerTimer = null;
 		}
 	}
 
 	// Only create timer when needed
-	private void SetupTimer()
-	{
-		if (useAssetCache && autoPruneEnabled && _Client.Network.getConnected())
-		{
+	private void SetupTimer() {
+		if (useAssetCache && autoPruneEnabled && _Client.Network.getConnected()) {
 			cleanerTimer = new Timer("AssetCleaner");
-			cleanerTimer.schedule(new TimerTask()
-			{
+			cleanerTimer.schedule(new TimerTask() {
 				@Override
-				public void run()
-				{
+				public void run() {
 					BeginPrune();
 				}
 			}, pruneInterval, pruneInterval);
@@ -241,43 +209,31 @@ public class AssetCache
 	 *            UUID of the asset we want to get
 	 * @return Raw bytes of the asset, or null on failure
 	 */
-	public final byte[] get(UUID assetID, String suffix)
-	{
-		if (useAssetCache)
-		{
-			try
-			{
+	public final byte[] get(UUID assetID, String suffix) {
+		if (useAssetCache) {
+			try {
 				File file = cachedAssetFile(assetID, suffix);
 				boolean exists = file.exists() && file.length() > 0;
-				if (!exists)
-				{
+				if (!exists) {
 					file = getStaticAssetFile(assetID);
 					exists = file.exists() && file.length() > 0;
 					if (exists)
 						logger.debug(GridClient.Log("Reading " + file + " from static asset cache.", _Client));
-				}
-				else
-				{
+				} else {
 					logger.debug(GridClient.Log("Reading " + file + " from asset cache.", _Client));
 				}
-				
-				if (exists)
-				{
+
+				if (exists) {
 					byte[] assetData = new byte[(int) file.length()];
 					FileInputStream fis = new FileInputStream(file);
-					try
-					{
+					try {
 						fis.read(assetData);
-					}
-					finally
-					{
+					} finally {
 						fis.close();
 					}
 					return assetData;
 				}
-			}
-			catch (Throwable ex)
-			{
+			} catch (Throwable ex) {
 				logger.warn(GridClient.Log("Failed reading asset from cache (" + ex.getMessage() + ")", _Client), ex);
 			}
 		}
@@ -287,18 +243,16 @@ public class AssetCache
 	/**
 	 * Constructs a file name of the cached asset
 	 * 
-	 * @param assetID UUID of the asset
+	 * @param assetID
+	 *            UUID of the asset
 	 * @return String with the file name of the cached asset
 	 */
-	public File cachedAssetFile(UUID assetID, String suffix)
-	{
-		if (ComputeAssetCacheFilename != null)
-		{
+	public File cachedAssetFile(UUID assetID, String suffix) {
+		if (ComputeAssetCacheFilename != null) {
 			return ComputeAssetCacheFilename.callback(cacheAssetDir, assetID, suffix);
 		}
 		String filename = assetID.toString();
-		if (suffix != null)
-		{
+		if (suffix != null) {
 			filename = filename + "." + suffix;
 		}
 		return new File(cacheAssetPath, filename);
@@ -311,8 +265,7 @@ public class AssetCache
 	 *            UUID of the asset
 	 * @return String with the file name of the static cached asset
 	 */
-	private File getStaticAssetFile(UUID assetID)
-	{
+	private File getStaticAssetFile(UUID assetID) {
 		return new File(cacheStaticPath, assetID.toString());
 	}
 
@@ -325,27 +278,19 @@ public class AssetCache
 	 *            Raw bytes the asset consists of
 	 * @return Weather the operation was successfull
 	 */
-	public final boolean put(UUID assetID, byte[] assetData, String suffix)
-	{
-		if (useAssetCache)
-		{
-			try
-			{
+	public final boolean put(UUID assetID, byte[] assetData, String suffix) {
+		if (useAssetCache) {
+			try {
 				File file = cachedAssetFile(assetID, suffix);
 				logger.debug(GridClient.Log("Saving " + file + " to asset cache.", _Client));
 				FileOutputStream fos = new FileOutputStream(file);
-				try
-				{
+				try {
 					fos.write(assetData);
-				}
-				finally
-				{
+				} finally {
 					fos.close();
 				}
 				return true;
-			}
-			catch (Throwable ex)
-			{
+			} catch (Throwable ex) {
 				logger.warn(GridClient.Log("Failed saving asset to cache (" + ex.getMessage() + ")", _Client), ex);
 			}
 		}
@@ -353,20 +298,17 @@ public class AssetCache
 	}
 
 	/**
-	 * Checks if the asset exists in the local cache
-	 * Note: libOpenMetaverse: HasAsset()
+	 * Checks if the asset exists in the local cache Note: libOpenMetaverse:
+	 * HasAsset()
 	 * 
 	 * @param assetID
 	 *            UUID of the asset
 	 * @return True is the asset is stored in the cache, otherwise false
 	 */
-	public final boolean containsKey(UUID assetID, String suffix)
-	{
-		if (useAssetCache)
-		{
+	public final boolean containsKey(UUID assetID, String suffix) {
+		if (useAssetCache) {
 			File file = cachedAssetFile(assetID, suffix);
-			if (!file.exists())
-			{
+			if (!file.exists()) {
 				file = getStaticAssetFile(assetID);
 			}
 			return file.exists();
@@ -374,18 +316,14 @@ public class AssetCache
 		return false;
 	}
 
-	private File[] ListCacheFiles()
-	{
-		if (!cacheAssetPath.exists() || !cacheAssetPath.isDirectory())
-		{
+	private File[] ListCacheFiles() {
+		if (!cacheAssetPath.exists() || !cacheAssetPath.isDirectory()) {
 			return null;
 		}
 
-		class CacheNameFilter implements FilenameFilter
-		{
+		class CacheNameFilter implements FilenameFilter {
 			@Override
-			public boolean accept(File dir, String name)
-			{
+			public boolean accept(File dir, String name) {
 				return name.matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}");
 			}
 		}
@@ -398,14 +336,11 @@ public class AssetCache
 	 * Wipes out entire cache
 	 * 
 	 */
-	public final void clear()
-	{
+	public final void clear() {
 		File[] files = ListCacheFiles();
-		if (files != null)
-		{
+		if (files != null) {
 			int num = 0;
-			for (File file : files)
-			{
+			for (File file : files) {
 				file.delete();
 				++num;
 			}
@@ -417,30 +352,25 @@ public class AssetCache
 	 * Brings cache size to the 90% of the max size
 	 * 
 	 */
-	public final void Prune()
-	{
+	public final void Prune() {
 		File[] files = ListCacheFiles();
 		long size = GetFileSize(files);
 
-		if (size > cacheAssetMaxSize)
-		{
+		if (size > cacheAssetMaxSize) {
 			Arrays.sort(files, new SortFilesByModTimeHelper());
-			long targetSize = (long)(cacheAssetMaxSize * 0.9);
+			long targetSize = (long) (cacheAssetMaxSize * 0.9);
 			int num = 0;
-			for (File file : files)
-			{
+			for (File file : files) {
 				++num;
 				size -= file.length();
 				file.delete();
-				if (size < targetSize)
-				{
+				if (size < targetSize) {
 					break;
 				}
 			}
-			logger.debug(GridClient.Log(num + " files deleted from the cache, cache size now: " + NiceFileSize(size), _Client));
-		}
-		else
-		{
+			logger.debug(GridClient.Log(num + " files deleted from the cache, cache size now: " + NiceFileSize(size),
+					_Client));
+		} else {
 			logger.debug(GridClient.Log("Cache size is " + NiceFileSize(size) + ", file deletion not needed", _Client));
 		}
 
@@ -450,21 +380,16 @@ public class AssetCache
 	 * Asynchronously brings cache size to the 90% of the max size
 	 * 
 	 */
-	public final void BeginPrune()
-	{
+	public final void BeginPrune() {
 		// Check if the background cache cleaning thread is active first
-		if (cleanerThread != null && cleanerThread.isAlive())
-		{
+		if (cleanerThread != null && cleanerThread.isAlive()) {
 			return;
 		}
 
-		synchronized (this)
-		{
-			cleanerThread = new Thread(new Runnable()
-			{
+		synchronized (this) {
+			cleanerThread = new Thread(new Runnable() {
 				@Override
-				public void run()
-				{
+				public void run() {
 					Prune();
 				}
 			});
@@ -476,11 +401,9 @@ public class AssetCache
 	/**
 	 * Adds up file sizes passed in a File array
 	 */
-	private long GetFileSize(File[] files)
-	{
+	private long GetFileSize(File[] files) {
 		long ret = 0;
-		for (File file : files)
-		{
+		for (File file : files) {
 			ret += file.length();
 		}
 		return ret;
@@ -493,23 +416,15 @@ public class AssetCache
 	 *            Byte size we want to output
 	 * @return String with humanly readable file size
 	 */
-	private String NiceFileSize(long byteCount)
-	{
+	private String NiceFileSize(long byteCount) {
 		String size = "0 Bytes";
-		if (byteCount >= 1073741824)
-		{
+		if (byteCount >= 1073741824) {
 			size = String.format("%d", (int) (byteCount / 1073741824)) + " GB";
-		}
-		else if (byteCount >= 1048576)
-		{
+		} else if (byteCount >= 1048576) {
 			size = String.format("%d", (int) (byteCount / 1048576)) + " MB";
-		}
-		else if (byteCount >= 1024)
-		{
+		} else if (byteCount >= 1024) {
 			size = String.format("%d", (int) (byteCount / 1024)) + " KB";
-		}
-		else if (byteCount > 0 && byteCount < 1024)
-		{
+		} else if (byteCount > 0 && byteCount < 1024) {
 			size = ((Long) byteCount).toString() + " Bytes";
 		}
 
@@ -520,17 +435,13 @@ public class AssetCache
 	 * Helper class for sorting files by their last accessed time
 	 * 
 	 */
-	private class SortFilesByModTimeHelper implements Comparator<File>
-	{
+	private class SortFilesByModTimeHelper implements Comparator<File> {
 		@Override
-		public int compare(File f1, File f2)
-		{
-			if (f1.lastModified() > f2.lastModified())
-			{
+		public int compare(File f1, File f2) {
+			if (f1.lastModified() > f2.lastModified()) {
 				return 1;
 			}
-			if (f1.lastModified() < f2.lastModified())
-			{
+			if (f1.lastModified() < f2.lastModified()) {
 				return -1;
 			}
 			return 0;

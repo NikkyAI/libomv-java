@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -77,109 +77,22 @@ import libomv.types.Vector3;
 import libomv.types.Vector3d;
 import libomv.utils.Helpers;
 
-public class CapsMessage implements IMessage
-{
+public class CapsMessage implements IMessage {
 	private static final Logger logger = Logger.getLogger(CapsMessage.class);
 
-	public enum CapsEventType
-	{
-		Default,
-		AgentGroupDataUpdate,
-		AgentStateUpdate,
-		AvatarGroupsReply,
-		ParcelProperties,
-		ParcelObjectOwnersReply,
-		TeleportFinish,
-		EnableSimulator,
-		ParcelPropertiesUpdate,
-		EstablishAgentCommunication,
-		ChatterBoxInvitation,
-		ChatterBoxSessionEventReply,
-		ChatterBoxSessionStartReply,
-		ChatterBoxSessionAgentListUpdates,
-		HomeLocation,
-		RequiredVoiceVersion,
-		MapLayer,
-		ChatSessionRequest,
-		ChatSessionRequestMuteUpdate,
-		ChatSessionRequestStartConference,
-		ChatSessionAcceptInvitation,
-		CopyInventoryFromNotecard,
-		ProvisionVoiceAccountRequest,
-		Viewerstats,
-		UpdateAgentLanguage,
-		RemoteParcelRequest,
-		RemoteParcelRequestRequest,
-		RemoteParcelRequestReply,
-		UpdateScriptTask,
-		UpdateScriptTaskUpdateMessage,
-		UploadScriptTask,
-		UpdateScriptAgent,
-		UploaderScriptRequestError,
-		SendPostcard,
-		UpdateGestureAgentInventory,
-		UpdateNotecardAgentInventory,
-		LandStatReply,
-		ParcelVoiceInfoRequest,
-		ViewerStats,
-		EventQueueGet,
-		CrossedRegion,
-		TeleportFailed,
-		PlacesReply,
-		UpdateAgentInformation,
-		DirLandReply,
-		ScriptRunningReply,
-		SearchStatRequest,
-		AgentDropGroup,
-		ForceCloseChatterBoxSession,
-		UploadBakedTexture,
-		WebFetchInventoryDescendents,
-		RegionInfo,
-		UploadObjectAsset,
-		ObjectPhysicsProperties,
-		ObjectMediaNavigate,
-		ObjectMedia,
-		GetObjectCost,
-		GetObjectPhysicsData,
-		AttachmentResources,
-		LandResources,
-		ProductInfoRequest,
-		DispatchRegionInfo,
-		EstateChangeInfo,
-		FetchInventoryDescendents,
-		GroupProposalBallot,
-		GroupAPIv1,
-		MapLayerGod,
-		NewFileAgentInventory,
-		BulkUpdateInventory,
-		RenderMaterials,
-		RequestTextureDownload,
-		SearchStatTracking,
-		SendUserReport,
-		SendUserReportWithScreenshot,
-		ServerReleaseNotes,
-		StartGroupProposal,
-		UpdateGestureTaskInventory,
-		UpdateNotecardTaskInventory,
-		ViewerStartAuction,
-		UntrustedSimulatorMessage,
-		GetDisplayNames,
-		SetDisplayName,
-		SetDisplayNameReply,
-		DisplayNameUpdate,
+	public enum CapsEventType {
+		Default, AgentGroupDataUpdate, AgentStateUpdate, AvatarGroupsReply, ParcelProperties, ParcelObjectOwnersReply, TeleportFinish, EnableSimulator, ParcelPropertiesUpdate, EstablishAgentCommunication, ChatterBoxInvitation, ChatterBoxSessionEventReply, ChatterBoxSessionStartReply, ChatterBoxSessionAgentListUpdates, HomeLocation, RequiredVoiceVersion, MapLayer, ChatSessionRequest, ChatSessionRequestMuteUpdate, ChatSessionRequestStartConference, ChatSessionAcceptInvitation, CopyInventoryFromNotecard, ProvisionVoiceAccountRequest, Viewerstats, UpdateAgentLanguage, RemoteParcelRequest, RemoteParcelRequestRequest, RemoteParcelRequestReply, UpdateScriptTask, UpdateScriptTaskUpdateMessage, UploadScriptTask, UpdateScriptAgent, UploaderScriptRequestError, SendPostcard, UpdateGestureAgentInventory, UpdateNotecardAgentInventory, LandStatReply, ParcelVoiceInfoRequest, ViewerStats, EventQueueGet, CrossedRegion, TeleportFailed, PlacesReply, UpdateAgentInformation, DirLandReply, ScriptRunningReply, SearchStatRequest, AgentDropGroup, ForceCloseChatterBoxSession, UploadBakedTexture, WebFetchInventoryDescendents, RegionInfo, UploadObjectAsset, ObjectPhysicsProperties, ObjectMediaNavigate, ObjectMedia, GetObjectCost, GetObjectPhysicsData, AttachmentResources, LandResources, ProductInfoRequest, DispatchRegionInfo, EstateChangeInfo, FetchInventoryDescendents, GroupProposalBallot, GroupAPIv1, MapLayerGod, NewFileAgentInventory, BulkUpdateInventory, RenderMaterials, RequestTextureDownload, SearchStatTracking, SendUserReport, SendUserReportWithScreenshot, ServerReleaseNotes, StartGroupProposal, UpdateGestureTaskInventory, UpdateNotecardTaskInventory, ViewerStartAuction, UntrustedSimulatorMessage, GetDisplayNames, SetDisplayName, SetDisplayNameReply, DisplayNameUpdate,
 	}
 
 	@Override
-	public CapsEventType getType()
-	{
+	public CapsEventType getType() {
 		return CapsEventType.Default;
 	}
 
 	// #region Teleport/Region/Movement Messages
 
 	/* Sent to the client to indicate a teleport request has completed */
-	public class TeleportFinishMessage implements IMessage
-	{
+	public class TeleportFinishMessage implements IMessage {
 		// The <see cref="UUID"/> of the agent
 		public UUID AgentID;
 		//
@@ -200,19 +113,17 @@ public class CapsMessage implements IMessage
 		public int Flags;
 
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.TeleportFinish;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(1);
 
 			OSDArray infoArray = new OSDArray(1);
@@ -238,13 +149,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			OSDArray array = (OSDArray) map.get("Info");
 			OSDMap blockMap = (OSDMap) array.get(0);
 
@@ -261,8 +171,7 @@ public class CapsMessage implements IMessage
 
 	// Sent to the viewer when a neighboring simulator is requesting the agent
 	// make a connection to it.
-	public class EstablishAgentCommunicationMessage implements IMessage
-	{
+	public class EstablishAgentCommunicationMessage implements IMessage {
 		public UUID AgentID;
 		public InetAddress Address;
 		public int Port;
@@ -272,19 +181,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.EstablishAgentCommunication;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(3);
 			map.put("agent-id", OSD.FromUUID(AgentID));
 			map.put("sim-ip-and-port", OSD.FromString(String.format("%s:%d", Address.getHostAddress(), Port)));
@@ -294,40 +201,32 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			String ipAndPort = map.get("sim-ip-and-port").AsString();
 			int i = ipAndPort.indexOf(':');
 
 			AgentID = map.get("agent-id").AsUUID();
 			Port = 2345; // FIXME: What default port should we use?
-			try
-			{
-				if (i >= 0)
-				{
+			try {
+				if (i >= 0) {
 					Address = InetAddress.getByName(ipAndPort.substring(0, i));
 					Port = Integer.valueOf(ipAndPort.substring(i + 1));
-				}
-				else
-				{
+				} else {
 					Address = InetAddress.getByName(ipAndPort);
 				}
-			}
-			catch (UnknownHostException e)
-			{
+			} catch (UnknownHostException e) {
 				Address = null;
 			}
 			SeedCapability = map.get("seed-capability").AsUri();
 		}
 	}
 
-	public class CrossedRegionMessage implements IMessage
-	{
+	public class CrossedRegionMessage implements IMessage {
 		public Vector3 LookAt;
 		public Vector3 Position;
 		public UUID AgentID;
@@ -341,19 +240,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.CrossedRegion;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(3);
 
 			OSDArray infoArray = new OSDArray(1);
@@ -384,13 +281,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			OSDMap infoMap = (OSDMap) ((OSDArray) map.get("Info")).get(0);
 			LookAt = infoMap.get("LookAt").AsVector3();
 			Position = infoMap.get("Position").AsVector3();
@@ -407,10 +303,8 @@ public class CapsMessage implements IMessage
 		}
 	}
 
-	public class EnableSimulatorMessage implements IMessage
-	{
-		public class SimulatorInfoBlock
-		{
+	public class EnableSimulatorMessage implements IMessage {
+		public class SimulatorInfoBlock {
 			public long RegionHandle;
 			public InetAddress IP;
 			public int Port;
@@ -422,24 +316,21 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.EnableSimulator;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(1);
 
 			OSDArray array = new OSDArray(Simulators.length);
-			for (int i = 0; i < Simulators.length; i++)
-			{
+			for (int i = 0; i < Simulators.length; i++) {
 				SimulatorInfoBlock block = Simulators[i];
 
 				OSDMap blockMap = new OSDMap(3);
@@ -455,18 +346,16 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			OSDArray array = (OSDArray) map.get("SimulatorInfo");
 			Simulators = new SimulatorInfoBlock[array.size()];
 
-			for (int i = 0; i < array.size(); i++)
-			{
+			for (int i = 0; i < array.size(); i++) {
 				OSDMap blockMap = (OSDMap) array.get(i);
 
 				SimulatorInfoBlock block = new SimulatorInfoBlock();
@@ -481,8 +370,7 @@ public class CapsMessage implements IMessage
 	// A message sent to the client which indicates a teleport request has
 	// failed
 	// and contains some information on why it failed
-	public class TeleportFailedMessage implements IMessage
-	{
+	public class TeleportFailedMessage implements IMessage {
 		//
 		public String ExtraParams;
 		// A string key of the reason the teleport failed e.g. CouldntTPCloser
@@ -498,19 +386,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.TeleportFailed;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(2);
 
 			OSDMap alertInfoMap = new OSDMap(2);
@@ -533,13 +419,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 
 			OSDArray alertInfoArray = (OSDArray) map.get("AlertInfo");
 
@@ -554,14 +439,12 @@ public class CapsMessage implements IMessage
 		}
 	}
 
-	public class LandStatReplyMessage implements IMessage
-	{
+	public class LandStatReplyMessage implements IMessage {
 		public int ReportType;
 		public int RequestFlags;
 		public int TotalObjectCount;
 
-		public class ReportDataBlock
-		{
+		public class ReportDataBlock {
 			public Vector3 Location;
 			public String OwnerName;
 			public float Score;
@@ -578,19 +461,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.LandStatReply;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(3);
 
 			OSDMap requestDataMap = new OSDMap(3);
@@ -604,8 +485,7 @@ public class CapsMessage implements IMessage
 
 			OSDArray reportDataArray = new OSDArray();
 			OSDArray dataExtendedArray = new OSDArray();
-			for (int i = 0; i < ReportDataBlocks.length; i++)
-			{
+			for (int i = 0; i < ReportDataBlocks.length; i++) {
 				OSDMap reportMap = new OSDMap(8);
 				reportMap.put("LocationX", OSD.FromReal(ReportDataBlocks[i].Location.X));
 				reportMap.put("LocationY", OSD.FromReal(ReportDataBlocks[i].Location.Y));
@@ -631,13 +511,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 
 			OSDArray requestDataArray = (OSDArray) map.get("RequestData");
 			OSDMap requestMap = (OSDMap) requestDataArray.get(0);
@@ -646,8 +525,7 @@ public class CapsMessage implements IMessage
 			this.RequestFlags = requestMap.get("RequestFlags").AsUInteger();
 			this.TotalObjectCount = requestMap.get("TotalObjectCount").AsUInteger();
 
-			if (TotalObjectCount < 1)
-			{
+			if (TotalObjectCount < 1) {
 				ReportDataBlocks = new ReportDataBlock[0];
 				return;
 			}
@@ -656,13 +534,12 @@ public class CapsMessage implements IMessage
 			OSDArray dataExtendedArray = (OSDArray) map.get("DataExtended");
 
 			ReportDataBlocks = new ReportDataBlock[dataArray.size()];
-			for (int i = 0; i < dataArray.size(); i++)
-			{
+			for (int i = 0; i < dataArray.size(); i++) {
 				OSDMap blockMap = (OSDMap) dataArray.get(i);
 				OSDMap extMap = (OSDMap) dataExtendedArray.get(i);
 				ReportDataBlock block = new ReportDataBlock();
-				block.Location = new Vector3((float) blockMap.get("LocationX").AsReal(), (float) blockMap.get(
-						"LocationY").AsReal(), (float) blockMap.get("LocationZ").AsReal());
+				block.Location = new Vector3((float) blockMap.get("LocationX").AsReal(),
+						(float) blockMap.get("LocationY").AsReal(), (float) blockMap.get("LocationZ").AsReal());
 				block.OwnerName = blockMap.get("OwnerName").AsString();
 				block.Score = (float) blockMap.get("Score").AsReal();
 				block.TaskID = blockMap.get("TaskID").AsUUID();
@@ -681,17 +558,15 @@ public class CapsMessage implements IMessage
 	/**
 	 * Contains a list of prim owner information for a specific parcel in a
 	 * simulator
-	 * 
-	 * A Simulator will always return at least 1 entry If agent does not have
-	 * proper permission the OwnerID will be UUID.Zero If agent does not have
-	 * proper permission OR there are no primitives on parcel the
-	 * DataBlocksExtended map will not be sent from the simulator
+	 *
+	 * A Simulator will always return at least 1 entry If agent does not have proper
+	 * permission the OwnerID will be UUID.Zero If agent does not have proper
+	 * permission OR there are no primitives on parcel the DataBlocksExtended map
+	 * will not be sent from the simulator
 	 */
-	public class ParcelObjectOwnersReplyMessage implements IMessage
-	{
+	public class ParcelObjectOwnersReplyMessage implements IMessage {
 		// Prim ownership information for a specified owner on a single parcel
-		public class PrimOwner
-		{
+		public class PrimOwner {
 			// The <see cref="UUID"/> of the prim owner,
 			// UUID.Zero if agent has no permission to view prim owner
 			// information
@@ -714,24 +589,21 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.ParcelObjectOwnersReply;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDArray dataArray = new OSDArray(PrimOwnersBlock.length);
 			OSDArray dataExtendedArray = new OSDArray();
 
-			for (int i = 0; i < PrimOwnersBlock.length; i++)
-			{
+			for (int i = 0; i < PrimOwnersBlock.length; i++) {
 				OSDMap dataMap = new OSDMap(4);
 				dataMap.put("OwnerID", OSD.FromUUID(PrimOwnersBlock[i].OwnerID));
 				dataMap.put("Count", OSD.FromInteger(PrimOwnersBlock[i].Count));
@@ -754,31 +626,26 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			OSDArray dataArray = (OSDArray) map.get("Data");
 
 			// DataExtended is optional, will not exist of parcel contains zero
 			// prims
 			OSDArray dataExtendedArray;
-			if (map.containsKey("DataExtended"))
-			{
+			if (map.containsKey("DataExtended")) {
 				dataExtendedArray = (OSDArray) map.get("DataExtended");
-			}
-			else
-			{
+			} else {
 				dataExtendedArray = new OSDArray();
 			}
 
 			PrimOwnersBlock = new PrimOwner[dataArray.size()];
 
-			for (int i = 0; i < dataArray.size(); i++)
-			{
+			for (int i = 0; i < dataArray.size(); i++) {
 				OSDMap dataMap = (OSDMap) dataArray.get(i);
 				PrimOwner block = new PrimOwner();
 				block.OwnerID = dataMap.get("OwnerID").AsUUID();
@@ -789,8 +656,7 @@ public class CapsMessage implements IMessage
 				// if the agent has no permissions, or there are no prims, the
 				// counts
 				// should not match up, so we don't decode the DataExtended map
-				if (dataExtendedArray.size() == dataArray.size())
-				{
+				if (dataExtendedArray.size() == dataArray.size()) {
 					OSDMap dataExtendedMap = (OSDMap) dataExtendedArray.get(i);
 					block.TimeStamp = Helpers.UnixTimeToDateTime(dataExtendedMap.get("TimeStamp").AsUInteger());
 				}
@@ -801,8 +667,7 @@ public class CapsMessage implements IMessage
 
 	// The details of a single parcel in a region, also contains some regionwide
 	// globals
-	public class ParcelPropertiesMessage implements IMessage
-	{
+	public class ParcelPropertiesMessage implements IMessage {
 		// Simulator-local ID of this parcel
 		public int LocalID;
 		// Maximum corner of the axis-aligned bounding box for this parcel
@@ -867,8 +732,8 @@ public class CapsMessage implements IMessage
 		public int PassPrice;
 		//
 		public int PublicCount;
-        // Disallows people outside the parcel from being able to see in
-        public boolean Privacy;
+		// Disallows people outside the parcel from being able to see in
+		public boolean Privacy;
 		//
 		public boolean RegionDenyAnonymous;
 		//
@@ -932,23 +797,22 @@ public class CapsMessage implements IMessage
 		public boolean AnyAVSounds;
 		// true if group members outside can hear any sounds avatars inside play
 		public boolean GroupAVSounds;
+
 		/**
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.ParcelProperties;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(3);
 
 			OSDArray dataArray = new OSDArray(1);
@@ -984,7 +848,7 @@ public class CapsMessage implements IMessage
 			parcelDataMap.put("PassHours", OSD.FromReal(PassHours));
 			parcelDataMap.put("PassPrice", OSD.FromInteger(PassPrice));
 			parcelDataMap.put("PublicCount", OSD.FromInteger(PublicCount));
-            parcelDataMap.put("Privacy", OSD.FromBoolean(Privacy));
+			parcelDataMap.put("Privacy", OSD.FromBoolean(Privacy));
 			parcelDataMap.put("RegionDenyAnonymous", OSD.FromBoolean(RegionDenyAnonymous));
 			parcelDataMap.put("RegionPushOverride", OSD.FromBoolean(RegionPushOverride));
 			parcelDataMap.put("RentPrice", OSD.FromInteger(RentPrice));
@@ -1030,13 +894,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			OSDMap parcelDataMap = (OSDMap) ((OSDArray) map.get("ParcelData")).get(0);
 			LocalID = parcelDataMap.get("LocalID").AsInteger();
 			AABBMax = parcelDataMap.get("AABBMax").AsVector3();
@@ -1051,13 +914,10 @@ public class CapsMessage implements IMessage
 			Desc = parcelDataMap.get("Desc").AsString();
 
 			// LL sends this as binary, we'll convert it here
-			if (parcelDataMap.get("ParcelFlags").getType() == OSDType.Binary)
-			{
+			if (parcelDataMap.get("ParcelFlags").getType() == OSDType.Binary) {
 				byte[] bytes = parcelDataMap.get("ParcelFlags").AsBinary();
 				ParcelFlags = Parcel.ParcelFlags.getValue((int) Helpers.BytesToUInt32B(bytes));
-			}
-			else
-			{
+			} else {
 				ParcelFlags = Parcel.ParcelFlags.getValue(parcelDataMap.get("ParcelFlags").AsUInteger());
 			}
 			GroupID = parcelDataMap.get("GroupID").AsUUID();
@@ -1081,7 +941,7 @@ public class CapsMessage implements IMessage
 			PassHours = (float) parcelDataMap.get("PassHours").AsReal();
 			PassPrice = parcelDataMap.get("PassPrice").AsInteger();
 			PublicCount = parcelDataMap.get("PublicCount").AsInteger();
-            Privacy = parcelDataMap.get("Privacy").AsBoolean();
+			Privacy = parcelDataMap.get("Privacy").AsBoolean();
 			RegionDenyAnonymous = parcelDataMap.get("RegionDenyAnonymous").AsBoolean();
 			RegionPushOverride = parcelDataMap.get("RegionPushOverride").AsBoolean();
 			RentPrice = parcelDataMap.get("RentPrice").AsInteger();
@@ -1122,8 +982,7 @@ public class CapsMessage implements IMessage
 
 	// A message sent from the viewer to the simulator to updated a specific
 	// parcels settings
-	public class ParcelPropertiesUpdateMessage implements IMessage
-	{
+	public class ParcelPropertiesUpdateMessage implements IMessage {
 		// The {@link UUID} of the agent authorized to purchase this parcel of
 		// land or
 		// a NULL {@link UUID} if the sale is authorized to anyone
@@ -1173,7 +1032,7 @@ public class CapsMessage implements IMessage
 		//
 		public int PassPrice;
 		//
-        public boolean Privacy;
+		public boolean Privacy;
 		//
 		public int SalePrice;
 		//
@@ -1193,19 +1052,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.ParcelPropertiesUpdate;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap();
 			map.put("auth_buyer_id", OSD.FromUUID(AuthBuyerID));
 			map.put("auto_scale", OSD.FromBoolean(MediaAutoScale));
@@ -1229,7 +1086,7 @@ public class CapsMessage implements IMessage
 			map.put("parcel_flags", OSD.FromUInteger(ParcelFlags));
 			map.put("pass_hours", OSD.FromReal(PassHours));
 			map.put("pass_price", OSD.FromInteger(PassPrice));
-            map.put("privacy", OSD.FromBoolean(Privacy));
+			map.put("privacy", OSD.FromBoolean(Privacy));
 			map.put("sale_price", OSD.FromInteger(SalePrice));
 			map.put("snapshot_id", OSD.FromUUID(SnapshotID));
 			map.put("user_location", OSD.FromVector3(UserLocation));
@@ -1243,13 +1100,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			AuthBuyerID = map.get("auth_buyer_id").AsUUID();
 			MediaAutoScale = map.get("auto_scale").AsBoolean();
 			Category = ParcelCategory.setValue(map.get("category").AsInteger());
@@ -1271,19 +1127,16 @@ public class CapsMessage implements IMessage
 			ParcelFlags = Parcel.ParcelFlags.setValue((map.get("parcel_flags").AsUInteger()));
 			PassHours = (float) map.get("pass_hours").AsReal();
 			PassPrice = map.get("pass_price").AsUInteger();
-            Privacy = map.get("privacy").AsBoolean();
+			Privacy = map.get("privacy").AsBoolean();
 			SalePrice = map.get("sale_price").AsUInteger();
 			SnapshotID = map.get("snapshot_id").AsUUID();
 			UserLocation = map.get("user_location").AsVector3();
 			UserLookAt = map.get("user_look_at").AsVector3();
-			if (map.containsKey("see_avs"))
-			{
-			    SeeAVs = map.get("see_avs").AsBoolean();
+			if (map.containsKey("see_avs")) {
+				SeeAVs = map.get("see_avs").AsBoolean();
 				AnyAVSounds = map.get("any_av_sounds").AsBoolean();
 				GroupAVSounds = map.get("group_av_sounds").AsBoolean();
-			}
-			else
-			{
+			} else {
 				SeeAVs = true;
 				AnyAVSounds = true;
 				GroupAVSounds = true;
@@ -1292,8 +1145,7 @@ public class CapsMessage implements IMessage
 	}
 
 	// Base class used for the RemoteParcelRequest message
-	public abstract class RemoteParcelRequestBlock implements IMessage
-	{
+	public abstract class RemoteParcelRequestBlock implements IMessage {
 		public abstract OSDMap Serialize();
 
 		public abstract void Deserialize(OSDMap map);
@@ -1301,8 +1153,7 @@ public class CapsMessage implements IMessage
 
 	// A message sent from the viewer to the simulator to request information on
 	// a remote parcel
-	public class RemoteParcelRequestRequest extends RemoteParcelRequestBlock
-	{
+	public class RemoteParcelRequestRequest extends RemoteParcelRequestBlock {
 		// Local sim position of the parcel we are looking up
 		public Vector3 Location;
 		// Region handle of the parcel we are looking up
@@ -1314,19 +1165,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.RemoteParcelRequestRequest;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(3);
 			map.put("location", OSD.FromVector3(Location));
 			map.put("region_handle", OSD.FromULong(RegionHandle));
@@ -1336,13 +1185,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			Location = map.get("location").AsVector3();
 			RegionHandle = map.get("region_handle").AsULong();
 			RegionID = map.get("region_id").AsUUID();
@@ -1351,8 +1199,7 @@ public class CapsMessage implements IMessage
 
 	// A message sent from the simulator to the viewer in response to a <see
 	// cref="RemoteParcelRequestRequest"/>
-	public class RemoteParcelRequestReply extends RemoteParcelRequestBlock
-	{
+	public class RemoteParcelRequestReply extends RemoteParcelRequestBlock {
 		// The grid-wide unique parcel ID
 		public UUID ParcelID;
 
@@ -1360,19 +1207,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.RemoteParcelRequestReply;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(1);
 			map.put("parcel_id", OSD.FromUUID(ParcelID));
 			return map;
@@ -1380,13 +1225,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			if (map == null || !map.containsKey("parcel_id"))
 				ParcelID = UUID.Zero;
 			else
@@ -1396,8 +1240,7 @@ public class CapsMessage implements IMessage
 
 	// A message containing a request for a remote parcel from a viewer, or a
 	// response from the simulator to that request
-	public class RemoteParcelRequestMessage implements IMessage
-	{
+	public class RemoteParcelRequestMessage implements IMessage {
 		// The request or response details block
 		public RemoteParcelRequestBlock Request;
 
@@ -1405,45 +1248,37 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.RemoteParcelRequest;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			return Request.Serialize();
 		}
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
-			if (map.containsKey("parcel_id"))
-			{
+		public void Deserialize(OSDMap map) {
+			if (map.containsKey("parcel_id")) {
 				Request = new RemoteParcelRequestReply();
 				Request.Deserialize(map);
-			}
-			else if (map.containsKey("location"))
-			{
+			} else if (map.containsKey("location")) {
 				Request = new RemoteParcelRequestRequest();
 				Request.Deserialize(map);
-			}
-			else
-				logger.warn(
-						"Unable to deserialize RemoteParcelRequest: No message handler exists for method: "
-								+ map.AsString());
+			} else
+				logger.warn("Unable to deserialize RemoteParcelRequest: No message handler exists for method: "
+						+ map.AsString());
 		}
 	}
 
@@ -1451,8 +1286,7 @@ public class CapsMessage implements IMessage
 
 	// #region Inventory Messages
 
-	public class NewFileAgentInventoryMessage implements IMessage
-	{
+	public class NewFileAgentInventoryMessage implements IMessage {
 		public UUID FolderID;
 		public AssetItem.AssetType AssetType;
 		public InventoryItem.InventoryType InventoryType;
@@ -1463,19 +1297,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.NewFileAgentInventory;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(5);
 			map.put("folder_id", OSD.FromUUID(FolderID));
 			map.put("asset_type", OSD.FromString(AssetType.toString()));
@@ -1488,13 +1320,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			FolderID = map.get("folder_id").AsUUID();
 			AssetType = AssetItem.AssetType.setValue(map.get("asset_type").AsString());
 			InventoryType = InventoryItem.InventoryType.setValue(map.get("inventory_type").AsString());
@@ -1503,142 +1334,123 @@ public class CapsMessage implements IMessage
 		}
 	}
 
-    public class BulkUpdateInventoryMessage implements IMessage
-    {
-        public class FolderDataInfo
-        {
-            public UUID FolderID;
-            public UUID ParentID;
-            public String Name;
-            public FolderType Type;
+	public class BulkUpdateInventoryMessage implements IMessage {
+		public class FolderDataInfo {
+			public UUID FolderID;
+			public UUID ParentID;
+			public String Name;
+			public FolderType Type;
 
-            public FolderDataInfo(OSDMap map)
-            {
-                FolderID = map.get("FolderID").AsUUID();
-                ParentID = map.get("ParentID").AsUUID();
-                Name = map.get("Name").AsString();
-                Type = FolderType.setValue(map.get("Type").AsInteger());
-             }
-        }
+			public FolderDataInfo(OSDMap map) {
+				FolderID = map.get("FolderID").AsUUID();
+				ParentID = map.get("ParentID").AsUUID();
+				Name = map.get("Name").AsString();
+				Type = FolderType.setValue(map.get("Type").AsInteger());
+			}
+		}
 
-        public class ItemDataInfo
-        {
-            public UUID ItemID;
-            public int CallbackID;
-            public UUID FolderID;
-            public UUID CreatorID;
-            public UUID OwnerID;
-            public UUID GroupID;
-            public int BaseMask;
-            public int OwnerMask;
-            public int GroupMask;
-            public int EveryoneMask;
-            public int NextOwnerMask;
-            public boolean GroupOwned;
-            public UUID AssetID;
-            public AssetType Type;
-            public InventoryType InvType;
-            public int Flags;
-            public SaleType saleType;
-            public int SalePrice;
-            public String Name;
-            public String Description;
-            public Date CreationDate;
-            public int CRC;
+		public class ItemDataInfo {
+			public UUID ItemID;
+			public int CallbackID;
+			public UUID FolderID;
+			public UUID CreatorID;
+			public UUID OwnerID;
+			public UUID GroupID;
+			public int BaseMask;
+			public int OwnerMask;
+			public int GroupMask;
+			public int EveryoneMask;
+			public int NextOwnerMask;
+			public boolean GroupOwned;
+			public UUID AssetID;
+			public AssetType Type;
+			public InventoryType InvType;
+			public int Flags;
+			public SaleType saleType;
+			public int SalePrice;
+			public String Name;
+			public String Description;
+			public Date CreationDate;
+			public int CRC;
 
-    		public ItemDataInfo(OSDMap map)
-            {
-                ItemID = map.get("ItemID").AsUUID();
-                CallbackID = map.get("CallbackID").AsUInteger();
-                FolderID = map.get("FolderID").AsUUID();
-                CreatorID = map.get("CreatorID").AsUUID();
-                OwnerID = map.get("OwnerID").AsUUID();
-                GroupID = map.get("GroupID").AsUUID();
-                BaseMask = PermissionMask.setValue(map.get("BaseMask").AsUInteger());
-                OwnerMask = PermissionMask.setValue(map.get("OwnerMask").AsUInteger());
-                GroupMask = PermissionMask.setValue(map.get("GroupMask").AsUInteger());
-                EveryoneMask = PermissionMask.setValue(map.get("EveryoneMask").AsUInteger());
-                NextOwnerMask = PermissionMask.setValue(map.get("NextOwnerMask").AsUInteger());
-                GroupOwned = map.get("GroupOwned").AsBoolean();
-                AssetID = map.get("AssetID").AsUUID();
-                Type = Asset.AssetType.setValue(map.get("Type").AsInteger());
-                InvType = InventoryType.setValue(map.get("InvType").AsInteger());
-                Flags = map.get("Flags").AsUInteger();
-                saleType = SaleType.setValue(map.get("SaleType").AsInteger());
-                SalePrice = map.get("SaleType").AsInteger();
-                Name = map.get("Name").AsString();
-                Description = map.get("Description").AsString();
-                CreationDate = Helpers.UnixTimeToDateTime(map.get("CreationDate").AsReal());
-                CRC = map.get("CRC").AsUInteger();
-            }
-        }
+			public ItemDataInfo(OSDMap map) {
+				ItemID = map.get("ItemID").AsUUID();
+				CallbackID = map.get("CallbackID").AsUInteger();
+				FolderID = map.get("FolderID").AsUUID();
+				CreatorID = map.get("CreatorID").AsUUID();
+				OwnerID = map.get("OwnerID").AsUUID();
+				GroupID = map.get("GroupID").AsUUID();
+				BaseMask = PermissionMask.setValue(map.get("BaseMask").AsUInteger());
+				OwnerMask = PermissionMask.setValue(map.get("OwnerMask").AsUInteger());
+				GroupMask = PermissionMask.setValue(map.get("GroupMask").AsUInteger());
+				EveryoneMask = PermissionMask.setValue(map.get("EveryoneMask").AsUInteger());
+				NextOwnerMask = PermissionMask.setValue(map.get("NextOwnerMask").AsUInteger());
+				GroupOwned = map.get("GroupOwned").AsBoolean();
+				AssetID = map.get("AssetID").AsUUID();
+				Type = Asset.AssetType.setValue(map.get("Type").AsInteger());
+				InvType = InventoryType.setValue(map.get("InvType").AsInteger());
+				Flags = map.get("Flags").AsUInteger();
+				saleType = SaleType.setValue(map.get("SaleType").AsInteger());
+				SalePrice = map.get("SaleType").AsInteger();
+				Name = map.get("Name").AsString();
+				Description = map.get("Description").AsString();
+				CreationDate = Helpers.UnixTimeToDateTime(map.get("CreationDate").AsReal());
+				CRC = map.get("CRC").AsUInteger();
+			}
+		}
 
-        public UUID AgentID;
-        public UUID TransactionID;
-        public FolderDataInfo[] FolderData;
-        public ItemDataInfo[] ItemData;
+		public UUID AgentID;
+		public UUID TransactionID;
+		public FolderDataInfo[] FolderData;
+		public ItemDataInfo[] ItemData;
 
 		/**
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.BulkUpdateInventory;
 		}
 
 		@Override
-		public OSDMap Serialize()
-        {
-            throw new UnsupportedOperationException();
-        }
+		public OSDMap Serialize() {
+			throw new UnsupportedOperationException();
+		}
 
-        @Override
-		public void Deserialize(OSDMap map)
-        {
-            if (map.get("AgentData") instanceof OSDArray)
-            {
-                OSDArray array = (OSDArray)map.get("AgentData");
-                if (array.size() > 0)
-                {
-                    OSDMap adata = (OSDMap)array.get(0);
-                    AgentID = adata.get("AgentID").AsUUID();
-                    TransactionID = adata.get("TransactionID").AsUUID();
-                }
-            }
-            
-            if (map.get("FolderData") instanceof OSDArray)
-            {
-                OSDArray array = (OSDArray)map.get("FolderData");
-                FolderData =  new FolderDataInfo[array.size()];
-                for (int i = 0; i < array.size(); i++)
-                {
-                    FolderData[i] = new FolderDataInfo((OSDMap)array.get(i));
-                }
-            }
-            else
-            {
-                FolderData = new FolderDataInfo[0];
-            }
+		@Override
+		public void Deserialize(OSDMap map) {
+			if (map.get("AgentData") instanceof OSDArray) {
+				OSDArray array = (OSDArray) map.get("AgentData");
+				if (array.size() > 0) {
+					OSDMap adata = (OSDMap) array.get(0);
+					AgentID = adata.get("AgentID").AsUUID();
+					TransactionID = adata.get("TransactionID").AsUUID();
+				}
+			}
 
-            if (map.get("ItemData") instanceof OSDArray)
-            {
-                OSDArray array = (OSDArray)map.get("ItemData");
-                ItemData = new ItemDataInfo[array.size()];
-                for (int i = 0; i < array.size(); i++)
-                {
-                    ItemData[i] = new ItemDataInfo((OSDMap)array.get(i));
-                }
-            }
-            else
-            {
-                ItemData = new ItemDataInfo[0];
-            }
-        }
-    }
+			if (map.get("FolderData") instanceof OSDArray) {
+				OSDArray array = (OSDArray) map.get("FolderData");
+				FolderData = new FolderDataInfo[array.size()];
+				for (int i = 0; i < array.size(); i++) {
+					FolderData[i] = new FolderDataInfo((OSDMap) array.get(i));
+				}
+			} else {
+				FolderData = new FolderDataInfo[0];
+			}
 
-    public class WebFetchInventoryDescendentsMessage implements IMessage
-	{
+			if (map.get("ItemData") instanceof OSDArray) {
+				OSDArray array = (OSDArray) map.get("ItemData");
+				ItemData = new ItemDataInfo[array.size()];
+				for (int i = 0; i < array.size(); i++) {
+					ItemData[i] = new ItemDataInfo((OSDMap) array.get(i));
+				}
+			} else {
+				ItemData = new ItemDataInfo[0];
+			}
+		}
+	}
+
+	public class WebFetchInventoryDescendentsMessage implements IMessage {
 
 		// public class Folder implements InventoryBase
 		// {
@@ -1655,20 +1467,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.WebFetchInventoryDescendents;
 		}
 
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			throw new UnsupportedOperationException();
 		}
 	}
@@ -1679,15 +1488,13 @@ public class CapsMessage implements IMessage
 
 	// A message sent from the simulator to an agent which contains the groups
 	// the agent is in
-	public class AgentGroupDataUpdateMessage implements IMessage
-	{
+	public class AgentGroupDataUpdateMessage implements IMessage {
 		// The Agent receiving the message
 
 		public UUID AgentID;
 
 		// Group Details specific to the agent
-		public class GroupData
-		{
+		public class GroupData {
 			// true of the agent accepts group notices
 			public boolean AcceptNotices;
 			// The agents tier contribution to the group
@@ -1699,15 +1506,14 @@ public class CapsMessage implements IMessage
 			// The name of the group
 			public String GroupName;
 			// The Active Title
-			public String GroupTitle; 
+			public String GroupTitle;
 			// The aggregate permissions the agent has in the group for all
 			// roles the agent is assigned
 			public long GroupPowers;
 		}
 
 		// An optional block containing additional agent specific information
-		public class NewGroupData
-		{
+		public class NewGroupData {
 			// true of the agent allows this group to be listed in their profile
 			public boolean ListInProfile;
 		}
@@ -1723,19 +1529,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.AgentGroupDataUpdate;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(3);
 
 			OSDMap agent = new OSDMap(1);
@@ -1748,8 +1552,7 @@ public class CapsMessage implements IMessage
 
 			OSDArray groupDataArray = new OSDArray(GroupDataBlock.length);
 
-			for (int i = 0; i < GroupDataBlock.length; i++)
-			{
+			for (int i = 0; i < GroupDataBlock.length; i++) {
 				OSDMap group = new OSDMap(7);
 				group.put("AcceptNotices", OSD.FromBoolean(GroupDataBlock[i].AcceptNotices));
 				group.put("Contribution", OSD.FromInteger(GroupDataBlock[i].Contribution));
@@ -1765,8 +1568,7 @@ public class CapsMessage implements IMessage
 
 			OSDArray newGroupDataArray = new OSDArray(NewGroupDataBlock.length);
 
-			for (int i = 0; i < NewGroupDataBlock.length; i++)
-			{
+			for (int i = 0; i < NewGroupDataBlock.length; i++) {
 				OSDMap group = new OSDMap(1);
 				group.put("ListInProfile", OSD.FromBoolean(NewGroupDataBlock[i].ListInProfile));
 				newGroupDataArray.add(group);
@@ -1779,13 +1581,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			OSDArray agentArray = (OSDArray) map.get("AgentData");
 			OSDMap agentMap = (OSDMap) agentArray.get(0);
 			AgentID = agentMap.get("AgentID").AsUUID();
@@ -1794,8 +1595,7 @@ public class CapsMessage implements IMessage
 
 			GroupDataBlock = new GroupData[groupArray.size()];
 
-			for (int i = 0; i < groupArray.size(); i++)
-			{
+			for (int i = 0; i < groupArray.size(); i++) {
 				OSDMap groupMap = (OSDMap) groupArray.get(i);
 
 				GroupData groupData = new GroupData();
@@ -1814,25 +1614,20 @@ public class CapsMessage implements IMessage
 			// If request for current groups came very close to login
 			// the Linden sim will not include the NewGroupData block, but
 			// it will instead set all ListInProfile fields to false
-			if (map.containsKey("NewGroupData"))
-			{
+			if (map.containsKey("NewGroupData")) {
 				OSDArray newGroupArray = (OSDArray) map.get("NewGroupData");
 
 				NewGroupDataBlock = new NewGroupData[newGroupArray.size()];
 
-				for (int i = 0; i < newGroupArray.size(); i++)
-				{
+				for (int i = 0; i < newGroupArray.size(); i++) {
 					OSDMap newGroupMap = (OSDMap) newGroupArray.get(i);
 					NewGroupData newGroupData = new NewGroupData();
 					newGroupData.ListInProfile = newGroupMap.get("ListInProfile").AsBoolean();
 					NewGroupDataBlock[i] = newGroupData;
 				}
-			}
-			else
-			{
+			} else {
 				NewGroupDataBlock = new NewGroupData[GroupDataBlock.length];
-				for (int i = 0; i < NewGroupDataBlock.length; i++)
-				{
+				for (int i = 0; i < NewGroupDataBlock.length; i++) {
 					NewGroupData newGroupData = new NewGroupData();
 					newGroupData.ListInProfile = false;
 					NewGroupDataBlock[i] = newGroupData;
@@ -1844,8 +1639,7 @@ public class CapsMessage implements IMessage
 	// A message sent from the viewer to the simulator which
 	// specifies the language and permissions for others to detect the language
 	// specified
-	public class UpdateAgentLanguageMessage implements IMessage
-	{
+	public class UpdateAgentLanguageMessage implements IMessage {
 		// A string containng the default language to use for the agent
 		public String Language;
 		// true of others are allowed to know the language setting
@@ -1855,19 +1649,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.UpdateAgentLanguage;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(2);
 
 			map.put("language", OSD.FromString(Language));
@@ -1878,13 +1670,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			LanguagePublic = map.get("language_is_public").AsBoolean();
 			Language = map.get("language").AsString();
 		}
@@ -1892,11 +1683,9 @@ public class CapsMessage implements IMessage
 
 	// An CapsEventQueue message sent from the simulator to an agent when the agent
 	// leaves a group
-	public class AgentDropGroupMessage implements IMessage
-	{
+	public class AgentDropGroupMessage implements IMessage {
 		// An object containing the Agents UUID, and the Groups UUID
-		public class AgentData
-		{
+		public class AgentData {
 			// The ID of the Agent leaving the group
 			public UUID AgentID;
 			// The GroupID the Agent is leaving
@@ -1911,25 +1700,22 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.AgentDropGroup;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(1);
 
 			OSDArray agentDataArray = new OSDArray(AgentDataBlock.length);
 
-			for (int i = 0; i < AgentDataBlock.length; i++)
-			{
+			for (int i = 0; i < AgentDataBlock.length; i++) {
 				OSDMap agentMap = new OSDMap(2);
 				agentMap.put("AgentID", OSD.FromUUID(AgentDataBlock[i].AgentID));
 				agentMap.put("GroupID", OSD.FromUUID(AgentDataBlock[i].GroupID));
@@ -1942,19 +1728,17 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			OSDArray agentDataArray = (OSDArray) map.get("AgentData");
 
 			AgentDataBlock = new AgentData[agentDataArray.size()];
 
-			for (int i = 0; i < agentDataArray.size(); i++)
-			{
+			for (int i = 0; i < agentDataArray.size(); i++) {
 				OSDMap agentMap = (OSDMap) agentDataArray.get(i);
 				AgentData agentData = new AgentData();
 
@@ -1968,10 +1752,8 @@ public class CapsMessage implements IMessage
 
 	// An CapsEventQueue message sent from the simulator to an agent when the agent
 	// state changes
-	public class AgentStateUpdateMessage implements IMessage
-	{
-		public class Preferences
-		{
+	public class AgentStateUpdateMessage implements IMessage {
+		public class Preferences {
 			public int godLevel;
 			public boolean languageIsPublic;
 			public String maxAccess;
@@ -1989,19 +1771,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.AgentStateUpdate;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap" containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap access = new OSDMap(1);
 			access.put("max", OSD.FromString(preferences.maxAccess));
 
@@ -2009,10 +1789,10 @@ public class CapsMessage implements IMessage
 			prefs.put("god_level", OSD.FromInteger(preferences.godLevel));
 			prefs.put("language_is_public", OSD.FromBoolean(preferences.languageIsPublic));
 			prefs.put("language", OSD.FromString(preferences.language));
-			prefs.put("alter_permanent_objects", OSD.FromBoolean(preferences.alterPermanentObjects));			
-			prefs.put("alter_navmesh_objects", OSD.FromBoolean(preferences.alterNavmeshObjects));			
+			prefs.put("alter_permanent_objects", OSD.FromBoolean(preferences.alterPermanentObjects));
+			prefs.put("alter_navmesh_objects", OSD.FromBoolean(preferences.alterNavmeshObjects));
 			prefs.put("access_prefs", access);
-			
+
 			OSDMap map = new OSDMap(3);
 			map.put("has_modified_navmesh", OSD.FromBoolean(hasModifiedNavmesh));
 			map.put("can_modify_navmesh", OSD.FromBoolean(canModifyNavmesh));
@@ -2023,40 +1803,38 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
-		 * @param map An <see cref="OSDMap" containing the data
+		 *
+		 * @param map
+		 *            An <see cref="OSDMap" containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			hasModifiedNavmesh = map.get("has_modified_navmesh").AsBoolean();
 			canModifyNavmesh = map.get("can_modify_navmesh").AsBoolean();
 			preferences = new Preferences();
 
-			OSDMap prefs = (OSDMap)map.get("preferences");
-			if (prefs != null)
-			{
+			OSDMap prefs = (OSDMap) map.get("preferences");
+			if (prefs != null) {
 				preferences.godLevel = prefs.get("god_level").AsInteger();
 				preferences.languageIsPublic = prefs.get("language_is_public").AsBoolean();
 				preferences.language = prefs.get("language").AsString();
-				preferences.alterPermanentObjects = prefs.get("alter_permanent_objects").AsBoolean();			
-				preferences.alterNavmeshObjects = prefs.get("alter_navmesh_objects").AsBoolean();			
+				preferences.alterPermanentObjects = prefs.get("alter_permanent_objects").AsBoolean();
+				preferences.alterNavmeshObjects = prefs.get("alter_navmesh_objects").AsBoolean();
 
-				OSDMap access = (OSDMap)prefs.get("access_prefs");
+				OSDMap access = (OSDMap) prefs.get("access_prefs");
 				preferences.maxAccess = access.get("max").AsString();
 			}
 		}
 	}
 
 	// Base class for Asset uploads/results via Capabilities
-	public abstract class AssetUploaderBlock
-	{
+	public abstract class AssetUploaderBlock {
 		// The request state
 		public String State;
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		public abstract OSDMap Serialize();
@@ -2067,20 +1845,17 @@ public class CapsMessage implements IMessage
 	// A message sent from the viewer to the simulator to request a temporary
 	// upload capability
 	// which allows an asset to be uploaded
-	public class UploaderRequestUpload extends AssetUploaderBlock
-	{
+	public class UploaderRequestUpload extends AssetUploaderBlock {
 		// The Capability URL sent by the simulator to upload the baked texture
 		// to
 		public URI Url;
 
-		public UploaderRequestUpload()
-		{
+		public UploaderRequestUpload() {
 			State = "upload";
 		}
 
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(2);
 			map.put("state", OSD.FromString(State));
 			map.put("uploader", OSD.FromUri(Url));
@@ -2089,8 +1864,7 @@ public class CapsMessage implements IMessage
 		}
 
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			Url = map.get("uploader").AsUri();
 			State = map.get("state").AsString();
 		}
@@ -2098,19 +1872,16 @@ public class CapsMessage implements IMessage
 
 	// A message sent from the simulator that will inform the agent the upload
 	// is complete, and the UUID of the uploaded asset
-	public class UploaderRequestComplete extends AssetUploaderBlock
-	{
+	public class UploaderRequestComplete extends AssetUploaderBlock {
 		// The uploaded texture asset ID
 		public UUID AssetID;
 
-		public UploaderRequestComplete()
-		{
+		public UploaderRequestComplete() {
 			State = "complete";
 		}
 
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(2);
 			map.put("state", OSD.FromString(State));
 			map.put("new_asset", OSD.FromUUID(AssetID));
@@ -2119,8 +1890,7 @@ public class CapsMessage implements IMessage
 		}
 
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			AssetID = map.get("new_asset").AsUUID();
 			State = map.get("state").AsString();
 		}
@@ -2129,8 +1899,7 @@ public class CapsMessage implements IMessage
 	// A message sent from the viewer to the simulator to request a temporary
 	// capability URI which is used to upload an agents baked appearance
 	// textures
-	public class UploadBakedTextureMessage implements IMessage
-	{
+	public class UploadBakedTextureMessage implements IMessage {
 		// Object containing request or response
 		public AssetUploaderBlock Request;
 
@@ -2138,46 +1907,39 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.UploadBakedTexture;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			return Request.Serialize();
 		}
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
-			if (map.containsKey("state"))
-			{
+		public void Deserialize(OSDMap map) {
+			if (map.containsKey("state")) {
 				String value = map.get("state").AsString();
-				if (value.equals("upload"))
-				{
+				if (value.equals("upload")) {
 					Request = new UploaderRequestUpload();
 					Request.Deserialize(map);
-				}
-				else if (value.equals("complete"))
-				{
+				} else if (value.equals("complete")) {
 					Request = new UploaderRequestComplete();
 					Request.Deserialize(map);
-				}
-				else
-					logger.warn("Unable to deserialize UploadBakedTexture: No message handler exists for state " + value);
+				} else
+					logger.warn(
+							"Unable to deserialize UploadBakedTexture: No message handler exists for state " + value);
 			}
 		}
 	}
@@ -2188,8 +1950,7 @@ public class CapsMessage implements IMessage
 
 	// A message sent from the simulator which indicates the minimum version
 	// required for using voice chat
-	public class RequiredVoiceVersionMessage implements IMessage
-	{
+	public class RequiredVoiceVersionMessage implements IMessage {
 		// Major Version Required
 		public int MajorVersion;
 		// Minor version required
@@ -2201,19 +1962,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.RequiredVoiceVersion;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(4);
 			map.put("major_version", OSD.FromInteger(MajorVersion));
 			map.put("minor_version", OSD.FromInteger(MinorVersion));
@@ -2224,13 +1983,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			MajorVersion = map.get("major_version").AsInteger();
 			MinorVersion = map.get("minor_version").AsInteger();
 			RegionName = map.get("region_name").AsString();
@@ -2239,8 +1997,7 @@ public class CapsMessage implements IMessage
 
 	// A message sent from the simulator to the viewer containing the voice
 	// server URI
-	public class ParcelVoiceInfoRequestMessage implements IMessage
-	{
+	public class ParcelVoiceInfoRequestMessage implements IMessage {
 		// The Parcel ID which the voice server URI applies
 		public int ParcelID;
 		// The name of the region
@@ -2253,19 +2010,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.ParcelVoiceInfoRequest;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(3);
 			map.put("parcel_local_id", OSD.FromInteger(ParcelID));
 			map.put("region_name", OSD.FromString(RegionName));
@@ -2280,13 +2035,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			ParcelID = map.get("parcel_local_id").AsInteger();
 			RegionName = map.get("region_name").AsString();
 
@@ -2295,8 +2049,7 @@ public class CapsMessage implements IMessage
 		}
 	}
 
-	public class ProvisionVoiceAccountRequestMessage implements IMessage
-	{
+	public class ProvisionVoiceAccountRequestMessage implements IMessage {
 		//
 		public String Password;
 		//
@@ -2306,19 +2059,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.ProvisionVoiceAccountRequest;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(2);
 
 			map.put("username", OSD.FromString(Username));
@@ -2329,13 +2080,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			Username = map.get("username").AsString();
 			Password = map.get("password").AsString();
 		}
@@ -2347,8 +2097,7 @@ public class CapsMessage implements IMessage
 
 	// A message sent by the viewer to the simulator to request a temporary
 	// capability for a script contained with in a Tasks inventory to be updated
-	public class UploadScriptTaskMessage implements IMessage
-	{
+	public class UploadScriptTaskMessage implements IMessage {
 		// Object containing request or response
 		public AssetUploaderBlock Request;
 
@@ -2356,24 +2105,21 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.UploadScriptTask;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			return Request.Serialize();
 		}
 
-		public UploadScriptTaskMessage(String value)
-		{
+		public UploadScriptTaskMessage(String value) {
 			if (value.equals("upload"))
 				Request = new UploaderRequestUpload();
 			else if (value.equals("complete"))
@@ -2384,27 +2130,21 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
-			if (map.containsKey("state"))
-			{
+		public void Deserialize(OSDMap map) {
+			if (map.containsKey("state")) {
 				String value = map.get("state").AsString();
-				if (value.equals("upload"))
-				{
+				if (value.equals("upload")) {
 					Request = new UploaderRequestUpload();
 					Request.Deserialize(map);
-				}
-				else if (value.equals("complete"))
-				{
+				} else if (value.equals("complete")) {
 					Request = new UploaderRequestComplete();
 					Request.Deserialize(map);
-				}
-				else
+				} else
 					logger.warn("Unable to deserialize UploadScriptTask: No message handler exists for state " + value);
 			}
 		}
@@ -2412,8 +2152,7 @@ public class CapsMessage implements IMessage
 
 	// A message sent from the simulator to the viewer to indicate a Tasks
 	// scripts status.
-	public class ScriptRunningReplyMessage implements IMessage
-	{
+	public class ScriptRunningReplyMessage implements IMessage {
 		// The Asset ID of the script
 		public UUID ItemID;
 		// True of the script is compiled/ran using the mono interpreter, false
@@ -2429,19 +2168,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.ScriptRunningReply;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(2);
 
 			OSDMap scriptMap = new OSDMap(4);
@@ -2460,13 +2197,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			OSDArray scriptArray = (OSDArray) map.get("Script");
 
 			OSDMap scriptMap = (OSDMap) scriptArray.get(0);
@@ -2480,8 +2216,7 @@ public class CapsMessage implements IMessage
 
 	// A message containing the request/response used for updating a gesture
 	// contained with an agents inventory
-	public class UpdateGestureAgentInventoryMessage implements IMessage
-	{
+	public class UpdateGestureAgentInventoryMessage implements IMessage {
 		// Object containing request or response
 		public AssetUploaderBlock Request;
 
@@ -2489,61 +2224,52 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.UpdateGestureAgentInventory;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			return Request.Serialize();
 		}
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
-			if (map.containsKey("item_id"))
-			{
+		public void Deserialize(OSDMap map) {
+			if (map.containsKey("item_id")) {
 				Request = new UpdateAgentInventoryRequestMessage();
 				Request.Deserialize(map);
-			}
-			else if (map.containsKey("state"))
-			{
+			} else if (map.containsKey("state")) {
 				String value = map.get("state").AsString();
-				if (value.equals("upload"))
-				{
+				if (value.equals("upload")) {
 					Request = new UploaderRequestUpload();
 					Request.Deserialize(map);
-				}
-				else if (value.equals("complete"))
-				{
+				} else if (value.equals("complete")) {
 					Request = new UploaderRequestComplete();
 					Request.Deserialize(map);
-				}
-				else
-					logger.warn("Unable to deserialize UpdateGestureAgentInventory: No message handler exists for state " + value);
-			}
-			else
-				logger.warn("Unable to deserialize UpdateGestureAgentInventory: No message handler exists for message " + map.AsString());
+				} else
+					logger.warn(
+							"Unable to deserialize UpdateGestureAgentInventory: No message handler exists for state "
+									+ value);
+			} else
+				logger.warn("Unable to deserialize UpdateGestureAgentInventory: No message handler exists for message "
+						+ map.AsString());
 		}
 	}
 
 	// A message request/response which is used to update a notecard contained
 	// within a tasks inventory
-	public class UpdateNotecardTaskInventoryMessage implements IMessage
-	{
+	public class UpdateNotecardTaskInventoryMessage implements IMessage {
 		// The {@link UUID} of the Task containing the notecard asset to update
 		public UUID TaskID;
 		// The notecard assets {@link UUID} contained in the tasks inventory
@@ -2553,19 +2279,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.UpdateNotecardTaskInventory;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(1);
 			map.put("task_id", OSD.FromUUID(TaskID));
 			map.put("item_id", OSD.FromUUID(ItemID));
@@ -2575,13 +2299,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			TaskID = map.get("task_id").AsUUID();
 			ItemID = map.get("item_id").AsUUID();
 		}
@@ -2592,19 +2315,17 @@ public class CapsMessage implements IMessage
 	// A reusable class containing a message sent from the viewer to the
 	// simulator to request a temporary uploader capability
 	// which is used to update an asset in an agents inventory
-	public class UpdateAgentInventoryRequestMessage extends AssetUploaderBlock
-	{
+	public class UpdateAgentInventoryRequestMessage extends AssetUploaderBlock {
 		// The Notecard AssetID to replace
 		public UUID ItemID;
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(1);
 			map.put("item_id", OSD.FromUUID(ItemID));
 
@@ -2613,21 +2334,19 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			ItemID = map.get("item_id").AsUUID();
 		}
 	}
 
 	// A message containing the request/response used for updating a notecard
 	// contained with an agents inventory
-	public class UpdateNotecardAgentInventoryMessage implements IMessage
-	{
+	public class UpdateNotecardAgentInventoryMessage implements IMessage {
 		// Object containing request or response
 		public AssetUploaderBlock Request;
 
@@ -2635,59 +2354,50 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.UpdateNotecardAgentInventory;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			return Request.Serialize();
 		}
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
-			if (map.containsKey("item_id"))
-			{
+		public void Deserialize(OSDMap map) {
+			if (map.containsKey("item_id")) {
 				Request = new UpdateAgentInventoryRequestMessage();
 				Request.Deserialize(map);
-			}
-			else if (map.containsKey("state"))
-			{
+			} else if (map.containsKey("state")) {
 				String value = map.get("state").AsString();
-				if (value.equals("upload"))
-				{
+				if (value.equals("upload")) {
 					Request = new UploaderRequestUpload();
 					Request.Deserialize(map);
-				}
-				else if (value.equals("complete"))
-				{
+				} else if (value.equals("complete")) {
 					Request = new UploaderRequestComplete();
 					Request.Deserialize(map);
-				}
-				else
-					logger.warn("Unable to deserialize UpdateNotecardAgentInventory: No message handler exists for state " + value);
-			}
-			else
-				logger.warn("Unable to deserialize UpdateNotecardAgentInventory: No message handler exists for message " + map.toString());
+				} else
+					logger.warn(
+							"Unable to deserialize UpdateNotecardAgentInventory: No message handler exists for state "
+									+ value);
+			} else
+				logger.warn("Unable to deserialize UpdateNotecardAgentInventory: No message handler exists for message "
+						+ map.toString());
 		}
 	}
 
-	public class CopyInventoryFromNotecardMessage implements IMessage
-	{
+	public class CopyInventoryFromNotecardMessage implements IMessage {
 		public int CallbackID;
 		public UUID FolderID;
 		public UUID ItemID;
@@ -2698,19 +2408,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.CopyInventoryFromNotecard;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(5);
 			map.put("callback-id", OSD.FromInteger(CallbackID));
 			map.put("folder-id", OSD.FromUUID(FolderID));
@@ -2723,13 +2431,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			CallbackID = map.get("callback-id").AsInteger();
 			FolderID = map.get("folder-id").AsUUID();
 			ItemID = map.get("item-id").AsUUID();
@@ -2741,8 +2448,7 @@ public class CapsMessage implements IMessage
 	// A message sent from the simulator to the viewer which indicates an error
 	// occurred while attempting
 	// to update a script in an agents or tasks inventory
-	public class UploaderScriptRequestError extends AssetUploaderBlock implements IMessage
-	{
+	public class UploaderScriptRequestError extends AssetUploaderBlock implements IMessage {
 		// true of the script was successfully compiled by the simulator
 		public boolean Compiled;
 		// A String containing the error which occurred while trying to update
@@ -2755,14 +2461,12 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.UploaderScriptRequestError;
 		}
 
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(4);
 			map.put("state", OSD.FromString(State));
 			map.put("new_asset", OSD.FromUUID(AssetID));
@@ -2775,8 +2479,7 @@ public class CapsMessage implements IMessage
 		}
 
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			AssetID = map.get("new_asset").AsUUID();
 			Compiled = map.get("compiled").AsBoolean();
 			State = map.get("state").AsString();
@@ -2789,8 +2492,7 @@ public class CapsMessage implements IMessage
 	// A message sent from the viewer to the simulator requesting the update of
 	// an existing script contained
 	// within a tasks inventory
-	public class UpdateScriptTaskUpdateMessage extends AssetUploaderBlock implements IMessage
-	{
+	public class UpdateScriptTaskUpdateMessage extends AssetUploaderBlock implements IMessage {
 		// if true, set the script mode to running
 		public boolean ScriptRunning;
 		// The scripts InventoryItem ItemID to update
@@ -2806,19 +2508,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.UpdateScriptTaskUpdateMessage;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(4);
 			map.put("is_script_running", OSD.FromBoolean(ScriptRunning));
 			map.put("item_id", OSD.FromUUID(ItemID));
@@ -2829,13 +2529,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			ScriptRunning = map.get("is_script_running").AsBoolean();
 			ItemID = map.get("item_id").AsUUID();
 			Target = map.get("target").AsString();
@@ -2845,8 +2544,7 @@ public class CapsMessage implements IMessage
 
 	// A message containing either the request or response used in updating a
 	// script inside a tasks inventory
-	public class UpdateScriptTaskMessage implements IMessage
-	{
+	public class UpdateScriptTaskMessage implements IMessage {
 		// Object containing request or response
 		public AssetUploaderBlock Request;
 
@@ -2854,102 +2552,80 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.UpdateScriptTask;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			return Request.Serialize();
 		}
 
-		public void GetMessageHandler(OSDMap map)
-		{
+		public void GetMessageHandler(OSDMap map) {
 			String value = map.get("method").AsString();
-			if (value.equals("task_id"))
-			{
+			if (value.equals("task_id")) {
 				Request = new UpdateScriptTaskUpdateMessage();
-			}
-			else if (value.equals("upload"))
-			{
+			} else if (value.equals("upload")) {
 				Request = new UploaderRequestUpload();
-			}
-			else if (value.equals("errors"))
-			{
+			} else if (value.equals("errors")) {
 				Request = new UploaderScriptRequestError();
-			}
-			else if (value.equals("complete"))
-			{
+			} else if (value.equals("complete")) {
 				Request = new UploaderRequestScriptComplete();
-			}
-			else
-				logger.warn("Unable to deserialize UpdateScriptTaskMessage: No message handler exists for state " + value);
+			} else
+				logger.warn(
+						"Unable to deserialize UpdateScriptTaskMessage: No message handler exists for state " + value);
 		}
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
-			if (map.containsKey("task_id"))
-			{
+		public void Deserialize(OSDMap map) {
+			if (map.containsKey("task_id")) {
 				Request = new UpdateScriptTaskUpdateMessage();
 				Request.Deserialize(map);
-			}
-			else if (map.containsKey("state"))
-			{
+			} else if (map.containsKey("state")) {
 				String value = map.get("state").AsString();
-				if (value.equals("upload"))
-				{
+				if (value.equals("upload")) {
 					Request = new UploaderRequestUpload();
 					Request.Deserialize(map);
-				}
-				else if (value.equals("complete") && map.containsKey("errors"))
-				{
+				} else if (value.equals("complete") && map.containsKey("errors")) {
 					Request = new UploaderScriptRequestError();
 					Request.Deserialize(map);
-				}
-				else if (value.equals("complete"))
-				{
+				} else if (value.equals("complete")) {
 					Request = new UploaderRequestScriptComplete();
 					Request.Deserialize(map);
-				}
-				else
-					logger.warn("Unable to deserialize UpdateScriptTaskMessage: No message handler exists for state " + value);
-			}
-			else
-				logger.warn("Unable to deserialize UpdateScriptTaskMessage: No message handler exists for message " + map.AsString());
+				} else
+					logger.warn("Unable to deserialize UpdateScriptTaskMessage: No message handler exists for state "
+							+ value);
+			} else
+				logger.warn("Unable to deserialize UpdateScriptTaskMessage: No message handler exists for message "
+						+ map.AsString());
 		}
 	}
 
 	// Response from the simulator to notify the viewer the upload is completed,
 	// and the UUID of the script asset and its compiled status
-	public class UploaderRequestScriptComplete extends AssetUploaderBlock
-	{
+	public class UploaderRequestScriptComplete extends AssetUploaderBlock {
 		// The uploaded texture asset ID
 		public UUID AssetID;
 		// true of the script was compiled successfully
 		public boolean Compiled;
 
-		public UploaderRequestScriptComplete()
-		{
+		public UploaderRequestScriptComplete() {
 			State = "complete";
 		}
 
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(2);
 			map.put("state", OSD.FromString(State));
 			map.put("new_asset", OSD.FromUUID(AssetID));
@@ -2958,8 +2634,7 @@ public class CapsMessage implements IMessage
 		}
 
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			AssetID = map.get("new_asset").AsUUID();
 			Compiled = map.get("compiled").AsBoolean();
 		}
@@ -2968,8 +2643,7 @@ public class CapsMessage implements IMessage
 	// A message sent from a viewer to the simulator requesting a temporary
 	// uploader capability used to update a script contained in an agents
 	// inventory
-	public class UpdateScriptAgentRequestMessage extends AssetUploaderBlock
-	{
+	public class UpdateScriptAgentRequestMessage extends AssetUploaderBlock {
 		// The existing asset if of the script in the agents inventory to
 		// replace
 		public UUID ItemID;
@@ -2979,12 +2653,11 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(2);
 			map.put("item_id", OSD.FromUUID(ItemID));
 			map.put("target", OSD.FromString(Target));
@@ -2993,13 +2666,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			ItemID = map.get("item_id").AsUUID();
 			Target = map.get("target").AsString();
 		}
@@ -3007,8 +2679,7 @@ public class CapsMessage implements IMessage
 
 	// A message containing either the request or response used in updating a
 	// script inside an agents inventory
-	public class UpdateScriptAgentMessage implements IMessage
-	{
+	public class UpdateScriptAgentMessage implements IMessage {
 		// Object containing request or response
 		public AssetUploaderBlock Request;
 
@@ -3016,64 +2687,52 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.UpdateScriptAgent;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			return Request.Serialize();
 		}
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
-			if (map.containsKey("item_id"))
-			{
+		public void Deserialize(OSDMap map) {
+			if (map.containsKey("item_id")) {
 				Request = new UpdateScriptAgentRequestMessage();
 				Request.Deserialize(map);
-			}
-			else if (map.containsKey("errors"))
-			{
+			} else if (map.containsKey("errors")) {
 				Request = new UploaderScriptRequestError();
 				Request.Deserialize(map);
-			}
-			else if (map.containsKey("state"))
-			{
+			} else if (map.containsKey("state")) {
 				String value = map.get("state").AsString();
-				if (value.equals("upload"))
-				{
+				if (value.equals("upload")) {
 					Request = new UploaderRequestUpload();
 					Request.Deserialize(map);
-				}
-				else if (value.equals("complete"))
-				{
+				} else if (value.equals("complete")) {
 					Request = new UploaderRequestScriptComplete();
 					Request.Deserialize(map);
-				}
-				else
-					logger.warn("Unable to deserialize UpdateScriptAgent: No message handler exists for state " + value);
-			}
-			else
-				logger.warn("Unable to deserialize UpdateScriptAgent: No message handler exists for message " + map.AsString());
+				} else
+					logger.warn(
+							"Unable to deserialize UpdateScriptAgent: No message handler exists for state " + value);
+			} else
+				logger.warn("Unable to deserialize UpdateScriptAgent: No message handler exists for message "
+						+ map.AsString());
 		}
 	}
 
-	public class SendPostcardMessage implements IMessage
-	{
+	public class SendPostcardMessage implements IMessage {
 		public String FromEmail;
 		public String Message;
 		public String FromName;
@@ -3085,19 +2744,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.SendPostcard;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(6);
 			map.put("from", OSD.FromString(FromEmail));
 			map.put("msg", OSD.FromString(Message));
@@ -3110,13 +2767,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			FromEmail = map.get("from").AsString();
 			Message = map.get("msg").AsString();
 			FromName = map.get("name").AsString();
@@ -3131,14 +2787,13 @@ public class CapsMessage implements IMessage
 	// #region Grid/Maps
 
 	// Base class for Map Layers via Capabilities
-	public abstract class MapLayerMessageBase
-	{
+	public abstract class MapLayerMessageBase {
 		//
 		public int Flags;
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		public abstract OSDMap Serialize();
@@ -3147,30 +2802,25 @@ public class CapsMessage implements IMessage
 	}
 
 	// Sent by an agent to the capabilities server to request map layers
-	public class MapLayerRequestVariant extends MapLayerMessageBase
-	{
+	public class MapLayerRequestVariant extends MapLayerMessageBase {
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(1);
 			map.put("Flags", OSD.FromInteger(Flags));
 			return map;
 		}
 
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			Flags = map.get("Flags").AsInteger();
 		}
 	}
 
 	// A message sent from the simulator to the viewer which contains an array
 	// of map images and their grid coordinates
-	public class MapLayerReplyVariant extends MapLayerMessageBase
-	{
+	public class MapLayerReplyVariant extends MapLayerMessageBase {
 		// An object containing map location details
-		public class LayerData
-		{
+		public class LayerData {
 			// The Asset ID of the regions tile overlay
 			public UUID ImageID;
 			// The grid location of the southern border of the map tile
@@ -3188,12 +2838,11 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(2);
 			OSDMap agentMap = new OSDMap(1);
 			agentMap.put("Flags", OSD.FromInteger(Flags));
@@ -3201,8 +2850,7 @@ public class CapsMessage implements IMessage
 
 			OSDArray layerArray = new OSDArray(LayerDataBlocks.length);
 
-			for (int i = 0; i < LayerDataBlocks.length; i++)
-			{
+			for (int i = 0; i < LayerDataBlocks.length; i++) {
 				OSDMap layerMap = new OSDMap(5);
 				layerMap.put("ImageID", OSD.FromUUID(LayerDataBlocks[i].ImageID));
 				layerMap.put("Bottom", OSD.FromInteger(LayerDataBlocks[i].Bottom));
@@ -3220,13 +2868,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			OSDMap agentMap = (OSDMap) map.get("AgentData");
 			Flags = agentMap.get("Flags").AsInteger();
 
@@ -3234,8 +2881,7 @@ public class CapsMessage implements IMessage
 
 			LayerDataBlocks = new LayerData[layerArray.size()];
 
-			for (int i = 0; i < LayerDataBlocks.length; i++)
-			{
+			for (int i = 0; i < LayerDataBlocks.length; i++) {
 				OSDMap layerMap = (OSDMap) layerArray.get(i);
 
 				LayerData layer = new LayerData();
@@ -3250,8 +2896,7 @@ public class CapsMessage implements IMessage
 		}
 	}
 
-	public class MapLayerMessage implements IMessage
-	{
+	public class MapLayerMessage implements IMessage {
 		// Object containing request or response
 		public MapLayerMessageBase Request;
 
@@ -3259,42 +2904,35 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.MapLayer;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			return Request.Serialize();
 		}
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
-			if (map.containsKey("LayerData"))
-			{
+		public void Deserialize(OSDMap map) {
+			if (map.containsKey("LayerData")) {
 				Request = new MapLayerReplyVariant();
 				Request.Deserialize(map);
-			}
-			else if (map.containsKey("Flags"))
-			{
+			} else if (map.containsKey("Flags")) {
 				Request = new MapLayerRequestVariant();
 				Request.Deserialize(map);
-			}
-			else
+			} else
 				logger.warn("Unable to deserialize MapLayerMessage: No message handler exists");
 		}
 	}
@@ -3304,63 +2942,56 @@ public class CapsMessage implements IMessage
 	// #region Session/Communication
 
 	// New as of 1.23 RC1, no details yet.
-	public class ProductInfoRequestMessage implements IMessage
-	{
+	public class ProductInfoRequestMessage implements IMessage {
 		/**
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.ProductInfoRequest;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			throw new UnsupportedOperationException();
 		}
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			throw new UnsupportedOperationException();
 		}
 	}
 
 	// #region ChatSessionRequestMessage
 
-	public abstract class SearchStatRequestBlock
-	{
+	public abstract class SearchStatRequestBlock {
 		public abstract OSDMap Serialize();
 
 		public abstract void Deserialize(OSDMap map);
 	}
 
 	// variant A - the request to the simulator
-	public class SearchStatRequestRequest extends SearchStatRequestBlock
-	{
+	public class SearchStatRequestRequest extends SearchStatRequestBlock {
 		public UUID ClassifiedID;
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(1);
 			map.put("classified_id", OSD.FromUUID(ClassifiedID));
 			return map;
@@ -3368,19 +2999,17 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			ClassifiedID = map.get("classified_id").AsUUID();
 		}
 	}
 
-	public class SearchStatRequestReply extends SearchStatRequestBlock
-	{
+	public class SearchStatRequestReply extends SearchStatRequestBlock {
 		public int MapClicks;
 		public int ProfileClicks;
 		public int SearchMapClicks;
@@ -3390,12 +3019,11 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(6);
 			map.put("map_clicks", OSD.FromInteger(MapClicks));
 			map.put("profile_clicks", OSD.FromInteger(ProfileClicks));
@@ -3408,13 +3036,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			MapClicks = map.get("map_clicks").AsInteger();
 			ProfileClicks = map.get("profile_clicks").AsInteger();
 			SearchMapClicks = map.get("search_map_clicks").AsInteger();
@@ -3424,58 +3051,48 @@ public class CapsMessage implements IMessage
 		}
 	}
 
-	public class SearchStatRequestMessage implements IMessage
-	{
+	public class SearchStatRequestMessage implements IMessage {
 		public SearchStatRequestBlock Request;
 
 		/**
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.SearchStatRequest;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			return Request.Serialize();
 		}
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
-			if (map.containsKey("map_clicks"))
-			{
+		public void Deserialize(OSDMap map) {
+			if (map.containsKey("map_clicks")) {
 				Request = new SearchStatRequestReply();
 				Request.Deserialize(map);
-			}
-			else if (map.containsKey("classified_id"))
-			{
+			} else if (map.containsKey("classified_id")) {
 				Request = new SearchStatRequestRequest();
 				Request.Deserialize(map);
-			}
-			else
-				logger.warn(
-						"Unable to deserialize SearchStatRequest: No message handler exists for method "
-								+ map.get("method").AsString());
+			} else
+				logger.warn("Unable to deserialize SearchStatRequest: No message handler exists for method "
+						+ map.get("method").AsString());
 		}
 	}
 
-	public abstract class ChatSessionRequestBlock implements IMessage
-	{
+	public abstract class ChatSessionRequestBlock implements IMessage {
 		// A string containing the method used
 		public String Method;
 
@@ -3488,16 +3105,14 @@ public class CapsMessage implements IMessage
 	 * A request sent from an agent to the Simulator to begin a new conference.
 	 * Contains a list of Agents which will be included in the conference
 	 */
-	public class ChatSessionRequestStartConference extends ChatSessionRequestBlock
-	{
+	public class ChatSessionRequestStartConference extends ChatSessionRequestBlock {
 		// An array containing the <see cref="UUID"/> of the agents invited to
 		// this conference
 		public UUID[] AgentsBlock;
 		// The conferences Session ID
 		public UUID SessionID;
 
-		public ChatSessionRequestStartConference()
-		{
+		public ChatSessionRequestStartConference() {
 			Method = "start conference";
 		}
 
@@ -3505,24 +3120,21 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.ChatSessionRequestStartConference;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(3);
 			map.put("method", OSD.FromString(Method));
 			OSDArray agentsArray = new OSDArray();
-			for (int i = 0; i < AgentsBlock.length; i++)
-			{
+			for (int i = 0; i < AgentsBlock.length; i++) {
 				agentsArray.add(OSD.FromUUID(AgentsBlock[i]));
 			}
 			map.put("params", agentsArray);
@@ -3533,20 +3145,18 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			Method = map.get("method").AsString();
 			OSDArray agentsArray = (OSDArray) map.get("params");
 
 			AgentsBlock = new UUID[agentsArray.size()];
 
-			for (int i = 0; i < agentsArray.size(); i++)
-			{
+			for (int i = 0; i < agentsArray.size(); i++) {
 				AgentsBlock[i] = agentsArray.get(i).AsUUID();
 			}
 
@@ -3555,27 +3165,25 @@ public class CapsMessage implements IMessage
 	}
 
 	/*
-	 * A moderation request sent from a conference moderator Contains an agent
-	 * and an optional action to take
+	 * A moderation request sent from a conference moderator Contains an agent and
+	 * an optional action to take
 	 */
-	public class ChatSessionRequestMuteUpdate extends ChatSessionRequestBlock
-	{
+	public class ChatSessionRequestMuteUpdate extends ChatSessionRequestBlock {
 		// The Session ID
 		public UUID SessionID;
 		public UUID AgentID;
 		/*
-		 * A list containing Key/Value pairs, known valid values: key: text
-		 * value: true/false - allow/disallow specified agents ability to use
-		 * text in session key: voice value: true/false - allow/disallow
-		 * specified agents ability to use voice in session
-		 * 
+		 * A list containing Key/Value pairs, known valid values: key: text value:
+		 * true/false - allow/disallow specified agents ability to use text in session
+		 * key: voice value: true/false - allow/disallow specified agents ability to use
+		 * voice in session
+		 *
 		 * "text" or "voice"
 		 */
 		public String RequestKey;
 		public boolean RequestValue;
 
-		public ChatSessionRequestMuteUpdate()
-		{
+		public ChatSessionRequestMuteUpdate() {
 			Method = "mute update";
 		}
 
@@ -3583,19 +3191,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.ChatSessionRequestMuteUpdate;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(3);
 			map.put("method", OSD.FromString(Method));
 
@@ -3614,13 +3220,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			Method = map.get("method").AsString();
 			SessionID = map.get("session-id").AsUUID();
 
@@ -3640,13 +3245,11 @@ public class CapsMessage implements IMessage
 
 	// A message sent from the agent to the simulator which tells the simulator
 	// we've accepted a conference invitation
-	public class ChatSessionAcceptInvitation extends ChatSessionRequestBlock
-	{
+	public class ChatSessionAcceptInvitation extends ChatSessionRequestBlock {
 		// The conference SessionID
 		public UUID SessionID;
 
-		public ChatSessionAcceptInvitation()
-		{
+		public ChatSessionAcceptInvitation() {
 			Method = "accept invitation";
 		}
 
@@ -3654,19 +3257,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.ChatSessionAcceptInvitation;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(2);
 			map.put("method", OSD.FromString(Method));
 			map.put("session-id", OSD.FromUUID(SessionID));
@@ -3675,81 +3276,69 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			Method = map.get("method").AsString();
 			SessionID = map.get("session-id").AsUUID();
 		}
 	}
 
-	public class ChatSessionRequestMessage implements IMessage
-	{
+	public class ChatSessionRequestMessage implements IMessage {
 		public ChatSessionRequestBlock Request;
 
 		/**
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.ChatSessionRequest;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			return Request.Serialize();
 		}
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
-			if (map.containsKey("method"))
-			{
+		public void Deserialize(OSDMap map) {
+			if (map.containsKey("method")) {
 				String value = map.get("method").AsString();
-				if (value.equals("start conference"))
-				{
+				if (value.equals("start conference")) {
 					Request = new ChatSessionRequestStartConference();
 					Request.Deserialize(map);
-				}
-				else if (value.equals("mute update"))
-				{
+				} else if (value.equals("mute update")) {
 					Request = new ChatSessionRequestMuteUpdate();
 					Request.Deserialize(map);
-				}
-				else if (value.equals("accept invitation"))
-				{
+				} else if (value.equals("accept invitation")) {
 					Request = new ChatSessionAcceptInvitation();
 					Request.Deserialize(map);
-				}
-				else
-					logger.warn("Unable to deserialize ChatSessionRequest: No message handler exists for method " + value);
-			}
-			else
-				logger.warn("Unable to deserialize ChatSessionRequest: No message handler exists for message " + map.AsString());
+				} else
+					logger.warn(
+							"Unable to deserialize ChatSessionRequest: No message handler exists for method " + value);
+			} else
+				logger.warn("Unable to deserialize ChatSessionRequest: No message handler exists for message "
+						+ map.AsString());
 		}
 	}
 
 	// #endregion
 
-	public class ChatterBoxSessionEventReplyMessage implements IMessage
-	{
+	public class ChatterBoxSessionEventReplyMessage implements IMessage {
 		public UUID SessionID;
 		public boolean Success;
 
@@ -3757,19 +3346,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.ChatterBoxSessionEventReply;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(2);
 			map.put("success", OSD.FromBoolean(Success));
 			map.put("session_id", OSD.FromUUID(SessionID)); // FIXME: Verify
@@ -3781,20 +3368,18 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			Success = map.get("success").AsBoolean();
 			SessionID = map.get("session_id").AsUUID();
 		}
 	}
 
-	public class ChatterBoxSessionStartReplyMessage implements IMessage
-	{
+	public class ChatterBoxSessionStartReplyMessage implements IMessage {
 		public UUID SessionID;
 		public UUID TempSessionID;
 		public boolean Success;
@@ -3811,19 +3396,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.ChatterBoxSessionStartReply;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap moderatedMap = new OSDMap(1);
 			moderatedMap.put("voice", OSD.FromBoolean(ModeratedVoice));
 
@@ -3844,19 +3427,17 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			SessionID = map.get("session_id").AsUUID();
 			TempSessionID = map.get("temp_session_id").AsUUID();
 			Success = map.get("success").AsBoolean();
 
-			if (Success)
-			{
+			if (Success) {
 				OSDMap sessionMap = (OSDMap) map.get("session_info");
 				SessionName = sessionMap.get("session_name").AsString();
 				Type = sessionMap.get("type").AsInteger();
@@ -3868,8 +3449,7 @@ public class CapsMessage implements IMessage
 		}
 	}
 
-	public class ChatterBoxInvitationMessage implements IMessage
-	{
+	public class ChatterBoxInvitationMessage implements IMessage {
 		// Key of sender
 		public UUID FromAgentID;
 		// Name of sender
@@ -3903,19 +3483,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.ChatterBoxInvitation;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap dataMap = new OSDMap(3);
 			dataMap.put("timestamp", OSD.FromDate(Timestamp));
 			dataMap.put("type", OSD.FromInteger(Dialog.getValue()));
@@ -3946,23 +3524,19 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
-			if (map.containsKey("voice"))
-			{
+		public void Deserialize(OSDMap map) {
+			if (map.containsKey("voice")) {
 				FromAgentID = map.get("from_id").AsUUID();
 				FromAgentName = map.get("from_name").AsString();
 				IMSessionID = map.get("session_id").AsUUID();
 				BinaryBucket = Helpers.StringToBytes(map.get("session_name").AsString());
 				Voice = true;
-			}
-			else
-			{
+			} else {
 				OSDMap im = (OSDMap) map.get("instantmessage");
 				OSDMap msg = (OSDMap) im.get("message_params");
 				OSDMap msgdata = (OSDMap) msg.get("data");
@@ -3985,8 +3559,7 @@ public class CapsMessage implements IMessage
 		}
 	}
 
-	public class RegionInfoMessage implements IMessage
-	{
+	public class RegionInfoMessage implements IMessage {
 		public int ParcelLocalID;
 		public String RegionName;
 		public String ChannelUri;
@@ -3995,19 +3568,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.RegionInfo;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(3);
 			map.put("parcel_local_id", OSD.FromInteger(ParcelLocalID));
 			map.put("region_name", OSD.FromString(RegionName));
@@ -4019,13 +3590,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			this.ParcelLocalID = map.get("parcel_local_id").AsInteger();
 			this.RegionName = map.get("region_name").AsString();
 			OSDMap voiceMap = (OSDMap) map.get("voice_credentials");
@@ -4047,95 +3617,42 @@ public class CapsMessage implements IMessage
 	// excluded with the exception of the Transition field. This indicates a new
 	// user entering or exiting the session with
 	// the string "ENTER" or "LEAVE" respectively.
-	public class ChatterBoxSessionAgentListUpdatesMessage implements IMessage
-	{
-		/* initial when agent joins session
-	       <llsd>
-		    <map>
-		     <key>events</key>
-		     <array>
-		      <map>
-		       <key>body</key>
-		       <map>
-		        <key>agent_updates</key>
-		        <map>
-		         <key>32939971-a520-4b52-8ca5-6085d0e39933</key>
-		         <map>
-		          <key>info</key>
-		          <map>
-		           <key>can_voice_chat</key>
-		           <boolean>1</boolean>
-		           <key>is_moderator</key>
-		           <boolean>1</boolean>
-		          </map>
-		          <key>transition</key>
-		          <string>ENTER</string>
-		         </map>
-		         <key>ca00e3e1-0fdb-4136-8ed4-0aab739b29e8</key>
-		         <map>
-		          <key>info</key>
-		          <map>
-		           <key>can_voice_chat</key>
-		           <boolean>1</boolean>
-		           <key>is_moderator</key>
-		           <boolean>0</boolean>
-		          </map>
-		          <key>transition</key>
-		          <string>ENTER</string>
-		         </map>
-		        </map>
-		        <key>session_id</key>
-		        <string>be7a1def-bd8a-5043-5d5b-49e3805adf6b</string>
-		        <key>updates</key>
-		        <map>
-		         <key>32939971-a520-4b52-8ca5-6085d0e39933</key>
-		         <string>ENTER</string>
-		         <key>ca00e3e1-0fdb-4136-8ed4-0aab739b29e8</key>
-		         <string>ENTER</string>
-		        </map>
-		       </map>
-		       <key>message</key>
-		       <string>ChatterBoxSessionAgentListUpdates</string>
-		      </map>
-		      <map>
-		       <key>body</key>
-		       <map>
-		        <key>agent_updates</key>
-		        <map>
-		         <key>32939971-a520-4b52-8ca5-6085d0e39933</key>
-		         <map>
-		          <key>info</key>
-		          <map>
-		           <key>can_voice_chat</key>
-		           <boolean>1</boolean>
-		           <key>is_moderator</key>
-		           <boolean>1</boolean>
-		          </map>
-		         </map>
-		        </map>
-		        <key>session_id</key>
-		        <string>be7a1def-bd8a-5043-5d5b-49e3805adf6b</string>
-		        <key>updates</key>
-		        <map>
-		        </map>
-		       </map >
-	           <key>message</key>
-		       <string>ChatterBoxSessionAgentListUpdates</string>
-		      </map>
-		     </array>
-		     <key>id</key>
-		     <integer>5</integer>
-		    </map>
-		   </llsd>
-
-		// a message containing only moderator updates
-		// <llsd><map><key>events</key><array><map><key>body</key><map><key>agent_updates</key><map><key>ca00e3e1-0fdb-4136-8ed4-0aab739b29e8</key><map><key>info</key><map><key>mutes</key><map><key>text</key><boolean>1</boolean></map></map></map></map><key>session_id</key><string>be7a1def-bd8a-5043-5d5b-49e3805adf6b</string><key>updates</key><map
-		// /></map><key>message</key><string>ChatterBoxSessionAgentListUpdates</string></map></array><key>id</key><integer>7</integer></map></llsd>
-        */
+	public class ChatterBoxSessionAgentListUpdatesMessage implements IMessage {
+		/*
+		 * initial when agent joins session <llsd> <map> <key>events</key> <array> <map>
+		 * <key>body</key> <map> <key>agent_updates</key> <map>
+		 * <key>32939971-a520-4b52-8ca5-6085d0e39933</key> <map> <key>info</key> <map>
+		 * <key>can_voice_chat</key> <boolean>1</boolean> <key>is_moderator</key>
+		 * <boolean>1</boolean> </map> <key>transition</key> <string>ENTER</string>
+		 * </map> <key>ca00e3e1-0fdb-4136-8ed4-0aab739b29e8</key> <map> <key>info</key>
+		 * <map> <key>can_voice_chat</key> <boolean>1</boolean> <key>is_moderator</key>
+		 * <boolean>0</boolean> </map> <key>transition</key> <string>ENTER</string>
+		 * </map> </map> <key>session_id</key>
+		 * <string>be7a1def-bd8a-5043-5d5b-49e3805adf6b</string> <key>updates</key>
+		 * <map> <key>32939971-a520-4b52-8ca5-6085d0e39933</key> <string>ENTER</string>
+		 * <key>ca00e3e1-0fdb-4136-8ed4-0aab739b29e8</key> <string>ENTER</string> </map>
+		 * </map> <key>message</key> <string>ChatterBoxSessionAgentListUpdates</string>
+		 * </map> <map> <key>body</key> <map> <key>agent_updates</key> <map>
+		 * <key>32939971-a520-4b52-8ca5-6085d0e39933</key> <map> <key>info</key> <map>
+		 * <key>can_voice_chat</key> <boolean>1</boolean> <key>is_moderator</key>
+		 * <boolean>1</boolean> </map> </map> </map> <key>session_id</key>
+		 * <string>be7a1def-bd8a-5043-5d5b-49e3805adf6b</string> <key>updates</key>
+		 * <map> </map> </map > <key>message</key>
+		 * <string>ChatterBoxSessionAgentListUpdates</string> </map> </array>
+		 * <key>id</key> <integer>5</integer> </map> </llsd>
+		 * 
+		 * // a message containing only moderator updates //
+		 * <llsd><map><key>events</key><array><map><key>body</key><map><key>
+		 * agent_updates</key><map><key>ca00e3e1-0fdb-4136-8ed4-0aab739b29e8</key><map><
+		 * key>info</key><map><key>mutes</key><map><key>text</key><boolean>1</boolean></
+		 * map></map></map></map><key>session_id</key><string>be7a1def-bd8a-5043-5d5b-
+		 * 49e3805adf6b</string><key>updates</key><map //
+		 * /></map><key>message</key><string>ChatterBoxSessionAgentListUpdates</string><
+		 * /map></array><key>id</key><integer>7</integer></map></llsd>
+		 */
 		public UUID SessionID;
 
-		public class AgentUpdatesBlock
-		{
+		public class AgentUpdatesBlock {
 			public UUID AgentID;
 
 			public boolean CanVoiceChat;
@@ -4154,24 +3671,21 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.ChatterBoxSessionAgentListUpdates;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap();
 
 			OSDMap agent_updatesMap = new OSDMap(1);
-			for (int i = 0; i < Updates.length; i++)
-			{
+			for (int i = 0; i < Updates.length; i++) {
 				OSDMap mutesMap = new OSDMap(2);
 				mutesMap.put("text", OSD.FromBoolean(Updates[i].MuteText));
 				mutesMap.put("voice", OSD.FromBoolean(Updates[i].MuteVoice));
@@ -4195,31 +3709,26 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 
 			OSDMap agent_updates = (OSDMap) map.get("agent_updates");
 			SessionID = map.get("session_id").AsUUID();
 
 			ArrayList<AgentUpdatesBlock> updatesList = new ArrayList<AgentUpdatesBlock>();
 
-			for (Entry<String, OSD> kvp : agent_updates.entrySet())
-			{
+			for (Entry<String, OSD> kvp : agent_updates.entrySet()) {
 
-				if (kvp.getKey().equals("updates"))
-				{
+				if (kvp.getKey().equals("updates")) {
 					// This appears to be redundant and duplicated by the info
 					// block, more dumps will confirm this
 					// <key>32939971-a520-4b52-8ca5-6085d0e39933</key>
 					// <string>ENTER</string>
-				}
-				else if (kvp.getKey().equals("session_id"))
-				{
+				} else if (kvp.getKey().equals("session_id")) {
 					// I am making the assumption that each osdmap will contain
 					// the information for a
 					// single session. This is how the map appears to read
@@ -4228,8 +3737,7 @@ public class CapsMessage implements IMessage
 					// <key>session_id</key>
 					// <string>984f6a1e-4ceb-6366-8d5e-a18c6819c6f7</string>
 
-				}
-				else
+				} else
 				// key is an agent uuid (we hope!)
 				{
 					// should be the agents uuid as the key, and "info" as the
@@ -4258,8 +3766,7 @@ public class CapsMessage implements IMessage
 
 					block.Transition = infoMap.get("transition").AsString();
 
-					if (agentPermsMap.containsKey("mutes"))
-					{
+					if (agentPermsMap.containsKey("mutes")) {
 						OSDMap mutesMap = (OSDMap) agentPermsMap.get("mutes");
 						block.MuteText = mutesMap.get("text").AsBoolean();
 						block.MuteVoice = mutesMap.get("voice").AsBoolean();
@@ -4270,8 +3777,7 @@ public class CapsMessage implements IMessage
 
 			Updates = new AgentUpdatesBlock[updatesList.size()];
 
-			for (int i = 0; i < updatesList.size(); i++)
-			{
+			for (int i = 0; i < updatesList.size(); i++) {
 				AgentUpdatesBlock block = new AgentUpdatesBlock();
 				block.AgentID = updatesList.get(i).AgentID;
 				block.CanVoiceChat = updatesList.get(i).CanVoiceChat;
@@ -4286,8 +3792,7 @@ public class CapsMessage implements IMessage
 
 	// An CapsEventQueue message sent when the agent is forcibly removed from a
 	// chatterbox session
-	public class ForceCloseChatterBoxSessionMessage implements IMessage
-	{
+	public class ForceCloseChatterBoxSessionMessage implements IMessage {
 		// A string containing the reason the agent was removed
 		public String Reason;
 		// The ChatterBoxSession's SessionID
@@ -4297,19 +3802,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.ForceCloseChatterBoxSession;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(2);
 			map.put("reason", OSD.FromString(Reason));
 			map.put("session_id", OSD.FromUUID(SessionID));
@@ -4319,13 +3822,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			Reason = map.get("reason").AsString();
 			SessionID = map.get("session_id").AsUUID();
 		}
@@ -4335,26 +3837,23 @@ public class CapsMessage implements IMessage
 
 	// #region CapsEventQueue
 
-	public abstract class EventMessageBlock
-	{
+	public abstract class EventMessageBlock {
 		public abstract OSDMap Serialize();
 
 		public abstract void Deserialize(OSDMap map);
 	}
 
-	public class EventQueueAck extends EventMessageBlock
-	{
+	public class EventQueueAck extends EventMessageBlock {
 		public int AckID;
 		public boolean Done;
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap();
 			map.put("ack", OSD.FromInteger(AckID));
 			map.put("done", OSD.FromBoolean(Done));
@@ -4363,22 +3862,19 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			AckID = map.get("ack").AsInteger();
 			Done = map.get("done").AsBoolean();
 		}
 	}
 
-	public class EventQueueEvent extends EventMessageBlock
-	{
-		public class QueueEvent
-		{
+	public class EventQueueEvent extends EventMessageBlock {
+		public class QueueEvent {
 			public CapsMessage EventMessage;
 			public CapsEventType MessageKey;
 		}
@@ -4388,18 +3884,16 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(1);
 
 			OSDArray eventsArray = new OSDArray();
 
-			for (int i = 0; i < MessageEvents.length; i++)
-			{
+			for (int i = 0; i < MessageEvents.length; i++) {
 				OSDMap eventMap = new OSDMap(2);
 				eventMap.put("body", MessageEvents[i].EventMessage.Serialize());
 				eventMap.put("message", OSD.FromString(MessageEvents[i].MessageKey.toString()));
@@ -4414,20 +3908,18 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			Sequence = map.get("id").AsInteger();
 			OSDArray arrayEvents = (OSDArray) map.get("events");
 
 			MessageEvents = new QueueEvent[arrayEvents.size()];
 
-			for (int i = 0; i < arrayEvents.size(); i++)
-			{
+			for (int i = 0; i < arrayEvents.size(); i++) {
 				OSDMap eventMap = (OSDMap) arrayEvents.get(i);
 				QueueEvent ev = new QueueEvent();
 
@@ -4438,50 +3930,42 @@ public class CapsMessage implements IMessage
 		}
 	}
 
-	public class EventQueueGetMessage implements IMessage
-	{
+	public class EventQueueGetMessage implements IMessage {
 		public EventMessageBlock Messages;
 
 		/**
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.EventQueueGet;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			return Messages.Serialize();
 		}
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
-			if (map.containsKey("ack"))
-			{
+		public void Deserialize(OSDMap map) {
+			if (map.containsKey("ack")) {
 				Messages = new EventQueueAck();
 				Messages.Deserialize(map);
-			}
-			else if (map.containsKey("events"))
-			{
+			} else if (map.containsKey("events")) {
 				Messages = new EventQueueEvent();
 				Messages.Deserialize(map);
-			}
-			else
+			} else
 				logger.warn("Unable to deserialize EventQueueGetMessage: No message handler exists for event");
 		}
 	}
@@ -4490,8 +3974,7 @@ public class CapsMessage implements IMessage
 
 	// #region Stats Messages
 
-	public class ViewerStatsMessage implements IMessage
-	{
+	public class ViewerStatsMessage implements IMessage {
 		public int AgentsInView;
 		public float AgentFPS;
 		public String AgentLanguage;
@@ -4546,19 +4029,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.ViewerStats;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(5);
 			map.put("session_id", OSD.FromUUID(SessionID));
 
@@ -4640,13 +4121,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			SessionID = map.get("session_id").AsUUID();
 
 			OSDMap agentMap = (OSDMap) map.get("agent");
@@ -4711,14 +4191,12 @@ public class CapsMessage implements IMessage
 	}
 
 	//
-	public class PlacesReplyMessage implements IMessage
-	{
+	public class PlacesReplyMessage implements IMessage {
 		public UUID AgentID;
 		public UUID QueryID;
 		public UUID TransactionID;
 
-		public class QueryData
-		{
+		public class QueryData {
 			public int ActualArea;
 			public int BillableArea;
 			public String Description;
@@ -4741,19 +4219,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.PlacesReply;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(3);
 
 			// add the AgentData map
@@ -4768,8 +4244,7 @@ public class CapsMessage implements IMessage
 
 			// add the QueryData map
 			OSDArray dataBlocksArray = new OSDArray(QueryDataBlocks.length);
-			for (int i = 0; i < QueryDataBlocks.length; i++)
-			{
+			for (int i = 0; i < QueryDataBlocks.length; i++) {
 				OSDMap queryDataMap = new OSDMap(14);
 				queryDataMap.put("ActualArea", OSD.FromInteger(QueryDataBlocks[i].ActualArea));
 				queryDataMap.put("BillableArea", OSD.FromInteger(QueryDataBlocks[i].BillableArea));
@@ -4802,13 +4277,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			OSDArray agentDataArray = (OSDArray) map.get("AgentData");
 
 			OSDMap agentDataMap = (OSDMap) agentDataArray.get(0);
@@ -4817,8 +4291,7 @@ public class CapsMessage implements IMessage
 
 			OSDArray dataBlocksArray = (OSDArray) map.get("QueryData");
 			QueryDataBlocks = new QueryData[dataBlocksArray.size()];
-			for (int i = 0; i < dataBlocksArray.size(); i++)
-			{
+			for (int i = 0; i < dataBlocksArray.size(); i++) {
 				OSDMap dataMap = (OSDMap) dataBlocksArray.get(i);
 				QueryData data = new QueryData();
 				data.ActualArea = dataMap.get("ActualArea").AsInteger();
@@ -4844,27 +4317,24 @@ public class CapsMessage implements IMessage
 		}
 	}
 
-	public class UpdateAgentInformationMessage implements IMessage
-	{
+	public class UpdateAgentInformationMessage implements IMessage {
 		public String MaxAccess; // PG, A, or M
 
 		/**
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.UpdateAgentInformation;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(1);
 			OSDMap prefsMap = new OSDMap(1);
 			prefsMap.put("max", OSD.FromString(MaxAccess));
@@ -4874,25 +4344,22 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			OSDMap prefsMap = (OSDMap) map.get("access_prefs");
 			MaxAccess = prefsMap.get("max").AsString();
 		}
 	}
 
-	public class DirLandReplyMessage implements IMessage
-	{
+	public class DirLandReplyMessage implements IMessage {
 		public UUID AgentID;
 		public UUID QueryID;
 
-		public class QueryReply
-		{
+		public class QueryReply {
 			public int ActualArea;
 			public boolean Auction;
 			public boolean ForSale;
@@ -4908,19 +4375,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.DirLandReply;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(3);
 
 			OSDMap agentMap = new OSDMap(1);
@@ -4936,8 +4401,7 @@ public class CapsMessage implements IMessage
 			map.put("QueryData", queryDataArray);
 
 			OSDArray queryReplyArray = new OSDArray();
-			for (int i = 0; i < QueryReplies.length; i++)
-			{
+			for (int i = 0; i < QueryReplies.length; i++) {
 				OSDMap queryReply = new OSDMap(100);
 				queryReply.put("ActualArea", OSD.FromInteger(QueryReplies[i].ActualArea));
 				queryReply.put("Auction", OSD.FromBoolean(QueryReplies[i].Auction));
@@ -4956,13 +4420,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			OSDArray agentDataArray = (OSDArray) map.get("AgentData");
 			OSDMap agentDataMap = (OSDMap) agentDataArray.get(0);
 			AgentID = agentDataMap.get("AgentID").AsUUID();
@@ -4974,8 +4437,7 @@ public class CapsMessage implements IMessage
 			OSDArray queryRepliesArray = (OSDArray) map.get("QueryReplies");
 
 			QueryReplies = new QueryReply[queryRepliesArray.size()];
-			for (int i = 0; i < queryRepliesArray.size(); i++)
-			{
+			for (int i = 0; i < queryRepliesArray.size(); i++) {
 				QueryReply reply = new QueryReply();
 				OSDMap replyMap = (OSDMap) queryRepliesArray.get(i);
 				reply.ActualArea = replyMap.get("ActualArea").AsInteger();
@@ -4995,12 +4457,9 @@ public class CapsMessage implements IMessage
 
 	// #region Object Messages
 
-	public class UploadObjectAssetMessage implements IMessage
-	{
-		public class Object
-		{
-			public class Face
-			{
+	public class UploadObjectAssetMessage implements IMessage {
+		public class Object {
+			public class Face {
 				public Bumpiness Bump;
 				public Color4 Color;
 				public boolean Fullbright;
@@ -5013,8 +4472,7 @@ public class CapsMessage implements IMessage
 				public float ScaleS;
 				public float ScaleT;
 
-				public OSDMap Serialize()
-				{
+				public OSDMap Serialize() {
 					OSDMap map = new OSDMap();
 					map.put("bump", OSD.FromInteger(Bump.getValue()));
 					map.put("colors", OSD.FromColor4(Color));
@@ -5031,8 +4489,7 @@ public class CapsMessage implements IMessage
 					return map;
 				}
 
-				public Face(OSDMap map)
-				{
+				public Face(OSDMap map) {
 					Bump = Bumpiness.setValue(map.get("bump").AsInteger());
 					Color = map.get("colors").AsColor4();
 					Fullbright = map.get("fullbright").AsBoolean();
@@ -5047,13 +4504,11 @@ public class CapsMessage implements IMessage
 				}
 			}
 
-			public class ExtraParam
-			{
+			public class ExtraParam {
 				public ExtraParamType Type;
 				public byte[] ExtraParamData;
 
-				public OSDMap Serialize()
-				{
+				public OSDMap Serialize() {
 					OSDMap map = new OSDMap();
 					map.put("extra_parameter", OSD.FromInteger(Type.getValue()));
 					map.put("param_data", OSD.FromBinary(ExtraParamData));
@@ -5061,8 +4516,7 @@ public class CapsMessage implements IMessage
 					return map;
 				}
 
-				public ExtraParam(OSDMap map)
-				{
+				public ExtraParam(OSDMap map) {
 					Type = ExtraParamType.setValue(map.get("extra_parameter").AsInteger());
 					ExtraParamData = map.get("param_data").AsBinary();
 				}
@@ -5097,8 +4551,7 @@ public class CapsMessage implements IMessage
 			public UUID SculptID;
 			public SculptType SculptType;
 
-			public OSDMap Serialize()
-			{
+			public OSDMap Serialize() {
 				OSDMap map = new OSDMap();
 
 				map.put("group-id", OSD.FromUUID(GroupID));
@@ -5110,8 +4563,7 @@ public class CapsMessage implements IMessage
 
 				// Extra params
 				OSDArray extraParams = new OSDArray();
-				if (ExtraParams != null)
-				{
+				if (ExtraParams != null) {
 					for (int i = 0; i < ExtraParams.length; i++)
 						extraParams.add(ExtraParams[i].Serialize());
 				}
@@ -5119,8 +4571,7 @@ public class CapsMessage implements IMessage
 
 				// Faces
 				OSDArray faces = new OSDArray();
-				if (Faces != null)
-				{
+				if (Faces != null) {
 					for (int i = 0; i < Faces.length; i++)
 						faces.add(Faces[i].Serialize());
 				}
@@ -5159,10 +4610,8 @@ public class CapsMessage implements IMessage
 				return map;
 			}
 
-			public Object(OSDMap map)
-			{
-				if (map != null)
-				{
+			public Object(OSDMap map) {
+				if (map != null) {
 					GroupID = map.get("group-id").AsUUID();
 					Material = libomv.primitives.Primitive.Material.setValue(map.get("material").AsInteger());
 					Name = map.get("name").AsString();
@@ -5172,32 +4621,24 @@ public class CapsMessage implements IMessage
 
 					// Extra params
 					OSDArray extraParams = (OSDArray) map.get("extra_parameters");
-					if (extraParams != null)
-					{
+					if (extraParams != null) {
 						ExtraParams = new ExtraParam[extraParams.size()];
-						for (int i = 0; i < extraParams.size(); i++)
-						{
+						for (int i = 0; i < extraParams.size(); i++) {
 							ExtraParams[i] = new ExtraParam((OSDMap) extraParams.get(i));
 							;
 						}
-					}
-					else
-					{
+					} else {
 						ExtraParams = new ExtraParam[0];
 					}
 
 					// Faces
 					OSDArray faces = (OSDArray) map.get("facelist");
-					if (faces != null)
-					{
+					if (faces != null) {
 						Faces = new Face[faces.size()];
-						for (int i = 0; i < faces.size(); i++)
-						{
+						for (int i = 0; i < faces.size(); i++) {
 							Faces[i] = new Face((OSDMap) faces.get(i));
 						}
-					}
-					else
-					{
+					} else {
 						Faces = new Face[0];
 					}
 
@@ -5226,13 +4667,10 @@ public class CapsMessage implements IMessage
 					ProfileHollow = (float) profile.get("hollow").AsReal();
 
 					OSDMap sculpt = (OSDMap) shape.get("sculpt");
-					if (sculpt != null)
-					{
+					if (sculpt != null) {
 						SculptID = sculpt.get("id").AsUUID();
 						SculptType = libomv.primitives.Primitive.SculptType.setValue(sculpt.get("type").AsInteger());
-					}
-					else
-					{
+					} else {
 						SculptID = UUID.Zero;
 						SculptType = libomv.primitives.Primitive.SculptType.None;
 					}
@@ -5246,24 +4684,21 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.UploadObjectAsset;
 		}
 
 		/**
 		 * Serializes the message
-		 * 
+		 *
 		 * @returns Serialized OSD
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap();
 			OSDArray array = new OSDArray();
 
-			if (Objects != null)
-			{
+			if (Objects != null) {
 				for (int i = 0; i < Objects.length; i++)
 					array.add(Objects[i].Serialize());
 			}
@@ -5273,21 +4708,16 @@ public class CapsMessage implements IMessage
 		}
 
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			OSDArray array = (OSDArray) map.get("objects");
 
-			if (array != null)
-			{
+			if (array != null) {
 				Objects = new Object[array.size()];
 
-				for (int i = 0; i < array.size(); i++)
-				{
+				for (int i = 0; i < array.size(); i++) {
 					Objects[i] = new Object((OSDMap) array.get(i));
 				}
-			}
-			else
-			{
+			} else {
 				Objects = new Object[0];
 			}
 		}
@@ -5296,8 +4726,7 @@ public class CapsMessage implements IMessage
 	// Event Queue message describing physics engine attributes of a list of
 	// objects
 	// Sim sends these when object is selected
-	public class ObjectPhysicsPropertiesMessage implements IMessage
-	{
+	public class ObjectPhysicsPropertiesMessage implements IMessage {
 		// Array with the list of physics properties
 		public PhysicsProperties[] ObjectPhysicsProperties;
 
@@ -5305,24 +4734,21 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.ObjectPhysicsProperties;
 		}
 
 		/**
 		 * Serializes the message
-		 * 
+		 *
 		 * @returns Serialized OSD
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap ret = new OSDMap(1);
 			OSDArray array = new OSDArray(ObjectPhysicsProperties.length);
 
-			for (int i = 0; i < ObjectPhysicsProperties.length; i++)
-			{
+			for (int i = 0; i < ObjectPhysicsProperties.length; i++) {
 				array.add(ObjectPhysicsProperties[i].getOSD());
 			}
 			ret.put("ObjectData", array);
@@ -5332,25 +4758,20 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deseializes the message
-		 * 
+		 *
 		 * @param name
 		 *            Incoming data to deserialize
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			OSDArray array = (OSDArray) map.get("ObjectData");
-			if (array != null)
-			{
+			if (array != null) {
 				ObjectPhysicsProperties = new PhysicsProperties[array.size()];
 
-				for (int i = 0; i < array.size(); i++)
-				{
+				for (int i = 0; i < array.size(); i++) {
 					ObjectPhysicsProperties[i] = new PhysicsProperties(array.get(i));
 				}
-			}
-			else
-			{
+			} else {
 				ObjectPhysicsProperties = new PhysicsProperties[0];
 			}
 		}
@@ -5362,8 +4783,7 @@ public class CapsMessage implements IMessage
 	// A message sent from the viewer to the simulator which specifies that the
 	// user has changed current URL
 	// of the specific media on a prim face
-	public class ObjectMediaNavigateMessage implements IMessage
-	{
+	public class ObjectMediaNavigateMessage implements IMessage {
 		// New URL
 		public String URL;
 
@@ -5377,19 +4797,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.ObjectMediaNavigate;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(3);
 
 			map.put("current_url", OSD.FromString(URL));
@@ -5401,13 +4819,12 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			URL = map.get("current_url").AsString();
 			PrimID = map.get("object_id").AsUUID();
 			Face = map.get("texture_index").AsInteger();
@@ -5415,16 +4832,14 @@ public class CapsMessage implements IMessage
 	}
 
 	// Base class used for the ObjectMedia message
-	public abstract class ObjectMediaBlock
-	{
+	public abstract class ObjectMediaBlock {
 		public abstract OSDMap Serialize();
 
 		public abstract void Deserialize(OSDMap map);
 	}
 
 	// Message used to retrive prim media data
-	public class ObjectMediaRequest extends ObjectMediaBlock
-	{
+	public class ObjectMediaRequest extends ObjectMediaBlock {
 		// Prim UUID
 		public UUID PrimID;
 
@@ -5434,12 +4849,11 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(2);
 			map.put("object_id", OSD.FromUUID(PrimID));
 			map.put("verb", OSD.FromString(Verb));
@@ -5448,21 +4862,19 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			PrimID = map.get("object_id").AsUUID();
 			Verb = map.get("verb").AsString();
 		}
 	}
 
 	// Message used to update prim media data
-	public class ObjectMediaResponse extends ObjectMediaBlock
-	{
+	public class ObjectMediaResponse extends ObjectMediaBlock {
 		// Prim UUID
 		public UUID PrimID;
 
@@ -5475,25 +4887,20 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(2);
 			map.put("object_id", OSD.FromUUID(PrimID));
 
-			if (FaceMedia == null)
-			{
+			if (FaceMedia == null) {
 				map.put("object_media_data", new OSDArray());
-			}
-			else
-			{
+			} else {
 				OSDArray mediaData = new OSDArray(FaceMedia.length);
 
-				for (int i = 0; i < FaceMedia.length; i++)
-				{
+				for (int i = 0; i < FaceMedia.length; i++) {
 					if (FaceMedia[i] == null)
 						mediaData.add(new OSD());
 					else
@@ -5509,25 +4916,20 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			PrimID = map.get("object_id").AsUUID();
 
-			if (map.get("object_media_data").getType() == OSDType.Array)
-			{
+			if (map.get("object_media_data").getType() == OSDType.Array) {
 				OSDArray mediaData = (OSDArray) map.get("object_media_data");
-				if (mediaData.size() > 0)
-				{
+				if (mediaData.size() > 0) {
 					FaceMedia = new MediaEntry[mediaData.size()];
-					for (int i = 0; i < mediaData.size(); i++)
-					{
-						if (mediaData.get(i).getType() == OSDType.Map)
-						{
+					for (int i = 0; i < mediaData.size(); i++) {
+						if (mediaData.get(i).getType() == OSDType.Map) {
 							FaceMedia[i] = new MediaEntry(mediaData.get(i));
 						}
 					}
@@ -5538,8 +4940,7 @@ public class CapsMessage implements IMessage
 	}
 
 	// Message used to update prim media data
-	public class ObjectMediaUpdate extends ObjectMediaBlock
-	{
+	public class ObjectMediaUpdate extends ObjectMediaBlock {
 		// Prim UUID
 		public UUID PrimID;
 
@@ -5551,25 +4952,20 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(2);
 			map.put("object_id", OSD.FromUUID(PrimID));
 
-			if (FaceMedia == null)
-			{
+			if (FaceMedia == null) {
 				map.put("object_media_data", new OSDArray());
-			}
-			else
-			{
+			} else {
 				OSDArray mediaData = new OSDArray(FaceMedia.length);
 
-				for (int i = 0; i < FaceMedia.length; i++)
-				{
+				for (int i = 0; i < FaceMedia.length; i++) {
 					if (FaceMedia[i] == null)
 						mediaData.add(new OSD());
 					else
@@ -5585,25 +4981,20 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			PrimID = map.get("object_id").AsUUID();
 
-			if (map.get("object_media_data").getType() == OSDType.Array)
-			{
+			if (map.get("object_media_data").getType() == OSDType.Array) {
 				OSDArray mediaData = (OSDArray) map.get("object_media_data");
-				if (mediaData.size() > 0)
-				{
+				if (mediaData.size() > 0) {
 					FaceMedia = new MediaEntry[mediaData.size()];
-					for (int i = 0; i < mediaData.size(); i++)
-					{
-						if (mediaData.get(i).getType() == OSDType.Map)
-						{
+					for (int i = 0; i < mediaData.size(); i++) {
+						if (mediaData.get(i).getType() == OSDType.Map) {
 							FaceMedia[i] = new MediaEntry(mediaData.get(i));
 						}
 					}
@@ -5614,8 +5005,7 @@ public class CapsMessage implements IMessage
 	}
 
 	// Message for setting or getting per face MediaEntry
-	public class ObjectMediaMessage implements IMessage
-	{
+	public class ObjectMediaMessage implements IMessage {
 		// The request or response details block
 		public ObjectMediaBlock Request;
 
@@ -5623,313 +5013,271 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.ObjectMedia;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			return Request.Serialize();
 		}
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
-			if (map.containsKey("verb"))
-			{
-				if (map.get("verb").AsString() == "GET")
-				{
+		public void Deserialize(OSDMap map) {
+			if (map.containsKey("verb")) {
+				if (map.get("verb").AsString() == "GET") {
 					Request = new ObjectMediaRequest();
 					Request.Deserialize(map);
-				}
-				else if (map.get("verb").AsString() == "UPDATE")
-				{
+				} else if (map.get("verb").AsString() == "UPDATE") {
 					Request = new ObjectMediaUpdate();
 					Request.Deserialize(map);
 				}
-			}
-			else if (map.containsKey("object_media_version"))
-			{
+			} else if (map.containsKey("object_media_version")) {
 				Request = new ObjectMediaResponse();
 				Request.Deserialize(map);
-			}
-			else
-				logger.warn("Unable to deserialize ObjectMedia: No message handler exists for method: " + map.AsString());
+			} else
+				logger.warn(
+						"Unable to deserialize ObjectMedia: No message handler exists for method: " + map.AsString());
 		}
 	}
 
-	public class RenderMaterialsMessage implements IMessage
-	{
-	    public OSD MaterialData;
-	
+	public class RenderMaterialsMessage implements IMessage {
+		public OSD MaterialData;
+
 		/**
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.ObjectMedia;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-	    public OSDMap Serialize()
-	    {
-	        return new OSDMap();
-	    }
+		public OSDMap Serialize() {
+			return new OSDMap();
+		}
 
 		/**
 		 * Deserialize the message
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-	    {
-	        try
-	        {
-                MaterialData = Helpers.ZDecompressOSD(new ByteArrayInputStream(map.get("Zipped").AsBinary()));
-	        }
-	        catch (Exception ex)
-	        {
-	            logger.warn("Failed to decode RenderMaterials message:", ex);
-	            MaterialData = new OSDMap();
-	        }
-	    }
-	} 
+		public void Deserialize(OSDMap map) {
+			try {
+				MaterialData = Helpers.ZDecompressOSD(new ByteArrayInputStream(map.get("Zipped").AsBinary()));
+			} catch (Exception ex) {
+				logger.warn("Failed to decode RenderMaterials message:", ex);
+				MaterialData = new OSDMap();
+			}
+		}
+	}
 
-
-    abstract class GetObjectInfoRequest implements IMessage
-    {
-        // Object IDs for which to request cost information
-        public UUID[] ObjectIDs;
+	abstract class GetObjectInfoRequest implements IMessage {
+		// Object IDs for which to request cost information
+		public UUID[] ObjectIDs;
 
 		/**
-         * Deserializes the message
-         *
-         * @param map Incoming data to deserialize
-         */
+		 * Deserializes the message
+		 *
+		 * @param map
+		 *            Incoming data to deserialize
+		 */
 		@Override
-        public void Deserialize(OSDMap map)
-        {
-            OSDArray array = (OSDArray)map.get("object_ids");
-            if (array != null)
-            {
-                ObjectIDs = new UUID[array.size()];
+		public void Deserialize(OSDMap map) {
+			OSDArray array = (OSDArray) map.get("object_ids");
+			if (array != null) {
+				ObjectIDs = new UUID[array.size()];
 
-                for (int i = 0; i < array.size(); i++)
-                {
-                    ObjectIDs[i] = array.get(i).AsUUID();
-                }
-            }
-            else
-            {
-                ObjectIDs = new UUID[0];
-            }
-        }
+				for (int i = 0; i < array.size(); i++) {
+					ObjectIDs[i] = array.get(i).AsUUID();
+				}
+			} else {
+				ObjectIDs = new UUID[0];
+			}
+		}
 
 		/**
-         * Serializes the message
-         *
-         * @returns Serialized OSD
-         */
+		 * Serializes the message
+		 *
+		 * @returns Serialized OSD
+		 */
 		@Override
-        public OSDMap Serialize()
-        {
-            OSDMap ret = new OSDMap();
-            OSDArray array = new OSDArray();
+		public OSDMap Serialize() {
+			OSDMap ret = new OSDMap();
+			OSDArray array = new OSDArray();
 
-            for (int i = 0; i < ObjectIDs.length; i++)
-            {
-                array.add(OSD.FromUUID(ObjectIDs[i]));
-            }
+			for (int i = 0; i < ObjectIDs.length; i++) {
+				array.add(OSD.FromUUID(ObjectIDs[i]));
+			}
 
-            ret.put("object_ids", array);
-            return ret;
-        }
-    }
+			ret.put("object_ids", array);
+			return ret;
+		}
+	}
 
-    public class GetObjectCostRequest extends GetObjectInfoRequest
-    {
+	public class GetObjectCostRequest extends GetObjectInfoRequest {
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.GetObjectCost;
 		}
-    }
-    
-    public class GetObjectCostMessage implements IMessage
-    {
-        class ObjectCost
-        {
-        	public UUID object_id;
-            public double link_cost;
-            public double object_cost;
-            public double physics_cost;
-            public double link_physics_cost;
-        }
+	}
 
-        public ObjectCost[] objectCosts;
-        
+	public class GetObjectCostMessage implements IMessage {
+		class ObjectCost {
+			public UUID object_id;
+			public double link_cost;
+			public double object_cost;
+			public double physics_cost;
+			public double link_physics_cost;
+		}
+
+		public ObjectCost[] objectCosts;
+
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.GetObjectCost;
 		}
- 
-		/**
-         * Deserializes the message
-         *
-         * @param map Incoming data to deserialize
-         */
-        public void Deserialize(OSDMap map)
-        {
-        	int i = 0;
-        	objectCosts = new ObjectCost[map.size()];
-        	
-            for (String key : map.keySet())
-            {
-            	ObjectCost cost = new ObjectCost();
-                OSDMap values = (OSDMap)map.get(key);
-            	cost.object_id = UUID.parse(key);
-
-                cost.link_cost = values.get("linked_set_resource_cost").AsReal();
-                cost.object_cost = values.get("resource_cost").AsReal();
-                cost.physics_cost = values.get("physics_cost").AsReal();
-                cost.link_physics_cost = values.get("linked_set_physics_cost").AsReal();
-                // value["resource_limiting_type"].AsString();
-                objectCosts[i++] = cost;
-            }
-        }
 
 		/**
-         * Serializes the message
-         *
-         * @returns Serialized OSD
-         */
-        public OSDMap Serialize()
-        {
-            OSDMap map = new OSDMap(objectCosts.length);
-            for (ObjectCost cost : objectCosts)
-        	{
-        		OSDMap values = new OSDMap(4);
-        		values.put("linked_set_resource_cost", OSD.FromReal(cost.link_cost));
-        		values.put("resource_cost", OSD.FromReal(cost.object_cost));
-        		values.put("physics_cost", OSD.FromReal(cost.physics_cost));
-        		values.put("linked_set_physics_cost", OSD.FromReal(cost.link_physics_cost));
+		 * Deserializes the message
+		 *
+		 * @param map
+		 *            Incoming data to deserialize
+		 */
+		public void Deserialize(OSDMap map) {
+			int i = 0;
+			objectCosts = new ObjectCost[map.size()];
 
-        		map.put(cost.object_id.toString(), values);
-        	}
-            return map;
-        }
+			for (String key : map.keySet()) {
+				ObjectCost cost = new ObjectCost();
+				OSDMap values = (OSDMap) map.get(key);
+				cost.object_id = UUID.parse(key);
 
-    }
-	
-	public class GetObjectPhysicsDataRequest extends GetObjectInfoRequest
-	{
+				cost.link_cost = values.get("linked_set_resource_cost").AsReal();
+				cost.object_cost = values.get("resource_cost").AsReal();
+				cost.physics_cost = values.get("physics_cost").AsReal();
+				cost.link_physics_cost = values.get("linked_set_physics_cost").AsReal();
+				// value["resource_limiting_type"].AsString();
+				objectCosts[i++] = cost;
+			}
+		}
+
+		/**
+		 * Serializes the message
+		 *
+		 * @returns Serialized OSD
+		 */
+		public OSDMap Serialize() {
+			OSDMap map = new OSDMap(objectCosts.length);
+			for (ObjectCost cost : objectCosts) {
+				OSDMap values = new OSDMap(4);
+				values.put("linked_set_resource_cost", OSD.FromReal(cost.link_cost));
+				values.put("resource_cost", OSD.FromReal(cost.object_cost));
+				values.put("physics_cost", OSD.FromReal(cost.physics_cost));
+				values.put("linked_set_physics_cost", OSD.FromReal(cost.link_physics_cost));
+
+				map.put(cost.object_id.toString(), values);
+			}
+			return map;
+		}
+
+	}
+
+	public class GetObjectPhysicsDataRequest extends GetObjectInfoRequest {
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.GetObjectPhysicsData;
 		}
 	}
-	
-    public class GetObjectPhysicsDataMessage implements IMessage
-    {
-        class ObjectPhysics
-        {
-        	public UUID object_id;
-            public int shape_type;
-            public double density;
-            public double friction;
-            public double restitution;
-            public double gravity_multiplier;
-        }
 
-        public ObjectPhysics[] objectPhysics;
-        
+	public class GetObjectPhysicsDataMessage implements IMessage {
+		class ObjectPhysics {
+			public UUID object_id;
+			public int shape_type;
+			public double density;
+			public double friction;
+			public double restitution;
+			public double gravity_multiplier;
+		}
+
+		public ObjectPhysics[] objectPhysics;
+
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.GetObjectPhysicsData;
 		}
- 
-		/**
-         * Deserializes the message
-         *
-         * @param map Incoming data to deserialize
-         */
-        public void Deserialize(OSDMap map)
-        {
-        	int i = 0;
-        	objectPhysics = new ObjectPhysics[map.size()];
-        	
-            for (String key : map.keySet())
-            {
-            	ObjectPhysics physics = new ObjectPhysics();
-                OSDMap values = (OSDMap)map.get(key);
-            	physics.object_id = UUID.parse(key);
-
-                physics.shape_type = values.get("PhysicsShapeType").AsInteger();
-                if (values.containsKey("Density"))
-                {
-                	physics.density = values.get("Density").AsReal();
-                	physics.friction = values.get("Friction").AsReal();
-                	physics.restitution = values.get("Restitution").AsReal();
-                	physics.gravity_multiplier = values.get("GravityMultiplier").AsReal();
-                	objectPhysics[i++] = physics;
-                }
-            }
-        }
 
 		/**
-         * Serializes the message
-         *
-         * @returns Serialized OSD
-         */
-        public OSDMap Serialize()
-        {
-            OSDMap map = new OSDMap(objectPhysics.length);
-            for (ObjectPhysics physics : objectPhysics)
-        	{
-        		OSDMap values = new OSDMap(4);
-        		values.put("PhysicsShapeType", OSD.FromReal(physics.shape_type));
-        		values.put("Density", OSD.FromReal(physics.density));
-        		values.put("Friction", OSD.FromReal(physics.friction));
-        		values.put("Restitution", OSD.FromReal(physics.restitution));
-        		values.put("GravityMultiplier", OSD.FromReal(physics.gravity_multiplier));
+		 * Deserializes the message
+		 *
+		 * @param map
+		 *            Incoming data to deserialize
+		 */
+		public void Deserialize(OSDMap map) {
+			int i = 0;
+			objectPhysics = new ObjectPhysics[map.size()];
 
-        		map.put(physics.object_id.toString(), values);
-        	}
-            return map;
-        }
-    }
+			for (String key : map.keySet()) {
+				ObjectPhysics physics = new ObjectPhysics();
+				OSDMap values = (OSDMap) map.get(key);
+				physics.object_id = UUID.parse(key);
 
-    // #endregion Object Media Messages
+				physics.shape_type = values.get("PhysicsShapeType").AsInteger();
+				if (values.containsKey("Density")) {
+					physics.density = values.get("Density").AsReal();
+					physics.friction = values.get("Friction").AsReal();
+					physics.restitution = values.get("Restitution").AsReal();
+					physics.gravity_multiplier = values.get("GravityMultiplier").AsReal();
+					objectPhysics[i++] = physics;
+				}
+			}
+		}
+
+		/**
+		 * Serializes the message
+		 *
+		 * @returns Serialized OSD
+		 */
+		public OSDMap Serialize() {
+			OSDMap map = new OSDMap(objectPhysics.length);
+			for (ObjectPhysics physics : objectPhysics) {
+				OSDMap values = new OSDMap(4);
+				values.put("PhysicsShapeType", OSD.FromReal(physics.shape_type));
+				values.put("Density", OSD.FromReal(physics.density));
+				values.put("Friction", OSD.FromReal(physics.friction));
+				values.put("Restitution", OSD.FromReal(physics.restitution));
+				values.put("GravityMultiplier", OSD.FromReal(physics.gravity_multiplier));
+
+				map.put(physics.object_id.toString(), values);
+			}
+			return map;
+		}
+	}
+
+	// #endregion Object Media Messages
 
 	// #region Resource usage
 
 	// Details about object resource usage
-	public class ObjectResourcesDetail
-	{
+	public class ObjectResourcesDetail {
 		// Object UUID
 		public UUID ID;
 		// Object name
@@ -5946,22 +5294,20 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			throw new UnsupportedOperationException();
 		}
 
 		/**
 		 * Deserializes object from OSD
-		 * 
+		 *
 		 * @param obj
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
-		public void Deserialize(OSDMap obj)
-		{
+		public void Deserialize(OSDMap obj) {
 			ID = obj.get("id").AsUUID();
 			Name = obj.get("name").AsString();
 			Location = obj.get("location").AsVector3d();
@@ -5969,16 +5315,14 @@ public class CapsMessage implements IMessage
 			OwnerID = obj.get("owner_id").AsUUID();
 			OSDMap resources = (OSDMap) obj.get("resources");
 			Resources = new HashMap<String, Integer>(resources.size());
-			for (Entry<String, OSD> kvp : resources.entrySet())
-			{
+			for (Entry<String, OSD> kvp : resources.entrySet()) {
 				Resources.put(kvp.getKey(), kvp.getValue().AsInteger());
 			}
 		}
 	}
-	
+
 	// Details about parcel resource usage
-	public class ParcelResourcesDetail
-	{
+	public class ParcelResourcesDetail {
 		// Parcel UUID
 		public UUID ID;
 		// Parcel local ID
@@ -5995,22 +5339,20 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			throw new UnsupportedOperationException();
 		}
 
 		/**
 		 * Deserializes object from OSD
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			ID = map.get("id").AsUUID();
 			LocalID = map.get("local_id").AsInteger();
 			Name = map.get("name").AsString();
@@ -6020,8 +5362,7 @@ public class CapsMessage implements IMessage
 			OSDArray objectsOSD = (OSDArray) map.get("objects");
 			Objects = new ObjectResourcesDetail[objectsOSD.size()];
 
-			for (int i = 0; i < objectsOSD.size(); i++)
-			{
+			for (int i = 0; i < objectsOSD.size(); i++) {
 				Objects[i] = new ObjectResourcesDetail();
 				Objects[i].Deserialize((OSDMap) objectsOSD.get(i));
 			}
@@ -6030,8 +5371,7 @@ public class CapsMessage implements IMessage
 
 	// Resource usage base class, both agent and parcel resource usage contains
 	// summary information
-	public abstract class BaseResourcesInfo implements IMessage
-	{
+	public abstract class BaseResourcesInfo implements IMessage {
 		// Summary of available resources, keys are resource names, values are
 		// resource usage for that specific resource
 		public HashMap<String, Integer> SummaryAvailable;
@@ -6040,20 +5380,18 @@ public class CapsMessage implements IMessage
 		public HashMap<String, Integer> SummaryUsed;
 
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			throw new UnsupportedOperationException();
 		}
 
 		/**
 		 * Deserializes object from OSD
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			SummaryAvailable = new HashMap<String, Integer>();
 			SummaryUsed = new HashMap<String, Integer>();
 
@@ -6061,41 +5399,36 @@ public class CapsMessage implements IMessage
 			OSDArray available = (OSDArray) summary.get("available");
 			OSDArray used = (OSDArray) summary.get("used");
 
-			for (int i = 0; i < available.size(); i++)
-			{
+			for (int i = 0; i < available.size(); i++) {
 				OSDMap limit = (OSDMap) available.get(i);
 				SummaryAvailable.put(limit.get("type").AsString(), limit.get("amount").AsInteger());
 			}
 
-			for (int i = 0; i < used.size(); i++)
-			{
+			for (int i = 0; i < used.size(); i++) {
 				OSDMap limit = (OSDMap) used.get(i);
 				SummaryUsed.put(limit.get("type").AsString(), limit.get("amount").AsInteger());
 			}
 		}
 	}
 
-	public class AttachmentResourcesMessage extends BaseResourcesInfo
-	{
+	public class AttachmentResourcesMessage extends BaseResourcesInfo {
 		BaseResourcesInfo SummaryInfoBlock;
 
 		// Per attachment point object resource usage
 		public HashMap<AttachmentPoint, ObjectResourcesDetail[]> Attachments;
 
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.AttachmentResources;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = super.Serialize();
 
 			return map;
@@ -6103,29 +5436,25 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserializes object from OSD
-		 * 
+		 *
 		 * @param osd
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
-			if (map != null)
-			{
+		public void Deserialize(OSDMap map) {
+			if (map != null) {
 				super.Deserialize(map);
 				OSDArray attachments = (OSDArray) map.get("attachments");
 				Attachments = new HashMap<AttachmentPoint, ObjectResourcesDetail[]>();
 
-				for (int i = 0; i < attachments.size(); i++)
-				{
+				for (int i = 0; i < attachments.size(); i++) {
 					OSDMap attachment = (OSDMap) attachments.get(i);
 					AttachmentPoint pt = AttachmentPoint.setValue(attachment.get("location").AsString());
 
 					OSDArray objectsOSD = (OSDArray) attachment.get("objects");
 					ObjectResourcesDetail[] objects = new ObjectResourcesDetail[objectsOSD.size()];
 
-					for (int j = 0; j < objects.length; j++)
-					{
+					for (int j = 0; j < objects.length; j++) {
 						objects[j] = new ObjectResourcesDetail();
 						objects[j].Deserialize((OSDMap) objectsOSD.get(j));
 					}
@@ -6137,8 +5466,7 @@ public class CapsMessage implements IMessage
 	}
 
 	// Request message for parcel resource usage
-	public class LandResourcesRequest implements IMessage
-	{
+	public class LandResourcesRequest implements IMessage {
 		// UUID of the parel to request resource usage info
 		public UUID ParcelID;
 
@@ -6146,19 +5474,17 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.LandResources;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(1);
 			map.put("parcel_id", OSD.FromUUID(ParcelID));
 			return map;
@@ -6166,19 +5492,17 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserializes object from OSD
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			ParcelID = map.get("parcel_id").AsUUID();
 		}
 	}
 
-	public class LandResourcesMessage implements IMessage
-	{
+	public class LandResourcesMessage implements IMessage {
 		// URL where parcel resource usage details can be retrieved
 		public URI ScriptResourceDetails;
 		// URL where parcel resource usage summary can be retrieved
@@ -6188,27 +5512,23 @@ public class CapsMessage implements IMessage
 		 * @return the type of message
 		 */
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.LandResources;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap();
-			if (ScriptResourceSummary != null)
-			{
+			if (ScriptResourceSummary != null) {
 				map.put("ScriptResourceSummary", OSD.FromString(ScriptResourceSummary.toString()));
 			}
 
-			if (ScriptResourceDetails != null)
-			{
+			if (ScriptResourceDetails != null) {
 				map.put("ScriptResourceDetails", OSD.FromString(ScriptResourceDetails.toString()));
 			}
 			return map;
@@ -6216,58 +5536,47 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserializes object from OSD
-		 * 
+		 *
 		 * @param map
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
-			try
-			{
-				if (map.containsKey("ScriptResourceSummary"))
-				{
+		public void Deserialize(OSDMap map) {
+			try {
+				if (map.containsKey("ScriptResourceSummary")) {
 					ScriptResourceSummary = new URI(map.get("ScriptResourceSummary").AsString());
 				}
-				if (map.containsKey("ScriptResourceDetails"))
-				{
+				if (map.containsKey("ScriptResourceDetails")) {
 					ScriptResourceDetails = new URI(map.get("ScriptResourceDetails").AsString());
 				}
-			}
-			catch (URISyntaxException e)
-			{
+			} catch (URISyntaxException e) {
 			}
 		}
 	}
 
 	// Parcel resource usage
-	public class LandResourcesInfo extends BaseResourcesInfo
-	{
+	public class LandResourcesInfo extends BaseResourcesInfo {
 		// Array of <see cref="ParcelResourcesDetail"/> containing per percal
 		// resource usage
 		public ParcelResourcesDetail[] Parcels;
 
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			// TODO Auto-generated method stub
 			return CapsEventType.LandResources;
 		}
 
 		/**
 		 * Serialize the object
-		 * 
+		 *
 		 * @return An <see cref="OSDMap"/> containing the objects data
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap(1);
-			if (Parcels != null)
-			{
+			if (Parcels != null) {
 				OSDArray array = new OSDArray(Parcels.length);
-				for (int i = 0; i < Parcels.length; i++)
-				{
+				for (int i = 0; i < Parcels.length; i++) {
 					array.add(Parcels[i].Serialize());
 				}
 				map.put("parcels", array);
@@ -6277,23 +5586,18 @@ public class CapsMessage implements IMessage
 
 		/**
 		 * Deserializes object from OSD
-		 * 
+		 *
 		 * @param osd
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		@Override
-		public void Deserialize(OSDMap map)
-		{
-			if (map.containsKey("summary"))
-			{
+		public void Deserialize(OSDMap map) {
+			if (map.containsKey("summary")) {
 				super.Deserialize(map);
-			}
-			else if (map.containsKey("parcels"))
-			{
+			} else if (map.containsKey("parcels")) {
 				OSDArray parcelsOSD = (OSDArray) map.get("parcels");
 				Parcels = new ParcelResourcesDetail[parcelsOSD.size()];
-				for (int i = 0; i < parcelsOSD.size(); i++)
-				{
+				for (int i = 0; i < parcelsOSD.size(); i++) {
 					Parcels[i] = new ParcelResourcesDetail();
 					Parcels[i].Deserialize((OSDMap) parcelsOSD.get(i));
 				}
@@ -6306,8 +5610,7 @@ public class CapsMessage implements IMessage
 	// #region Display names
 
 	// Reply to request for bunch if display names
-	public class GetDisplayNamesMessage implements IMessage
-	{
+	public class GetDisplayNamesMessage implements IMessage {
 		// Current display name
 		public AgentDisplayName[] Agents = new AgentDisplayName[0];
 
@@ -6315,34 +5618,28 @@ public class CapsMessage implements IMessage
 		public UUID[] BadIDs = new UUID[0];
 
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.GetDisplayNames;
 		}
 
 		/**
 		 * Serializes the message
-		 * 
+		 *
 		 * @returns OSD containting the messaage
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDArray agents = new OSDArray();
 
-			if (Agents != null && Agents.length > 0)
-			{
-				for (int i = 0; i < Agents.length; i++)
-				{
+			if (Agents != null && Agents.length > 0) {
+				for (int i = 0; i < Agents.length; i++) {
 					agents.add(Agents[i].GetOSD());
 				}
 			}
 
 			OSDArray badIDs = new OSDArray();
-			if (BadIDs != null && BadIDs.length > 0)
-			{
-				for (int i = 0; i < BadIDs.length; i++)
-				{
+			if (BadIDs != null && BadIDs.length > 0) {
+				for (int i = 0; i < BadIDs.length; i++) {
 					badIDs.add(OSD.FromUUID(BadIDs[i]));
 				}
 			}
@@ -6354,32 +5651,25 @@ public class CapsMessage implements IMessage
 		}
 
 		@Override
-		public void Deserialize(OSDMap map)
-		{
-			if (map.get("agents").getType() == OSDType.Array)
-			{
+		public void Deserialize(OSDMap map) {
+			if (map.get("agents").getType() == OSDType.Array) {
 				OSDArray osdAgents = (OSDArray) map.get("agents");
 
-				if (osdAgents.size() > 0)
-				{
+				if (osdAgents.size() > 0) {
 					Agents = new AgentDisplayName[osdAgents.size()];
 
-					for (int i = 0; i < osdAgents.size(); i++)
-					{
+					for (int i = 0; i < osdAgents.size(); i++) {
 						Agents[i].FromOSD(osdAgents.get(i));
 					}
 				}
 			}
 
-			if (map.get("bad_ids").getType() == OSDType.Array)
-			{
+			if (map.get("bad_ids").getType() == OSDType.Array) {
 				OSDArray osdBadIDs = (OSDArray) map.get("bad_ids");
-				if (osdBadIDs.size() > 0)
-				{
+				if (osdBadIDs.size() > 0) {
 					BadIDs = new UUID[osdBadIDs.size()];
 
-					for (int i = 0; i < osdBadIDs.size(); i++)
-					{
+					for (int i = 0; i < osdBadIDs.size(); i++) {
 						BadIDs[i] = osdBadIDs.get(i).AsUUID();
 					}
 				}
@@ -6388,8 +5678,7 @@ public class CapsMessage implements IMessage
 	}
 
 	// Message sent when requesting change of the display name
-	public class SetDisplayNameMessage implements IMessage
-	{
+	public class SetDisplayNameMessage implements IMessage {
 		// Current display name
 		public String OldDisplayName;
 
@@ -6397,19 +5686,17 @@ public class CapsMessage implements IMessage
 		public String NewDisplayName;
 
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.SetDisplayName;
 		}
 
 		/**
 		 * Serializes the message
-		 * 
+		 *
 		 * @returns OSD containting the messaage
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDArray names = new OSDArray(2);
 			names.add(OSD.FromString(OldDisplayName));
 			names.add(OSD.FromString(NewDisplayName));
@@ -6420,8 +5707,7 @@ public class CapsMessage implements IMessage
 		}
 
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			OSDArray names = (OSDArray) map.get("display_name");
 			OldDisplayName = names.get(0).AsString();
 			NewDisplayName = names.get(1).AsString();
@@ -6429,8 +5715,7 @@ public class CapsMessage implements IMessage
 	}
 
 	// Message recieved in response to request to change display name
-	public class SetDisplayNameReplyMessage implements IMessage
-	{
+	public class SetDisplayNameReplyMessage implements IMessage {
 		// New display name
 		public AgentDisplayName DisplayName;
 
@@ -6441,19 +5726,17 @@ public class CapsMessage implements IMessage
 		public int Status;
 
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.SetDisplayNameReply;
 		}
 
 		/**
 		 * Serializes the message
-		 * 
+		 *
 		 * @returns OSD containting the messaage
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap ret = new OSDMap(3);
 			ret.put("content", DisplayName.GetOSD());
 			ret.put("reason", OSD.FromString(Reason));
@@ -6462,8 +5745,7 @@ public class CapsMessage implements IMessage
 		}
 
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			DisplayName.FromOSD(map.get("content"));
 			Reason = map.get("reason").AsString();
 			Status = map.get("status").AsInteger();
@@ -6471,8 +5753,7 @@ public class CapsMessage implements IMessage
 	}
 
 	// Message recieved when someone nearby changes their display name
-	public class DisplayNameUpdateMessage implements IMessage
-	{
+	public class DisplayNameUpdateMessage implements IMessage {
 		// Previous display name, empty string if default
 		public String OldDisplayName;
 
@@ -6480,19 +5761,17 @@ public class CapsMessage implements IMessage
 		public AgentDisplayName DisplayName;
 
 		@Override
-		public CapsEventType getType()
-		{
+		public CapsEventType getType() {
 			return CapsEventType.DisplayNameUpdate;
 		}
 
 		/**
 		 * Serializes the message
-		 * 
+		 *
 		 * @returns OSD containting the messaage
 		 */
 		@Override
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap agent = (OSDMap) DisplayName.GetOSD();
 			agent.put("old_display_name", OSD.FromString(OldDisplayName));
 			OSDMap ret = new OSDMap();
@@ -6501,8 +5780,7 @@ public class CapsMessage implements IMessage
 		}
 
 		@Override
-		public void Deserialize(OSDMap map)
-		{
+		public void Deserialize(OSDMap map) {
 			OSDMap agent = (OSDMap) map.get("agent");
 			DisplayName.FromOSD(agent);
 			OldDisplayName = agent.get("old_display_name").AsString();
@@ -6511,254 +5789,238 @@ public class CapsMessage implements IMessage
 
 	// #endregion Display names
 
-	public IMessage DecodeEvent(String eventName, OSDMap map)
-	{
-		try
-		{
+	public IMessage DecodeEvent(String eventName, OSDMap map) {
+		try {
 			CapsEventType eventType = CapsEventType.valueOf(eventName);
 			return DecodeEvent(eventType, map);
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			return null;
 		}
 	}
+
 	/**
 	 * Return a decoded capabilities message as a strongly typed object
-	 * 
+	 *
 	 * @param eventType
 	 *            The event type enumeration key of the capabilities message
 	 * @param map
 	 *            An <see cref="OSDMap"/> OSDMap to decode
-	 * @return A strongly typed object containing the decoded information from
-	 *         the capabilities message, or null if no existing Message object
-	 *         exists for the specified event
+	 * @return A strongly typed object containing the decoded information from the
+	 *         capabilities message, or null if no existing Message object exists
+	 *         for the specified event
 	 */
-	public IMessage DecodeEvent(CapsEventType eventType, OSDMap map)
-	{
+	public IMessage DecodeEvent(CapsEventType eventType, OSDMap map) {
 		IMessage message = null;
 		if (map == null)
 			return message;
 
-		switch (eventType)
-		{
-			case AgentGroupDataUpdate:
-				message = new AgentGroupDataUpdateMessage();
-				break;
-			case AvatarGroupsReply: // OpenSim sends the above with the wrong key
-				message = new AgentGroupDataUpdateMessage();
-				break;
-			case AgentStateUpdate:
-				message = new AgentStateUpdateMessage();
-				break;
-			case ParcelProperties:
-				message = new ParcelPropertiesMessage();
-				break;
-			case ParcelObjectOwnersReply:
-				message = new ParcelObjectOwnersReplyMessage();
-				break;
-			case TeleportFinish:
-				message = new TeleportFinishMessage();
-				break;
-			case EnableSimulator:
-				message = new EnableSimulatorMessage();
-				break;
-			case ParcelPropertiesUpdate:
-				message = new ParcelPropertiesUpdateMessage();
-				break;
-			case EstablishAgentCommunication:
-				message = new EstablishAgentCommunicationMessage();
-				break;
-			case ChatterBoxInvitation:
-				message = new ChatterBoxInvitationMessage();
-				break;
-			case ChatterBoxSessionEventReply:
-				message = new ChatterBoxSessionEventReplyMessage();
-				break;
-			case ChatterBoxSessionStartReply:
-				message = new ChatterBoxSessionStartReplyMessage();
-				break;
-			case ChatterBoxSessionAgentListUpdates:
-				message = new ChatterBoxSessionAgentListUpdatesMessage();
-				break;
-			case RequiredVoiceVersion:
-				message = new RequiredVoiceVersionMessage();
-				break;
-			case MapLayer:
-				message = new MapLayerMessage();
-				break;
-			case ChatSessionRequest:
-				message = new ChatSessionRequestMessage();
-				break;
-			case CopyInventoryFromNotecard:
-				message = new CopyInventoryFromNotecardMessage();
-				break;
-			case ProvisionVoiceAccountRequest:
-				message = new ProvisionVoiceAccountRequestMessage();
-				break;
-			case Viewerstats:
-				message = new ViewerStatsMessage();
-				break;
-			case UpdateAgentLanguage:
-				message = new UpdateAgentLanguageMessage();
-				break;
-			case RemoteParcelRequest:
-				message = new RemoteParcelRequestMessage();
-				break;
-			case UpdateScriptTask:
-				message = new UpdateScriptTaskMessage();
-				break;
-			case UpdateScriptAgent:
-				message = new UpdateScriptAgentMessage();
-				break;
-			case SendPostcard:
-				message = new SendPostcardMessage();
-				break;
-			case UpdateGestureAgentInventory:
-				message = new UpdateGestureAgentInventoryMessage();
-				break;
-			case UpdateNotecardAgentInventory:
-				message = new UpdateNotecardAgentInventoryMessage();
-				break;
-			case LandStatReply:
-				message = new LandStatReplyMessage();
-				break;
-			case ParcelVoiceInfoRequest:
-				message = new ParcelVoiceInfoRequestMessage();
-				break;
-			case ViewerStats:
-				message = new ViewerStatsMessage();
-				break;
-			case EventQueueGet:
-				message = new EventQueueGetMessage();
-				break;
-			case CrossedRegion:
-				message = new CrossedRegionMessage();
-				break;
-			case TeleportFailed:
-				message = new TeleportFailedMessage();
-				break;
-			case PlacesReply:
-				message = new PlacesReplyMessage();
-				break;
-			case UpdateAgentInformation:
-				message = new UpdateAgentInformationMessage();
-				break;
-			case DirLandReply:
-				message = new DirLandReplyMessage();
-				break;
-			case ScriptRunningReply:
-				message = new ScriptRunningReplyMessage();
-				break;
-			case SearchStatRequest:
-				message = new SearchStatRequestMessage();
-				break;
-			case AgentDropGroup:
-				message = new AgentDropGroupMessage();
-				break;
-			case ForceCloseChatterBoxSession:
-				message = new ForceCloseChatterBoxSessionMessage();
-				break;
-			case UploadBakedTexture:
-				message = new UploadBakedTextureMessage();
-				break;
-			case WebFetchInventoryDescendents:
-				message = new WebFetchInventoryDescendentsMessage();
-				break;
-			case RegionInfo:
-				message = new RegionInfoMessage();
-				break;
-			case UploadObjectAsset:
-				message = new UploadObjectAssetMessage();
-				break;
-			case ObjectPhysicsProperties:
-				message = new ObjectPhysicsPropertiesMessage();
-				break;
-			case ObjectMediaNavigate:
-				message = new ObjectMediaNavigateMessage();
-				break;
-			case ObjectMedia:
-				message = new ObjectMediaMessage();
-				break;
-			case AttachmentResources:
-				message = new AttachmentResourcesMessage();
-				break;
-			case LandResources:
-				if (map.containsKey("parcel_id"))
-				{
-					message = new LandResourcesRequest();
-				}
-				else if (map.containsKey("ScriptResourceSummary"))
-				{
-					message = new LandResourcesMessage();
-				}
-				else if (map.containsKey("summary"))
-				{
-					message = new LandResourcesInfo();
-				}
-				break;
-			case ProductInfoRequest:
-				message = new ProductInfoRequestMessage();
-				break;
-			case GetDisplayNames:
-				message = new GetDisplayNamesMessage();
-				break;
-			case SetDisplayName:
-				message = new SetDisplayNameMessage();
-				break;
-			case SetDisplayNameReply:
-				message = new SetDisplayNameReplyMessage();
-				break;
-			case DisplayNameUpdate:
-				message = new DisplayNameUpdateMessage();
-				break;
-			case BulkUpdateInventory:
-				message = new BulkUpdateInventoryMessage();
-				break;
-			case RenderMaterials:
-				message = new RenderMaterialsMessage();
-				break;
-			case GetObjectCost:
-	            if (map.containsKey("object_ids"))
-	            {
-	                message = new GetObjectCostRequest();
-	            }
-	            else
-	            {
-	                message = new GetObjectCostMessage();
-	            }
-	            break;
-			case GetObjectPhysicsData:
-	            if (map.containsKey("object_ids"))
-	            {
-	                message = new GetObjectPhysicsDataRequest();
-	            }
-	            else
-	            {
-	                message = new GetObjectPhysicsDataMessage();
-	            }
-	            break;
-				
-	        // Capabilities TODO:
-			case GroupAPIv1:
-			case DispatchRegionInfo:
-			case EstateChangeInfo:
-			case FetchInventoryDescendents:
-			case GroupProposalBallot:
-			case MapLayerGod:
-			case NewFileAgentInventory:
-			case RequestTextureDownload:
-			case SearchStatTracking:
-			case SendUserReport:
-			case SendUserReportWithScreenshot:
-			case ServerReleaseNotes:
-			case StartGroupProposal:
-			case UpdateGestureTaskInventory:
-			case UpdateNotecardTaskInventory:
-			case ViewerStartAuction:
-			case UntrustedSimulatorMessage:
-			default:
-				logger.error("Unimplemented event " + eventType.toString());
+		switch (eventType) {
+		case AgentGroupDataUpdate:
+			message = new AgentGroupDataUpdateMessage();
+			break;
+		case AvatarGroupsReply: // OpenSim sends the above with the wrong key
+			message = new AgentGroupDataUpdateMessage();
+			break;
+		case AgentStateUpdate:
+			message = new AgentStateUpdateMessage();
+			break;
+		case ParcelProperties:
+			message = new ParcelPropertiesMessage();
+			break;
+		case ParcelObjectOwnersReply:
+			message = new ParcelObjectOwnersReplyMessage();
+			break;
+		case TeleportFinish:
+			message = new TeleportFinishMessage();
+			break;
+		case EnableSimulator:
+			message = new EnableSimulatorMessage();
+			break;
+		case ParcelPropertiesUpdate:
+			message = new ParcelPropertiesUpdateMessage();
+			break;
+		case EstablishAgentCommunication:
+			message = new EstablishAgentCommunicationMessage();
+			break;
+		case ChatterBoxInvitation:
+			message = new ChatterBoxInvitationMessage();
+			break;
+		case ChatterBoxSessionEventReply:
+			message = new ChatterBoxSessionEventReplyMessage();
+			break;
+		case ChatterBoxSessionStartReply:
+			message = new ChatterBoxSessionStartReplyMessage();
+			break;
+		case ChatterBoxSessionAgentListUpdates:
+			message = new ChatterBoxSessionAgentListUpdatesMessage();
+			break;
+		case RequiredVoiceVersion:
+			message = new RequiredVoiceVersionMessage();
+			break;
+		case MapLayer:
+			message = new MapLayerMessage();
+			break;
+		case ChatSessionRequest:
+			message = new ChatSessionRequestMessage();
+			break;
+		case CopyInventoryFromNotecard:
+			message = new CopyInventoryFromNotecardMessage();
+			break;
+		case ProvisionVoiceAccountRequest:
+			message = new ProvisionVoiceAccountRequestMessage();
+			break;
+		case Viewerstats:
+			message = new ViewerStatsMessage();
+			break;
+		case UpdateAgentLanguage:
+			message = new UpdateAgentLanguageMessage();
+			break;
+		case RemoteParcelRequest:
+			message = new RemoteParcelRequestMessage();
+			break;
+		case UpdateScriptTask:
+			message = new UpdateScriptTaskMessage();
+			break;
+		case UpdateScriptAgent:
+			message = new UpdateScriptAgentMessage();
+			break;
+		case SendPostcard:
+			message = new SendPostcardMessage();
+			break;
+		case UpdateGestureAgentInventory:
+			message = new UpdateGestureAgentInventoryMessage();
+			break;
+		case UpdateNotecardAgentInventory:
+			message = new UpdateNotecardAgentInventoryMessage();
+			break;
+		case LandStatReply:
+			message = new LandStatReplyMessage();
+			break;
+		case ParcelVoiceInfoRequest:
+			message = new ParcelVoiceInfoRequestMessage();
+			break;
+		case ViewerStats:
+			message = new ViewerStatsMessage();
+			break;
+		case EventQueueGet:
+			message = new EventQueueGetMessage();
+			break;
+		case CrossedRegion:
+			message = new CrossedRegionMessage();
+			break;
+		case TeleportFailed:
+			message = new TeleportFailedMessage();
+			break;
+		case PlacesReply:
+			message = new PlacesReplyMessage();
+			break;
+		case UpdateAgentInformation:
+			message = new UpdateAgentInformationMessage();
+			break;
+		case DirLandReply:
+			message = new DirLandReplyMessage();
+			break;
+		case ScriptRunningReply:
+			message = new ScriptRunningReplyMessage();
+			break;
+		case SearchStatRequest:
+			message = new SearchStatRequestMessage();
+			break;
+		case AgentDropGroup:
+			message = new AgentDropGroupMessage();
+			break;
+		case ForceCloseChatterBoxSession:
+			message = new ForceCloseChatterBoxSessionMessage();
+			break;
+		case UploadBakedTexture:
+			message = new UploadBakedTextureMessage();
+			break;
+		case WebFetchInventoryDescendents:
+			message = new WebFetchInventoryDescendentsMessage();
+			break;
+		case RegionInfo:
+			message = new RegionInfoMessage();
+			break;
+		case UploadObjectAsset:
+			message = new UploadObjectAssetMessage();
+			break;
+		case ObjectPhysicsProperties:
+			message = new ObjectPhysicsPropertiesMessage();
+			break;
+		case ObjectMediaNavigate:
+			message = new ObjectMediaNavigateMessage();
+			break;
+		case ObjectMedia:
+			message = new ObjectMediaMessage();
+			break;
+		case AttachmentResources:
+			message = new AttachmentResourcesMessage();
+			break;
+		case LandResources:
+			if (map.containsKey("parcel_id")) {
+				message = new LandResourcesRequest();
+			} else if (map.containsKey("ScriptResourceSummary")) {
+				message = new LandResourcesMessage();
+			} else if (map.containsKey("summary")) {
+				message = new LandResourcesInfo();
+			}
+			break;
+		case ProductInfoRequest:
+			message = new ProductInfoRequestMessage();
+			break;
+		case GetDisplayNames:
+			message = new GetDisplayNamesMessage();
+			break;
+		case SetDisplayName:
+			message = new SetDisplayNameMessage();
+			break;
+		case SetDisplayNameReply:
+			message = new SetDisplayNameReplyMessage();
+			break;
+		case DisplayNameUpdate:
+			message = new DisplayNameUpdateMessage();
+			break;
+		case BulkUpdateInventory:
+			message = new BulkUpdateInventoryMessage();
+			break;
+		case RenderMaterials:
+			message = new RenderMaterialsMessage();
+			break;
+		case GetObjectCost:
+			if (map.containsKey("object_ids")) {
+				message = new GetObjectCostRequest();
+			} else {
+				message = new GetObjectCostMessage();
+			}
+			break;
+		case GetObjectPhysicsData:
+			if (map.containsKey("object_ids")) {
+				message = new GetObjectPhysicsDataRequest();
+			} else {
+				message = new GetObjectPhysicsDataMessage();
+			}
+			break;
+
+		// Capabilities TODO:
+		case GroupAPIv1:
+		case DispatchRegionInfo:
+		case EstateChangeInfo:
+		case FetchInventoryDescendents:
+		case GroupProposalBallot:
+		case MapLayerGod:
+		case NewFileAgentInventory:
+		case RequestTextureDownload:
+		case SearchStatTracking:
+		case SendUserReport:
+		case SendUserReportWithScreenshot:
+		case ServerReleaseNotes:
+		case StartGroupProposal:
+		case UpdateGestureTaskInventory:
+		case UpdateNotecardTaskInventory:
+		case ViewerStartAuction:
+		case UntrustedSimulatorMessage:
+		default:
+			logger.error("Unimplemented event " + eventType.toString());
 		}
 		if (message != null)
 			message.Deserialize(map);
@@ -6766,13 +6028,11 @@ public class CapsMessage implements IMessage
 	}
 
 	@Override
-	public OSDMap Serialize()
-	{
+	public OSDMap Serialize() {
 		return null;
 	}
 
 	@Override
-	public void Deserialize(OSDMap map)
-	{
+	public void Deserialize(OSDMap map) {
 	}
 }

@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -16,15 +15,18 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
 /**
  * 
- * 			The InputGlobal type is used to represent inputs that can reference external resources.
- * 			
+ * The InputGlobal type is used to represent inputs that can reference external
+ * resources.
  * 
- * <p>Java class for InputGlobal complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * Java class for InputGlobal complex type.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="InputGlobal">
@@ -43,60 +45,54 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(name = "InputGlobal")
 public class InputGlobal {
 
-    @XmlAttribute(name = "semantic", required = true)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlSchemaType(name = "NMTOKEN")
-    protected String semantic;
-    @XmlAttribute(name = "source", required = true)
-    @XmlSchemaType(name = "anyURI")
-    protected String source;
+	@XmlAttribute(name = "semantic", required = true)
+	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+	@XmlSchemaType(name = "NMTOKEN")
+	protected String semantic;
+	@XmlAttribute(name = "source", required = true)
+	@XmlSchemaType(name = "anyURI")
+	protected String source;
 
-    /**
-     * Gets the value of the semantic property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getSemantic() {
-        return semantic;
-    }
+	/**
+	 * Gets the value of the semantic property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getSemantic() {
+		return semantic;
+	}
 
-    /**
-     * Sets the value of the semantic property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setSemantic(String value) {
-        this.semantic = value;
-    }
+	/**
+	 * Sets the value of the semantic property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setSemantic(String value) {
+		this.semantic = value;
+	}
 
-    /**
-     * Gets the value of the source property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getSource() {
-        return source;
-    }
+	/**
+	 * Gets the value of the source property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getSource() {
+		return source;
+	}
 
-    /**
-     * Sets the value of the source property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setSource(String value) {
-        this.source = value;
-    }
+	/**
+	 * Sets the value of the source property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setSource(String value) {
+		this.source = value;
+	}
 
 }

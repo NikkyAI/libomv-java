@@ -27,46 +27,35 @@ package libomv.objects;
 import junit.framework.TestCase;
 import libomv.rendering.LindenSkeleton;
 
-public class RenderingTest extends TestCase
-{
+public class RenderingTest extends TestCase {
 	private static final ClassLoader classLoader = RenderingTest.class.getClassLoader();
-	
-	public void testLindenSkeleton() throws Exception
-	{
+
+	public void testLindenSkeleton() throws Exception {
 		LindenSkeleton skeleton = LindenSkeleton.load();
 		assertTrue("Loading of skeleton failed", skeleton != null);
 	}
 
 	/*
-	public void testLindenMesh() throws Exception {
-
-		File meshFile = new File( classLoader.getResource("character/avatar_lad.xml").getFile() );
-
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		Document doc = builder.parse(meshFile);
-		
-		NodeList meshes = doc.getElementsByTagName("mesh");
-		for (int i = 0; i < meshes.getLength(); i++) {
-			Node meshNode = meshes.item(i);
-			String type = meshNode.getAttributes().getNamedItem("type").getNodeValue();
-			int lod = Integer.parseInt(meshNode.getAttributes().getNamedItem("lod").getNodeValue());
-			String fileName = meshNode.getAttributes().getNamedItem("file_name").getNodeValue();
-
-			// Mash up the filename with the current path
-			fileName = new File(meshFile.getParentFile(), fileName).getPath();
-
-			LindenMesh mesh = new LindenMesh(type);
-			if (lod == 0)
-			{
-				mesh.load(fileName);
-			}
-			else
-			{
-				mesh.loadLod(lod, fileName);
-			}
-			System.out.println(mesh);
-		}
-	}
-	*/
+	 * public void testLindenMesh() throws Exception {
+	 * 
+	 * File meshFile = new File(
+	 * classLoader.getResource("character/avatar_lad.xml").getFile() );
+	 * 
+	 * DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	 * DocumentBuilder builder = factory.newDocumentBuilder(); Document doc =
+	 * builder.parse(meshFile);
+	 * 
+	 * NodeList meshes = doc.getElementsByTagName("mesh"); for (int i = 0; i <
+	 * meshes.getLength(); i++) { Node meshNode = meshes.item(i); String type =
+	 * meshNode.getAttributes().getNamedItem("type").getNodeValue(); int lod =
+	 * Integer.parseInt(meshNode.getAttributes().getNamedItem("lod").getNodeValue())
+	 * ; String fileName =
+	 * meshNode.getAttributes().getNamedItem("file_name").getNodeValue();
+	 * 
+	 * // Mash up the filename with the current path fileName = new
+	 * File(meshFile.getParentFile(), fileName).getPath();
+	 * 
+	 * LindenMesh mesh = new LindenMesh(type); if (lod == 0) { mesh.load(fileName);
+	 * } else { mesh.loadLod(lod, fileName); } System.out.println(mesh); } }
+	 */
 }

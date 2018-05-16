@@ -62,8 +62,7 @@ import libomv.io.GridClient;
 import libomv.types.UUID;
 import libomv.utils.TimeoutEvent;
 
-public abstract class AbstractChannel extends JPanel
-{
+public abstract class AbstractChannel extends JPanel {
 	private static final Logger logger = Logger.getLogger(AbstractChannel.class);
 
 	private static final long serialVersionUID = 1L;
@@ -76,9 +75,14 @@ public abstract class AbstractChannel extends JPanel
 	public static final String STYLE_ERROR = "error";
 	/** Identifier for the "system" style of text. */
 	public static final String STYLE_SYSTEM = "system";
-	/** Identifier for the "remote chat" style of text (message from a third party). */
+	/**
+	 * Identifier for the "remote chat" style of text (message from a third party).
+	 */
 	public static final String STYLE_CHATREMOTE = "remote";
-	/** Identifier for the "remote chat from a friend" style of text (message from a third party). */
+	/**
+	 * Identifier for the "remote chat from a friend" style of text (message from a
+	 * third party).
+	 */
 	public static final String STYLE_CHATREMOTEFRIEND = "remoteFriend";
 	/** Identifier for the "local chat" style of text (message from the user). */
 	public static final String STYLE_CHATLOCAL = "local";
@@ -96,58 +100,48 @@ public abstract class AbstractChannel extends JPanel
 	/** Identifier for a URL. */
 	private static final Integer IDENTIFIER_URL = new Integer(0);
 
-    protected static final String NewlineMarker = String.valueOf('\u00b6');
+	protected static final String NewlineMarker = String.valueOf('\u00b6');
 
 	private long typingEndTime;
 	private TimeoutEvent<Integer> isTyping = new TimeoutEvent<Integer>();
-    protected static int AGENT_TYPING_TIMEOUT = 5000;	// milliseconds
+	protected static int AGENT_TYPING_TIMEOUT = 5000; // milliseconds
 
 	/** Regex used for testing URLs. */
 	private static String URLRegex =
 			// protocol identifier
-		    "([A-Za-z]+://)" +
-		    // user:pass authentication
-		    "(?:\\S+(?::\\S*)?@)?" +
-		    "(?:" +
-		      // IP address exclusion
-		      // private & local networks
-		      "(?!10(?:\\.\\d{1,3}){3})" +
-		      "(?!127(?:\\.\\d{1,3}){3})" +
-		      "(?!169\\.254(?:\\.\\d{1,3}){2})" +
-		      "(?!192\\.168(?:\\.\\d{1,3}){2})" +
-		      "(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})" +
-		      // IP address dotted notation octets
-		      // excludes loopback network 0.0.0.0
-		      // excludes reserved space >= 224.0.0.0
-		      // excludes network & broacast addresses
-		      // (first & last IP address of each class)
-		      "(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])" +
-		      "(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}" +
-		      "(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))" +
-		    "|" +
-		      // host name
-		      "(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)" +
-		      // domain name
-		      "(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*" +
-		      // TLD identifier
-		      "(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" +
-		    ")" +
-		    // port number
-		    "(?::\\d{2,5})?" +
-		    // resource path
-		    "(?:/[^\\s]*)?" +
-		  "$";
-	
-	public class ChatItem
-	{
+			"([A-Za-z]+://)" +
+			// user:pass authentication
+					"(?:\\S+(?::\\S*)?@)?" + "(?:" +
+					// IP address exclusion
+					// private & local networks
+					"(?!10(?:\\.\\d{1,3}){3})" + "(?!127(?:\\.\\d{1,3}){3})" + "(?!169\\.254(?:\\.\\d{1,3}){2})"
+					+ "(?!192\\.168(?:\\.\\d{1,3}){2})" + "(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})" +
+					// IP address dotted notation octets
+					// excludes loopback network 0.0.0.0
+					// excludes reserved space >= 224.0.0.0
+					// excludes network & broacast addresses
+					// (first & last IP address of each class)
+					"(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])" + "(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}"
+					+ "(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))" + "|" +
+					// host name
+					"(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)" +
+					// domain name
+					"(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*" +
+					// TLD identifier
+					"(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" + ")" +
+					// port number
+					"(?::\\d{2,5})?" +
+					// resource path
+					"(?:/[^\\s]*)?" + "$";
+
+	public class ChatItem {
 		Date timestamp;
 		String from;
 		String fromStyle;
 		String message;
 		String messageStyle;
-		
-		public ChatItem(String from, String fromStyle, String message, String messageStyle)
-		{
+
+		public ChatItem(String from, String fromStyle, String message, String messageStyle) {
 			this.timestamp = new Date();
 			this.from = from;
 			this.fromStyle = fromStyle;
@@ -155,8 +149,7 @@ public abstract class AbstractChannel extends JPanel
 			this.messageStyle = messageStyle;
 		}
 
-		public ChatItem(Date timestamp, String from, String fromStyle, String message, String messageStyle)
-		{
+		public ChatItem(Date timestamp, String from, String fromStyle, String message, String messageStyle) {
 			this.timestamp = timestamp != null ? timestamp : new Date();
 			this.from = from;
 			this.fromStyle = fromStyle;
@@ -180,12 +173,11 @@ public abstract class AbstractChannel extends JPanel
 	private List<String> chatHistory;
 	private List<ChatItem> chatBuffer;
 	private Pattern URL;
-	
-	private boolean printTimestamp = true; 
+
+	private boolean printTimestamp = true;
 	protected static DateFormat df = DateFormat.getTimeInstance();
 
-	public AbstractChannel(MainControl main, String name, UUID id, UUID session)
-	{
+	public AbstractChannel(MainControl main, String name, UUID id, UUID session) {
 		super();
 		_UUID = id;
 		_Session = session;
@@ -195,7 +187,7 @@ public abstract class AbstractChannel extends JPanel
 		setName(name);
 		setLayout(new BorderLayout(0, 0));
 
-		chatBuffer = new ArrayList<ChatItem>(); 
+		chatBuffer = new ArrayList<ChatItem>();
 		chatHistory = new ArrayList<String>();
 		chatPointer = 0;
 		isTyping.reset(0);
@@ -205,7 +197,7 @@ public abstract class AbstractChannel extends JPanel
 
 		JScrollPane scrollPaneText = new JScrollPane();
 		scrollPaneText.setViewportView(getTextPane());
-		scrollPaneText.getVerticalScrollBar().setValue(scrollPaneText.getVerticalScrollBar().getMaximum()); 
+		scrollPaneText.getVerticalScrollBar().setValue(scrollPaneText.getVerticalScrollBar().getMaximum());
 		add(scrollPaneText, BorderLayout.CENTER);
 
 		JPanel panelSouth = new JPanel();
@@ -214,128 +206,110 @@ public abstract class AbstractChannel extends JPanel
 
 		JButton btnSay = new JButton("Say");
 		btnSay.setHorizontalAlignment(SwingConstants.RIGHT);
-		btnSay.addActionListener(new ActionListener()
-		{
+		btnSay.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				try
-				{
+			public void actionPerformed(ActionEvent e) {
+				try {
 					transmitMessage(getJTxChat().getText(), ChatType.Normal);
-				}
-				catch (Exception ex)
-				{
+				} catch (Exception ex) {
 					logger.error(GridClient.Log("Failed to send local chat text", _Main.getGridClient()), ex);
 				}
 				getJTxChat().grabFocus();
 			}
 		});
 
-//		getRootPane().setDefaultButton(btnSay);
+		// getRootPane().setDefaultButton(btnSay);
 		panelSouth.add(btnSay);
 		add(panelSouth, BorderLayout.SOUTH);
 	}
 
-	public UUID getUUID()
-	{
+	public UUID getUUID() {
 		return _UUID;
 	}
 
-	public String getName()
-	{
+	public String getName() {
 		return super.getName();
 	}
 
-	protected UUID getSession()
-	{
+	protected UUID getSession() {
 		return _Session;
 	}
 
-//	public JPanel getPanel()
-//	{
-//		return this;
-//	}
+	// public JPanel getPanel()
+	// {
+	// return this;
+	// }
 
-	protected void transmitMessage(String message, ChatType chatType) throws Exception
-	{
-		isTyping.reset(-1);		
+	protected void transmitMessage(String message, ChatType chatType) throws Exception {
+		isTyping.reset(-1);
 	}
 
 	/* Overwrite this for channels who send a typing indication */
 	abstract protected void triggerTyping(boolean start) throws Exception;
-	
-	/* this must be implemented by all channels to receive messages */
-	abstract public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style) throws BadLocationException;
 
-	public void receiveStatus(UUID sourceID, String message, String style) throws BadLocationException
-	{
+	/* this must be implemented by all channels to receive messages */
+	abstract public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style)
+			throws BadLocationException;
+
+	public void receiveStatus(UUID sourceID, String message, String style) throws BadLocationException {
 		// Get the StyledDocument.
 		StyledDocument styledDocument = getTextPane().getStyledDocument();
 
-		if (tempLen > 0)
-		{
+		if (tempLen > 0) {
 			styledDocument.remove(tempStart, tempLen);
 			tempLen = 0;
 		}
 
-		if (message != null && !message.isEmpty())
-		{
+		if (message != null && !message.isEmpty()) {
 			tempStart = styledDocument.getLength();
-			styledDocument.insertString(styledDocument.getLength(), message, styledDocument.getStyle(style == null ? STYLE_SYSTEM : style));
+			styledDocument.insertString(styledDocument.getLength(), message,
+					styledDocument.getStyle(style == null ? STYLE_SYSTEM : style));
 			tempLen = message.length();
 		}
 	}
-	
+
 	/**
 	 * Call to trigger that typing has begun.
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
-	protected void triggerTyping() throws Exception
-	{
+	protected void triggerTyping() throws Exception {
 		// Update the time at which typing started
 		typingEndTime = System.currentTimeMillis() + AGENT_TYPING_TIMEOUT;
 
 		// If this is the beginning of typing.
-		if (isTyping.get() <= 0)
-		{
+		if (isTyping.get() <= 0) {
 			// Set the flag
 			isTyping.reset(1);
 			// Inform the server of the typing status
 			triggerTyping(true);
 
 			// Start a thread that checks if we paused typing
-			new Thread(new Runnable()
-			{
+			new Thread(new Runnable() {
 				@Override
-				public void run()
-				{
-					try
-					{
+				public void run() {
+					try {
 						// While the channel is flagged as typing...
-						do
-						{
+						do {
 							// Check for timeout.
-							if (System.currentTimeMillis() > typingEndTime)
-							{
+							if (System.currentTimeMillis() > typingEndTime) {
 								// Clear the flag
 								isTyping.set(0);
 							}
 							// give up time
-						}
-						while (isTyping.waitOne(200) > 0);
+						} while (isTyping.waitOne(200) > 0);
 
 						// Send the "stopped typing" message
 						if (isTyping.get() == 0)
 							triggerTyping(false);
+					} catch (Exception e) {
 					}
-					catch (Exception e) { }
 				}
 			}).start();
 		}
-	}	
-	
-	protected void addMessage(ChatItem chatItem) throws BadLocationException
-	{
+	}
+
+	protected void addMessage(ChatItem chatItem) throws BadLocationException {
 		if (chatItem == null || chatItem.message == null || chatItem.message.trim().isEmpty())
 			return;
 
@@ -347,62 +321,60 @@ public abstract class AbstractChannel extends JPanel
 		getJTxChat().grabFocus();
 	}
 
-	protected void addHistory(String message)
-	{
+	protected void addHistory(String message) {
 		chatHistory.add(message);
 		chatPointer = chatHistory.size();
 	}
 
-	protected void printMessage(ChatItem chatItem) throws BadLocationException
-	{
+	protected void printMessage(ChatItem chatItem) throws BadLocationException {
 		// Get the StyledDocument.
 		StyledDocument styledDocument = jTextPane.getStyledDocument();
 
-		if (tempLen > 0)
-		{
+		if (tempLen > 0) {
 			styledDocument.remove(tempStart, tempLen);
 			tempLen = 0;
 		}
 
 		// First, if timestamps are enabled add that one
-		if (printTimestamp)
-		{
-			styledDocument.insertString(styledDocument.getLength(), "[" + df.format(chatItem.timestamp) + "] ", styledDocument.getStyle(STYLE_INFORMATIONAL));
+		if (printTimestamp) {
+			styledDocument.insertString(styledDocument.getLength(), "[" + df.format(chatItem.timestamp) + "] ",
+					styledDocument.getStyle(STYLE_INFORMATIONAL));
 		}
 
 		// Second, we insert the name.
-		styledDocument.insertString(styledDocument.getLength(), chatItem.from, styledDocument.getStyle(chatItem.fromStyle));
+		styledDocument.insertString(styledDocument.getLength(), chatItem.from,
+				styledDocument.getStyle(chatItem.fromStyle));
 
 		// Third, we insert all of the text plus a line feed with the desired style.
-		styledDocument.insertString(styledDocument.getLength(), chatItem.message + "\n", styledDocument.getStyle(chatItem.messageStyle));
+		styledDocument.insertString(styledDocument.getLength(), chatItem.message + "\n",
+				styledDocument.getStyle(chatItem.messageStyle));
 
-		// Find the start of the insert point for this message (-1 is for the additional line feed)
+		// Find the start of the insert point for this message (-1 is for the additional
+		// line feed)
 		int offset = styledDocument.getLength() - chatItem.message.length() - 1;
 		Matcher matcher = URL.matcher(chatItem.message);
-		
+
 		// This style will be used to create a style identifying each link.
 		Style urlStyle;
 		// Whilst there are still links to be found...
-		while (matcher.find())
-		{
+		while (matcher.find()) {
 			// Create a style to identify the link (so that it can be clicked).
-			urlStyle = styledDocument.addStyle("link" + matcher.start(), null);				
+			urlStyle = styledDocument.addStyle("link" + matcher.start(), null);
 			urlStyle.addAttribute(IDENTIFIER_URL, matcher.group());
 			StyleConstants.setForeground(urlStyle, Color.BLUE);
 			StyleConstants.setBold(urlStyle, true);
 			StyleConstants.setUnderline(urlStyle, true);
 			// Update the substring of the URL within the document with the link style.
-			styledDocument.setCharacterAttributes(offset + matcher.start(), matcher.end() - matcher.start(), urlStyle, true );
+			styledDocument.setCharacterAttributes(offset + matcher.start(), matcher.end() - matcher.start(), urlStyle,
+					true);
 		}
 	}
 
-	protected void chatHistoryPrev()
-	{
+	protected void chatHistoryPrev() {
 		if (chatPointer == 0)
 			return;
 		chatPointer--;
-		if (chatHistory.size() > chatPointer)
-		{
+		if (chatHistory.size() > chatPointer) {
 			String text = chatHistory.get(chatPointer);
 			getJTxChat().setText(text);
 			getJTxChat().setSelectionStart(text.length());
@@ -410,13 +382,11 @@ public abstract class AbstractChannel extends JPanel
 		}
 	}
 
-	protected void chatHistoryNext()
-	{
+	protected void chatHistoryNext() {
 		if (chatPointer == chatHistory.size())
 			return;
 		chatPointer++;
-		if (chatPointer == chatHistory.size())
-		{
+		if (chatPointer == chatHistory.size()) {
 			getJTxChat().setText(null);
 			return;
 		}
@@ -427,15 +397,12 @@ public abstract class AbstractChannel extends JPanel
 	}
 
 	/** Clear the text pane. */
-	public void clearText()
-	{
+	public void clearText() {
 		getTextPane().setText(null);
 	}
 
-	protected JTextPane getTextPane()
-	{
-		if (jTextPane == null)
-		{
+	protected JTextPane getTextPane() {
+		if (jTextPane == null) {
 			jTextPane = new JTextPane();
 			// Automatically scroll.
 			jTextPane.setAutoscrolls(true);
@@ -446,7 +413,8 @@ public abstract class AbstractChannel extends JPanel
 			StyledDocument styledDocument = jTextPane.getStyledDocument();
 
 			// Set up the regular style (using the default style context).
-			Style regular = styledDocument.addStyle(STYLE_REGULAR, StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
+			Style regular = styledDocument.addStyle(STYLE_REGULAR,
+					StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
 			StyleConstants.setFontFamily(regular, "SansSerif");
 
 			// Set up the action style.
@@ -489,7 +457,7 @@ public abstract class AbstractChannel extends JPanel
 
 			// Set up the object style.
 			Style object = styledDocument.addStyle(STYLE_OBJECT, regular);
-			StyleConstants.setForeground(object, new Color(0, 127, 0));  // lightGreen
+			StyleConstants.setForeground(object, new Color(0, 127, 0)); // lightGreen
 			StyleConstants.setBold(object, true);
 
 			// Set up the faint style.
@@ -503,60 +471,44 @@ public abstract class AbstractChannel extends JPanel
 		return jTextPane;
 	}
 
-	protected JTextField getJTxChat()
-	{
-		if (jTextChat == null)
-		{
+	protected JTextField getJTxChat() {
+		if (jTextChat == null) {
 			jTextChat = new JTextField();
 			jTextChat.setHorizontalAlignment(SwingConstants.LEFT);
 			jTextChat.setColumns(20);
-			jTextChat.addKeyListener(new KeyAdapter()
-			{
+			jTextChat.addKeyListener(new KeyAdapter() {
 				@Override
-				public void keyTyped(KeyEvent e)
-				{
-					if (e.getKeyChar() != '\n')
-					{
-						try
-						{
+				public void keyTyped(KeyEvent e) {
+					if (e.getKeyChar() != '\n') {
+						try {
 							triggerTyping();
-						}
-						catch (Exception ex)
-						{
+						} catch (Exception ex) {
 							logger.error(GridClient.Log("Failed to send typing indication", _Main.getGridClient()), ex);
 						}
 						return;
 					}
 					e.consume();
 
-					try
-					{
+					try {
 						if (e.isShiftDown())
 							transmitMessage(getJTxChat().getText(), ChatType.Whisper);
 						else if (e.isControlDown())
 							transmitMessage(getJTxChat().getText(), ChatType.Shout);
 						else
 							transmitMessage(getJTxChat().getText(), ChatType.Normal);
-					}
-					catch (Exception ex)
-					{
+					} catch (Exception ex) {
 						logger.error(GridClient.Log("Failed to send local chat text", _Client), ex);
 					}
 				}
 
 				@Override
-				public void keyReleased(KeyEvent e)
-				{
-					if (e.isAltDown())
-					{
-						if (e.getKeyCode() == KeyEvent.VK_UP)
-						{
+				public void keyReleased(KeyEvent e) {
+					if (e.isAltDown()) {
+						if (e.getKeyCode() == KeyEvent.VK_UP) {
 							e.consume();
 							chatHistoryPrev();
 							return;
-						}
-						else if (e.getKeyCode() == KeyEvent.VK_DOWN)
-						{
+						} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
 							e.consume();
 							chatHistoryNext();
 							return;

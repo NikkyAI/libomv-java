@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import java.util.ArrayList;
@@ -20,15 +19,18 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
 /**
  * 
- * 			Defines a set of texturing commands that will be converted into multitexturing operations using glTexEnv in regular and combiner mode.
- * 			
+ * Defines a set of texturing commands that will be converted into
+ * multitexturing operations using glTexEnv in regular and combiner mode.
  * 
- * <p>Java class for gles_texture_pipeline complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * Java class for gles_texture_pipeline complex type.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="gles_texture_pipeline">
@@ -48,75 +50,68 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "gles_texture_pipeline", propOrder = {
-    "texcombinerOrTexenvOrExtra"
-})
+@XmlType(name = "gles_texture_pipeline", propOrder = { "texcombinerOrTexenvOrExtra" })
 public class GlesTexturePipeline {
 
-    @XmlElements({
-        @XmlElement(name = "texcombiner", type = GlesTexcombinerCommandType.class),
-        @XmlElement(name = "texenv", type = GlesTexenvCommandType.class),
-        @XmlElement(name = "extra", type = Extra.class)
-    })
-    protected List<Object> texcombinerOrTexenvOrExtra;
-    @XmlAttribute(name = "sid")
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlSchemaType(name = "NCName")
-    protected String sid;
+	@XmlElements({ @XmlElement(name = "texcombiner", type = GlesTexcombinerCommandType.class),
+			@XmlElement(name = "texenv", type = GlesTexenvCommandType.class),
+			@XmlElement(name = "extra", type = Extra.class) })
+	protected List<Object> texcombinerOrTexenvOrExtra;
+	@XmlAttribute(name = "sid")
+	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+	@XmlSchemaType(name = "NCName")
+	protected String sid;
 
-    /**
-     * Gets the value of the texcombinerOrTexenvOrExtra property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the texcombinerOrTexenvOrExtra property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getTexcombinerOrTexenvOrExtra().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link GlesTexcombinerCommandType }
-     * {@link GlesTexenvCommandType }
-     * {@link Extra }
-     * 
-     * 
-     */
-    public List<Object> getTexcombinerOrTexenvOrExtra() {
-        if (texcombinerOrTexenvOrExtra == null) {
-            texcombinerOrTexenvOrExtra = new ArrayList<Object>();
-        }
-        return this.texcombinerOrTexenvOrExtra;
-    }
+	/**
+	 * Gets the value of the texcombinerOrTexenvOrExtra property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the texcombinerOrTexenvOrExtra property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getTexcombinerOrTexenvOrExtra().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list
+	 * {@link GlesTexcombinerCommandType } {@link GlesTexenvCommandType }
+	 * {@link Extra }
+	 * 
+	 * 
+	 */
+	public List<Object> getTexcombinerOrTexenvOrExtra() {
+		if (texcombinerOrTexenvOrExtra == null) {
+			texcombinerOrTexenvOrExtra = new ArrayList<Object>();
+		}
+		return this.texcombinerOrTexenvOrExtra;
+	}
 
-    /**
-     * Gets the value of the sid property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getSid() {
-        return sid;
-    }
+	/**
+	 * Gets the value of the sid property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getSid() {
+		return sid;
+	}
 
-    /**
-     * Sets the value of the sid property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setSid(String value) {
-        this.sid = value;
-    }
+	/**
+	 * Sets the value of the sid property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setSid(String value) {
+		this.sid = value;
+	}
 
 }

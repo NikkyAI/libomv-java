@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import java.util.ArrayList;
@@ -22,11 +21,13 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -65,121 +66,111 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "content"
-})
+@XmlType(name = "", propOrder = { "content" })
 @XmlRootElement(name = "animation")
 public class Animation {
 
-    @XmlElementRefs({
-        @XmlElementRef(name = "sampler", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = Sampler.class, required = false),
-        @XmlElementRef(name = "source", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = Source.class, required = false),
-        @XmlElementRef(name = "channel", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = Channel.class, required = false),
-        @XmlElementRef(name = "asset", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = Asset.class, required = false),
-        @XmlElementRef(name = "animation", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = Animation.class, required = false),
-        @XmlElementRef(name = "extra", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = Extra.class, required = false)
-    })
-    protected List<Object> content;
-    @XmlAttribute(name = "id")
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlID
-    @XmlSchemaType(name = "ID")
-    protected String id;
-    @XmlAttribute(name = "name")
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlSchemaType(name = "NCName")
-    protected String name;
+	@XmlElementRefs({
+			@XmlElementRef(name = "sampler", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = Sampler.class, required = false),
+			@XmlElementRef(name = "source", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = Source.class, required = false),
+			@XmlElementRef(name = "channel", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = Channel.class, required = false),
+			@XmlElementRef(name = "asset", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = Asset.class, required = false),
+			@XmlElementRef(name = "animation", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = Animation.class, required = false),
+			@XmlElementRef(name = "extra", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = Extra.class, required = false) })
+	protected List<Object> content;
+	@XmlAttribute(name = "id")
+	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+	@XmlID
+	@XmlSchemaType(name = "ID")
+	protected String id;
+	@XmlAttribute(name = "name")
+	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+	@XmlSchemaType(name = "NCName")
+	protected String name;
 
-    /**
-     * Gets the rest of the content model. 
-     * 
-     * <p>
-     * You are getting this "catch-all" property because of the following reason: 
-     * The field name "Animation" is used by two different parts of a schema. See: 
-     * line 2439 of file:/C:/Users/ROKA/workspace/collada%20lib/src/collada_schema_1_4.xsd
-     * line 2431 of file:/C:/Users/ROKA/workspace/collada%20lib/src/collada_schema_1_4.xsd
-     * <p>
-     * To get rid of this property, apply a property customization to one 
-     * of both of the following declarations to change their names: 
-     * Gets the value of the content property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the content property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getContent().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Sampler }
-     * {@link Source }
-     * {@link Channel }
-     * {@link Asset }
-     * {@link Animation }
-     * {@link Extra }
-     * 
-     * 
-     */
-    public List<Object> getContent() {
-        if (content == null) {
-            content = new ArrayList<Object>();
-        }
-        return this.content;
-    }
+	/**
+	 * Gets the rest of the content model.
+	 * 
+	 * <p>
+	 * You are getting this "catch-all" property because of the following reason:
+	 * The field name "Animation" is used by two different parts of a schema. See:
+	 * line 2439 of
+	 * file:/C:/Users/ROKA/workspace/collada%20lib/src/collada_schema_1_4.xsd line
+	 * 2431 of
+	 * file:/C:/Users/ROKA/workspace/collada%20lib/src/collada_schema_1_4.xsd
+	 * <p>
+	 * To get rid of this property, apply a property customization to one of both of
+	 * the following declarations to change their names: Gets the value of the
+	 * content property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the content property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getContent().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link Sampler }
+	 * {@link Source } {@link Channel } {@link Asset } {@link Animation }
+	 * {@link Extra }
+	 * 
+	 * 
+	 */
+	public List<Object> getContent() {
+		if (content == null) {
+			content = new ArrayList<Object>();
+		}
+		return this.content;
+	}
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getId() {
-        return id;
-    }
+	/**
+	 * Gets the value of the id property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getId() {
+		return id;
+	}
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setId(String value) {
-        this.id = value;
-    }
+	/**
+	 * Sets the value of the id property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setId(String value) {
+		this.id = value;
+	}
 
-    /**
-     * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getName() {
-        return name;
-    }
+	/**
+	 * Gets the value of the name property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
+	/**
+	 * Sets the value of the name property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setName(String value) {
+		this.name = value;
+	}
 
 }

@@ -116,15 +116,13 @@ import libomv.utils.Helpers;
 
 // Handles all network traffic related to reading and writing group
 // information
-public class GroupManager implements PacketCallback, CapsCallback
-{
+public class GroupManager implements PacketCallback, CapsCallback {
 	private static final Logger logger = Logger.getLogger(GroupManager.class);
 
 	// /#region Structs
 
 	// Avatar group management
-	public final class GroupMember
-	{
+	public final class GroupMember {
 		// Key of Group Member
 		public UUID ID;
 		// Total land contribution
@@ -138,15 +136,13 @@ public class GroupManager implements PacketCallback, CapsCallback
 		// Is a group owner
 		public boolean IsOwner;
 
-		public GroupMember(UUID agentID)
-		{
+		public GroupMember(UUID agentID) {
 			ID = agentID;
 		}
 	}
 
 	// Role manager for a group
-	public final class GroupRole
-	{
+	public final class GroupRole {
 		// Key of the group
 		public UUID GroupID;
 		// Key of Role
@@ -162,20 +158,17 @@ public class GroupManager implements PacketCallback, CapsCallback
 
 		// Returns the role's title
 		@Override
-		public String toString()
-		{
+		public String toString() {
 			return Name;
 		}
 
-		public GroupRole(UUID roleID)
-		{
+		public GroupRole(UUID roleID) {
 			ID = roleID;
 		}
 	}
 
 	// Class to represent Group Title
-	public final class GroupTitle
-	{
+	public final class GroupTitle {
 		// Key of the group
 		public UUID GroupID;
 		// ID of the role title belongs to
@@ -187,19 +180,16 @@ public class GroupManager implements PacketCallback, CapsCallback
 
 		// Returns group title
 		@Override
-		public String toString()
-		{
+		public String toString() {
 			return Title;
 		}
 
-		public GroupTitle()
-		{
+		public GroupTitle() {
 		}
 	}
 
 	// Represents a group on the grid
-	public final class Group
-	{
+	public final class Group {
 		// Key of Group
 		private UUID ID;
 		// Key of Group Insignia
@@ -239,51 +229,42 @@ public class GroupManager implements PacketCallback, CapsCallback
 		// Show this group in agent's profile
 		public boolean ListInProfile;
 
-		public UUID getID()
-		{
+		public UUID getID() {
 			return ID;
 		}
-		
-		public String getName()
-		{
+
+		public String getName() {
 			return Name;
 		}
-		
+
 		@Override
-		public boolean equals(Object o)
-		{
-			return (o != null && o instanceof Group) ? equals((Group)o) : false;
+		public boolean equals(Object o) {
+			return (o != null && o instanceof Group) ? equals((Group) o) : false;
 		}
 
-		public boolean equals(Group o)
-		{
+		public boolean equals(Group o) {
 			return o != null ? ID.equals(o.ID) : false;
 		}
-		
+
 		@Override
-		public int hashCode()
-		{
+		public int hashCode() {
 			return ID.hashCode();
 		}
-		
+
 		// Returns the name of the group
 		@Override
-		public String toString()
-		{
+		public String toString() {
 			return Name;
 		}
 
-
-		public Group(UUID id)
-		{
+		public Group(UUID id) {
 			ID = id;
 			InsigniaID = new UUID();
 		}
 	}
 
 	// A group Vote
-	public final class Vote
-	{
+	public final class Vote {
 		// Key of Avatar who created Vote
 		public UUID Candidate;
 		// Text of the Vote proposal
@@ -293,8 +274,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	}
 
 	// A group proposal
-	public final class GroupProposal
-	{
+	public final class GroupProposal {
 		// The minimum number of members that must vote before proposal passes
 		// or fails
 		public int Quorum;
@@ -309,8 +289,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	}
 
 	// A group proposal
-	public final class GroupProposalItem
-	{
+	public final class GroupProposalItem {
 		public UUID VoteID;
 		public UUID VoteInitiator;
 		public String TerseDateID;
@@ -329,8 +308,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		public String ProposalText;
 	}
 
-	public final class GroupAccountSummary
-	{
+	public final class GroupAccountSummary {
 		//
 		public int IntervalDays;
 		//
@@ -371,8 +349,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		public String TaxDate;
 	}
 
-	public class GroupAccountDetails
-	{
+	public class GroupAccountDetails {
 		public int IntervalDays;
 
 		public int CurrentInterval;
@@ -388,8 +365,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	}
 
 	// Struct representing a group notice
-	public final class GroupNotice
-	{
+	public final class GroupNotice {
 		//
 		public String Subject;
 		//
@@ -399,10 +375,8 @@ public class GroupManager implements PacketCallback, CapsCallback
 		//
 		public UUID OwnerID;
 
-		public byte[] SerializeAttachment() throws IOException
-		{
-			if (OwnerID.equals(UUID.Zero) || AttachmentID.equals(UUID.Zero))
-			{
+		public byte[] SerializeAttachment() throws IOException {
+			if (OwnerID.equals(UUID.Zero) || AttachmentID.equals(UUID.Zero)) {
 				return Helpers.EmptyBytes;
 			}
 
@@ -415,8 +389,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	}
 
 	// Struct representing a group notice list entry
-	public final class GroupNoticesListEntry
-	{
+	public final class GroupNoticesListEntry {
 		// Notice ID
 		public UUID NoticeID;
 		// Creation timestamp of notice
@@ -433,10 +406,8 @@ public class GroupManager implements PacketCallback, CapsCallback
 
 	}
 
-	public class GroupAccountTransactions
-	{
-		public class TransactionEntry
-		{
+	public class GroupAccountTransactions {
+		public class TransactionEntry {
 			public String Time;
 			public String Item;
 			public String User;
@@ -454,8 +425,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	}
 
 	// Struct representing a member of a group chat session and their settings
-	public final class ChatSessionMember
-	{
+	public final class ChatSessionMember {
 		// The <see cref="UUID"/> of the Avatar
 		public UUID AvatarKey;
 		// True if user has voice chat enabled
@@ -466,18 +436,16 @@ public class GroupManager implements PacketCallback, CapsCallback
 		public boolean MuteText;
 		// True if a moderator has muted this avatars voice
 		public boolean MuteVoice;
-		
-		public boolean equals(Object obj)
-		{
+
+		public boolean equals(Object obj) {
 			if (this == obj)
 				return true;
 			if (!(obj instanceof ChatSessionMember))
 				return false;
-			return AvatarKey.equals(((ChatSessionMember)obj).AvatarKey);
+			return AvatarKey.equals(((ChatSessionMember) obj).AvatarKey);
 		}
-		
-		public int hashCode()
-		{
+
+		public int hashCode() {
 			return AvatarKey.hashCode();
 		}
 	}
@@ -487,8 +455,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	// #region Enums
 
 	// Role update flags
-	public enum GroupRoleUpdate
-	{
+	public enum GroupRoleUpdate {
 		//
 		NoUpdate,
 		//
@@ -502,20 +469,17 @@ public class GroupManager implements PacketCallback, CapsCallback
 		//
 		Delete;
 
-		public GroupRoleUpdate setValue(byte value)
-		{
+		public GroupRoleUpdate setValue(byte value) {
 			return values()[value];
 		}
 
-		public byte getValue()
-		{
+		public byte getValue() {
 			return (byte) ordinal();
 		}
 	}
 
 	// [Flags]
-	public static class GroupPowers
-	{
+	public static class GroupPowers {
 		//
 		public static final long None = 0;
 
@@ -630,10 +594,10 @@ public class GroupManager implements PacketCallback, CapsCallback
 		// Pay group liabilities and receive group dividends
 		public static final long Accountable = 1L << 40;
 
-		// List and Host group events 
-		public static final long  HostEvent = 1L << 41;
+		// List and Host group events
+		public static final long HostEvent = 1L << 41;
 
-	    // Notices and proposals
+		// Notices and proposals
 		// Can send group notices
 		public static final long SendNotices = 1L << 42;
 		// Can receive group notices
@@ -648,18 +612,16 @@ public class GroupManager implements PacketCallback, CapsCallback
 		public static final long ExperienceAdmin = 1L << 49;
 		// Can sign scripts for experiences owned by this group
 		public static final long ExperienceCreator = 1L << 50;
-		       
+
 		// Group Banning
 		// Allows access to ban / un-ban agents from a group
 		public static final long GroupBanAccess = 1L << 51;
-		
-		public static long setValue(long value)
-		{
+
+		public static long setValue(long value) {
 			return value & _mask;
 		}
 
-		public static long getValue(long value)
-		{
+		public static long getValue(long value) {
 			return value & _mask;
 		}
 
@@ -667,35 +629,30 @@ public class GroupManager implements PacketCallback, CapsCallback
 	}
 
 	// Ban actions available for group members
-    public enum GroupBanAction
-    {
-        // Ban agent from joining a group
-        Ban(1),
-        // Remove restriction on agent jointing a group
-        Unban(2);
+	public enum GroupBanAction {
+		// Ban agent from joining a group
+		Ban(1),
+		// Remove restriction on agent jointing a group
+		Unban(2);
 
-        public static GroupBanAction setValue(int value)
-		{
-			for (GroupBanAction e : values())
-			{
+		public static GroupBanAction setValue(int value) {
+			for (GroupBanAction e : values()) {
 				if (e.val == value)
 					return e;
 			}
 			return Ban;
 		}
 
-		public int getValue()
-		{
+		public int getValue() {
 			return val;
 		}
 
 		private int val;
 
-		private GroupBanAction(int value)
-		{
+		private GroupBanAction(int value) {
 			val = value;
 		}
-    }
+	}
 
 	// #endregion Enums
 
@@ -754,32 +711,28 @@ public class GroupManager implements PacketCallback, CapsCallback
 
 	public HashMap<UUID, Callback<GroupAccountTransactions>> OnGroupAccountTransactionsCallbacks = new HashMap<UUID, Callback<GroupAccountTransactions>>();
 
-	private class InstantMessageCallback implements Callback<InstantMessageCallbackArgs>
-	{
+	private class InstantMessageCallback implements Callback<InstantMessageCallbackArgs> {
 		@Override
-		public boolean callback(InstantMessageCallbackArgs e)
-		{
-			if (OnGroupInvitation.count() > 0 && e.getIM().Dialog == InstantMessageDialog.GroupInvitation)
-			{
+		public boolean callback(InstantMessageCallbackArgs e) {
+			if (OnGroupInvitation.count() > 0 && e.getIM().Dialog == InstantMessageDialog.GroupInvitation) {
 				byte[] bucket = e.getIM().BinaryBucket;
 				int fee = -1;
 				UUID roleID = null;
-				if (bucket.length == 20)
-				{
+				if (bucket.length == 20) {
 					fee = Helpers.BytesToInt32B(bucket);
 					roleID = new UUID(bucket, 4);
 				}
-				
-				GroupInvitationCallbackArgs args = new GroupInvitationCallbackArgs(e.getSimulator(), e.getIM().IMSessionID,
-						                                                           e.getIM().FromAgentID, roleID, e.getIM().FromAgentName, e.getIM().Message, fee);
+
+				GroupInvitationCallbackArgs args = new GroupInvitationCallbackArgs(e.getSimulator(),
+						e.getIM().IMSessionID, e.getIM().FromAgentID, roleID, e.getIM().FromAgentName,
+						e.getIM().Message, fee);
 				OnGroupInvitation.dispatch(args);
 			}
 			return false;
 		}
 	}
 
-	public GroupManager(GridClient client)
-	{
+	public GroupManager(GridClient client) {
 		_Client = client;
 
 		TempGroupMembers = new HashMap<UUID, HashMap<UUID, GroupMember>>();
@@ -820,80 +773,76 @@ public class GroupManager implements PacketCallback, CapsCallback
 	}
 
 	@Override
-	public void capsCallback(IMessage message, SimulatorManager simulator) throws Exception
-	{
-		switch (message.getType())
-		{
-			case AgentGroupDataUpdate:
-				HandleAgentGroupDataUpdate(message, simulator);
-			case AgentDropGroup:
-				HandleAgentDropGroup(message, simulator);
-			default:
-				break;
+	public void capsCallback(IMessage message, SimulatorManager simulator) throws Exception {
+		switch (message.getType()) {
+		case AgentGroupDataUpdate:
+			HandleAgentGroupDataUpdate(message, simulator);
+		case AgentDropGroup:
+			HandleAgentDropGroup(message, simulator);
+		default:
+			break;
 		}
 	}
 
 	@Override
-	public void packetCallback(Packet packet, Simulator simulator) throws Exception
-	{
-		switch (packet.getType())
-		{
-			case AgentGroupDataUpdate:
-				HandleAgentGroupDataUpdate(packet, simulator);
-				break;
-			case AgentDropGroup:
-				HandleAgentDropGroup(packet, simulator);
-				break;
-			case GroupTitlesReply:
-				HandleGroupTitlesReply(packet, simulator);
-				break;
-			case GroupProfileReply:
-				HandleGroupProfileReply(packet, simulator);
-				break;
-			case GroupMembersReply:
-				HandleGroupMembers(packet, simulator);
-				break;
-			case GroupRoleDataReply:
-				HandleGroupRoleDataReply(packet, simulator);
-				break;
-			case GroupRoleMembersReply:
-				HandleGroupRoleMembersReply(packet, simulator);
-				break;
-			case GroupActiveProposalItemReply:
-				HandleGroupActiveProposalItem(packet, simulator);
-				break;
-			case GroupVoteHistoryItemReply:
-				HandleGroupVoteHistoryItem(packet, simulator);
-				break;
-			case GroupAccountSummaryReply:
-				HandleGroupAccountSummaryReply(packet, simulator);
-				break;
-			case GroupAccountDetailsReply:
-				HandleGroupAccountDetails(packet, simulator);
-				break;
-			case GroupAccountTransactionsReply:
-				HandleGroupAccountTransactions(packet, simulator);
-				break;
-			case CreateGroupReply:
-				HandleCreateGroupReply(packet, simulator);
-				break;
-			case JoinGroupReply:
-				HandleJoinGroupReply(packet, simulator);
-				break;
-			case LeaveGroupReply:
-				HandleLeaveGroupReply(packet, simulator);
-				break;
-			case EjectGroupMemberReply:
-				HandleEjectGroupMemberReply(packet, simulator);
-				break;
-			case GroupNoticesListReply:
-				HandleGroupNoticesListReply(packet, simulator);
-				break;
-			case UUIDGroupNameReply:
-				HandleUUIDGroupNameReply(packet, simulator);
-				break;
-			default:
-				break;
+	public void packetCallback(Packet packet, Simulator simulator) throws Exception {
+		switch (packet.getType()) {
+		case AgentGroupDataUpdate:
+			HandleAgentGroupDataUpdate(packet, simulator);
+			break;
+		case AgentDropGroup:
+			HandleAgentDropGroup(packet, simulator);
+			break;
+		case GroupTitlesReply:
+			HandleGroupTitlesReply(packet, simulator);
+			break;
+		case GroupProfileReply:
+			HandleGroupProfileReply(packet, simulator);
+			break;
+		case GroupMembersReply:
+			HandleGroupMembers(packet, simulator);
+			break;
+		case GroupRoleDataReply:
+			HandleGroupRoleDataReply(packet, simulator);
+			break;
+		case GroupRoleMembersReply:
+			HandleGroupRoleMembersReply(packet, simulator);
+			break;
+		case GroupActiveProposalItemReply:
+			HandleGroupActiveProposalItem(packet, simulator);
+			break;
+		case GroupVoteHistoryItemReply:
+			HandleGroupVoteHistoryItem(packet, simulator);
+			break;
+		case GroupAccountSummaryReply:
+			HandleGroupAccountSummaryReply(packet, simulator);
+			break;
+		case GroupAccountDetailsReply:
+			HandleGroupAccountDetails(packet, simulator);
+			break;
+		case GroupAccountTransactionsReply:
+			HandleGroupAccountTransactions(packet, simulator);
+			break;
+		case CreateGroupReply:
+			HandleCreateGroupReply(packet, simulator);
+			break;
+		case JoinGroupReply:
+			HandleJoinGroupReply(packet, simulator);
+			break;
+		case LeaveGroupReply:
+			HandleLeaveGroupReply(packet, simulator);
+			break;
+		case EjectGroupMemberReply:
+			HandleEjectGroupMemberReply(packet, simulator);
+			break;
+		case GroupNoticesListReply:
+			HandleGroupNoticesListReply(packet, simulator);
+			break;
+		case UUIDGroupNameReply:
+			HandleUUIDGroupNameReply(packet, simulator);
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -905,8 +854,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * 
 	 * @throws Exception
 	 */
-	public final void RequestCurrentGroups() throws Exception
-	{
+	public final void RequestCurrentGroups() throws Exception {
 		AgentDataUpdateRequestPacket request = new AgentDataUpdateRequestPacket();
 
 		request.AgentData.AgentID = _Client.Self.getAgentID();
@@ -922,14 +870,11 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            groupID of group to lookup name for.
 	 * @throws Exception
 	 */
-	public final void RequestGroupName(UUID groupID) throws Exception
-	{
+	public final void RequestGroupName(UUID groupID) throws Exception {
 		// if we already have this in the cache, return from cache instead of
 		// making a request
-		synchronized (GroupNames)
-		{
-			if (GroupNames.containsKey(groupID))
-			{
+		synchronized (GroupNames) {
+			if (GroupNames.containsKey(groupID)) {
 				HashMap<UUID, String> groupNames = new HashMap<UUID, String>();
 				groupNames.put(groupID, GroupNames.get(groupID));
 
@@ -951,31 +896,23 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            List of group IDs to request.
 	 * @throws Exception
 	 */
-	public final void RequestGroupNames(ArrayList<UUID> groupIDs) throws Exception
-	{
+	public final void RequestGroupNames(ArrayList<UUID> groupIDs) throws Exception {
 		HashMap<UUID, String> groupNames = new HashMap<UUID, String>();
 		ArrayList<UUID> tempIDs = new ArrayList<UUID>();
-		synchronized (GroupNames)
-		{
-			for (UUID groupID : groupIDs)
-			{
-				if (GroupNames.containsKey(groupID))
-				{
+		synchronized (GroupNames) {
+			for (UUID groupID : groupIDs) {
+				if (GroupNames.containsKey(groupID)) {
 					groupNames.put(groupID, GroupNames.get(groupID));
-				}
-				else
-				{
+				} else {
 					tempIDs.add(groupID);
 				}
 			}
 		}
 
-		if (tempIDs.size() > 0)
-		{
+		if (tempIDs.size() > 0) {
 			UUIDGroupNameRequestPacket req = new UUIDGroupNameRequestPacket();
 			req.ID = new UUID[tempIDs.size()];
-			for (int i = 0; i < tempIDs.size(); i++)
-			{
+			for (int i = 0; i < tempIDs.size(); i++) {
 				req.ID[i] = tempIDs.get(i);
 			}
 			_Client.Network.sendPacket(req);
@@ -991,11 +928,11 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * Subscribe to <code>OnGroupProfile</code> event to receive the results.
 	 * 
 	 * @param group
-	 *            @param group group ID (UUID)
+	 * @param group
+	 *            group ID (UUID)
 	 * @throws Exception
 	 */
-	public final void RequestGroupProfile(UUID group) throws Exception
-	{
+	public final void RequestGroupProfile(UUID group) throws Exception {
 		GroupProfileRequestPacket request = new GroupProfileRequestPacket();
 
 		request.AgentData.AgentID = _Client.Self.getAgentID();
@@ -1005,65 +942,54 @@ public class GroupManager implements PacketCallback, CapsCallback
 		_Client.Network.sendPacket(request);
 	}
 
-	private class GroupMembersHandlerCaps implements FutureCallback<OSD>
-	{
+	private class GroupMembersHandlerCaps implements FutureCallback<OSD> {
 		private UUID requestID;
-	
-		public GroupMembersHandlerCaps(UUID requestID)
-		{
+
+		public GroupMembersHandlerCaps(UUID requestID) {
 			this.requestID = requestID;
 		}
 
 		@Override
-		public void completed(OSD result)
-		{
-			try
-			{
-				OSDMap res = (OSDMap)result;
-//				int memberCount = res.get("member_count").AsInteger();
-				OSDArray titlesOSD = (OSDArray)res.get("titles");
+		public void completed(OSD result) {
+			try {
+				OSDMap res = (OSDMap) result;
+				// int memberCount = res.get("member_count").AsInteger();
+				OSDArray titlesOSD = (OSDArray) res.get("titles");
 				String[] titles = new String[titlesOSD.size()];
-				for (int i = 0; i < titlesOSD.size(); i++)
-				{
+				for (int i = 0; i < titlesOSD.size(); i++) {
 					titles[i] = titlesOSD.get(i).AsString();
 				}
 				UUID groupID = res.get("group_id").AsUUID();
-				long defaultPowers = ((OSDMap)res.get("defaults")).get("default_powers").AsULong();
-				OSDMap membersOSD = (OSDMap)res.get("members");
+				long defaultPowers = ((OSDMap) res.get("defaults")).get("default_powers").AsULong();
+				OSDMap membersOSD = (OSDMap) res.get("members");
 				HashMap<UUID, GroupMember> groupMembers = new HashMap<UUID, GroupMember>(membersOSD.size());
-				for (String memberID : membersOSD.keySet())
-				{
-					OSDMap member = (OSDMap)membersOSD.get(memberID);
+				for (String memberID : membersOSD.keySet()) {
+					OSDMap member = (OSDMap) membersOSD.get(memberID);
 
 					GroupMember groupMember = GroupManager.this.new GroupMember(UUID.parse(memberID));
 					groupMember.Contribution = member.get("donated_square_meters").AsInteger();
 					groupMember.IsOwner = "Y" == member.get("owner").AsString();
 					groupMember.OnlineStatus = member.get("last_login").AsString();
 					groupMember.Powers = defaultPowers;
-					if (member.containsKey("powers"))
-					{
+					if (member.containsKey("powers")) {
 						groupMember.Powers = member.get("powers").AsULong();
 					}
 					groupMember.Title = titles[member.get("title").AsInteger()];
 					groupMembers.put(groupMember.ID, groupMember);
 				}
 				OnGroupMembersReply.dispatch(new GroupMembersReplyCallbackArgs(requestID, groupID, groupMembers));
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				logger.error(GridClient.Log("Failed to decode result of GroupMemberData capability: ", _Client), ex);
 			}
 		}
-		
+
 		@Override
-		public void failed(Exception ex)
-		{
+		public void failed(Exception ex) {
 			logger.error(GridClient.Log("Failed to request GroupMemberData capability: ", _Client), ex);
 		}
-		
+
 		@Override
-		public void cancelled()
-		{
+		public void cancelled() {
 			logger.error(GridClient.Log("GroupMemberData capability request canceled!", _Client));
 		}
 	}
@@ -1077,21 +1003,17 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * @return UUID of the request, use to index into cache
 	 * @throws Exception
 	 */
-	public final UUID RequestGroupMembers(UUID group) throws Exception
-	{
+	public final UUID RequestGroupMembers(UUID group) throws Exception {
 		UUID requestID = new UUID();
 		URI url = _Client.Network.getCapabilityURI("GroupMemberData");
-		if (url != null)
-		{
+		if (url != null) {
 			CapsClient req = new CapsClient(_Client, "GroupMemberData");
 			OSDMap requestData = new OSDMap(1);
 			requestData.put("group_id", OSD.FromUUID(group));
-			req.executeHttpPost(url, requestData, OSDFormat.Xml, new GroupMembersHandlerCaps(requestID), _Client.Settings.CAPS_TIMEOUT * 4);
-		}
-		else
-		{
-			synchronized (GroupMembersRequests)
-			{
+			req.executeHttpPost(url, requestData, OSDFormat.Xml, new GroupMembersHandlerCaps(requestID),
+					_Client.Settings.CAPS_TIMEOUT * 4);
+		} else {
+			synchronized (GroupMembersRequests) {
 				GroupMembersRequests.add(requestID);
 			}
 
@@ -1108,19 +1030,17 @@ public class GroupManager implements PacketCallback, CapsCallback
 	}
 
 	/**
-	 * Request group roles Subscribe to <code>OnGroupRoles</code> event to
-	 * receive the results.
+	 * Request group roles Subscribe to <code>OnGroupRoles</code> event to receive
+	 * the results.
 	 * 
 	 * @param group
 	 *            group ID (UUID)
 	 * @return UUID of the request, use to index into cache
 	 * @throws Exception
 	 */
-	public final UUID RequestGroupRoles(UUID group) throws Exception
-	{
+	public final UUID RequestGroupRoles(UUID group) throws Exception {
 		UUID requestID = new UUID();
-		synchronized (GroupRolesRequests)
-		{
+		synchronized (GroupRolesRequests) {
 			GroupRolesRequests.add(requestID);
 		}
 
@@ -1144,11 +1064,9 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * @return UUID of the request, use to index into cache
 	 * @throws Exception
 	 */
-	public final UUID RequestGroupRolesMembers(UUID group) throws Exception
-	{
+	public final UUID RequestGroupRolesMembers(UUID group) throws Exception {
 		UUID requestID = new UUID();
-		synchronized (GroupRolesRequests)
-		{
+		synchronized (GroupRolesRequests) {
 			GroupRolesMembersRequests.add(requestID);
 		}
 
@@ -1170,8 +1088,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * @return UUID of the request, use to index into cache
 	 * @throws Exception
 	 */
-	public final UUID RequestGroupTitles(UUID group) throws Exception
-	{
+	public final UUID RequestGroupTitles(UUID group) throws Exception {
 		UUID requestID = new UUID();
 
 		GroupTitlesRequestPacket request = new GroupTitlesRequestPacket();
@@ -1197,8 +1114,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            Which interval (0 for current, 1 for last)
 	 * @throws Exception
 	 */
-	public final void RequestGroupAccountSummary(UUID group, int intervalDays, int currentInterval) throws Exception
-	{
+	public final void RequestGroupAccountSummary(UUID group, int intervalDays, int currentInterval) throws Exception {
 		GroupAccountSummaryRequestPacket p = new GroupAccountSummaryRequestPacket();
 		p.AgentData.AgentID = _Client.Self.getAgentID();
 		p.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1222,8 +1138,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            Which interval (0 for current, 1 for last)
 	 * @throws Exception
 	 */
-	public final void RequestGroupAccountDetails(UUID group, int intervalDays, int currentInterval) throws Exception
-	{
+	public final void RequestGroupAccountDetails(UUID group, int intervalDays, int currentInterval) throws Exception {
 		GroupAccountDetailsRequestPacket p = new GroupAccountDetailsRequestPacket();
 		p.AgentData.AgentID = _Client.Self.getAgentID();
 		p.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1246,8 +1161,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            Key of person to invite
 	 * @throws Exception
 	 */
-	public final void Invite(UUID group, ArrayList<UUID> roles, UUID personkey) throws Exception
-	{
+	public final void Invite(UUID group, ArrayList<UUID> roles, UUID personkey) throws Exception {
 		InviteGroupRequestPacket igp = new InviteGroupRequestPacket();
 
 		igp.AgentData = igp.new AgentDataBlock();
@@ -1258,8 +1172,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 
 		igp.InviteData = new InviteGroupRequestPacket.InviteDataBlock[roles.size()];
 
-		for (int i = 0; i < roles.size(); i++)
-		{
+		for (int i = 0; i < roles.size(); i++) {
 			igp.InviteData[i] = igp.new InviteDataBlock();
 			igp.InviteData[i].InviteeID = personkey;
 			igp.InviteData[i].RoleID = roles.get(i);
@@ -1275,8 +1188,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            group ID (UUID)
 	 * @throws Exception
 	 */
-	public final void ActivateGroup(UUID id) throws Exception
-	{
+	public final void ActivateGroup(UUID id) throws Exception {
 		ActivateGroupPacket activate = new ActivateGroupPacket();
 		activate.AgentData.AgentID = _Client.Self.getAgentID();
 		activate.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1294,8 +1206,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            Role ID to change to
 	 * @throws Exception
 	 */
-	public final void ActivateTitle(UUID group, UUID role) throws Exception
-	{
+	public final void ActivateTitle(UUID group, UUID role) throws Exception {
 		GroupTitleUpdatePacket gtu = new GroupTitleUpdatePacket();
 		gtu.AgentData.AgentID = _Client.Self.getAgentID();
 		gtu.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1314,8 +1225,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            amount of tier to donate
 	 * @throws Exception
 	 */
-	public final void SetGroupContribution(UUID group, int contribution) throws Exception
-	{
+	public final void SetGroupContribution(UUID group, int contribution) throws Exception {
 		SetGroupContributionPacket sgp = new SetGroupContributionPacket();
 		sgp.AgentData.AgentID = _Client.Self.getAgentID();
 		sgp.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1338,8 +1248,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * @throws Exception
 	 */
 	public final void SetGroupAcceptNotices(UUID groupID, boolean acceptNotices, boolean listInProfile)
-			throws Exception
-	{
+			throws Exception {
 		SetGroupAcceptNoticesPacket p = new SetGroupAcceptNoticesPacket();
 		p.AgentData.AgentID = _Client.Self.getAgentID();
 		p.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1357,8 +1266,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            group ID (UUID) to join.
 	 * @throws Exception
 	 */
-	public final void RequestJoinGroup(UUID id) throws Exception
-	{
+	public final void RequestJoinGroup(UUID id) throws Exception {
 		JoinGroupRequestPacket join = new JoinGroupRequestPacket();
 		join.AgentData.AgentID = _Client.Self.getAgentID();
 		join.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1369,8 +1277,8 @@ public class GroupManager implements PacketCallback, CapsCallback
 	}
 
 	/**
-	 * Request to create a new group. If the group is successfully created,
-	 * L$100 will automatically be deducted
+	 * Request to create a new group. If the group is successfully created, L$100
+	 * will automatically be deducted
 	 * 
 	 * Subscribe to <code>OnGroupCreated</code> event to receive confirmation.
 	 * 
@@ -1378,8 +1286,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            Group struct containing the new group info
 	 * @throws Exception
 	 */
-	public final void RequestCreateGroup(Group group) throws Exception
-	{
+	public final void RequestCreateGroup(Group group) throws Exception {
 		CreateGroupRequestPacket cgrp = new CreateGroupRequestPacket();
 		cgrp.AgentData = cgrp.new AgentDataBlock();
 		cgrp.AgentData.AgentID = _Client.Self.getAgentID();
@@ -1408,8 +1315,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * @throws Exception
 	 * @throws UnsupportedEncodingException
 	 */
-	public final void UpdateGroup(UUID id, Group group) throws Exception
-	{
+	public final void UpdateGroup(UUID id, Group group) throws Exception {
 		UpdateGroupInfoPacket cgrp = new UpdateGroupInfoPacket();
 		cgrp.AgentData = cgrp.new AgentDataBlock();
 		cgrp.AgentData.AgentID = _Client.Self.getAgentID();
@@ -1437,8 +1343,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            Avatar's key to eject
 	 * @throws Exception
 	 */
-	public final void EjectUser(UUID group, UUID member) throws Exception
-	{
+	public final void EjectUser(UUID group, UUID member) throws Exception {
 		EjectGroupMemberRequestPacket eject = new EjectGroupMemberRequestPacket();
 		eject.AgentData = eject.new AgentDataBlock();
 		eject.AgentData.AgentID = _Client.Self.getAgentID();
@@ -1459,8 +1364,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            Modified role to be updated
 	 * @throws Exception
 	 */
-	public final void UpdateRole(GroupRole role) throws Exception
-	{
+	public final void UpdateRole(GroupRole role) throws Exception {
 		GroupRoleUpdatePacket gru = new GroupRoleUpdatePacket();
 		gru.AgentData.AgentID = _Client.Self.getAgentID();
 		gru.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1485,8 +1389,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            Role to create
 	 * @throws Exception
 	 */
-	public final void CreateRole(UUID group, GroupRole role) throws Exception
-	{
+	public final void CreateRole(UUID group, GroupRole role) throws Exception {
 		GroupRoleUpdatePacket gru = new GroupRoleUpdatePacket();
 		gru.AgentData.AgentID = _Client.Self.getAgentID();
 		gru.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1511,8 +1414,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            Role to delete
 	 * @throws Exception
 	 */
-	public final void DeleteRole(UUID group, UUID roleID) throws Exception
-	{
+	public final void DeleteRole(UUID group, UUID roleID) throws Exception {
 		GroupRoleUpdatePacket gru = new GroupRoleUpdatePacket();
 		gru.AgentData.AgentID = _Client.Self.getAgentID();
 		gru.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1539,8 +1441,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            Avatar's Key to remove
 	 * @throws Exception
 	 */
-	public final void RemoveFromRole(UUID group, UUID role, UUID member) throws Exception
-	{
+	public final void RemoveFromRole(UUID group, UUID role, UUID member) throws Exception {
 		GroupRoleChangesPacket grc = new GroupRoleChangesPacket();
 		grc.AgentData.AgentID = _Client.Self.getAgentID();
 		grc.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1566,8 +1467,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            Avatar's ID to assign to role
 	 * @throws Exception
 	 */
-	public final void AddToRole(UUID group, UUID role, UUID member) throws Exception
-	{
+	public final void AddToRole(UUID group, UUID role, UUID member) throws Exception {
 		GroupRoleChangesPacket grc = new GroupRoleChangesPacket();
 		grc.AgentData.AgentID = _Client.Self.getAgentID();
 		grc.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1589,8 +1489,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            Group ID to fetch notices for
 	 * @throws Exception
 	 */
-	public final void RequestGroupNoticesList(UUID group) throws Exception
-	{
+	public final void RequestGroupNoticesList(UUID group) throws Exception {
 		GroupNoticesListRequestPacket gnl = new GroupNoticesListRequestPacket();
 		gnl.AgentData.AgentID = _Client.Self.getAgentID();
 		gnl.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1605,8 +1504,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            ID of group notice
 	 * @throws Exception
 	 */
-	public final void RequestGroupNotice(UUID noticeID) throws Exception
-	{
+	public final void RequestGroupNotice(UUID noticeID) throws Exception {
 		GroupNoticeRequestPacket gnr = new GroupNoticeRequestPacket();
 		gnr.AgentData.AgentID = _Client.Self.getAgentID();
 		gnr.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1623,8 +1521,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            <code>GroupNotice</code> structure containing notice data
 	 * @throws Exception
 	 */
-	public final void SendGroupNotice(UUID group, GroupNotice notice) throws Exception
-	{
+	public final void SendGroupNotice(UUID group, GroupNotice notice) throws Exception {
 		_Client.Self.InstantMessage(_Client.Self.getName(), group, notice.Subject + "|" + notice.Message, UUID.Zero,
 				InstantMessageDialog.GroupNotice, InstantMessageOnline.Online, Vector3.Zero, UUID.Zero, 0,
 				notice.SerializeAttachment());
@@ -1639,8 +1536,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            <code>GroupProposal</code> structure containing the proposal
 	 * @throws Exception
 	 */
-	public final void StartProposal(UUID group, GroupProposal prop) throws Exception
-	{
+	public final void StartProposal(UUID group, GroupProposal prop) throws Exception {
 		StartGroupProposalPacket p = new StartGroupProposalPacket();
 		p.AgentData.AgentID = _Client.Self.getAgentID();
 		p.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1659,8 +1555,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            The group to leave
 	 * @throws Exception
 	 */
-	public final void LeaveGroup(UUID groupID) throws Exception
-	{
+	public final void LeaveGroup(UUID groupID) throws Exception {
 		LeaveGroupRequestPacket p = new LeaveGroupRequestPacket();
 		p.AgentData.AgentID = _Client.Self.getAgentID();
 		p.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1670,204 +1565,190 @@ public class GroupManager implements PacketCallback, CapsCallback
 	}
 
 	/**
-     * Gets the URI of the cpability for handling group bans
-     * 
-     * @param groupID UUID of the group
-	 * @throws URISyntaxException 
-     * @returns null, if the feature is not supported, or URI of the capability
-     */
-	public URI GetGroupAPIUri(UUID groupID) throws URISyntaxException
-    {
-         URI ret = _Client.Network.getCapabilityURI("GroupAPIv1");
-         if (ret != null)
-         {
-             ret = new URI(String.format("%s?group_id=%s", ret.toString(), groupID.toString()));
-         }
-         return ret;
-    }
+	 * Gets the URI of the cpability for handling group bans
+	 * 
+	 * @param groupID
+	 *            UUID of the group
+	 * @throws URISyntaxException
+	 * @returns null, if the feature is not supported, or URI of the capability
+	 */
+	public URI GetGroupAPIUri(UUID groupID) throws URISyntaxException {
+		URI ret = _Client.Network.getCapabilityURI("GroupAPIv1");
+		if (ret != null) {
+			ret = new URI(String.format("%s?group_id=%s", ret.toString(), groupID.toString()));
+		}
+		return ret;
+	}
 
 	/**
-     * Request a list of residents banned from joining a group
-     * 
-     * @param groupID UUID of the group
-	 * @throws URISyntaxException 
-	 * @throws IOReactorException 
-     */
-    public void RequestBannedAgents(UUID groupID) throws IOReactorException, URISyntaxException
-    {
-        RequestBannedAgents(groupID, null);
-    }
+	 * Request a list of residents banned from joining a group
+	 * 
+	 * @param groupID
+	 *            UUID of the group
+	 * @throws URISyntaxException
+	 * @throws IOReactorException
+	 */
+	public void RequestBannedAgents(UUID groupID) throws IOReactorException, URISyntaxException {
+		RequestBannedAgents(groupID, null);
+	}
 
 	/**
-     * Request a list of residents banned from joining a group
-     * 
-     * @param groupID UUID of the group
-     * @param callback Callback on request completition
-	 * @throws URISyntaxException 
-	 * @throws IOReactorException 
-     */
-    public void RequestBannedAgents(final UUID groupID, final Callback<BannedAgentsCallbackArgs> callback) throws URISyntaxException, IOReactorException
-    {
-        class ClientCallback implements FutureCallback<OSD>
-        {
-        	@Override
-        	public void cancelled()
-        	{
-        		BannedAgentsCallbackArgs ret = new BannedAgentsCallbackArgs(groupID, false, null);
-        		if (callback != null)
-        		{
-        			try
-        			{
-        				callback.callback(ret);
-        			}
-        			catch (Exception ex) { }
-        		}
-        		OnBannedAgents.dispatch(ret);
-        	}
-        	
-        	@Override
-        	public void completed(OSD result)
-        	{
-        		UUID gid = ((OSDMap)result).get("group_id").AsUUID();
-        		OSDMap banList = (OSDMap)((OSDMap)result).get("ban_list");
-        		HashMap<UUID, Date> bannedAgents = new HashMap<UUID, Date>(banList.size());
-
-        		for (String id : banList.keySet())
-        		{
-        			UUID uid = new UUID(id);
-        			bannedAgents.put(uid, ((OSDMap)banList.get(uid)).get("ban_date").AsDate());
-        		}
-        		BannedAgentsCallbackArgs ret = new BannedAgentsCallbackArgs(gid, true, bannedAgents);
-
-        		if (callback != null)
-        		{
-        			try
-        			{
-        				callback.callback(ret);
-        			}
-        			catch (Exception ex) { }
-        		}
-        		OnBannedAgents.dispatch(ret);
-        	}
-        	
-        	@Override
-        	public void failed(Exception ex)
-        	{
-        		logger.warn(GridClient.Log("Failed to get a list of banned group members: " + ex.getMessage(), _Client));
-        		BannedAgentsCallbackArgs ret = new BannedAgentsCallbackArgs(groupID, false, null);
-        		if (callback != null)
-        		{
-        			try
-        			{
-        				callback.callback(ret);
-        			}
-        			catch (Exception ex1) { }
-        		}
-        		OnBannedAgents.dispatch(ret);
+	 * Request a list of residents banned from joining a group
+	 * 
+	 * @param groupID
+	 *            UUID of the group
+	 * @param callback
+	 *            Callback on request completition
+	 * @throws URISyntaxException
+	 * @throws IOReactorException
+	 */
+	public void RequestBannedAgents(final UUID groupID, final Callback<BannedAgentsCallbackArgs> callback)
+			throws URISyntaxException, IOReactorException {
+		class ClientCallback implements FutureCallback<OSD> {
+			@Override
+			public void cancelled() {
+				BannedAgentsCallbackArgs ret = new BannedAgentsCallbackArgs(groupID, false, null);
+				if (callback != null) {
+					try {
+						callback.callback(ret);
+					} catch (Exception ex) {
+					}
+				}
+				OnBannedAgents.dispatch(ret);
 			}
-        }
 
-        URI uri = GetGroupAPIUri(groupID);
-        if (uri == null) return;
-        CapsClient req = new CapsClient(_Client, "GroupAPIv1");
-        req.executeHttpGet(uri, null, new ClientCallback(),  _Client.Settings.CAPS_TIMEOUT);
-    }
+			@Override
+			public void completed(OSD result) {
+				UUID gid = ((OSDMap) result).get("group_id").AsUUID();
+				OSDMap banList = (OSDMap) ((OSDMap) result).get("ban_list");
+				HashMap<UUID, Date> bannedAgents = new HashMap<UUID, Date>(banList.size());
 
+				for (String id : banList.keySet()) {
+					UUID uid = new UUID(id);
+					bannedAgents.put(uid, ((OSDMap) banList.get(uid)).get("ban_date").AsDate());
+				}
+				BannedAgentsCallbackArgs ret = new BannedAgentsCallbackArgs(gid, true, bannedAgents);
 
-	/**
-     * Request that group of agents be banned or unbanned from the group
-     * 
-     * @param groupID UUID of the group
-     * @param action Ban/Unban action<
-     * @param agents Array of agents UUIDs to ban
-	 * @throws URISyntaxException 
-	 * @throws IOReactorException 
-     */
-    public void RequestBanAction(UUID groupID, GroupBanAction action, UUID[] agents) throws IOReactorException, URISyntaxException
-    {
-        RequestBanAction(groupID, action, agents, null);
-    }
-
-	/**
-     * Request that group of agents be banned or unbanned from the group
-     * 
-     * @param groupID UUID of the group
-     * @param action Ban/Unban action<
-     * @param agents Array of agents UUIDs to ban
-     * @param callback Callback on request completition
-	 * @throws URISyntaxException 
-	 * @throws IOReactorException 
-     */
-    public void RequestBanAction(final UUID groupID, GroupBanAction action, UUID[] agents, final Callback<CallbackArgs> callback) throws IOReactorException, URISyntaxException
-    {
-        class ClientCallback implements FutureCallback<OSD>
-        {
-        	@Override
-        	public void cancelled()
-        	{
-        		if (callback != null)
-        		{
-        			try
-        			{
-        				callback.callback(null);
-        			}
-        			catch (Exception ex) { }
-        		}
-        	}
-        	
-        	@Override
-        	public void completed(OSD result)
-        	{
-        		if (callback != null)
-        		{
-            		BannedAgentsCallbackArgs ret = new BannedAgentsCallbackArgs(groupID, true, null);
-        			try
-        			{
-        				callback.callback(ret);
-        			}
-        			catch (Exception ex) { }
-        		}
-        	}
-        	
-        	@Override
-        	public void failed(Exception ex)
-        	{
-        		logger.warn(GridClient.Log("Failed to ban or unban group members: " + ex.getMessage(), _Client));
-        		if (callback != null)
-        		{
-        			try
-        			{
-        				callback.callback(null);
-        			}
-        			catch (Exception ex1) { }
-        		}
+				if (callback != null) {
+					try {
+						callback.callback(ret);
+					} catch (Exception ex) {
+					}
+				}
+				OnBannedAgents.dispatch(ret);
 			}
-       }
 
-        URI uri = GetGroupAPIUri(groupID);
-        if (uri == null) return;
+			@Override
+			public void failed(Exception ex) {
+				logger.warn(
+						GridClient.Log("Failed to get a list of banned group members: " + ex.getMessage(), _Client));
+				BannedAgentsCallbackArgs ret = new BannedAgentsCallbackArgs(groupID, false, null);
+				if (callback != null) {
+					try {
+						callback.callback(ret);
+					} catch (Exception ex1) {
+					}
+				}
+				OnBannedAgents.dispatch(ret);
+			}
+		}
 
-        OSDMap request = new OSDMap();
-        request.put("ban_action", OSD.FromInteger(action.getValue()));
-        OSDArray banIDs = new OSDArray(agents.length);
-        for (UUID agent : agents)
-        {
-            banIDs.add(OSD.FromUUID(agent));
-        }
-        request.put("ban_ids", banIDs);
-        CapsClient req = new CapsClient(_Client, "GroupAPIv1");
-        req.executeHttpPost(uri, request, OSDFormat.Xml, new ClientCallback(), _Client.Settings.CAPS_TIMEOUT);
-    }
+		URI uri = GetGroupAPIUri(groupID);
+		if (uri == null)
+			return;
+		CapsClient req = new CapsClient(_Client, "GroupAPIv1");
+		req.executeHttpGet(uri, null, new ClientCallback(), _Client.Settings.CAPS_TIMEOUT);
+	}
+
+	/**
+	 * Request that group of agents be banned or unbanned from the group
+	 * 
+	 * @param groupID
+	 *            UUID of the group
+	 * @param action
+	 *            Ban/Unban action<
+	 * @param agents
+	 *            Array of agents UUIDs to ban
+	 * @throws URISyntaxException
+	 * @throws IOReactorException
+	 */
+	public void RequestBanAction(UUID groupID, GroupBanAction action, UUID[] agents)
+			throws IOReactorException, URISyntaxException {
+		RequestBanAction(groupID, action, agents, null);
+	}
+
+	/**
+	 * Request that group of agents be banned or unbanned from the group
+	 * 
+	 * @param groupID
+	 *            UUID of the group
+	 * @param action
+	 *            Ban/Unban action<
+	 * @param agents
+	 *            Array of agents UUIDs to ban
+	 * @param callback
+	 *            Callback on request completition
+	 * @throws URISyntaxException
+	 * @throws IOReactorException
+	 */
+	public void RequestBanAction(final UUID groupID, GroupBanAction action, UUID[] agents,
+			final Callback<CallbackArgs> callback) throws IOReactorException, URISyntaxException {
+		class ClientCallback implements FutureCallback<OSD> {
+			@Override
+			public void cancelled() {
+				if (callback != null) {
+					try {
+						callback.callback(null);
+					} catch (Exception ex) {
+					}
+				}
+			}
+
+			@Override
+			public void completed(OSD result) {
+				if (callback != null) {
+					BannedAgentsCallbackArgs ret = new BannedAgentsCallbackArgs(groupID, true, null);
+					try {
+						callback.callback(ret);
+					} catch (Exception ex) {
+					}
+				}
+			}
+
+			@Override
+			public void failed(Exception ex) {
+				logger.warn(GridClient.Log("Failed to ban or unban group members: " + ex.getMessage(), _Client));
+				if (callback != null) {
+					try {
+						callback.callback(null);
+					} catch (Exception ex1) {
+					}
+				}
+			}
+		}
+
+		URI uri = GetGroupAPIUri(groupID);
+		if (uri == null)
+			return;
+
+		OSDMap request = new OSDMap();
+		request.put("ban_action", OSD.FromInteger(action.getValue()));
+		OSDArray banIDs = new OSDArray(agents.length);
+		for (UUID agent : agents) {
+			banIDs.add(OSD.FromUUID(agent));
+		}
+		request.put("ban_ids", banIDs);
+		CapsClient req = new CapsClient(_Client, "GroupAPIv1");
+		req.executeHttpPost(uri, request, OSDFormat.Xml, new ClientCallback(), _Client.Settings.CAPS_TIMEOUT);
+	}
 	// #endregion
 
 	// #region Packet Handlers
-	private final void HandleAgentGroupDataUpdate(IMessage message, Simulator simulator)
-	{
+	private final void HandleAgentGroupDataUpdate(IMessage message, Simulator simulator) {
 		HashMap<UUID, Group> currentGroups = OnCurrentGroups.count() > 0 ? new HashMap<UUID, Group>() : null;
 		AgentGroupDataUpdateMessage msg = (AgentGroupDataUpdateMessage) message;
 
-		for (int i = 0; i < msg.GroupDataBlock.length; i++)
-		{
+		for (int i = 0; i < msg.GroupDataBlock.length; i++) {
 			Group group = new Group(msg.GroupDataBlock[i].GroupID);
 			group.InsigniaID = msg.GroupDataBlock[i].GroupInsigniaID;
 			group.Name = msg.GroupDataBlock[i].GroupName;
@@ -1879,13 +1760,11 @@ public class GroupManager implements PacketCallback, CapsCallback
 			if (currentGroups != null)
 				currentGroups.put(group.ID, group);
 
-			synchronized (GroupList)
-			{
+			synchronized (GroupList) {
 				GroupList.put(group.ID, group);
 			}
-			synchronized (GroupNames)
-			{
-				GroupNames.put(group.ID, group.Name);				
+			synchronized (GroupNames) {
+				GroupNames.put(group.ID, group.Name);
 			}
 		}
 
@@ -1893,13 +1772,11 @@ public class GroupManager implements PacketCallback, CapsCallback
 			OnCurrentGroups.dispatch(new CurrentGroupsCallbackArgs(currentGroups));
 	}
 
-	private final void HandleAgentGroupDataUpdate(Packet packet, Simulator simulator) throws Exception
-	{
+	private final void HandleAgentGroupDataUpdate(Packet packet, Simulator simulator) throws Exception {
 		HashMap<UUID, Group> currentGroups = OnCurrentGroups.count() > 0 ? new HashMap<UUID, Group>() : null;
 		AgentGroupDataUpdatePacket update = (AgentGroupDataUpdatePacket) packet;
 
-		for (AgentGroupDataUpdatePacket.GroupDataBlock block : update.GroupData)
-		{
+		for (AgentGroupDataUpdatePacket.GroupDataBlock block : update.GroupData) {
 			Group group = new Group(block.GroupID);
 
 			group.InsigniaID = block.GroupInsigniaID;
@@ -1911,13 +1788,11 @@ public class GroupManager implements PacketCallback, CapsCallback
 			if (currentGroups != null)
 				currentGroups.put(block.GroupID, group);
 
-			synchronized (GroupList)
-			{
+			synchronized (GroupList) {
 				GroupList.put(group.ID, group);
 			}
-			synchronized (GroupNames)
-			{
-				GroupNames.put(group.ID, group.Name);				
+			synchronized (GroupNames) {
+				GroupNames.put(group.ID, group.Name);
 			}
 		}
 
@@ -1933,20 +1808,16 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * @param e
 	 *            The EventArgs object containing the packet data
 	 */
-	private final void HandleAgentDropGroup(IMessage message, Simulator simulator)
-	{
-		if (OnGroupDropped.count() > 0)
-		{
+	private final void HandleAgentDropGroup(IMessage message, Simulator simulator) {
+		if (OnGroupDropped.count() > 0) {
 			AgentDropGroupMessage msg = (AgentDropGroupMessage) message;
-			for (int i = 0; i < msg.AgentDataBlock.length; i++)
-			{
+			for (int i = 0; i < msg.AgentDataBlock.length; i++) {
 				OnGroupDropped.dispatch(new GroupDroppedCallbackArgs(msg.AgentDataBlock[i].GroupID));
 			}
 		}
 	}
 
-	private final void HandleAgentDropGroup(Packet packet, Simulator simulator)
-	{
+	private final void HandleAgentDropGroup(Packet packet, Simulator simulator) {
 		OnGroupDropped.dispatch(new GroupDroppedCallbackArgs(((AgentDropGroupPacket) packet).AgentData.GroupID));
 	}
 
@@ -1959,11 +1830,8 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            The EventArgs object containing the packet data
 	 * @throws UnsupportedEncodingException
 	 */
-	private final void HandleGroupProfileReply(Packet packet, Simulator simulator)
-			throws UnsupportedEncodingException
-	{
-		if (OnGroupProfile.count() > 0)
-		{
+	private final void HandleGroupProfileReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
+		if (OnGroupProfile.count() > 0) {
 			GroupProfileReplyPacket profile = (GroupProfileReplyPacket) packet;
 			Group group = new Group(profile.GroupData.GroupID);
 
@@ -1997,16 +1865,13 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * @throws UnsupportedEncodingException
 	 */
 	private final void HandleGroupNoticesListReply(Packet packet, Simulator simulator)
-			throws UnsupportedEncodingException
-	{
-		if (OnGroupNoticesListReply.count() > 0)
-		{
+			throws UnsupportedEncodingException {
+		if (OnGroupNoticesListReply.count() > 0) {
 			GroupNoticesListReplyPacket reply = (GroupNoticesListReplyPacket) packet;
 
 			ArrayList<GroupNoticesListEntry> notices = new ArrayList<GroupNoticesListEntry>();
 
-			for (GroupNoticesListReplyPacket.DataBlock entry : reply.Data)
-			{
+			for (GroupNoticesListReplyPacket.DataBlock entry : reply.Data) {
 				GroupNoticesListEntry notice = new GroupNoticesListEntry();
 				notice.FromName = Helpers.BytesToString(entry.getFromName());
 				notice.Subject = Helpers.BytesToString(entry.getSubject());
@@ -2030,16 +1895,12 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            The EventArgs object containing the packet data
 	 * @throws UnsupportedEncodingException
 	 */
-	private final void HandleGroupTitlesReply(Packet packet, Simulator simulator)
-			throws UnsupportedEncodingException
-	{
-		if (OnGroupTitles.count() > 0)
-		{
+	private final void HandleGroupTitlesReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
+		if (OnGroupTitles.count() > 0) {
 			GroupTitlesReplyPacket titles = (GroupTitlesReplyPacket) packet;
 			java.util.HashMap<UUID, GroupTitle> groupTitleCache = new java.util.HashMap<UUID, GroupTitle>();
 
-			for (GroupTitlesReplyPacket.GroupDataBlock block : titles.GroupData)
-			{
+			for (GroupTitlesReplyPacket.GroupDataBlock block : titles.GroupData) {
 				GroupTitle groupTitle = new GroupTitle();
 
 				groupTitle.GroupID = titles.AgentData.GroupID;
@@ -2063,30 +1924,22 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            The EventArgs object containing the packet data
 	 * @throws UnsupportedEncodingException
 	 */
-	private final void HandleGroupMembers(Packet packet, Simulator simulator) throws UnsupportedEncodingException
-	{
+	private final void HandleGroupMembers(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
 		GroupMembersReplyPacket members = (GroupMembersReplyPacket) packet;
 		HashMap<UUID, GroupMember> groupMemberCache = null;
 
-		synchronized (GroupMembersRequests)
-		{
+		synchronized (GroupMembersRequests) {
 			// If nothing is registered to receive this RequestID drop the data
-			if (GroupMembersRequests.contains(members.GroupData.RequestID))
-			{
-				synchronized (TempGroupMembers)
-				{
-					if (TempGroupMembers.containsKey(members.GroupData.RequestID))
-					{
+			if (GroupMembersRequests.contains(members.GroupData.RequestID)) {
+				synchronized (TempGroupMembers) {
+					if (TempGroupMembers.containsKey(members.GroupData.RequestID)) {
 						groupMemberCache = TempGroupMembers.get(members.GroupData.RequestID);
-					}
-					else
-					{
+					} else {
 						groupMemberCache = new java.util.HashMap<UUID, GroupMember>();
 						TempGroupMembers.put(members.GroupData.RequestID, groupMemberCache);
 					}
 
-					for (GroupMembersReplyPacket.MemberDataBlock block : members.MemberData)
-					{
+					for (GroupMembersReplyPacket.MemberDataBlock block : members.MemberData) {
 						GroupMember groupMember = new GroupMember(block.AgentID);
 
 						groupMember.Contribution = block.Contribution;
@@ -2098,8 +1951,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 						groupMemberCache.put(block.AgentID, groupMember);
 					}
 
-					if (groupMemberCache.size() >= members.GroupData.MemberCount)
-					{
+					if (groupMemberCache.size() >= members.GroupData.MemberCount) {
 						GroupMembersRequests.remove(members.GroupData.RequestID);
 						TempGroupMembers.remove(members.GroupData.RequestID);
 					}
@@ -2107,8 +1959,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 			}
 		}
 
-		if (groupMemberCache != null && groupMemberCache.size() >= members.GroupData.MemberCount)
-		{
+		if (groupMemberCache != null && groupMemberCache.size() >= members.GroupData.MemberCount) {
 			OnGroupMembersReply.dispatch(new GroupMembersReplyCallbackArgs(members.GroupData.RequestID,
 					members.GroupData.GroupID, groupMemberCache));
 		}
@@ -2124,30 +1975,22 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * @throws UnsupportedEncodingException
 	 */
 	private final void HandleGroupRoleDataReply(Packet packet, Simulator simulator)
-			throws UnsupportedEncodingException
-	{
+			throws UnsupportedEncodingException {
 		GroupRoleDataReplyPacket roles = (GroupRoleDataReplyPacket) packet;
 		HashMap<UUID, GroupRole> groupRoleCache = null;
 
-		synchronized (GroupRolesRequests)
-		{
+		synchronized (GroupRolesRequests) {
 			// If nothing is registered to receive this RequestID drop the data
-			if (GroupRolesRequests.contains(roles.GroupData.RequestID))
-			{
-				synchronized (TempGroupRoles)
-				{
-					if (TempGroupRoles.containsKey(roles.GroupData.RequestID))
-					{
+			if (GroupRolesRequests.contains(roles.GroupData.RequestID)) {
+				synchronized (TempGroupRoles) {
+					if (TempGroupRoles.containsKey(roles.GroupData.RequestID)) {
 						groupRoleCache = TempGroupRoles.get(roles.GroupData.RequestID);
-					}
-					else
-					{
+					} else {
 						groupRoleCache = new java.util.HashMap<UUID, GroupRole>();
 						TempGroupRoles.put(roles.GroupData.RequestID, groupRoleCache);
 					}
 
-					for (GroupRoleDataReplyPacket.RoleDataBlock block : roles.RoleData)
-					{
+					for (GroupRoleDataReplyPacket.RoleDataBlock block : roles.RoleData) {
 						GroupRole groupRole = new GroupRole(roles.GroupData.GroupID);
 
 						groupRole.ID = block.RoleID;
@@ -2159,8 +2002,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 						groupRoleCache.put(block.RoleID, groupRole);
 					}
 
-					if (groupRoleCache.size() >= roles.GroupData.RoleCount)
-					{
+					if (groupRoleCache.size() >= roles.GroupData.RoleCount) {
 						GroupRolesRequests.remove(roles.GroupData.RequestID);
 						TempGroupRoles.remove(roles.GroupData.RequestID);
 					}
@@ -2168,8 +2010,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 			}
 		}
 
-		if (groupRoleCache != null && groupRoleCache.size() >= roles.GroupData.RoleCount)
-		{
+		if (groupRoleCache != null && groupRoleCache.size() >= roles.GroupData.RoleCount) {
 			OnGroupRoleDataReply.dispatch(new GroupRolesDataReplyCallbackArgs(roles.GroupData.RequestID,
 					roles.GroupData.GroupID, groupRoleCache));
 		}
@@ -2183,38 +2024,29 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * @param e
 	 *            The EventArgs object containing the packet data
 	 */
-	private final void HandleGroupRoleMembersReply(Packet packet, Simulator simulator)
-	{
+	private final void HandleGroupRoleMembersReply(Packet packet, Simulator simulator) {
 		GroupRoleMembersReplyPacket members = (GroupRoleMembersReplyPacket) packet;
 		ArrayList<Entry<UUID, UUID>> groupRoleMemberCache = null;
 
-		synchronized (GroupRolesMembersRequests)
-		{
+		synchronized (GroupRolesMembersRequests) {
 			// If nothing is registered to receive this RequestID drop the data
-			if (GroupRolesMembersRequests.contains(members.AgentData.RequestID))
-			{
-				synchronized (TempGroupRolesMembers)
-				{
-					if (TempGroupRolesMembers.containsKey(members.AgentData.RequestID))
-					{
+			if (GroupRolesMembersRequests.contains(members.AgentData.RequestID)) {
+				synchronized (TempGroupRolesMembers) {
+					if (TempGroupRolesMembers.containsKey(members.AgentData.RequestID)) {
 						groupRoleMemberCache = TempGroupRolesMembers.get(members.AgentData.RequestID);
-					}
-					else
-					{
+					} else {
 						groupRoleMemberCache = new ArrayList<Entry<UUID, UUID>>();
 						TempGroupRolesMembers.put(members.AgentData.RequestID, groupRoleMemberCache);
 					}
 
-					for (GroupRoleMembersReplyPacket.MemberDataBlock block : members.MemberData)
-					{
+					for (GroupRoleMembersReplyPacket.MemberDataBlock block : members.MemberData) {
 						Entry<UUID, UUID> rolemember = new AbstractMap.SimpleEntry<UUID, UUID>(block.RoleID,
 								block.MemberID);
 
 						groupRoleMemberCache.add(rolemember);
 					}
 
-					if (groupRoleMemberCache.size() >= members.AgentData.TotalPairs)
-					{
+					if (groupRoleMemberCache.size() >= members.AgentData.TotalPairs) {
 						GroupRolesMembersRequests.remove(members.AgentData.RequestID);
 						TempGroupRolesMembers.remove(members.AgentData.RequestID);
 					}
@@ -2222,8 +2054,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 			}
 		}
 
-		if (groupRoleMemberCache != null && groupRoleMemberCache.size() >= members.AgentData.TotalPairs)
-		{
+		if (groupRoleMemberCache != null && groupRoleMemberCache.size() >= members.AgentData.TotalPairs) {
 			OnGroupRoleMembers.dispatch(new GroupRolesMembersReplyCallbackArgs(members.AgentData.RequestID,
 					members.AgentData.GroupID, groupRoleMemberCache));
 		}
@@ -2239,15 +2070,13 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * @throws UnsupportedEncodingException
 	 */
 	private final void HandleGroupActiveProposalItem(Packet packet, Simulator simulator)
-			throws UnsupportedEncodingException
-	{
+			throws UnsupportedEncodingException {
 		GroupActiveProposalItemReplyPacket proposal = (GroupActiveProposalItemReplyPacket) packet;
 
 		// UUID transactionID = proposal.TransactionData.TransactionID;
 
 		ArrayList<GroupProposalItem> array = new ArrayList<GroupProposalItem>(proposal.ProposalData.length);
-		for (GroupActiveProposalItemReplyPacket.ProposalDataBlock block : proposal.ProposalData)
-		{
+		for (GroupActiveProposalItemReplyPacket.ProposalDataBlock block : proposal.ProposalData) {
 			GroupProposalItem p = new GroupProposalItem();
 
 			p.VoteID = block.VoteID;
@@ -2275,26 +2104,22 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * @param e
 	 *            The EventArgs object containing the packet data
 	 */
-	private final void HandleGroupVoteHistoryItem(Packet packet, Simulator simulator)
-	{
+	private final void HandleGroupVoteHistoryItem(Packet packet, Simulator simulator) {
 		@SuppressWarnings("unused")
 		GroupVoteHistoryItemReplyPacket history = (GroupVoteHistoryItemReplyPacket) packet;
 
-		// TODO: This was broken in the official viewer when I was last trying to work on it
-	    /*
-	    GroupProposalItem proposal = new GroupProposalItem();
-	    proposal.Majority = history.HistoryItemData.Majority;
-		proposal.Quorum = history.HistoryItemData.Quorum;
-		proposal.Duration = history.TransactionData.TotalNumItems;
-		proposal.ProposalText = ;
-		proposal.TerseDateID = proposal.VoteID = history.HistoryItemData.VoteID;
-		proposal.VoteInitiator = history.HistoryItemData.VoteInitiator;
-		for (int i = 0; i < history.VoteItem.length; i++)
-		{
-			history.VoteItem[i].CandidateID = history.VoteItem.;
-			history.VoteItem[i].NumVotes = ;
-		}
-		*/
+		// TODO: This was broken in the official viewer when I was last trying to work
+		// on it
+		/*
+		 * GroupProposalItem proposal = new GroupProposalItem(); proposal.Majority =
+		 * history.HistoryItemData.Majority; proposal.Quorum =
+		 * history.HistoryItemData.Quorum; proposal.Duration =
+		 * history.TransactionData.TotalNumItems; proposal.ProposalText = ;
+		 * proposal.TerseDateID = proposal.VoteID = history.HistoryItemData.VoteID;
+		 * proposal.VoteInitiator = history.HistoryItemData.VoteInitiator; for (int i =
+		 * 0; i < history.VoteItem.length; i++) { history.VoteItem[i].CandidateID =
+		 * history.VoteItem.; history.VoteItem[i].NumVotes = ; }
+		 */
 	}
 
 	/**
@@ -2307,10 +2132,8 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * @throws UnsupportedEncodingException
 	 */
 	private final void HandleGroupAccountSummaryReply(Packet packet, Simulator simulator)
-			throws UnsupportedEncodingException
-	{
-		if (OnGroupAccountSummaryReply.count() > 0)
-		{
+			throws UnsupportedEncodingException {
+		if (OnGroupAccountSummaryReply.count() > 0) {
 			GroupAccountSummaryReplyPacket summary = (GroupAccountSummaryReplyPacket) packet;
 			GroupAccountSummary account = new GroupAccountSummary();
 
@@ -2334,8 +2157,8 @@ public class GroupManager implements PacketCallback, CapsCallback
 			account.TotalCredits = summary.MoneyData.TotalCredits;
 			account.TotalDebits = summary.MoneyData.TotalDebits;
 
-			OnGroupAccountSummaryReply.dispatch(new GroupAccountSummaryReplyCallbackArgs(summary.AgentData.GroupID,
-					account));
+			OnGroupAccountSummaryReply
+					.dispatch(new GroupAccountSummaryReplyCallbackArgs(summary.AgentData.GroupID, account));
 		}
 	}
 
@@ -2348,14 +2171,12 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            The EventArgs object containing the packet data
 	 * @throws UnsupportedEncodingException
 	 */
-	private final void HandleCreateGroupReply(Packet packet, Simulator simulator)
-			throws UnsupportedEncodingException
-	{
+	private final void HandleCreateGroupReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
 		CreateGroupReplyPacket reply = (CreateGroupReplyPacket) packet;
 		String message = Helpers.BytesToString(reply.ReplyData.getMessage());
 
-		OnGroupCreatedReply.dispatch(new GroupCreatedReplyCallbackArgs(reply.ReplyData.GroupID,
-				reply.ReplyData.Success, message));
+		OnGroupCreatedReply
+				.dispatch(new GroupCreatedReplyCallbackArgs(reply.ReplyData.GroupID, reply.ReplyData.Success, message));
 	}
 
 	/**
@@ -2366,8 +2187,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * @param e
 	 *            The EventArgs object containing the packet data
 	 */
-	private final void HandleJoinGroupReply(Packet packet, Simulator simulator)
-	{
+	private final void HandleJoinGroupReply(Packet packet, Simulator simulator) {
 		JoinGroupReplyPacket reply = (JoinGroupReplyPacket) packet;
 
 		OnGroupJoinedReply.dispatch(new GroupOperationCallbackArgs(reply.GroupData.GroupID, reply.GroupData.Success));
@@ -2381,8 +2201,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * @param e
 	 *            The EventArgs object containing the packet data
 	 */
-	private final void HandleLeaveGroupReply(Packet packet, Simulator simulator)
-	{
+	private final void HandleLeaveGroupReply(Packet packet, Simulator simulator) {
 		LeaveGroupReplyPacket reply = (LeaveGroupReplyPacket) packet;
 
 		OnGroupLeaveReply.dispatch(new GroupOperationCallbackArgs(reply.GroupData.GroupID, reply.GroupData.Success));
@@ -2397,26 +2216,21 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 *            The EventArgs object containing the packet data
 	 * @throws UnsupportedEncodingException
 	 */
-	private void HandleUUIDGroupNameReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException
-	{
+	private void HandleUUIDGroupNameReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
 		UUIDGroupNameReplyPacket reply = (UUIDGroupNameReplyPacket) packet;
 		UUIDGroupNameReplyPacket.UUIDNameBlockBlock[] blocks = reply.UUIDNameBlock;
 
 		HashMap<UUID, String> groupNames = new HashMap<UUID, String>();
 
-		for (UUIDGroupNameReplyPacket.UUIDNameBlockBlock block : blocks)
-		{
+		for (UUIDGroupNameReplyPacket.UUIDNameBlockBlock block : blocks) {
 			String name = Helpers.BytesToString(block.getGroupName());
 			groupNames.put(block.ID, name);
-			synchronized (GroupNames)
-			{
+			synchronized (GroupNames) {
 				GroupNames.put(block.ID, name);
-			}	
-			synchronized (GroupList)
-			{
+			}
+			synchronized (GroupList) {
 				Group group = GroupList.get(block.ID);
-				if (group != null)
-				{
+				if (group != null) {
 					group.Name = name;
 				}
 			}
@@ -2432,8 +2246,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 	 * @param e
 	 *            The EventArgs object containing the packet data
 	 */
-	private final void HandleEjectGroupMemberReply(Packet packet, Simulator simulator)
-	{
+	private final void HandleEjectGroupMemberReply(Packet packet, Simulator simulator) {
 		EjectGroupMemberReplyPacket reply = (EjectGroupMemberReplyPacket) packet;
 
 		// TODO: On Success remove the member from the cache(s)
@@ -2443,12 +2256,10 @@ public class GroupManager implements PacketCallback, CapsCallback
 
 	// #endregion Packet Handlers
 
-	private final void HandleGroupAccountDetails(Packet packet, Simulator simulator) throws Exception
-	{
+	private final void HandleGroupAccountDetails(Packet packet, Simulator simulator) throws Exception {
 		GroupAccountDetailsReplyPacket details = (GroupAccountDetailsReplyPacket) packet;
 
-		if (OnGroupAccountDetailsCallbacks.containsKey(details.AgentData.GroupID))
-		{
+		if (OnGroupAccountDetailsCallbacks.containsKey(details.AgentData.GroupID)) {
 			GroupAccountDetails account = new GroupAccountDetails();
 
 			account.CurrentInterval = details.MoneyData.CurrentInterval;
@@ -2457,8 +2268,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 
 			account.HistoryItems = new HashMapInt<String>();
 
-			for (int i = 0; i < details.HistoryData.length; i++)
-			{
+			for (int i = 0; i < details.HistoryData.length; i++) {
 				GroupAccountDetailsReplyPacket.HistoryDataBlock block = details.HistoryData[i];
 				account.HistoryItems.put(Helpers.BytesToString(block.getDescription()), block.Amount);
 			}
@@ -2466,12 +2276,10 @@ public class GroupManager implements PacketCallback, CapsCallback
 		}
 	}
 
-	private final void HandleGroupAccountTransactions(Packet packet, Simulator simulator) throws Exception
-	{
+	private final void HandleGroupAccountTransactions(Packet packet, Simulator simulator) throws Exception {
 		GroupAccountTransactionsReplyPacket transactions = (GroupAccountTransactionsReplyPacket) packet;
 
-		if (OnGroupAccountTransactionsCallbacks.containsKey(transactions.AgentData.GroupID))
-		{
+		if (OnGroupAccountTransactionsCallbacks.containsKey(transactions.AgentData.GroupID)) {
 			GroupAccountTransactions account = new GroupAccountTransactions();
 
 			account.CurrentInterval = transactions.MoneyData.CurrentInterval;
@@ -2479,8 +2287,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 			account.StartDate = Helpers.BytesToString(transactions.MoneyData.getStartDate());
 
 			account.Transactions = new TransactionEntry[transactions.HistoryData.length];
-			for (int i = 0; i < transactions.HistoryData.length; i++)
-			{
+			for (int i = 0; i < transactions.HistoryData.length; i++) {
 				TransactionEntry entry = account.new TransactionEntry();
 				GroupAccountTransactionsReplyPacket.HistoryDataBlock block = transactions.HistoryData[i];
 
@@ -2498,13 +2305,11 @@ public class GroupManager implements PacketCallback, CapsCallback
 	// #region CallbackArgs
 
 	// Contains the current groups your agent is a member of
-	public class CurrentGroupsCallbackArgs implements CallbackArgs
-	{
+	public class CurrentGroupsCallbackArgs implements CallbackArgs {
 		private final java.util.HashMap<UUID, Group> m_Groups;
 
 		// Get the current groups your agent is a member of
-		public final java.util.HashMap<UUID, Group> getGroups()
-		{
+		public final java.util.HashMap<UUID, Group> getGroups() {
 			return m_Groups;
 		}
 
@@ -2514,21 +2319,18 @@ public class GroupManager implements PacketCallback, CapsCallback
 		 * @param groups
 		 *            The current groups your agent is a member of
 		 */
-		public CurrentGroupsCallbackArgs(java.util.HashMap<UUID, Group> groups)
-		{
+		public CurrentGroupsCallbackArgs(java.util.HashMap<UUID, Group> groups) {
 			this.m_Groups = groups;
 		}
 	}
 
 	// A Dictionary of group names, where the Key is the groups ID and the value
 	// is the groups name
-	public class GroupNamesCallbackArgs implements CallbackArgs
-	{
+	public class GroupNamesCallbackArgs implements CallbackArgs {
 		private final HashMap<UUID, String> m_GroupNames;
 
 		// Get the Group Names dictionary
-		public final HashMap<UUID, String> getGroupNames()
-		{
+		public final HashMap<UUID, String> getGroupNames() {
 			return m_GroupNames;
 		}
 
@@ -2538,35 +2340,30 @@ public class GroupManager implements PacketCallback, CapsCallback
 		 * @param groupNames
 		 *            The Group names dictionary
 		 */
-		public GroupNamesCallbackArgs(HashMap<UUID, String> groupNames)
-		{
+		public GroupNamesCallbackArgs(HashMap<UUID, String> groupNames) {
 			this.m_GroupNames = groupNames;
 		}
 	}
 
 	// Represents the members of a group
-	public class GroupMembersReplyCallbackArgs implements CallbackArgs
-	{
+	public class GroupMembersReplyCallbackArgs implements CallbackArgs {
 		private final UUID m_RequestID;
 		private final UUID m_GroupID;
 		private final HashMap<UUID, GroupMember> m_Members;
 
 		// Get the ID as returned by the request to correlate this result set
 		// and the request
-		public final UUID getRequestID()
-		{
+		public final UUID getRequestID() {
 			return m_RequestID;
 		}
 
 		// Get the ID of the group
-		public final UUID getGroupID()
-		{
+		public final UUID getGroupID() {
 			return m_GroupID;
 		}
 
 		// Get the dictionary of members
-		public final HashMap<UUID, GroupMember> getMembers()
-		{
+		public final HashMap<UUID, GroupMember> getMembers() {
 			return m_Members;
 		}
 
@@ -2580,8 +2377,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		 * @param members
 		 *            The membership list of the group
 		 */
-		public GroupMembersReplyCallbackArgs(UUID requestID, UUID groupID, HashMap<UUID, GroupMember> members)
-		{
+		public GroupMembersReplyCallbackArgs(UUID requestID, UUID groupID, HashMap<UUID, GroupMember> members) {
 			this.m_RequestID = requestID;
 			this.m_GroupID = groupID;
 			this.m_Members = members;
@@ -2589,28 +2385,24 @@ public class GroupManager implements PacketCallback, CapsCallback
 	}
 
 	// Represents the roles associated with a group
-	public class GroupRolesDataReplyCallbackArgs implements CallbackArgs
-	{
+	public class GroupRolesDataReplyCallbackArgs implements CallbackArgs {
 		private final UUID m_RequestID;
 		private final UUID m_GroupID;
 		private final HashMap<UUID, GroupRole> m_Roles;
 
 		// Get the ID as returned by the request to correlate this result set
 		// and the request
-		public final UUID getRequestID()
-		{
+		public final UUID getRequestID() {
 			return m_RequestID;
 		}
 
 		// Get the ID of the group
-		public final UUID getGroupID()
-		{
+		public final UUID getGroupID() {
 			return m_GroupID;
 		}
 
 		// Get the dictionary containing the roles
-		public final java.util.HashMap<UUID, GroupRole> getRoles()
-		{
+		public final java.util.HashMap<UUID, GroupRole> getRoles() {
 			return m_Roles;
 		}
 
@@ -2618,15 +2410,14 @@ public class GroupManager implements PacketCallback, CapsCallback
 		 * Construct a new instance of the GroupRolesDataReplyCallbackArgs class
 		 * 
 		 * @param requestID
-		 *            The ID as returned by the request to correlate this result
-		 *            set and the request
+		 *            The ID as returned by the request to correlate this result set and
+		 *            the request
 		 * @param groupID
 		 *            The ID of the group
 		 * @param roles
 		 *            The dictionary containing the roles
 		 */
-		public GroupRolesDataReplyCallbackArgs(UUID requestID, UUID groupID, java.util.HashMap<UUID, GroupRole> roles)
-		{
+		public GroupRolesDataReplyCallbackArgs(UUID requestID, UUID groupID, java.util.HashMap<UUID, GroupRole> roles) {
 			this.m_RequestID = requestID;
 			this.m_GroupID = groupID;
 			this.m_Roles = roles;
@@ -2634,46 +2425,40 @@ public class GroupManager implements PacketCallback, CapsCallback
 	}
 
 	// Represents the Role to Member mappings for a group
-	public class GroupRolesMembersReplyCallbackArgs implements CallbackArgs
-	{
+	public class GroupRolesMembersReplyCallbackArgs implements CallbackArgs {
 		private final UUID m_RequestID;
 		private final UUID m_GroupID;
 		private final ArrayList<Entry<UUID, UUID>> m_RolesMembers;
 
 		// Get the ID as returned by the request to correlate this result set
 		// and the request
-		public final UUID getRequestID()
-		{
+		public final UUID getRequestID() {
 			return m_RequestID;
 		}
 
 		// Get the ID of the group
-		public final UUID getGroupID()
-		{
+		public final UUID getGroupID() {
 			return m_GroupID;
 		}
 
 		// Get the member to roles map
-		public final ArrayList<Entry<UUID, UUID>> getRolesMembers()
-		{
+		public final ArrayList<Entry<UUID, UUID>> getRolesMembers() {
 			return m_RolesMembers;
 		}
 
 		/**
-		 * Construct a new instance of the GroupRolesMembersReplyCallbackArgs
-		 * class
+		 * Construct a new instance of the GroupRolesMembersReplyCallbackArgs class
 		 * 
 		 * @param requestID
-		 *            The ID as returned by the request to correlate this result
-		 *            set and the request
+		 *            The ID as returned by the request to correlate this result set and
+		 *            the request
 		 * @param groupID
 		 *            The ID of the group
 		 * @param rolesMembers
 		 *            The member to roles map
 		 */
 		public GroupRolesMembersReplyCallbackArgs(UUID requestID, UUID groupID,
-				ArrayList<Entry<UUID, UUID>> rolesMembers)
-		{
+				ArrayList<Entry<UUID, UUID>> rolesMembers) {
 			this.m_RequestID = requestID;
 			this.m_GroupID = groupID;
 			this.m_RolesMembers = rolesMembers;
@@ -2681,28 +2466,24 @@ public class GroupManager implements PacketCallback, CapsCallback
 	}
 
 	// Represents the titles for a group
-	public class GroupTitlesReplyCallbackArgs implements CallbackArgs
-	{
+	public class GroupTitlesReplyCallbackArgs implements CallbackArgs {
 		private final UUID m_RequestID;
 		private final UUID m_GroupID;
 		private final HashMap<UUID, GroupTitle> m_Titles;
 
 		// Get the ID as returned by the request to correlate this result set
 		// and the request
-		public final UUID getRequestID()
-		{
+		public final UUID getRequestID() {
 			return m_RequestID;
 		}
 
 		// Get the ID of the group
-		public final UUID getGroupID()
-		{
+		public final UUID getGroupID() {
 			return m_GroupID;
 		}
 
 		// Get the titles
-		public final HashMap<UUID, GroupTitle> getTitles()
-		{
+		public final HashMap<UUID, GroupTitle> getTitles() {
 			return m_Titles;
 		}
 
@@ -2710,15 +2491,14 @@ public class GroupManager implements PacketCallback, CapsCallback
 		 * Construct a new instance of the GroupTitlesReplyCallbackArgs class
 		 * 
 		 * @param requestID
-		 *            The ID as returned by the request to correlate this result
-		 *            set and the request
+		 *            The ID as returned by the request to correlate this result set and
+		 *            the request
 		 * @param groupID
 		 *            The ID of the group
 		 * @param titles
 		 *            The titles
 		 */
-		public GroupTitlesReplyCallbackArgs(UUID requestID, UUID groupID, HashMap<UUID, GroupTitle> titles)
-		{
+		public GroupTitlesReplyCallbackArgs(UUID requestID, UUID groupID, HashMap<UUID, GroupTitle> titles) {
 			this.m_RequestID = requestID;
 			this.m_GroupID = groupID;
 			this.m_Titles = titles;
@@ -2726,61 +2506,52 @@ public class GroupManager implements PacketCallback, CapsCallback
 	}
 
 	// Represents the summary data for a group
-	public class GroupAccountSummaryReplyCallbackArgs implements CallbackArgs
-	{
+	public class GroupAccountSummaryReplyCallbackArgs implements CallbackArgs {
 		private final UUID m_GroupID;
 		private final GroupAccountSummary m_Summary;
 
 		// Get the ID of the group
-		public final UUID getGroupID()
-		{
+		public final UUID getGroupID() {
 			return m_GroupID;
 		}
 
 		// Get the summary data
-		public final GroupAccountSummary getSummary()
-		{
+		public final GroupAccountSummary getSummary() {
 			return m_Summary;
 		}
 
 		/**
-		 * Construct a new instance of the GroupAccountSummaryReplyCallbackArgs
-		 * class
+		 * Construct a new instance of the GroupAccountSummaryReplyCallbackArgs class
 		 * 
 		 * @param groupID
 		 *            The ID of the group
 		 * @param summary
 		 *            The summary data
 		 */
-		public GroupAccountSummaryReplyCallbackArgs(UUID groupID, GroupAccountSummary summary)
-		{
+		public GroupAccountSummaryReplyCallbackArgs(UUID groupID, GroupAccountSummary summary) {
 			this.m_GroupID = groupID;
 			this.m_Summary = summary;
 		}
 	}
 
 	// A response to a group create request
-	public class GroupCreatedReplyCallbackArgs implements CallbackArgs
-	{
+	public class GroupCreatedReplyCallbackArgs implements CallbackArgs {
 		private final UUID m_GroupID;
 		private final boolean m_Success;
 		private final String m_Message;
 
 		// Get the ID of the group
-		public final UUID getGroupID()
-		{
+		public final UUID getGroupID() {
 			return m_GroupID;
 		}
 
 		// true of the group was created successfully
-		public final boolean getSuccess()
-		{
+		public final boolean getSuccess() {
 			return m_Success;
 		}
 
 		// A string containing the message
-		public final String getMessage()
-		{
+		public final String getMessage() {
 			return m_Message;
 		}
 
@@ -2794,8 +2565,7 @@ public class GroupManager implements PacketCallback, CapsCallback
 		 * @param messsage
 		 *            A string containing additional information
 		 */
-		public GroupCreatedReplyCallbackArgs(UUID groupID, boolean success, String messsage)
-		{
+		public GroupCreatedReplyCallbackArgs(UUID groupID, boolean success, String messsage) {
 			this.m_GroupID = groupID;
 			this.m_Success = success;
 			this.m_Message = messsage;
@@ -2803,20 +2573,17 @@ public class GroupManager implements PacketCallback, CapsCallback
 	}
 
 	// Represents a response to a request
-	public class GroupOperationCallbackArgs implements CallbackArgs
-	{
+	public class GroupOperationCallbackArgs implements CallbackArgs {
 		private final UUID m_GroupID;
 		private final boolean m_Success;
 
 		// Get the ID of the group
-		public final UUID getGroupID()
-		{
+		public final UUID getGroupID() {
 			return m_GroupID;
 		}
 
 		// true of the request was successful
-		public final boolean getSuccess()
-		{
+		public final boolean getSuccess() {
 			return m_Success;
 		}
 
@@ -2828,21 +2595,18 @@ public class GroupManager implements PacketCallback, CapsCallback
 		 * @param success
 		 *            true of the request was successful
 		 */
-		public GroupOperationCallbackArgs(UUID groupID, boolean success)
-		{
+		public GroupOperationCallbackArgs(UUID groupID, boolean success) {
 			this.m_GroupID = groupID;
 			this.m_Success = success;
 		}
 	}
 
 	// Represents your agent leaving a group
-	public class GroupDroppedCallbackArgs implements CallbackArgs
-	{
+	public class GroupDroppedCallbackArgs implements CallbackArgs {
 		private final UUID m_GroupID;
 
 		// Get the ID of the group
-		public final UUID getGroupID()
-		{
+		public final UUID getGroupID() {
 			return m_GroupID;
 		}
 
@@ -2852,54 +2616,46 @@ public class GroupManager implements PacketCallback, CapsCallback
 		 * @param groupID
 		 *            The ID of the group
 		 */
-		public GroupDroppedCallbackArgs(UUID groupID)
-		{
+		public GroupDroppedCallbackArgs(UUID groupID) {
 			m_GroupID = groupID;
 		}
 	}
 
 	// Represents a list of active group notices
-	public class GroupNoticesListReplyCallbackArgs implements CallbackArgs
-	{
+	public class GroupNoticesListReplyCallbackArgs implements CallbackArgs {
 		private final UUID m_GroupID;
 		private final ArrayList<GroupNoticesListEntry> m_Notices;
 
 		// Get the ID of the group
-		public final UUID getGroupID()
-		{
+		public final UUID getGroupID() {
 			return m_GroupID;
 		}
 
 		// Get the notices list
-		public final ArrayList<GroupNoticesListEntry> getNotices()
-		{
+		public final ArrayList<GroupNoticesListEntry> getNotices() {
 			return m_Notices;
 		}
 
 		/**
-		 * Construct a new instance of the GroupNoticesListReplyCallbackArgs
-		 * class
+		 * Construct a new instance of the GroupNoticesListReplyCallbackArgs class
 		 * 
 		 * @param groupID
 		 *            The ID of the group
 		 * @param notices
 		 *            The list containing active notices
 		 */
-		public GroupNoticesListReplyCallbackArgs(UUID groupID, ArrayList<GroupNoticesListEntry> notices)
-		{
+		public GroupNoticesListReplyCallbackArgs(UUID groupID, ArrayList<GroupNoticesListEntry> notices) {
 			m_GroupID = groupID;
 			m_Notices = notices;
 		}
 	}
 
 	// Represents the profile of a group
-	public class GroupProfileCallbackArgs implements CallbackArgs
-	{
+	public class GroupProfileCallbackArgs implements CallbackArgs {
 		private final Group m_Group;
 
 		// Get the group profile
-		public final Group getGroup()
-		{
+		public final Group getGroup() {
 			return m_Group;
 		}
 
@@ -2909,21 +2665,18 @@ public class GroupManager implements PacketCallback, CapsCallback
 		 * @param group
 		 *            The group profile
 		 */
-		public GroupProfileCallbackArgs(Group group)
-		{
+		public GroupProfileCallbackArgs(Group group) {
 			this.m_Group = group;
 		}
 	}
 
 	/**
-	 * Provides notification of a group invitation request sent by another
-	 * Avatar
+	 * Provides notification of a group invitation request sent by another Avatar
 	 * 
-	 * The <see cref="GroupInvitation"/> invitation is raised when another
-	 * avatar makes an offer for our avatar to join a group.
+	 * The <see cref="GroupInvitation"/> invitation is raised when another avatar
+	 * makes an offer for our avatar to join a group.
 	 */
-	public class GroupInvitationCallbackArgs implements CallbackArgs
-	{
+	public class GroupInvitationCallbackArgs implements CallbackArgs {
 		private final UUID m_SessionID;
 		private final UUID m_GroupID;
 		private final UUID m_RoleID;
@@ -2933,50 +2686,43 @@ public class GroupManager implements PacketCallback, CapsCallback
 		private String m_Message;
 
 		// The ID of the Avatar sending the group invitation
-		public final UUID getSessionID()
-		{
+		public final UUID getSessionID() {
 			return m_SessionID;
 		}
 
 		// The ID of the Avatar sending the group invitation
-		public final UUID getGroupID()
-		{
+		public final UUID getGroupID() {
 			return m_GroupID;
 		}
 
 		// The ID of the group role sending the group invitation
-		public final UUID getRoleID()
-		{
+		public final UUID getRoleID() {
 			return m_RoleID;
 		}
 
 		// The name of the Avatar sending the group invitation
-		public final String getFromName()
-		{
+		public final String getFromName() {
 			return m_FromName;
 		}
 
 		// The fee joining this group costs
-		public final int getFee()
-		{
+		public final int getFee() {
 			return m_Fee;
 		}
 
 		// A message containing the request information which includes the name
 		// of the group, the groups charter and the fee to join details
-		public final String getMessage()
-		{
+		public final String getMessage() {
 			return m_Message;
 		}
 
 		// The Simulator
-		public final Simulator getSimulator()
-		{
+		public final Simulator getSimulator() {
 			return m_Simulator;
 		}
 
-		public GroupInvitationCallbackArgs(Simulator simulator, UUID sessionID, UUID groupID, UUID roleID, String fromName, String message, int fee)
-		{
+		public GroupInvitationCallbackArgs(Simulator simulator, UUID sessionID, UUID groupID, UUID roleID,
+				String fromName, String message, int fee) {
 			this.m_Simulator = simulator;
 			this.m_SessionID = sessionID;
 			this.m_GroupID = groupID;
@@ -2987,28 +2733,32 @@ public class GroupManager implements PacketCallback, CapsCallback
 		}
 	}
 
-    // Result of the request for list of agents banned from a group
-    public class BannedAgentsCallbackArgs implements CallbackArgs
-    {
-        private final UUID mGroupID;
-        private final boolean mSuccess;
-        private final HashMap<UUID, Date> mBannedAgents;
+	// Result of the request for list of agents banned from a group
+	public class BannedAgentsCallbackArgs implements CallbackArgs {
+		private final UUID mGroupID;
+		private final boolean mSuccess;
+		private final HashMap<UUID, Date> mBannedAgents;
 
-        // Indicates if list of banned agents for a group was successfully retrieved
-        public UUID getGroupID() { return mGroupID; }
+		// Indicates if list of banned agents for a group was successfully retrieved
+		public UUID getGroupID() {
+			return mGroupID;
+		}
 
-        // Indicates if list of banned agents for a group was successfully retrieved
-        public boolean getSuccess() { return mSuccess; }
+		// Indicates if list of banned agents for a group was successfully retrieved
+		public boolean getSuccess() {
+			return mSuccess;
+		}
 
-        // Array containing a list of UUIDs of the agents banned from a group
-        public HashMap<UUID, Date> getBannedAgents() { return mBannedAgents; }
+		// Array containing a list of UUIDs of the agents banned from a group
+		public HashMap<UUID, Date> getBannedAgents() {
+			return mBannedAgents;
+		}
 
-        public BannedAgentsCallbackArgs(UUID groupID, boolean success, HashMap<UUID, Date> bannedAgents)
-        {
-            this.mGroupID = groupID;
-            this.mSuccess = success;
-            this.mBannedAgents = bannedAgents;
-        }
-    }
+		public BannedAgentsCallbackArgs(UUID groupID, boolean success, HashMap<UUID, Date> bannedAgents) {
+			this.mGroupID = groupID;
+			this.mSuccess = success;
+			this.mBannedAgents = bannedAgents;
+		}
+	}
 	// #endregion CallbackArgs
 }

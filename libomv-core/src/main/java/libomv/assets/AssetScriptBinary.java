@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -32,25 +32,22 @@ package libomv.assets;
 import libomv.types.UUID;
 
 // Represents an AssetScriptBinary object containing the LSO compiled bytecode of an LSL script
-public class AssetScriptBinary extends AssetItem
-{
+public class AssetScriptBinary extends AssetItem {
 	// Override the base classes AssetType
 	@Override
-	public AssetType getAssetType()
-	{
+	public AssetType getAssetType() {
 		return AssetType.LSLBytecode;
 	}
 
 	/**
 	 * Initializes a new instance of an AssetScriptBinary object with parameters
-	 * 
+	 *
 	 * @param assetID
 	 *            A unique <see cref="UUID"/> specific to this asset
 	 * @param assetData
 	 *            A byte array containing the raw asset data
 	 */
-	public AssetScriptBinary(UUID assetID, byte[] assetData)
-	{
+	public AssetScriptBinary(UUID assetID, byte[] assetData) {
 		super(assetID, assetData);
 	}
 
@@ -58,18 +55,16 @@ public class AssetScriptBinary extends AssetItem
 	 * TODO: Encodes a scripts contents into a LSO Bytecode file
 	 */
 	@Override
-	protected void encode()
-	{
+	protected void encode() {
 	}
 
 	/**
 	 * TODO: Decode LSO Bytecode into a string
-	 * 
+	 *
 	 * @return true
 	 */
 	@Override
-	protected boolean decode()
-	{
+	protected boolean decode() {
 		return true;
 	}
 }

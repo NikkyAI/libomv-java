@@ -88,17 +88,15 @@ import org.apache.log4j.Logger;
 import libomv.utils.Helpers;
 
 @SuppressWarnings("deprecation")
-public abstract class AsyncHTTPClient<T>
-{
+public abstract class AsyncHTTPClient<T> {
 	private static final Logger logger = Logger.getLogger(AsyncHTTPClient.class);
 
 	public static final long TIMEOUT_INFINITE = -1;
 
-	public interface ProgressCallback
-	{
+	public interface ProgressCallback {
 		public void progress(long bytesTransceived, long totalBytes);
 	}
-	
+
 	private HttpAsyncClientBuilder builder = HttpAsyncClientBuilder.create();
 	private CloseableHttpAsyncClient asyncClient;
 	private X509Certificate certificate;
@@ -109,25 +107,25 @@ public abstract class AsyncHTTPClient<T>
 
 	protected String name;
 
-	public void setProgressCallback(ProgressCallback callback)
-	{
+	public void setProgressCallback(ProgressCallback callback) {
 		progressCb = callback;
 	}
-	
-	public void setCertificate(X509Certificate cert)
-	{
+
+	public void setCertificate(X509Certificate cert) {
 		certificate = cert;
 	}
-	
+
 	/**
 	 * Sets basic authentication on web request using plain credentials
 	 *
-	 * @param uri The uri for which the authentication credentials should be applied
-	 * @param username The plain text username
-	 * @param password The plain text password
+	 * @param uri
+	 *            The uri for which the authentication credentials should be applied
+	 * @param username
+	 *            The plain text username
+	 * @param password
+	 *            The plain text password
 	 */
-	public synchronized void setBasicAuthentication(URI uri, String username, String password)
-	{
+	public synchronized void setBasicAuthentication(URI uri, String username, String password) {
 		BasicCredentialsProvider provider = new BasicCredentialsProvider();
 		provider.setCredentials(new AuthScope(uri.getHost(), uri.getPort(), AuthScope.ANY_REALM),
 				new UsernamePasswordCredentials(username, password));
@@ -136,43 +134,39 @@ public abstract class AsyncHTTPClient<T>
 
 	/**
 	 * Registers a new scheme for this client. Useful to provide a scheme with
-	 * custom security provider such as for certificate verification for the
-	 * HTTPS scheme
+	 * custom security provider such as for certificate verification for the HTTPS
+	 * scheme
 	 *
-	 * @param scheme The scheme to add to the connection manager for this connection
+	 * @param scheme
+	 *            The scheme to add to the connection manager for this connection
 	 * @return The scheme registered
 	 */
-	//public synchronized Scheme register(Scheme scheme)
-	//{
-	//	return asyncClient.getConnectionManager().getSchemeRegistry().register(scheme);
-	//}
-	
-	protected synchronized void cancel(boolean mayInterruptIfRunning)
-	{
-		if (timeout != null)
-		{
+	// public synchronized Scheme register(Scheme scheme)
+	// {
+	// return
+	// asyncClient.getConnectionManager().getSchemeRegistry().register(scheme);
+	// }
+
+	protected synchronized void cancel(boolean mayInterruptIfRunning) {
+		if (timeout != null) {
 			timeout.cancel();
 			timeout = null;
 		}
-		if (mayInterruptIfRunning && resultFuture != null)
-		{
-			if (!resultFuture.isDone())
-			{
+		if (mayInterruptIfRunning && resultFuture != null) {
+			if (!resultFuture.isDone()) {
 				resultFuture.cancel(mayInterruptIfRunning);
 			}
 			resultFuture = null;
 		}
 	}
-	
-	public synchronized void shutdown(boolean mayInterruptIfRunning) throws InterruptedException, IOException
-	{
+
+	public synchronized void shutdown(boolean mayInterruptIfRunning) throws InterruptedException, IOException {
 		cancel(mayInterruptIfRunning);
 		asyncClient.close();
 		asyncClient = null;
 	}
 
-	public AsyncHTTPClient(String name) throws IOReactorException
-	{
+	public AsyncHTTPClient(String name) throws IOReactorException {
 		this.name = name;
 		asyncClient = HttpAsyncClients.createDefault();
 		asyncClient.start();
@@ -181,23 +175,24 @@ public abstract class AsyncHTTPClient<T>
 	/**
 	 * Do a HTTP Get Request from the server without any timeout
 	 * 
-	 * @param address The document uri to fetch
+	 * @param address
+	 *            The document uri to fetch
 	 * @return A Future that can be used to retrieve the data or cancel the request
 	 */
-	public Future<T> executeHttpGet(URI address)
-	{
+	public Future<T> executeHttpGet(URI address) {
 		return executeHttp(new HttpGet(address), null, TIMEOUT_INFINITE);
 	}
-	
+
 	/**
 	 * Do a HTTP Get Request from the server without any timeout
 	 * 
-	 * @param address The document uri to fetch
-	 * @param acceptHeader The content type to add as Accept: header or null
+	 * @param address
+	 *            The document uri to fetch
+	 * @param acceptHeader
+	 *            The content type to add as Accept: header or null
 	 * @return A Future that can be used to retrieve the data or cancel the request
 	 */
-	public Future<T> executeHttpGet(URI address, String acceptHeader)
-	{
+	public Future<T> executeHttpGet(URI address, String acceptHeader) {
 		HttpGet request = new HttpGet(address);
 		if (acceptHeader != null && !acceptHeader.isEmpty())
 			request.addHeader("Accept", acceptHeader);
@@ -207,15 +202,19 @@ public abstract class AsyncHTTPClient<T>
 	/**
 	 * Do a HTTP Get Request from the server
 	 * 
-	 * @param address The document uri to fetch
-	 * @param acceptHeader The content type to add as Accept: header or null
-	 * @param callback The result callback to be called on success, exception or failure
-	 * @param millisecondTimeout The timeout to wait for a response or -1 if no timeout should be used
-	 *                The request can still be aborted through the returned future.
+	 * @param address
+	 *            The document uri to fetch
+	 * @param acceptHeader
+	 *            The content type to add as Accept: header or null
+	 * @param callback
+	 *            The result callback to be called on success, exception or failure
+	 * @param millisecondTimeout
+	 *            The timeout to wait for a response or -1 if no timeout should be
+	 *            used The request can still be aborted through the returned future.
 	 * @return A Future that can be used to cancel the request
 	 */
-	public Future<T> executeHttpGet(URI address, String acceptHeader, FutureCallback<T> callback, long millisecondTimeout)
-	{
+	public Future<T> executeHttpGet(URI address, String acceptHeader, FutureCallback<T> callback,
+			long millisecondTimeout) {
 		HttpGet request = new HttpGet(address);
 		if (acceptHeader != null && !acceptHeader.isEmpty())
 			request.addHeader("Accept", acceptHeader);
@@ -225,15 +224,19 @@ public abstract class AsyncHTTPClient<T>
 	/**
 	 * Do a HTTP Post Request from the server from string data
 	 * 
-	 * @param address The uri to post
-	 * @param data The string data to add as entity content
-	 * @param contentType The content type to add as ContentType: header or null
-	 * @param encoding The encoding to use to stream the data
+	 * @param address
+	 *            The uri to post
+	 * @param data
+	 *            The string data to add as entity content
+	 * @param contentType
+	 *            The content type to add as ContentType: header or null
+	 * @param encoding
+	 *            The encoding to use to stream the data
 	 * @return A Future that can be used to retrieve the data or cancel the request
-	 * @throws UnsupportedEncodingException 
+	 * @throws UnsupportedEncodingException
 	 */
-	public Future<T> executeHttpPost(URI address, String data, String contentType, String encoding) throws UnsupportedEncodingException
-	{
+	public Future<T> executeHttpPost(URI address, String data, String contentType, String encoding)
+			throws UnsupportedEncodingException {
 		AbstractHttpEntity entity = new NStringEntity(data);
 		if (contentType != null && !contentType.isEmpty())
 			entity.setContentType(contentType);
@@ -245,19 +248,24 @@ public abstract class AsyncHTTPClient<T>
 	/**
 	 * Do a HTTP Post Request from the server from string data
 	 * 
-	 * @param address The uri to post
-	 * @param data The string data to add as entity content
-	 * @param contentType The content type to add as ContentType: header or null
-	 * @param encoding The encoding to use to stream the data
-	 * @param callback The result callback to be called on success, exception or failure
-	 * @param millisecondTimeout The timeout to wait for a response or -1 if no timeout should be used
-	 *                The request can still be aborted through the returned future.
+	 * @param address
+	 *            The uri to post
+	 * @param data
+	 *            The string data to add as entity content
+	 * @param contentType
+	 *            The content type to add as ContentType: header or null
+	 * @param encoding
+	 *            The encoding to use to stream the data
+	 * @param callback
+	 *            The result callback to be called on success, exception or failure
+	 * @param millisecondTimeout
+	 *            The timeout to wait for a response or -1 if no timeout should be
+	 *            used The request can still be aborted through the returned future.
 	 * @return A Future that can be used to retrieve the data or cancel the request
-	 * @throws UnsupportedEncodingException 
+	 * @throws UnsupportedEncodingException
 	 */
 	public Future<T> executeHttpPost(URI address, String data, String contentType, String encoding,
-							FutureCallback<T> callback, long millisecondTimeout) throws UnsupportedEncodingException
-	{
+			FutureCallback<T> callback, long millisecondTimeout) throws UnsupportedEncodingException {
 		AbstractHttpEntity entity = new NStringEntity(data);
 		if (contentType != null && !contentType.isEmpty())
 			entity.setContentType(contentType);
@@ -269,14 +277,17 @@ public abstract class AsyncHTTPClient<T>
 	/**
 	 * Do a HTTP Post Request from the server from binary data
 	 * 
-	 * @param address The uri to post
-	 * @param data The binary data to add as entity content
-	 * @param contentType The content type to add as ContentType: header or null
-	 * @param encoding The encoding to use in the header
+	 * @param address
+	 *            The uri to post
+	 * @param data
+	 *            The binary data to add as entity content
+	 * @param contentType
+	 *            The content type to add as ContentType: header or null
+	 * @param encoding
+	 *            The encoding to use in the header
 	 * @return A Future that can be used to retrieve the data or cancel the request
 	 */
-	public Future<T> executeHttpPost(URI address, byte[] data, String contentType, String encoding)
-	{
+	public Future<T> executeHttpPost(URI address, byte[] data, String contentType, String encoding) {
 		AbstractHttpEntity entity = new NByteArrayEntity(data);
 		if (contentType != null && !contentType.isEmpty())
 			entity.setContentType(contentType);
@@ -288,18 +299,23 @@ public abstract class AsyncHTTPClient<T>
 	/**
 	 * Do a HTTP Post Request from the server from binary data
 	 * 
-	 * @param address The uri to post the data to
-	 * @param data The binary data to add as entity content
-	 * @param contentType The content type to add as ContentType: header or null
-	 * @param encoding The encoding to use in the header
-	 * @param callback The result callback to be called on success, exception or failure
-	 * @param millisecondTimeout The timeout to wait for a response or -1 if no timeout should be used
-	 *                The request can still be aborted through the returned future.
+	 * @param address
+	 *            The uri to post the data to
+	 * @param data
+	 *            The binary data to add as entity content
+	 * @param contentType
+	 *            The content type to add as ContentType: header or null
+	 * @param encoding
+	 *            The encoding to use in the header
+	 * @param callback
+	 *            The result callback to be called on success, exception or failure
+	 * @param millisecondTimeout
+	 *            The timeout to wait for a response or -1 if no timeout should be
+	 *            used The request can still be aborted through the returned future.
 	 * @return A Future that can be used to retrieve the data or cancel the request
 	 */
 	public Future<T> executeHttpPost(URI address, byte[] data, String contentType, String encoding,
-							         FutureCallback<T> callback, long millisecondTimeout)
-	{
+			FutureCallback<T> callback, long millisecondTimeout) {
 		AbstractHttpEntity entity = new NByteArrayEntity(data);
 		if (contentType != null && !contentType.isEmpty())
 			entity.setContentType(contentType);
@@ -307,22 +323,27 @@ public abstract class AsyncHTTPClient<T>
 			entity.setContentEncoding(encoding);
 		return executeHttpPost(address, entity, callback, millisecondTimeout);
 	}
-	
+
 	/**
 	 * Do a HTTP Put Request from the server from file data
 	 * 
-	 * @param address The uri to post the data to
-	 * @param file The binary data to add as entity content
-	 * @param contentType The content type to add as ContentType: header or null
-	 * @param encoding The encoding to use in the header
-	 * @param callback The result callback to be called on success, exception or failure
-	 * @param millisecondTimeout The timeout to wait for a response or -1 if no timeout should be used
-	 *                The request can still be aborted through the returned future.
+	 * @param address
+	 *            The uri to post the data to
+	 * @param file
+	 *            The binary data to add as entity content
+	 * @param contentType
+	 *            The content type to add as ContentType: header or null
+	 * @param encoding
+	 *            The encoding to use in the header
+	 * @param callback
+	 *            The result callback to be called on success, exception or failure
+	 * @param millisecondTimeout
+	 *            The timeout to wait for a response or -1 if no timeout should be
+	 *            used The request can still be aborted through the returned future.
 	 * @return A Future that can be used to retrieve the data or cancel the request
 	 */
 	public Future<T> executeHttpPut(URI address, File file, String contentType, String encoding,
-	         FutureCallback<T> callback, long millisecondTimeout)
-	{
+			FutureCallback<T> callback, long millisecondTimeout) {
 		AbstractHttpEntity entity = new NFileEntity(file, contentType);
 		if (encoding != null)
 			entity.setContentEncoding(encoding);
@@ -330,20 +351,23 @@ public abstract class AsyncHTTPClient<T>
 		request.setEntity(entity);
 		return executeHttp(request, callback, millisecondTimeout);
 	}
-	
+
 	/**
 	 * Do a HTTP Post Request from the server from binary data
 	 * 
-	 * @param address The uri to post the data to
-	 * @param entity The content entity to send
-	 * @param callback The result callback to be called on success, exception or failure
-	 * @param millisecondTimeout The timeout to wait for a response or -1 if no timeout should be used
-	 *                The request can still be aborted through the returned future.
+	 * @param address
+	 *            The uri to post the data to
+	 * @param entity
+	 *            The content entity to send
+	 * @param callback
+	 *            The result callback to be called on success, exception or failure
+	 * @param millisecondTimeout
+	 *            The timeout to wait for a response or -1 if no timeout should be
+	 *            used The request can still be aborted through the returned future.
 	 * @return A Future that can be used to retrieve the data or cancel the request
 	 */
-	public Future<T> executeHttpPost(URI address, HttpEntity entity,
-			                         FutureCallback<T> callback, long millisecondTimeout)
-	{
+	public Future<T> executeHttpPost(URI address, HttpEntity entity, FutureCallback<T> callback,
+			long millisecondTimeout) {
 		// Create the request
 		HttpPost request = new HttpPost(address);
 		// set POST body
@@ -351,21 +375,16 @@ public abstract class AsyncHTTPClient<T>
 		return executeHttp(request, callback, millisecondTimeout);
 	}
 
-	private HttpHost determineTarget(URI address)
-	{
+	private HttpHost determineTarget(URI address) {
 		HttpHost host = URIUtils.extractHost(address);
-		if (address.getScheme().equals("https"))
-		{
-			try
-			{
+		if (address.getScheme().equals("https")) {
+			try {
 				String hostname = host.getHostName();
-				if (certificate == null)
-				{
+				if (certificate == null) {
 					certificate = Helpers.getCertificate(hostname);
 				}
 
-				if (certificate != null)
-				{
+				if (certificate != null) {
 					KeyStore store = Helpers.getExtendedKeyStore();
 					store.setCertificateEntry(hostname, certificate);
 
@@ -381,23 +400,21 @@ public abstract class AsyncHTTPClient<T>
 					// Allow TLSv1 protocol only
 					SSLIOSessionStrategy sslSessionStrategy = new SSLIOSessionStrategy(sslcontext,
 							new String[] { "TLSv1" }, null, SSLIOSessionStrategy.getDefaultHostnameVerifier());
-					builder.setSSLStrategy(sslSessionStrategy);					
-					
-					//register(new Scheme("https", 443, new SSLLayeringStrategy(store)));
+					builder.setSSLStrategy(sslSessionStrategy);
+
+					// register(new Scheme("https", 443, new SSLLayeringStrategy(store)));
 				}
-			}
-			catch (Exception ex)
-			{
-				// Ignore exceptions that happen while trying to add extra certificates to keystore
+			} catch (Exception ex) {
+				// Ignore exceptions that happen while trying to add extra certificates to
+				// keystore
 			}
 		}
 		return host;
 	}
 
-	private synchronized Future<T> executeHttp(HttpRequestBase request, FutureCallback<T> callback, long millisecondTimeout)
-	{
-		if (timeout != null)
-		{
+	private synchronized Future<T> executeHttp(HttpRequestBase request, FutureCallback<T> callback,
+			long millisecondTimeout) {
+		if (timeout != null) {
 			logger.error("This Capability Client is already waiting for a response");
 			return null;
 		}
@@ -406,144 +423,113 @@ public abstract class AsyncHTTPClient<T>
 			resultCb = callback;
 		FutureCallback<T> internalCallback = new AsyncHttpResultCallback();
 
-		try
-		{
+		try {
 			resultFuture = asyncClient.execute(new AsyncHttpRequestProducer(determineTarget(request.getURI()), request),
-				                                	new AsyncHttpResponseConsumer(), internalCallback);
+					new AsyncHttpResponseConsumer(), internalCallback);
 
-			if (millisecondTimeout >= 0)
-			{
+			if (millisecondTimeout >= 0) {
 				timeout = new Timer("HTTP Async Timer");
-				timeout.schedule(new TimerTask()
-				{
+				timeout.schedule(new TimerTask() {
 					@Override
-					public void run()
-					{
+					public void run() {
 						AsyncHTTPClient.this.cancel(true);
 					}
 				}, millisecondTimeout);
 			}
 			return resultFuture;
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			BasicFuture<T> failed = new BasicFuture<T>(internalCallback);
 			failed.failed(ex);
 			return failed;
 		}
 	}
 
-	private class AsyncHttpResultCallback implements FutureCallback<T>
-	{
+	private class AsyncHttpResultCallback implements FutureCallback<T> {
 		@Override
-		public void completed(T result)
-		{
+		public void completed(T result) {
 			cancel(false);
 			if (resultCb != null)
 				resultCb.completed(result);
 		}
 
 		@Override
-		public void failed(Exception ex)
-		{
+		public void failed(Exception ex) {
 			cancel(false);
 			if (resultCb != null)
 				resultCb.failed(ex);
 		}
 
 		@Override
-		public void cancelled()
-		{
+		public void cancelled() {
 			cancel(false);
 			if (resultCb != null)
 				resultCb.cancelled();
 		}
 	}
 
-	private class AsyncHttpRequestProducer implements HttpAsyncRequestProducer, Closeable
-	{
+	private class AsyncHttpRequestProducer implements HttpAsyncRequestProducer, Closeable {
 		private final HttpHost target;
 		private final HttpRequestBase request;
 		private final ProducingNHttpEntity producer;
 
-		public AsyncHttpRequestProducer(final HttpHost target, final HttpRequestBase request) throws IOException
-		{
+		public AsyncHttpRequestProducer(final HttpHost target, final HttpRequestBase request) throws IOException {
 			super();
-			if (target == null)
-			{
+			if (target == null) {
 				throw new IllegalArgumentException("Target host may not be null");
 			}
-			if (request == null)
-			{
+			if (request == null) {
 				throw new IllegalArgumentException("HTTP request may not be null");
 			}
 			this.target = target;
 			this.request = request;
 			HttpEntity entity = null;
-			if (request instanceof HttpEntityEnclosingRequest)
-			{
+			if (request instanceof HttpEntityEnclosingRequest) {
 				entity = ((HttpEntityEnclosingRequest) request).getEntity();
 			}
-			if (entity != null)
-			{
-				if (entity instanceof ProducingNHttpEntity)
-				{
+			if (entity != null) {
+				if (entity instanceof ProducingNHttpEntity) {
 					producer = (ProducingNHttpEntity) entity;
-				}
-				else
-				{
+				} else {
 					producer = new NHttpEntityWrapper(entity);
 				}
-			}
-			else
-			{
+			} else {
 				producer = null;
 			}
 		}
 
 		@Override
-		public HttpRequestBase generateRequest()
-		{
+		public HttpRequestBase generateRequest() {
 			return request;
 		}
 
 		@Override
-		public HttpHost getTarget()
-		{
+		public HttpHost getTarget() {
 			return target;
 		}
 
 		@Override
 		public synchronized void produceContent(final ContentEncoder encoder, final IOControl ioctrl)
-				throws IOException
-		{
+				throws IOException {
 			producer.produceContent(encoder, ioctrl);
-			if (encoder.isCompleted())
-			{
+			if (encoder.isCompleted()) {
 				producer.finish();
 			}
 		}
 
 		@Override
-		public synchronized boolean isRepeatable()
-		{
+		public synchronized boolean isRepeatable() {
 			return producer.isRepeatable();
 		}
 
 		@Override
-		public synchronized void resetRequest()
-		{
-			try
-			{
+		public synchronized void resetRequest() {
+			try {
 				producer.finish();
-			}
-			catch (IOException ignore)
-			{
+			} catch (IOException ignore) {
 			}
 		}
 
-		public synchronized void close() throws IOException
-		{
+		public synchronized void close() throws IOException {
 			this.producer.finish();
 		}
 
@@ -561,9 +547,8 @@ public abstract class AsyncHTTPClient<T>
 	}
 
 	protected abstract T convertContent(InputStream in, String encoding) throws IOException;
-	
-	private class AsyncHttpResponseConsumer implements HttpAsyncResponseConsumer<T>
-	{
+
+	private class AsyncHttpResponseConsumer implements HttpAsyncResponseConsumer<T> {
 		private volatile String encoding;
 		private volatile long length;
 		private volatile T result;
@@ -571,32 +556,24 @@ public abstract class AsyncHTTPClient<T>
 		private volatile boolean completed;
 
 		private ByteBuffer buffer;
-		
+
 		@Override
-		public synchronized void responseReceived(final HttpResponse response) throws IOException
-		{
+		public synchronized void responseReceived(final HttpResponse response) throws IOException {
 			StatusLine status = response.getStatusLine();
-			if (status.getStatusCode() != HttpStatus.SC_OK)
-			{
+			if (status.getStatusCode() != HttpStatus.SC_OK) {
 				throw new HttpResponseException(status.getStatusCode(), status.getReasonPhrase());
 			}
 
 			HttpEntity entity = response.getEntity();
-			if (entity != null)
-			{
+			if (entity != null) {
 				length = entity.getContentLength();
-				if (entity.getContentEncoding() != null)
-				{
+				if (entity.getContentEncoding() != null) {
 					encoding = entity.getContentEncoding().getValue();
-				}
-				else if (entity.getContentType() != null)
-				{
+				} else if (entity.getContentType() != null) {
 					HeaderElement values[] = entity.getContentType().getElements();
-					if (values.length > 0)
-					{
+					if (values.length > 0) {
 						NameValuePair param = values[0].getParameterByName("charset");
-						if (param != null)
-						{
+						if (param != null) {
 							encoding = param.getValue();
 						}
 					}
@@ -606,9 +583,9 @@ public abstract class AsyncHTTPClient<T>
 
 		/**
 		 * Notification that content is available to be read from the decoder.
-		 * {@link IOControl} instance passed as a parameter to the method can be
-		 * used to suspend input events if the entity is temporarily unable to
-		 * allocate more storage to accommodate all incoming content.
+		 * {@link IOControl} instance passed as a parameter to the method can be used to
+		 * suspend input events if the entity is temporarily unable to allocate more
+		 * storage to accommodate all incoming content.
 		 * 
 		 * @param decoder
 		 *            content decoder.
@@ -617,45 +594,36 @@ public abstract class AsyncHTTPClient<T>
 		 */
 		@Override
 		public synchronized void consumeContent(final ContentDecoder decoder, final IOControl ioctrl)
-				throws IOException
-		{
+				throws IOException {
 			int toRead;
 
-			if (buffer == null)
-			{
+			if (buffer == null) {
 				if (length < 0)
 					buffer = ByteBuffer.allocate(8 * 1024);
-				else 
-					buffer = ByteBuffer.allocate((int)length);
+				else
+					buffer = ByteBuffer.allocate((int) length);
 			}
-			
-			do
-			{
-				if (length < 0 && buffer.capacity() - buffer.position() < 1024)
-				{
+
+			do {
+				if (length < 0 && buffer.capacity() - buffer.position() < 1024) {
 					buffer.flip();
 					buffer = ByteBuffer.allocate(buffer.capacity() * 2).put(buffer);
 				}
 				toRead = decoder.read(buffer);
-			}
-			while (toRead > 0);
+			} while (toRead > 0);
 
 			if (progressCb != null)
-				progressCb.progress(buffer.position(), length);	
+				progressCb.progress(buffer.position(), length);
 
-			if (decoder.isCompleted() || toRead < 0)
-			{
+			if (decoder.isCompleted() || toRead < 0) {
 				if (length < 0 && progressCb != null)
-					progressCb.progress(buffer.position(), buffer.position());	
+					progressCb.progress(buffer.position(), buffer.position());
 
 				buffer.flip();
 				InputStream in = new ByteArrayInputStream(buffer.array(), 0, buffer.limit());
-				try
-				{
+				try {
 					result = convertContent(in, encoding);
-				}
-				finally
-				{
+				} finally {
 					in.close();
 				}
 			}
@@ -664,21 +632,19 @@ public abstract class AsyncHTTPClient<T>
 		/**
 		 * Notification that any resources allocated for reading can be released.
 		 */
-		//@Override
-		//public synchronized void responseCompleted()
-		//{
-		//	if (completed)
-		//	{
-		//		return;
-		//	}
-		//	completed = true;
-		//}
+		// @Override
+		// public synchronized void responseCompleted()
+		// {
+		// if (completed)
+		// {
+		// return;
+		// }
+		// completed = true;
+		// }
 
 		@Override
-		public synchronized boolean cancel()
-		{
-			if (!completed)
-			{
+		public synchronized boolean cancel() {
+			if (!completed) {
 				completed = true;
 				result = null;
 			}
@@ -686,10 +652,8 @@ public abstract class AsyncHTTPClient<T>
 		}
 
 		@Override
-		public synchronized void failed(final Exception exc)
-		{
-			if (completed)
-			{
+		public synchronized void failed(final Exception exc) {
+			if (completed) {
 				return;
 			}
 			ex = exc;
@@ -697,17 +661,15 @@ public abstract class AsyncHTTPClient<T>
 		}
 
 		@Override
-		public T getResult()
-		{
+		public T getResult() {
 			return result;
 		}
 
 		@Override
-		public Exception getException()
-		{
+		public Exception getException() {
 			return ex;
 		}
-		
+
 		@Override
 		public void close() throws IOException {
 			// TODO Auto-generated method stub

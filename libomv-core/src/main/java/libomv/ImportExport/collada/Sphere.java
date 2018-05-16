@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import java.util.ArrayList;
@@ -15,11 +14,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -37,61 +38,58 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "radius",
-    "extra"
-})
+@XmlType(name = "", propOrder = { "radius", "extra" })
 @XmlRootElement(name = "sphere")
 public class Sphere {
 
-    protected double radius;
-    protected List<Extra> extra;
+	protected double radius;
+	protected List<Extra> extra;
 
-    /**
-     * Gets the value of the radius property.
-     * 
-     */
-    public double getRadius() {
-        return radius;
-    }
+	/**
+	 * Gets the value of the radius property.
+	 * 
+	 */
+	public double getRadius() {
+		return radius;
+	}
 
-    /**
-     * Sets the value of the radius property.
-     * 
-     */
-    public void setRadius(double value) {
-        this.radius = value;
-    }
+	/**
+	 * Sets the value of the radius property.
+	 * 
+	 */
+	public void setRadius(double value) {
+		this.radius = value;
+	}
 
-    /**
-     * 
-     * 						The extra element may appear any number of times.
-     * 						Gets the value of the extra property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the extra property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getExtra().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Extra }
-     * 
-     * 
-     */
-    public List<Extra> getExtra() {
-        if (extra == null) {
-            extra = new ArrayList<Extra>();
-        }
-        return this.extra;
-    }
+	/**
+	 * 
+	 * The extra element may appear any number of times. Gets the value of the extra
+	 * property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the extra property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getExtra().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link Extra }
+	 * 
+	 * 
+	 */
+	public List<Extra> getExtra() {
+		if (extra == null) {
+			extra = new ArrayList<Extra>();
+		}
+		return this.extra;
+	}
 
 }

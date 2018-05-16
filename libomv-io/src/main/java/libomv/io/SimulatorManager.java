@@ -79,14 +79,12 @@ import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 
 // Simulator is a wrapper for a network connection to a simulator and the
 // Region class representing the block of land in the metaverse.
-public class SimulatorManager extends Thread implements libomv.model.Simulator
-{
+public class SimulatorManager extends Thread implements libomv.model.Simulator {
 	private static final Logger logger = Logger.getLogger(SimulatorManager.class);
 
 	/* Simulator (region) properties */
 	// [Flags]
-	public static class RegionFlags
-	{
+	public static class RegionFlags {
 		/* No flags set */
 		public static final long None = 0;
 		/* Agents can take damage and be killed */
@@ -108,18 +106,17 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 		/* All content is wiped nightly */
 		public static final long Sandbox = 1 << 8;
 		/*
-		 * Unknown: Related to the availability of an overview world map
-		 * tile.(Think mainland images when zoomed out.)
+		 * Unknown: Related to the availability of an overview world map tile.(Think
+		 * mainland images when zoomed out.)
 		 */
 		public static final long NullLayer = 1 << 9;
 		/*
-		 * Unknown: Related to region debug flags. Possibly to skip processing
-		 * of agent interaction with world.
+		 * Unknown: Related to region debug flags. Possibly to skip processing of agent
+		 * interaction with world.
 		 */
 		public static final long SkipAgentAction = 1 << 10;
 		/*
-		 * Region does not update agent prim interest lists. Internal debugging
-		 * option.
+		 * Region does not update agent prim interest lists. Internal debugging option.
 		 */
 		public static final long SkipUpdateInterestList = 1 << 11;
 		/* No collision detection for non-agent objects */
@@ -134,15 +131,14 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 		 */
 		public static final long ExternallyVisible = 1 << 15;
 		/*
-		 * Region can be seen from mainland on world map. (Legacy world map
-		 * option?)
+		 * Region can be seen from mainland on world map. (Legacy world map option?)
 		 */
 		public static final long MainlandVisible = 1 << 16;
 		/* Agents not explicitly on the access list can visit the region. */
 		public static final long PublicAllowed = 1 << 17;
 		/*
-		 * Traffic calculations are not run across entire region, overrides
-		 * parcel settings.
+		 * Traffic calculations are not run across entire region, overrides parcel
+		 * settings.
 		 */
 		public static final long BlockDwell = 1 << 18;
 		/* Flight is disabled (not currently enforced by the sim) */
@@ -152,8 +148,8 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 		/* Estate owner has temporarily disabled scripting */
 		public static final long EstateSkipScripts = 1 << 21;
 		/*
-		 * Restricts the usage of the LSL llPushObject function, applies to
-		 * whole region.
+		 * Restricts the usage of the LSL llPushObject function, applies to whole
+		 * region.
 		 */
 		public static final long RestrictPushObject = 1 << 22;
 		/* Deny agents with no payment info on file */
@@ -163,32 +159,30 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 		/* Deny agents who have made a monetary transaction */
 		public static final long DenyTransacted = 1 << 25;
 		/*
-		 * Parcels within the region may be joined or divided by anyone, not
-		 * just estate owners/managers.
+		 * Parcels within the region may be joined or divided by anyone, not just estate
+		 * owners/managers.
 		 */
 		public static final long AllowParcelChanges = 1 << 26;
 		/*
-		 * Abuse reports sent from within this region are sent to the estate
-		 * owner defined email.
+		 * Abuse reports sent from within this region are sent to the estate owner
+		 * defined email.
 		 */
 		public static final long AbuseEmailToEstateOwner = 1 << 27;
 		/* Region is Voice Enabled */
 		public static final long AllowVoice = 1 << 28;
 		/*
-		 * Removes the ability from parcel owners to set their parcels to show
-		 * in search.
+		 * Removes the ability from parcel owners to set their parcels to show in
+		 * search.
 		 */
 		public static final long BlockParcelSearch = 1 << 29;
 		/* Deny agents who have not been age verified from entering the region. */
 		public static final long DenyAgeUnverified = 1 << 30;
 
-		public static long setValue(long value)
-		{
+		public static long setValue(long value) {
 			return value & _mask;
 		}
 
-		public static long getValue(long value)
-		{
+		public static long getValue(long value) {
 			return value;
 		}
 
@@ -197,91 +191,52 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 
 	/* Region protocol flags */
 	// [Flags]
-    public static class RegionProtocols
-    {
-    	// Nothing special
-    	public static final long None = 0;
-    	// Region supports Server side Appearance
-    	public static final long AgentAppearanceService = 1 << 0;
-    	// Viewer supports Server side Appearance
-    	public static final long SelfAppearanceSupport = 1 << 2;
+	public static class RegionProtocols {
+		// Nothing special
+		public static final long None = 0;
+		// Region supports Server side Appearance
+		public static final long AgentAppearanceService = 1 << 0;
+		// Viewer supports Server side Appearance
+		public static final long SelfAppearanceSupport = 1 << 2;
 
-    	public static long setValue(long value)
-		{
+		public static long setValue(long value) {
 			return value & _mask;
 		}
 
-		public static long getValue(long value)
-		{
+		public static long getValue(long value) {
 			return value;
 		}
 
 		private static final long _mask = 0x7FFFFFFFL;
-    }
-  	
-	public static enum SimStatType
-	{
-		Unknown,		// -1
-		TimeDilation,   // 0
-		SimFPS,
-		PhysicsFPS,
-		AgentUpdates,
-		FrameMS,
-		NetMS,
-		OtherMS,
-		PhysicsMS,
-		AgentMS,
-		ImageMS,
-		ScriptMS,       // 10
-		TotalPrim,
-		ActivePrim,
-		Agents,
-		ChildAgents,
-		ActiveScripts,
-		ScriptInstructionsPerSecond,
-		InPacketsPerSecond,
-		OutPacketsPerSecond,
-		PendingDownloads,
-		PendingUploads, // 20
-		VirtualSizeKB,
-		ResidentSizeKB,
-		PendingLocalUploads,
-		UnAckedBytes,
-		
-		PhysicsPinnedTasks,
-		PhysicsLODTasks,
-		PhysicsStepMS,
-		PhysicsShapeMS,
-		PhysicsOtherMS,
-		PhysicsMemory, // 30
+	}
 
-		ScriptEPS,
-		SimSpareTime,
-		SimSleepTime,
-		SimIOPumpTime,
-		SimPctScriptsRun,    // 35
-		SimRegionIdle,         // dataserver only
+	public static enum SimStatType {
+		Unknown, // -1
+		TimeDilation, // 0
+		SimFPS, PhysicsFPS, AgentUpdates, FrameMS, NetMS, OtherMS, PhysicsMS, AgentMS, ImageMS, ScriptMS, // 10
+		TotalPrim, ActivePrim, Agents, ChildAgents, ActiveScripts, ScriptInstructionsPerSecond, InPacketsPerSecond, OutPacketsPerSecond, PendingDownloads, PendingUploads, // 20
+		VirtualSizeKB, ResidentSizeKB, PendingLocalUploads, UnAckedBytes,
+
+		PhysicsPinnedTasks, PhysicsLODTasks, PhysicsStepMS, PhysicsShapeMS, PhysicsOtherMS, PhysicsMemory, // 30
+
+		ScriptEPS, SimSpareTime, SimSleepTime, SimIOPumpTime, SimPctScriptsRun, // 35
+		SimRegionIdle, // dataserver only
 		SimRegionIdlePossible, // dataserver only
-	    SimAIStepMsec,
-		SimSkippedSilhouetteSteps,
-		SimPctSteppedCharacters;   //40
-		
-		public static SimStatType setValue(int value)
-		{
+		SimAIStepMsec, SimSkippedSilhouetteSteps, SimPctSteppedCharacters; // 40
+
+		public static SimStatType setValue(int value) {
 			if (value >= 0 && value < values().length - 1)
 				return values()[value + 1];
 			return Unknown;
 		}
 
-		public static int getValue(SimStatType type)
-		{
+		public static int getValue(SimStatType type) {
 			return type.ordinal();
 		}
 	}
 
 	/* Simulator Statistics */
-	public final class SimStats
-	{
+	public final class SimStats {
 		/* Total number of packets sent by this simulator from this agent */
 		public long SentPackets;
 		/* Total number of packets received by this simulator to this agent */
@@ -303,15 +258,15 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 		/*
 		 * Incoming bytes per second
 		 * 
-		 * It would be nice to have this calculated on the fly, but this is far,
-		 * far easier
+		 * It would be nice to have this calculated on the fly, but this is far, far
+		 * easier
 		 */
 		public int IncomingBPS;
 		/*
 		 * Outgoing bytes per second
 		 * 
-		 * It would be nice to have this claculated on the fly, but this is far,
-		 * far easier
+		 * It would be nice to have this claculated on the fly, but this is far, far
+		 * easier
 		 */
 		public int OutgoingBPS;
 		/* Time last ping was sent */
@@ -389,31 +344,25 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 		public int SimPctSteppedCharacters;
 	}
 
-	public final class IncomingPacketIDCollection
-	{
+	public final class IncomingPacketIDCollection {
 		private final int[] Items;
 		private HashSet<Integer> hashSet;
 		private int first = 0;
 		private int next = 0;
 		private int capacity;
 
-		public IncomingPacketIDCollection(int capacity)
-		{
+		public IncomingPacketIDCollection(int capacity) {
 			this.capacity = capacity;
 			Items = new int[capacity];
 			hashSet = new HashSet<Integer>();
 		}
 
-		public boolean tryEnqueue(int ack)
-		{
-			synchronized (hashSet)
-			{
-				if (hashSet.add(ack))
-				{
+		public boolean tryEnqueue(int ack) {
+			synchronized (hashSet) {
+				if (hashSet.add(ack)) {
 					Items[next] = ack;
 					next = (next + 1) % capacity;
-					if (next == first)
-					{
+					if (next == first) {
 						hashSet.remove(Items[first]);
 						first = (first + 1) % capacity;
 					}
@@ -424,25 +373,21 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 		}
 	}
 
-	private class BoundedLongArray
-	{
+	private class BoundedLongArray {
 		private long[] array;
 		private int index;
 		private int size;
 
-		public BoundedLongArray(int capacity)
-		{
+		public BoundedLongArray(int capacity) {
 			array = new long[capacity];
 			index = size = 0;
 		}
 
-		public int size()
-		{
+		public int size() {
 			return size;
 		}
 
-		public boolean isFull()
-		{
+		public boolean isFull() {
 			return size >= array.length;
 		}
 
@@ -457,8 +402,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 		 *            The value to put in the queue
 		 * @return The previous value that was in the queue at that position
 		 */
-		public long offer(long value)
-		{
+		public long offer(long value) {
 			long old = array[index];
 			array[index] = value;
 			++index;
@@ -472,8 +416,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 	/* The reference to the client that this Simulator object is attached to */
 	private GridClient _Client;
 
-	public GridClient getClient()
-	{
+	public GridClient getClient() {
 		return _Client;
 	}
 
@@ -485,13 +428,11 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 
 	private long _Handle;
 
-	public long getHandle()
-	{
+	public long getHandle() {
 		return _Handle;
 	}
 
-	public void setHandle(long handle)
-	{
+	public void setHandle(long handle) {
 		_Handle = handle;
 	}
 
@@ -507,7 +448,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 	/* ACKs that are queued up to be sent to the simulator */
 	private TreeSet<Integer> _PendingAcks;
 	/* Packets we sent out that need ACKs from the simulator */
-	
+
 	private TreeMap<Integer, NetworkManager.OutgoingPacket> _NeedAck; // int -> Packet
 	/* Sequence number for pause/resume */
 	private AtomicInteger _PauseSerial;
@@ -531,29 +472,24 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 
 	// Provides access to an internal thread-safe multidimensional array
 	// containing a x,y grid mapped to each 64x64 parcel's LocalID.
-	public synchronized final int[] getParcelMap()
-	{
+	public synchronized final int[] getParcelMap() {
 		return _ParcelMap;
 	}
 
-	public synchronized final int getParcelMap(int x, int y)
-	{
+	public synchronized final int getParcelMap(int x, int y) {
 		if (x < 0 || x >= 64 || y < 0 || y >= 64)
-			throw new IllegalArgumentException("Simulator.getParcelMap() parameters need to be in the range 0 - 63. x = " + x + "; y = " + y);
-	    return _ParcelMap[y * 64 + x];
+			throw new IllegalArgumentException(
+					"Simulator.getParcelMap() parameters need to be in the range 0 - 63. x = " + x + "; y = " + y);
+		return _ParcelMap[y * 64 + x];
 	}
 
-	public synchronized final void setParcelMap(int x, int y, int value)
-	{
+	public synchronized final void setParcelMap(int x, int y, int value) {
 		_ParcelMap[y * 64 + x] = value;
 	}
 
-	public synchronized final void clearParcelMap()
-	{
-		for (int y = 0; y < 64; y++)
-		{
-			for (int x = 0; x < 64; x++)
-			{
+	public synchronized final void clearParcelMap() {
+		for (int y = 0; y < 64; y++) {
+			for (int x = 0; x < 64; x++) {
 				_ParcelMap[x * 64 + y] = 0;
 			}
 		}
@@ -561,13 +497,11 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 
 	// Provides access to an internal thread-safe multidimensional array
 	// containing a x,y grid mapped to each 64x64 parcel's LocalID.
-	public synchronized final boolean getDownloadingParcelMap()
-	{
+	public synchronized final boolean getDownloadingParcelMap() {
 		return _DownloadingParcelMap;
 	}
 
-	public synchronized final void setDownloadingParcelMap(boolean value)
-	{
+	public synchronized final void setDownloadingParcelMap(boolean value) {
 		_DownloadingParcelMap = value;
 	}
 
@@ -577,14 +511,10 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 	 * 
 	 * @return true if map is full (contains no 0's)
 	 */
-	public final boolean IsParcelMapFull()
-	{
-		for (int y = 0; y < 64; y++)
-		{
-			for (int x = 0; x < 64; x++)
-			{
-				if (getParcelMap(y, x) == 0)
-				{
+	public final boolean IsParcelMapFull() {
+		for (int y = 0; y < 64; y++) {
+			for (int x = 0; x < 64; x++) {
+				if (getParcelMap(y, x) == 0) {
 					return false;
 				}
 			}
@@ -592,7 +522,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 		return true;
 	}
 
-    // Is it safe to send agent updates to this sim
+	// Is it safe to send agent updates to this sim
 	// AgentMovementComplete message received
 	public boolean AgentMovementComplete;
 
@@ -606,8 +536,8 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 	public String SimVersion = "";
 
 	/*
-	 * A 64x64 grid of parcel coloring values. The values stored in this array
-	 * are of the {@link ParcelArrayType} type
+	 * A 64x64 grid of parcel coloring values. The values stored in this array are
+	 * of the {@link ParcelArrayType} type
 	 */
 	public byte[] ParcelOverlay = new byte[4096];
 	/*  */
@@ -660,25 +590,25 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 	public UUID RegionID = UUID.Zero;
 
 	/*
-	 * The physical data center the simulator is located Known values are:
-	 * Dallas, SF
+	 * The physical data center the simulator is located Known values are: Dallas,
+	 * SF
 	 */
 	public String ColoLocation;
 	/*
-	 * The CPU Class of the simulator Most full mainland/estate sims appear to
-	 * be 5, Homesteads and Openspace appear to be 501
+	 * The CPU Class of the simulator Most full mainland/estate sims appear to be 5,
+	 * Homesteads and Openspace appear to be 501
 	 */
 	public int CPUClass;
 	/*
-	 * The number of regions sharing the same CPU as this one "Full Sims" appear
-	 * to be 1, Homesteads appear to be 4
+	 * The number of regions sharing the same CPU as this one "Full Sims" appear to
+	 * be 1, Homesteads appear to be 4
 	 */
 	public int CPURatio;
 	/*
-	 * The billing product name Known values are: Mainland / Full Region (Sku:
-	 * 023) Estate / Full Region (Sku: 024) Estate / Openspace (Sku: 027) Estate
-	 * / Homestead (Sku: 029) Mainland / Homestead (Sku: 129) (Linden Owned)
-	 * Mainland / Linden Homes (Sku: 131)
+	 * The billing product name Known values are: Mainland / Full Region (Sku: 023)
+	 * Estate / Full Region (Sku: 024) Estate / Openspace (Sku: 027) Estate /
+	 * Homestead (Sku: 029) Mainland / Homestead (Sku: 129) (Linden Owned) Mainland
+	 * / Linden Homes (Sku: 131)
 	 */
 	public String ProductName;
 	/*
@@ -689,50 +619,41 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 	public String ProductSku;
 
 	/* Flags indicating which protocols this region supports */
-   	public long Protocols;
+	public long Protocols;
 
 	private DatagramSocket _Connection;
 	// The IP address and port of the server.
 	private InetSocketAddress ipEndPoint;
-	
+
 	private String simName;
-	
-	public void setSimName(String name)
-	{
+
+	public void setSimName(String name) {
 		simName = name;
 		setName(name + " (" + ipEndPoint.getHostName() + ")");
 	}
 
-	public String getSimName()
-	{
+	public String getSimName() {
 		return simName;
 	}
 
 	/* A non thread-safe dictionary containing avatars in a simulator */
 	private HashMap<Integer, Avatar> _ObjectsAvatars = new HashMap<Integer, Avatar>();
 
-	public HashMap<Integer, Avatar> getObjectsAvatars()
-	{
+	public HashMap<Integer, Avatar> getObjectsAvatars() {
 		return _ObjectsAvatars;
 	}
 
-	public Avatar findAvatar(UUID id)
-	{
+	public Avatar findAvatar(UUID id) {
 		return findAvatar(id, false);
 	}
-	
-	public Avatar findAvatar(UUID id, boolean remove)
-	{
-		if (!UUID.isZeroOrNull(id))
-		{
-			synchronized (_ObjectsAvatars)
-			{
+
+	public Avatar findAvatar(UUID id, boolean remove) {
+		if (!UUID.isZeroOrNull(id)) {
+			synchronized (_ObjectsAvatars) {
 				Iterator<Entry<Integer, Avatar>> iter = _ObjectsAvatars.entrySet().iterator();
-				while (iter.hasNext())
-				{
+				while (iter.hasNext()) {
 					Entry<Integer, Avatar> e = iter.next();
-					if (id.equals(e.getValue().ID))
-					{
+					if (id.equals(e.getValue().ID)) {
 						if (remove)
 							iter.remove();
 						return e.getValue();
@@ -742,17 +663,12 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 		}
 		return null;
 	}
-	
-	public Avatar findAvatar(String name)
-	{
-		if (name != null && !name.isEmpty())
-		{
-			synchronized (_ObjectsAvatars)
-			{
-				for (Entry<Integer, Avatar> e : _ObjectsAvatars.entrySet())
-				{
-					if (name.equals(e.getValue().getName()))
-					{
+
+	public Avatar findAvatar(String name) {
+		if (name != null && !name.isEmpty()) {
+			synchronized (_ObjectsAvatars) {
+				for (Entry<Integer, Avatar> e : _ObjectsAvatars.entrySet()) {
+					if (name.equals(e.getValue().getName())) {
 						return e.getValue();
 					}
 				}
@@ -764,23 +680,17 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 	/* A non thread-safe dictionary containing primitives in a simulator */
 	private HashMap<Integer, Primitive> _ObjectsPrimitives = new HashMap<Integer, Primitive>();
 
-	public HashMap<Integer, Primitive> getObjectsPrimitives()
-	{
+	public HashMap<Integer, Primitive> getObjectsPrimitives() {
 		return _ObjectsPrimitives;
 	}
 
-	public Primitive findPrimitive(UUID id, boolean remove)
-	{
-		if (!UUID.isZeroOrNull(id))
-		{
-			synchronized (_ObjectsPrimitives)
-			{
+	public Primitive findPrimitive(UUID id, boolean remove) {
+		if (!UUID.isZeroOrNull(id)) {
+			synchronized (_ObjectsPrimitives) {
 				Iterator<Entry<Integer, Primitive>> iter = _ObjectsPrimitives.entrySet().iterator();
-				while (iter.hasNext())
-				{
+				while (iter.hasNext()) {
 					Entry<Integer, Primitive> e = iter.next();
-					if (id.equals(e.getValue().ID))
-					{
+					if (id.equals(e.getValue().ID)) {
 						if (remove)
 							iter.remove();
 						return e.getValue();
@@ -794,26 +704,22 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 	/* Coarse locations of avatars in this simulator */
 	private HashMap<UUID, Vector3> _AvatarPositions = new HashMap<UUID, Vector3>();
 
-	public HashMap<UUID, Vector3> getAvatarPositions()
-	{
+	public HashMap<UUID, Vector3> getAvatarPositions() {
 		return _AvatarPositions;
 	}
 
 	/* AvatarPositions key representing TrackAgent target */
 	private UUID preyID = UUID.Zero;
 
-	public final UUID getPreyID()
-	{
+	public final UUID getPreyID() {
 		return preyID;
 	}
 
-	public final void setPreyID(UUID id)
-	{
+	public final void setPreyID(UUID id) {
 		preyID = id;
 	}
 
-	public InetSocketAddress getIPEndPoint()
-	{
+	public InetSocketAddress getIPEndPoint() {
 		return ipEndPoint;
 	}
 
@@ -821,44 +727,34 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 	// simulator or not.
 	private boolean _Connected;
 
-	public boolean getConnected()
-	{
+	public boolean getConnected() {
 		return _Connected;
 	}
 
 	/* Used internally to track sim disconnections, do not modify this variable. */
 	private boolean _DisconnectCandidate = false;
 
-	public boolean getDisconnectCandidate()
-	{
+	public boolean getDisconnectCandidate() {
 		return _DisconnectCandidate;
 	}
 
-	public void setDisconnectCandidate(boolean val)
-	{
+	public void setDisconnectCandidate(boolean val) {
 		_DisconnectCandidate = val;
 	}
 
 	private boolean trackUtilization;
 	private boolean throttleOutgoingPackets;
-	
-	private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs>
-	{
+
+	private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs> {
 		@Override
-		public boolean callback(SettingsUpdateCallbackArgs params)
-		{
+		public boolean callback(SettingsUpdateCallbackArgs params) {
 			String key = params.getName();
-			if (key == null)
-			{
+			if (key == null) {
 				trackUtilization = _Client.Settings.getBool(LibSettings.TRACK_UTILIZATION);
 				throttleOutgoingPackets = _Client.Settings.getBool(LibSettings.THROTTLE_OUTGOING_PACKETS);
-			}
-			else if (key.equals(LibSettings.TRACK_UTILIZATION))
-			{
+			} else if (key.equals(LibSettings.TRACK_UTILIZATION)) {
 				trackUtilization = params.getValue().AsBoolean();
-			}
-			else if (key.equals(LibSettings.THROTTLE_OUTGOING_PACKETS))
-			{
+			} else if (key.equals(LibSettings.THROTTLE_OUTGOING_PACKETS)) {
 				throttleOutgoingPackets = params.getValue().AsBoolean();
 			}
 			return false;
@@ -872,19 +768,16 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 	private Timer _PingTimer;
 
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		return ((Long) getHandle()).hashCode();
 	}
 
-	public SimulatorManager(GridClient client, InetAddress ip, short port, long handle) throws Exception
-	{
+	public SimulatorManager(GridClient client, InetAddress ip, short port, long handle) throws Exception {
 		// Create an endpoint that we will be communicating with
 		this(client, new InetSocketAddress(ip, port), handle);
 	}
 
-	public SimulatorManager(GridClient client, InetSocketAddress endPoint, long handle) throws Exception
-	{
+	public SimulatorManager(GridClient client, InetSocketAddress endPoint, long handle) throws Exception {
 		super("Simulator: " + endPoint.getHostName());
 		_Client = client;
 
@@ -906,20 +799,18 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 		_InBytes = new BoundedLongArray(_Client.Settings.STATS_QUEUE_SIZE);
 		_OutBytes = new BoundedLongArray(_Client.Settings.STATS_QUEUE_SIZE);
 
-		// Initialize the dictionary for reliable packets waiting on ACKs from the server
+		// Initialize the dictionary for reliable packets waiting on ACKs from the
+		// server
 		_NeedAck = new TreeMap<Integer, NetworkManager.OutgoingPacket>();
 
 		// Initialize the lists of sequence numbers we've received so far
 		_PacketArchive = new IncomingPacketIDCollection(_Client.Settings.getInt(LibSettings.PACKET_ARCHIVE_SIZE));
 		_PendingAcks = new TreeSet<Integer>();
 
-		if (client.Settings.getBool(LibSettings.STORE_LAND_PATCHES))
-		{
+		if (client.Settings.getBool(LibSettings.STORE_LAND_PATCHES)) {
 			Terrain = new TerrainPatch[16 * 16];
 			WindSpeeds = new Vector2[16 * 16];
-		}
-		else
-		{
+		} else {
 			Terrain = null;
 			WindSpeeds = null;
 		}
@@ -934,36 +825,31 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 	 *         false if there was a failure
 	 * @throws Exception
 	 */
-	public final boolean connect(boolean moveToSim) throws Exception
-	{
-		if (_Connected)
-		{
+	public final boolean connect(boolean moveToSim) throws Exception {
+		if (_Connected) {
 			useCircuitCode();
-			if (moveToSim)
-			{
+			if (moveToSim) {
 				_Client.Self.CompleteAgentMovement(this);
 			}
 			return true;
 		}
 
-		if (_AckTimer == null)
-		{
+		if (_AckTimer == null) {
 			_AckTimer = new Timer("Simulator Acknowledge");
 		}
 		_AckTimer.schedule(new AckTimer_Elapsed(), LibSettings.NETWORK_TICK_INTERVAL);
 
 		// Timer for recording simulator connection statistics
-  		if (LibSettings.OUTPUT_TIMING_STATS && _StatsTimer == null)
-		{
+		if (LibSettings.OUTPUT_TIMING_STATS && _StatsTimer == null) {
 			_StatsTimer = new Timer("Simulator Statistics");
 			_StatsTimer.scheduleAtFixedRate(new StatsTimer_Elapsed(), 1000, 1000);
 		}
 
 		// Timer for periodically pinging the simulator
-		if (_PingTimer == null && _Client.Settings.SEND_PINGS)
-		{
+		if (_PingTimer == null && _Client.Settings.SEND_PINGS) {
 			_PingTimer = new Timer("Simulator Pings");
-			_PingTimer.scheduleAtFixedRate(new PingTimer_Elapsed(), LibSettings.PING_INTERVAL, LibSettings.PING_INTERVAL);
+			_PingTimer.scheduleAtFixedRate(new PingTimer_Elapsed(), LibSettings.PING_INTERVAL,
+					LibSettings.PING_INTERVAL);
 		}
 
 		logger.info(GridClient.Log("Connecting to " + ipEndPoint.toString(), _Client));
@@ -974,20 +860,19 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 		Statistics.ConnectTime = System.currentTimeMillis();
 
 		logger.debug(GridClient.Log("Waiting for connection", _Client));
-		while (true)
-		{
-			if (_Connected)
-			{
-				logger.debug(GridClient.Log(String.format("Connected! Waited %d ms", System.currentTimeMillis() - Statistics.ConnectTime), _Client));
+		while (true) {
+			if (_Connected) {
+				logger.debug(GridClient.Log(
+						String.format("Connected! Waited %d ms", System.currentTimeMillis() - Statistics.ConnectTime),
+						_Client));
 				break;
-			}
-			else if (System.currentTimeMillis() - Statistics.ConnectTime > _Client.Settings.LOGIN_TIMEOUT)
-			{
-				logger.error(GridClient.Log("Giving up on waiting for RegionHandshake for " + this.toString(), _Client));
+			} else if (System.currentTimeMillis() - Statistics.ConnectTime > _Client.Settings.LOGIN_TIMEOUT) {
+				logger.error(
+						GridClient.Log("Giving up on waiting for RegionHandshake for " + this.toString(), _Client));
 
-				// Remove the simulator from the list, not useful if we haven't received the RegionHandshake
-				synchronized (_Client.Network.getSimulators())
-				{
+				// Remove the simulator from the list, not useful if we haven't received the
+				// RegionHandshake
+				synchronized (_Client.Network.getSimulators()) {
 					_Client.Network.getSimulators().remove(this);
 				}
 				return false;
@@ -995,38 +880,31 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 			Thread.sleep(10);
 		}
 
-		try
-		{
+		try {
 			// Initiate connection
 			useCircuitCode();
 
 			// Move our agent in to the sim to complete the connection
-			if (moveToSim)
-			{
+			if (moveToSim) {
 				_Client.Self.CompleteAgentMovement(this);
 			}
 
-			if (_Client.Settings.getBool(LibSettings.SEND_AGENT_THROTTLE))
-			{
+			if (_Client.Settings.getBool(LibSettings.SEND_AGENT_THROTTLE)) {
 				_Client.Throttle.Set(this);
 			}
 
-			if (_Client.Settings.getBool(LibSettings.SEND_AGENT_UPDATES))
-			{
+			if (_Client.Settings.getBool(LibSettings.SEND_AGENT_UPDATES)) {
 				_Client.Self.SendMovementUpdate(true, this);
 			}
 			return true;
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			logger.error(GridClient.Log("Failed to update our status", _Client), ex);
 		}
 		return false;
 	}
 
 	/* Initiates connection to the simulator */
-	public final void useCircuitCode() throws Exception
-	{
+	public final void useCircuitCode() throws Exception {
 		// Send the UseCircuitCode packet to initiate the connection
 		UseCircuitCodePacket use = new UseCircuitCodePacket();
 		use.CircuitCode.Code = _Client.Network.getCircuitCode();
@@ -1037,10 +915,8 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 		sendPacket(use);
 	}
 
-	public final void setSeedCaps(String seedcaps) throws InterruptedException, IOException
-	{
-		if (_Caps != null)
-		{
+	public final void setSeedCaps(String seedcaps) throws InterruptedException, IOException {
+		if (_Caps != null) {
 			if (_Caps.getSeedCapsURI().equals(seedcaps))
 				return;
 
@@ -1049,88 +925,69 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 			_Caps = null;
 		}
 
-		if (_Client.Settings.getBool(LibSettings.ENABLE_CAPS))
-		{
+		if (_Client.Settings.getBool(LibSettings.ENABLE_CAPS)) {
 			// Connect to the new CAPS system
-			if (seedcaps == null || seedcaps.isEmpty())
-			{
+			if (seedcaps == null || seedcaps.isEmpty()) {
 				logger.error(GridClient.Log("Setting up a sim without a valid capabilities server!", _Client));
-			}
-			else
-			{
+			} else {
 				_Caps = new CapsManager(this, seedcaps);
 			}
 		}
 	}
 
-	public void disconnect(boolean sendCloseCircuit) throws Exception
-	{
-		if (_Connected)
-		{
+	public void disconnect(boolean sendCloseCircuit) throws Exception {
+		if (_Connected) {
 			_Connected = false;
 
 			// Destroy the timers
-			if (_AckTimer != null)
-			{
+			if (_AckTimer != null) {
 				_AckTimer.cancel();
 				_AckTimer = null;
 			}
 
-			if (_StatsTimer != null)
-			{
+			if (_StatsTimer != null) {
 				_StatsTimer.cancel();
 				_StatsTimer = null;
 			}
 
-			if (_PingTimer != null)
-			{
+			if (_PingTimer != null) {
 				_PingTimer.cancel();
 				_PingTimer = null;
 			}
 
 			// Kill the current CAPS system
-			if (_Caps != null)
-			{
+			if (_Caps != null) {
 				_Caps.disconnect(true);
 				_Caps = null;
 			}
 
-			if (sendCloseCircuit)
-			{
+			if (sendCloseCircuit) {
 				// Send the CloseCircuit notice
 				CloseCircuitPacket close = new CloseCircuitPacket();
 
-				try
-				{
+				try {
 					ByteBuffer data = close.ToBytes();
 					_Connection.send(new DatagramPacket(data.array(), data.position()));
 					Thread.sleep(50);
-				}
-				catch (IOException ex)
-				{
+				} catch (IOException ex) {
 					// There's a high probability of this failing if the network
 					// is disconnected, so don't even bother logging the error
 				}
 			}
 
-			try
-			{
+			try {
 				// Shut the socket communication down
 				_Connection.close();
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				logger.error(GridClient.Log(ex.toString(), _Client), ex);
 			}
 		}
 	}
 
 	/*
-	 * Instructs the simulator to stop sending update (and possibly other)
-	 * packets
+	 * Instructs the simulator to stop sending update (and possibly other) packets
 	 */
-	public final void pauseUpdates() throws Exception
-	{
+	public final void pauseUpdates() throws Exception {
 		AgentPausePacket pause = new AgentPausePacket();
 		pause.AgentData.AgentID = _Client.Self.getAgentID();
 		pause.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1140,8 +997,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 	}
 
 	/* Instructs the simulator to resume sending update packets (unpause) */
-	public final void resumeUpdates() throws Exception
-	{
+	public final void resumeUpdates() throws Exception {
 		AgentResumePacket resume = new AgentResumePacket();
 		resume.AgentData.AgentID = _Client.Self.getAgentID();
 		resume.AgentData.SessionID = _Client.Self.getSessionID();
@@ -1162,39 +1018,33 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 	 *            successful, otherwise 0.0f
 	 * @return True if the lookup was successful, otherwise false
 	 */
-	public final float TerrainHeightAtPoint(int x, int y)
-	{
-		if (Terrain != null && x >= 0 && x < 256 && y >= 0 && y < 256)
-		{
+	public final float TerrainHeightAtPoint(int x, int y) {
+		if (Terrain != null && x >= 0 && x < 256 && y >= 0 && y < 256) {
 			int patchX = x / 16;
 			int patchY = y / 16;
 			x = x % 16;
 			y = y % 16;
 
 			TerrainPatch patch = Terrain[patchY * 16 + patchX];
-			if (patch != null)
-			{
+			if (patch != null) {
 				return patch.Data[y * 16 + x];
 			}
 		}
 		return Float.NaN;
 	}
 
-	private final void sendPing() throws Exception
-	{
+	private final void sendPing() throws Exception {
 		int oldestUnacked = 0;
 
 		// Get the oldest NeedAck value, the first entry in the sorted dictionary
-		synchronized (_NeedAck)
-		{
-			if (!_NeedAck.isEmpty())
-			{
+		synchronized (_NeedAck) {
+			if (!_NeedAck.isEmpty()) {
 				oldestUnacked = _NeedAck.firstKey();
 			}
 		}
 
 		// if (oldestUnacked != 0)
-		//     logger.debug("Sending ping with oldestUnacked=" + oldestUnacked);
+		// logger.debug("Sending ping with oldestUnacked=" + oldestUnacked);
 
 		StartPingCheckPacket ping = new StartPingCheckPacket();
 		ping.PingID.PingID = Statistics.LastPingID++;
@@ -1204,26 +1054,22 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 		Statistics.LastPingSent = System.currentTimeMillis();
 	}
 
-	public URI getCapabilityURI(String capability)
-	{
+	public URI getCapabilityURI(String capability) {
 		if (_Caps != null)
 			return _Caps.capabilityURI(capability);
 		return null;
 	}
 
-	public boolean getIsEventQueueRunning()
-	{
+	public boolean getIsEventQueueRunning() {
 		if (_Caps != null)
 			return _Caps.isRunning();
 		return false;
 	}
 
-	private void DumpBuffer(byte[] byteBuffer, int numBytes, String head)
-	{
+	private void DumpBuffer(byte[] byteBuffer, int numBytes, String head) {
 		logger.debug(GridClient.Log(head + numBytes, _Client));
 		StringBuffer dump = new StringBuffer(numBytes * 2);
-		for (int i = 0; i < numBytes; i++)
-		{
+		for (int i = 0; i < numBytes; i++) {
 			byte value = byteBuffer[i];
 			dump.append(Integer.toHexString(value & 0xFF));
 			dump.append(" ");
@@ -1233,14 +1079,10 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 	}
 
 	@Override
-	public void run()
-	{
-		try
-		{
+	public void run() {
+		try {
 			_Connection.connect(ipEndPoint);
-		}
-		catch (SocketException e)
-		{
+		} catch (SocketException e) {
 			logger.error(GridClient.Log("Failed to startup the UDP socket", _Client));
 			return;
 		}
@@ -1249,10 +1091,8 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 		boolean logRawPackets = _Client.Settings.getBool(LibSettings.LOG_RAW_PACKET_BYTES);
 		_Connected = true;
 
-		while (true)
-		{
-			try
-			{
+		while (true) {
+			try {
 				_Connection.receive(p);
 				int numBytes = p.getLength();
 				Packet packet = null;
@@ -1260,95 +1100,77 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 				// Update the disconnect flag so this sim doesn't time out
 				_DisconnectCandidate = false;
 
-				synchronized (RecvBuffer)
-				{
+				synchronized (RecvBuffer) {
 					byte[] byteBuffer = RecvBuffer;
 
 					// Retrieve the incoming packet
-					try
-					{
-						if (logRawPackets)
-						{
+					try {
+						if (logRawPackets) {
 							DumpBuffer(byteBuffer, numBytes, "<=============== Received packet, length = ");
 						}
 
-						if ((RecvBuffer[0] & PacketHeader.MSG_ZEROCODED) != 0)
-						{
+						if ((RecvBuffer[0] & PacketHeader.MSG_ZEROCODED) != 0) {
 							int bodylen = numBytes;
-							if ((RecvBuffer[0] & PacketHeader.MSG_APPENDED_ACKS) != 0)
-							{
+							if ((RecvBuffer[0] & PacketHeader.MSG_APPENDED_ACKS) != 0) {
 								bodylen -= (RecvBuffer[numBytes - 1] * 4 + 1);
 							}
 							byteBuffer = new byte[numBytes <= 1000 ? 4000 : numBytes * 4];
 							numBytes = ZeroDecode(RecvBuffer, numBytes, bodylen, byteBuffer);
-							if (logRawPackets)
-							{
+							if (logRawPackets) {
 								DumpBuffer(byteBuffer, numBytes, "<==========Zero-Decoded packet, length=");
 							}
 						}
 
 						packet = Packet.BuildPacket(ByteBuffer.wrap(byteBuffer, 0, numBytes));
-						if (logRawPackets)
-						{
+						if (logRawPackets) {
 							logger.debug(GridClient.Log("Decoded packet " + packet.getClass().getName(), _Client));
 						}
-					}
-					catch (IOException ex)
-					{
-						logger.info(GridClient.Log(ipEndPoint.toString() + " socket is closed, shutting down " + getName(), _Client), ex);
+					} catch (IOException ex) {
+						logger.info(GridClient.Log(
+								ipEndPoint.toString() + " socket is closed, shutting down " + getName(), _Client), ex);
 
 						_Connected = false;
 						_Client.Network.disconnectSim(this, true);
 						return;
-					}
-					catch (BufferUnderflowException ex)
-					{
+					} catch (BufferUnderflowException ex) {
 						DumpBuffer(byteBuffer, numBytes, "<=========== Buffer Underflow in packet, length = ");
 					}
 				}
 
-				if (packet == null)
-				{
+				if (packet == null) {
 					// TODO:FIXME
 					// This used to be a warning
-					DumpBuffer(RecvBuffer, numBytes, "<=========== Couldn't build a message from the incoming data, length = ");
+					DumpBuffer(RecvBuffer, numBytes,
+							"<=========== Couldn't build a message from the incoming data, length = ");
 					continue;
 				}
 
 				Statistics.RecvBytes += numBytes;
 				Statistics.RecvPackets++;
 
-				if (packet.getHeader().getResent())
-				{
+				if (packet.getHeader().getResent()) {
 					Statistics.ReceivedResends++;
 				}
 
 				// Handle appended ACKs
-				if (packet.getHeader().getAppendedAcks() && packet.getHeader().AckList != null)
-				{
-					synchronized (_NeedAck)
-					{
-						for (int ack : packet.getHeader().AckList)
-						{
-							if (_NeedAck.remove(ack) == null)
-							{
-								logger.warn(GridClient.Log(String.format("Appended ACK for a packet (%d) we didn't send: %s", ack,
-										packet.getClass().getName()), _Client));
+				if (packet.getHeader().getAppendedAcks() && packet.getHeader().AckList != null) {
+					synchronized (_NeedAck) {
+						for (int ack : packet.getHeader().AckList) {
+							if (_NeedAck.remove(ack) == null) {
+								logger.warn(GridClient
+										.Log(String.format("Appended ACK for a packet (%d) we didn't send: %s", ack,
+												packet.getClass().getName()), _Client));
 							}
 						}
 					}
 				}
 				// Handle PacketAck packets
-				if (packet.getType() == PacketType.PacketAck)
-				{
+				if (packet.getType() == PacketType.PacketAck) {
 					PacketAckPacket ackPacket = (PacketAckPacket) packet;
 
-					synchronized (_NeedAck)
-					{
-						for (int ID : ackPacket.ID)
-						{
-							if (_NeedAck.remove(ID) == null)
-							{
+					synchronized (_NeedAck) {
+						for (int ID : ackPacket.ID) {
+							if (_NeedAck.remove(ID) == null) {
 								logger.warn(GridClient.Log(String.format("ACK for a packet (%d) we didn't send: %s", ID,
 										packet.getClass().getName()), _Client));
 							}
@@ -1358,31 +1180,28 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 
 				// Add this packet to the list of ACKs that need to be sent out
 				int sequence = packet.getHeader().getSequence();
-				synchronized (_PendingAcks)
-				{
+				synchronized (_PendingAcks) {
 					_PendingAcks.add(sequence);
 				}
 
 				// Send out ACKs if we have a lot of them
-				if (_PendingAcks.size() >= _Client.Settings.MAX_PENDING_ACKS)
-				{
+				if (_PendingAcks.size() >= _Client.Settings.MAX_PENDING_ACKS) {
 					sendPendingAcks();
 				}
 
 				/*
 				 * Track the sequence number for this packet if it's marked as reliable
 				 */
-				if (packet.getHeader().getReliable() && !_PacketArchive.tryEnqueue(sequence))
-				{
-					if (packet.getHeader().getResent())
-					{
-						logger.debug(GridClient.Log(String.format("Received a resend of already processed packet #%d, type: %s, from %s",
-								                       sequence, packet.getType(), getName()), _Client));
-					}
-					else
-					{
-						logger.warn(GridClient.Log(String.format("Received a duplicate (not marked as resend) of packet #%d, type: %s for %s from %s", 
-								                 sequence, packet.getType(), _Client.Self.getName(), getName()), _Client));
+				if (packet.getHeader().getReliable() && !_PacketArchive.tryEnqueue(sequence)) {
+					if (packet.getHeader().getResent()) {
+						logger.debug(GridClient.Log(
+								String.format("Received a resend of already processed packet #%d, type: %s, from %s",
+										sequence, packet.getType(), getName()),
+								_Client));
+					} else {
+						logger.warn(GridClient.Log(String.format(
+								"Received a duplicate (not marked as resend) of packet #%d, type: %s for %s from %s",
+								sequence, packet.getType(), _Client.Self.getName(), getName()), _Client));
 					}
 					// Avoid firing a callback twice for the same packet
 					continue;
@@ -1391,75 +1210,57 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 				// Let the network manager distribute the packet to the callbacks
 				_Client.Network.DistributePacket(this, packet);
 
-				if (trackUtilization)
-				{
+				if (trackUtilization) {
 					_Client.Stats.updateNetStats(packet.getType().toString(), Type.Packet, 0, numBytes);
 				}
-			}
-			catch (IOException ex)
-			{
-				logger.info(GridClient.Log(ipEndPoint.toString() + " socket is closed, shutting down " + getName(), _Client));
+			} catch (IOException ex) {
+				logger.info(GridClient.Log(ipEndPoint.toString() + " socket is closed, shutting down " + getName(),
+						_Client));
 
 				_Connected = false;
 				return;
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		}
 	}
 
-	public void sendPacket(Packet packet) throws Exception
-	{
-		if (packet.hasVariableBlocks && packet.getLength() > Packet.MTU)
-		{
+	public void sendPacket(Packet packet) throws Exception {
+		if (packet.hasVariableBlocks && packet.getLength() > Packet.MTU) {
 			ByteBuffer[] datas;
-			try
-			{
+			try {
 				datas = packet.ToBytesMultiple();
-			}
-			catch (NullPointerException ex)
-			{
-				logger.error(
-						"Failed to serialize " + packet.getType()
-								+ " packet to one or more payloads due to a missing block or field. StackTrace: "
-								+ ex.getStackTrace());
+			} catch (NullPointerException ex) {
+				logger.error("Failed to serialize " + packet.getType()
+						+ " packet to one or more payloads due to a missing block or field. StackTrace: "
+						+ ex.getStackTrace());
 				return;
 			}
 			int packetCount = datas.length;
 
-			if (packetCount > 1)
-			{
+			if (packetCount > 1) {
 				logger.debug("Split " + packet.getType() + " packet into " + packetCount + " packets");
 			}
 
-			for (int i = 0; i < packetCount; i++)
-			{
+			for (int i = 0; i < packetCount; i++) {
 				sendPacketData(datas[i], packet.getType(), packet.getHeader().getZerocoded());
 			}
-		}
-		else
-		{
+		} else {
 			ByteBuffer data = packet.ToBytes();
 			sendPacketData(data, packet.getType(), packet.getHeader().getZerocoded());
 		}
 	}
 
-	private final void sendPacketData(ByteBuffer data, PacketType type, boolean doZerocode) throws InterruptedException
-	{
+	private final void sendPacketData(ByteBuffer data, PacketType type, boolean doZerocode)
+			throws InterruptedException {
 		// Zerocode if needed
-		if (doZerocode)
-		{
+		if (doZerocode) {
 			byte[] zeroBuffer = new byte[2000];
 			int bytes = PacketHeader.zeroEncode(data, zeroBuffer);
-			if (bytes <= data.capacity())
-			{
+			if (bytes <= data.capacity()) {
 				data = ByteBuffer.wrap(zeroBuffer, 0, bytes);
 				data.order(ByteOrder.LITTLE_ENDIAN);
-			}
-			else
-			{
+			} else {
 				// Zero encoding actually grew the buffer beyond the original size
 				data.put(0, (byte) (data.get(0) & PacketHeader.MSG_ZEROCODED));
 				data.position(0);
@@ -1471,47 +1272,36 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 
 		// Send ACK and logout packets directly, everything else goes through
 		// the queue
-		if (!throttleOutgoingPackets || type == PacketType.PacketAck || type == PacketType.LogoutRequest)
-		{
+		if (!throttleOutgoingPackets || type == PacketType.PacketAck || type == PacketType.LogoutRequest) {
 			sendPacketFinal(outgoingPacket);
-		}
-		else
-		{
+		} else {
 			_Client.Network.QueuePacket(outgoingPacket);
 		}
 		// #endregion Queue or Send
 
 		// #region Stats Tracking
-		if (trackUtilization)
-		{
+		if (trackUtilization) {
 			_Client.Stats.updateNetStats(type.toString(), Type.Packet, data.capacity(), 0);
 		}
 	}
 
 	/* Sends out pending acknowledgements */
-	private void sendPendingAcks()
-	{
-		synchronized (_PendingAcks)
-		{
-			if (_PendingAcks.size() > 0)
-			{
+	private void sendPendingAcks() {
+		synchronized (_PendingAcks) {
+			if (_PendingAcks.size() > 0) {
 				PacketAckPacket acks = new PacketAckPacket();
 				acks.ID = new int[_PendingAcks.size()];
 				acks.getHeader().setReliable(false);
 				int i = 0;
 				Iterator<Integer> iter = _PendingAcks.iterator();
-				while (iter.hasNext())
-				{
+				while (iter.hasNext()) {
 					acks.ID[i++] = iter.next();
 				}
 				_PendingAcks.clear();
 
-				try
-				{
+				try {
 					sendPacket(acks);
-				}
-				catch (Exception ex)
-				{
+				} catch (Exception ex) {
 					logger.error(GridClient.Log("Exception when sending Ack packet", _Client), ex);
 				}
 			}
@@ -1521,14 +1311,11 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 	/**
 	 * Resend unacknowledged packets
 	 */
-	private void resendUnacked()
-	{
-		if (_NeedAck.size() > 0)
-		{
+	private void resendUnacked() {
+		if (_NeedAck.size() > 0) {
 			ArrayList<NetworkManager.OutgoingPacket> array;
 
-			synchronized (_NeedAck)
-			{
+			synchronized (_NeedAck) {
 				// Create a temporary copy of the outgoing packets array to iterate over
 				array = new ArrayList<NetworkManager.OutgoingPacket>(_NeedAck.size());
 				array.addAll(_NeedAck.values());
@@ -1537,16 +1324,12 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 			long now = System.currentTimeMillis();
 
 			// Resend packets
-			for (int i = 0; i < array.size(); i++)
-			{
+			for (int i = 0; i < array.size(); i++) {
 				NetworkManager.OutgoingPacket outgoing = array.get(i);
 
-				if (outgoing.TickCount != 0 && now - outgoing.TickCount > _Client.Settings.RESEND_TIMEOUT)
-				{
-					if (outgoing.ResendCount < _Client.Settings.MAX_RESEND_COUNT)
-					{
-						if (_Client.Settings.LOG_RESENDS)
-						{
+				if (outgoing.TickCount != 0 && now - outgoing.TickCount > _Client.Settings.RESEND_TIMEOUT) {
+					if (outgoing.ResendCount < _Client.Settings.MAX_RESEND_COUNT) {
+						if (_Client.Settings.LOG_RESENDS) {
 							logger.debug(GridClient.Log(String.format("Resending %s packet #%d, %d ms have passed",
 									outgoing.Type, outgoing.SequenceNumber, now - outgoing.TickCount), _Client));
 						}
@@ -1563,14 +1346,11 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 						Statistics.ResentPackets++;
 
 						sendPacketFinal(outgoing);
-					}
-					else
-					{
+					} else {
 						logger.debug(String.format("Dropping packet #%d after %d failed attempts",
 								outgoing.SequenceNumber, outgoing.ResendCount, _Client));
 
-						synchronized (_NeedAck)
-						{
+						synchronized (_NeedAck) {
 							_NeedAck.remove(outgoing.SequenceNumber);
 						}
 					}
@@ -1579,8 +1359,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 		}
 	}
 
-	public final void sendPacketFinal(NetworkManager.OutgoingPacket outgoingPacket)
-	{
+	public final void sendPacketFinal(NetworkManager.OutgoingPacket outgoingPacket) {
 		ByteBuffer buffer = outgoingPacket.Buffer;
 		byte[] bytes = buffer.array();
 		byte flags = buffer.get(0);
@@ -1596,17 +1375,14 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 		// Keep appending ACKs until there is no room left in the packet or
 		// there are no more ACKs to append
 		int ackCount = 0;
-		synchronized (_PendingAcks)
-		{
-			while (dataLength + 5 < buffer.capacity() && !_PendingAcks.isEmpty())
-			{
+		synchronized (_PendingAcks) {
+			while (dataLength + 5 < buffer.capacity() && !_PendingAcks.isEmpty()) {
 				dataLength += Helpers.UInt32ToBytesB(_PendingAcks.pollFirst(), bytes, dataLength);
 				++ackCount;
 			}
 		}
 
-		if (ackCount > 0)
-		{
+		if (ackCount > 0) {
 			// Set the last byte of the packet equal to the number of appended
 			// ACKs
 			bytes[dataLength++] = (byte) ackCount;
@@ -1617,29 +1393,23 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 		}
 		// #endregion ACK Appending
 
-		if (!isResend)
-		{
+		if (!isResend) {
 			// Not a resend, assign a new sequence number
 			outgoingPacket.SequenceNumber = _Sequence.incrementAndGet();
 			Helpers.UInt32ToBytesB(outgoingPacket.SequenceNumber, bytes, 1);
 
-			if (isReliable)
-			{
+			if (isReliable) {
 				// Add this packet to the list of ACK responses we are waiting
 				// on from the server
-				synchronized (_NeedAck)
-				{
+				synchronized (_NeedAck) {
 					_NeedAck.put(outgoingPacket.SequenceNumber, outgoingPacket);
 				}
 			}
 		}
 
-		try
-		{
+		try {
 			_Connection.send(new DatagramPacket(buffer.array(), dataLength));
-		}
-		catch (IOException ex)
-		{
+		} catch (IOException ex) {
 			logger.error(GridClient.Log(ex.toString(), _Client), ex);
 		}
 
@@ -1650,13 +1420,10 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 	}
 
 	/* #region timer callbacks */
-	private class AckTimer_Elapsed extends TimerTask
-	{
+	private class AckTimer_Elapsed extends TimerTask {
 		@Override
-		public void run()
-		{
-			if (!_Connected)
-			{
+		public void run() {
+			if (!_Connected) {
 				return;
 			}
 
@@ -1667,39 +1434,31 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 		}
 	}
 
-	private class StatsTimer_Elapsed extends TimerTask
-	{
+	private class StatsTimer_Elapsed extends TimerTask {
 		@Override
-		public void run()
-		{
+		public void run() {
 			boolean full = _InBytes.isFull();
 			long recv = Statistics.RecvBytes;
 			long sent = Statistics.SentBytes;
 			long old_in = _InBytes.offer(recv);
 			long old_out = _OutBytes.offer(sent);
 
-			if (full)
-			{
+			if (full) {
 				Statistics.IncomingBPS = (int) (recv - old_in) / _InBytes.size();
 				Statistics.OutgoingBPS = (int) (sent - old_out) / _OutBytes.size();
-				logger.debug(GridClient.Log(getName() + ", Incoming: " + Statistics.IncomingBPS + " bps, Out: " + Statistics.OutgoingBPS
-						+ " bps, Lag: " + Statistics.LastLag + " ms, Pings: " + Statistics.ReceivedPongs + "/"
-						+ Statistics.SentPings, _Client));
+				logger.debug(GridClient.Log(getName() + ", Incoming: " + Statistics.IncomingBPS + " bps, Out: "
+						+ Statistics.OutgoingBPS + " bps, Lag: " + Statistics.LastLag + " ms, Pings: "
+						+ Statistics.ReceivedPongs + "/" + Statistics.SentPings, _Client));
 			}
 		}
 	}
 
-	private class PingTimer_Elapsed extends TimerTask
-	{
+	private class PingTimer_Elapsed extends TimerTask {
 		@Override
-		public void run()
-		{
-			try
-			{
+		public void run() {
+			try {
 				sendPing();
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 			Statistics.SentPings++;
@@ -1708,10 +1467,10 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 
 	/**
 	 * Decode a zerocoded byte array, used to decompress packets marked with the
-	 * zerocoded flag Any time a zero is encountered, the next byte is a count
-	 * of how many zeroes to expand. One zero is encoded with 0x00 0x01, two
-	 * zeroes is 0x00 0x02, three zeroes is 0x00 0x03, etc. The first six bytes
-	 * puls and extra bytes are copied directly to the output buffer.
+	 * zerocoded flag Any time a zero is encountered, the next byte is a count of
+	 * how many zeroes to expand. One zero is encoded with 0x00 0x01, two zeroes is
+	 * 0x00 0x02, three zeroes is 0x00 0x03, etc. The first six bytes puls and extra
+	 * bytes are copied directly to the output buffer.
 	 * 
 	 * @param src
 	 *            The byte array to decode
@@ -1724,30 +1483,23 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator
 	 * @return The length of the output buffer
 	 * @throws Exception
 	 */
-	private static int ZeroDecode(byte[] src, int srclen, int bodylen, byte[] dest) throws Exception
-	{
+	private static int ZeroDecode(byte[] src, int srclen, int bodylen, byte[] dest) throws Exception {
 		int i, destlen = 6 + src[5];
 
 		/* Copy the first 6 + extra header bytes as they are never compressed */
 		System.arraycopy(src, 0, dest, 0, destlen);
-		for (i = destlen; i < bodylen; i++)
-		{
-			if (src[i] == 0x00)
-			{
-				for (byte j = 0; j < src[i + 1]; j++)
-				{
+		for (i = destlen; i < bodylen; i++) {
+			if (src[i] == 0x00) {
+				for (byte j = 0; j < src[i + 1]; j++) {
 					dest[destlen++] = 0x00;
 				}
 				i++;
-			}
-			else
-			{
+			} else {
 				dest[destlen++] = src[i];
 			}
 		}
 
-		if (srclen > bodylen)
-		{
+		if (srclen > bodylen) {
 			/* Copy the appended ack data as they are never compressed */
 			System.arraycopy(src, bodylen, dest, destlen, srclen - bodylen);
 			destlen += srclen - bodylen;

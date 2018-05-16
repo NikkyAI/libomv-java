@@ -5,22 +5,23 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
  * 
- * 			A depth texture sampler for the GLSL profile.
- * 			
+ * A depth texture sampler for the GLSL profile.
  * 
- * <p>Java class for gl_samplerDEPTH complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * Java class for gl_samplerDEPTH complex type.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="gl_samplerDEPTH">
@@ -35,9 +36,6 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "gl_samplerDEPTH")
-public class GlSamplerDEPTH
-    extends FxSamplerDEPTHCommon
-{
-
+public class GlSamplerDEPTH extends FxSamplerDEPTHCommon {
 
 }

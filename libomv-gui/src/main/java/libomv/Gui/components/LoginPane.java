@@ -64,10 +64,9 @@ import libomv.io.GridClient.GridInfo;
 import libomv.io.GridClient.GridListUpdateCallbackArgs;
 import libomv.utils.Callback;
 
-public class LoginPane extends JPanel implements ActionListener
-{
+public class LoginPane extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
-	
+
 	public static final String cmdGrid = "grid";
 	private static final String cmdGrids = "grids";
 	private static final String cmdSaveDetails = "saveDetails";
@@ -76,9 +75,9 @@ public class LoginPane extends JPanel implements ActionListener
 	private GridClient _Client;
 	private Browser _Browser;
 	private String cachedPage;
-	
+
 	private Callback<GridListUpdateCallbackArgs> gridListCallback = new GridListUpdateCallback();
-	
+
 	private JLabel jLblUserName;
 	private JTextField jTxtUserName;
 	private JLabel jLblPassword;
@@ -91,14 +90,13 @@ public class LoginPane extends JPanel implements ActionListener
 	private JButton jBtnGrids;
 	private JCheckBox jChkSavePassword;
 	private JCheckBox jChkSaveDetails;
-	
-	public LoginPane(MainControl main, Browser browser)
-	{
+
+	public LoginPane(MainControl main, Browser browser) {
 		super();
 		_Main = main;
 		_Client = _Main.getGridClient();
-		_Browser = browser; 
-		
+		_Browser = browser;
+
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 1, 4, 6, 4, 6, 4, 0, 1, 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 0, 0 };
@@ -137,14 +135,14 @@ public class LoginPane extends JPanel implements ActionListener
 		gridBagConstraints.gridx = 4;
 		gridBagConstraints.gridy = 0;
 		add(getJPwdPassword(), gridBagConstraints);
-				
+
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
 		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
 		gridBagConstraints.gridx = 5;
 		gridBagConstraints.gridy = 0;
 		add(getChckbxSavePassword(), gridBagConstraints);
-		
+
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.insets = new Insets(5, 0, 5, 5);
 		gridBagConstraints.gridx = 7;
@@ -171,7 +169,7 @@ public class LoginPane extends JPanel implements ActionListener
 		gridBagConstraints.gridx = 3;
 		gridBagConstraints.gridy = 1;
 		add(getBtnGrids(), gridBagConstraints);
-		
+
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
 		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
@@ -192,129 +190,106 @@ public class LoginPane extends JPanel implements ActionListener
 		gridBagConstraints.gridx = 2;
 		gridBagConstraints.gridy = 2;
 		add(getJcbStartLocation(), gridBagConstraints);
-		
+
 		_Client.OnGridListUpdate.add(gridListCallback);
-		
-		initializePanel((GridInfo)getJcbGridSelector().getSelectedItem());
+
+		initializePanel((GridInfo) getJcbGridSelector().getSelectedItem());
 	}
-	
+
 	@Override
-	public Dimension getMinimumSize()
-	{
+	public Dimension getMinimumSize() {
 		Dimension size = super.getMinimumSize();
 		size.height = 110;
 		return size;
 	}
-	
-	protected void finalize() throws Throwable
-	{
+
+	protected void finalize() throws Throwable {
 		_Client.OnGridListUpdate.remove(gridListCallback);
 		super.finalize();
 	}
-	
+
 	@Override
-	public void actionPerformed(ActionEvent e)
-	{
+	public void actionPerformed(ActionEvent e) {
 		/* Handle local events */
-		if (e.getActionCommand().equals(MainControl.cmdLogin))
-		{
-			GridInfo grid = (GridInfo)getJcbGridSelector().getSelectedItem();
+		if (e.getActionCommand().equals(MainControl.cmdLogin)) {
+			GridInfo grid = (GridInfo) getJcbGridSelector().getSelectedItem();
 			_Client.setDefaultGrid(grid);
 
 			grid.saveSettings = getChckbxSaveDetails().isSelected();
 			grid.savePassword = grid.saveSettings && getChckbxSavePassword().isSelected();
 			grid.startLocation = getJcbStartLocation().getSelectedItem().toString().toLowerCase();
 
-			String string = getJTxtUserName().getText(); 
+			String string = getJTxtUserName().getText();
 			if (string != null)
 				grid.username = string;
 			string = String.valueOf(getJPwdPassword().getPassword());
 			if (string != null)
 				grid.setPassword(string);
-			try
-			{
+			try {
 				_Client.saveList();
+			} catch (Exception ex) {
 			}
-			catch (Exception ex) { };
+			;
 
 			// Pass this event to the state controller to perform the actual login
 			_Main.getStateControl().actionPerformed(e);
-		}
-		else if (e.getActionCommand().equals(cmdGrid))
-		{
-			GridInfo grid = (GridInfo)getJcbGridSelector().getSelectedItem();
+		} else if (e.getActionCommand().equals(cmdGrid)) {
+			GridInfo grid = (GridInfo) getJcbGridSelector().getSelectedItem();
 			if (grid != null)
-			    initializePanel(grid);
-		}
-		else if (e.getActionCommand().equals(cmdGrids))
-		{
+				initializePanel(grid);
+		} else if (e.getActionCommand().equals(cmdGrids)) {
 			GridEditor gridEdit = new GridEditor(_Main, "Grid List", true);
 			gridEdit.setVisible(true);
-		}
-		else if (e.getActionCommand().equals(cmdSaveDetails))
-		{
-			JCheckBox cb = (JCheckBox)e.getSource();
+		} else if (e.getActionCommand().equals(cmdSaveDetails)) {
+			JCheckBox cb = (JCheckBox) e.getSource();
 			getChckbxSavePassword().setEnabled(cb.isSelected());
-			if (!cb.isSelected())
-			{
+			if (!cb.isSelected()) {
 				getChckbxSavePassword().setSelected(false);
 			}
-		}	
-		else
-		{
+		} else {
 			/* Pass to main window to be handled */
 			_Main.actionPerformed(e);
 		}
 	}
 
-	private JLabel getJLblUserName()
-	{
-		if (jLblUserName == null)
-		{
+	private JLabel getJLblUserName() {
+		if (jLblUserName == null) {
 			jLblUserName = new JLabel("User Name:");
 		}
 		return jLblUserName;
 	}
 
-	private JLabel getJLblPassword()
-	{
-		if (jLblPassword == null)
-		{
-			jLblPassword = new JLabel("Password:");			
+	private JLabel getJLblPassword() {
+		if (jLblPassword == null) {
+			jLblPassword = new JLabel("Password:");
 		}
 		return jLblPassword;
 	}
-	
-	private JLabel getJLblGridSelector()
-	{
-		if (jLblGridSelector == null)
-		{
+
+	private JLabel getJLblGridSelector() {
+		if (jLblGridSelector == null) {
 			jLblGridSelector = new JLabel("Grid:");
 		}
 		return jLblGridSelector;
 	}
-	private JLabel getJLblLocation()
-	{
-		if (jLblLocation == null)
-		{
+
+	private JLabel getJLblLocation() {
+		if (jLblLocation == null) {
 			jLblLocation = new JLabel("Location:");
 		}
 		return jLblLocation;
 	}
-	
+
 	/**
 	 * This method initializes textFirstName
 	 * 
 	 * @return JTextField
 	 */
-	private JTextField getJTxtUserName()
-	{
-		if (jTxtUserName == null)
-		{
+	private JTextField getJTxtUserName() {
+		if (jTxtUserName == null) {
 			jTxtUserName = new JTextField(20);
 			// Add a caret listener
-			jTxtUserName.addCaretListener(new CaretListener()
-			{
+			jTxtUserName.addCaretListener(new CaretListener() {
 				/**
 				 * Called when the caret is updated
 				 * 
@@ -322,16 +297,14 @@ public class LoginPane extends JPanel implements ActionListener
 				 *            The CaretEvent
 				 */
 				@Override
-				public void caretUpdate(CaretEvent e)
-				{
+				public void caretUpdate(CaretEvent e) {
 					// Validate
 					validateSettings();
 				}
 			});
 
 			// Add a focus listener
-			jTxtUserName.addFocusListener(new FocusAdapter()
-			{
+			jTxtUserName.addFocusListener(new FocusAdapter() {
 				/**
 				 * Called when focus is gained
 				 * 
@@ -339,16 +312,14 @@ public class LoginPane extends JPanel implements ActionListener
 				 *            The FocusEvent
 				 */
 				@Override
-				public void focusGained(FocusEvent e)
-				{
+				public void focusGained(FocusEvent e) {
 					// Select all
 					getJTxtUserName().selectAll();
 				}
 			});
 
 			// Add a key listener
-			jTxtUserName.addKeyListener(new KeyAdapter()
-			{
+			jTxtUserName.addKeyListener(new KeyAdapter() {
 				/**
 				 * Called when a key is pressed
 				 * 
@@ -356,10 +327,8 @@ public class LoginPane extends JPanel implements ActionListener
 				 *            The KeyEvent
 				 */
 				@Override
-				public void keyPressed(KeyEvent e)
-				{
-					if (e.getKeyCode() == KeyEvent.VK_ENTER)
-					{
+				public void keyPressed(KeyEvent e) {
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 						getJPwdPassword().requestFocus();
 					}
 				}
@@ -373,14 +342,11 @@ public class LoginPane extends JPanel implements ActionListener
 	 * 
 	 * @return java.awt.TextField
 	 */
-	private JPasswordField getJPwdPassword()
-	{
-		if (jPwdPassword == null)
-		{
+	private JPasswordField getJPwdPassword() {
+		if (jPwdPassword == null) {
 			jPwdPassword = new JPasswordField(20);
 			// Add a caret listener
-			jPwdPassword.addCaretListener(new CaretListener()
-			{
+			jPwdPassword.addCaretListener(new CaretListener() {
 				/**
 				 * Called when the caret is updated
 				 * 
@@ -388,16 +354,14 @@ public class LoginPane extends JPanel implements ActionListener
 				 *            The CaretEvent
 				 */
 				@Override
-				public void caretUpdate(CaretEvent e)
-				{
+				public void caretUpdate(CaretEvent e) {
 					// Validate input
 					validateSettings();
 				}
 			});
 
 			// Add a focus listener
-			jPwdPassword.addFocusListener(new FocusAdapter()
-			{
+			jPwdPassword.addFocusListener(new FocusAdapter() {
 				/**
 				 * Called when focus is gained
 				 * 
@@ -405,16 +369,14 @@ public class LoginPane extends JPanel implements ActionListener
 				 *            The FocusEvent
 				 */
 				@Override
-				public void focusGained(FocusEvent e)
-				{
+				public void focusGained(FocusEvent e) {
 					// Select all
 					getJPwdPassword().selectAll();
 				}
 			});
 
 			// Add a key listener
-			jPwdPassword.addKeyListener(new KeyAdapter()
-			{
+			jPwdPassword.addKeyListener(new KeyAdapter() {
 				/**
 				 * Called when a key is pressed
 				 * 
@@ -422,14 +384,13 @@ public class LoginPane extends JPanel implements ActionListener
 				 *            The KeyEvent
 				 */
 				@Override
-				public void keyPressed(KeyEvent e)
-				{
-					if (e.getKeyCode() == KeyEvent.VK_ENTER)
-					{
+				public void keyPressed(KeyEvent e) {
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 						if (validateSettings())
-							actionPerformed(new ActionEvent(jTxtUserName, ActionEvent.ACTION_PERFORMED, MainControl.cmdLogin));
+							actionPerformed(
+									new ActionEvent(jTxtUserName, ActionEvent.ACTION_PERFORMED, MainControl.cmdLogin));
 						else
-							getJTxtUserName().requestFocus();				
+							getJTxtUserName().requestFocus();
 					}
 				}
 			});
@@ -442,10 +403,8 @@ public class LoginPane extends JPanel implements ActionListener
 	 * 
 	 * @return Login JButton
 	 */
-	private JButton getJBtnLogin()
-	{
-		if (jBtnLogin == null)
-		{
+	private JButton getJBtnLogin() {
+		if (jBtnLogin == null) {
 			jBtnLogin = new JButton();
 			jBtnLogin.setText("Login");
 			MainWindow.setAction(jBtnLogin, this, MainControl.cmdLogin);
@@ -453,10 +412,8 @@ public class LoginPane extends JPanel implements ActionListener
 		return jBtnLogin;
 	}
 
-	private JComboBox<GridInfo> getJcbGridSelector()
-	{
-		if (jcbGridSelector == null)
-		{
+	private JComboBox<GridInfo> getJcbGridSelector() {
+		if (jcbGridSelector == null) {
 			jcbGridSelector = new JComboBox<GridInfo>(_Client.getGridInfos());
 			jcbGridSelector.setSelectedItem(_Client.getDefaultGrid());
 			MainWindow.setAction(jcbGridSelector, this, cmdGrid);
@@ -464,105 +421,85 @@ public class LoginPane extends JPanel implements ActionListener
 		return jcbGridSelector;
 	}
 
-	private JComboBox<String> getJcbStartLocation()
-	{
-		if (jcbLocation == null)
-		{
+	private JComboBox<String> getJcbStartLocation() {
+		if (jcbLocation == null) {
 			jcbLocation = new JComboBox<String>();
 			jcbLocation.setEditable(true);
 			jcbLocation.addItem("Last");
 			jcbLocation.addItem("Home");
-			
+
 			String start = _Client.getDefaultGrid().startLocation;
-			if (start == null || start.isEmpty() || start.equalsIgnoreCase("last"))
-			{
+			if (start == null || start.isEmpty() || start.equalsIgnoreCase("last")) {
 				jcbLocation.setSelectedIndex(0);
-			}
-			else if (start.equalsIgnoreCase("home"))
-			{
+			} else if (start.equalsIgnoreCase("home")) {
 				jcbLocation.setSelectedIndex(1);
-			}
-			else
-			{
+			} else {
 				jcbLocation.setSelectedItem(start);
 			}
 
 		}
 		return jcbLocation;
 	}
-	
+
 	/**
 	 * This method initializes our Grid button
 	 * 
 	 * @return Grid JButton
 	 */
-	private JButton getBtnGrids()
-	{
-		if (jBtnGrids == null)
-		{
+	private JButton getBtnGrids() {
+		if (jBtnGrids == null) {
 			jBtnGrids = new JButton("Grids");
 			MainWindow.setAction(jBtnGrids, this, cmdGrids);
 		}
 		return jBtnGrids;
 	}
 
-	private JCheckBox getChckbxSaveDetails()
-	{
-		if (jChkSaveDetails == null)
-		{
+	private JCheckBox getChckbxSaveDetails() {
+		if (jChkSaveDetails == null) {
 			jChkSaveDetails = new JCheckBox("Save Details");
 			MainWindow.setAction(jChkSaveDetails, this, cmdSaveDetails);
 		}
 		return jChkSaveDetails;
 	}
 
-	private JCheckBox getChckbxSavePassword()
-	{
-		if (jChkSavePassword == null)
-		{
+	private JCheckBox getChckbxSavePassword() {
+		if (jChkSavePassword == null) {
 			jChkSavePassword = new JCheckBox("Save Password");
 		}
 		return jChkSavePassword;
 	}
 
-	private void refreshGridList()
-	{
+	private void refreshGridList() {
 		GridInfo[] grids = _Client.getGridInfos();
-		GridInfo gridInfo = (GridInfo)getJcbGridSelector().getSelectedItem();
-		if (gridInfo != null)
-		{
+		GridInfo gridInfo = (GridInfo) getJcbGridSelector().getSelectedItem();
+		if (gridInfo != null) {
 			gridInfo = _Client.getGrid(gridInfo.gridnick);
 		}
-		if (gridInfo == null)
-		{
+		if (gridInfo == null) {
 			gridInfo = grids[Math.min(getJcbGridSelector().getSelectedIndex(), grids.length - 1)];
 		}
 
 		getJcbGridSelector().removeAllItems();
-		for (GridInfo entry : grids)
-		{
+		for (GridInfo entry : grids) {
 			getJcbGridSelector().addItem(entry);
 		}
 		getJcbGridSelector().setSelectedItem(gridInfo);
 		initializePanel(gridInfo);
 	}
-	
+
 	/**
 	 * Validate all settings
 	 */
-	private boolean validateSettings()
-	{
+	private boolean validateSettings() {
 		boolean valid = true;
 
 		// Validate the first name
-		if (!validateField(getJTxtUserName(), getJLblUserName()))
-		{
+		if (!validateField(getJTxtUserName(), getJLblUserName())) {
 			valid = false;
 		}
 
 		// Validate the password
-		if (!validateField(getJPwdPassword(), getJLblPassword()))
-		{
+		if (!validateField(getJPwdPassword(), getJLblPassword())) {
 			valid = false;
 		}
 
@@ -582,24 +519,19 @@ public class LoginPane extends JPanel implements ActionListener
 	 *            The label associated with the component
 	 * @return True if valid, otherwise false
 	 */
-	private static boolean validateField(JTextComponent component, JLabel associatedLabel)
-	{
+	private static boolean validateField(JTextComponent component, JLabel associatedLabel) {
 		// If this is a text field..
-		if (component instanceof JTextField)
-		{
+		if (component instanceof JTextField) {
 			// Invalid
-			if (component.getText() == null || component.getText().trim().length() <= 0)
-			{
+			if (component.getText() == null || component.getText().trim().length() <= 0) {
 				associatedLabel.setForeground(Color.RED);
 				return false;
 			}
 		}
 		// If this is a password field..
-		else if (component instanceof JPasswordField)
-		{
+		else if (component instanceof JPasswordField) {
 			// Invalid
-			if (((JPasswordField) component).getPassword().length <= 0)
-			{
+			if (((JPasswordField) component).getPassword().length <= 0) {
 				associatedLabel.setForeground(Color.RED);
 				return false;
 			}
@@ -610,10 +542,8 @@ public class LoginPane extends JPanel implements ActionListener
 		return true;
 	}
 
-	private void initializePanel(GridInfo grid)
-	{
-		if (grid.startLocation != null)
-		{
+	private void initializePanel(GridInfo grid) {
+		if (grid.startLocation != null) {
 			getJcbStartLocation().setSelectedItem(grid.startLocation);
 		}
 		if (grid.username != null)
@@ -621,32 +551,27 @@ public class LoginPane extends JPanel implements ActionListener
 		if (grid.getPassword() != null)
 			getJPwdPassword().setText(grid.getPassword());
 		getChckbxSaveDetails().setSelected(grid.saveSettings);
-		getChckbxSavePassword().setSelected(grid.saveSettings && grid.savePassword);				
+		getChckbxSavePassword().setSelected(grid.saveSettings && grid.savePassword);
 		getChckbxSavePassword().setEnabled(grid.saveSettings);
 
-		if (cachedPage == null || !cachedPage.equals(grid.loginpage))
-		{
+		if (cachedPage == null || !cachedPage.equals(grid.loginpage)) {
 			cachedPage = grid.loginpage;
 			_Browser.navigate(grid.loginpage);
-//			_Browser.loadURL(grid.loginpage);
+			// _Browser.loadURL(grid.loginpage);
 		}
 	}
-	
-	private class GridListUpdateCallback implements Callback<GridListUpdateCallbackArgs>
-	{
+
+	private class GridListUpdateCallback implements Callback<GridListUpdateCallbackArgs> {
 		@Override
-		public boolean callback(GridListUpdateCallbackArgs params)
-		{
-			EventQueue.invokeLater(new Runnable()
-			{
+		public boolean callback(GridListUpdateCallbackArgs params) {
+			EventQueue.invokeLater(new Runnable() {
 				@Override
-				public void run()
-				{
+				public void run() {
 					refreshGridList();
 				}
 			});
 			return false;
 		}
-		
+
 	}
 }

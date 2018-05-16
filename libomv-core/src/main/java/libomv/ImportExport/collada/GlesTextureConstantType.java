@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import java.util.ArrayList;
@@ -18,11 +17,13 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
 /**
- * <p>Java class for gles_texture_constant_type complex type.
+ * <p>
+ * Java class for gles_texture_constant_type complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="gles_texture_constant_type">
@@ -41,64 +42,61 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(name = "gles_texture_constant_type")
 public class GlesTextureConstantType {
 
-    @XmlAttribute(name = "value")
-    protected List<Double> value;
-    @XmlAttribute(name = "param")
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlSchemaType(name = "NCName")
-    protected String param;
+	@XmlAttribute(name = "value")
+	protected List<Double> value;
+	@XmlAttribute(name = "param")
+	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+	@XmlSchemaType(name = "NCName")
+	protected String param;
 
-    /**
-     * Gets the value of the value property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the value property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getValue().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Double }
-     * 
-     * 
-     */
-    public List<Double> getValue() {
-        if (value == null) {
-            value = new ArrayList<Double>();
-        }
-        return this.value;
-    }
+	/**
+	 * Gets the value of the value property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the value property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getValue().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link Double }
+	 * 
+	 * 
+	 */
+	public List<Double> getValue() {
+		if (value == null) {
+			value = new ArrayList<Double>();
+		}
+		return this.value;
+	}
 
-    /**
-     * Gets the value of the param property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getParam() {
-        return param;
-    }
+	/**
+	 * Gets the value of the param property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getParam() {
+		return param;
+	}
 
-    /**
-     * Sets the value of the param property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setParam(String value) {
-        this.param = value;
-    }
+	/**
+	 * Sets the value of the param property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setParam(String value) {
+		this.param = value;
+	}
 
 }

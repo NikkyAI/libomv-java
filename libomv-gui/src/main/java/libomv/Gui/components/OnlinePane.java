@@ -35,29 +35,23 @@ import javax.swing.JPanel;
 
 import libomv.Gui.windows.MainControl;
 
-public class OnlinePane extends JPanel implements ActionListener
-{
+public class OnlinePane extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
-	
+
 	private MainControl _Main;
-	
-	public OnlinePane(MainControl main)
-	{
+
+	public OnlinePane(MainControl main) {
 		super();
 		_Main = main;
-		
-	}
-	
-	@Override
-	public void actionPerformed(ActionEvent e)
-	{
-		/* Handle local events */
-		if (e.getActionCommand().equals(MainControl.cmdLogout))
-		{
 
-		}
-		else
-		{
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		/* Handle local events */
+		if (e.getActionCommand().equals(MainControl.cmdLogout)) {
+
+		} else {
 			/* Pass to main window to be handled */
 			_Main.actionPerformed(e);
 		}

@@ -33,8 +33,7 @@ import java.awt.BorderLayout;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-public class PreferenceWindow extends JDialog
-{
+public class PreferenceWindow extends JDialog {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel jContentPane = null;
@@ -42,8 +41,7 @@ public class PreferenceWindow extends JDialog
 	/**
 	 * 
 	 */
-	public PreferenceWindow(MainControl main)
-	{
+	public PreferenceWindow(MainControl main) {
 		super(main.getJFrame());
 		setTitle("Preferences");
 		setSize(300, 200);
@@ -55,10 +53,8 @@ public class PreferenceWindow extends JDialog
 	 * 
 	 * @return javax.swing.JPanel
 	 */
-	private JPanel getJContentPane()
-	{
-		if (jContentPane == null)
-		{
+	private JPanel getJContentPane() {
+		if (jContentPane == null) {
 			jContentPane = new JPanel();
 			jContentPane.setLayout(new BorderLayout());
 		}

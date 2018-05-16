@@ -30,8 +30,7 @@ import libomv.io.GroupManager.Group;
  * 
  * @author John O'Conner
  */
-public class SortedListModel extends AbstractListModel<Group>
-{
+public class SortedListModel extends AbstractListModel<Group> {
 	// The serialisation UID
 	private static final long serialVersionUID = 9161658455000735352L;
 
@@ -42,22 +41,20 @@ public class SortedListModel extends AbstractListModel<Group>
 	 * @param model
 	 *            the underlying, unsorted ListModel
 	 */
-	public SortedListModel(ListModel<Group> model)
-	{
+	public SortedListModel(ListModel<Group> model) {
 		this(model, SortOrder.ASCENDING, null);
 	}
 
 	/**
-	 * Create a SortedListModel from an existing model using a specific
-	 * comparator and sort order. Use a default text comparator.
+	 * Create a SortedListModel from an existing model using a specific comparator
+	 * and sort order. Use a default text comparator.
 	 * 
 	 * @param model
 	 *            the unsorted list model
 	 * @param sortOrder
 	 *            that should be used
 	 */
-	public SortedListModel(ListModel<Group> model, SortOrder sortOrder)
-	{
+	public SortedListModel(ListModel<Group> model, SortOrder sortOrder) {
 		this(model, sortOrder, null);
 	}
 
@@ -70,45 +67,36 @@ public class SortedListModel extends AbstractListModel<Group>
 	 * @param comp
 	 * 
 	 */
-	public SortedListModel(ListModel<Group> model, SortOrder sortOrder, Comparator<Object> comperator)
-	{
+	public SortedListModel(ListModel<Group> model, SortOrder sortOrder, Comparator<Object> comperator) {
 		unsortedModel = model;
-		unsortedModel.addListDataListener(new ListDataListener()
-		{
+		unsortedModel.addListDataListener(new ListDataListener() {
 			@Override
-			public void intervalAdded(ListDataEvent e)
-			{
+			public void intervalAdded(ListDataEvent e) {
 				unsortedIntervalAdded(e);
 			}
 
 			@Override
-			public void intervalRemoved(ListDataEvent e)
-			{
+			public void intervalRemoved(ListDataEvent e) {
 				unsortedIntervalRemoved(e);
 			}
 
 			@Override
-			public void contentsChanged(ListDataEvent e)
-			{
+			public void contentsChanged(ListDataEvent e) {
 				unsortedContentsChanged();
 			}
 
 		});
 		this.sortOrder = sortOrder;
-		if (comperator != null)
-		{
+		if (comperator != null) {
 			comparator = comperator;
-		}
-		else
-		{
+		} else {
 			comparator = Collator.getInstance();
 		}
 
 		// get base model info
 		int size = model.getSize();
 		sortedModel = new ArrayList<SortedListEntry>(size);
-		for (int x = 0; x < size; ++x)
-		{
+		for (int x = 0; x < size; ++x) {
 			SortedListEntry entry = new SortedListEntry(x);
 			int insertionPoint = findInsertionPoint(entry);
 			sortedModel.add(insertionPoint, entry);
@@ -123,8 +111,7 @@ public class SortedListModel extends AbstractListModel<Group>
 	 * @return element in the original model to which our entry points
 	 */
 	@Override
-	public Group getElementAt(int index) throws IndexOutOfBoundsException
-	{
+	public Group getElementAt(int index) throws IndexOutOfBoundsException {
 		int modelIndex = toUnsortedModelIndex(index);
 		Group element = unsortedModel.getElementAt(modelIndex);
 		return element;
@@ -136,8 +123,7 @@ public class SortedListModel extends AbstractListModel<Group>
 	 * @return size of the model
 	 */
 	@Override
-	public int getSize()
-	{
+	public int getSize() {
 		int size = sortedModel.size();
 		return size;
 	}
@@ -150,8 +136,7 @@ public class SortedListModel extends AbstractListModel<Group>
 	 * @return modelIndex an index in the unsorted model
 	 * 
 	 */
-	public int toUnsortedModelIndex(int index) throws IndexOutOfBoundsException
-	{
+	public int toUnsortedModelIndex(int index) throws IndexOutOfBoundsException {
 		int modelIndex = -1;
 		SortedListEntry entry = sortedModel.get(index);
 		modelIndex = entry.getIndex();
@@ -164,16 +149,13 @@ public class SortedListModel extends AbstractListModel<Group>
 	 * Sort the resulting set of indices.
 	 * 
 	 * @param sortedSelectedIndices
-	 *            indices of selected elements in the sorted model or sorted
-	 *            view
+	 *            indices of selected elements in the sorted model or sorted view
 	 * @return unsortedSelectedIndices selected indices in the unsorted model
 	 */
-	public int[] toUnsortedModelIndices(int[] sortedSelectedIndices)
-	{
+	public int[] toUnsortedModelIndices(int[] sortedSelectedIndices) {
 		int[] unsortedSelectedIndices = new int[sortedSelectedIndices.length];
 		int x = 0;
-		for (int sortedIndex : sortedSelectedIndices)
-		{
+		for (int sortedIndex : sortedSelectedIndices) {
 			unsortedSelectedIndices[x++] = toUnsortedModelIndex(sortedIndex);
 		}
 		// sort the array of indices before returning
@@ -189,15 +171,12 @@ public class SortedListModel extends AbstractListModel<Group>
 	 *            an element index in the unsorted model
 	 * @return sortedIndex an element index in the sorted model
 	 */
-	public int toSortedModelIndex(int unsortedIndex)
-	{
+	public int toSortedModelIndex(int unsortedIndex) {
 		int sortedIndex = -1;
 		int x = -1;
-		for (SortedListEntry entry : sortedModel)
-		{
+		for (SortedListEntry entry : sortedModel) {
 			++x;
-			if (entry.getIndex() == unsortedIndex)
-			{
+			if (entry.getIndex() == unsortedIndex) {
 				sortedIndex = x;
 				break;
 			}
@@ -206,45 +185,37 @@ public class SortedListModel extends AbstractListModel<Group>
 	}
 
 	/**
-	 * Convert an array of unsorted model selection indices to indices in the
-	 * sorted model. Sort the model indices from low to high to duplicate
-	 * JList's getSelectedIndices method
+	 * Convert an array of unsorted model selection indices to indices in the sorted
+	 * model. Sort the model indices from low to high to duplicate JList's
+	 * getSelectedIndices method
 	 * 
 	 * @param unsortedModelIndices
 	 * @return an array of selected indices in the sorted model
 	 */
-	public int[] toSortedModelIndices(int[] unsortedModelIndices)
-	{
+	public int[] toSortedModelIndices(int[] unsortedModelIndices) {
 		int[] sortedModelIndices = new int[unsortedModelIndices.length];
 		int x = 0;
-		for (int unsortedIndex : unsortedModelIndices)
-		{
+		for (int unsortedIndex : unsortedModelIndices) {
 			sortedModelIndices[x++] = toSortedModelIndex(unsortedIndex);
 		}
 		Arrays.sort(sortedModelIndices);
 		return sortedModelIndices;
 	}
 
-	private void resetModelData()
-	{
+	private void resetModelData() {
 		int index = 0;
-		for (SortedListEntry entry : sortedModel)
-		{
+		for (SortedListEntry entry : sortedModel) {
 			entry.setIndex(index++);
 		}
 	}
 
 	@SuppressWarnings({ "boxing" })
-	public void setComparator(Comparator<Object> comp)
-	{
-		if (comp == null)
-		{
+	public void setComparator(Comparator<Object> comp) {
+		if (comp == null) {
 			sortOrder = SortOrder.UNORDERED;
 			comparator = Collator.getInstance();
 			resetModelData();
-		}
-		else
-		{
+		} else {
 			comparator = comp;
 			Collections.sort(sortedModel);
 		}
@@ -257,17 +228,12 @@ public class SortedListModel extends AbstractListModel<Group>
 	 * @param sortOrder
 	 */
 	@SuppressWarnings({ "boxing" })
-	public void setSortOrder(SortOrder sortOrder)
-	{
-		if (this.sortOrder != sortOrder)
-		{
+	public void setSortOrder(SortOrder sortOrder) {
+		if (this.sortOrder != sortOrder) {
 			this.sortOrder = sortOrder;
-			if (sortOrder == SortOrder.UNORDERED)
-			{
+			if (sortOrder == SortOrder.UNORDERED) {
 				resetModelData();
-			}
-			else
-			{
+			} else {
 				Collections.sort(sortedModel);
 			}
 			fireContentsChanged(ListDataEvent.CONTENTS_CHANGED, 0, sortedModel.size() - 1);
@@ -279,31 +245,27 @@ public class SortedListModel extends AbstractListModel<Group>
 	 * original/decorated model.
 	 * 
 	 */
-	private void unsortedIntervalAdded(ListDataEvent e)
-	{
+	private void unsortedIntervalAdded(ListDataEvent e) {
 		int begin = e.getIndex0();
 		int end = e.getIndex1();
 		int nElementsAdded = end - begin + 1;
 
 		/*
-		 * Items in the decorated model have shifted in flight. Increment our
-		 * model pointers into the decorated model. We must increment indices
-		 * that intersect with the insertion point in the decorated model.
+		 * Items in the decorated model have shifted in flight. Increment our model
+		 * pointers into the decorated model. We must increment indices that intersect
+		 * with the insertion point in the decorated model.
 		 */
-		for (SortedListEntry entry : sortedModel)
-		{
+		for (SortedListEntry entry : sortedModel) {
 			int index = entry.getIndex();
 			// if our model points to a model index >= to where
 			// new model entries are added, we must bump up their index
-			if (index >= begin)
-			{
+			if (index >= begin) {
 				entry.setIndex(index + nElementsAdded);
 			}
 		}
 
 		// now add the new items from the decorated model
-		for (int x = begin; x <= end; ++x)
-		{
+		for (int x = begin; x <= end; ++x) {
 			SortedListEntry newEntry = new SortedListEntry(x);
 			int insertionPoint = findInsertionPoint(newEntry);
 			sortedModel.add(insertionPoint, newEntry);
@@ -312,31 +274,26 @@ public class SortedListModel extends AbstractListModel<Group>
 	}
 
 	/**
-	 * Update this model when items are removed from the original/decorated
-	 * model. Also, let our listeners know that we've removed items.
+	 * Update this model when items are removed from the original/decorated model.
+	 * Also, let our listeners know that we've removed items.
 	 */
-	private void unsortedIntervalRemoved(ListDataEvent e)
-	{
+	private void unsortedIntervalRemoved(ListDataEvent e) {
 		int begin = e.getIndex0();
 		int end = e.getIndex1();
 		int nElementsRemoved = end - begin + 1;
 
 		/*
-		 * Move from end to beginning of our sorted model, updating element
-		 * indices into the decorated model or removing elements as necessary
+		 * Move from end to beginning of our sorted model, updating element indices into
+		 * the decorated model or removing elements as necessary
 		 */
 		int sortedSize = sortedModel.size();
 		boolean[] bElementRemoved = new boolean[sortedSize];
-		for (int x = sortedSize - 1; x >= 0; --x)
-		{
+		for (int x = sortedSize - 1; x >= 0; --x) {
 			SortedListEntry entry = sortedModel.get(x);
 			int index = entry.getIndex();
-			if (index > end)
-			{
+			if (index > end) {
 				entry.setIndex(index - nElementsRemoved);
-			}
-			else if (index >= begin)
-			{
+			} else if (index >= begin) {
 				sortedModel.remove(x);
 				bElementRemoved[x] = true;
 			}
@@ -344,10 +301,8 @@ public class SortedListModel extends AbstractListModel<Group>
 		/*
 		 * Let listeners know that we've removed items.
 		 */
-		for (int x = bElementRemoved.length - 1; x >= 0; --x)
-		{
-			if (bElementRemoved[x])
-			{
+		for (int x = bElementRemoved.length - 1; x >= 0; --x) {
+			if (bElementRemoved[x]) {
 				fireIntervalRemoved(ListDataEvent.INTERVAL_REMOVED, x, x);
 			}
 		}
@@ -355,13 +310,12 @@ public class SortedListModel extends AbstractListModel<Group>
 	}
 
 	/**
-	 * Resort the sorted model if there are changes in the original unsorted
-	 * model. Let any listeners know about changes. Since I don't track specific
-	 * changes, sort everywhere and redisplay all items.
+	 * Resort the sorted model if there are changes in the original unsorted model.
+	 * Let any listeners know about changes. Since I don't track specific changes,
+	 * sort everywhere and redisplay all items.
 	 */
 	@SuppressWarnings({ "boxing" })
-	private void unsortedContentsChanged()
-	{
+	private void unsortedContentsChanged() {
 		Collections.sort(sortedModel);
 		fireContentsChanged(ListDataEvent.CONTENTS_CHANGED, 0, sortedModel.size() - 1);
 	}
@@ -370,14 +324,11 @@ public class SortedListModel extends AbstractListModel<Group>
 	 * Internal helper method to find the insertion point for a new entry in the
 	 * sorted model.
 	 */
-	private int findInsertionPoint(SortedListEntry entry)
-	{
+	private int findInsertionPoint(SortedListEntry entry) {
 		int insertionPoint = sortedModel.size();
-		if (sortOrder != SortOrder.UNORDERED)
-		{
+		if (sortOrder != SortOrder.UNORDERED) {
 			insertionPoint = Collections.binarySearch(sortedModel, entry);
-			if (insertionPoint < 0)
-			{
+			if (insertionPoint < 0) {
 				insertionPoint = -(insertionPoint + 1);
 			}
 		}
@@ -389,36 +340,29 @@ public class SortedListModel extends AbstractListModel<Group>
 	private Comparator<Object> comparator;
 	private SortOrder sortOrder;
 
-	public ListModel<Group> getUnsortedModel()
-	{
+	public ListModel<Group> getUnsortedModel() {
 		return unsortedModel;
 	}
 
-	public enum SortOrder
-	{
+	public enum SortOrder {
 		UNORDERED, ASCENDING, DESCENDING;
 	}
 
-	public class SortedListEntry implements Comparable<Object>
-	{
-		public SortedListEntry(int index)
-		{
+	public class SortedListEntry implements Comparable<Object> {
+		public SortedListEntry(int index) {
 			this.index = index;
 		}
 
-		public int getIndex()
-		{
+		public int getIndex() {
 			return index;
 		}
 
-		public void setIndex(int index)
-		{
+		public void setIndex(int index) {
 			this.index = index;
 		}
 
 		@Override
-		public int compareTo(Object o)
-		{
+		public int compareTo(Object o) {
 			// retrieve the element that this entry points to in the original
 			// model
 			Object thisElement = unsortedModel.getElementAt(index);
@@ -426,16 +370,14 @@ public class SortedListModel extends AbstractListModel<Group>
 			// retrieve the element that thatEntry points to in the original
 			// model
 			Object thatElement = unsortedModel.getElementAt(thatEntry.getIndex());
-			if (comparator instanceof Collator)
-			{
+			if (comparator instanceof Collator) {
 				thisElement = thisElement.toString();
 				thatElement = thatElement.toString();
 			}
 			// compare the base model's elements using the provided comparator
 			int comparison = comparator.compare(thisElement, thatElement);
 			// convert to descending order as necessary
-			if (sortOrder == SortOrder.DESCENDING)
-			{
+			if (sortOrder == SortOrder.DESCENDING) {
 				comparison = -comparison;
 			}
 			return comparison;

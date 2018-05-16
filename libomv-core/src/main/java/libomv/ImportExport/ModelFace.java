@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -36,31 +36,26 @@ import java.util.List;
 import libomv.rendering.Mesh.Vertex;
 import libomv.utils.Helpers;
 
-public class ModelFace
-{
-    public List<Vertex> Vertices = new ArrayList<Vertex>();
-    public List<Integer> Indices = new ArrayList<Integer>();
-    public String MaterialID = Helpers.EmptyString;
-    public ModelMaterial Material = new ModelMaterial();
+public class ModelFace {
+	public List<Vertex> Vertices = new ArrayList<Vertex>();
+	public List<Integer> Indices = new ArrayList<Integer>();
+	public String MaterialID = Helpers.EmptyString;
+	public ModelMaterial Material = new ModelMaterial();
 
-    Hashtable<Vertex, Integer> LookUp = new Hashtable<Vertex, Integer>();
+	Hashtable<Vertex, Integer> LookUp = new Hashtable<Vertex, Integer>();
 
-    public void AddVertex(Vertex v)
-    {
-        int index;
+	public void AddVertex(Vertex v) {
+		int index;
 
-        if (LookUp.containsKey(v))
-        {
-            index = LookUp.get(v);
-        }
-        else
-        {
-            index = Vertices.size();
-            Vertices.add(v);
-            LookUp.put(v, index);
-        }
+		if (LookUp.containsKey(v)) {
+			index = LookUp.get(v);
+		} else {
+			index = Vertices.size();
+			Vertices.add(v);
+			LookUp.put(v, index);
+		}
 
-        Indices.add(index);
-    }
+		Indices.add(index);
+	}
 
 }

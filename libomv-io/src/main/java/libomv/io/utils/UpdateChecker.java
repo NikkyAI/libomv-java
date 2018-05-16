@@ -42,145 +42,179 @@ import libomv.io.capabilities.CapsClient;
 import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 
-public class UpdateChecker
-{
+public class UpdateChecker {
 	private static final Logger logger = Logger.getLogger(UpdateChecker.class);
-	
-	public class UpdateInfo
-	{
-	    private boolean Error;
-	    private String ErrMessage;
-	    private String CurrentVersion;
-	    private String DownloadSite;
-	    private boolean DisplayMOTD;
-	    private String MOTD;
-	    private boolean UpdateAvailable;
 
-	    public boolean getError() { return Error; };
-	    public void setError(boolean value) { Error = value; };
-	    public String getErrMessage() { return ErrMessage; };
-	    public void setErrMessage(String value) { ErrMessage = value; };
-	    public String getCurrentVersion() { return CurrentVersion; };
-	    public void setCurrentVersion(String value) { CurrentVersion = value; };
-	    public String getDownloadSite() { return DownloadSite; };
-	    public void setDownloadSite(String value) { DownloadSite = value; };
-	    public boolean getDisplayMOTD() { return DisplayMOTD; };
-	    public void setDisplayMOTD(boolean value) { DisplayMOTD = value; };
-	    public String getMOTD() { return MOTD; };
-	    public void setMOTD(String value) { MOTD = value; };
-	    public boolean getUpdateAvailable() { return UpdateAvailable; };
-	    public void setUpdateAvailable(boolean value) { UpdateAvailable = value; };
+	public class UpdateInfo {
+		private boolean Error;
+		private String ErrMessage;
+		private String CurrentVersion;
+		private String DownloadSite;
+		private boolean DisplayMOTD;
+		private String MOTD;
+		private boolean UpdateAvailable;
+
+		public boolean getError() {
+			return Error;
+		};
+
+		public void setError(boolean value) {
+			Error = value;
+		};
+
+		public String getErrMessage() {
+			return ErrMessage;
+		};
+
+		public void setErrMessage(String value) {
+			ErrMessage = value;
+		};
+
+		public String getCurrentVersion() {
+			return CurrentVersion;
+		};
+
+		public void setCurrentVersion(String value) {
+			CurrentVersion = value;
+		};
+
+		public String getDownloadSite() {
+			return DownloadSite;
+		};
+
+		public void setDownloadSite(String value) {
+			DownloadSite = value;
+		};
+
+		public boolean getDisplayMOTD() {
+			return DisplayMOTD;
+		};
+
+		public void setDisplayMOTD(boolean value) {
+			DisplayMOTD = value;
+		};
+
+		public String getMOTD() {
+			return MOTD;
+		};
+
+		public void setMOTD(String value) {
+			MOTD = value;
+		};
+
+		public boolean getUpdateAvailable() {
+			return UpdateAvailable;
+		};
+
+		public void setUpdateAvailable(boolean value) {
+			UpdateAvailable = value;
+		};
 	}
 
-	public class UpdateCheckerArgs implements CallbackArgs
-	{
-	    public boolean Success;
-	    public UpdateInfo Info;
+	public class UpdateCheckerArgs implements CallbackArgs {
+		public boolean Success;
+		public UpdateInfo Info;
 
-	    public boolean getSuccess() { return Success; };
-	    public void setSuccess(boolean value) { Success = value; };
-	    public UpdateInfo getInfo() { return Info; };
-	    public void setInfo(UpdateInfo value) { Info = value; };
+		public boolean getSuccess() {
+			return Success;
+		};
+
+		public void setSuccess(boolean value) {
+			Success = value;
+		};
+
+		public UpdateInfo getInfo() {
+			return Info;
+		};
+
+		public void setInfo(UpdateInfo value) {
+			Info = value;
+		};
 	}
 
 	private Package Package;
 
-	public CallbackHandler<UpdateCheckerArgs> OnUpdateInfoReceived = new CallbackHandler<UpdateCheckerArgs>(); 
-	
-    private CapsClient client;
+	public CallbackHandler<UpdateCheckerArgs> OnUpdateInfoReceived = new CallbackHandler<UpdateCheckerArgs>();
 
-    public UpdateChecker(Class<?> clazz)
-    {
-   		Package = clazz.getPackage();
-    }
+	private CapsClient client;
 
-    public void dispose() throws InterruptedException, IOException
-    {
-        if (client != null)
-        {
-            client.shutdown(true);
-            client = null;
-        }
-    }
+	public UpdateChecker(Class<?> clazz) {
+		Package = clazz.getPackage();
+	}
 
-    /**
-     * Compare a new version with the one from this package
-     * 
-     * @param version Version string in the form <major>.<minor>.<bugfix>.<build>
-     * @return true if the version is higher than the current version
-     * @throws NumberFormatException
-     */
-    private boolean isNewerVersion(String version) throws NumberFormatException
-    {
-    	String[] verss = version.split("[\\.\\-]");
-    	String[] impls = Package.getImplementationVersion().split("[\\.\\-]");
-    	int impl, vers;
-    	for (int i = 0; i < verss.length && i < impls.length; i++)
-    	{
-    		impl = Integer.parseInt(impls[i].trim());
-    		vers = Integer.parseInt(verss[i].trim());
-    		if (impl != vers)
-    			return vers > impl;
-    	}
-    	return verss.length > impls.length;
-    }
-    
-	private class OnDownloadCallback implements FutureCallback<OSD>
-    {
+	public void dispose() throws InterruptedException, IOException {
+		if (client != null) {
+			client.shutdown(true);
+			client = null;
+		}
+	}
+
+	/**
+	 * Compare a new version with the one from this package
+	 * 
+	 * @param version
+	 *            Version string in the form <major>.<minor>.<bugfix>.<build>
+	 * @return true if the version is higher than the current version
+	 * @throws NumberFormatException
+	 */
+	private boolean isNewerVersion(String version) throws NumberFormatException {
+		String[] verss = version.split("[\\.\\-]");
+		String[] impls = Package.getImplementationVersion().split("[\\.\\-]");
+		int impl, vers;
+		for (int i = 0; i < verss.length && i < impls.length; i++) {
+			impl = Integer.parseInt(impls[i].trim());
+			vers = Integer.parseInt(verss[i].trim());
+			if (impl != vers)
+				return vers > impl;
+		}
+		return verss.length > impls.length;
+	}
+
+	private class OnDownloadCallback implements FutureCallback<OSD> {
 		private UpdateCheckerArgs checkArgs;
 
-		public OnDownloadCallback()
-		{
+		public OnDownloadCallback() {
 			checkArgs = new UpdateCheckerArgs();
 			checkArgs.setSuccess(false);
 		}
-		
+
 		@Override
-		public void cancelled()
-		{
-            logger.warn("Failed fetching updatede information");
-            OnUpdateInfoReceived.dispatch(checkArgs);
+		public void cancelled() {
+			logger.warn("Failed fetching updatede information");
+			OnUpdateInfoReceived.dispatch(checkArgs);
 		}
 
 		@Override
-		public void completed(OSD arg)
-		{
-			try
-	        {
-				OSDMap upd = (OSDMap)arg;
-                UpdateInfo inf = new UpdateInfo();
-                inf.setError(upd.get("Error").AsBoolean());
-                inf.setErrMessage(upd.get("ErrMessage").AsString());
-                inf.setCurrentVersion(upd.get("CurrentVersion").AsString());
-                inf.setDownloadSite(upd.get("DownloadSite").AsString());
-                inf.setDisplayMOTD(upd.get("DisplayMOTD").AsBoolean());
-                inf.setMOTD(upd.get("MOTD").AsString());
-                inf.UpdateAvailable = isNewerVersion(inf.getCurrentVersion());
+		public void completed(OSD arg) {
+			try {
+				OSDMap upd = (OSDMap) arg;
+				UpdateInfo inf = new UpdateInfo();
+				inf.setError(upd.get("Error").AsBoolean());
+				inf.setErrMessage(upd.get("ErrMessage").AsString());
+				inf.setCurrentVersion(upd.get("CurrentVersion").AsString());
+				inf.setDownloadSite(upd.get("DownloadSite").AsString());
+				inf.setDisplayMOTD(upd.get("DisplayMOTD").AsBoolean());
+				inf.setMOTD(upd.get("MOTD").AsString());
+				inf.UpdateAvailable = isNewerVersion(inf.getCurrentVersion());
 				checkArgs.Success = !inf.Error;
 				checkArgs.Info = inf;
-            }
-            catch (Exception ex)
-            {
-                logger.warn("Failed decoding updatede information: ", ex);
-            }
-            OnUpdateInfoReceived.dispatch(checkArgs);
+			} catch (Exception ex) {
+				logger.warn("Failed decoding updatede information: ", ex);
+			}
+			OnUpdateInfoReceived.dispatch(checkArgs);
 		}
 
 		@Override
-		public void failed(Exception ex)
-		{
-            logger.warn("Failed fetching updated information: ", ex);
-            OnUpdateInfoReceived.dispatch(checkArgs);
+		public void failed(Exception ex) {
+			logger.warn("Failed fetching updated information: ", ex);
+			OnUpdateInfoReceived.dispatch(checkArgs);
 		}
-    }
-    
-    public void startCheck(URI updateCheckUri) throws IOReactorException
-    {
-        if (client == null)
-        {
-            client = new CapsClient(null, "startCheck");
-            client.executeHttpGet(updateCheckUri, null, new OnDownloadCallback(), 60000);
-        }
-    }
-}
+	}
 
+	public void startCheck(URI updateCheckUri) throws IOReactorException {
+		if (client == null) {
+			client = new CapsClient(null, "startCheck");
+			client.executeHttpGet(updateCheckUri, null, new OnDownloadCallback(), 60000);
+		}
+	}
+}

@@ -63,8 +63,7 @@ import libomv.io.GroupManager.GroupOperationCallbackArgs;
 import libomv.types.UUID;
 import libomv.utils.Callback;
 
-public class GroupList extends JScrollPane implements ActionListener
-{
+public class GroupList extends JScrollPane implements ActionListener {
 	private static final Logger logger = Logger.getLogger(GroupList.class);
 
 	private static final long serialVersionUID = 1L;
@@ -81,15 +80,15 @@ public class GroupList extends JScrollPane implements ActionListener
 	private MainControl _Main;
 	private GridClient _Client;
 	private CommWindow _Comm;
-	
+
 	private JList<Group> jLGroupsList;
-	
+
 	/**
 	 * Constructs a list to display
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
-	public GroupList(MainControl main, CommWindow comm)
-	{
+	public GroupList(MainControl main, CommWindow comm) {
 		super();
 		_Main = main;
 		_Comm = comm;
@@ -99,61 +98,51 @@ public class GroupList extends JScrollPane implements ActionListener
 		_Client.Groups.OnGroupLeaveReply.add(new GroupLeave());
 
 		_Client.Groups.OnCurrentGroups.add(new GroupCurrentGroups());
-//		_Client.Groups.OnGroupCreatedReply.add(new GroupCreated());
-//      _Client.Self.OnMuteListUpdated.add(new MuteListUpdated());
+		// _Client.Groups.OnGroupCreatedReply.add(new GroupCreated());
+		// _Client.Self.OnMuteListUpdated.add(new MuteListUpdated());
 
 		// CapsEventQueue must be working for this
-		try
-		{
+		try {
 			_Client.Groups.RequestCurrentGroups();
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			logger.error(GridClient.Log("Error requesting group names", _Client), ex);
 		}
-		
+
 		// Choose a sensible minimum size.
 		setPreferredSize(new Dimension(200, 320));
 		// Add the friends list to the viewport.
 		setViewportView(getJGroupsList());
 	}
-	
-	private final JList<Group> getJGroupsList()
-	{
-		if (jLGroupsList == null)
-		{
+
+	private final JList<Group> getJGroupsList() {
+		if (jLGroupsList == null) {
 			jLGroupsList = new JList<Group>(new SortedListModel(new DefaultListModel<Group>(), SortOrder.ASCENDING));
 			// install a mouse handler
-			jLGroupsList.addMouseListener(new MouseAdapter()
-			{
+			jLGroupsList.addMouseListener(new MouseAdapter() {
 				@Override
-				public void mouseClicked(MouseEvent e)
-				{
+				public void mouseClicked(MouseEvent e) {
 					// Select the item first.
 					jLGroupsList.setSelectedIndex(jLGroupsList.locationToIndex(e.getPoint()));
 
 					// If an index is selected...
-					if (jLGroupsList.getSelectedIndex() >= 0)
-					{
+					if (jLGroupsList.getSelectedIndex() >= 0) {
 						// If the left mouse button was pressed
-						if (SwingUtilities.isLeftMouseButton(e))
-						{
+						if (SwingUtilities.isLeftMouseButton(e)) {
 							// Look for a double click.
-							if (e.getClickCount() >= 2)
-							{
-								actionPerformed(new ActionEvent(jLGroupsList, ActionEvent.ACTION_PERFORMED, cmdStartIM));
+							if (e.getClickCount() >= 2) {
+								actionPerformed(
+										new ActionEvent(jLGroupsList, ActionEvent.ACTION_PERFORMED, cmdStartIM));
 							}
 						}
 						// If the right mouse button was pressed...
-						else if (SwingUtilities.isRightMouseButton(e))
-						{
+						else if (SwingUtilities.isRightMouseButton(e)) {
 							GroupPopupMenu gpm = new GroupPopupMenu(jLGroupsList.getSelectedValue());
 							gpm.show(jLGroupsList, e.getX(), e.getY());
 						}
 					}
 				}
 			});
-			
+
 			// create Renderer and display
 			jLGroupsList.setCellRenderer(new GroupListRow());
 			// only allow single selections.
@@ -165,37 +154,36 @@ public class GroupList extends JScrollPane implements ActionListener
 	/**
 	 * Find the entry based on the groups UUID
 	 * 
-	 * @param id The UUID of the group
+	 * @param id
+	 *            The UUID of the group
 	 * @return returns the group info if found, null otherwise
 	 */
-	public Group findGroup(UUID id)
-	{
-		DefaultListModel<Group> model = (DefaultListModel<Group>) ((SortedListModel) getJGroupsList().getModel()).getUnsortedModel();
-		for (Enumeration<?> e = model.elements(); e.hasMoreElements();)
-		{
+	public Group findGroup(UUID id) {
+		DefaultListModel<Group> model = (DefaultListModel<Group>) ((SortedListModel) getJGroupsList().getModel())
+				.getUnsortedModel();
+		for (Enumeration<?> e = model.elements(); e.hasMoreElements();) {
 			Group info = (Group) e.nextElement();
-			if (info.getID().equals(id))
-			{
+			if (info.getID().equals(id)) {
 				return info;
 			}
 		}
 		return null;
 	}
-	
-	private Group getSelectedGroupRow()
-	{
+
+	private Group getSelectedGroupRow() {
 		return getJGroupsList().getSelectedValue();
 	}
-	
+
 	/**
 	 * Add a group to the list
 	 * 
-	 * @param info The group info to add to the list
+	 * @param info
+	 *            The group info to add to the list
 	 * @return true if the group was added, false if it was replaced
 	 */
-	public boolean addGroup(Group info)
-	{
-		DefaultListModel<Group> model = (DefaultListModel<Group>) ((SortedListModel) getJGroupsList().getModel()).getUnsortedModel();
+	public boolean addGroup(Group info) {
+		DefaultListModel<Group> model = (DefaultListModel<Group>) ((SortedListModel) getJGroupsList().getModel())
+				.getUnsortedModel();
 		int idx = model.indexOf(info);
 		if (idx < 0)
 			model.add(model.size(), info);
@@ -207,68 +195,64 @@ public class GroupList extends JScrollPane implements ActionListener
 	/**
 	 * Remove a group from the list
 	 * 
-	 * @param info The group info to remove from the list
-	 * @return true if the group info was successfully removed, false if the group could not be found, 
+	 * @param info
+	 *            The group info to remove from the list
+	 * @return true if the group info was successfully removed, false if the group
+	 *         could not be found,
 	 */
-	public boolean removeGroup(Group info)
-	{
-		DefaultListModel<Group> model = (DefaultListModel<Group>) ((SortedListModel) getJGroupsList().getModel()).getUnsortedModel();
+	public boolean removeGroup(Group info) {
+		DefaultListModel<Group> model = (DefaultListModel<Group>) ((SortedListModel) getJGroupsList().getModel())
+				.getUnsortedModel();
 		int idx = model.indexOf(info);
 		if (idx < 0)
 			return false;
 		model.remove(idx);
 		return true;
 	}
-	
+
 	/**
 	 * Change group info in the list
 	 * 
-	 * @param info The group info to change
+	 * @param info
+	 *            The group info to change
 	 * @return true if the group info was successfully changed, false otherwise
 	 */
-	public boolean changeGroup(Group info)
-	{
-		DefaultListModel<Group> model = (DefaultListModel<Group>) ((SortedListModel) getJGroupsList().getModel()).getUnsortedModel();
+	public boolean changeGroup(Group info) {
+		DefaultListModel<Group> model = (DefaultListModel<Group>) ((SortedListModel) getJGroupsList().getModel())
+				.getUnsortedModel();
 		int idx = model.indexOf(info);
 		if (idx >= 0)
 			model.set(idx, info);
 		return idx >= 0;
 	}
 
-	private class GroupListRow extends DefaultListCellRenderer
-	{
+	private class GroupListRow extends DefaultListCellRenderer {
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus)
-		{
+		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+				boolean cellHasFocus) {
 			// The toString() function from Group is used to set the label text
-			JLabel jlblName = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-			
+			JLabel jlblName = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
 			Color background, foreground;
-			if (isSelected)
-			{
+			if (isSelected) {
 				background = list.getSelectionBackground();
 				foreground = list.getSelectionForeground();
-			}
-			else
-			{
+			} else {
 				background = list.getBackground();
 				foreground = list.getForeground();
 			}
 			jlblName.setBackground(background);
 			jlblName.setForeground(foreground);
-			
+
 			Font font = jlblName.getFont();
 			int style = font.getStyle();
 			Group group = (Group) value;
 
-			if (_Client.Self.getActiveGroup().equals(group.getID()))
-			{
+			if (_Client.Self.getActiveGroup().equals(group.getID())) {
 				style |= Font.BOLD;
-			}
-			else
-			{
+			} else {
 				style &= ~Font.BOLD;
 			}
 			jlblName.setFont(new Font(font.getFamily(), style, font.getSize()));
@@ -276,8 +260,7 @@ public class GroupList extends JScrollPane implements ActionListener
 		}
 	}
 
-	private class GroupPopupMenu extends JPopupMenu
-	{
+	private class GroupPopupMenu extends JPopupMenu {
 		private static final long serialVersionUID = 1L;
 		// The friend associated with the menu
 		private Group _Info;
@@ -305,8 +288,7 @@ public class GroupList extends JScrollPane implements ActionListener
 		 * @param info
 		 *            The friend to generate the menu for.
 		 */
-		public GroupPopupMenu(Group info)
-		{
+		public GroupPopupMenu(Group info) {
 			super();
 			this._Info = info;
 
@@ -332,53 +314,45 @@ public class GroupList extends JScrollPane implements ActionListener
 		 * 
 		 * @return The "send message" menu item
 		 */
-		private JMenuItem getJmiSendMessage()
-		{
-			if (jmiSendMessage == null)
-			{
+		private JMenuItem getJmiSendMessage() {
+			if (jmiSendMessage == null) {
 				jmiSendMessage = MainWindow.newMenuItem("Send message", GroupList.this, cmdStartIM);
 			}
 			return jmiSendMessage;
 		}
-	
+
 		/**
 		 * Get the activate group menu item
 		 * 
 		 * @return The "activate group" menu item
 		 */
-		private JMenuItem getJmiActivate(boolean disable)
-		{
-			if (jmiActivate == null)
-			{
+		private JMenuItem getJmiActivate(boolean disable) {
+			if (jmiActivate == null) {
 				jmiActivate = MainWindow.newMenuItem("Activate", GroupList.this, cmdActivate);
 			}
 			jmiActivate.setEnabled(!disable);
 			return jmiActivate;
 		}
-		
+
 		/**
 		 * Get the group invite menu item
 		 * 
 		 * @return The "group invite" menu item
 		 */
-		private JMenuItem getJmiInvite()
-		{
-			if (jmiInvite == null)
-			{
+		private JMenuItem getJmiInvite() {
+			if (jmiInvite == null) {
 				jmiInvite = MainWindow.newMenuItem("Invite ..", GroupList.this, cmdInvite);
 			}
 			return jmiInvite;
 		}
-		
+
 		/**
 		 * Get the group info menu item
 		 * 
 		 * @return The "group info" menu item
 		 */
-		private JMenuItem getJmiGroupInfo()
-		{
-			if (jmiGroupInfo == null)
-			{
+		private JMenuItem getJmiGroupInfo() {
+			if (jmiGroupInfo == null) {
 				jmiGroupInfo = MainWindow.newMenuItem("Info ..", GroupList.this, cmdProfile);
 			}
 			return jmiGroupInfo;
@@ -389,10 +363,8 @@ public class GroupList extends JScrollPane implements ActionListener
 		 * 
 		 * @return The "create group" menu item
 		 */
-		private JMenuItem getJmiCreateGroup()
-		{
-			if (jmiCreateGroup == null)
-			{
+		private JMenuItem getJmiCreateGroup() {
+			if (jmiCreateGroup == null) {
 				jmiCreateGroup = MainWindow.newMenuItem("Create ..", GroupList.this, cmdCreateGroup);
 			}
 			return jmiCreateGroup;
@@ -403,10 +375,8 @@ public class GroupList extends JScrollPane implements ActionListener
 		 * 
 		 * @return The "search group" menu item
 		 */
-		private JMenuItem getJmiSearchGroup()
-		{
-			if (jmiSearchGroup == null)
-			{
+		private JMenuItem getJmiSearchGroup() {
+			if (jmiSearchGroup == null) {
 				jmiSearchGroup = MainWindow.newMenuItem("Search ..", GroupList.this, cmdSearchGroup);
 			}
 			return jmiSearchGroup;
@@ -417,46 +387,37 @@ public class GroupList extends JScrollPane implements ActionListener
 		 * 
 		 * @return The remove as friend menu item
 		 */
-		private JMenuItem getJmiLeaveGroup()
-		{
-			if (jmiLeaveGroup == null)
-			{
+		private JMenuItem getJmiLeaveGroup() {
+			if (jmiLeaveGroup == null) {
 				jmiLeaveGroup = MainWindow.newMenuItem("Leave ..", GroupList.this, cmdLeaveGroup);
 			}
 			return jmiLeaveGroup;
 		}
 	}
-	
-	private class GroupCurrentGroups implements Callback<CurrentGroupsCallbackArgs>
-	{
+
+	private class GroupCurrentGroups implements Callback<CurrentGroupsCallbackArgs> {
 		@Override
-		public boolean callback(final CurrentGroupsCallbackArgs params)
-		{
-			EventQueue.invokeLater(new Runnable()
-			{
+		public boolean callback(final CurrentGroupsCallbackArgs params) {
+			EventQueue.invokeLater(new Runnable() {
 				@Override
-				public void run()
-				{
-					DefaultListModel<Group> model = (DefaultListModel<Group>) ((SortedListModel) getJGroupsList().getModel()).getUnsortedModel();
+				public void run() {
+					DefaultListModel<Group> model = (DefaultListModel<Group>) ((SortedListModel) getJGroupsList()
+							.getModel()).getUnsortedModel();
 					model.clear();
 					model.copyInto(params.getGroups().values().toArray());
 				}
 			});
 			return false;
 		}
-		
+
 	}
-	
-	private class GroupJoined implements Callback<GroupOperationCallbackArgs>
-	{
+
+	private class GroupJoined implements Callback<GroupOperationCallbackArgs> {
 		@Override
-		public boolean callback(final GroupOperationCallbackArgs params)
-		{
-			EventQueue.invokeLater(new Runnable()
-			{
+		public boolean callback(final GroupOperationCallbackArgs params) {
+			EventQueue.invokeLater(new Runnable() {
 				@Override
-				public void run()
-				{
+				public void run() {
 					if (params.getSuccess())
 						;
 				}
@@ -464,81 +425,53 @@ public class GroupList extends JScrollPane implements ActionListener
 			return false;
 		}
 	}
-	
-	private class GroupLeave implements Callback<GroupOperationCallbackArgs>
-	{
+
+	private class GroupLeave implements Callback<GroupOperationCallbackArgs> {
 		@Override
-		public boolean callback(GroupOperationCallbackArgs args)
-		{
+		public boolean callback(GroupOperationCallbackArgs args) {
 			return false;
 		}
 	}
-	
+
 	@Override
-	public void actionPerformed(ActionEvent e)
-	{
+	public void actionPerformed(ActionEvent e) {
 		final Group info = getSelectedGroupRow();
-		if (e.getActionCommand().equals(cmdPayTo))
-		{
-			// TODO: open a money transfer dialog			
-		}
-		else if (e.getActionCommand().equals(cmdProfile))
-		{
-			// TODO: open group profile dialog			
-		}
-		else if (e.getActionCommand().equals(cmdStartIM))
-		{
-			if (_Comm.getChannel(info.getID()) == null)
-			{
+		if (e.getActionCommand().equals(cmdPayTo)) {
+			// TODO: open a money transfer dialog
+		} else if (e.getActionCommand().equals(cmdProfile)) {
+			// TODO: open group profile dialog
+		} else if (e.getActionCommand().equals(cmdStartIM)) {
+			if (_Comm.getChannel(info.getID()) == null) {
 				GroupChannel channel = new GroupChannel(_Main, info.getName(), info.getID(), info.getID());
 				_Comm.addChannel(channel);
 
 				// We need to request to join the group chat
-				try
-				{
+				try {
 					_Client.Self.RequestJoinGroupChat(info.getID());
 					_Comm.setFocus(null, info.getID());
-				}
-				catch (Exception ex)
-				{
+				} catch (Exception ex) {
 					logger.error(GridClient.Log("Start GroupIM failed", _Client), ex);
 				}
 			}
 			_Comm.setFocus(null, info.getID());
-		}
-		else if (e.getActionCommand().equals(cmdActivate))
-		{
-			try
-			{
+		} else if (e.getActionCommand().equals(cmdActivate)) {
+			try {
 				_Client.Groups.ActivateGroup(info.getID());
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				logger.error(GridClient.Log("Activate Group failed", _Client), ex);
 			}
-		}
-		else if (e.getActionCommand().equals(cmdLeaveGroup))
-		{
+		} else if (e.getActionCommand().equals(cmdLeaveGroup)) {
 			// Terminate the membership
-			try
-			{
+			try {
 				_Client.Groups.LeaveGroup(info.getID());
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				logger.error(GridClient.Log("Leave Group failed", _Client), ex);
 			}
-		}
-		else if (e.getActionCommand().equals(cmdSearchGroup))
-		{
+		} else if (e.getActionCommand().equals(cmdSearchGroup)) {
 			// TODO: open search group dialog
-		}
-		else if (e.getActionCommand().equals(cmdCreateGroup))
-		{
+		} else if (e.getActionCommand().equals(cmdCreateGroup)) {
 			// TODO: open create group dialog
-		}
-		else if (e.getActionCommand().equals(cmdInvite))
-		{
+		} else if (e.getActionCommand().equals(cmdInvite)) {
 			// TODO: Open Group Invitation window
 		}
 	}

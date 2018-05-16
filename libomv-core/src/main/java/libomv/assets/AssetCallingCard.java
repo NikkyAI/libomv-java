@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -35,74 +35,66 @@ import libomv.types.UUID;
 import libomv.utils.Helpers;
 
 /** Represents a Callingcard with AvatarID and Position vector */
-public class AssetCallingCard extends AssetItem
-{
+public class AssetCallingCard extends AssetItem {
 	/* Returns asset type */
 	@Override
-	public AssetType getAssetType()
-	{
+	public AssetType getAssetType() {
 		return AssetType.CallingCard;
 	}
 
 	/** UUID of the Callingcard target avatar */
-	public UUID getAvatarID()
-	{
+	public UUID getAvatarID() {
 		return AssetID;
 	}
 
 	/**
 	 * Construct an Asset object of type Callingcard
-	 * 
-	 * @param assetID A unique @see UUID specific to this asset
-	 * @param assetData A byte array containing the raw asset data
+	 *
+	 * @param assetID
+	 *            A unique @see UUID specific to this asset
+	 * @param assetData
+	 *            A byte array containing the raw asset data
 	 */
-	public AssetCallingCard(UUID assetID, byte[] assetData)
-	{
+	public AssetCallingCard(UUID assetID, byte[] assetData) {
 		super(assetID, assetData);
-     }
-	
+	}
+
 	/**
 	 * Construct an Asset object of type Callingcard
-	 * 
-	 * @param avatarID UUID of the target avatar
+	 *
+	 * @param avatarID
+	 *            UUID of the target avatar
 	 */
-	public AssetCallingCard(UUID avatarID)
-	{
+	public AssetCallingCard(UUID avatarID) {
 		super(avatarID, null);
-    }
+	}
 
 	/**
 	 * Encode the raw contents of a string with the specific Callingcard format
 	 */
 	@Override
-	protected void encode()
-	{
+	protected void encode() {
 		String temp = "Callingcard version 2\n" + "avatar_id " + AssetID.toString() + "\n";
 		AssetData = Helpers.StringToBytes(temp);
 	}
 
 	/**
 	 * Decode the raw asset data, populating the AvatarID and Position
-	 * 
+	 *
 	 * @return True if the AssetData was successfully decoded to a UUID and Vector
 	 */
 	@Override
-	protected boolean decode()
-	{
+	protected boolean decode() {
 		if (AssetData == null)
 			return false;
 
-		try
-		{
+		try {
 			String text = Helpers.BytesToString(AssetData);
-			if (text != null && text.toLowerCase().contains("callingcard version 2"))
-			{
+			if (text != null && text.toLowerCase().contains("callingcard version 2")) {
 				AssetID = new UUID(text.substring(text.indexOf("avatar_id") + 9, 38).trim());
 				return true;
 			}
-		}
-		catch (UnsupportedEncodingException e)
-		{
+		} catch (UnsupportedEncodingException e) {
 		}
 		return false;
 	}

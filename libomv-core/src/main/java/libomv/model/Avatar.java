@@ -6,8 +6,7 @@ public interface Avatar {
 	/**
 	 * Contains an animation currently being played by an agent
 	 */
-	public class Animation
-	{
+	public class Animation {
 		// The ID of the animation asset
 		public UUID AnimationID;
 		// A number to indicate start order of currently playing animations

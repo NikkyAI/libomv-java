@@ -48,17 +48,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
-public class AboutDialog extends JDialog
-{
+public class AboutDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private JPanel jContentPane = null;
-	
+
 	private JScrollPane jScrLicense;
 	private JScrollPane jScrCredits;
 	private JButton jBtnClose;
-	
-	public AboutDialog(JFrame owner)
-	{
+
+	public AboutDialog(JFrame owner) {
 		super(owner);
 		setTitle("About Libomv-Java");
 		setSize(524, 480);
@@ -69,34 +67,30 @@ public class AboutDialog extends JDialog
 		setContentPane(getJContentPane());
 		getRootPane().setDefaultButton(getJBtnClose());
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		
+
 		// Add a component listener to this dialog to reset the text area scroll bars
 		// after the GroupLayout messed with it
-		addComponentListener(new ComponentAdapter()
-		{
+		addComponentListener(new ComponentAdapter() {
 			@Override
-			public void componentShown(ComponentEvent e)
-			{
+			public void componentShown(ComponentEvent e) {
 				JScrollBar scrollBar = getScrLicense().getVerticalScrollBar();
 				scrollBar.setValue(scrollBar.getMinimum());
-				
+
 				scrollBar = getScrCredits().getVerticalScrollBar();
 				scrollBar.setValue(scrollBar.getMinimum());
 			}
 		});
 	}
-	
+
 	/**
 	 * This method initializes jContentPane
 	 * 
 	 * @return javax.swing.JPanel
 	 */
-	private JPanel getJContentPane()
-	{
-		if (jContentPane == null)
-		{
+	private JPanel getJContentPane() {
+		if (jContentPane == null) {
 			jContentPane = new JPanel();
-						
+
 			ImagePanel jPanImage = new ImagePanel(Resources.IMAGE_LOGO);
 
 			JTextArea jTxtVersion;
@@ -110,68 +104,64 @@ public class AboutDialog extends JDialog
 			jTxtCopyright.setFont(new Font("Tahoma", Font.PLAIN, 11));
 			jTxtCopyright.setEditable(false);
 			jTxtCopyright.setText("Copyright (C) 2009-2013 by Frederick Martian");
-			
+
 			GroupLayout gl_jContentPane = new GroupLayout(jContentPane);
-			gl_jContentPane.setHorizontalGroup(
-				gl_jContentPane.createParallelGroup(Alignment.LEADING)
-					.addGroup(Alignment.TRAILING, gl_jContentPane.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(gl_jContentPane.createParallelGroup(Alignment.TRAILING)
-							.addComponent(getScrLicense(), Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE)
-							.addComponent(getJBtnClose(), Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 87, GroupLayout.PREFERRED_SIZE)
+			gl_jContentPane.setHorizontalGroup(gl_jContentPane.createParallelGroup(Alignment.LEADING).addGroup(
+					Alignment.TRAILING,
+					gl_jContentPane.createSequentialGroup().addContainerGap().addGroup(gl_jContentPane
+							.createParallelGroup(Alignment.TRAILING)
+							.addComponent(getScrLicense(), Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 498,
+									Short.MAX_VALUE)
+							.addComponent(getJBtnClose(), Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 87,
+									GroupLayout.PREFERRED_SIZE)
 							.addGroup(Alignment.LEADING, gl_jContentPane.createSequentialGroup()
-								.addComponent(jPanImage, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addGroup(gl_jContentPane.createParallelGroup(Alignment.LEADING)
-									.addComponent(jTxtCopyright, GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
-									.addComponent(jTxtVersion, GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)))
-							.addComponent(getScrCredits(), Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE))
-						.addContainerGap())
-			);
-			gl_jContentPane.setVerticalGroup(
-				gl_jContentPane.createParallelGroup(Alignment.LEADING)
-					.addGroup(gl_jContentPane.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(gl_jContentPane.createParallelGroup(Alignment.LEADING, false)
+									.addComponent(
+											jPanImage, GroupLayout.PREFERRED_SIZE, 126, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addGroup(gl_jContentPane.createParallelGroup(Alignment.LEADING)
+											.addComponent(jTxtCopyright, GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
+											.addComponent(jTxtVersion, GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)))
+							.addComponent(getScrCredits(), Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 498,
+									Short.MAX_VALUE))
+							.addContainerGap()));
+			gl_jContentPane.setVerticalGroup(gl_jContentPane.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_jContentPane.createSequentialGroup().addContainerGap().addGroup(gl_jContentPane
+							.createParallelGroup(Alignment.LEADING, false)
 							.addComponent(jPanImage, GroupLayout.PREFERRED_SIZE, 107, GroupLayout.PREFERRED_SIZE)
 							.addGroup(gl_jContentPane.createSequentialGroup()
-								.addComponent(jTxtVersion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(jTxtCopyright, GroupLayout.PREFERRED_SIZE, 37, GroupLayout.PREFERRED_SIZE)))
-						.addPreferredGap(ComponentPlacement.UNRELATED)
-						.addComponent(getScrLicense(), GroupLayout.PREFERRED_SIZE, 172, GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(getScrCredits(), GroupLayout.PREFERRED_SIZE, 137, GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(getJBtnClose(), GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addContainerGap())
-			);
+									.addComponent(jTxtVersion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+											GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE,
+											Short.MAX_VALUE)
+									.addComponent(jTxtCopyright, GroupLayout.PREFERRED_SIZE, 37,
+											GroupLayout.PREFERRED_SIZE)))
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(getScrLicense(), GroupLayout.PREFERRED_SIZE, 172, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(getScrCredits(), GroupLayout.PREFERRED_SIZE, 137, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED).addComponent(getJBtnClose(),
+									GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addContainerGap()));
 			jContentPane.setLayout(gl_jContentPane);
 		}
 		return jContentPane;
 	}
-	
-	private JButton getJBtnClose()
-	{
-		if (jBtnClose == null)
-		{
+
+	private JButton getJBtnClose() {
+		if (jBtnClose == null) {
 			jBtnClose = new JButton("Close");
-			jBtnClose.addActionListener(new ActionListener()
-			{
+			jBtnClose.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent e)
-				{
+				public void actionPerformed(ActionEvent e) {
 					dispose();
 				}
 			});
 		}
 		return jBtnClose;
 	}
-	
-	private JScrollPane getScrLicense()
-	{
-		if (jScrLicense == null)
-		{
+
+	private JScrollPane getScrLicense() {
+		if (jScrLicense == null) {
 			JTextArea jTxtLicenses = new JTextArea();
 			jTxtLicenses.setFont(new Font("Tahoma", Font.PLAIN, 11));
 			jTxtLicenses.setEditable(false);
@@ -180,11 +170,9 @@ public class AboutDialog extends JDialog
 		}
 		return jScrLicense;
 	}
-	
-	private JScrollPane getScrCredits()
-	{
-		if (jScrCredits == null)
-		{
+
+	private JScrollPane getScrCredits() {
+		if (jScrCredits == null) {
 			JTextArea jTxtCredits = new JTextArea();
 			jTxtCredits.setFont(new Font("Tahoma", Font.PLAIN, 11));
 			jTxtCredits.setEditable(false);

@@ -6,7 +6,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -47,14 +47,12 @@ import libomv.utils.Helpers;
 import libomv.utils.RefObject;
 
 // A 128-bit Universally Unique Identifier, used throughout SL and OpenSim
-public class UUID implements Serializable
-{
+public class UUID implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private byte[] data;
 
-	private static byte[] makeNewGuid()
-	{
+	private static byte[] makeNewGuid() {
 		SecureRandom rand = new SecureRandom();
 		byte[] guid = new byte[16];
 		rand.nextBytes(guid);
@@ -64,122 +62,103 @@ public class UUID implements Serializable
 	/**
 	 * Constructor that creates a new random UUID representation
 	 */
-	public UUID()
-	{
+	public UUID() {
 		data = makeNewGuid();
 	}
 
 	/**
 	 * Constructor that takes a string UUID representation
-	 * 
+	 *
 	 * @param val
-	 *            A string representation of a UUID, case insensitive and can
-	 *            either be hyphenated or non-hyphenated
-	 *            <example>UUID("11f8aa9c-b071-4242-836b-13b7abe0d489"
-	 *            )</example>
+	 *            A string representation of a UUID, case insensitive and can either
+	 *            be hyphenated or non-hyphenated
+	 *            <example>UUID("11f8aa9c-b071-4242-836b-13b7abe0d489" )</example>
 	 */
-	public UUID(String string)
-	{
+	public UUID(String string) {
 		fromString(string);
 	}
 
 	/**
 	 * Constructor that takes a ByteBuffer containing a UUID
-	 * 
+	 *
 	 * @param source
 	 *            ByteBuffer containing a 16 byte UUID
 	 */
-	public UUID(ByteBuffer byteArray)
-	{
+	public UUID(ByteBuffer byteArray) {
 		data = new byte[16];
 		byteArray.get(data);
 	}
 
 	/**
 	 * Constructor that takes a byte array containing a UUID
-	 * 
+	 *
 	 * @param source
 	 *            Byte array containing a 16 byte UUID
 	 * @param pos
 	 *            Beginning offset in the array
 	 */
-	public UUID(byte[] byteArray)
-	{
+	public UUID(byte[] byteArray) {
 		this(byteArray, 0);
 	}
 
-	public UUID(byte[] byteArray, int pos)
-	{
+	public UUID(byte[] byteArray, int pos) {
 		data = new byte[16];
 		System.arraycopy(byteArray, pos, data, 0, Math.min(byteArray.length, 16));
 	}
 
 	/**
-	 * Constructor that takes an unsigned 64-bit unsigned integer to convert to
-	 * a UUID
-	 * 
+	 * Constructor that takes an unsigned 64-bit unsigned integer to convert to a
+	 * UUID
+	 *
 	 * @param val
 	 *            64-bit unsigned integer to convert to a UUID
 	 */
-	public UUID(long value)
-	{
+	public UUID(long value) {
 		this(value, false);
 	}
 
-	public UUID(long value, boolean le)
-	{
+	public UUID(long value, boolean le) {
 		data = new byte[16];
-		if (le)
-		{
+		if (le) {
 			Helpers.UInt64ToBytesL(value, data, 0);
-		}
-		else
-		{
+		} else {
 			Helpers.UInt64ToBytesB(value, data, 8);
 		}
 	}
 
-	public UUID(boolean randomize)
-	{
-		if (randomize)
-		{
+	public UUID(boolean randomize) {
+		if (randomize) {
 			data = makeNewGuid();
-		}
-		else
-		{
+		} else {
 			data = new byte[16];
 		}
 	}
 
-	public UUID(XmlPullParser parser) throws XmlPullParserException, IOException
-	{
+	public UUID(XmlPullParser parser) throws XmlPullParserException, IOException {
 		// entering with event on START_TAG for the tag name identifying the UUID
 		// call nextTag() to proceed to inner <UUID> or <Guid> element
 		int eventType = parser.next();
-		switch (eventType)
-		{
-			case XmlPullParser.START_TAG:
-				if (parser.getName().equalsIgnoreCase("GUID") || parser.getName().equalsIgnoreCase("UUID"))
-				{
-					// we got apparently an UUID, try to create it from the string
-					fromString(parser.nextText());
-				}
-				else
-				{
-					// apperently not an UUID, skip entire element and generate UUID.Zero  
-					Helpers.skipElement(parser);
-				}
-				parser.nextTag(); // Advance to outer end tag
-				break;
-			case XmlPullParser.TEXT:
-				fromString(parser.getText());
-				parser.nextTag(); // Advance to end tag
-				break;
-			case XmlPullParser.END_TAG:
-				// empty outer tag, generate UUID.Zero  
-			    break;
-			default:
-	    		throw new XmlPullParserException("Unexpected Tag event " + eventType + " for tag name " + parser.getName(), parser, null);
+		switch (eventType) {
+		case XmlPullParser.START_TAG:
+			if (parser.getName().equalsIgnoreCase("GUID") || parser.getName().equalsIgnoreCase("UUID")) {
+				// we got apparently an UUID, try to create it from the string
+				fromString(parser.nextText());
+			} else {
+				// apperently not an UUID, skip entire element and generate UUID.Zero
+				Helpers.skipElement(parser);
+			}
+			parser.nextTag(); // Advance to outer end tag
+			break;
+		case XmlPullParser.TEXT:
+			fromString(parser.getText());
+			parser.nextTag(); // Advance to end tag
+			break;
+		case XmlPullParser.END_TAG:
+			// empty outer tag, generate UUID.Zero
+			break;
+		default:
+			throw new XmlPullParserException("Unexpected Tag event " + eventType + " for tag name " + parser.getName(),
+					parser, null);
 		}
 		if (data == null)
 			data = new byte[16];
@@ -187,117 +166,102 @@ public class UUID implements Serializable
 
 	/**
 	 * Copy constructor
-	 * 
+	 *
 	 * @param val
 	 *            UUID to copy
 	 */
-	public UUID(UUID val)
-	{
+	public UUID(UUID val) {
 		data = new byte[16];
 		System.arraycopy(val.data, 0, data, 0, 16);
 	}
 
 	/**
 	 * Parses a string UUID representation and assigns its value to the object
-	 * <example
-	 * >uuid.FromString("11f8aa9c-b071-4242-836b-13b7abe0d489")</example>
-	 * 
+	 * <example >uuid.FromString("11f8aa9c-b071-4242-836b-13b7abe0d489")</example>
+	 *
 	 * @param val
-	 *            A string representation of a UUID, case insensitive and can
-	 *            either be hyphenated or non-hyphenated
+	 *            A string representation of a UUID, case insensitive and can either
+	 *            be hyphenated or non-hyphenated
 	 * @return true when successful, false otherwise
 	 */
-	private boolean fromString(String string)
-	{
+	private boolean fromString(String string) {
 		// Always create new data array to prevent overwriting byref data
 		data = new byte[16];
 
-		if (string.length() >= 38 && string.charAt(0) == '{' && string.charAt(37) == '}')
-		{
+		if (string.length() >= 38 && string.charAt(0) == '{' && string.charAt(37) == '}') {
 			string = string.substring(1, 37);
-		}
-		else if (string.length() > 36)
-		{
+		} else if (string.length() > 36) {
 			string = string.substring(0, 36);
 		}
 		// Any valid string is now either 32 or 36 bytes long
-		if (string.length() == 36 && string.charAt(8) == '-' && string.charAt(13) == '-' && 
-				                     string.charAt(18) == '-' && string.charAt(23) == '-')
-		{
+		if (string.length() == 36 && string.charAt(8) == '-' && string.charAt(13) == '-' && string.charAt(18) == '-'
+				&& string.charAt(23) == '-') {
 			string = string.substring(0, 36).replaceAll("-", "");
 		}
 
-		// Any valid string contains now only hexadecimal characters in its first 32 bytes	
-		if (string.length() >= 32 && string.substring(0, 32).matches("[0-9A-Fa-f]+"))
-		{
-			try
-			{
-				for (int i = 0; i < 16; ++i)
-				{
+		// Any valid string contains now only hexadecimal characters in its first 32
+		// bytes
+		if (string.length() >= 32 && string.substring(0, 32).matches("[0-9A-Fa-f]+")) {
+			try {
+				for (int i = 0; i < 16; ++i) {
 					data[i] = (byte) Integer.parseInt(string.substring(i * 2, (i * 2) + 2), 16);
 				}
 				return true;
+			} catch (NumberFormatException ex) {
 			}
-			catch (NumberFormatException ex)
-			{}
 		}
 		return false;
 	}
 
 	/**
 	 * Returns a copy of the raw bytes for this UUID
-	 * 
+	 *
 	 * @return A 16 byte array containing this UUID
 	 */
-	public byte[] getBytes()
-	{
+	public byte[] getBytes() {
 		return data;
 	}
 
 	/**
 	 * Copies the raw bytes for this UUID into a ByteBuffer
-	 * 
+	 *
 	 * @param bytes
 	 *            The ByteBuffer in which the 16 byte of this UUID are copied
 	 */
-	public void write(ByteBuffer bytes)
-	{
+	public void write(ByteBuffer bytes) {
 		bytes.put(data);
 	}
 
 	/**
 	 * Copies the raw bytes for this UUID into an OutputStreaam
-	 * 
+	 *
 	 * @param stream
 	 *            The OutputStream in which the 16 byte of this UUID are copied
 	 */
-	public void write(OutputStream stream) throws IOException
-	{
+	public void write(OutputStream stream) throws IOException {
 		stream.write(data);
 	}
+
 	/**
 	 * Writes the raw bytes for this UUID to a byte array
-	 * 
+	 *
 	 * @param dest
 	 *            Destination byte array
 	 * @param pos
-	 *            Position in the destination array to start writeing. Must be
-	 *            at least 16 bytes before the end of the array
+	 *            Position in the destination array to start writeing. Must be at
+	 *            least 16 bytes before the end of the array
 	 */
-	public int toBytes(byte[] dest, int pos)
-	{
+	public int toBytes(byte[] dest, int pos) {
 		int length = Math.min(data.length, dest.length - pos);
 		System.arraycopy(data, 0, dest, pos, length);
 		return length;
 	}
 
-	public long AsLong()
-	{
+	public long AsLong() {
 		return AsLong(false);
 	}
 
-	public long AsLong(boolean le)
-	{
+	public long AsLong(boolean le) {
 		if (le)
 			return Helpers.BytesToUInt64L(data);
 
@@ -306,11 +270,10 @@ public class UUID implements Serializable
 
 	/**
 	 * Calculate an LLCRC (cyclic redundancy check) for this LLUUID
-	 * 
+	 *
 	 * @returns The CRC checksum for this UUID
 	 */
-	public long CRC()
-	{
+	public long CRC() {
 		long retval = 0;
 
 		retval += ((data[3] << 24) + (data[2] << 16) + (data[1] << 8) + data[0]);
@@ -321,56 +284,51 @@ public class UUID implements Serializable
 		return retval;
 	}
 
-	public static UUID GenerateUUID()
-	{
+	public static UUID GenerateUUID() {
 		return new UUID(makeNewGuid());
 	}
-	
-	public void serializeXml(XmlSerializer writer, String namespace, String name) throws IllegalArgumentException, IllegalStateException, IOException
-	{
-        writer.startTag(namespace, name);
-	    writer.startTag(namespace, "UUID").text(toString()).endTag(namespace, "UUID");
-        writer.endTag(namespace, name);
+
+	public void serializeXml(XmlSerializer writer, String namespace, String name)
+			throws IllegalArgumentException, IllegalStateException, IOException {
+		writer.startTag(namespace, name);
+		writer.startTag(namespace, "UUID").text(toString()).endTag(namespace, "UUID");
+		writer.endTag(namespace, name);
 	}
 
 	/**
 	 * Return a hash code for this UUID
-	 * 
+	 *
 	 * @return An integer composed of all the UUID bytes XORed together
 	 */
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		return Arrays.hashCode(data);
 	}
 
 	/**
 	 * Comparison function
-	 * 
+	 *
 	 * @param o
 	 *            An object to compare to this UUID
 	 * @return True if the object is a UUID and both UUIDs are equal
 	 */
 	@Override
-	public boolean equals(Object obj)
-	{
-		return obj != null && obj instanceof UUID && equals((UUID)obj);
+	public boolean equals(Object obj) {
+		return obj != null && obj instanceof UUID && equals((UUID) obj);
 	}
 
 	/**
 	 * Comparison function
-	 * 
+	 *
 	 * @param uuid
 	 *            UUID to compare to
 	 * @return True if the UUIDs are equal, otherwise false
 	 */
-	public boolean equals(UUID uuid)
-	{
-		if (uuid != null)
-		{
+	public boolean equals(UUID uuid) {
+		if (uuid != null) {
 			if (uuid.data == null && this.data == null)
 				return true;
-			
+
 			if (uuid.data != null && this.data != null)
 				return Arrays.equals(this.data, uuid.data);
 		}
@@ -379,14 +337,14 @@ public class UUID implements Serializable
 
 	/**
 	 * Generate a UUID from a string
-	 * 
-	 * @param val A string representation of a UUID, case insensitive and can
-	 *            either be hyphenated or non-hyphenated
-	 *            example: UUID.Parse("11f8aa9c-b071-4242-836b-13b7abe0d489")
+	 *
+	 * @param val
+	 *            A string representation of a UUID, case insensitive and can either
+	 *            be hyphenated or non-hyphenated example:
+	 *            UUID.Parse("11f8aa9c-b071-4242-836b-13b7abe0d489")
 	 * @returns a new UUID if successful, null otherwise
 	 */
-	public static UUID parse(String val)
-	{
+	public static UUID parse(String val) {
 		UUID uuid = new UUID(false);
 		if (uuid.fromString(val))
 			return uuid;
@@ -395,55 +353,47 @@ public class UUID implements Serializable
 
 	/**
 	 * Generate a UUID from a string
-	 * 
+	 *
 	 * @param val
-	 *            A string representation of a UUID, case insensitive and can
-	 *            either be hyphenated or non-hyphenated
+	 *            A string representation of a UUID, case insensitive and can either
+	 *            be hyphenated or non-hyphenated
 	 * @param result
 	 *            Will contain the parsed UUID if successful, otherwise null
 	 * @return True if the string was successfully parse, otherwise false
 	 *         <example>UUID.TryParse("11f8aa9c-b071-4242-836b-13b7abe0d489",
 	 *         result)</example>
 	 */
-	public static boolean TryParse(String val, RefObject<UUID> result)
-	{
-		if (val == null || val.length() == 0 || (val.charAt(0) == '{' && val.length() < 38) || (val.length() < 36 && val.length() != 32))
-		{
+	public static boolean TryParse(String val, RefObject<UUID> result) {
+		if (val == null || val.length() == 0 || (val.charAt(0) == '{' && val.length() < 38)
+				|| (val.length() < 36 && val.length() != 32)) {
 			result.argvalue = UUID.Zero;
 			return false;
 		}
 
-		try
-		{
+		try {
 			result.argvalue = parse(val);
 			return true;
-		}
-		catch (Throwable t)
-		{
+		} catch (Throwable t) {
 			result.argvalue = UUID.Zero;
 			return false;
 		}
 	}
 
 	/**
-	 * Combine two UUIDs together by taking the MD5 hash of a byte array
-	 * containing both UUIDs
-	 * 
+	 * Combine two UUIDs together by taking the MD5 hash of a byte array containing
+	 * both UUIDs
+	 *
 	 * @param first
 	 *            First UUID to combine
 	 * @param second
 	 *            Second UUID to combine
 	 * @return The UUID product of the combination
 	 */
-	public static UUID Combine(UUID first, UUID second)
-	{
+	public static UUID Combine(UUID first, UUID second) {
 		MessageDigest md;
-		try
-		{
+		try {
 			md = MessageDigest.getInstance("MD5");
-		}
-		catch (NoSuchAlgorithmException e)
-		{
+		} catch (NoSuchAlgorithmException e) {
 			return null;
 		}
 
@@ -456,21 +406,18 @@ public class UUID implements Serializable
 
 	/**
 	 * XOR two UUIDs together
-	 * 
+	 *
 	 * @param uuid
 	 *            UUID to combine
 	 */
-	public void XOr(UUID uuid)
-	{
+	public void XOr(UUID uuid) {
 		int i = 0;
-		for (byte b : uuid.getBytes())
-		{
+		for (byte b : uuid.getBytes()) {
 			data[i++] ^= b;
 		}
 	}
 
-	public static UUID XOr(UUID first, UUID second)
-	{
+	public static UUID XOr(UUID first, UUID second) {
 		UUID uuid = new UUID(first);
 		uuid.XOr(second);
 		return uuid;
@@ -478,46 +425,39 @@ public class UUID implements Serializable
 
 	/**
 	 * Get a hyphenated string representation of this UUID
-	 * 
+	 *
 	 * @return A string representation of this UUID, lowercase and with hyphens
 	 *         <example>11f8aa9c-b071-4242-836b-13b7abe0d489</example>
 	 */
 	@Override
-	public String toString()
-	{
-		if (data == null)
-		{
+	public String toString() {
+		if (data == null) {
 			return ZeroString;
 		}
 
 		StringBuffer uuid = new StringBuffer(36);
 
-		for (int i = 0; i < 16; ++i)
-		{
+		for (int i = 0; i < 16; ++i) {
 			byte value = data[i];
 			uuid.append(String.format("%02x", value & 0xFF));
-			if (i == 3 || i == 5 || i == 7 || i == 9)
-			{
+			if (i == 3 || i == 5 || i == 7 || i == 9) {
 				uuid.append("-");
 			}
 		}
 		return uuid.toString();
 	}
 
-	public boolean isZero()
-	{
-		return equals(Zero);		
+	public boolean isZero() {
+		return equals(Zero);
 	}
-	
-	public static boolean isZero(UUID uuid)
-	{
+
+	public static boolean isZero(UUID uuid) {
 		if (uuid != null)
 			return uuid.equals(Zero);
 		return false;
 	}
-	
-	public static boolean isZeroOrNull(UUID uuid)
-	{
+
+	public static boolean isZeroOrNull(UUID uuid) {
 		if (uuid != null)
 			return uuid.equals(Zero);
 		return true;

@@ -257,6 +257,7 @@
 	<modules>
 		<module>libomv-jj2k</module>
 		<module>libomv-core</module>
+		<module>libomv-io</module>
 		<module>libomv-gui</module>
 	</modules>
 

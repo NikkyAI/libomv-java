@@ -42,247 +42,210 @@ import libomv.types.Vector3;
 import libomv.utils.Callback;
 import libomv.utils.TimeoutEvent;
 
-public class BufferSound extends MediaObject
-{
+public class BufferSound extends MediaObject {
 	private static final Logger logger = Logger.getLogger(BufferSound.class);
 
-    private UUID containerId;
-    private boolean prefetchOnly;
-    private boolean looping;
+	private UUID containerId;
+	private boolean prefetchOnly;
+	private boolean looping;
 
-    /**
-     * The individual volume setting for THIS object
-     */
-    private float volumeSetting = 0.5f;
-    public void setVolumeSetting(float value)
-    {
-    	volumeSetting = value;
-    }
-    
-    public float getVolumeSetting()
-    {
-    	return volumeSetting;
-    }
-  
-    /**
-     * Handle arrival of a sound resource.
-     */
-    public class Assets_OnSoundReceived implements Callback<AssetDownload>
-    {
+	/**
+	 * The individual volume setting for THIS object
+	 */
+	private float volumeSetting = 0.5f;
+
+	public void setVolumeSetting(float value) {
+		volumeSetting = value;
+	}
+
+	public float getVolumeSetting() {
+		return volumeSetting;
+	}
+
+	/**
+	 * Handle arrival of a sound resource.
+	 */
+	public class Assets_OnSoundReceived implements Callback<AssetDownload> {
 		@Override
-		public boolean callback(AssetDownload transfer)
-		{
-	        if (transfer.Success)
-	        {
-	            // If this was a Prefetch, just stop here.
-	            if (prefetchOnly)
-	                return false;
+		public boolean callback(AssetDownload transfer) {
+			if (transfer.Success) {
+				// If this was a Prefetch, just stop here.
+				if (prefetchOnly)
+					return false;
 
-	            logger.debug("Opening sound " + transfer.ItemID.toString());
+				logger.debug("Opening sound " + transfer.ItemID.toString());
 
-	            // Decode the Ogg Vorbis buffer.
-	            AssetSound s = (AssetSound)AssetManager.CreateAssetItem(AssetType.Sound, transfer.ItemID, transfer.AssetData);
+				// Decode the Ogg Vorbis buffer.
+				AssetSound s = (AssetSound) AssetManager.CreateAssetItem(AssetType.Sound, transfer.ItemID,
+						transfer.AssetData);
 
-	            try
-	            {
-	            	sound = SoundSystem.createSound(new ByteArrayInputStream(s.getAssetData()), null);
-                    registerSound(sound);
+				try {
+					sound = SoundSystem.createSound(new ByteArrayInputStream(s.getAssetData()), null);
+					registerSound(sound);
 
-                    // If looping is requested, loop the entire thing.
-                    if (looping)
-                    {
-                        int soundlen = sound.getFrameLength();
-                        sound.setLoopPoints(0, soundlen - 1);
-                        sound.setLoopCount(-1);
-                    }
-                    
-                    channel = SoundSystem.playSound(-1, sound, true);
-                    registerChannel(channel);
+					// If looping is requested, loop the entire thing.
+					if (looping) {
+						int soundlen = sound.getFrameLength();
+						sound.setLoopPoints(0, soundlen - 1);
+						sound.setLoopCount(-1);
+					}
 
-                    channel.setVolume(volumeSetting * allObjectVolume);
+					channel = SoundSystem.playSound(-1, sound, true);
+					registerChannel(channel);
 
-                    // Take note of when the sound is finished playing.
-                    channel.setCallback(lineCallback);
+					channel.setVolume(volumeSetting * allObjectVolume);
 
-                    // Set attenuation limits.
-                    sound.set3DMinMaxDistance(1.2f,       // Any closer than this gets no louder
-                                              100.0f);    // Further than this gets no softer.
+					// Take note of when the sound is finished playing.
+					channel.setCallback(lineCallback);
 
-                    // Set the sound point of origin. This is in SIM coordinates.
-                    channel.set3DAttributes(position, null);
+					// Set attenuation limits.
+					sound.set3DMinMaxDistance(1.2f, // Any closer than this gets no louder
+							100.0f); // Further than this gets no softer.
 
-                    // Turn off pause mode.  The sound will start playing now.
-                    channel.start();
-	            }
-	            catch (Exception ex)
-	            {
-	            	logger.error("Exception when trying to queue sound data", ex);
-	            }
-	        }
-	        else
-	        {
-	            logger.error("Failed to download sound: " + transfer.Status.toString());
-	        }
-	        return false;
+					// Set the sound point of origin. This is in SIM coordinates.
+					channel.set3DAttributes(position, null);
+
+					// Turn off pause mode. The sound will start playing now.
+					channel.start();
+				} catch (Exception ex) {
+					logger.error("Exception when trying to queue sound data", ex);
+				}
+			} else {
+				logger.error("Failed to download sound: " + transfer.Status.toString());
+			}
+			return false;
 		}
-    }
- 
-    // A simpler constructor used by PreFetchSound.
-    public BufferSound(UUID soundID)
-    {
-        if (manager == null || !manager.getSoundSystemAvailable()) return;
+	}
 
-        this.prefetchOnly = true;
-        this.containerId = UUID.Zero;
+	// A simpler constructor used by PreFetchSound.
+	public BufferSound(UUID soundID) {
+		if (manager == null || !manager.getSoundSystemAvailable())
+			return;
 
-        try
-        {
-			manager.RequestAsset(soundID, AssetType.Sound, false, new  Assets_OnSoundReceived());
+		this.prefetchOnly = true;
+		this.containerId = UUID.Zero;
+
+		try {
+			manager.RequestAsset(soundID, AssetType.Sound, false, new Assets_OnSoundReceived());
+		} catch (Exception ex) {
+			logger.error("Failed to request sound download: " + soundID.toString(), ex);
 		}
-        catch (Exception ex)
-        {
-            logger.error("Failed to request sound download: " + soundID.toString(), ex);
-		}
-    }
+	}
 
-    public BufferSound(UUID objectID, UUID soundID, boolean looping, boolean global, Vector3 worldpos, float volume)
-    {
-        if (manager == null || !manager.getSoundSystemAvailable()) return;
+	public BufferSound(UUID objectID, UUID soundID, boolean looping, boolean global, Vector3 worldpos, float volume) {
+		if (manager == null || !manager.getSoundSystemAvailable())
+			return;
 
-        // Do not let this get garbage-collected.
-        synchronized (allBuffers)
-        {
-            allBuffers.put(objectID, this);
+		// Do not let this get garbage-collected.
+		synchronized (allBuffers) {
+			allBuffers.put(objectID, this);
 		}
-        
-        this.containerId = objectID;
-        this.position = worldpos;
-        this.volumeSetting = volume;
-        this.looping = looping;
-        
-        logger.debug(String.format("Playing sound at <%0.0f,%0.0f,%0.0f> ID %s}",
-                                 position.X, position.Y, position.Z, soundID.toString()));
 
-         // Fetch the sound data.
-        try
-        {
-        	manager.RequestAsset(soundID, AssetType.Sound, false, new Assets_OnSoundReceived());
-		}
-		catch (Exception ex)
-		{
+		this.containerId = objectID;
+		this.position = worldpos;
+		this.volumeSetting = volume;
+		this.looping = looping;
+
+		logger.debug(String.format("Playing sound at <%0.0f,%0.0f,%0.0f> ID %s}", position.X, position.Y, position.Z,
+				soundID.toString()));
+
+		// Fetch the sound data.
+		try {
+			manager.RequestAsset(soundID, AssetType.Sound, false, new Assets_OnSoundReceived());
+		} catch (Exception ex) {
 			logger.error("Failure requestin sound buffere for sound " + soundID, ex);
 		}
-    }
-    
-    /**
-     * Handles stop sound even from FMOD
-     *
-     * @returns true on success, false otherwise
-     */
-    protected boolean EndCallbackHandler()
-    {
-        stopSound(false);
-        return true;
-    }
+	}
 
-    public static void killAll()
-    {
-        // Make a list from the dictionary so we do not get a deadlock
-        // on it when removing entries.
-        ArrayList<BufferSound> list = new ArrayList<BufferSound>(allBuffers.values());
+	/**
+	 * Handles stop sound even from FMOD
+	 *
+	 * @returns true on success, false otherwise
+	 */
+	protected boolean EndCallbackHandler() {
+		stopSound(false);
+		return true;
+	}
 
-        for (BufferSound s : list)
-        {
-            s.stopSound();
-        }
+	public static void killAll() {
+		// Make a list from the dictionary so we do not get a deadlock
+		// on it when removing entries.
+		ArrayList<BufferSound> list = new ArrayList<BufferSound>(allBuffers.values());
 
-        ArrayList<MediaObject> objs = new ArrayList<MediaObject>(allChannels.values());
-        for (MediaObject obj : objs)
-        {
-            if (obj instanceof BufferSound)
-                ((BufferSound)obj).stopSound();
-        }
-    }
+		for (BufferSound s : list) {
+			s.stopSound();
+		}
 
-    public static void kill(UUID uuid)
-    {
-        if (allBuffers.containsKey(uuid))
-        {
-            BufferSound bs = allBuffers.get(uuid);
-            bs.stopSound(true);
-        }   	
-    }
-    
-    /**
-     * Adjust volumes of all playing sounds to observe the new global sound volume
-     */
-    public static void adjustVolumes()
-    {
-        // Make a list from the dictionary so we do not get a deadlock
-        ArrayList<BufferSound> list = new ArrayList<BufferSound>(allBuffers.values());
+		ArrayList<MediaObject> objs = new ArrayList<MediaObject>(allChannels.values());
+		for (MediaObject obj : objs) {
+			if (obj instanceof BufferSound)
+				((BufferSound) obj).stopSound();
+		}
+	}
 
-        for (BufferSound s : list)
-        {
-            s.adjustVolume();
-        }
-    }
+	public static void kill(UUID uuid) {
+		if (allBuffers.containsKey(uuid)) {
+			BufferSound bs = allBuffers.get(uuid);
+			bs.stopSound(true);
+		}
+	}
 
-    public void adjustVolume()
-    {
-        volume = volumeSetting * allObjectVolume;    	
-    }
-    
-    protected void stopSound()
-    {
-        stopSound(false);
-    }
+	/**
+	 * Adjust volumes of all playing sounds to observe the new global sound volume
+	 */
+	public static void adjustVolumes() {
+		// Make a list from the dictionary so we do not get a deadlock
+		ArrayList<BufferSound> list = new ArrayList<BufferSound>(allBuffers.values());
 
-    protected void stopSound(final boolean blocking)
-    {
-        final TimeoutEvent<Boolean> stopped = blocking ? new TimeoutEvent<Boolean>() : null;
- 
-        finished = true;
+		for (BufferSound s : list) {
+			s.adjustVolume();
+		}
+	}
 
-        new Thread(new Runnable()
-        {
-        	public void run()
-        	{
-                // Release the buffer to avoid a big memory leak.
-                if (channel != null)
-                {
-                	synchronized(allChannels)
-                	{
-                        allChannels.remove(channel);
-                	}
-                	channel.stop();
-                    channel = null;
-                }
+	public void adjustVolume() {
+		volume = volumeSetting * allObjectVolume;
+	}
 
-                if (sound != null)
-                {
-                    sound.dispose();
-                    sound = null;
-                }
+	protected void stopSound() {
+		stopSound(false);
+	}
 
-                synchronized(allBuffers)
-                {
-                    allBuffers.remove(containerId);
-                }
+	protected void stopSound(final boolean blocking) {
+		final TimeoutEvent<Boolean> stopped = blocking ? new TimeoutEvent<Boolean>() : null;
 
-                if (blocking)
-                {
-                    stopped.set(true);
-                }
-        	}
-        }).run();
-        
-        if (blocking)
-        {
-            try
-            {
-				stopped.waitOne(10000);
+		finished = true;
+
+		new Thread(new Runnable() {
+			public void run() {
+				// Release the buffer to avoid a big memory leak.
+				if (channel != null) {
+					synchronized (allChannels) {
+						allChannels.remove(channel);
+					}
+					channel.stop();
+					channel = null;
+				}
+
+				if (sound != null) {
+					sound.dispose();
+					sound = null;
+				}
+
+				synchronized (allBuffers) {
+					allBuffers.remove(containerId);
+				}
+
+				if (blocking) {
+					stopped.set(true);
+				}
 			}
-            catch (InterruptedException ex) { }
-        }
-    }
+		}).run();
+
+		if (blocking) {
+			try {
+				stopped.waitOne(10000);
+			} catch (InterruptedException ex) {
+			}
+		}
+	}
 }

@@ -36,89 +36,76 @@ import libomv.Gui.windows.MainControl;
 import libomv.io.AgentManager.ChatType;
 import libomv.types.UUID;
 
-public class PrivateChannel extends AbstractChannel
-{
+public class PrivateChannel extends AbstractChannel {
 	private static final long serialVersionUID = 1L;
-		
-	public PrivateChannel(MainControl main, String name, UUID id, UUID session)
-	{
+
+	public PrivateChannel(MainControl main, String name, UUID id, UUID session) {
 		super(main, name, id, session);
 	}
-		
+
 	/**
 	 * Receive a message.
 	 * 
-	 * @param message The message received.
-	 * @throws BadLocationException 
+	 * @param message
+	 *            The message received.
+	 * @throws BadLocationException
 	 */
 	@Override
-	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style) throws BadLocationException
-	{
+	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style)
+			throws BadLocationException {
 		// Determine if this is a friend...
 		boolean friend = _Client.Friends.getFriendList().containsKey(fromId);
 		String localMessage = message, localStyle = style;
-		
+
 		// If this is an action message.
-		if (message.startsWith("/me "))
-		{
+		if (message.startsWith("/me ")) {
 			localStyle = STYLE_ACTION;
 			// Remove the "/me".
 			localMessage = message.substring(3);
-		}
-		else if (style == null) 
-		{
+		} else if (style == null) {
 			localStyle = STYLE_REGULAR;
 			localMessage = ": " + message;
 		}
 		// This is a normal message.
-		addMessage(new ChatItem(timestamp, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, localMessage, localStyle));
+		addMessage(new ChatItem(timestamp, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, localMessage,
+				localStyle));
 	}
 
 	@Override
-	public void transmitMessage(String message, ChatType chatType) throws Exception
-	{
+	public void transmitMessage(String message, ChatType chatType) throws Exception {
 		if (message == null || message.trim().isEmpty())
-        	return;
+			return;
 
 		// Indicate that we're no longer typing.
 		super.transmitMessage(message, chatType);
 
 		String localMessage = message, self = _Client.Self.getName();
-		if (getUUID() != null)
-		{
-	        if (message.length() >= 1000)
-	        {
-	        	localMessage = message.substring(0, 1000);
-	        }
-			addHistory(message);	
+		if (getUUID() != null) {
+			if (message.length() >= 1000) {
+				localMessage = message.substring(0, 1000);
+			}
+			addHistory(message);
 
-            if (_Main.getStateControl().RLV.restrictionActive("sendim", getUUID()))
-            {
-            	localMessage = "*** IM blocked by sender's viewer";
-            }
-            
+			if (_Main.getStateControl().RLV.restrictionActive("sendim", getUUID())) {
+				localMessage = "*** IM blocked by sender's viewer";
+			}
+
 			// Deal with actions.
-			if (localMessage.toLowerCase().startsWith("/me "))
-			{
+			if (localMessage.toLowerCase().startsWith("/me ")) {
 				// Remove the "/me "
 				addMessage(new ChatItem(self, STYLE_CHATLOCAL, " " + localMessage.substring(4).trim(), STYLE_ACTION));
-			}
-			else
-			{
+			} else {
 				addMessage(new ChatItem(self, STYLE_CHATLOCAL, ": " + localMessage, STYLE_REGULAR));
 			}
 
 			// Send the message.
 			_Client.Self.InstantMessage(getUUID(), localMessage, getSession());
-		}
-		else
-		{
-			addMessage(new ChatItem(self, STYLE_CHATLOCAL, ": Invalid UUID for this chat channel", STYLE_ERROR));			
+		} else {
+			addMessage(new ChatItem(self, STYLE_CHATLOCAL, ": Invalid UUID for this chat channel", STYLE_ERROR));
 		}
 	}
 
-	protected void triggerTyping(boolean start) throws Exception
-	{
-		_Client.Self.SendTypingState(getUUID(), getSession(), start);		
+	protected void triggerTyping(boolean start) throws Exception {
+		_Client.Self.SendTypingState(getUUID(), getSession(), start);
 	}
 }

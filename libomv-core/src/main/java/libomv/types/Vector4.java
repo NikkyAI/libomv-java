@@ -6,7 +6,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -43,8 +43,7 @@ import org.xmlpull.v1.XmlSerializer;
 
 import libomv.utils.Helpers;
 
-public class Vector4
-{
+public class Vector4 {
 	public float X;
 
 	public float Y;
@@ -53,85 +52,68 @@ public class Vector4
 
 	public float S;
 
-	public Vector4()
-	{
+	public Vector4() {
 		X = Y = Z = S = 0;
 	}
 
-	public Vector4(float val)
-	{
+	public Vector4(float val) {
 		X = Y = Z = S = val;
 	}
 
-	public Vector4(ByteBuffer byteArray)
-	{
+	public Vector4(ByteBuffer byteArray) {
 		X = byteArray.getFloat();
 		Y = byteArray.getFloat();
 		Z = byteArray.getFloat();
 		S = byteArray.getFloat();
 	}
 
-	public Vector4(float x, float y, float z, float s)
-	{
+	public Vector4(float x, float y, float z, float s) {
 		X = x;
 		Y = y;
 		Z = z;
 		S = s;
 	}
 
-    /**
+	/**
 	 * Constructor, builds a vector from an XML reader
-	 * 
+	 *
 	 * @param parser
 	 *            XML pull parser reader
 	 */
-    public Vector4(XmlPullParser parser) throws XmlPullParserException, IOException
-    {
+	public Vector4(XmlPullParser parser) throws XmlPullParserException, IOException {
 		// entering with event on START_TAG for the tag name identifying the Vector3
-    	int eventType = parser.getEventType();
-    	if (eventType != XmlPullParser.START_TAG)
-    		throw new XmlPullParserException("Unexpected Tag event " + eventType + " for tag name " + parser.getName(), parser, null);
-    	
-   		while (parser.nextTag() == XmlPullParser.START_TAG)
-   		{
-   			String name = parser.getName();
-   			if (name.equalsIgnoreCase("X"))
-   			{
-				X = Helpers.TryParseFloat(parser.nextText().trim());
-   			}
-   			else if (name.equalsIgnoreCase("Y"))
-   			{
-				Y = Helpers.TryParseFloat(parser.nextText().trim());
-   			}
-   			else if (name.equalsIgnoreCase("Z"))
-   			{
-				Z= Helpers.TryParseFloat(parser.nextText().trim());
-   			}
-			else if (name.equalsIgnoreCase("S"))
-			{
-				S = Helpers.TryParseFloat(parser.nextText().trim());
-			}
-   			else
-   			{
-   				Helpers.skipElement(parser);
-   			}
-    	}
-    }
+		int eventType = parser.getEventType();
+		if (eventType != XmlPullParser.START_TAG)
+			throw new XmlPullParserException("Unexpected Tag event " + eventType + " for tag name " + parser.getName(),
+					parser, null);
 
-	public Vector4(byte[] dest, int pos)
-	{
+		while (parser.nextTag() == XmlPullParser.START_TAG) {
+			String name = parser.getName();
+			if (name.equalsIgnoreCase("X")) {
+				X = Helpers.TryParseFloat(parser.nextText().trim());
+			} else if (name.equalsIgnoreCase("Y")) {
+				Y = Helpers.TryParseFloat(parser.nextText().trim());
+			} else if (name.equalsIgnoreCase("Z")) {
+				Z = Helpers.TryParseFloat(parser.nextText().trim());
+			} else if (name.equalsIgnoreCase("S")) {
+				S = Helpers.TryParseFloat(parser.nextText().trim());
+			} else {
+				Helpers.skipElement(parser);
+			}
+		}
+	}
+
+	public Vector4(byte[] dest, int pos) {
 		X = Y = Z = S = 0;
 		fromBytes(dest, pos, false);
 	}
 
-	public Vector4(byte[] dest, int pos, boolean le)
-	{
+	public Vector4(byte[] dest, int pos, boolean le) {
 		X = Y = Z = S = 0;
 		fromBytes(dest, pos, le);
 	}
 
-	public Vector4(Vector4 v)
-	{
+	public Vector4(Vector4 v) {
 		X = v.X;
 		Y = v.Y;
 		Z = v.Z;
@@ -140,13 +122,14 @@ public class Vector4
 
 	/**
 	 * Writes the raw data for this vector to a ByteBuffer
-	 * 
-	 * @param byteArray buffer to copy the 16 bytes for X, Y, Z, and S
-	 * @param le True for writing little endian data
-	 * @throws IOException 
+	 *
+	 * @param byteArray
+	 *            buffer to copy the 16 bytes for X, Y, Z, and S
+	 * @param le
+	 *            True for writing little endian data
+	 * @throws IOException
 	 */
-	public void write(ByteBuffer byteArray)
-	{
+	public void write(ByteBuffer byteArray) {
 		byteArray.putFloat(X);
 		byteArray.putFloat(Y);
 		byteArray.putFloat(Z);
@@ -155,22 +138,20 @@ public class Vector4
 
 	/**
 	 * Writes the raw data for this vector to a OutputStream
-	 * 
-	 * @param stream OutputStream to copy the 16 bytes for X, Y, Z, and S
-	 * @param le True for writing little endian data
-	 * @throws IOException 
+	 *
+	 * @param stream
+	 *            OutputStream to copy the 16 bytes for X, Y, Z, and S
+	 * @param le
+	 *            True for writing little endian data
+	 * @throws IOException
 	 */
-	public void write(OutputStream stream, boolean le) throws IOException
-	{
-		if (le)
-		{
+	public void write(OutputStream stream, boolean le) throws IOException {
+		if (le) {
 			stream.write(Helpers.FloatToBytesL(X));
 			stream.write(Helpers.FloatToBytesL(Y));
 			stream.write(Helpers.FloatToBytesL(Z));
 			stream.write(Helpers.FloatToBytesL(S));
-		}
-		else
-		{
+		} else {
 			stream.write(Helpers.FloatToBytesB(X));
 			stream.write(Helpers.FloatToBytesB(Y));
 			stream.write(Helpers.FloatToBytesB(Z));
@@ -180,18 +161,16 @@ public class Vector4
 
 	/**
 	 * Initializes a vector from a float array
-	 * 
+	 *
 	 * @param vec
-	 *           the vector to intialize
+	 *            the vector to intialize
 	 * @param arr
 	 *            is the float array
 	 * @param pos
 	 *            Beginning position in the float array
 	 */
-	public static Vector4 fromArray(Vector4 vec, float[] arr, int pos)
-	{
-		if (arr.length >= (pos + 4))
-		{		
+	public static Vector4 fromArray(Vector4 vec, float[] arr, int pos) {
+		if (arr.length >= (pos + 4)) {
 			vec.X = arr[pos + 0];
 			vec.Y = arr[pos + 1];
 			vec.Z = arr[pos + 2];
@@ -202,7 +181,7 @@ public class Vector4
 
 	/**
 	 * Builds a vector from a byte array
-	 * 
+	 *
 	 * @param byteArray
 	 *            Byte array containing a 12 byte vector
 	 * @param pos
@@ -210,18 +189,14 @@ public class Vector4
 	 * @param le
 	 *            is the byte array in little endian format
 	 */
-	public void fromBytes(byte[] bytes, int pos, boolean le)
-	{
-		if (le)
-		{
+	public void fromBytes(byte[] bytes, int pos, boolean le) {
+		if (le) {
 			/* Little endian architecture */
 			X = Helpers.BytesToFloatL(bytes, pos + 0);
 			Y = Helpers.BytesToFloatL(bytes, pos + 4);
 			Z = Helpers.BytesToFloatL(bytes, pos + 8);
 			S = Helpers.BytesToFloatL(bytes, pos + 12);
-		}
-		else
-		{
+		} else {
 			X = Helpers.BytesToFloatB(bytes, pos + 0);
 			Y = Helpers.BytesToFloatB(bytes, pos + 4);
 			Z = Helpers.BytesToFloatB(bytes, pos + 8);
@@ -231,20 +206,18 @@ public class Vector4
 
 	/**
 	 * Builds a vector from a data stream
-	 * 
+	 *
 	 * @param is
 	 *            DataInputStream to read the vector from
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	public void fromBytes(DataInputStream is) throws IOException
-	{
+	public void fromBytes(DataInputStream is) throws IOException {
 		X = is.readFloat();
 		Y = is.readFloat();
 		Z = is.readFloat();
 	}
 
-	public void fromBytes(SwappedDataInputStream is) throws IOException
-	{
+	public void fromBytes(SwappedDataInputStream is) throws IOException {
 		X = is.readFloat();
 		Y = is.readFloat();
 		Z = is.readFloat();
@@ -252,7 +225,7 @@ public class Vector4
 
 	/**
 	 * Serializes this vector into four bytes in a byte array
-	 * 
+	 *
 	 * @param dest
 	 *            Destination byte array
 	 * @param pos
@@ -260,43 +233,41 @@ public class Vector4
 	 *            least 4 bytes before the end of the array
 	 * @return number of bytes filled to the byte array
 	 */
-	public int toBytes(byte[] dest)
-	{
+	public int toBytes(byte[] dest) {
 		return toBytes(dest, 0, false);
 	}
 
 	/**
 	 * Serializes this color into four bytes in a byte array
-	 * 
-	 * @param dest Destination byte array
-	 * @param pos Position in the destination array to start writing. Must be at
+	 *
+	 * @param dest
+	 *            Destination byte array
+	 * @param pos
+	 *            Position in the destination array to start writing. Must be at
 	 *            least 4 bytes before the end of the array
 	 * @return number of bytes filled to the byte array
 	 */
-	public int toBytes(byte[] dest, int pos)
-	{
+	public int toBytes(byte[] dest, int pos) {
 		return toBytes(dest, pos, false);
 	}
-	
+
 	/**
 	 * Serializes this color into four bytes in a byte array
-	 * 
-	 * @param dest Destination byte array
-	 * @param pos Position in the destination array to start writing. Must be at
+	 *
+	 * @param dest
+	 *            Destination byte array
+	 * @param pos
+	 *            Position in the destination array to start writing. Must be at
 	 *            least 4 bytes before the end of the array
 	 * @return number of bytes filled to the byte array
 	 */
-	public int toBytes(byte[] dest, int pos, boolean le)
-	{
-		if (le)
-		{
+	public int toBytes(byte[] dest, int pos, boolean le) {
+		if (le) {
 			pos += Helpers.FloatToBytesL(X, dest, pos);
 			pos += Helpers.FloatToBytesL(Y, dest, pos);
 			pos += Helpers.FloatToBytesL(Z, dest, pos);
 			pos += Helpers.FloatToBytesL(S, dest, pos);
-		}
-		else
-		{
+		} else {
 			pos += Helpers.FloatToBytesB(X, dest, pos);
 			pos += Helpers.FloatToBytesB(Y, dest, pos);
 			pos += Helpers.FloatToBytesB(Z, dest, pos);
@@ -305,13 +276,12 @@ public class Vector4
 		return 16;
 	}
 
-	static public Vector4 parse(XmlPullParser parser) throws XmlPullParserException, IOException
-	{
+	static public Vector4 parse(XmlPullParser parser) throws XmlPullParserException, IOException {
 		return new Vector4(parser);
 	}
-	
-	public void serializeXml(XmlSerializer writer, String namespace, String name) throws IllegalArgumentException, IllegalStateException, IOException
-	{
+
+	public void serializeXml(XmlSerializer writer, String namespace, String name)
+			throws IllegalArgumentException, IllegalStateException, IOException {
 		writer.startTag(namespace, name);
 		writer.startTag(namespace, "X").text(Float.toString(X)).endTag(namespace, "X");
 		writer.startTag(namespace, "Y").text(Float.toString(Y)).endTag(namespace, "Y");
@@ -320,8 +290,8 @@ public class Vector4
 		writer.startTag(namespace, name);
 	}
 
-	public void serializeXml(XmlSerializer writer, String namespace, String name, Locale locale) throws IllegalArgumentException, IllegalStateException, IOException
-	{
+	public void serializeXml(XmlSerializer writer, String namespace, String name, Locale locale)
+			throws IllegalArgumentException, IllegalStateException, IOException {
 		writer.startTag(namespace, name);
 		writer.startTag(namespace, "X").text(String.format(locale, "%f", X)).endTag(namespace, "X");
 		writer.startTag(namespace, "Y").text(String.format(locale, "%f", Y)).endTag(namespace, "Y");
@@ -331,30 +301,26 @@ public class Vector4
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return String.format(Helpers.EnUsCulture, "<%.3f, %.3f, %.3f, %.3f>", X, Y, Z, S);
 	}
 
-	public boolean equals(Vector4 val)
-	{
+	public boolean equals(Vector4 val) {
 		return val != null && X == val.X && Y == val.Y && Z == val.Z && S == val.S;
 	}
 
 	@Override
-	public boolean equals(Object obj)
-	{
-		return obj != null && (obj instanceof Vector4) && equals((Vector4)obj);
+	public boolean equals(Object obj) {
+		return obj != null && (obj instanceof Vector4) && equals((Vector4) obj);
 	}
 
 	@Override
-	public int hashCode()
-	{
-		int hashCode = ((Float)X).hashCode();
-		hashCode = hashCode * 31 + ((Float)Y).hashCode();
-		hashCode = hashCode * 31 + ((Float)Z).hashCode();
-		hashCode = hashCode * 31 + ((Float)S).hashCode();
-		return  hashCode;
+	public int hashCode() {
+		int hashCode = ((Float) X).hashCode();
+		hashCode = hashCode * 31 + ((Float) Y).hashCode();
+		hashCode = hashCode * 31 + ((Float) Z).hashCode();
+		hashCode = hashCode * 31 + ((Float) S).hashCode();
+		return hashCode;
 	}
 
 	/** A vector with a value of 0,0,0,0 */

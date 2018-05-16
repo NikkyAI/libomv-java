@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -31,89 +31,74 @@ package libomv.StructuredData;
 
 import libomv.utils.Helpers;
 
-public class OSDInteger extends OSD
-{
+public class OSDInteger extends OSD {
 	private int value;
 
 	@Override
-	public OSDType getType()
-	{
+	public OSDType getType() {
 		return OSDType.Integer;
 	}
 
-	public OSDInteger(int value)
-	{
+	public OSDInteger(int value) {
 		this.value = value;
 	}
 
 	@Override
-	public boolean AsBoolean()
-	{
+	public boolean AsBoolean() {
 		return value != 0;
 	}
 
 	@Override
-	public int AsInteger()
-	{
+	public int AsInteger() {
 		return value;
 	}
 
 	@Override
-	public int AsUInteger()
-	{
+	public int AsUInteger() {
 		return (value & 0xFFFFFFFF);
 	}
 
 	@Override
-	public long AsLong()
-	{
+	public long AsLong() {
 		return value;
 	}
 
 	@Override
-	public long AsULong()
-	{
+	public long AsULong() {
 		return (value & 0xFFFFFFFF);
 	}
 
 	@Override
-	public double AsReal()
-	{
+	public double AsReal() {
 		return value;
 	}
 
 	@Override
-	public String AsString()
-	{
+	public String AsString() {
 		return ((Integer) value).toString();
 	}
 
 	@Override
-	public byte[] AsBinary()
-	{
+	public byte[] AsBinary() {
 		return Helpers.Int32ToBytesB(value);
 	}
 
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		return value;
 	}
-	
+
 	@Override
-	public boolean equals(Object obj)
-	{
-		return obj != null && obj instanceof OSD && equals((OSD)obj);
+	public boolean equals(Object obj) {
+		return obj != null && obj instanceof OSD && equals((OSD) obj);
 	}
 
-	public boolean equals(OSD osd)
-	{
+	public boolean equals(OSD osd) {
 		return osd != null && osd.AsInteger() == value;
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return AsString();
 	}
 }

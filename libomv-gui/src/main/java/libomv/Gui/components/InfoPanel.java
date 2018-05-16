@@ -36,19 +36,17 @@ import javax.swing.JPanel;
 
 import libomv.io.GridClient;
 
-public class InfoPanel extends JPanel
-{
+public class InfoPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
 	private Image image;
 	private GridClient _Client;
-	
+
 	/**
 	 * This is the default constructor
 	 */
-	public InfoPanel(GridClient client)
-	{
+	public InfoPanel(GridClient client) {
 		super();
 		_Client = client;
 		initialize();
@@ -59,15 +57,13 @@ public class InfoPanel extends JPanel
 	 * 
 	 * @return void
 	 */
-	private void initialize()
-	{
+	private void initialize() {
 		this.setLayout(new GridBagLayout());
 	}
 
 	@Override
-	public void paintComponent(Graphics g)
-	{
-	    g.drawImage(image, 0, 0, null);
-	    super.paintComponents(g);
+	public void paintComponent(Graphics g) {
+		g.drawImage(image, 0, 0, null);
+		super.paintComponents(g);
 	}
 }

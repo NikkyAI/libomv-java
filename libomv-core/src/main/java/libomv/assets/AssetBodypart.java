@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -35,25 +35,22 @@ import libomv.types.UUID;
  * Represents an {@link AssetWearable} that represents an avatars body ie: Hair,
  * Etc.
  */
-public class AssetBodypart extends AssetWearable
-{
+public class AssetBodypart extends AssetWearable {
 	// Override the base classes AssetType
 	@Override
-	public AssetType getAssetType()
-	{
+	public AssetType getAssetType() {
 		return AssetType.Bodypart;
 	}
 
 	/**
 	 * Initializes a new instance of an AssetBodyPart object with parameters
-	 * 
+	 *
 	 * @param assetID
 	 *            A unique <see cref="UUID"/> specific to this asset
 	 * @param assetData
 	 *            byte array containing the raw asset data
 	 */
-	public AssetBodypart(UUID assetID, byte[] assetData)
-	{
+	public AssetBodypart(UUID assetID, byte[] assetData) {
 		super(assetID, assetData);
 	}
 }

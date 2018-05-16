@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -16,11 +15,13 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
 /**
- * <p>Java class for gles_texenv_command_type complex type.
+ * <p>
+ * Java class for gles_texenv_command_type complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="gles_texenv_command_type">
@@ -39,89 +40,78 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "gles_texenv_command_type", propOrder = {
-    "constant"
-})
+@XmlType(name = "gles_texenv_command_type", propOrder = { "constant" })
 public class GlesTexenvCommandType {
 
-    protected GlesTextureConstantType constant;
-    @XmlAttribute(name = "operator")
-    protected GlesTexenvModeEnums operator;
-    @XmlAttribute(name = "unit")
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlSchemaType(name = "NCName")
-    protected String unit;
+	protected GlesTextureConstantType constant;
+	@XmlAttribute(name = "operator")
+	protected GlesTexenvModeEnums operator;
+	@XmlAttribute(name = "unit")
+	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+	@XmlSchemaType(name = "NCName")
+	protected String unit;
 
-    /**
-     * Gets the value of the constant property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link GlesTextureConstantType }
-     *     
-     */
-    public GlesTextureConstantType getConstant() {
-        return constant;
-    }
+	/**
+	 * Gets the value of the constant property.
+	 * 
+	 * @return possible object is {@link GlesTextureConstantType }
+	 * 
+	 */
+	public GlesTextureConstantType getConstant() {
+		return constant;
+	}
 
-    /**
-     * Sets the value of the constant property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link GlesTextureConstantType }
-     *     
-     */
-    public void setConstant(GlesTextureConstantType value) {
-        this.constant = value;
-    }
+	/**
+	 * Sets the value of the constant property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link GlesTextureConstantType }
+	 * 
+	 */
+	public void setConstant(GlesTextureConstantType value) {
+		this.constant = value;
+	}
 
-    /**
-     * Gets the value of the operator property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link GlesTexenvModeEnums }
-     *     
-     */
-    public GlesTexenvModeEnums getOperator() {
-        return operator;
-    }
+	/**
+	 * Gets the value of the operator property.
+	 * 
+	 * @return possible object is {@link GlesTexenvModeEnums }
+	 * 
+	 */
+	public GlesTexenvModeEnums getOperator() {
+		return operator;
+	}
 
-    /**
-     * Sets the value of the operator property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link GlesTexenvModeEnums }
-     *     
-     */
-    public void setOperator(GlesTexenvModeEnums value) {
-        this.operator = value;
-    }
+	/**
+	 * Sets the value of the operator property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link GlesTexenvModeEnums }
+	 * 
+	 */
+	public void setOperator(GlesTexenvModeEnums value) {
+		this.operator = value;
+	}
 
-    /**
-     * Gets the value of the unit property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getUnit() {
-        return unit;
-    }
+	/**
+	 * Gets the value of the unit property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getUnit() {
+		return unit;
+	}
 
-    /**
-     * Sets the value of the unit property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setUnit(String value) {
-        this.unit = value;
-    }
+	/**
+	 * Sets the value of the unit property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setUnit(String value) {
+		this.unit = value;
+	}
 
 }

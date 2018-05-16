@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -30,12 +30,10 @@ package libomv.imaging;
 
 import libomv.imaging.ManagedImage.ImageCodec;
 
-public class UnsupportedCodecException extends Exception
-{
+public class UnsupportedCodecException extends Exception {
 	private static final long serialVersionUID = 6137581012975838959L;
 
-	public UnsupportedCodecException(ImageCodec codec)
-	{
+	public UnsupportedCodecException(ImageCodec codec) {
 		super("Unsupported image codec " + codec);
 	}
 }

@@ -63,41 +63,40 @@ import libomv.utils.CallbackHandler;
  * Capabilities is the name of the bi-directional HTTP REST protocol used to
  * communicate non real-time transactions such as teleporting or group messaging
  */
-public class CapsManager extends Thread
-{
+public class CapsManager extends Thread {
 	private static final Logger logger = Logger.getLogger(CapsManager.class);
 
-    public class CapabilitiesReceivedCallbackArgs implements CallbackArgs
-    {
-        // The simulator that received a capability
-        private SimulatorManager simulator;
-        
-        public SimulatorManager getSimulator()
-        {
-        	return simulator;
-        }
+	public class CapabilitiesReceivedCallbackArgs implements CallbackArgs {
+		// The simulator that received a capability
+		private SimulatorManager simulator;
 
-        public CapabilitiesReceivedCallbackArgs(SimulatorManager simulator)
-        {
-            this.simulator = simulator;
-        }
-    }
+		public SimulatorManager getSimulator() {
+			return simulator;
+		}
+
+		public CapabilitiesReceivedCallbackArgs(SimulatorManager simulator) {
+			this.simulator = simulator;
+		}
+	}
 
 	public CallbackHandler<CapabilitiesReceivedCallbackArgs> OnCapabilitiesReceived = new CallbackHandler<CapabilitiesReceivedCallbackArgs>();
 
 	/* Reference to the simulator this system is connected to */
 	private SimulatorManager _Simulator;
 
-	/* Asynchronous HTTP Client used for both the seedRequest as well as the eventQueue */
+	/*
+	 * Asynchronous HTTP Client used for both the seedRequest as well as the
+	 * eventQueue
+	 */
 	private CapsClient _Client;
 
 	/* Capabilities URI this system was initialized with */
 	private String _SeedCapsURI;
-	public final String getSeedCapsURI()
-	{
+
+	public final String getSeedCapsURI() {
 		return _SeedCapsURI;
 	}
-	
+
 	private Hashtable<String, URI> _Capabilities = new Hashtable<String, URI>();
 
 	/**
@@ -108,45 +107,36 @@ public class CapsManager extends Thread
 	 * @return The URI of the requested capability, or String. Empty if the
 	 *         capability does not exist
 	 */
-	public final URI capabilityURI(String capability)
-	{
-		synchronized (_Capabilities)
-		{
+	public final URI capabilityURI(String capability) {
+		synchronized (_Capabilities) {
 			return _Capabilities.get(capability);
 		}
 	}
 
-	private enum CapsState
-	{
-		Seeding,
-		Running,
-		Closing,
-		Closed;
+	private enum CapsState {
+		Seeding, Running, Closing, Closed;
 	}
-	
-	/* Whether the capabilities event queue is connected and listening for incoming events */
+
+	/*
+	 * Whether the capabilities event queue is connected and listening for incoming
+	 * events
+	 */
 	private CapsState _Running = CapsState.Closed;
 
-	private void setState(CapsState state)
-	{
-		synchronized (_Running)
-		{
+	private void setState(CapsState state) {
+		synchronized (_Running) {
 			_Running = state;
 		}
 	}
 
-	private final boolean isClosed()
-	{
-		synchronized (_Running)
-		{
+	private final boolean isClosed() {
+		synchronized (_Running) {
 			return _Running == CapsState.Closed;
 		}
 	}
-	
-	private final boolean isActiveAndMakeClosing()
-	{
-		synchronized (_Running)
-		{
+
+	private final boolean isActiveAndMakeClosing() {
+		synchronized (_Running) {
 			boolean active = _Running == CapsState.Seeding || _Running == CapsState.Running;
 			if (active)
 				_Running = CapsState.Closing;
@@ -154,10 +144,8 @@ public class CapsManager extends Thread
 		}
 	}
 
-	private final boolean isSeedingAndMakeRun()
-	{
-		synchronized (_Running)
-		{
+	private final boolean isSeedingAndMakeRun() {
+		synchronized (_Running) {
 			boolean seeding = _Running == CapsState.Seeding;
 			if (seeding)
 				_Running = CapsState.Running;
@@ -165,26 +153,20 @@ public class CapsManager extends Thread
 		}
 	}
 
-	private final boolean isSeeding()
-	{
-		synchronized (_Running)
-		{
+	private final boolean isSeeding() {
+		synchronized (_Running) {
 			return _Running == CapsState.Seeding;
 		}
 	}
 
-	public final boolean isRunning()
-	{
-		synchronized (_Running)
-		{
+	public final boolean isRunning() {
+		synchronized (_Running) {
 			return _Running == CapsState.Running;
 		}
 	}
-	
-	public final boolean isClosing()
-	{
-		synchronized (_Running)
-		{
+
+	public final boolean isClosing() {
+		synchronized (_Running) {
 			return _Running == CapsState.Closing;
 		}
 	}
@@ -196,71 +178,59 @@ public class CapsManager extends Thread
 	 * @param seedcaps
 	 * @throws IOReactorException
 	 */
-	public CapsManager(SimulatorManager simulator, String seedcaps) throws IOReactorException
-	{
+	public CapsManager(SimulatorManager simulator, String seedcaps) throws IOReactorException {
 		super("CapsManager");
 		_Simulator = simulator;
 
 		_SeedCapsURI = seedcaps;
 		_Client = new CapsClient(simulator.getClient(), CapsEventType.EventQueueGet.toString());
-		
+
 		start();
 	}
 
-	public final void disconnect(boolean immediate) throws InterruptedException
-	{
-		if (isActiveAndMakeClosing())
-		{
+	public final void disconnect(boolean immediate) throws InterruptedException {
+		if (isActiveAndMakeClosing()) {
 			_Client.cancel(immediate);
-			logger.info(GridClient.Log("Caps system for " + _Simulator.getName() + " is " + (immediate ? "aborting" : "disconnecting"), _Simulator.getClient()));
+			logger.info(GridClient.Log(
+					"Caps system for " + _Simulator.getName() + " is " + (immediate ? "aborting" : "disconnecting"),
+					_Simulator.getClient()));
 		}
 	}
 
 	@Override
-	public void run()
-	{
+	public void run() {
 		setState(CapsState.Seeding);
-		try
-		{
+		try {
 			URI eventQueueGet = null;
-			do
-			{
+			do {
 				eventQueueGet = makeSeedRequest();
-			}
-			while (isSeeding() && eventQueueGet == null);
-			
+			} while (isSeeding() && eventQueueGet == null);
+
 			runEventQueueLoop(eventQueueGet);
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			logger.error(GridClient.Log("Couldn't startup capability system", _Simulator.getClient()), ex);
 			setState(CapsState.Closed);
-		}
-		finally
-		{
-			try
-			{
+		} finally {
+			try {
 				_Client.shutdown(true);
-			}
-			catch (InterruptedException | IOException ex)
-			{				
-			}
-			finally
-			{
+			} catch (InterruptedException | IOException ex) {
+			} finally {
 				_Client = null;
 			}
-		}	
+		}
 	}
 
-	private URI makeSeedRequest() throws InterruptedException, ExecutionException, TimeoutException, IOException, URISyntaxException
-	{
-		if (_Simulator != null && _Simulator.getClient().Network.getConnected())
-		{
+	private URI makeSeedRequest()
+			throws InterruptedException, ExecutionException, TimeoutException, IOException, URISyntaxException {
+		if (_Simulator != null && _Simulator.getClient().Network.getConnected()) {
 			// Create a request list
 			OSDArray req = new OSDArray();
 			// This list can be updated by using the following command to obtain a
 			// current list of capabilities the official linden viewer supports:
-			// wget -q -O - https://bitbucket.org/lindenlab/viewer-release/raw/default/indra/newview/llviewerregion.cpp | grep 'capabilityNames.append'  | sed 's/^[ \t]*//;s/capabilityNames.append("/req.Add("/'
+			// wget -q -O -
+			// https://bitbucket.org/lindenlab/viewer-release/raw/default/indra/newview/llviewerregion.cpp
+			// | grep 'capabilityNames.append' | sed 's/^[
+			// \t]*//;s/capabilityNames.append("/req.Add("/'
 			req.add(OSD.FromString("AgentPreferences"));
 			req.add(OSD.FromString("AgentState"));
 			req.add(OSD.FromString("AttachmentResources"));
@@ -271,8 +241,8 @@ public class CapsManager extends Thread
 			req.add(OSD.FromString("CopyInventoryFromNotecard"));
 			req.add(OSD.FromString("CreateInventoryCategory"));
 			req.add(OSD.FromString("DispatchRegionInfo"));
-            req.add(OSD.FromString("DirectDelivery"));
-            req.add(OSD.FromString("EnvironmentSettings"));
+			req.add(OSD.FromString("DirectDelivery"));
+			req.add(OSD.FromString("EnvironmentSettings"));
 			req.add(OSD.FromString("EstateChangeInfo"));
 			req.add(OSD.FromString("EventQueueGet"));
 			req.add(OSD.FromString("FacebookConnect"));
@@ -283,21 +253,21 @@ public class CapsManager extends Thread
 			req.add(OSD.FromString("FetchLib2"));
 			req.add(OSD.FromString("FetchLibDescendents2"));
 			req.add(OSD.FromString("GetDisplayNames"));
-            req.add(OSD.FromString("GetExperiences"));
-            req.add(OSD.FromString("AgentExperiences"));
-            req.add(OSD.FromString("FindExperienceByName"));
-            req.add(OSD.FromString("GetExperienceInfo"));
-            req.add(OSD.FromString("GetAdminExperiences"));
-            req.add(OSD.FromString("GetCreatorExperiences"));
-            req.add(OSD.FromString("ExperiencePreferences"));
-            req.add(OSD.FromString("GroupExperiences"));
-            req.add(OSD.FromString("UpdateExperience"));
-            req.add(OSD.FromString("IsExperienceAdmin"));
-            req.add(OSD.FromString("IsExperienceContributor"));
-            req.add(OSD.FromString("RegionExperiences"));
+			req.add(OSD.FromString("GetExperiences"));
+			req.add(OSD.FromString("AgentExperiences"));
+			req.add(OSD.FromString("FindExperienceByName"));
+			req.add(OSD.FromString("GetExperienceInfo"));
+			req.add(OSD.FromString("GetAdminExperiences"));
+			req.add(OSD.FromString("GetCreatorExperiences"));
+			req.add(OSD.FromString("ExperiencePreferences"));
+			req.add(OSD.FromString("GroupExperiences"));
+			req.add(OSD.FromString("UpdateExperience"));
+			req.add(OSD.FromString("IsExperienceAdmin"));
+			req.add(OSD.FromString("IsExperienceContributor"));
+			req.add(OSD.FromString("RegionExperiences"));
 			req.add(OSD.FromString("GetMesh"));
 			req.add(OSD.FromString("GetMesh2"));
-            req.add(OSD.FromString("GetMetadata"));
+			req.add(OSD.FromString("GetMetadata"));
 			req.add(OSD.FromString("GetObjectCost"));
 			req.add(OSD.FromString("GetObjectPhysicsData"));
 			req.add(OSD.FromString("GetTexture"));
@@ -305,7 +275,7 @@ public class CapsManager extends Thread
 			req.add(OSD.FromString("GroupMemberData"));
 			req.add(OSD.FromString("GroupProposalBallot"));
 			req.add(OSD.FromString("HomeLocation"));
-			req.add(OSD.FromString("IncrementCOFVersion")); 
+			req.add(OSD.FromString("IncrementCOFVersion"));
 			req.add(OSD.FromString("LandResources"));
 			req.add(OSD.FromString("LSLSyntax"));
 			req.add(OSD.FromString("MapLayer"));
@@ -352,27 +322,23 @@ public class CapsManager extends Thread
 			req.add(OSD.FromString("ViewerStartAuction"));
 			req.add(OSD.FromString("ViewerStats"));
 			req.add(OSD.FromString("WebFetchInventoryDescendents"));
-            // AIS3
-            req.add(OSD.FromString("InventoryAPIv3"));
-            req.add(OSD.FromString("LibraryAPIv3"));
+			// AIS3
+			req.add(OSD.FromString("InventoryAPIv3"));
+			req.add(OSD.FromString("LibraryAPIv3"));
 
-			try
-			{
-				OSD result = _Client.getResponse(new URI(_SeedCapsURI), req, OSD.OSDFormat.Xml, _Simulator.getClient().Settings.CAPS_TIMEOUT);
-				if (result != null && result.getType().equals(OSDType.Map))
-				{
+			try {
+				OSD result = _Client.getResponse(new URI(_SeedCapsURI), req, OSD.OSDFormat.Xml,
+						_Simulator.getClient().Settings.CAPS_TIMEOUT);
+				if (result != null && result.getType().equals(OSDType.Map)) {
 					URI eventQueueGet = null;
 					OSDMap respTable = (OSDMap) result;
-					synchronized (_Capabilities)
-					{
-						for (Map.Entry<String, OSD> entry : respTable.entrySet())
-						{
+					synchronized (_Capabilities) {
+						for (Map.Entry<String, OSD> entry : respTable.entrySet()) {
 							OSD value = entry.getValue();
-							if (value.getType() == OSD.OSDType.String || value.getType() == OSD.OSDType.URI)
-							{
+							if (value.getType() == OSD.OSDType.String || value.getType() == OSD.OSDType.URI) {
 								URI capsURI = value.AsUri();
 								if (entry.getKey().equals("EventQueueGet"))
-									eventQueueGet = capsURI; 
+									eventQueueGet = capsURI;
 								_Capabilities.put(entry.getKey(), capsURI);
 							}
 						}
@@ -380,30 +346,31 @@ public class CapsManager extends Thread
 
 					OnCapabilitiesReceived.dispatch(new CapabilitiesReceivedCallbackArgs(_Simulator));
 
-					if (eventQueueGet == null)
-					{
-						logger.warn(GridClient.Log("Caps seed: Returned capabilities does not contain an EventQueueGet caps", _Simulator.getClient()));
+					if (eventQueueGet == null) {
+						logger.warn(GridClient.Log(
+								"Caps seed: Returned capabilities does not contain an EventQueueGet caps",
+								_Simulator.getClient()));
 					}
 					/* when successful: return and startup eventqueue */
 					return eventQueueGet;
 				}
-			}
-			catch (HttpResponseException ex)
-			{
-				if (ex.getStatusCode() == HttpStatus.SC_NOT_FOUND)
-				{
-					logger.error(GridClient.Log("Caps seed: Seed capability returned a 404 status, capability system is aborting", _Simulator.getClient()));
+			} catch (HttpResponseException ex) {
+				if (ex.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
+					logger.error(GridClient.Log(
+							"Caps seed: Seed capability returned a 404 status, capability system is aborting",
+							_Simulator.getClient()));
 					throw ex;
 				}
-				logger.warn(GridClient.Log("Caps seed: Seed capability returned an error status", _Simulator.getClient()), ex);
+				logger.warn(
+						GridClient.Log("Caps seed: Seed capability returned an error status", _Simulator.getClient()),
+						ex);
 			}
 		}
 		/* Retry seed request */
 		return null;
 	}
-	
-	private void runEventQueueLoop(URI eventQueueGet)
-	{
+
+	private void runEventQueueLoop(URI eventQueueGet) {
 		logger.info(GridClient.Log("Starting event queue for " + _Simulator.getName(), _Simulator.getClient()));
 
 		OSDMap osdRequest = new OSDMap(2);
@@ -412,50 +379,49 @@ public class CapsManager extends Thread
 		OSDArray events = null;
 		int errorCount = 0;
 
-		while (!isClosed())
-		{
+		while (!isClosed()) {
 			osdRequest.put("done", OSD.FromBoolean(isClosing()));
 
 			// Start or resume the connection
-			Future<OSD> request = _Client.executeHttpPost(eventQueueGet, osdRequest, OSD.OSDFormat.Xml, null, CapsClient.TIMEOUT_INFINITE);
-		
+			Future<OSD> request = _Client.executeHttpPost(eventQueueGet, osdRequest, OSD.OSDFormat.Xml, null,
+					CapsClient.TIMEOUT_INFINITE);
+
 			// Handle incoming events from previous request
-			if (events != null && events.size() > 0)
-			{
+			if (events != null && events.size() > 0) {
 				// Fire callbacks for each event received
 				ListIterator<OSD> iterator = events.listIterator();
-				while (iterator.hasNext())
-				{
+				while (iterator.hasNext()) {
 					OSDMap evt = (OSDMap) iterator.next();
 					OSD osd = evt.get("body");
-					if (osd.getType().equals(OSDType.Map))
-					{
+					if (osd.getType().equals(OSDType.Map)) {
 						OSDMap body = (OSDMap) osd;
 						String eventName = evt.get("message").AsString();
 
 						IMessage message = _Simulator.getClient().Messages.DecodeEvent(eventName, body);
-						if (message != null)
-						{
+						if (message != null) {
 							logger.debug(GridClient.Log("Caps message: " + eventName + ".", _Simulator.getClient()));
 							_Simulator.getClient().Network.DistributeCaps(_Simulator, message);
-						}
-						else
-						{
-							logger.warn(GridClient.Log("Caps loop: No Message handler exists for event " + eventName + ". Unable to decode. Will try Generic Handler next",
-									   _Simulator.getClient()));
-							logger.debug(GridClient.Log("Caps loop: Please report this information to http://sourceforge.net/tracker/?group_id=387920&atid=1611745\n" + body,
-									   _Simulator.getClient()));
+						} else {
+							logger.warn(GridClient.Log(
+									"Caps loop: No Message handler exists for event " + eventName
+											+ ". Unable to decode. Will try Generic Handler next",
+									_Simulator.getClient()));
+							logger.debug(GridClient.Log(
+									"Caps loop: Please report this information to http://sourceforge.net/tracker/?group_id=387920&atid=1611745\n"
+											+ body,
+									_Simulator.getClient()));
 
-							// try generic decoder next which takes a caps event and tries to match it to an existing packet
+							// try generic decoder next which takes a caps event and tries to match it to an
+							// existing packet
 							Packet packet = CapsToPacket.BuildPacket(eventName, body);
-							if (packet != null)
-							{
-								logger.debug(GridClient.Log("Caps loop: Serializing " + packet.getType() + " capability with generic handler", _Simulator.getClient()));
+							if (packet != null) {
+								logger.debug(GridClient.Log("Caps loop: Serializing " + packet.getType()
+										+ " capability with generic handler", _Simulator.getClient()));
 								_Simulator.getClient().Network.DistributePacket(_Simulator, packet);
-							}
-							else
-							{
-								logger.warn(GridClient.Log("Caps loop: No Packet or Message handler exists for " + eventName, _Simulator.getClient()));
+							} else {
+								logger.warn(GridClient.Log(
+										"Caps loop: No Packet or Message handler exists for " + eventName,
+										_Simulator.getClient()));
 							}
 						}
 					}
@@ -463,21 +429,16 @@ public class CapsManager extends Thread
 				events = null;
 			}
 
-			if (!isClosing())
-			{
-				try
-				{
+			if (!isClosing()) {
+				try {
 					OSD result = request.get(_Simulator.getClient().Settings.CAPS_TIMEOUT, TimeUnit.MILLISECONDS);
-					if (result == null)
-					{
+					if (result == null) {
 						++errorCount;
-						logger.warn(GridClient.Log("Caps loop: Got an unparseable response from the event queue!", _Simulator.getClient()));
-					}
-					else if (result instanceof OSDMap)
-					{
+						logger.warn(GridClient.Log("Caps loop: Got an unparseable response from the event queue!",
+								_Simulator.getClient()));
+					} else if (result instanceof OSDMap) {
 						errorCount = 0;
-						if (isSeedingAndMakeRun())
-						{
+						if (isSeedingAndMakeRun()) {
 							_Simulator.getClient().Network.raiseConnectedEvent(_Simulator);
 						}
 
@@ -485,73 +446,59 @@ public class CapsManager extends Thread
 						osdRequest.put("ack", map.get("id"));
 						events = (OSDArray) ((map.get("events") instanceof OSDArray) ? map.get("events") : null);
 					}
-				}
-				catch (ExecutionException ex)
-				{
+				} catch (ExecutionException ex) {
 					Throwable cause = ex.getCause();
-					if (cause instanceof HttpResponseException)
-					{
-						int status = ((HttpResponseException)cause).getStatusCode();
-						if (status == HttpStatus.SC_NOT_FOUND || status == HttpStatus.SC_GONE)
-						{
+					if (cause instanceof HttpResponseException) {
+						int status = ((HttpResponseException) cause).getStatusCode();
+						if (status == HttpStatus.SC_NOT_FOUND || status == HttpStatus.SC_GONE) {
 							setState(CapsState.Closed);
-							logger.info(GridClient.Log(String.format("Closing event queue at %s due to missing caps URI", eventQueueGet), _Simulator.getClient()));
-						}
-						else if (status == HttpStatus.SC_BAD_GATEWAY)
-						{
+							logger.info(GridClient.Log(
+									String.format("Closing event queue at %s due to missing caps URI", eventQueueGet),
+									_Simulator.getClient()));
+						} else if (status == HttpStatus.SC_BAD_GATEWAY) {
 							// This is not good (server) protocol design, but it's normal.
 							// The EventQueue server is a proxy that connects to a Squid
 							// cache which will time out periodically. The EventQueue
 							// server interprets this as a generic error and returns a
 							// 502 to us that we ignore
-						}
-						else
-						{
+						} else {
 							++errorCount;
 
 							// Try to log a meaningful error message
-							if (status != HttpStatus.SC_OK)
-							{
-								logger.warn(GridClient.Log(String.format("Unrecognized caps connection problem from %s: %d", eventQueueGet, status), _Simulator.getClient()));
-							}
-							else if (ex.getCause() != null)
-							{
-								logger.warn(GridClient.Log("Unrecognized internal caps exception from " + eventQueueGet + ": " + ex.getCause().getMessage(), _Simulator.getClient()));
-							}
-							else
-							{
-								logger.warn(GridClient.Log("Unrecognized caps exception from " + eventQueueGet + ": " + ex.getMessage(), _Simulator.getClient()));
+							if (status != HttpStatus.SC_OK) {
+								logger.warn(
+										GridClient.Log(String.format("Unrecognized caps connection problem from %s: %d",
+												eventQueueGet, status), _Simulator.getClient()));
+							} else if (ex.getCause() != null) {
+								logger.warn(GridClient.Log("Unrecognized internal caps exception from " + eventQueueGet
+										+ ": " + ex.getCause().getMessage(), _Simulator.getClient()));
+							} else {
+								logger.warn(GridClient.Log(
+										"Unrecognized caps exception from " + eventQueueGet + ": " + ex.getMessage(),
+										_Simulator.getClient()));
 							}
 						}
-					}
-					else
-					{
+					} else {
 						++errorCount;
 
-						logger.warn(GridClient.Log("No response from the event queue but no reported HTTP error either", _Simulator.getClient()), ex);
+						logger.warn(GridClient.Log("No response from the event queue but no reported HTTP error either",
+								_Simulator.getClient()), ex);
 					}
-				}
-				catch (Exception ex)
-				{
+				} catch (Exception ex) {
 					++errorCount;
-					logger.warn(GridClient.Log("Error retrieving response from the event queue request!", _Simulator.getClient()), ex);
-				} 
+					logger.warn(GridClient.Log("Error retrieving response from the event queue request!",
+							_Simulator.getClient()), ex);
+				}
 				request = null;
 
-				if (errorCount > 0)
-				{
+				if (errorCount > 0) {
 					// On error backoff in increasing delay to not hammer the server
-					try
-					{
+					try {
 						Thread.sleep(random.nextInt(500 + (int) Math.pow(2, errorCount)));
-					}
-					catch (InterruptedException e)
-					{
+					} catch (InterruptedException e) {
 					}
 				}
-			}
-			else
-			{
+			} else {
 				setState(CapsState.Closed);
 			}
 		}

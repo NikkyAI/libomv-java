@@ -6,7 +6,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -43,14 +43,12 @@ import libomv.types.UUID;
 import libomv.utils.Helpers;
 
 /* Basic class to hold other Avatar's data. */
-public class Avatar extends Primitive
-{
+public class Avatar extends Primitive {
 	// #region Enums
 
 	// Avatar profile flags
 	// [Flags]
-	public static class ProfileFlags
-	{
+	public static class ProfileFlags {
 		public static final byte None = 0;
 		public static final byte AllowPublish = 1;
 		public static final byte MaturePublish = 2;
@@ -59,13 +57,11 @@ public class Avatar extends Primitive
 		public static final byte Online = 16;
 		public static final byte AgeVerified = 32;
 
-		public static byte setValue(int value)
-		{
+		public static byte setValue(int value) {
 			return (byte) (value & _mask);
 		}
 
-		public static byte getValue(byte value)
-		{
+		public static byte getValue(byte value) {
 			return (byte) (value & _mask);
 		}
 
@@ -77,8 +73,7 @@ public class Avatar extends Primitive
 	// #region Subclasses
 
 	// Positive and negative ratings
-	public final class Statistics
-	{
+	public final class Statistics {
 		// Positive ratings for Behavior
 		public int BehaviorPositive;
 		// Negative ratings for Behavior
@@ -96,8 +91,7 @@ public class Avatar extends Primitive
 		// Negative ratings given by this avatar
 		public int GivenNegative;
 
-		public Statistics(OSD osd)
-		{
+		public Statistics(OSD osd) {
 			OSDMap tex = (OSDMap) osd;
 
 			BehaviorPositive = tex.get("behavior_positive").AsInteger();
@@ -110,8 +104,7 @@ public class Avatar extends Primitive
 			GivenNegative = tex.get("given_negative").AsInteger();
 		}
 
-		public OSD Serialize()
-		{
+		public OSD Serialize() {
 			OSDMap tex = new OSDMap(8);
 			tex.put("behavior_positive", OSD.FromInteger(BehaviorPositive));
 			tex.put("behavior_negative", OSD.FromInteger(BehaviorNegative));
@@ -124,16 +117,14 @@ public class Avatar extends Primitive
 			return tex;
 		}
 
-		public Statistics fromOSD(OSD osd)
-		{
+		public Statistics fromOSD(OSD osd) {
 			return new Statistics(osd);
 		}
 	}
 
 	// Avatar properties including about text, profile URL, image IDs and
 	// publishing settings
-	public final class AvatarProperties
-	{
+	public final class AvatarProperties {
 		// First Life about text
 		public String FirstLifeText;
 		// First Life image ID
@@ -156,118 +147,86 @@ public class Avatar extends Primitive
 		// #region Properties
 
 		// Should this profile be published on the web
-		public boolean getAllowPublish()
-		{
+		public boolean getAllowPublish() {
 			return ((Flags & ProfileFlags.AllowPublish) != 0);
 		}
 
-		public void setAllowPublish(boolean value)
-		{
-			if (value == true)
-			{
+		public void setAllowPublish(boolean value) {
+			if (value == true) {
 				Flags |= ProfileFlags.AllowPublish;
-			}
-			else
-			{
+			} else {
 				Flags &= ~ProfileFlags.AllowPublish;
 			}
 		}
 
 		// Avatar Online Status
-		public boolean getOnline()
-		{
+		public boolean getOnline() {
 			return ((Flags & ProfileFlags.Online) != 0);
 		}
 
-		public void setOnline(boolean value)
-		{
-			if (value == true)
-			{
+		public void setOnline(boolean value) {
+			if (value == true) {
 				Flags |= ProfileFlags.Online;
-			}
-			else
-			{
+			} else {
 				Flags &= ~ProfileFlags.Online;
 			}
 		}
 
 		// Is this a mature profile
-		public boolean getMaturePublish()
-		{
+		public boolean getMaturePublish() {
 			return ((Flags & ProfileFlags.MaturePublish) != 0);
 		}
 
-		public void setMaturePublish(boolean value)
-		{
-			if (value == true)
-			{
+		public void setMaturePublish(boolean value) {
+			if (value == true) {
 				Flags |= ProfileFlags.MaturePublish;
-			}
-			else
-			{
+			} else {
 				Flags &= ~ProfileFlags.MaturePublish;
 			}
 		}
 
 		//
-		public boolean getIdentified()
-		{
+		public boolean getIdentified() {
 			return ((Flags & ProfileFlags.Identified) != 0);
 		}
 
-		public void setIdentified(boolean value)
-		{
-			if (value == true)
-			{
+		public void setIdentified(boolean value) {
+			if (value == true) {
 				Flags |= ProfileFlags.Identified;
-			}
-			else
-			{
+			} else {
 				Flags &= ~ProfileFlags.Identified;
 			}
 		}
 
 		//
-		public boolean getTransacted()
-		{
+		public boolean getTransacted() {
 			return ((Flags & ProfileFlags.Transacted) != 0);
 		}
 
-		public void setTransacted(boolean value)
-		{
-			if (value == true)
-			{
+		public void setTransacted(boolean value) {
+			if (value == true) {
 				Flags |= ProfileFlags.Transacted;
-			}
-			else
-			{
+			} else {
 				Flags &= ~ProfileFlags.Transacted;
 			}
 		}
 
-		public boolean getAgeVerified()
-		{
+		public boolean getAgeVerified() {
 			return ((Flags & ProfileFlags.AgeVerified) != 0);
 		}
 
-		public void setAgeVerified(boolean value)
-		{
-			if (value == true)
-			{
+		public void setAgeVerified(boolean value) {
+			if (value == true) {
 				Flags |= ProfileFlags.AgeVerified;
-			}
-			else
-			{
+			} else {
 				Flags &= ~ProfileFlags.AgeVerified;
 			}
 		}
 
-		public AvatarProperties()
-		{
+		public AvatarProperties() {
 		}
 
-		public OSD Serialize()
-		{
+		public OSD Serialize() {
 			OSDMap tex = new OSDMap(9);
 			tex.put("first_life_text", OSD.FromString(FirstLifeText));
 			tex.put("first_life_image", OSD.FromUUID(FirstLifeImage));
@@ -281,8 +240,7 @@ public class Avatar extends Primitive
 			return tex;
 		}
 
-		public AvatarProperties(OSD osd)
-		{
+		public AvatarProperties(OSD osd) {
 			OSDMap tex = (OSDMap) osd;
 
 			FirstLifeText = tex.get("first_life_text").AsString();
@@ -299,8 +257,7 @@ public class Avatar extends Primitive
 
 	// Avatar interests including spoken languages, skills, and "want to"
 	// choices
-	public final class Interests
-	{
+	public final class Interests {
 		// Languages profile field
 		public String LanguagesText;
 		// FIXME: ORIGINAL LINE: public uint SkillsMask;
@@ -312,12 +269,10 @@ public class Avatar extends Primitive
 		//
 		public String WantToText;
 
-		public Interests()
-		{
+		public Interests() {
 		}
 
-		public OSD Serialize()
-		{
+		public OSD Serialize() {
 			OSDMap InterestsOSD = new OSDMap(5);
 			InterestsOSD.put("languages_text", OSD.FromString(LanguagesText));
 			InterestsOSD.put("skills_mask", OSD.FromUInteger(SkillsMask));
@@ -327,8 +282,7 @@ public class Avatar extends Primitive
 			return InterestsOSD;
 		}
 
-		public Interests(OSD osd)
-		{
+		public Interests(OSD osd) {
 			OSDMap tex = (OSDMap) osd;
 
 			LanguagesText = tex.get("languages_text").AsString();
@@ -368,11 +322,11 @@ public class Avatar extends Primitive
 
 	// Appearance flags. Introduced with server side baking, currently unused.
 	public Appearance.AppearanceFlags AppearanceFlags = Appearance.AppearanceFlags.None;
-    
-	// List of current avatar animations
-    public ArrayList<Animation> Animations;
 
-    // #endregion Public Members
+	// List of current avatar animations
+	public ArrayList<Animation> Animations;
+
+	// #endregion Public Members
 
 	protected String name;
 	protected String displayName;
@@ -381,12 +335,9 @@ public class Avatar extends Primitive
 	// /#region Properties
 
 	// First name
-	public final String getFirstName()
-	{
-		for (int i = 0; i < NameValues.length; i++)
-		{
-			if (NameValues[i].Name.equals("FirstName") && NameValues[i].Type == NameValue.ValueType.String)
-			{
+	public final String getFirstName() {
+		for (int i = 0; i < NameValues.length; i++) {
+			if (NameValues[i].Name.equals("FirstName") && NameValues[i].Type == NameValue.ValueType.String) {
 				return (String) NameValues[i].Value;
 			}
 		}
@@ -394,12 +345,9 @@ public class Avatar extends Primitive
 	}
 
 	// Last name
-	public final String getLastName()
-	{
-		for (int i = 0; i < NameValues.length; i++)
-		{
-			if (NameValues[i].Name.equals("LastName") && NameValues[i].Type == NameValue.ValueType.String)
-			{
+	public final String getLastName() {
+		for (int i = 0; i < NameValues.length; i++) {
+			if (NameValues[i].Name.equals("LastName") && NameValues[i].Type == NameValue.ValueType.String) {
 				return (String) NameValues[i].Value;
 			}
 		}
@@ -407,33 +355,24 @@ public class Avatar extends Primitive
 	}
 
 	// Full name
-	public final String getName()
-	{
-		if (!Helpers.isEmpty(name))
-		{
+	public final String getName() {
+		if (!Helpers.isEmpty(name)) {
 			return name;
-		}
-		else if (NameValues != null && NameValues.length > 0)
-		{
-			synchronized (NameValues)
-			{
+		} else if (NameValues != null && NameValues.length > 0) {
+			synchronized (NameValues) {
 				String firstName = Helpers.EmptyString;
 				String lastName = Helpers.EmptyString;
 
-				for (int i = 0; i < NameValues.length; i++)
-				{
-					if (NameValues[i].Name.equals("FirstName") && NameValues[i].Type == NameValue.ValueType.String)
-					{
+				for (int i = 0; i < NameValues.length; i++) {
+					if (NameValues[i].Name.equals("FirstName") && NameValues[i].Type == NameValue.ValueType.String) {
 						firstName = (String) NameValues[i].Value;
-					}
-					else if (NameValues[i].Name.equals("LastName") && NameValues[i].Type == NameValue.ValueType.String)
-					{
+					} else if (NameValues[i].Name.equals("LastName")
+							&& NameValues[i].Type == NameValue.ValueType.String) {
 						lastName = (String) NameValues[i].Value;
 					}
 				}
 
-				if (!firstName.isEmpty() && !lastName.isEmpty())
-				{
+				if (!firstName.isEmpty() && !lastName.isEmpty()) {
 					name = String.format("%s %s", firstName, lastName);
 					return name;
 				}
@@ -442,29 +381,20 @@ public class Avatar extends Primitive
 		return Helpers.EmptyString;
 	}
 
-	public void setNames(String firstName, String lastName)
-	{
-		if (!firstName.isEmpty() && !lastName.isEmpty())
-		{
+	public void setNames(String firstName, String lastName) {
+		if (!firstName.isEmpty() && !lastName.isEmpty()) {
 			name = String.format("%s %s", firstName, lastName);
-		}
-		else
-		{
+		} else {
 			name = Helpers.EmptyString;
 		}
 
-		if (NameValues != null && NameValues.length > 0)
-		{
-			synchronized (NameValues)
-			{
-				for (int i = 0; i < NameValues.length; i++)
-				{
-					if (NameValues[i].Name.equals("FirstName") && NameValues[i].Type == NameValue.ValueType.String)
-					{
+		if (NameValues != null && NameValues.length > 0) {
+			synchronized (NameValues) {
+				for (int i = 0; i < NameValues.length; i++) {
+					if (NameValues[i].Name.equals("FirstName") && NameValues[i].Type == NameValue.ValueType.String) {
 						NameValues[i].Value = firstName;
-					}
-					else if (NameValues[i].Name.equals("LastName") && NameValues[i].Type == NameValue.ValueType.String)
-					{
+					} else if (NameValues[i].Name.equals("LastName")
+							&& NameValues[i].Type == NameValue.ValueType.String) {
 						NameValues[i].Value = lastName;
 					}
 				}
@@ -472,32 +402,24 @@ public class Avatar extends Primitive
 		}
 	}
 
-	public String getDisplayName()
-	{
+	public String getDisplayName() {
 		return displayName;
 	}
-	
-	public void setDisplayName(String name)
-	{
+
+	public void setDisplayName(String name) {
 		displayName = name;
 	}
 
 	// Active group
-	public final String getGroupName()
-	{
-		if (!Helpers.isEmpty(groupName))
-		{
+	public final String getGroupName() {
+		if (!Helpers.isEmpty(groupName)) {
 			return groupName;
 		}
 
-		if (NameValues != null || NameValues.length > 0)
-		{
-			synchronized (NameValues)
-			{
-				for (int i = 0; i < NameValues.length; i++)
-				{
-					if (NameValues[i].Name.equals("Title") && NameValues[i].Type == NameValue.ValueType.String)
-					{
+		if (NameValues != null || NameValues.length > 0) {
+			synchronized (NameValues) {
+				for (int i = 0; i < NameValues.length; i++) {
+					if (NameValues[i].Name.equals("Title") && NameValues[i].Type == NameValue.ValueType.String) {
 						groupName = (String) NameValues[i].Value;
 						return groupName;
 					}
@@ -508,20 +430,17 @@ public class Avatar extends Primitive
 	}
 
 	@Override
-	public OSD Serialize()
-	{
+	public OSD Serialize() {
 		OSDMap Avi = (OSDMap) super.Serialize();
 		OSDArray grp = new OSDArray();
 
-		for (int i = 0; i < Groups.size(); i++)
-		{
+		for (int i = 0; i < Groups.size(); i++) {
 			grp.add(OSD.FromUUID(Groups.get(i)));
 		}
 
 		OSDArray vp = new OSDArray();
 
-		for (int i = 0; i < VisualParameters.length; i++)
-		{
+		for (int i = 0; i < VisualParameters.length; i++) {
 			vp.add(OSD.FromInteger(VisualParameters[i]));
 		}
 
@@ -544,27 +463,23 @@ public class Avatar extends Primitive
 	// #region Constructors
 
 	// Default constructor
-	public Avatar()
-	{
+	public Avatar() {
 		super();
 	}
 
-	public Avatar(UUID ID)
-	{
+	public Avatar(UUID ID) {
 		super();
 		this.ID = ID;
 	}
 
-	public Avatar(OSD osd)
-	{
+	public Avatar(OSD osd) {
 		super(osd);
 
 		OSDMap tex = (OSDMap) osd;
 
 		Groups = new ArrayList<UUID>();
 
-		for (OSD U : (OSDArray) tex.get("groups"))
-		{
+		for (OSD U : (OSDArray) tex.get("groups")) {
 			Groups.add(U.AsUUID());
 		}
 
@@ -576,8 +491,7 @@ public class Avatar extends Primitive
 		OSDArray vp = (OSDArray) tex.get("visual_parameters");
 		VisualParameters = new byte[vp.size()];
 
-		for (int i = 0; i < vp.size(); i++)
-		{
+		for (int i = 0; i < vp.size(); i++) {
 			VisualParameters[i] = (byte) vp.get(i).AsInteger();
 		}
 

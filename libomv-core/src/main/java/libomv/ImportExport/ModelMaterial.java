@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -31,10 +31,9 @@ package libomv.ImportExport;
 
 import libomv.types.Color4;
 
-public class ModelMaterial
-{
-    public String ID;
-    public Color4 DiffuseColor = Color4.White;
-    public String Texture;
-    public byte[] TextureData;
+public class ModelMaterial {
+	public String ID;
+	public Color4 DiffuseColor = Color4.White;
+	public String Texture;
+	public byte[] TextureData;
 }

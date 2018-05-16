@@ -5,18 +5,19 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for cg_samplerCUBE complex type.
+ * <p>
+ * Java class for cg_samplerCUBE complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="cg_samplerCUBE">
@@ -31,9 +32,6 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "cg_samplerCUBE")
-public class CgSamplerCUBE
-    extends FxSamplerCUBECommon
-{
-
+public class CgSamplerCUBE extends FxSamplerCUBECommon {
 
 }

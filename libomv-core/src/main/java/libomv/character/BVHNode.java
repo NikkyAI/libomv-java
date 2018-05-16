@@ -23,100 +23,85 @@ import java.util.List;
 
 import libomv.types.Vector3;
 
-public class BVHNode
-{
+public class BVHNode {
 	public boolean[] mIgnorePos;
 	public boolean[] mIgnoreRot;
-	
+
 	private Vector3 offset;
-	
-	public Vector3 getOffset()
-	{
+
+	public Vector3 getOffset() {
 		return offset;
 	}
-	
-	public void setOffset(Vector3 offset)
-	{
+
+	public void setOffset(Vector3 offset) {
 		this.offset = offset;
 	}
-	
-	public Vector3 getEndSite()
-	{
-		if (endSites.size() > 0)
-		{
+
+	public Vector3 getEndSite() {
+		if (endSites.size() > 0) {
 			return endSites.get(0);
 		}
 		return null;
 	}
 
-	public List<Vector3> getEndSites()
-	{
+	public List<Vector3> getEndSites() {
 		return endSites;
 	}
 
-	public void addEndSite(Vector3 endSite)
-	{
+	public void addEndSite(Vector3 endSite) {
 		this.endSites.add(endSite);
 	}
-	
-	public String getName()
-	{
+
+	public String getName() {
 		return name;
 	}
-	
-	public void setName(String name)
-	{
+
+	public void setName(String name) {
 		this.name = name;
 	}
-	
-	public Channels getChannels()
-	{
+
+	public Channels getChannels() {
 		return channels;
 	}
-	
-	public void setChannels(Channels channels)
-	{
+
+	public void setChannels(Channels channels) {
 		this.channels = channels;
 	}
-	
+
 	private List<Vector3> endSites = new ArrayList<Vector3>();
 	private String name;
 	private Channels channels;
 	private List<BVHNode> joints = new ArrayList<BVHNode>();
 
-	public List<BVHNode> getJoints()
-	{
+	public List<BVHNode> getJoints() {
 		return joints;
 	}
-	
-	public void add(BVHNode joint)
-	{
+
+	public void add(BVHNode joint) {
 		joints.add(joint);
 	}
 
-	//usually null for special purpose
+	// usually null for special purpose
 	private String parentName;
-	public String getParentName()
-	{
+
+	public String getParentName() {
 		return parentName;
 	}
-	
-	public void setParentName(String parentName)
-	{
+
+	public void setParentName(String parentName) {
 		this.parentName = parentName;
 	}
-	
+
 	private BVHTranslation translation;
-	public BVHTranslation getTranslation()
-	{
+
+	public BVHTranslation getTranslation() {
 		return translation;
 	}
-	
-	public void setTranslation(BVHTranslation translation)
-	{
+
+	public void setTranslation(BVHTranslation translation) {
 		this.translation = translation;
 	}
-	
+
 	public int mNumPosKeys;
 	public int mNumRotKeys;
 }

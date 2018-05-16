@@ -58,104 +58,92 @@ import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 
 /// Manages HTTP texture downloads with a limit on maximum concurrent downloads
-public class DownloadManager
-{
+public class DownloadManager {
 	private static final Logger logger = Logger.getLogger(DownloadManager.class);
 
-     public class DownloadResult
-    {
-        public boolean finished;
-        public int current;
-        public int full;
-        public byte[] data;
-        
-        public DownloadResult(int current, int full)
-        {
-        	finished = false;
-        	this.current = current;
-        	this.full = full;
-        }
-        
-        public DownloadResult(byte[] data)
-        {
-        	finished = true;
-        	this.data = data;
-        }
-    }
+	public class DownloadResult {
+		public boolean finished;
+		public int current;
+		public int full;
+		public byte[] data;
 
-    private class ActiveDownload implements Runnable
-    {
-        // URI of the item to fetch 
-        private URI address;
-        // Timout specified in milliseconds 
-        private int millisecondsTimeout;
-        // Accept the following content type
-        private String acceptType;
-        // How many times will this request be retried
-        private int retries;
-        // Current fetch attempt
-        private int attempt;
-        // The cache location to store this resources data after successful download if any
-        private File cacheFile;
-        
-        private CallbackHandler<DownloadResult> callbacks = new CallbackHandler<DownloadResult>();
-    	
-        // Default constructor
-        public ActiveDownload()
-        {
-            this.retries = 5;
-            this.attempt = 0;
-        }
-
-        public ActiveDownload(URI address, int millisecondsTimeout, String acceptType, File cacheFile, Callback<DownloadResult> callback)
-		{
-        	this();
-            this.address = address;
-            this.millisecondsTimeout = millisecondsTimeout;
-            this.acceptType = acceptType;
-            this.cacheFile = cacheFile;
-            this.callbacks.add(callback, false);
+		public DownloadResult(int current, int full) {
+			finished = false;
+			this.current = current;
+			this.full = full;
 		}
-        
-        public void addCallback(Callback<DownloadResult> callback)
-        {
-            this.callbacks.add(callback, false);        	
-        }
-        
+
+		public DownloadResult(byte[] data) {
+			finished = true;
+			this.data = data;
+		}
+	}
+
+	private class ActiveDownload implements Runnable {
+		// URI of the item to fetch
+		private URI address;
+		// Timout specified in milliseconds
+		private int millisecondsTimeout;
+		// Accept the following content type
+		private String acceptType;
+		// How many times will this request be retried
+		private int retries;
+		// Current fetch attempt
+		private int attempt;
+		// The cache location to store this resources data after successful download if
+		// any
+		private File cacheFile;
+
+		private CallbackHandler<DownloadResult> callbacks = new CallbackHandler<DownloadResult>();
+
+		// Default constructor
+		public ActiveDownload() {
+			this.retries = 5;
+			this.attempt = 0;
+		}
+
+		public ActiveDownload(URI address, int millisecondsTimeout, String acceptType, File cacheFile,
+				Callback<DownloadResult> callback) {
+			this();
+			this.address = address;
+			this.millisecondsTimeout = millisecondsTimeout;
+			this.acceptType = acceptType;
+			this.cacheFile = cacheFile;
+			this.callbacks.add(callback, false);
+		}
+
+		public void addCallback(Callback<DownloadResult> callback) {
+			this.callbacks.add(callback, false);
+		}
+
 		@Override
-		public void run()
-		{
-			while (attempt++ < retries)
-			{
-				try
-				{
-					HttpURLConnection con = (HttpURLConnection)address.toURL().openConnection();
-					try
-					{
+		public void run() {
+			while (attempt++ < retries) {
+				try {
+					HttpURLConnection con = (HttpURLConnection) address.toURL().openConnection();
+					try {
 						con.setRequestProperty("Accept-Encoding", "identity");
 						if (acceptType != null)
-						    con.setRequestProperty("Accept", acceptType);
+							con.setRequestProperty("Accept", acceptType);
 						con.setReadTimeout(millisecondsTimeout > 0 ? millisecondsTimeout : 0);
-						if (address.getScheme().equals("https"))
-						{
-							try
-							{
+						if (address.getScheme().equals("https")) {
+							try {
 								String hostname = address.getHost();
-								X509Certificate	certificate = Helpers.getCertificate(hostname);
-								if (certificate != null)
-								{
+								X509Certificate certificate = Helpers.getCertificate(hostname);
+								if (certificate != null) {
 									KeyStore keyStore = Helpers.getExtendedKeyStore();
 									keyStore.setCertificateEntry(hostname, certificate);
 									KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
 									kmf.init(keyStore, null);
 									SSLContext context = SSLContext.getInstance("TLS");
 									context.init(kmf.getKeyManagers(), null, null);
-									((HttpsURLConnection)con).setSSLSocketFactory(context.getSocketFactory());
+									((HttpsURLConnection) con).setSSLSocketFactory(context.getSocketFactory());
 								}
-							}
-							catch (Exception e)
-							{
-								/* Ignore any exceptions here and let the connection fail if the security manager has a problem */
+							} catch (Exception e) {
+								/*
+								 * Ignore any exceptions here and let the connection fail if the security
+								 * manager has a problem
+								 */
 							}
 						}
 						con.connect();
@@ -163,96 +151,71 @@ public class DownloadManager
 						ByteArrayOutputStream bos = new ByteArrayOutputStream(total > 0 ? total : 10000);
 						InputStream is = con.getInputStream();
 						byte b[] = new byte[10000];
-						while ((len = is.read(b)) >= 0)
-						{
+						while ((len = is.read(b)) >= 0) {
 							callbacks.dispatch(new DownloadResult(len, total));
 							bos.write(b, 0, len);
 						}
-						if (cacheFile != null)
-						{
-							try
-							{
+						if (cacheFile != null) {
+							try {
 								FileOutputStream fos = new FileOutputStream(cacheFile);
-								try
-								{
+								try {
 									fos.write(bos.toByteArray());
-								}
-								finally
-								{
+								} finally {
 									fos.close();
 								}
+							} catch (Exception ex) {
 							}
-							catch (Exception ex) {}
 						}
 						callbacks.dispatch(new DownloadResult(bos.toByteArray()));
 						return;
-					}
-					catch (MalformedURLException ex)
-					{
-						logger.debug("HTTP Texture download failed, attempt " + attempt + " from " + retries, ex);						
-					}
-					catch (UnknownServiceException ex)
-					{
-						logger.debug("HTTP Texture download failed, attempt " + attempt + " from " + retries, ex);						
-					}
-			        catch (ProtocolException ex)
-					{
-						logger.debug("HTTP Texture download failed, attempt " + attempt + " from " + retries, ex);						
-					}
-					catch (IOException ex)
-					{
-						logger.debug("HTTP Texture download failed, attempt " + attempt + " from " + retries, ex);						
-					}
-					finally
-					{
+					} catch (MalformedURLException ex) {
+						logger.debug("HTTP Texture download failed, attempt " + attempt + " from " + retries, ex);
+					} catch (UnknownServiceException ex) {
+						logger.debug("HTTP Texture download failed, attempt " + attempt + " from " + retries, ex);
+					} catch (ProtocolException ex) {
+						logger.debug("HTTP Texture download failed, attempt " + attempt + " from " + retries, ex);
+					} catch (IOException ex) {
+						logger.debug("HTTP Texture download failed, attempt " + attempt + " from " + retries, ex);
+					} finally {
 						con.disconnect();
 					}
-				}
-				catch (Exception ex)
-				{
+				} catch (Exception ex) {
 					logger.debug("HTTP Texture download failed, attempt " + attempt + " from " + retries, ex);
 				}
 			}
 			callbacks.dispatch(new DownloadResult(null));
 		}
-    }
-    
-    private static int num = 0;
+	}
 
-    class SimpleThreadFactory implements ThreadFactory
-    {
-    	public Thread newThread(Runnable r)
-    	{
-    		return new Thread(r, "DownloadManager" + ++num);    			
-    	}
-    }
-    
-    private ExecutorService execPool = Executors.newFixedThreadPool(8, new SimpleThreadFactory());
+	private static int num = 0;
+
+	class SimpleThreadFactory implements ThreadFactory {
+		public Thread newThread(Runnable r) {
+			return new Thread(r, "DownloadManager" + ++num);
+		}
+	}
+
+	private ExecutorService execPool = Executors.newFixedThreadPool(8, new SimpleThreadFactory());
 	private Hashtable<URI, ActiveDownload> requests = new Hashtable<URI, ActiveDownload>();
-    
-    // Enqueue a new HTPP download
-    public void enque(URI address, int millisecondsTimeout, String acceptType, File cacheFile, Callback<DownloadResult> callback)
-    {
-    	synchronized (requests)
-    	{
-    		ActiveDownload download = requests.get(address);
-    		if (download == null)
-    		{
-    			download = new ActiveDownload(address, millisecondsTimeout, acceptType, cacheFile, callback);
-    			requests.put(address, download);
-    	    	execPool.submit(download);
-    		}
-    		else if (callback != null)
-    		{
-    			download.addCallback(callback);
-    		}
-    	}
-    }
 
-    // Cleanup method
-    public void shutdown()
-    {
-    	execPool.shutdownNow();
-    	requests.clear();
-    }
+	// Enqueue a new HTPP download
+	public void enque(URI address, int millisecondsTimeout, String acceptType, File cacheFile,
+			Callback<DownloadResult> callback) {
+		synchronized (requests) {
+			ActiveDownload download = requests.get(address);
+			if (download == null) {
+				download = new ActiveDownload(address, millisecondsTimeout, acceptType, cacheFile, callback);
+				requests.put(address, download);
+				execPool.submit(download);
+			} else if (callback != null) {
+				download.addCallback(callback);
+			}
+		}
+	}
+
+	// Cleanup method
+	public void shutdown() {
+		execPool.shutdownNow();
+		requests.clear();
+	}
 }

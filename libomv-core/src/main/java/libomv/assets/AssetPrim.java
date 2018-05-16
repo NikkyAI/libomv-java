@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -70,67 +70,57 @@ import libomv.types.Vector3;
 import libomv.utils.Helpers;
 
 // A linkset asset, containing a parent primitive and zero or more children
-public class AssetPrim extends AssetItem
-{
+public class AssetPrim extends AssetItem {
 	private static final Logger logger = Logger.getLogger(AssetPrim.class);
 
 	private PrimObject Parent;
-	
-	public PrimObject getParent()
-	{
+
+	public PrimObject getParent() {
 		return Parent;
 	}
-	
-	public void setParent(PrimObject parent)
-	{
+
+	public void setParent(PrimObject parent) {
 		invalidateAssetData();
 		Parent = parent;
 	}
 
 	private List<PrimObject> Children;
 
-	public List<PrimObject> getChildren()
-	{
+	public List<PrimObject> getChildren() {
 		return Children;
 	}
-	
-	public void setChildren(List<PrimObject> children)
-	{
+
+	public void setChildren(List<PrimObject> children) {
 		invalidateAssetData();
 		Children = children;
 	}
 
 	// Override the base classes AssetType
 	@Override
-	public AssetType getAssetType()
-	{
+	public AssetType getAssetType() {
 		return AssetType.Object;
 	}
 
+	/// Initializes a new instance of an AssetPrim object
+	/// <param name="assetID">A unique <see cref="UUID"/> specific to this
+	/// asset</param>
+	/// <param name="assetData">A byte array containing the raw asset data</param>
+	public AssetPrim(UUID assetID, byte[] assetData) {
+		super(assetID, assetData);
+	}
 
-    /// Initializes a new instance of an AssetPrim object
-    /// <param name="assetID">A unique <see cref="UUID"/> specific to this asset</param>
-    /// <param name="assetData">A byte array containing the raw asset data</param>
-    public AssetPrim(UUID assetID, byte[] assetData)
-    {
-    	 super(assetID, assetData);
-    }
-
-    public AssetPrim(String xmlData) throws XmlPullParserException, IOException
-	{
-   	    super(null, null);
+	public AssetPrim(String xmlData) throws XmlPullParserException, IOException {
+		super(null, null);
 		decodeXml(xmlData);
 	}
 
-    public AssetPrim(XmlPullParser xmlParser) throws XmlPullParserException, IOException
-	{
-   	    super(null, null);
+	public AssetPrim(XmlPullParser xmlParser) throws XmlPullParserException, IOException {
+		super(null, null);
 		decodeXml(xmlParser);
 	}
-	
-	public AssetPrim(PrimObject parent, ArrayList<PrimObject> children)
-	{
-   	    super(null, null);
+
+	public AssetPrim(PrimObject parent, ArrayList<PrimObject> children) {
+		super(null, null);
 		Parent = parent;
 		if (children != null)
 			Children = children;
@@ -139,60 +129,41 @@ public class AssetPrim extends AssetItem
 	}
 
 	@Override
-	protected void encode()
-	{
+	protected void encode() {
 		StringWriter textWriter = new StringWriter();
-		try
-		{
+		try {
 			XmlSerializer xmlWriter = XmlPullParserFactory.newInstance().newSerializer();
 			xmlWriter.setOutput(textWriter);
 
 			encodeXml(xmlWriter);
 			xmlWriter.flush();
 			AssetData = textWriter.toString().getBytes(Helpers.UTF8_ENCODING);
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			logger.error("XML encoding error", ex);
-		}
-		finally
-		{
-			try
-			{
+		} finally {
+			try {
 				textWriter.close();
-			}
-			catch (IOException ex)
-			{
+			} catch (IOException ex) {
 				logger.error("XML encoding error", ex);
 			}
 		}
 	}
 
 	@Override
-	protected boolean decode()
-	{
-		if (AssetData != null)
-		{
+	protected boolean decode() {
+		if (AssetData != null) {
 			InputStream stream = new ByteArrayInputStream(AssetData);
-			try
-			{
+			try {
 				XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
 				parser.setInput(stream, Helpers.UTF8_ENCODING);
 				parser.nextTag();
 				return decodeXml(parser);
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				logger.error("XML parse error", ex);
-			}
-			finally
-			{
-				try
-				{
+			} finally {
+				try {
 					stream.close();
-				}
-				catch (IOException ex)
-				{
+				} catch (IOException ex) {
 					logger.error("XML parse error", ex);
 				}
 			}
@@ -200,240 +171,235 @@ public class AssetPrim extends AssetItem
 		return false;
 	}
 
-	private boolean decodeXml(String xmlData) throws XmlPullParserException, IOException
-	{
+	private boolean decodeXml(String xmlData) throws XmlPullParserException, IOException {
 		StringReader reader = new StringReader(xmlData);
-		try
-		{
+		try {
 			XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
 			parser.setInput(reader);
 			parser.nextTag();
 			return decodeXml(parser);
-		}
-		finally
-		{
+		} finally {
 			reader.close();
 		}
 	}
-	
-	public void writeXml(Writer writer, int indentation) throws XmlPullParserException, IllegalArgumentException, IllegalStateException, IOException
-	{
-   		XmlSerializer xmlWriter = XmlPullParserFactory.newInstance().newSerializer();
-   		
-   		if (indentation > 0)
-   		{
-   			String indent = new String(new char[indentation]).replace('\0', ' ');
-   			xmlWriter.setProperty("http://xmlpull.org/v1/doc/properties.html#serializer-indentation", indent);
-   		}
-   		xmlWriter.setOutput(writer);
-   		xmlWriter.startDocument(Helpers.UTF8_ENCODING, null);
-        encodeXml(xmlWriter);
-        xmlWriter.flush();	
+
+	public void writeXml(Writer writer, int indentation)
+			throws XmlPullParserException, IllegalArgumentException, IllegalStateException, IOException {
+		XmlSerializer xmlWriter = XmlPullParserFactory.newInstance().newSerializer();
+
+		if (indentation > 0) {
+			String indent = new String(new char[indentation]).replace('\0', ' ');
+			xmlWriter.setProperty("http://xmlpull.org/v1/doc/properties.html#serializer-indentation", indent);
+		}
+		xmlWriter.setOutput(writer);
+		xmlWriter.startDocument(Helpers.UTF8_ENCODING, null);
+		encodeXml(xmlWriter);
+		xmlWriter.flush();
 	}
 
-	private void encodeXml(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException, IOException
-	{
-        writer.startTag(null, "SceneObjectGroup");
-        writePrim(writer, Parent, null);
+	private void encodeXml(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException, IOException {
+		writer.startTag(null, "SceneObjectGroup");
+		writePrim(writer, Parent, null);
 
-        writer.startTag(null, "OtherParts");
-        for (PrimObject child : Children)
-        	writePrim(writer, child, Parent);
-        writer.endTag(null, "OtherParts");
-        writer.endTag(null, "SceneObjectGroup");
-        writer.endDocument();
+		writer.startTag(null, "OtherParts");
+		for (PrimObject child : Children)
+			writePrim(writer, child, Parent);
+		writer.endTag(null, "OtherParts");
+		writer.endTag(null, "SceneObjectGroup");
+		writer.endDocument();
 	}
 
-	private void writePrim(XmlSerializer writer, PrimObject prim, PrimObject parent) throws IllegalArgumentException, IllegalStateException, IOException
-	{
-        writer.startTag(null, "SceneObjectPart");
-        writer.attribute(null, "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        writer.attribute(null, "xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
+	private void writePrim(XmlSerializer writer, PrimObject prim, PrimObject parent)
+			throws IllegalArgumentException, IllegalStateException, IOException {
+		writer.startTag(null, "SceneObjectPart");
+		writer.attribute(null, "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+		writer.attribute(null, "xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
 
-        prim.CreatorID.serializeXml(writer, null, "CreatorID");
-        prim.FolderID.serializeXml(writer, null, "FolderID");
-        writeText(writer, "InventorySerial", (prim.Inventory != null) ? Integer.toString(prim.Inventory.Serial) : "0");
+		prim.CreatorID.serializeXml(writer, null, "CreatorID");
+		prim.FolderID.serializeXml(writer, null, "FolderID");
+		writeText(writer, "InventorySerial", (prim.Inventory != null) ? Integer.toString(prim.Inventory.Serial) : "0");
 
-        // FIXME: Task inventory
-        writer.startTag(null, "TaskInventory");
-        if (prim.Inventory != null)
-        {
-            for (PrimObject.InventoryBlock.ItemBlock item : prim.Inventory.Items)
-            {
-                writer.startTag(null, "TaskInventoryItem");
+		// FIXME: Task inventory
+		writer.startTag(null, "TaskInventory");
+		if (prim.Inventory != null) {
+			for (PrimObject.InventoryBlock.ItemBlock item : prim.Inventory.Items) {
+				writer.startTag(null, "TaskInventoryItem");
 
-                item.AssetID.serializeXml(writer, null, "AssetID");
-                writeInt(writer, "BasePermissions", item.PermsBase);
-                writeLong(writer, "CreationDate", (long)Helpers.DateTimeToUnixTime(item.CreationDate));
-                item.CreatorID.serializeXml(writer, null, "CreatorID");
-                writeText(writer, "Description", item.Description);
-                writeInt(writer, "EveryonePermissions", item.PermsEveryone);
-                writeInt(writer, "Flags", item.Flags);
-                item.GroupID.serializeXml(writer, null, "GroupID");
-                writeInt(writer, "GroupPermissions", item.PermsGroup);
-                writeInt(writer, "InvType", item.InvType.getValue());
-                item.ID.serializeXml(writer, null, "ItemID");
-                UUID.Zero.serializeXml(writer, null, "OldItemID");
-                item.LastOwnerID.serializeXml(writer, null, "LastOwnerID");
-                writeText(writer, "Name", item.Name);
-                writeInt(writer, "NextPermissions", item.PermsNextOwner);
-                item.OwnerID.serializeXml(writer, null, "OwnerID");
-                writeInt(writer, "CurrentPermissions", item.PermsOwner);
-                prim.ID.serializeXml(writer, null, "ParentID");
-                prim.ID.serializeXml(writer, null, "ParentPartID");
-                item.PermsGranterID.serializeXml(writer, null, "PermsGranter");
-                writeInt(writer, "PermsMask", 0);
-                writeInt(writer, "Type", item.Type.getValue());
-                writeText(writer, "OwnerChanged", "false");
+				item.AssetID.serializeXml(writer, null, "AssetID");
+				writeInt(writer, "BasePermissions", item.PermsBase);
+				writeLong(writer, "CreationDate", (long) Helpers.DateTimeToUnixTime(item.CreationDate));
+				item.CreatorID.serializeXml(writer, null, "CreatorID");
+				writeText(writer, "Description", item.Description);
+				writeInt(writer, "EveryonePermissions", item.PermsEveryone);
+				writeInt(writer, "Flags", item.Flags);
+				item.GroupID.serializeXml(writer, null, "GroupID");
+				writeInt(writer, "GroupPermissions", item.PermsGroup);
+				writeInt(writer, "InvType", item.InvType.getValue());
+				item.ID.serializeXml(writer, null, "ItemID");
+				UUID.Zero.serializeXml(writer, null, "OldItemID");
+				item.LastOwnerID.serializeXml(writer, null, "LastOwnerID");
+				writeText(writer, "Name", item.Name);
+				writeInt(writer, "NextPermissions", item.PermsNextOwner);
+				item.OwnerID.serializeXml(writer, null, "OwnerID");
+				writeInt(writer, "CurrentPermissions", item.PermsOwner);
+				prim.ID.serializeXml(writer, null, "ParentID");
+				prim.ID.serializeXml(writer, null, "ParentPartID");
+				item.PermsGranterID.serializeXml(writer, null, "PermsGranter");
+				writeInt(writer, "PermsMask", 0);
+				writeInt(writer, "Type", item.Type.getValue());
+				writeText(writer, "OwnerChanged", "false");
 
-                writer.endTag(null, "TaskInventoryItem");
-            }
-        }
-        writer.endTag(null, "TaskInventory");
+				writer.endTag(null, "TaskInventoryItem");
+			}
+		}
+		writer.endTag(null, "TaskInventory");
 
-        int flags = PrimFlags.None;
-        if (prim.UsePhysics) flags |= PrimFlags.Physics;
-        if (prim.Phantom) flags |= PrimFlags.Phantom;
-        if (prim.DieAtEdge) flags |= PrimFlags.DieAtEdge;
-        if (prim.ReturnAtEdge) flags |= PrimFlags.ReturnAtEdge;
-        if (prim.Temporary) flags |= PrimFlags.Temporary;
-        if (prim.Sandbox) flags |= PrimFlags.Sandbox;
-        writeInt(writer, "ObjectFlags", flags);
+		int flags = PrimFlags.None;
+		if (prim.UsePhysics)
+			flags |= PrimFlags.Physics;
+		if (prim.Phantom)
+			flags |= PrimFlags.Phantom;
+		if (prim.DieAtEdge)
+			flags |= PrimFlags.DieAtEdge;
+		if (prim.ReturnAtEdge)
+			flags |= PrimFlags.ReturnAtEdge;
+		if (prim.Temporary)
+			flags |= PrimFlags.Temporary;
+		if (prim.Sandbox)
+			flags |= PrimFlags.Sandbox;
+		writeInt(writer, "ObjectFlags", flags);
 
-        prim.ID.serializeXml(writer, null, "UUID");
-        writeInt(writer, "LocalId", prim.LocalID);
-        writeText(writer, "Name", prim.Name);
-        writeInt(writer, "Material", prim.Material);
-        writeLong(writer, "RegionHandle", prim.RegionHandle);
-        writeInt(writer, "ScriptAccessPin", prim.RemoteScriptAccessPIN);
+		prim.ID.serializeXml(writer, null, "UUID");
+		writeInt(writer, "LocalId", prim.LocalID);
+		writeText(writer, "Name", prim.Name);
+		writeInt(writer, "Material", prim.Material);
+		writeLong(writer, "RegionHandle", prim.RegionHandle);
+		writeInt(writer, "ScriptAccessPin", prim.RemoteScriptAccessPIN);
 
-        Vector3 groupPosition;
-        if (parent == null)
-            groupPosition = prim.Position;
-        else
-            groupPosition = parent.Position;
+		Vector3 groupPosition;
+		if (parent == null)
+			groupPosition = prim.Position;
+		else
+			groupPosition = parent.Position;
 
-        groupPosition.serializeXml(writer, null,  "GroupPosition", Helpers.EnUsCulture);
-        if (prim.ParentID == 0)
-        	Vector3.Zero.serializeXml(writer, null, "OffsetPosition");
-        else
-        	prim.Position.serializeXml(writer, null, "OffsetPosition");
-        prim.Rotation.serializeXml(writer, null, "RotationOffset");
-        prim.Velocity.serializeXml(writer, null, "Velocity");
-        Vector3.Zero.serializeXml(writer, null, "RotationalVelocity");
-        prim.AngularVelocity.serializeXml(writer, null, "AngularVelocity");
-        prim.Acceleration.serializeXml(writer, null, "Acceleration");
-        writeText(writer, "Description", prim.Description);
+		groupPosition.serializeXml(writer, null, "GroupPosition", Helpers.EnUsCulture);
+		if (prim.ParentID == 0)
+			Vector3.Zero.serializeXml(writer, null, "OffsetPosition");
+		else
+			prim.Position.serializeXml(writer, null, "OffsetPosition");
+		prim.Rotation.serializeXml(writer, null, "RotationOffset");
+		prim.Velocity.serializeXml(writer, null, "Velocity");
+		Vector3.Zero.serializeXml(writer, null, "RotationalVelocity");
+		prim.AngularVelocity.serializeXml(writer, null, "AngularVelocity");
+		prim.Acceleration.serializeXml(writer, null, "Acceleration");
+		writeText(writer, "Description", prim.Description);
 
-        prim.TextColor.serializeXml(writer, null, "Color");
+		prim.TextColor.serializeXml(writer, null, "Color");
 
-        writeText(writer, "Text", prim.Text);
-        writeText(writer, "SitName", prim.SitName);
-        writeText(writer, "TouchName", prim.TouchName);
+		writeText(writer, "Text", prim.Text);
+		writeText(writer, "SitName", prim.SitName);
+		writeText(writer, "TouchName", prim.TouchName);
 
-        writeInt(writer, "LinkNum", prim.LinkNumber);
-        writeInt(writer, "ClickAction", prim.ClickAction);
+		writeInt(writer, "LinkNum", prim.LinkNumber);
+		writeInt(writer, "ClickAction", prim.ClickAction);
 
-        writer.startTag(null, "Shape");
+		writer.startTag(null, "Shape");
 
-        writeInt(writer, "PathBegin", Primitive.PackBeginCut(prim.Shape.PathBegin));
-        writeInt(writer, "PathCurve", prim.Shape.PathCurve);
-        writeInt(writer, "PathEnd", Primitive.PackEndCut(prim.Shape.PathEnd));
-        writeInt(writer, "PathRadiusOffset", Primitive.PackPathTwist(prim.Shape.PathRadiusOffset));
-        writeInt(writer, "PathRevolutions", Primitive.PackPathRevolutions(prim.Shape.PathRevolutions));
-        writeInt(writer, "PathScaleX", Primitive.PackPathScale(prim.Shape.PathScaleX));
-        writeInt(writer, "PathScaleY", Primitive.PackPathScale(prim.Shape.PathScaleY));
-        writeInt(writer, "PathShearX", Primitive.PackPathShear(prim.Shape.PathShearX));
-        writeInt(writer, "PathShearY", Primitive.PackPathShear(prim.Shape.PathShearY));
-        writeInt(writer, "PathSkew", Primitive.PackPathTwist(prim.Shape.PathSkew));
-        writeInt(writer, "PathTaperX", Primitive.PackPathTaper(prim.Shape.PathTaperX));
-        writeInt(writer, "PathTaperY", Primitive.PackPathTaper(prim.Shape.PathTaperY));
-        writeInt(writer, "PathTwist", Primitive.PackPathTwist(prim.Shape.PathTwist));
-        writeInt(writer, "PathTwistBegin", Primitive.PackPathTwist(prim.Shape.PathTwistBegin));
-        writeInt(writer, "PCode", prim.PCode);
-        writeInt(writer, "ProfileBegin", Primitive.PackBeginCut(prim.Shape.ProfileBegin));
-        writeInt(writer, "ProfileEnd", Primitive.PackEndCut(prim.Shape.ProfileEnd));
-        writeInt(writer, "ProfileHollow", Primitive.PackProfileHollow(prim.Shape.ProfileHollow));
-        prim.Scale.serializeXml(writer, null, "Scale");
-        writeInt(writer, "State", prim.State);
-        writeText(writer, "ProfileShape", ProfileCurve.setValue(prim.Shape.ProfileCurve & 0x0F).toString());
-        writeText(writer, "HollowShape", HoleType.setValue((prim.Shape.ProfileCurve & 0xF0) >> 4).toString());
-        writeInt(writer, "ProfileCurve", prim.Shape.ProfileCurve);
-        
-        writeText(writer, "TextureEntry", Base64.encodeBase64String(prim.Textures != null ? prim.Textures.getBytes() : Helpers.EmptyBytes));
+		writeInt(writer, "PathBegin", Primitive.PackBeginCut(prim.Shape.PathBegin));
+		writeInt(writer, "PathCurve", prim.Shape.PathCurve);
+		writeInt(writer, "PathEnd", Primitive.PackEndCut(prim.Shape.PathEnd));
+		writeInt(writer, "PathRadiusOffset", Primitive.PackPathTwist(prim.Shape.PathRadiusOffset));
+		writeInt(writer, "PathRevolutions", Primitive.PackPathRevolutions(prim.Shape.PathRevolutions));
+		writeInt(writer, "PathScaleX", Primitive.PackPathScale(prim.Shape.PathScaleX));
+		writeInt(writer, "PathScaleY", Primitive.PackPathScale(prim.Shape.PathScaleY));
+		writeInt(writer, "PathShearX", Primitive.PackPathShear(prim.Shape.PathShearX));
+		writeInt(writer, "PathShearY", Primitive.PackPathShear(prim.Shape.PathShearY));
+		writeInt(writer, "PathSkew", Primitive.PackPathTwist(prim.Shape.PathSkew));
+		writeInt(writer, "PathTaperX", Primitive.PackPathTaper(prim.Shape.PathTaperX));
+		writeInt(writer, "PathTaperY", Primitive.PackPathTaper(prim.Shape.PathTaperY));
+		writeInt(writer, "PathTwist", Primitive.PackPathTwist(prim.Shape.PathTwist));
+		writeInt(writer, "PathTwistBegin", Primitive.PackPathTwist(prim.Shape.PathTwistBegin));
+		writeInt(writer, "PCode", prim.PCode);
+		writeInt(writer, "ProfileBegin", Primitive.PackBeginCut(prim.Shape.ProfileBegin));
+		writeInt(writer, "ProfileEnd", Primitive.PackEndCut(prim.Shape.ProfileEnd));
+		writeInt(writer, "ProfileHollow", Primitive.PackProfileHollow(prim.Shape.ProfileHollow));
+		prim.Scale.serializeXml(writer, null, "Scale");
+		writeInt(writer, "State", prim.State);
+		writeText(writer, "ProfileShape", ProfileCurve.setValue(prim.Shape.ProfileCurve & 0x0F).toString());
+		writeText(writer, "HollowShape", HoleType.setValue((prim.Shape.ProfileCurve & 0xF0) >> 4).toString());
+		writeInt(writer, "ProfileCurve", prim.Shape.ProfileCurve);
 
-        // FIXME: ExtraParams
-        writeText(writer, "ExtraParams", Helpers.EmptyString);
-        
-        // FIXME: write sculpt, flexy and light data
+		writeText(writer, "TextureEntry",
+				Base64.encodeBase64String(prim.Textures != null ? prim.Textures.getBytes() : Helpers.EmptyBytes));
 
-        writer.endTag(null, "Shape");
+		// FIXME: ExtraParams
+		writeText(writer, "ExtraParams", Helpers.EmptyString);
 
-        prim.Scale.serializeXml(writer, null, "Scale"); // FIXME: again?
-        writeInt(writer, "UpdateFlag", 0);
-        Quaternion.Identity.serializeXml(writer, null, "SitTargetOrientation");
-        prim.SitOffset.serializeXml(writer, null, "SitTargetPosition");
-        prim.SitOffset.serializeXml(writer, null, "SitTargetPositionLL");
-        prim.SitRotation.serializeXml(writer, null, "SitTargetOrientationLL");
-        writeInt(writer, "ParentID", prim.ParentID);
-        writeLong(writer, "CreationDate", (long)Helpers.DateTimeToUnixTime(prim.CreationDate));
-        writeInt(writer, "Category", 0);
-        writeInt(writer, "SalePrice", prim.SalePrice);
-        writeInt(writer, "ObjectSaleType", prim.SaleType);
-        writeInt(writer, "OwnershipCost", 0);
-        prim.GroupID.serializeXml(writer, null, "GroupID");
-        prim.OwnerID.serializeXml(writer, null, "OwnerID");
-        prim.LastOwnerID.serializeXml(writer, null, "LastOwnerID");
-        writeInt(writer, "BaseMask", prim.PermsBase);
-        writeInt(writer, "OwnerMask", prim.PermsOwner);
-        writeInt(writer, "GroupMask", prim.PermsGroup);
-        writeInt(writer, "EveryoneMask", prim.PermsEveryone);
-        writeInt(writer, "NextOwnerMask", prim.PermsNextOwner);
-        writeText(writer, "Flags", "None");
-        prim.CollisionSound.serializeXml(writer, null, "CollisionSound");
-        writeFloat(writer, "CollisionSoundVolume", prim.CollisionSoundVolume);
-        Vector3.Zero.serializeXml(writer, null, "SitTargetAvatar");
-        writer.endTag(null, "SceneObjectPart");
+		// FIXME: write sculpt, flexy and light data
+
+		writer.endTag(null, "Shape");
+
+		prim.Scale.serializeXml(writer, null, "Scale"); // FIXME: again?
+		writeInt(writer, "UpdateFlag", 0);
+		Quaternion.Identity.serializeXml(writer, null, "SitTargetOrientation");
+		prim.SitOffset.serializeXml(writer, null, "SitTargetPosition");
+		prim.SitOffset.serializeXml(writer, null, "SitTargetPositionLL");
+		prim.SitRotation.serializeXml(writer, null, "SitTargetOrientationLL");
+		writeInt(writer, "ParentID", prim.ParentID);
+		writeLong(writer, "CreationDate", (long) Helpers.DateTimeToUnixTime(prim.CreationDate));
+		writeInt(writer, "Category", 0);
+		writeInt(writer, "SalePrice", prim.SalePrice);
+		writeInt(writer, "ObjectSaleType", prim.SaleType);
+		writeInt(writer, "OwnershipCost", 0);
+		prim.GroupID.serializeXml(writer, null, "GroupID");
+		prim.OwnerID.serializeXml(writer, null, "OwnerID");
+		prim.LastOwnerID.serializeXml(writer, null, "LastOwnerID");
+		writeInt(writer, "BaseMask", prim.PermsBase);
+		writeInt(writer, "OwnerMask", prim.PermsOwner);
+		writeInt(writer, "GroupMask", prim.PermsGroup);
+		writeInt(writer, "EveryoneMask", prim.PermsEveryone);
+		writeInt(writer, "NextOwnerMask", prim.PermsNextOwner);
+		writeText(writer, "Flags", "None");
+		prim.CollisionSound.serializeXml(writer, null, "CollisionSound");
+		writeFloat(writer, "CollisionSoundVolume", prim.CollisionSoundVolume);
+		Vector3.Zero.serializeXml(writer, null, "SitTargetAvatar");
+		writer.endTag(null, "SceneObjectPart");
 	}
 
-	private static void writeText(XmlSerializer writer, String name, String text) throws IllegalArgumentException, IllegalStateException, IOException
-    {
-    	writer.startTag(null, name).text(text).endTag(null, name);
-    }
-    
-    private static void writeInt(XmlSerializer writer, String name, int number) throws IllegalArgumentException, IllegalStateException, IOException
-    {
-    	writer.startTag(null, name).text(Integer.toString(number)).endTag(null, name);
-    }
+	private static void writeText(XmlSerializer writer, String name, String text)
+			throws IllegalArgumentException, IllegalStateException, IOException {
+		writer.startTag(null, name).text(text).endTag(null, name);
+	}
 
-    private static void writeLong(XmlSerializer writer, String name, long number) throws IllegalArgumentException, IllegalStateException, IOException
-    {
-    	writer.startTag(null, name).text(Long.toString(number)).endTag(null, name);
-    }
+	private static void writeInt(XmlSerializer writer, String name, int number)
+			throws IllegalArgumentException, IllegalStateException, IOException {
+		writer.startTag(null, name).text(Integer.toString(number)).endTag(null, name);
+	}
 
-    private static void writeFloat(XmlSerializer writer, String name, float number) throws IllegalArgumentException, IllegalStateException, IOException
-    {
-    	writer.startTag(null, name).text(Float.toString(number)).endTag(null, name);
-    }
+	private static void writeLong(XmlSerializer writer, String name, long number)
+			throws IllegalArgumentException, IllegalStateException, IOException {
+		writer.startTag(null, name).text(Long.toString(number)).endTag(null, name);
+	}
 
-	private boolean decodeXml(XmlPullParser parser) throws XmlPullParserException, IOException
-	{
+	private static void writeFloat(XmlSerializer writer, String name, float number)
+			throws IllegalArgumentException, IllegalStateException, IOException {
+		writer.startTag(null, name).text(Float.toString(number)).endTag(null, name);
+	}
+
+	private boolean decodeXml(XmlPullParser parser) throws XmlPullParserException, IOException {
 		parser.require(XmlPullParser.START_TAG, null, "SceneObjectGroup");
 		parser.nextTag(); // Advance to <RootPart> (or sometimes just <SceneObjectPart>
 		Parent = loadPrim(parser);
-		if (Parent != null)
-		{
+		if (Parent != null) {
 			parser.nextTag(); // Advance to <OtherParths>
 			if (parser.getEventType() == XmlPullParser.END_TAG)
 				logger.error("Unexpected event type");
 
-			if (!parser.isEmptyElementTag())
-			{
+			if (!parser.isEmptyElementTag()) {
 				parser.require(XmlPullParser.START_TAG, null, "OtherParts");
 
 				ArrayList<PrimObject> children = new ArrayList<PrimObject>();
-				while (parser.nextTag() == XmlPullParser.START_TAG)
-				{
+				while (parser.nextTag() == XmlPullParser.START_TAG) {
 					PrimObject child = loadPrim(parser);
 					if (child != null)
 						children.add(child);
@@ -446,53 +412,41 @@ public class AssetPrim extends AssetItem
 		return false;
 	}
 
-	private PrimObject loadPrim(XmlPullParser parser) throws XmlPullParserException, IOException
-	{
+	private PrimObject loadPrim(XmlPullParser parser) throws XmlPullParserException, IOException {
 		PrimObject obj = new PrimObject();
 		Vector3 groupPosition = null, offsetPosition = null;
 		boolean gotExtraPartTag = false;
 
 		obj.Inventory = obj.new InventoryBlock();
- 
-		// Enter with eventType == XmlPullParser.START_TAG 
-		if (parser.getEventType() == XmlPullParser.START_TAG && (parser.getName().equals("RootPart") || parser.getName().equals("Part")))
-		{
+
+		// Enter with eventType == XmlPullParser.START_TAG
+		if (parser.getEventType() == XmlPullParser.START_TAG
+				&& (parser.getName().equals("RootPart") || parser.getName().equals("Part"))) {
 			gotExtraPartTag = true;
-			parser.nextTag();  // Advance to SceneObjectPart tag
+			parser.nextTag(); // Advance to SceneObjectPart tag
 		}
 		if (!parser.getName().equals("SceneObjectPart"))
 			System.out.println("Something went wrong");
 		parser.require(XmlPullParser.START_TAG, null, "SceneObjectPart");
 
 		obj.AllowedDrop = true;
-//		obj.PassTouches = false;
+		// obj.PassTouches = false;
 
-		while (parser.nextTag() == XmlPullParser.START_TAG)
-		{
+		while (parser.nextTag() == XmlPullParser.START_TAG) {
 			String name = parser.getName();
-			if (name.equals("AllowedDrop"))
-			{
+			if (name.equals("AllowedDrop")) {
 				obj.AllowedDrop = Helpers.TryParseBoolean(parser.nextText().trim());
-			}
-			else if (name.equals("CreatorID"))
-			{
+			} else if (name.equals("CreatorID")) {
 				obj.CreatorID = new UUID(parser);
-			}
-			else if (name.equals("FolderID"))
-			{
+			} else if (name.equals("FolderID")) {
 				obj.FolderID = new UUID(parser);
-			}
-			else if (name.equals("InventorySerial"))
-			{
+			} else if (name.equals("InventorySerial")) {
 				obj.Inventory.Serial = Helpers.TryParseInt(parser.nextText().trim());
-			}
-			else if (name.equals("TaskInventory"))
-			{
-				// FIXME: Parse TaskInventory obj.Inventory.Items = new PrimObject.InventoryBlock.ItemBlock[0];
+			} else if (name.equals("TaskInventory")) {
+				// FIXME: Parse TaskInventory obj.Inventory.Items = new
+				// PrimObject.InventoryBlock.ItemBlock[0];
 				Helpers.skipElement(parser);
-			}
-			else if (name.equals("ObjectFlags"))
-			{
+			} else if (name.equals("ObjectFlags")) {
 				int flags = Helpers.TryParseInt(parser.nextText().trim());
 				obj.UsePhysics = (flags & PrimFlags.Physics) != 0;
 				obj.Phantom = (flags & PrimFlags.Phantom) != 0;
@@ -500,193 +454,102 @@ public class AssetPrim extends AssetItem
 				obj.ReturnAtEdge = (flags & PrimFlags.ReturnAtEdge) != 0;
 				obj.Temporary = (flags & PrimFlags.Temporary) != 0;
 				obj.Sandbox = (flags & PrimFlags.Sandbox) != 0;
-			}
-			else if (name.equals("UUID"))
-			{
+			} else if (name.equals("UUID")) {
 				obj.ID = new UUID(parser);
-			}
-			else if (name.equals("LocalId"))
-			{
+			} else if (name.equals("LocalId")) {
 				obj.LocalID = Helpers.TryParseInt(parser.nextText().trim());
-			}
-			else if (name.equals("Name"))
-			{
+			} else if (name.equals("Name")) {
 				obj.Name = parser.nextText().trim();
-			}
-			else if (name.equals("Material"))
-			{
+			} else if (name.equals("Material")) {
 				obj.Material = Helpers.TryParseInt(parser.nextText().trim());
-			}
-			else if (name.equals("PassTouches"))
-			{
-	            obj.PassTouches = Helpers.TryParseBoolean(parser.nextText().trim());
-			}
-			else if (name.equals("RegionHandle"))
-			{
+			} else if (name.equals("PassTouches")) {
+				obj.PassTouches = Helpers.TryParseBoolean(parser.nextText().trim());
+			} else if (name.equals("RegionHandle")) {
 				obj.RegionHandle = Helpers.TryParseLong(parser.nextText().trim());
-			}
-			else if (name.equals("ScriptAccessPin"))
-			{
+			} else if (name.equals("ScriptAccessPin")) {
 				obj.RemoteScriptAccessPIN = Helpers.TryParseInt(parser.nextText().trim());
-			}
-			else if (name.equals("GroupPosition"))
-			{
+			} else if (name.equals("GroupPosition")) {
 				groupPosition = new Vector3(parser);
-			}
-			else if (name.equals("OffsetPosition"))
-			{
+			} else if (name.equals("OffsetPosition")) {
 				offsetPosition = new Vector3(parser);
-			}
-			else if (name.equals("RotationOffset"))
-			{
+			} else if (name.equals("RotationOffset")) {
 				obj.Rotation = new Quaternion(parser);
-			}
-			else if (name.equals("Velocity"))
-			{
+			} else if (name.equals("Velocity")) {
 				obj.Velocity = new Vector3(parser);
-			}
-			else if (name.equals("RotationalVelocity"))
-			{
+			} else if (name.equals("RotationalVelocity")) {
 				new Vector3(parser);
-			}
-			else if (name.equals("AngularVelocity"))
-			{
+			} else if (name.equals("AngularVelocity")) {
 				obj.AngularVelocity = new Vector3(parser);
-			}
-			else if (name.equals("Acceleration"))
-			{
+			} else if (name.equals("Acceleration")) {
 				obj.Acceleration = new Vector3(parser);
-			}
-			else if (name.equals("Description"))
-			{
+			} else if (name.equals("Description")) {
 				obj.Description = parser.nextText().trim();
-			}
-			else if (name.equals("Color"))
-			{
+			} else if (name.equals("Color")) {
 				obj.TextColor = new Color4(parser);
-			}
-			else if (name.equals("Text"))
-			{
+			} else if (name.equals("Text")) {
 				obj.Text = parser.nextText().trim();
-			}
-			else if (name.equals("SitName"))
-			{
+			} else if (name.equals("SitName")) {
 				obj.SitName = parser.nextText().trim();
-			}
-			else if (name.equals("TouchName"))
-			{
+			} else if (name.equals("TouchName")) {
 				obj.TouchName = parser.nextText().trim();
-			}
-			else if (name.equals("LinkNum"))
-			{
+			} else if (name.equals("LinkNum")) {
 				obj.LinkNumber = Helpers.TryParseInt(parser.nextText().trim());
-			}
-			else if (name.equals("ClickAction"))
-			{
+			} else if (name.equals("ClickAction")) {
 				obj.ClickAction = Helpers.TryParseInt(parser.nextText().trim());
-			}
-			else if (name.equals("Shape"))
-			{
+			} else if (name.equals("Shape")) {
 				obj.Shape = loadShape(parser, obj);
-			}
-			else if (name.equals("Scale"))
-			{
+			} else if (name.equals("Scale")) {
 				obj.Scale = new Vector3(parser); // Yes, again
-			}
-			else if (name.equals("UpdateFlag"))
-			{
+			} else if (name.equals("UpdateFlag")) {
 				parser.nextText(); // Skip
-			}
-			else if (name.equals("SitTargetOrientation"))
-			{
+			} else if (name.equals("SitTargetOrientation")) {
 				Quaternion.parse(parser); // Skip
-			}
-			else if (name.equals("SitTargetPosition"))
-			{
+			} else if (name.equals("SitTargetPosition")) {
 				Vector3.parse(parser); // Skip
-			}
-			else if (name.equals("SitTargetPositionLL"))
-			{
+			} else if (name.equals("SitTargetPositionLL")) {
 				obj.SitOffset = new Vector3(parser);
-			}
-			else if (name.equals("SitTargetOrientationLL"))
-			{
+			} else if (name.equals("SitTargetOrientationLL")) {
 				obj.SitRotation = new Quaternion(parser);
-			}
-			else if (name.equals("ParentID"))
-			{
+			} else if (name.equals("ParentID")) {
 				obj.ParentID = Helpers.TryParseInt(parser.nextText().trim());
-			}
-			else if (name.equals("CreationDate"))
-			{
+			} else if (name.equals("CreationDate")) {
 				obj.CreationDate = Helpers.UnixTimeToDateTime(Helpers.TryParseInt(parser.nextText().trim()));
-			}
-			else if (name.equals("Category"))
-			{
+			} else if (name.equals("Category")) {
 				Helpers.TryParseInt(parser.nextText().trim());
-			}
-			else if (name.equals("SalePrice"))
-			{
+			} else if (name.equals("SalePrice")) {
 				obj.SalePrice = Helpers.TryParseInt(parser.nextText().trim());
-			}
-			else if (name.equals("ObjectSaleType"))
-			{
+			} else if (name.equals("ObjectSaleType")) {
 				obj.SaleType = Helpers.TryParseInt(parser.nextText().trim());
-			}
-			else if (name.equals("OwnershipCost"))
-			{
+			} else if (name.equals("OwnershipCost")) {
 				Helpers.TryParseInt(parser.nextText().trim());
-			}
-			else if (name.equals("GroupID"))
-			{
+			} else if (name.equals("GroupID")) {
 				obj.GroupID = new UUID(parser);
-			}
-			else if (name.equals("OwnerID"))
-			{
+			} else if (name.equals("OwnerID")) {
 				obj.OwnerID = new UUID(parser);
-			}
-			else if (name.equals("LastOwnerID"))
-			{
+			} else if (name.equals("LastOwnerID")) {
 				obj.LastOwnerID = new UUID(parser);
-			}
-			else if (name.equals("BaseMask"))
-			{
+			} else if (name.equals("BaseMask")) {
 				obj.PermsBase = Helpers.TryParseInt(parser.nextText().trim());
-			}
-			else if (name.equals("OwnerMask"))
-			{
+			} else if (name.equals("OwnerMask")) {
 				obj.PermsOwner = Helpers.TryParseInt(parser.nextText().trim());
-			}
-			else if (name.equals("GroupMask"))
-			{
+			} else if (name.equals("GroupMask")) {
 				obj.PermsGroup = Helpers.TryParseInt(parser.nextText().trim());
-			}
-			else if (name.equals("EveryoneMask"))
-			{
+			} else if (name.equals("EveryoneMask")) {
 				obj.PermsEveryone = Helpers.TryParseInt(parser.nextText().trim());
-			}
-			else if (name.equals("NextOwnerMask"))
-			{
+			} else if (name.equals("NextOwnerMask")) {
 				obj.PermsNextOwner = Helpers.TryParseInt(parser.nextText().trim());
-			}
-			else if (name.equals("Flags"))
-			{
+			} else if (name.equals("Flags")) {
 				parser.nextText();
-			}
-			else if (name.equals("CollisionSound"))
-			{
+			} else if (name.equals("CollisionSound")) {
 				obj.CollisionSound = new UUID(parser);
-			}
-			else if (name.equals("CollisionSoundVolume"))
-			{
+			} else if (name.equals("CollisionSoundVolume")) {
 				obj.CollisionSoundVolume = Helpers.TryParseFloat(parser.nextText().trim());
-			}
-			else
-			{
+			} else {
 				if (parser.isEmptyElementTag())
 					Helpers.skipElement(parser);
 				else
-					logger.debug("Received unrecocognized asset primitive element " + name + " \"" + Helpers.skipElementDebug(parser) + "\"");
+					logger.debug("Received unrecocognized asset primitive element " + name + " \""
+							+ Helpers.skipElementDebug(parser) + "\"");
 			}
 		}
 		// currently at </SceneObjectPart>
@@ -694,238 +557,144 @@ public class AssetPrim extends AssetItem
 			parser.nextTag(); // Advance to </RootPart> or </Part>
 
 		if (obj.ParentID == 0)
-	 		obj.Position = groupPosition;
-	 	else
-	 		obj.Position = offsetPosition;
+			obj.Position = groupPosition;
+		else
+			obj.Position = offsetPosition;
 
-	 	return obj;
+		return obj;
 	}
 
-	private static PrimObject.ShapeBlock loadShape(XmlPullParser parser, PrimObject obj) throws XmlPullParserException, IOException
-	{
+	private static PrimObject.ShapeBlock loadShape(XmlPullParser parser, PrimObject obj)
+			throws XmlPullParserException, IOException {
 		obj.Shape = obj.new ShapeBlock();
 		PrimObject.LightBlock light = obj.new LightBlock();
 		light.Color = new Color4(0f, 0f, 0f, 1f);
 		PrimObject.FlexibleBlock flexible = obj.new FlexibleBlock();
 		flexible.Force = new Vector3(0.0f);
-		
+
 		parser.require(XmlPullParser.START_TAG, null, "Shape");
 
-		while (parser.nextTag() == XmlPullParser.START_TAG)
-		{
+		while (parser.nextTag() == XmlPullParser.START_TAG) {
 			String name = parser.getName();
-			if (name.equals("ProfileCurve"))
-			{
+			if (name.equals("ProfileCurve")) {
 				obj.Shape.ProfileCurve = Helpers.TryParseInt(parser.nextText().trim());
-			}
-			else if (name.equals("TextureEntry"))
-			{
+			} else if (name.equals("TextureEntry")) {
 				byte[] teData = Base64.decodeBase64(parser.nextText());
-			 	obj.Textures = new TextureEntry(teData, 0, teData.length);
-			}
-			else if (name.equals("ExtraParams"))
-			{
+				obj.Textures = new TextureEntry(teData, 0, teData.length);
+			} else if (name.equals("ExtraParams")) {
 				parser.nextText(); // Skip Extra Params
-			}
-			else if (name.equals("PathBegin"))
-			{
-			 	obj.Shape.PathBegin = Primitive.UnpackBeginCut((short)Helpers.TryParseInt(parser.nextText().trim()));
-			}
-			else if (name.equals("PathCurve"))
-			{
-			 	obj.Shape.PathCurve = Helpers.TryParseInt(parser.nextText().trim());
-			}
-			else if (name.equals("PathEnd"))
-			{
-			 	obj.Shape.PathEnd = Primitive.UnpackEndCut((short)Helpers.TryParseInt(parser.nextText().trim()));
-			}
-			else if (name.equals("PathRadiusOffset"))
-			{
-			 	obj.Shape.PathRadiusOffset = Primitive.UnpackPathTwist((byte)Helpers.TryParseInt(parser.nextText().trim()));
-			}
-			else if (name.equals("PathRevolutions"))
-			{
-			 	obj.Shape.PathRevolutions = Primitive.UnpackPathRevolutions((byte)Helpers.TryParseInt(parser.nextText().trim()));
-			}
-			else if (name.equals("PathScaleX"))
-			{
-			 	obj.Shape.PathScaleX = Primitive.UnpackPathScale((byte)Helpers.TryParseInt(parser.nextText().trim()));
-			}
-			else if (name.equals("PathScaleY"))
-			{
-			 	obj.Shape.PathScaleY = Primitive.UnpackPathScale((byte)Helpers.TryParseInt(parser.nextText().trim()));
-			}
-			else if (name.equals("PathShearX"))
-			{
-			 	obj.Shape.PathShearX = Primitive.UnpackPathShear((byte)Helpers.TryParseInt(parser.nextText().trim()));
-			}
-			else if (name.equals("PathShearY"))
-			{
-			 	obj.Shape.PathShearY = Primitive.UnpackPathShear((byte)Helpers.TryParseInt(parser.nextText().trim()));
-			}
-			else if (name.equals("PathSkew"))
-			{
-			 	obj.Shape.PathSkew = Primitive.UnpackPathTwist((byte)Helpers.TryParseInt(parser.nextText().trim()));
-			}
-			else if (name.equals("PathTaperX"))
-			{
-			 	obj.Shape.PathTaperX = Primitive.UnpackPathTaper((byte)Helpers.TryParseInt(parser.nextText().trim()));
-			}
-			else if (name.equals("PathTaperY"))
-			{
-			 	obj.Shape.PathTaperY = Primitive.UnpackPathShear((byte)Helpers.TryParseInt(parser.nextText().trim()));
-			}
-			else if (name.equals("PathTwist"))
-			{
-			 	obj.Shape.PathTwist = Primitive.UnpackPathTwist((byte)Helpers.TryParseInt(parser.nextText().trim()));
-			}
-			else if (name.equals("PathTwistBegin"))
-			{
-			 	obj.Shape.PathTwistBegin = Primitive.UnpackPathTwist((byte)Helpers.TryParseInt(parser.nextText().trim()));
-			}
-			else if (name.equals("PCode"))
-			{
-			 	obj.PCode = Helpers.TryParseInt(parser.nextText().trim());
-			}
-			else if (name.equals("ProfileBegin"))
-			{
-			 	obj.Shape.ProfileBegin = Primitive.UnpackBeginCut((short)Helpers.TryParseInt(parser.nextText().trim()));
-			}
-			else if (name.equals("ProfileEnd"))
-			{
-			 	obj.Shape.ProfileEnd = Primitive.UnpackEndCut((short)Helpers.TryParseInt(parser.nextText().trim()));
-			}
-			else if (name.equals("ProfileHollow"))
-			{
-			 	obj.Shape.ProfileHollow = Primitive.UnpackProfileHollow((short)Helpers.TryParseInt(parser.nextText().trim()));
-			}
-			else if (name.equals("Scale"))
-			{
-			 	obj.Scale = new Vector3(parser);
-			}
-			else if (name.equals("State"))
-			{
-			 	obj.State = (byte)Helpers.TryParseInt(parser.nextText().trim());
-			}
-			else if (name.equals("ProfileShape"))
-			{
+			} else if (name.equals("PathBegin")) {
+				obj.Shape.PathBegin = Primitive.UnpackBeginCut((short) Helpers.TryParseInt(parser.nextText().trim()));
+			} else if (name.equals("PathCurve")) {
+				obj.Shape.PathCurve = Helpers.TryParseInt(parser.nextText().trim());
+			} else if (name.equals("PathEnd")) {
+				obj.Shape.PathEnd = Primitive.UnpackEndCut((short) Helpers.TryParseInt(parser.nextText().trim()));
+			} else if (name.equals("PathRadiusOffset")) {
+				obj.Shape.PathRadiusOffset = Primitive
+						.UnpackPathTwist((byte) Helpers.TryParseInt(parser.nextText().trim()));
+			} else if (name.equals("PathRevolutions")) {
+				obj.Shape.PathRevolutions = Primitive
+						.UnpackPathRevolutions((byte) Helpers.TryParseInt(parser.nextText().trim()));
+			} else if (name.equals("PathScaleX")) {
+				obj.Shape.PathScaleX = Primitive.UnpackPathScale((byte) Helpers.TryParseInt(parser.nextText().trim()));
+			} else if (name.equals("PathScaleY")) {
+				obj.Shape.PathScaleY = Primitive.UnpackPathScale((byte) Helpers.TryParseInt(parser.nextText().trim()));
+			} else if (name.equals("PathShearX")) {
+				obj.Shape.PathShearX = Primitive.UnpackPathShear((byte) Helpers.TryParseInt(parser.nextText().trim()));
+			} else if (name.equals("PathShearY")) {
+				obj.Shape.PathShearY = Primitive.UnpackPathShear((byte) Helpers.TryParseInt(parser.nextText().trim()));
+			} else if (name.equals("PathSkew")) {
+				obj.Shape.PathSkew = Primitive.UnpackPathTwist((byte) Helpers.TryParseInt(parser.nextText().trim()));
+			} else if (name.equals("PathTaperX")) {
+				obj.Shape.PathTaperX = Primitive.UnpackPathTaper((byte) Helpers.TryParseInt(parser.nextText().trim()));
+			} else if (name.equals("PathTaperY")) {
+				obj.Shape.PathTaperY = Primitive.UnpackPathShear((byte) Helpers.TryParseInt(parser.nextText().trim()));
+			} else if (name.equals("PathTwist")) {
+				obj.Shape.PathTwist = Primitive.UnpackPathTwist((byte) Helpers.TryParseInt(parser.nextText().trim()));
+			} else if (name.equals("PathTwistBegin")) {
+				obj.Shape.PathTwistBegin = Primitive
+						.UnpackPathTwist((byte) Helpers.TryParseInt(parser.nextText().trim()));
+			} else if (name.equals("PCode")) {
+				obj.PCode = Helpers.TryParseInt(parser.nextText().trim());
+			} else if (name.equals("ProfileBegin")) {
+				obj.Shape.ProfileBegin = Primitive
+						.UnpackBeginCut((short) Helpers.TryParseInt(parser.nextText().trim()));
+			} else if (name.equals("ProfileEnd")) {
+				obj.Shape.ProfileEnd = Primitive.UnpackEndCut((short) Helpers.TryParseInt(parser.nextText().trim()));
+			} else if (name.equals("ProfileHollow")) {
+				obj.Shape.ProfileHollow = Primitive
+						.UnpackProfileHollow((short) Helpers.TryParseInt(parser.nextText().trim()));
+			} else if (name.equals("Scale")) {
+				obj.Scale = new Vector3(parser);
+			} else if (name.equals("State")) {
+				obj.State = (byte) Helpers.TryParseInt(parser.nextText().trim());
+			} else if (name.equals("ProfileShape")) {
 				obj.Shape.ProfileCurve |= ProfileCurve.setValue(Helpers.TryParseInt(parser.nextText())).getValue();
-			}
-			else if (name.equals("HollowShape"))
-			{
+			} else if (name.equals("HollowShape")) {
 				obj.Shape.ProfileCurve |= HoleType.setValue(Helpers.TryParseInt(parser.nextText())).getValue() << 4;
-			}
-			else if (name.equals("SculptTexture"))
-			{
+			} else if (name.equals("SculptTexture")) {
 				UUID sculptTexture = new UUID(parser);
-				if (!sculptTexture.equals(UUID.Zero))
-				{
+				if (!sculptTexture.equals(UUID.Zero)) {
 					if (obj.Sculpt == null)
-						obj.Sculpt = obj.new SculptBlock();	
+						obj.Sculpt = obj.new SculptBlock();
 					obj.Sculpt.Texture = sculptTexture;
 				}
-			}
-			else if (name.equals("SculptType"))
-			{
+			} else if (name.equals("SculptType")) {
 				if (obj.Sculpt == null)
-					obj.Sculpt = obj.new SculptBlock();	
-			 	obj.Sculpt.Type = SculptType.setValue(Helpers.TryParseInt(parser.nextText())).getValue();
-			}
-			else if (name.equals("SculptData"))
-			{
+					obj.Sculpt = obj.new SculptBlock();
+				obj.Sculpt.Type = SculptType.setValue(Helpers.TryParseInt(parser.nextText())).getValue();
+			} else if (name.equals("SculptData")) {
 				parser.nextText();
-			}
-			else if (name.equals("FlexiSoftness"))
-			{
-			 	flexible.Softness = Helpers.TryParseInt(parser.nextText().trim());
-			}
-			else if (name.equals("FlexiTension"))
-			{
-			 	flexible.Tension = Helpers.TryParseFloat(parser.nextText().trim());
-			}
-			else if (name.equals("FlexiDrag"))
-			{
-			 	flexible.Drag = Helpers.TryParseFloat(parser.nextText().trim());
-			}
-			else if (name.equals("FlexiGravity"))
-			{
-			 	flexible.Gravity = Helpers.TryParseFloat(parser.nextText().trim());
-			}
-			else if (name.equals("FlexiWind"))
-			{
-			 	flexible.Wind = Helpers.TryParseFloat(parser.nextText().trim());
-			}
-			else if (name.equals("FlexiForceX"))
-			{
-			 	flexible.Force.X = Helpers.TryParseFloat(parser.nextText().trim());
-			}
-			else if (name.equals("FlexiForceY"))
-			{
-			 	flexible.Force.Y = Helpers.TryParseFloat(parser.nextText().trim());
-			}
-			else if (name.equals("FlexiForceZ"))
-			{
-			 	flexible.Force.Z = Helpers.TryParseFloat(parser.nextText().trim());
-			}
-			else if (name.equals("LightColorR"))
-			{
+			} else if (name.equals("FlexiSoftness")) {
+				flexible.Softness = Helpers.TryParseInt(parser.nextText().trim());
+			} else if (name.equals("FlexiTension")) {
+				flexible.Tension = Helpers.TryParseFloat(parser.nextText().trim());
+			} else if (name.equals("FlexiDrag")) {
+				flexible.Drag = Helpers.TryParseFloat(parser.nextText().trim());
+			} else if (name.equals("FlexiGravity")) {
+				flexible.Gravity = Helpers.TryParseFloat(parser.nextText().trim());
+			} else if (name.equals("FlexiWind")) {
+				flexible.Wind = Helpers.TryParseFloat(parser.nextText().trim());
+			} else if (name.equals("FlexiForceX")) {
+				flexible.Force.X = Helpers.TryParseFloat(parser.nextText().trim());
+			} else if (name.equals("FlexiForceY")) {
+				flexible.Force.Y = Helpers.TryParseFloat(parser.nextText().trim());
+			} else if (name.equals("FlexiForceZ")) {
+				flexible.Force.Z = Helpers.TryParseFloat(parser.nextText().trim());
+			} else if (name.equals("LightColorR")) {
 				light.Color.R = Helpers.TryParseFloat(parser.nextText().trim());
-			}
-			else if (name.equals("LightColorG"))
-			{
+			} else if (name.equals("LightColorG")) {
 				light.Color.G = Helpers.TryParseFloat(parser.nextText().trim());
-			}
-			else if (name.equals("LightColorB"))
-			{
+			} else if (name.equals("LightColorB")) {
 				light.Color.B = Helpers.TryParseFloat(parser.nextText().trim());
-			}
-			else if (name.equals("LightColorA"))
-			{
+			} else if (name.equals("LightColorA")) {
 				light.Color.A = Helpers.TryParseFloat(parser.nextText().trim());
-			}
-			else if (name.equals("LightRadius"))
-			{
+			} else if (name.equals("LightRadius")) {
 				light.Radius = Helpers.TryParseFloat(parser.nextText().trim());
-			}
-			else if (name.equals("LightCutoff"))
-			{
+			} else if (name.equals("LightCutoff")) {
 				light.Cutoff = Helpers.TryParseFloat(parser.nextText().trim());
-			}
-			else if (name.equals("LightFalloff"))
-			{
+			} else if (name.equals("LightFalloff")) {
 				light.Falloff = Helpers.TryParseFloat(parser.nextText().trim());
-			}
-			else if (name.equals("LightIntensity"))
-			{
+			} else if (name.equals("LightIntensity")) {
 				light.Intensity = Helpers.TryParseFloat(parser.nextText().trim());
-			}
-			else if (name.equals("FlexiEntry"))
-			{
-			 	if (Helpers.TryParseBoolean(parser.nextText().trim()))
-			 		obj.Flexible = flexible;
-			}
-			else if (name.equals("LightEntry"))
-			{
-			 	if (Helpers.TryParseBoolean(parser.nextText().trim()))
-			 		obj.Light = light;
-			}
-			else if (name.equals("SculptEntry"))
-			{
+			} else if (name.equals("FlexiEntry")) {
+				if (Helpers.TryParseBoolean(parser.nextText().trim()))
+					obj.Flexible = flexible;
+			} else if (name.equals("LightEntry")) {
+				if (Helpers.TryParseBoolean(parser.nextText().trim()))
+					obj.Light = light;
+			} else if (name.equals("SculptEntry")) {
 				parser.nextText(); // Skip
-			}
-			else
-			{
+			} else {
 				Helpers.skipElement(parser);
 			}
 		}
-		return obj.Shape; 
+		return obj.Shape;
 	}
 
 	/** The deserialized form of a single primitive in a linkset asset */
-	public class PrimObject
-	{
-		public class FlexibleBlock
-		{
+	public class PrimObject {
+		public class FlexibleBlock {
 			public int Softness;
 			public float Gravity;
 			public float Drag;
@@ -933,8 +702,7 @@ public class AssetPrim extends AssetItem
 			public float Tension;
 			public Vector3 Force;
 
-			public OSDMap serialize()
-			{
+			public OSDMap serialize() {
 				OSDMap map = new OSDMap();
 				map.put("softness", OSD.FromInteger(Softness));
 				map.put("gravity", OSD.FromReal(Gravity));
@@ -945,8 +713,7 @@ public class AssetPrim extends AssetItem
 				return map;
 			}
 
-			public void deserialize(OSDMap map)
-			{
+			public void deserialize(OSDMap map) {
 				Softness = map.get("softness").AsInteger();
 				Gravity = (float) map.get("gravity").AsReal();
 				Drag = (float) map.get("drag").AsReal();
@@ -956,16 +723,14 @@ public class AssetPrim extends AssetItem
 			}
 		}
 
-		public class LightBlock
-		{
+		public class LightBlock {
 			public Color4 Color;
 			public float Intensity;
 			public float Radius;
 			public float Falloff;
 			public float Cutoff;
 
-			public OSDMap serialize()
-			{
+			public OSDMap serialize() {
 				OSDMap map = new OSDMap();
 				map.put("color", OSD.FromColor4(Color));
 				map.put("intensity", OSD.FromReal(Intensity));
@@ -975,8 +740,7 @@ public class AssetPrim extends AssetItem
 				return map;
 			}
 
-			public void deserialize(OSDMap map)
-			{
+			public void deserialize(OSDMap map) {
 				Color = map.get("color").AsColor4();
 				Intensity = (float) map.get("intensity").AsReal();
 				Radius = (float) map.get("radius").AsReal();
@@ -985,28 +749,24 @@ public class AssetPrim extends AssetItem
 			}
 		}
 
-		public class SculptBlock
-		{
+		public class SculptBlock {
 			public UUID Texture;
 			public byte Type;
 
-			public OSDMap serialize()
-			{
+			public OSDMap serialize() {
 				OSDMap map = new OSDMap();
 				map.put("texture", OSD.FromUUID(Texture));
 				map.put("type", OSD.FromInteger(Type));
 				return map;
 			}
 
-			public void deserialize(OSDMap map)
-			{
+			public void deserialize(OSDMap map) {
 				Texture = map.get("texture").AsUUID();
 				Type = (byte) map.get("type").AsInteger();
 			}
 		}
 
-		public class ParticlesBlock
-		{
+		public class ParticlesBlock {
 			public int Flags;
 			public int Pattern;
 			public float MaxAge;
@@ -1029,8 +789,7 @@ public class AssetPrim extends AssetItem
 			public Vector2 ParticleStartScale;
 			public Vector2 ParticleEndScale;
 
-			public OSDMap serialize()
-			{
+			public OSDMap serialize() {
 				OSDMap map = new OSDMap();
 				map.put("flags", OSD.FromInteger(Flags));
 				map.put("pattern", OSD.FromInteger(Pattern));
@@ -1056,8 +815,7 @@ public class AssetPrim extends AssetItem
 				return map;
 			}
 
-			public void deserialize(OSDMap map)
-			{
+			public void deserialize(OSDMap map) {
 				Flags = map.get("flags").AsInteger();
 				Pattern = map.get("pattern").AsInteger();
 				MaxAge = (float) map.get("max_age").AsReal();
@@ -1081,8 +839,7 @@ public class AssetPrim extends AssetItem
 			}
 		}
 
-		public class ShapeBlock
-		{
+		public class ShapeBlock {
 			public int PathCurve;
 			public float PathBegin;
 			public float PathEnd;
@@ -1102,8 +859,7 @@ public class AssetPrim extends AssetItem
 			public float ProfileEnd;
 			public float ProfileHollow;
 
-			public OSDMap serialize()
-			{
+			public OSDMap serialize() {
 				OSDMap map = new OSDMap();
 				map.put("path_curve", OSD.FromInteger(PathCurve));
 				map.put("path_begin", OSD.FromReal(PathBegin));
@@ -1126,8 +882,7 @@ public class AssetPrim extends AssetItem
 				return map;
 			}
 
-			public void deserialize(OSDMap map)
-			{
+			public void deserialize(OSDMap map) {
 				PathCurve = map.get("path_curve").AsInteger();
 				PathBegin = (float) map.get("path_begin").AsReal();
 				PathEnd = (float) map.get("path_end").AsReal();
@@ -1149,21 +904,19 @@ public class AssetPrim extends AssetItem
 			}
 		}
 
-		public class InventoryBlock
-		{
-			public class ItemBlock
-			{
+		public class InventoryBlock {
+			public class ItemBlock {
 				public UUID ID;
 				public String Name;
-                public UUID OwnerID;
-                public UUID CreatorID;
-                public UUID GroupID;
-                public UUID LastOwnerID;
-                public UUID PermsGranterID;
+				public UUID OwnerID;
+				public UUID CreatorID;
+				public UUID GroupID;
+				public UUID LastOwnerID;
+				public UUID PermsGranterID;
 				public UUID AssetID;
-                public AssetType Type;
-                public InventoryType InvType;
-                public String Description;
+				public AssetType Type;
+				public InventoryType InvType;
+				public String Description;
 				public int PermsBase;
 				public int PermsOwner;
 				public int PermsGroup;
@@ -1174,19 +927,18 @@ public class AssetPrim extends AssetItem
 				public int Flags;
 				public Date CreationDate;
 
-				public OSDMap serialize()
-				{
+				public OSDMap serialize() {
 					OSDMap map = new OSDMap();
 					map.put("id", OSD.FromUUID(ID));
 					map.put("name", OSD.FromString(Name));
 					map.put("owner_id", OSD.FromUUID(OwnerID));
 					map.put("creator_id", OSD.FromUUID(CreatorID));
 					map.put("group_id", OSD.FromUUID(GroupID));
-                    map.put("last_owner_id", OSD.FromUUID(LastOwnerID));
-                    map.put("perms_granter_id", OSD.FromUUID(PermsGranterID));
+					map.put("last_owner_id", OSD.FromUUID(LastOwnerID));
+					map.put("perms_granter_id", OSD.FromUUID(PermsGranterID));
 					map.put("asset_id", OSD.FromUUID(AssetID));
 					map.put("asset_type", OSD.FromInteger(Type.getValue()));
-                    map.put("inv_type", OSD.FromInteger(InvType.getValue()));
+					map.put("inv_type", OSD.FromInteger(InvType.getValue()));
 					map.put("description", OSD.FromString(Description));
 					map.put("perms_base", OSD.FromInteger(PermsBase));
 					map.put("perms_owner", OSD.FromInteger(PermsOwner));
@@ -1200,18 +952,17 @@ public class AssetPrim extends AssetItem
 					return map;
 				}
 
-				public void deserialize(OSDMap map)
-				{
+				public void deserialize(OSDMap map) {
 					ID = map.get("id").AsUUID();
 					Name = map.get("name").AsString();
 					OwnerID = map.get("owner_id").AsUUID();
 					CreatorID = map.get("creator_id").AsUUID();
 					GroupID = map.get("group_id").AsUUID();
 					AssetID = map.get("asset_id").AsUUID();
-                    LastOwnerID = map.get("last_owner_id").AsUUID();
-                    PermsGranterID = map.get("perms_granter_id").AsUUID();
- 					Type = Type.setValue(map.get("asset_type").AsInteger());
-                    InvType = InventoryType.setValue(map.get("inv_type").AsInteger());
+					LastOwnerID = map.get("last_owner_id").AsUUID();
+					PermsGranterID = map.get("perms_granter_id").AsUUID();
+					Type = AssetType.setValue(map.get("asset_type").AsInteger());
+					InvType = InventoryType.setValue(map.get("inv_type").AsInteger());
 					Description = map.get("description").AsString();
 					PermsBase = map.get("perms_base").AsInteger();
 					PermsOwner = map.get("perms_owner").AsInteger();
@@ -1224,43 +975,42 @@ public class AssetPrim extends AssetItem
 					CreationDate = map.get("creation_date").AsDate();
 				}
 
-				public ItemBlock()
-                {
-                }
-				
-				public ItemBlock(InventoryItem item)
-                {
-                    AssetID = item.assetID;
-                    CreationDate = item.CreationDate;
-                    CreatorID = item.Permissions.creatorID;
-                    Description = item.Description;
-                    Flags = item.ItemFlags;
-                    GroupID = item.Permissions.groupID;
-                    ID = item.itemID;
-                    InvType = item.getType() == InventoryType.Unknown && item.assetType == Type.LSLText ? InventoryType.LSL : item.getType(); ;
-                    LastOwnerID = item.Permissions.lastOwnerID;
-                    Name = item.name;
-                    OwnerID = item.getOwnerID();
-                    PermsBase = item.Permissions.BaseMask;
-                    PermsEveryone = item.Permissions.EveryoneMask;
-                    PermsGroup = item.Permissions.GroupMask;
-                    PermsNextOwner = item.Permissions.NextOwnerMask;
-                    PermsOwner = item.Permissions.OwnerMask;
-                    PermsGranterID = UUID.Zero;
-                    Type = item.assetType;
-                }
+				public ItemBlock() {
+				}
+
+				public ItemBlock(InventoryItem item) {
+					AssetID = item.assetID;
+					CreationDate = item.CreationDate;
+					CreatorID = item.Permissions.creatorID;
+					Description = item.Description;
+					Flags = item.ItemFlags;
+					GroupID = item.Permissions.groupID;
+					ID = item.itemID;
+					InvType = item.getType() == InventoryType.Unknown && item.assetType == AssetType.LSLText
+							? InventoryType.LSL
+							: item.getType();
+					;
+					LastOwnerID = item.Permissions.lastOwnerID;
+					Name = item.name;
+					OwnerID = item.getOwnerID();
+					PermsBase = item.Permissions.BaseMask;
+					PermsEveryone = item.Permissions.EveryoneMask;
+					PermsGroup = item.Permissions.GroupMask;
+					PermsNextOwner = item.Permissions.NextOwnerMask;
+					PermsOwner = item.Permissions.OwnerMask;
+					PermsGranterID = UUID.Zero;
+					Type = item.assetType;
+				}
 			}
 
 			public int Serial;
 			public ItemBlock[] Items;
 
-			public OSDMap serialize()
-			{
+			public OSDMap serialize() {
 				OSDMap map = new OSDMap();
 				map.put("serial", OSD.FromInteger(Serial));
 
-				if (Items != null)
-				{
+				if (Items != null) {
 					OSDArray array = new OSDArray(Items.length);
 					for (int i = 0; i < Items.length; i++)
 						array.add(Items[i].serialize());
@@ -1270,24 +1020,19 @@ public class AssetPrim extends AssetItem
 				return map;
 			}
 
-			public void deserialize(OSDMap map)
-			{
+			public void deserialize(OSDMap map) {
 				Serial = map.get("serial").AsInteger();
 
-				if (map.containsKey("items"))
-				{
+				if (map.containsKey("items")) {
 					OSDArray array = (OSDArray) map.get("items");
 					Items = new ItemBlock[array.size()];
 
-					for (int i = 0; i < array.size(); i++)
-					{
+					for (int i = 0; i < array.size(); i++) {
 						ItemBlock item = new ItemBlock();
 						item.deserialize((OSDMap) array.get(i));
 						Items[i] = item;
 					}
-				}
-				else
-				{
+				} else {
 					Items = new ItemBlock[0];
 				}
 			}
@@ -1363,8 +1108,7 @@ public class AssetPrim extends AssetItem
 		public TextureEntry Textures;
 		public InventoryBlock Inventory;
 
-		public OSDMap Serialize()
-		{
+		public OSDMap Serialize() {
 			OSDMap map = new OSDMap();
 			map.put("id", OSD.FromUUID(ID));
 			map.put("attachment_position", OSD.FromVector3(AttachmentPosition));
@@ -1443,8 +1187,7 @@ public class AssetPrim extends AssetItem
 			return map;
 		}
 
-		public void deserialize(OSDMap map)
-		{
+		public void deserialize(OSDMap map) {
 			ID = map.get("id").AsUUID();
 			AttachmentPosition = map.get("attachment_position").AsVector3();
 			AttachmentRotation = map.get("attachment_rotation").AsQuaternion();
@@ -1480,7 +1223,7 @@ public class AssetPrim extends AssetItem
 			State = map.get("state").AsInteger();
 			PCode = map.get("prim_code").AsInteger();
 			Material = map.get("material").AsInteger();
-            PassTouches = map.get("pass_touches").AsBoolean();
+			PassTouches = map.get("pass_touches").AsBoolean();
 			SoundID = map.get("sound_id").AsUUID();
 			SoundGain = (float) map.get("sound_gain").AsReal();
 			SoundRadius = (float) map.get("sound_radius").AsReal();
@@ -1505,149 +1248,144 @@ public class AssetPrim extends AssetItem
 			SaleType = map.get("sale_type").AsInteger();
 		}
 
-		public PrimObject()
-		{
-			
+		public PrimObject() {
+
 		}
 
-		public PrimObject(Primitive obj)
-		{
-            Acceleration = obj.Acceleration;
-            AllowedDrop = (obj.Flags & PrimFlags.AllowInventoryDrop) == PrimFlags.AllowInventoryDrop;
-            AngularVelocity = obj.AngularVelocity;
-            //AttachmentPosition
-            //AttachmentRotation
-            //BeforeAttachmentRotation
-            //CameraAtOffset
-            //CameraEyeOffset
-            ClickAction = obj.clickAction.getValue();
-            //CollisionSound
-            //CollisionSoundVolume;
-            CreationDate = obj.Properties.CreationDate;
-            CreatorID = obj.Properties.Permissions.creatorID;
-            Description = obj.Properties.Description;
-            DieAtEdge = (obj.Flags & PrimFlags.DieAtEdge) == PrimFlags.DieAtEdge;
-            if (obj.Flexible != null)
-            {
-                Flexible = new FlexibleBlock();
-                Flexible.Drag = obj.Flexible.Drag;
-                Flexible.Force = obj.Flexible.Force;
-                Flexible.Gravity = obj.Flexible.Gravity;
-                Flexible.Softness = obj.Flexible.Softness;
-                Flexible.Tension = obj.Flexible.Tension;
-                Flexible.Wind = obj.Flexible.Wind;
-            }
-            FolderID = obj.Properties.FolderID;
-            GroupID = obj.Properties.Permissions.groupID;
-            ID = obj.Properties.ObjectID;
-            //Inventory;
-            //LastAttachmentPoint;
-            LastOwnerID = obj.Properties.Permissions.lastOwnerID;
-            if (obj.Light != null)
-            {
-                Light = new LightBlock();
-                Light.Color = obj.Light.Color;
-                Light.Cutoff = obj.Light.Cutoff;
-                Light.Falloff = obj.Light.Falloff;
-                Light.Intensity = obj.Light.Intensity;
-                Light.Radius = obj.Light.Radius;
-            }
+		public PrimObject(Primitive obj) {
+			Acceleration = obj.Acceleration;
+			AllowedDrop = (obj.Flags & PrimFlags.AllowInventoryDrop) == PrimFlags.AllowInventoryDrop;
+			AngularVelocity = obj.AngularVelocity;
+			// AttachmentPosition
+			// AttachmentRotation
+			// BeforeAttachmentRotation
+			// CameraAtOffset
+			// CameraEyeOffset
+			ClickAction = obj.clickAction.getValue();
+			// CollisionSound
+			// CollisionSoundVolume;
+			CreationDate = obj.Properties.CreationDate;
+			CreatorID = obj.Properties.Permissions.creatorID;
+			Description = obj.Properties.Description;
+			DieAtEdge = (obj.Flags & PrimFlags.DieAtEdge) == PrimFlags.DieAtEdge;
+			if (obj.Flexible != null) {
+				Flexible = new FlexibleBlock();
+				Flexible.Drag = obj.Flexible.Drag;
+				Flexible.Force = obj.Flexible.Force;
+				Flexible.Gravity = obj.Flexible.Gravity;
+				Flexible.Softness = obj.Flexible.Softness;
+				Flexible.Tension = obj.Flexible.Tension;
+				Flexible.Wind = obj.Flexible.Wind;
+			}
+			FolderID = obj.Properties.FolderID;
+			GroupID = obj.Properties.Permissions.groupID;
+			ID = obj.Properties.ObjectID;
+			// Inventory;
+			// LastAttachmentPoint;
+			LastOwnerID = obj.Properties.Permissions.lastOwnerID;
+			if (obj.Light != null) {
+				Light = new LightBlock();
+				Light.Color = obj.Light.Color;
+				Light.Cutoff = obj.Light.Cutoff;
+				Light.Falloff = obj.Light.Falloff;
+				Light.Intensity = obj.Light.Intensity;
+				Light.Radius = obj.Light.Radius;
+			}
 
-            //LinkNumber;
-            LocalID = obj.LocalID;
-            Material = obj.PrimData.Material.getValue();
-            Name = obj.Properties.Name;
-            OwnerID = obj.Properties.Permissions.ownerID;
-            ParentID = obj.ParentID;
-            
-            Particles = new ParticlesBlock();
-            Particles.AngularVelocity = obj.ParticleSys.AngularVelocity;
-            Particles.Acceleration = obj.ParticleSys.PartAcceleration;
-            Particles.BurstParticleCount = obj.ParticleSys.BurstPartCount;
-            Particles.BurstRate = obj.ParticleSys.BurstRadius;
-            Particles.BurstRate = obj.ParticleSys.BurstRate;
-            Particles.BurstSpeedMax = obj.ParticleSys.BurstSpeedMax;
-            Particles.BurstSpeedMin = obj.ParticleSys.BurstSpeedMin;
-            Particles.DataFlags = obj.ParticleSys.PartDataFlags;
-            Particles.Flags = obj.ParticleSys.PartFlags;
-            Particles.InnerAngle = obj.ParticleSys.InnerAngle;
-            Particles.MaxAge = obj.ParticleSys.MaxAge;
-            Particles.OuterAngle = obj.ParticleSys.OuterAngle;
-            Particles.ParticleEndColor = obj.ParticleSys.PartEndColor;
-            Particles.ParticleEndScale = new Vector2(obj.ParticleSys.PartEndScaleX, obj.ParticleSys.PartEndScaleY);
-            Particles.ParticleMaxAge = obj.ParticleSys.MaxAge;
-            Particles.ParticleStartColor = obj.ParticleSys.PartStartColor;
-            Particles.ParticleStartScale = new Vector2(obj.ParticleSys.PartStartScaleX, obj.ParticleSys.PartStartScaleY);
-            Particles.Pattern = obj.ParticleSys.Pattern;
-            Particles.StartAge = obj.ParticleSys.StartAge;
-            Particles.TargetID = obj.ParticleSys.Target;
-            Particles.TextureID = obj.ParticleSys.Texture;
+			// LinkNumber;
+			LocalID = obj.LocalID;
+			Material = obj.PrimData.Material.getValue();
+			Name = obj.Properties.Name;
+			OwnerID = obj.Properties.Permissions.ownerID;
+			ParentID = obj.ParentID;
 
-            //PassTouches;
-            PCode = obj.PrimData.PCode.getValue();
-            PermsBase = obj.Properties.Permissions.BaseMask;
-            PermsEveryone = obj.Properties.Permissions.EveryoneMask;
-            PermsGroup = obj.Properties.Permissions.GroupMask;
-            PermsNextOwner = obj.Properties.Permissions.NextOwnerMask;
-            PermsOwner = obj.Properties.Permissions.OwnerMask;
-            Phantom = (obj.Flags & PrimFlags.Phantom) == PrimFlags.Phantom;
-            Position = obj.Position;
-            RegionHandle = obj.RegionHandle;
-            //RemoteScriptAccessPIN;
-            ReturnAtEdge = (obj.Flags & PrimFlags.ReturnAtEdge) == PrimFlags.ReturnAtEdge;
-            //RezDate;
-            Rotation = obj.Rotation;
-            SalePrice = obj.Properties.SalePrice;
-            SaleType = obj.Properties.SaleType.getValue();
-            Sandbox = (obj.Flags & PrimFlags.Sandbox) == PrimFlags.Sandbox;
-            Scale = obj.Scale;
-            //ScriptState;
-            if (obj.Sculpt != null)
-            {
-                Sculpt = new SculptBlock();
-                Sculpt.Texture = obj.Sculpt.SculptTexture;
-                Sculpt.Type = obj.Sculpt.getType().getValue();
-            }
-            Shape = new ShapeBlock();
-            Shape.PathBegin = obj.PrimData.PathBegin;
-            Shape.PathCurve = obj.PrimData.PathCurve.getValue();
-            Shape.PathEnd = obj.PrimData.PathEnd;
-            Shape.PathRadiusOffset = obj.PrimData.PathRadiusOffset;
-            Shape.PathRevolutions = obj.PrimData.PathRevolutions;
-            Shape.PathScaleX = obj.PrimData.PathScaleX;
-            Shape.PathScaleY = obj.PrimData.PathScaleY;
-            Shape.PathShearX = obj.PrimData.PathShearX;
-            Shape.PathShearY = obj.PrimData.PathShearY;
-            Shape.PathSkew = obj.PrimData.PathSkew;
-            Shape.PathTaperX = obj.PrimData.PathTaperX;
-            Shape.PathTaperY = obj.PrimData.PathTaperY;
+			Particles = new ParticlesBlock();
+			Particles.AngularVelocity = obj.ParticleSys.AngularVelocity;
+			Particles.Acceleration = obj.ParticleSys.PartAcceleration;
+			Particles.BurstParticleCount = obj.ParticleSys.BurstPartCount;
+			Particles.BurstRate = obj.ParticleSys.BurstRadius;
+			Particles.BurstRate = obj.ParticleSys.BurstRate;
+			Particles.BurstSpeedMax = obj.ParticleSys.BurstSpeedMax;
+			Particles.BurstSpeedMin = obj.ParticleSys.BurstSpeedMin;
+			Particles.DataFlags = obj.ParticleSys.PartDataFlags;
+			Particles.Flags = obj.ParticleSys.PartFlags;
+			Particles.InnerAngle = obj.ParticleSys.InnerAngle;
+			Particles.MaxAge = obj.ParticleSys.MaxAge;
+			Particles.OuterAngle = obj.ParticleSys.OuterAngle;
+			Particles.ParticleEndColor = obj.ParticleSys.PartEndColor;
+			Particles.ParticleEndScale = new Vector2(obj.ParticleSys.PartEndScaleX, obj.ParticleSys.PartEndScaleY);
+			Particles.ParticleMaxAge = obj.ParticleSys.MaxAge;
+			Particles.ParticleStartColor = obj.ParticleSys.PartStartColor;
+			Particles.ParticleStartScale = new Vector2(obj.ParticleSys.PartStartScaleX,
+					obj.ParticleSys.PartStartScaleY);
+			Particles.Pattern = obj.ParticleSys.Pattern;
+			Particles.StartAge = obj.ParticleSys.StartAge;
+			Particles.TargetID = obj.ParticleSys.Target;
+			Particles.TextureID = obj.ParticleSys.Texture;
 
-            Shape.PathTwist = obj.PrimData.PathTwist;
-            Shape.PathTwistBegin = obj.PrimData.PathTwistBegin;
-            Shape.ProfileBegin = obj.PrimData.ProfileBegin;
-            Shape.ProfileCurve = obj.PrimData.ProfileCurve.getValue();
-            Shape.ProfileEnd = obj.PrimData.ProfileEnd;
-            Shape.ProfileHollow = obj.PrimData.ProfileHollow;
+			// PassTouches;
+			PCode = obj.PrimData.PCode.getValue();
+			PermsBase = obj.Properties.Permissions.BaseMask;
+			PermsEveryone = obj.Properties.Permissions.EveryoneMask;
+			PermsGroup = obj.Properties.Permissions.GroupMask;
+			PermsNextOwner = obj.Properties.Permissions.NextOwnerMask;
+			PermsOwner = obj.Properties.Permissions.OwnerMask;
+			Phantom = (obj.Flags & PrimFlags.Phantom) == PrimFlags.Phantom;
+			Position = obj.Position;
+			RegionHandle = obj.RegionHandle;
+			// RemoteScriptAccessPIN;
+			ReturnAtEdge = (obj.Flags & PrimFlags.ReturnAtEdge) == PrimFlags.ReturnAtEdge;
+			// RezDate;
+			Rotation = obj.Rotation;
+			SalePrice = obj.Properties.SalePrice;
+			SaleType = obj.Properties.SaleType.getValue();
+			Sandbox = (obj.Flags & PrimFlags.Sandbox) == PrimFlags.Sandbox;
+			Scale = obj.Scale;
+			// ScriptState;
+			if (obj.Sculpt != null) {
+				Sculpt = new SculptBlock();
+				Sculpt.Texture = obj.Sculpt.SculptTexture;
+				Sculpt.Type = obj.Sculpt.getType().getValue();
+			}
+			Shape = new ShapeBlock();
+			Shape.PathBegin = obj.PrimData.PathBegin;
+			Shape.PathCurve = obj.PrimData.PathCurve.getValue();
+			Shape.PathEnd = obj.PrimData.PathEnd;
+			Shape.PathRadiusOffset = obj.PrimData.PathRadiusOffset;
+			Shape.PathRevolutions = obj.PrimData.PathRevolutions;
+			Shape.PathScaleX = obj.PrimData.PathScaleX;
+			Shape.PathScaleY = obj.PrimData.PathScaleY;
+			Shape.PathShearX = obj.PrimData.PathShearX;
+			Shape.PathShearY = obj.PrimData.PathShearY;
+			Shape.PathSkew = obj.PrimData.PathSkew;
+			Shape.PathTaperX = obj.PrimData.PathTaperX;
+			Shape.PathTaperY = obj.PrimData.PathTaperY;
 
-            SitName = obj.Properties.SitName;
-            //SitOffset;
-            //SitRotation;
-            SoundFlags = obj.SoundFlags;
-            SoundGain = obj.SoundGain;
-            SoundID = obj.SoundID;
-            SoundRadius = obj.SoundRadius;
-            State = obj.PrimData.State;
-            Temporary = (obj.Flags & PrimFlags.Temporary) == PrimFlags.Temporary;
-            Text = obj.Text;
-            TextColor = obj.TextColor;
-            Textures = obj.Textures;
-            //TouchName;
-            UsePhysics = (obj.Flags & PrimFlags.Physics) == PrimFlags.Physics;
-            Velocity = obj.Velocity;
+			Shape.PathTwist = obj.PrimData.PathTwist;
+			Shape.PathTwistBegin = obj.PrimData.PathTwistBegin;
+			Shape.ProfileBegin = obj.PrimData.ProfileBegin;
+			Shape.ProfileCurve = obj.PrimData.ProfileCurve.getValue();
+			Shape.ProfileEnd = obj.PrimData.ProfileEnd;
+			Shape.ProfileHollow = obj.PrimData.ProfileHollow;
+
+			SitName = obj.Properties.SitName;
+			// SitOffset;
+			// SitRotation;
+			SoundFlags = obj.SoundFlags;
+			SoundGain = obj.SoundGain;
+			SoundID = obj.SoundID;
+			SoundRadius = obj.SoundRadius;
+			State = obj.PrimData.State;
+			Temporary = (obj.Flags & PrimFlags.Temporary) == PrimFlags.Temporary;
+			Text = obj.Text;
+			TextColor = obj.TextColor;
+			Textures = obj.Textures;
+			// TouchName;
+			UsePhysics = (obj.Flags & PrimFlags.Physics) == PrimFlags.Physics;
+			Velocity = obj.Velocity;
 		}
 
-		public Primitive toPrimitive()
-		{
+		public Primitive toPrimitive() {
 			Primitive prim = new Primitive();
 			prim.Properties = new ObjectProperties();
 			prim.PrimData = prim.new ConstructionData();
@@ -1667,8 +1405,8 @@ public class AssetPrim extends AssetItem
 			prim.OwnerID = this.OwnerID;
 			prim.ParentID = this.ParentID;
 			prim.PrimData.PCode = Primitive.PCode.setValue(this.PCode);
-			prim.Properties.Permissions = new Permissions(this.CreatorID, this.OwnerID, this.LastOwnerID, this.GroupID, this.PermsBase, this.PermsEveryone, this.PermsGroup,
-					this.PermsNextOwner, this.PermsOwner);
+			prim.Properties.Permissions = new Permissions(this.CreatorID, this.OwnerID, this.LastOwnerID, this.GroupID,
+					this.PermsBase, this.PermsEveryone, this.PermsGroup, this.PermsNextOwner, this.PermsOwner);
 			if (this.Phantom)
 				prim.Flags |= PrimFlags.Phantom;
 			prim.Position = this.Position;
@@ -1713,8 +1451,7 @@ public class AssetPrim extends AssetItem
 			prim.PrimData.ProfileEnd = this.Shape.ProfileEnd;
 			prim.PrimData.ProfileHollow = this.Shape.ProfileHollow;
 
-			if (this.Flexible != null)
-			{
+			if (this.Flexible != null) {
 				prim.Flexible = prim.new FlexibleData();
 				prim.Flexible.Drag = this.Flexible.Drag;
 				prim.Flexible.Force = this.Flexible.Force;
@@ -1724,8 +1461,7 @@ public class AssetPrim extends AssetItem
 				prim.Flexible.Wind = this.Flexible.Wind;
 			}
 
-			if (this.Light != null)
-			{
+			if (this.Light != null) {
 				prim.Light = prim.new LightData();
 				prim.Light.Color = this.Light.Color;
 				prim.Light.Cutoff = this.Light.Cutoff;
@@ -1734,8 +1470,7 @@ public class AssetPrim extends AssetItem
 				prim.Light.Radius = this.Light.Radius;
 			}
 
-			if (this.Particles != null)
-			{
+			if (this.Particles != null) {
 				prim.ParticleSys = new ParticleSystem();
 				prim.ParticleSys.AngularVelocity = this.Particles.AngularVelocity;
 				prim.ParticleSys.PartAcceleration = this.Particles.Acceleration;
@@ -1762,8 +1497,7 @@ public class AssetPrim extends AssetItem
 				prim.ParticleSys.Texture = this.Particles.TextureID;
 			}
 
-			if (this.Sculpt != null)
-			{
+			if (this.Sculpt != null) {
 				prim.Sculpt = prim.new SculptData();
 				prim.Sculpt.SculptTexture = this.Sculpt.Texture;
 				prim.Sculpt.setType(this.Sculpt.Type);

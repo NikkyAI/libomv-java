@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -29,74 +29,62 @@
  */
 package libomv.StructuredData;
 
-public class OSDBoolean extends OSD
-{
+public class OSDBoolean extends OSD {
 	private boolean value;
 
 	private static byte[] trueBinary = { 0x31 };
 	private static byte[] falseBinary = { 0x30 };
 
 	@Override
-	public OSDType getType()
-	{
+	public OSDType getType() {
 		return OSDType.Boolean;
 	}
 
-	public OSDBoolean(boolean value)
-	{
+	public OSDBoolean(boolean value) {
 		this.value = value;
 	}
 
 	@Override
-	public boolean AsBoolean()
-	{
+	public boolean AsBoolean() {
 		return value;
 	}
 
 	@Override
-	public int AsInteger()
-	{
+	public int AsInteger() {
 		return value ? 1 : 0;
 	}
 
 	@Override
-	public double AsReal()
-	{
+	public double AsReal() {
 		return value ? 1d : 0d;
 	}
 
 	@Override
-	public String AsString()
-	{
+	public String AsString() {
 		return value ? "1" : "0";
 	}
 
 	@Override
-	public byte[] AsBinary()
-	{
+	public byte[] AsBinary() {
 		return value ? trueBinary : falseBinary;
 	}
 
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		return value ? 1 : 0;
 	}
-	
+
 	@Override
-	public boolean equals(Object obj)
-	{
-		return obj != null && obj instanceof OSD && equals((OSD)obj);
+	public boolean equals(Object obj) {
+		return obj != null && obj instanceof OSD && equals((OSD) obj);
 	}
 
-	public boolean equals(OSD osd)
-	{
+	public boolean equals(OSD osd) {
 		return osd != null && osd.AsBoolean() == value;
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return AsString();
 	}
 }

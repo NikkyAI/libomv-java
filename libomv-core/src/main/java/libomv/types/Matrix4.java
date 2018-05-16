@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -32,51 +32,43 @@ package libomv.types;
 import libomv.utils.Helpers;
 import libomv.utils.RefObject;
 
-public final class Matrix4
-{
+public final class Matrix4 {
 	public float M11, M12, M13, M14;
 	public float M21, M22, M23, M24;
 	public float M31, M32, M33, M34;
 	public float M41, M42, M43, M44;
 
-	public Vector3 getAtAxis()
-	{
+	public Vector3 getAtAxis() {
 		return new Vector3(M11, M21, M31);
 	}
 
-	public void setAtAxis(Vector3 value)
-	{
+	public void setAtAxis(Vector3 value) {
 		M11 = value.X;
 		M21 = value.Y;
 		M31 = value.Z;
 	}
 
-	public Vector3 getLeftAxis()
-	{
+	public Vector3 getLeftAxis() {
 		return new Vector3(M12, M22, M32);
 	}
 
-	public void setLeftAxis(Vector3 value)
-	{
+	public void setLeftAxis(Vector3 value) {
 		M12 = value.X;
 		M22 = value.Y;
 		M32 = value.Z;
 	}
 
-	public Vector3 getUpAxis()
-	{
+	public Vector3 getUpAxis() {
 		return new Vector3(M13, M23, M33);
 	}
 
-	public void setUpAxis(Vector3 value)
-	{
+	public void setUpAxis(Vector3 value) {
 		M13 = value.X;
 		M23 = value.Y;
 		M33 = value.Z;
 	}
 
-	public Matrix4()
-	{
+	public Matrix4() {
 		M11 = M12 = M13 = M14 = 0.0f;
 		M21 = M22 = M23 = M24 = 0.0f;
 		M31 = M32 = M33 = M34 = 0.0f;
@@ -84,8 +76,7 @@ public final class Matrix4
 	}
 
 	public Matrix4(float m11, float m12, float m13, float m14, float m21, float m22, float m23, float m24, float m31,
-			float m32, float m33, float m34, float m41, float m42, float m43, float m44)
-	{
+			float m32, float m33, float m34, float m41, float m42, float m43, float m44) {
 		M11 = m11;
 		M12 = m12;
 		M13 = m13;
@@ -107,8 +98,7 @@ public final class Matrix4
 		M44 = m44;
 	}
 
-	public Matrix4(float roll, float pitch, float yaw)
-	{
+	public Matrix4(float roll, float pitch, float yaw) {
 		Matrix4 m = createFromEulers(roll, pitch, yaw);
 		M11 = m.M11;
 		M12 = m.M12;
@@ -131,8 +121,7 @@ public final class Matrix4
 		M44 = m.M44;
 	}
 
-	public Matrix4(Matrix4 m)
-	{
+	public Matrix4(Matrix4 m) {
 		M11 = m.M11;
 		M12 = m.M12;
 		M13 = m.M13;
@@ -154,18 +143,16 @@ public final class Matrix4
 		M44 = m.M44;
 	}
 
-	public float determinant()
-	{
-		return M14 * M23 * M32 * M41 - M13 * M24 * M32 * M41 - M14 * M22 * M33 * M41 + M12 * M24 * M33 * M41 + M13
-				* M22 * M34 * M41 - M12 * M23 * M34 * M41 - M14 * M23 * M31 * M42 + M13 * M24 * M31 * M42 + M14 * M21
-				* M33 * M42 - M11 * M24 * M33 * M42 - M13 * M21 * M34 * M42 + M11 * M23 * M34 * M42 + M14 * M22 * M31
-				* M43 - M12 * M24 * M31 * M43 - M14 * M21 * M32 * M43 + M11 * M24 * M32 * M43 + M12 * M21 * M34 * M43
-				- M11 * M22 * M34 * M43 - M13 * M22 * M31 * M44 + M12 * M23 * M31 * M44 + M13 * M21 * M32 * M44 - M11
-				* M23 * M32 * M44 - M12 * M21 * M33 * M44 + M11 * M22 * M33 * M44;
+	public float determinant() {
+		return M14 * M23 * M32 * M41 - M13 * M24 * M32 * M41 - M14 * M22 * M33 * M41 + M12 * M24 * M33 * M41
+				+ M13 * M22 * M34 * M41 - M12 * M23 * M34 * M41 - M14 * M23 * M31 * M42 + M13 * M24 * M31 * M42
+				+ M14 * M21 * M33 * M42 - M11 * M24 * M33 * M42 - M13 * M21 * M34 * M42 + M11 * M23 * M34 * M42
+				+ M14 * M22 * M31 * M43 - M12 * M24 * M31 * M43 - M14 * M21 * M32 * M43 + M11 * M24 * M32 * M43
+				+ M12 * M21 * M34 * M43 - M11 * M22 * M34 * M43 - M13 * M22 * M31 * M44 + M12 * M23 * M31 * M44
+				+ M13 * M21 * M32 * M44 - M11 * M23 * M32 * M44 - M12 * M21 * M33 * M44 + M11 * M22 * M33 * M44;
 	}
 
-	public float determinant3x3()
-	{
+	public float determinant3x3() {
 		float det = 0f;
 
 		float diag1 = M11 * M22 * M33;
@@ -180,14 +167,13 @@ public final class Matrix4
 		return det;
 	}
 
-	public float trace()
-	{
+	public float trace() {
 		return M11 + M22 + M33 + M44;
 	}
 
 	/**
 	 * Convert this matrix to euler rotations
-	 * 
+	 *
 	 * @param roll
 	 *            X euler angle
 	 * @param pitch
@@ -195,8 +181,7 @@ public final class Matrix4
 	 * @param yaw
 	 *            Z euler angle
 	 */
-	public void getEulerAngles(RefObject<Float> roll, RefObject<Float> pitch, RefObject<Float> yaw)
-	{
+	public void getEulerAngles(RefObject<Float> roll, RefObject<Float> pitch, RefObject<Float> yaw) {
 		double angleX, angleY, angleZ;
 		double cx, cy, cz; // cosines
 		double sx, sz; // sines
@@ -204,8 +189,7 @@ public final class Matrix4
 		angleY = Math.asin(Helpers.Clamp(M13, -1f, 1f));
 		cy = Math.cos(angleY);
 
-		if (Math.abs(cy) > 0.005f)
-		{
+		if (Math.abs(cy) > 0.005f) {
 			// No gimbal lock
 			cx = M33 / cy;
 			sx = (-M23) / cy;
@@ -216,9 +200,7 @@ public final class Matrix4
 			sz = (-M12) / cy;
 
 			angleZ = (float) Math.atan2(sz, cz);
-		}
-		else
-		{
+		} else {
 			// Gimbal lock
 			angleX = 0;
 
@@ -229,16 +211,13 @@ public final class Matrix4
 		}
 
 		// Return only positive angles in [0, 2*Pi]
-		if (angleX < 0)
-		{
+		if (angleX < 0) {
 			angleX += Helpers.TWO_PI;
 		}
-		if (angleY < 0)
-		{
+		if (angleY < 0) {
 			angleY += Helpers.TWO_PI;
 		}
-		if (angleZ < 0)
-		{
+		if (angleZ < 0) {
 			angleZ += Helpers.TWO_PI;
 		}
 
@@ -249,55 +228,46 @@ public final class Matrix4
 
 	/**
 	 * Convert this matrix to a quaternion rotation
-	 * 
+	 *
 	 * @return A quaternion representation of this rotation matrix
 	 */
-	public Quaternion getQuaternion()
-	{
+	public Quaternion getQuaternion() {
 		return getQuaternion(new Quaternion());
 	}
-		
+
 	/**
 	 * Convert this matrix to a quaternion rotation
-	 * 
-	 * @param quaternion The quaternion to fill the information into
+	 *
+	 * @param quaternion
+	 *            The quaternion to fill the information into
 	 * @return A quaternion representation of this rotation matrix
 	 */
-	public Quaternion getQuaternion(Quaternion quaternion)
-	{
+	public Quaternion getQuaternion(Quaternion quaternion) {
 		float trace = trace() + 1f;
 
-		if (trace > Helpers.FLOAT_MAG_THRESHOLD)
-		{
+		if (trace > Helpers.FLOAT_MAG_THRESHOLD) {
 			float s = 0.5f / (float) Math.sqrt(trace);
 
 			quaternion.X = (M32 - M23) * s;
 			quaternion.Y = (M13 - M31) * s;
 			quaternion.Z = (M21 - M12) * s;
 			quaternion.W = 0.25f / s;
-		}
-		else
-		{
-			if (M11 > M22 && M11 > M33)
-			{
+		} else {
+			if (M11 > M22 && M11 > M33) {
 				float s = 2.0f * (float) Math.sqrt(1.0f + M11 - M22 - M33);
 
 				quaternion.X = 0.25f * s;
 				quaternion.Y = (M12 + M21) / s;
 				quaternion.Z = (M13 + M31) / s;
 				quaternion.W = (M23 - M32) / s;
-			}
-			else if (M22 > M33)
-			{
+			} else if (M22 > M33) {
 				float s = 2.0f * (float) Math.sqrt(1.0f + M22 - M11 - M33);
 
 				quaternion.X = (M12 + M21) / s;
 				quaternion.Y = 0.25f * s;
 				quaternion.Z = (M23 + M32) / s;
 				quaternion.W = (M13 - M31) / s;
-			}
-			else
-			{
+			} else {
 				float s = 2.0f * (float) Math.sqrt(1.0f + M33 - M11 - M22);
 
 				quaternion.X = (M13 + M31) / s;
@@ -309,45 +279,39 @@ public final class Matrix4
 		return quaternion;
 	}
 
-	public Vector3 getTranslation()
-	{
+	public Vector3 getTranslation() {
 		return new Vector3(M41, M42, M43);
 	}
-	
-    public boolean decompose(Vector3 scale, Quaternion rotation, Vector3 translation)
-    {
-        translation.X = M41;
-        translation.Y = M42;
-        translation.Z = M43;
 
-        float xs = (Math.signum(M11 * M12 * M13 * M14) < 0) ? -1 : 1;
-        float ys = (Math.signum(M21 * M22 * M23 * M24) < 0) ? -1 : 1;
-        float zs = (Math.signum(M31 * M32 * M33 * M34) < 0) ? -1 : 1;
+	public boolean decompose(Vector3 scale, Quaternion rotation, Vector3 translation) {
+		translation.X = M41;
+		translation.Y = M42;
+		translation.Z = M43;
 
-        scale.X = xs * (float)Math.sqrt(M11 * M11 + M12 * M12 + M13 * M13);
-        scale.Y = ys * (float)Math.sqrt(M21 * M21 + M22 * M22 + M23 * M23);
-        scale.Z = zs * (float)Math.sqrt(M31 * M31 + M32 * M32 + M33 * M33);
+		float xs = (Math.signum(M11 * M12 * M13 * M14) < 0) ? -1 : 1;
+		float ys = (Math.signum(M21 * M22 * M23 * M24) < 0) ? -1 : 1;
+		float zs = (Math.signum(M31 * M32 * M33 * M34) < 0) ? -1 : 1;
 
-        if (scale.X == 0.0 || scale.Y == 0.0 || scale.Z == 0.0)
-        {
-            rotation = Quaternion.Identity;
-            return false;
-        }
+		scale.X = xs * (float) Math.sqrt(M11 * M11 + M12 * M12 + M13 * M13);
+		scale.Y = ys * (float) Math.sqrt(M21 * M21 + M22 * M22 + M23 * M23);
+		scale.Z = zs * (float) Math.sqrt(M31 * M31 + M32 * M32 + M33 * M33);
 
-        Matrix4 m1 = new Matrix4(M11 / scale.X, M12 / scale.X, M13 / scale.X, 0,
-                                 M21 / scale.Y, M22 / scale.Y, M23 / scale.Y, 0,
-                                 M31 / scale.Z, M32 / scale.Z, M33 / scale.Z, 0,
-                                 0, 0, 0, 1);
+		if (scale.X == 0.0 || scale.Y == 0.0 || scale.Z == 0.0) {
+			rotation = Quaternion.Identity;
+			return false;
+		}
 
-        rotation.setFromRotationMatrix(m1);
-        return true;
-    }	
+		Matrix4 m1 = new Matrix4(M11 / scale.X, M12 / scale.X, M13 / scale.X, 0, M21 / scale.Y, M22 / scale.Y,
+				M23 / scale.Y, 0, M31 / scale.Z, M32 / scale.Z, M33 / scale.Z, 0, 0, 0, 0, 1);
 
-    // #endregion Public Methods
-	
-    // #region Static Methods
-	public static Matrix4 createFromAxisAngle(Vector3 axis, float angle)
-	{
+		rotation.setFromRotationMatrix(m1);
+		return true;
+	}
+
+	// #endregion Public Methods
+
+	// #region Static Methods
+	public static Matrix4 createFromAxisAngle(Vector3 axis, float angle) {
 		Matrix4 matrix = new Matrix4();
 
 		float x = axis.X;
@@ -385,7 +349,7 @@ public final class Matrix4
 
 	/**
 	 * Construct a matrix from euler rotation values in radians
-	 * 
+	 *
 	 * @param roll
 	 *            X euler angle in radians
 	 * @param pitch
@@ -393,8 +357,7 @@ public final class Matrix4
 	 * @param yaw
 	 *            Z euler angle in radians
 	 */
-	public static Matrix4 createFromEulers(float roll, float pitch, float yaw)
-	{
+	public static Matrix4 createFromEulers(float roll, float pitch, float yaw) {
 		Matrix4 m = new Matrix4();
 
 		float a, b, c, d, e, f;
@@ -431,8 +394,7 @@ public final class Matrix4
 		return m;
 	}
 
-	public static Matrix4 createFromQuaternion(Quaternion quaternion)
-	{
+	public static Matrix4 createFromQuaternion(Quaternion quaternion) {
 		float xx = quaternion.X * quaternion.X;
 		float yy = quaternion.Y * quaternion.Y;
 		float zz = quaternion.Z * quaternion.Z;
@@ -448,8 +410,7 @@ public final class Matrix4
 				0f, 0f, 0f, 1f);
 	}
 
-	public static Matrix4 createLookAt(Vector3 cameraPosition, Vector3 cameraTarget, Vector3 cameraUpVector)
-	{
+	public static Matrix4 createLookAt(Vector3 cameraPosition, Vector3 cameraTarget, Vector3 cameraUpVector) {
 
 		Vector3 z = Vector3.normalize(Vector3.subtract(cameraPosition, cameraTarget));
 		Vector3 x = Vector3.normalize(Vector3.cross(cameraUpVector, z));
@@ -459,16 +420,14 @@ public final class Matrix4
 				-Vector3.dot(y, cameraPosition), -Vector3.dot(z, cameraPosition), 1f);
 	}
 
-	public static Matrix4 createRotationX(float radians)
-	{
+	public static Matrix4 createRotationX(float radians) {
 		float cos = (float) Math.cos(radians);
 		float sin = (float) Math.sin(radians);
 
 		return new Matrix4(1f, 0f, 0f, 0f, 0f, cos, sin, 0f, 0f, -sin, cos, 0f, 0f, 0f, 0f, 1f);
 	}
 
-	public static Matrix4 createRotationY(float radians)
-	{
+	public static Matrix4 createRotationY(float radians) {
 		Matrix4 matrix = new Matrix4();
 
 		float cos = (float) Math.cos(radians);
@@ -497,8 +456,7 @@ public final class Matrix4
 		return matrix;
 	}
 
-	public static Matrix4 createRotationZ(float radians)
-	{
+	public static Matrix4 createRotationZ(float radians) {
 		Matrix4 matrix = new Matrix4();
 
 		float cos = (float) Math.cos(radians);
@@ -527,8 +485,7 @@ public final class Matrix4
 		return matrix;
 	}
 
-	public static Matrix4 createScale(Vector3 scale)
-	{
+	public static Matrix4 createScale(Vector3 scale) {
 		Matrix4 matrix = new Matrix4();
 
 		matrix.M11 = scale.X;
@@ -554,8 +511,7 @@ public final class Matrix4
 		return matrix;
 	}
 
-	public static Matrix4 createTranslation(Vector3 position)
-	{
+	public static Matrix4 createTranslation(Vector3 position) {
 		Matrix4 matrix = new Matrix4();
 
 		matrix.M11 = 1f;
@@ -581,8 +537,7 @@ public final class Matrix4
 		return matrix;
 	}
 
-	public static Matrix4 createWorld(Vector3 position, Vector3 forward, Vector3 up)
-	{
+	public static Matrix4 createWorld(Vector3 position, Vector3 forward, Vector3 up) {
 		Matrix4 result = new Matrix4();
 
 		// Normalize forward vector
@@ -619,105 +574,116 @@ public final class Matrix4
 		return result;
 	}
 
-	public static Matrix4 lerp(Matrix4 matrix1, Matrix4 matrix2, float amount)
-	{
-		return new Matrix4(matrix1.M11 + ((matrix2.M11 - matrix1.M11) * amount), matrix1.M12
-				+ ((matrix2.M12 - matrix1.M12) * amount), matrix1.M13 + ((matrix2.M13 - matrix1.M13) * amount),
+	public static Matrix4 lerp(Matrix4 matrix1, Matrix4 matrix2, float amount) {
+		return new Matrix4(matrix1.M11 + ((matrix2.M11 - matrix1.M11) * amount),
+				matrix1.M12 + ((matrix2.M12 - matrix1.M12) * amount),
+				matrix1.M13 + ((matrix2.M13 - matrix1.M13) * amount),
 				matrix1.M14 + ((matrix2.M14 - matrix1.M14) * amount),
 
-				matrix1.M21 + ((matrix2.M21 - matrix1.M21) * amount), matrix1.M22
-						+ ((matrix2.M22 - matrix1.M22) * amount), matrix1.M23 + ((matrix2.M23 - matrix1.M23) * amount),
+				matrix1.M21 + ((matrix2.M21 - matrix1.M21) * amount),
+				matrix1.M22 + ((matrix2.M22 - matrix1.M22) * amount),
+				matrix1.M23 + ((matrix2.M23 - matrix1.M23) * amount),
 				matrix1.M24 + ((matrix2.M24 - matrix1.M24) * amount),
 
-				matrix1.M31 + ((matrix2.M31 - matrix1.M31) * amount), matrix1.M32
-						+ ((matrix2.M32 - matrix1.M32) * amount), matrix1.M33 + ((matrix2.M33 - matrix1.M33) * amount),
+				matrix1.M31 + ((matrix2.M31 - matrix1.M31) * amount),
+				matrix1.M32 + ((matrix2.M32 - matrix1.M32) * amount),
+				matrix1.M33 + ((matrix2.M33 - matrix1.M33) * amount),
 				matrix1.M34 + ((matrix2.M34 - matrix1.M34) * amount),
 
-				matrix1.M41 + ((matrix2.M41 - matrix1.M41) * amount), matrix1.M42
-						+ ((matrix2.M42 - matrix1.M42) * amount), matrix1.M43 + ((matrix2.M43 - matrix1.M43) * amount),
+				matrix1.M41 + ((matrix2.M41 - matrix1.M41) * amount),
+				matrix1.M42 + ((matrix2.M42 - matrix1.M42) * amount),
+				matrix1.M43 + ((matrix2.M43 - matrix1.M43) * amount),
 				matrix1.M44 + ((matrix2.M44 - matrix1.M44) * amount));
 	}
 
-	public static Matrix4 negate(Matrix4 matrix)
-	{
+	public static Matrix4 negate(Matrix4 matrix) {
 		return new Matrix4(-matrix.M11, -matrix.M12, -matrix.M13, -matrix.M14, -matrix.M21, -matrix.M22, -matrix.M23,
 				-matrix.M24, -matrix.M31, -matrix.M32, -matrix.M33, -matrix.M34, -matrix.M41, -matrix.M42, -matrix.M43,
 				-matrix.M44);
 	}
 
-	public static Matrix4 add(Matrix4 matrix1, Matrix4 matrix2)
-	{
-		return new Matrix4(matrix1.M11 + matrix2.M11, matrix1.M12 + matrix2.M12, matrix1.M13 + matrix2.M13, matrix1.M14
-				+ matrix2.M14, matrix1.M21 + matrix2.M21, matrix1.M22 + matrix2.M22, matrix1.M23 + matrix2.M23,
-				matrix1.M24 + matrix2.M24, matrix1.M31 + matrix2.M31, matrix1.M32 + matrix2.M32, matrix1.M33
-						+ matrix2.M33, matrix1.M34 + matrix2.M34, matrix1.M41 + matrix2.M41, matrix1.M42 + matrix2.M42,
-				matrix1.M43 + matrix2.M43, matrix1.M44 + matrix2.M44);
+	public static Matrix4 add(Matrix4 matrix1, Matrix4 matrix2) {
+		return new Matrix4(matrix1.M11 + matrix2.M11, matrix1.M12 + matrix2.M12, matrix1.M13 + matrix2.M13,
+				matrix1.M14 + matrix2.M14, matrix1.M21 + matrix2.M21, matrix1.M22 + matrix2.M22,
+				matrix1.M23 + matrix2.M23, matrix1.M24 + matrix2.M24, matrix1.M31 + matrix2.M31,
+				matrix1.M32 + matrix2.M32, matrix1.M33 + matrix2.M33, matrix1.M34 + matrix2.M34,
+				matrix1.M41 + matrix2.M41, matrix1.M42 + matrix2.M42, matrix1.M43 + matrix2.M43,
+				matrix1.M44 + matrix2.M44);
 	}
 
-	public static Matrix4 subtract(Matrix4 matrix1, Matrix4 matrix2)
-	{
-		return new Matrix4(matrix1.M11 - matrix2.M11, matrix1.M12 - matrix2.M12, matrix1.M13 - matrix2.M13, matrix1.M14
-				- matrix2.M14, matrix1.M21 - matrix2.M21, matrix1.M22 - matrix2.M22, matrix1.M23 - matrix2.M23,
-				matrix1.M24 - matrix2.M24, matrix1.M31 - matrix2.M31, matrix1.M32 - matrix2.M32, matrix1.M33
-						- matrix2.M33, matrix1.M34 - matrix2.M34, matrix1.M41 - matrix2.M41, matrix1.M42 - matrix2.M42,
-				matrix1.M43 - matrix2.M43, matrix1.M44 - matrix2.M44);
+	public static Matrix4 subtract(Matrix4 matrix1, Matrix4 matrix2) {
+		return new Matrix4(matrix1.M11 - matrix2.M11, matrix1.M12 - matrix2.M12, matrix1.M13 - matrix2.M13,
+				matrix1.M14 - matrix2.M14, matrix1.M21 - matrix2.M21, matrix1.M22 - matrix2.M22,
+				matrix1.M23 - matrix2.M23, matrix1.M24 - matrix2.M24, matrix1.M31 - matrix2.M31,
+				matrix1.M32 - matrix2.M32, matrix1.M33 - matrix2.M33, matrix1.M34 - matrix2.M34,
+				matrix1.M41 - matrix2.M41, matrix1.M42 - matrix2.M42, matrix1.M43 - matrix2.M43,
+				matrix1.M44 - matrix2.M44);
 	}
 
-	public static Matrix4 multiply(Matrix4 matrix1, Matrix4 matrix2)
-	{
-		return new Matrix4(matrix1.M11 * matrix2.M11 + matrix1.M12 * matrix2.M21 + matrix1.M13 * matrix2.M31
-				+ matrix1.M14 * matrix2.M41, matrix1.M11 * matrix2.M12 + matrix1.M12 * matrix2.M22 + matrix1.M13
-				* matrix2.M32 + matrix1.M14 * matrix2.M42, matrix1.M11 * matrix2.M13 + matrix1.M12 * matrix2.M23
-				+ matrix1.M13 * matrix2.M33 + matrix1.M14 * matrix2.M43, matrix1.M11 * matrix2.M14 + matrix1.M12
-				* matrix2.M24 + matrix1.M13 * matrix2.M34 + matrix1.M14 * matrix2.M44, matrix1.M21 * matrix2.M11
-				+ matrix1.M22 * matrix2.M21 + matrix1.M23 * matrix2.M31 + matrix1.M24 * matrix2.M41, matrix1.M21
-				* matrix2.M12 + matrix1.M22 * matrix2.M22 + matrix1.M23 * matrix2.M32 + matrix1.M24 * matrix2.M42,
-				matrix1.M21 * matrix2.M13 + matrix1.M22 * matrix2.M23 + matrix1.M23 * matrix2.M33 + matrix1.M24
-						* matrix2.M43, matrix1.M21 * matrix2.M14 + matrix1.M22 * matrix2.M24 + matrix1.M23
-						* matrix2.M34 + matrix1.M24 * matrix2.M44, matrix1.M31 * matrix2.M11 + matrix1.M32
-						* matrix2.M21 + matrix1.M33 * matrix2.M31 + matrix1.M34 * matrix2.M41, matrix1.M31
-						* matrix2.M12 + matrix1.M32 * matrix2.M22 + matrix1.M33 * matrix2.M32 + matrix1.M34
-						* matrix2.M42, matrix1.M31 * matrix2.M13 + matrix1.M32 * matrix2.M23 + matrix1.M33
-						* matrix2.M33 + matrix1.M34 * matrix2.M43, matrix1.M31 * matrix2.M14 + matrix1.M32
-						* matrix2.M24 + matrix1.M33 * matrix2.M34 + matrix1.M34 * matrix2.M44, matrix1.M41
-						* matrix2.M11 + matrix1.M42 * matrix2.M21 + matrix1.M43 * matrix2.M31 + matrix1.M44
-						* matrix2.M41, matrix1.M41 * matrix2.M12 + matrix1.M42 * matrix2.M22 + matrix1.M43
-						* matrix2.M32 + matrix1.M44 * matrix2.M42, matrix1.M41 * matrix2.M13 + matrix1.M42
-						* matrix2.M23 + matrix1.M43 * matrix2.M33 + matrix1.M44 * matrix2.M43, matrix1.M41
-						* matrix2.M14 + matrix1.M42 * matrix2.M24 + matrix1.M43 * matrix2.M34 + matrix1.M44
-						* matrix2.M44);
+	public static Matrix4 multiply(Matrix4 matrix1, Matrix4 matrix2) {
+		return new Matrix4(
+				matrix1.M11 * matrix2.M11 + matrix1.M12 * matrix2.M21 + matrix1.M13 * matrix2.M31
+						+ matrix1.M14 * matrix2.M41,
+				matrix1.M11 * matrix2.M12 + matrix1.M12 * matrix2.M22 + matrix1.M13 * matrix2.M32
+						+ matrix1.M14 * matrix2.M42,
+				matrix1.M11 * matrix2.M13 + matrix1.M12 * matrix2.M23 + matrix1.M13 * matrix2.M33
+						+ matrix1.M14 * matrix2.M43,
+				matrix1.M11 * matrix2.M14 + matrix1.M12 * matrix2.M24 + matrix1.M13 * matrix2.M34
+						+ matrix1.M14 * matrix2.M44,
+				matrix1.M21 * matrix2.M11 + matrix1.M22 * matrix2.M21 + matrix1.M23 * matrix2.M31
+						+ matrix1.M24 * matrix2.M41,
+				matrix1.M21 * matrix2.M12 + matrix1.M22 * matrix2.M22 + matrix1.M23 * matrix2.M32
+						+ matrix1.M24 * matrix2.M42,
+				matrix1.M21 * matrix2.M13 + matrix1.M22 * matrix2.M23 + matrix1.M23 * matrix2.M33
+						+ matrix1.M24 * matrix2.M43,
+				matrix1.M21 * matrix2.M14 + matrix1.M22 * matrix2.M24 + matrix1.M23 * matrix2.M34
+						+ matrix1.M24 * matrix2.M44,
+				matrix1.M31 * matrix2.M11 + matrix1.M32 * matrix2.M21 + matrix1.M33 * matrix2.M31
+						+ matrix1.M34 * matrix2.M41,
+				matrix1.M31 * matrix2.M12 + matrix1.M32 * matrix2.M22 + matrix1.M33 * matrix2.M32
+						+ matrix1.M34 * matrix2.M42,
+				matrix1.M31 * matrix2.M13 + matrix1.M32 * matrix2.M23 + matrix1.M33 * matrix2.M33
+						+ matrix1.M34 * matrix2.M43,
+				matrix1.M31 * matrix2.M14 + matrix1.M32 * matrix2.M24 + matrix1.M33 * matrix2.M34
+						+ matrix1.M34 * matrix2.M44,
+				matrix1.M41 * matrix2.M11 + matrix1.M42 * matrix2.M21 + matrix1.M43 * matrix2.M31
+						+ matrix1.M44 * matrix2.M41,
+				matrix1.M41 * matrix2.M12 + matrix1.M42 * matrix2.M22 + matrix1.M43 * matrix2.M32
+						+ matrix1.M44 * matrix2.M42,
+				matrix1.M41 * matrix2.M13 + matrix1.M42 * matrix2.M23 + matrix1.M43 * matrix2.M33
+						+ matrix1.M44 * matrix2.M43,
+				matrix1.M41 * matrix2.M14 + matrix1.M42 * matrix2.M24 + matrix1.M43 * matrix2.M34
+						+ matrix1.M44 * matrix2.M44);
 	}
 
-	public static Matrix4 multiply(Matrix4 matrix1, float scaleFactor)
-	{
-		return new Matrix4(matrix1.M11 * scaleFactor, matrix1.M12 * scaleFactor, matrix1.M13 * scaleFactor, matrix1.M14
-				* scaleFactor, matrix1.M21 * scaleFactor, matrix1.M22 * scaleFactor, matrix1.M23 * scaleFactor,
-				matrix1.M24 * scaleFactor, matrix1.M31 * scaleFactor, matrix1.M32 * scaleFactor, matrix1.M33
-						* scaleFactor, matrix1.M34 * scaleFactor, matrix1.M41 * scaleFactor, matrix1.M42 * scaleFactor,
-				matrix1.M43 * scaleFactor, matrix1.M44 * scaleFactor);
+	public static Matrix4 multiply(Matrix4 matrix1, float scaleFactor) {
+		return new Matrix4(matrix1.M11 * scaleFactor, matrix1.M12 * scaleFactor, matrix1.M13 * scaleFactor,
+				matrix1.M14 * scaleFactor, matrix1.M21 * scaleFactor, matrix1.M22 * scaleFactor,
+				matrix1.M23 * scaleFactor, matrix1.M24 * scaleFactor, matrix1.M31 * scaleFactor,
+				matrix1.M32 * scaleFactor, matrix1.M33 * scaleFactor, matrix1.M34 * scaleFactor,
+				matrix1.M41 * scaleFactor, matrix1.M42 * scaleFactor, matrix1.M43 * scaleFactor,
+				matrix1.M44 * scaleFactor);
 	}
 
-	public static Matrix4 divide(Matrix4 matrix1, Matrix4 matrix2)
-	{
-		return new Matrix4(matrix1.M11 / matrix2.M11, matrix1.M12 / matrix2.M12, matrix1.M13 / matrix2.M13, matrix1.M14
-				/ matrix2.M14, matrix1.M21 / matrix2.M21, matrix1.M22 / matrix2.M22, matrix1.M23 / matrix2.M23,
-				matrix1.M24 / matrix2.M24, matrix1.M31 / matrix2.M31, matrix1.M32 / matrix2.M32, matrix1.M33
-						/ matrix2.M33, matrix1.M34 / matrix2.M34, matrix1.M41 / matrix2.M41, matrix1.M42 / matrix2.M42,
-				matrix1.M43 / matrix2.M43, matrix1.M44 / matrix2.M44);
+	public static Matrix4 divide(Matrix4 matrix1, Matrix4 matrix2) {
+		return new Matrix4(matrix1.M11 / matrix2.M11, matrix1.M12 / matrix2.M12, matrix1.M13 / matrix2.M13,
+				matrix1.M14 / matrix2.M14, matrix1.M21 / matrix2.M21, matrix1.M22 / matrix2.M22,
+				matrix1.M23 / matrix2.M23, matrix1.M24 / matrix2.M24, matrix1.M31 / matrix2.M31,
+				matrix1.M32 / matrix2.M32, matrix1.M33 / matrix2.M33, matrix1.M34 / matrix2.M34,
+				matrix1.M41 / matrix2.M41, matrix1.M42 / matrix2.M42, matrix1.M43 / matrix2.M43,
+				matrix1.M44 / matrix2.M44);
 	}
 
-	public static Matrix4 divide(Matrix4 matrix1, float divider)
-	{
+	public static Matrix4 divide(Matrix4 matrix1, float divider) {
 		float oodivider = 1f / divider;
-		return new Matrix4(matrix1.M11 * oodivider, matrix1.M12 * oodivider, matrix1.M13 * oodivider, matrix1.M14
-				* oodivider, matrix1.M21 * oodivider, matrix1.M22 * oodivider, matrix1.M23 * oodivider, matrix1.M24
-				* oodivider, matrix1.M31 * oodivider, matrix1.M32 * oodivider, matrix1.M33 * oodivider, matrix1.M34
-				* oodivider, matrix1.M41 * oodivider, matrix1.M42 * oodivider, matrix1.M43 * oodivider, matrix1.M44
-				* oodivider);
+		return new Matrix4(matrix1.M11 * oodivider, matrix1.M12 * oodivider, matrix1.M13 * oodivider,
+				matrix1.M14 * oodivider, matrix1.M21 * oodivider, matrix1.M22 * oodivider, matrix1.M23 * oodivider,
+				matrix1.M24 * oodivider, matrix1.M31 * oodivider, matrix1.M32 * oodivider, matrix1.M33 * oodivider,
+				matrix1.M34 * oodivider, matrix1.M41 * oodivider, matrix1.M42 * oodivider, matrix1.M43 * oodivider,
+				matrix1.M44 * oodivider);
 	}
 
-	public static Matrix4 transform(Matrix4 value, Quaternion rotation)
-	{
+	public static Matrix4 transform(Matrix4 value, Quaternion rotation) {
 		float x2 = rotation.X + rotation.X;
 		float y2 = rotation.Y + rotation.Y;
 		float z2 = rotation.Z + rotation.Z;
@@ -732,42 +698,40 @@ public final class Matrix4
 		float h = rotation.Y * z2 + rotation.W * x2;
 		float i = (1f - rotation.X * x2) - rotation.Y * y2;
 
-		return new Matrix4(((value.M11 * a) + (value.M12 * b)) + (value.M13 * c), ((value.M11 * d) + (value.M12 * e))
-				+ (value.M13 * f), ((value.M11 * g) + (value.M12 * h)) + (value.M13 * i), value.M14,
+		return new Matrix4(((value.M11 * a) + (value.M12 * b)) + (value.M13 * c),
+				((value.M11 * d) + (value.M12 * e)) + (value.M13 * f),
+				((value.M11 * g) + (value.M12 * h)) + (value.M13 * i), value.M14,
 
-		((value.M21 * a) + (value.M22 * b)) + (value.M23 * c), ((value.M21 * d) + (value.M22 * e)) + (value.M23 * f),
+				((value.M21 * a) + (value.M22 * b)) + (value.M23 * c),
+				((value.M21 * d) + (value.M22 * e)) + (value.M23 * f),
 				((value.M21 * g) + (value.M22 * h)) + (value.M23 * i), value.M24,
 
-				((value.M31 * a) + (value.M32 * b)) + (value.M33 * c), ((value.M31 * d) + (value.M32 * e))
-						+ (value.M33 * f), ((value.M31 * g) + (value.M32 * h)) + (value.M33 * i), value.M34,
+				((value.M31 * a) + (value.M32 * b)) + (value.M33 * c),
+				((value.M31 * d) + (value.M32 * e)) + (value.M33 * f),
+				((value.M31 * g) + (value.M32 * h)) + (value.M33 * i), value.M34,
 
-				((value.M41 * a) + (value.M42 * b)) + (value.M43 * c), ((value.M41 * d) + (value.M42 * e))
-						+ (value.M43 * f), ((value.M41 * g) + (value.M42 * h)) + (value.M43 * i), value.M44);
+				((value.M41 * a) + (value.M42 * b)) + (value.M43 * c),
+				((value.M41 * d) + (value.M42 * e)) + (value.M43 * f),
+				((value.M41 * g) + (value.M42 * h)) + (value.M43 * i), value.M44);
 	}
 
-	public static Matrix4 transpose(Matrix4 matrix)
-	{
+	public static Matrix4 transpose(Matrix4 matrix) {
 		return new Matrix4(matrix.M11, matrix.M21, matrix.M31, matrix.M41, matrix.M12, matrix.M22, matrix.M32,
 				matrix.M42, matrix.M13, matrix.M23, matrix.M33, matrix.M43, matrix.M14, matrix.M24, matrix.M34,
 				matrix.M44);
 	}
 
-	public static Matrix4 inverse3x3(Matrix4 matrix) throws Exception
-	{
-		if (matrix.determinant3x3() == 0f)
-		{
+	public static Matrix4 inverse3x3(Matrix4 matrix) throws Exception {
+		if (matrix.determinant3x3() == 0f) {
 			throw new Exception("Singular matrix inverse not possible");
 		}
 		return (Matrix4.divide(adjoint3x3(matrix), matrix.determinant3x3()));
 	}
 
-	public static Matrix4 adjoint3x3(Matrix4 matrix)
-	{
+	public static Matrix4 adjoint3x3(Matrix4 matrix) {
 		Matrix4 adjointMatrix = new Matrix4();
-		for (int i = 0; i < 4; i++)
-		{
-			for (int j = 0; j < 4; j++)
-			{
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
 				adjointMatrix.setItem(i, j, (float) (Math.pow(-1, i + j) * (minor(matrix, i, j).determinant3x3())));
 			}
 		}
@@ -775,22 +739,17 @@ public final class Matrix4
 		return adjointMatrix;
 	}
 
-	public static Matrix4 inverse(Matrix4 matrix) throws Exception
-	{
-		if (matrix.determinant() == 0f)
-		{
+	public static Matrix4 inverse(Matrix4 matrix) throws Exception {
+		if (matrix.determinant() == 0f) {
 			throw new Exception("Singular matrix inverse not possible");
 		}
 		return (Matrix4.divide(adjoint(matrix), matrix.determinant()));
 	}
 
-	public static Matrix4 adjoint(Matrix4 matrix)
-	{
+	public static Matrix4 adjoint(Matrix4 matrix) {
 		Matrix4 adjointMatrix = new Matrix4();
-		for (int i = 0; i < 4; i++)
-		{
-			for (int j = 0; j < 4; j++)
-			{
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
 				adjointMatrix.setItem(i, j, (float) (Math.pow(-1, i + j) * ((minor(matrix, i, j)).determinant3x3())));
 			}
 		}
@@ -798,22 +757,17 @@ public final class Matrix4
 		return adjointMatrix;
 	}
 
-	public static Matrix4 minor(Matrix4 matrix, int row, int col)
-	{
+	public static Matrix4 minor(Matrix4 matrix, int row, int col) {
 		Matrix4 minor = new Matrix4();
 		int m = 0, n = 0;
 
-		for (int i = 0; i < 4; i++)
-		{
-			if (i == row)
-			{
+		for (int i = 0; i < 4; i++) {
+			if (i == row) {
 				continue;
 			}
 			n = 0;
-			for (int j = 0; j < 4; j++)
-			{
-				if (j == col)
-				{
+			for (int j = 0; j < 4; j++) {
+				if (j == col) {
 					continue;
 				}
 				minor.setItem(m, n, matrix.getItem(i, j));
@@ -826,248 +780,228 @@ public final class Matrix4
 	}
 
 	@Override
-	public boolean equals(Object obj)
-	{
-		return obj != null && obj instanceof Matrix4 && equals((Matrix4)obj);
+	public boolean equals(Object obj) {
+		return obj != null && obj instanceof Matrix4 && equals((Matrix4) obj);
 	}
 
-	public boolean equals(Matrix4 other)
-	{
-		return (other != null && M11 == other.M11 && M12 == other.M12 && M13 == other.M13 && M14 == other.M14 && 
-				M21 == other.M21 && M22 == other.M22 && M23 == other.M23 && M24 == other.M24 && M31 == other.M31 &&
-				M32 == other.M32 && M33 == other.M33 && M34 == other.M34 && M41 == other.M41 && M42 == other.M42 &&
-				M43 == other.M43 && M44 == other.M44);
+	public boolean equals(Matrix4 other) {
+		return (other != null && M11 == other.M11 && M12 == other.M12 && M13 == other.M13 && M14 == other.M14
+				&& M21 == other.M21 && M22 == other.M22 && M23 == other.M23 && M24 == other.M24 && M31 == other.M31
+				&& M32 == other.M32 && M33 == other.M33 && M34 == other.M34 && M41 == other.M41 && M42 == other.M42
+				&& M43 == other.M43 && M44 == other.M44);
 	}
 
 	@Override
-	public int hashCode()
-	{
-		int hashCode = ((Float)M11).hashCode();
-		hashCode = hashCode * 31 + ((Float)M12).hashCode();
-		hashCode = hashCode * 31 + ((Float)M13).hashCode();
-		hashCode = hashCode * 31 + ((Float)M14).hashCode();
-		hashCode = hashCode * 31 + ((Float)M21).hashCode();
-		hashCode = hashCode * 31 + ((Float)M22).hashCode();
-		hashCode = hashCode * 31 + ((Float)M23).hashCode();
-		hashCode = hashCode * 31 + ((Float)M24).hashCode();
-		hashCode = hashCode * 31 + ((Float)M31).hashCode();
-		hashCode = hashCode * 31 + ((Float)M32).hashCode();
-		hashCode = hashCode * 31 + ((Float)M33).hashCode();
-		hashCode = hashCode * 31 + ((Float)M34).hashCode();
-		hashCode = hashCode * 31 + ((Float)M41).hashCode();
-		hashCode = hashCode * 31 + ((Float)M42).hashCode();
-		hashCode = hashCode * 31 + ((Float)M43).hashCode();
-		hashCode = hashCode * 31 + ((Float)M44).hashCode();
-		return  hashCode;
+	public int hashCode() {
+		int hashCode = ((Float) M11).hashCode();
+		hashCode = hashCode * 31 + ((Float) M12).hashCode();
+		hashCode = hashCode * 31 + ((Float) M13).hashCode();
+		hashCode = hashCode * 31 + ((Float) M14).hashCode();
+		hashCode = hashCode * 31 + ((Float) M21).hashCode();
+		hashCode = hashCode * 31 + ((Float) M22).hashCode();
+		hashCode = hashCode * 31 + ((Float) M23).hashCode();
+		hashCode = hashCode * 31 + ((Float) M24).hashCode();
+		hashCode = hashCode * 31 + ((Float) M31).hashCode();
+		hashCode = hashCode * 31 + ((Float) M32).hashCode();
+		hashCode = hashCode * 31 + ((Float) M33).hashCode();
+		hashCode = hashCode * 31 + ((Float) M34).hashCode();
+		hashCode = hashCode * 31 + ((Float) M41).hashCode();
+		hashCode = hashCode * 31 + ((Float) M42).hashCode();
+		hashCode = hashCode * 31 + ((Float) M43).hashCode();
+		hashCode = hashCode * 31 + ((Float) M44).hashCode();
+		return hashCode;
 	}
 
 	/**
 	 * Get a formatted string representation of the vector
-	 * 
+	 *
 	 * @return A string representation of the vector
 	 */
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return String.format(Helpers.EnUsCulture,
 				"|%f, %f, %f, %f|\n|%f, %f, %f, %f|\n|%f, %f, %f, %f|\n|%f, %f, %f, %f|", M11, M12, M13, M14, M21, M22,
 				M23, M24, M31, M32, M33, M34, M41, M42, M43, M44);
 	}
 
-	public Vector4 getItem(int row) throws IndexOutOfBoundsException
-	{
-		switch (row)
-		{
-			case 0:
-				return new Vector4(M11, M12, M13, M14);
-			case 1:
-				return new Vector4(M21, M22, M23, M24);
-			case 2:
-				return new Vector4(M31, M32, M33, M34);
-			case 3:
-				return new Vector4(M41, M42, M43, M44);
-			default:
-				throw new IndexOutOfBoundsException("Matrix4 row index must be from 0-3");
+	public Vector4 getItem(int row) throws IndexOutOfBoundsException {
+		switch (row) {
+		case 0:
+			return new Vector4(M11, M12, M13, M14);
+		case 1:
+			return new Vector4(M21, M22, M23, M24);
+		case 2:
+			return new Vector4(M31, M32, M33, M34);
+		case 3:
+			return new Vector4(M41, M42, M43, M44);
+		default:
+			throw new IndexOutOfBoundsException("Matrix4 row index must be from 0-3");
 		}
 	}
 
-	public void setItem(int row, Vector4 value) throws IndexOutOfBoundsException
-	{
-		switch (row)
-		{
-			case 0:
-				M11 = value.X;
-				M12 = value.Y;
-				M13 = value.Z;
-				M14 = value.S;
-				break;
-			case 1:
-				M21 = value.X;
-				M22 = value.Y;
-				M23 = value.Z;
-				M24 = value.S;
-				break;
-			case 2:
-				M31 = value.X;
-				M32 = value.Y;
-				M33 = value.Z;
-				M34 = value.S;
-				break;
-			case 3:
-				M41 = value.X;
-				M42 = value.Y;
-				M43 = value.Z;
-				M44 = value.S;
-				break;
-			default:
-				throw new IndexOutOfBoundsException("Matrix4 row index must be from 0-3");
+	public void setItem(int row, Vector4 value) throws IndexOutOfBoundsException {
+		switch (row) {
+		case 0:
+			M11 = value.X;
+			M12 = value.Y;
+			M13 = value.Z;
+			M14 = value.S;
+			break;
+		case 1:
+			M21 = value.X;
+			M22 = value.Y;
+			M23 = value.Z;
+			M24 = value.S;
+			break;
+		case 2:
+			M31 = value.X;
+			M32 = value.Y;
+			M33 = value.Z;
+			M34 = value.S;
+			break;
+		case 3:
+			M41 = value.X;
+			M42 = value.Y;
+			M43 = value.Z;
+			M44 = value.S;
+			break;
+		default:
+			throw new IndexOutOfBoundsException("Matrix4 row index must be from 0-3");
 		}
 	}
 
-	public float getItem(int row, int column) throws IndexOutOfBoundsException
-	{
-		switch (row)
-		{
+	public float getItem(int row, int column) throws IndexOutOfBoundsException {
+		switch (row) {
+		case 0:
+			switch (column) {
 			case 0:
-				switch (column)
-				{
-					case 0:
-						return M11;
-					case 1:
-						return M12;
-					case 2:
-						return M13;
-					case 3:
-						return M14;
-					default:
-						throw new IndexOutOfBoundsException("Matrix4 row and column values must be from 0-3");
-				}
+				return M11;
 			case 1:
-				switch (column)
-				{
-					case 0:
-						return M21;
-					case 1:
-						return M22;
-					case 2:
-						return M23;
-					case 3:
-						return M24;
-					default:
-						throw new IndexOutOfBoundsException("Matrix4 row and column values must be from 0-3");
-				}
+				return M12;
 			case 2:
-				switch (column)
-				{
-					case 0:
-						return M31;
-					case 1:
-						return M32;
-					case 2:
-						return M33;
-					case 3:
-						return M34;
-					default:
-						throw new IndexOutOfBoundsException("Matrix4 row and column values must be from 0-3");
-				}
+				return M13;
 			case 3:
-				switch (column)
-				{
-					case 0:
-						return M41;
-					case 1:
-						return M42;
-					case 2:
-						return M43;
-					case 3:
-						return M44;
-					default:
-						throw new IndexOutOfBoundsException("Matrix4 row and column values must be from 0-3");
-				}
+				return M14;
 			default:
 				throw new IndexOutOfBoundsException("Matrix4 row and column values must be from 0-3");
+			}
+		case 1:
+			switch (column) {
+			case 0:
+				return M21;
+			case 1:
+				return M22;
+			case 2:
+				return M23;
+			case 3:
+				return M24;
+			default:
+				throw new IndexOutOfBoundsException("Matrix4 row and column values must be from 0-3");
+			}
+		case 2:
+			switch (column) {
+			case 0:
+				return M31;
+			case 1:
+				return M32;
+			case 2:
+				return M33;
+			case 3:
+				return M34;
+			default:
+				throw new IndexOutOfBoundsException("Matrix4 row and column values must be from 0-3");
+			}
+		case 3:
+			switch (column) {
+			case 0:
+				return M41;
+			case 1:
+				return M42;
+			case 2:
+				return M43;
+			case 3:
+				return M44;
+			default:
+				throw new IndexOutOfBoundsException("Matrix4 row and column values must be from 0-3");
+			}
+		default:
+			throw new IndexOutOfBoundsException("Matrix4 row and column values must be from 0-3");
 		}
 	}
 
-	public void setItem(int row, int column, float value)
-	{
-		switch (row)
-		{
+	public void setItem(int row, int column, float value) {
+		switch (row) {
+		case 0:
+			switch (column) {
 			case 0:
-				switch (column)
-				{
-					case 0:
-						M11 = value;
-						return;
-					case 1:
-						M12 = value;
-						return;
-					case 2:
-						M13 = value;
-						return;
-					case 3:
-						M14 = value;
-						return;
-					default:
-						throw new IndexOutOfBoundsException("Matrix4 row and column values must be from 0-3");
-				}
+				M11 = value;
+				return;
 			case 1:
-				switch (column)
-				{
-					case 0:
-						M21 = value;
-						return;
-					case 1:
-						M22 = value;
-						return;
-					case 2:
-						M23 = value;
-						return;
-					case 3:
-						M24 = value;
-						return;
-					default:
-						throw new IndexOutOfBoundsException("Matrix4 row and column values must be from 0-3");
-				}
+				M12 = value;
+				return;
 			case 2:
-				switch (column)
-				{
-					case 0:
-						M31 = value;
-						return;
-					case 1:
-						M32 = value;
-						return;
-					case 2:
-						M33 = value;
-						return;
-					case 3:
-						M34 = value;
-						return;
-					default:
-						throw new IndexOutOfBoundsException("Matrix4 row and column values must be from 0-3");
-				}
+				M13 = value;
+				return;
 			case 3:
-				switch (column)
-				{
-					case 0:
-						M41 = value;
-						return;
-					case 1:
-						M42 = value;
-						return;
-					case 2:
-						M43 = value;
-						return;
-					case 3:
-						M44 = value;
-						return;
-					default:
-						throw new IndexOutOfBoundsException("Matrix4 row and column values must be from 0-3");
-				}
+				M14 = value;
+				return;
 			default:
 				throw new IndexOutOfBoundsException("Matrix4 row and column values must be from 0-3");
+			}
+		case 1:
+			switch (column) {
+			case 0:
+				M21 = value;
+				return;
+			case 1:
+				M22 = value;
+				return;
+			case 2:
+				M23 = value;
+				return;
+			case 3:
+				M24 = value;
+				return;
+			default:
+				throw new IndexOutOfBoundsException("Matrix4 row and column values must be from 0-3");
+			}
+		case 2:
+			switch (column) {
+			case 0:
+				M31 = value;
+				return;
+			case 1:
+				M32 = value;
+				return;
+			case 2:
+				M33 = value;
+				return;
+			case 3:
+				M34 = value;
+				return;
+			default:
+				throw new IndexOutOfBoundsException("Matrix4 row and column values must be from 0-3");
+			}
+		case 3:
+			switch (column) {
+			case 0:
+				M41 = value;
+				return;
+			case 1:
+				M42 = value;
+				return;
+			case 2:
+				M43 = value;
+				return;
+			case 3:
+				M44 = value;
+				return;
+			default:
+				throw new IndexOutOfBoundsException("Matrix4 row and column values must be from 0-3");
+			}
+		default:
+			throw new IndexOutOfBoundsException("Matrix4 row and column values must be from 0-3");
 		}
 	}
 

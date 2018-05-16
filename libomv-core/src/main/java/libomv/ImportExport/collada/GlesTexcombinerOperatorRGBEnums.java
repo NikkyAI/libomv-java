@@ -5,19 +5,21 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for gles_texcombiner_operatorRGB_enums.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
+ * Java class for gles_texcombiner_operatorRGB_enums.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ * <p>
+ * 
  * <pre>
  * &lt;simpleType name="gles_texcombiner_operatorRGB_enums">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token">
@@ -38,33 +40,27 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum GlesTexcombinerOperatorRGBEnums {
 
-    REPLACE("REPLACE"),
-    MODULATE("MODULATE"),
-    ADD("ADD"),
-    ADD_SIGNED("ADD_SIGNED"),
-    INTERPOLATE("INTERPOLATE"),
-    SUBTRACT("SUBTRACT"),
-    @XmlEnumValue("DOT3_RGB")
-    DOT_3_RGB("DOT3_RGB"),
-    @XmlEnumValue("DOT3_RGBA")
-    DOT_3_RGBA("DOT3_RGBA");
-    private final String value;
+	REPLACE("REPLACE"), MODULATE("MODULATE"), ADD("ADD"), ADD_SIGNED("ADD_SIGNED"), INTERPOLATE(
+			"INTERPOLATE"), SUBTRACT("SUBTRACT"), @XmlEnumValue("DOT3_RGB")
+	DOT_3_RGB("DOT3_RGB"), @XmlEnumValue("DOT3_RGBA")
+	DOT_3_RGBA("DOT3_RGBA");
+	private final String value;
 
-    GlesTexcombinerOperatorRGBEnums(String v) {
-        value = v;
-    }
+	GlesTexcombinerOperatorRGBEnums(String v) {
+		value = v;
+	}
 
-    public String value() {
-        return value;
-    }
+	public String value() {
+		return value;
+	}
 
-    public static GlesTexcombinerOperatorRGBEnums fromValue(String v) {
-        for (GlesTexcombinerOperatorRGBEnums c: GlesTexcombinerOperatorRGBEnums.values()) {
-            if (c.value.equals(v)) {
-                return c;
-            }
-        }
-        throw new IllegalArgumentException(v);
-    }
+	public static GlesTexcombinerOperatorRGBEnums fromValue(String v) {
+		for (GlesTexcombinerOperatorRGBEnums c : GlesTexcombinerOperatorRGBEnums.values()) {
+			if (c.value.equals(v)) {
+				return c;
+			}
+		}
+		throw new IllegalArgumentException(v);
+	}
 
 }

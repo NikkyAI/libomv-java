@@ -12,8 +12,7 @@ import libomv.utils.Helpers;
 public interface Agent {
 
 	// Information about agents display name
-	public class AgentDisplayName
-	{
+	public class AgentDisplayName {
 		// Agent UUID
 		public UUID ID;
 		// Username
@@ -32,9 +31,8 @@ public interface Agent {
 		public Date NextUpdate;
 		// Last updated timestamp
 		public Date Updated;
-		
-		public String getLegacyFullName()
-		{
+
+		public String getLegacyFullName() {
 			return String.format("%s %s", LegacyFirstName, LegacyLastName);
 		}
 
@@ -44,8 +42,7 @@ public interface Agent {
 		 * @param data
 		 *            Incoming OSD data AgentDisplayName object
 		 */
-		public AgentDisplayName FromOSD(OSD data)
-		{
+		public AgentDisplayName FromOSD(OSD data) {
 			AgentDisplayName ret = new AgentDisplayName();
 
 			OSDMap map = (OSDMap) data;
@@ -65,8 +62,7 @@ public interface Agent {
 		 * 
 		 * @returns OSD containing agent's display name data
 		 */
-		public OSD GetOSD()
-		{
+		public OSD GetOSD() {
 			OSDMap map = new OSDMap();
 
 			map.put("id", OSD.FromUUID(ID));
@@ -82,37 +78,49 @@ public interface Agent {
 		}
 
 		@Override
-		public String toString()
-		{
+		public String toString() {
 			return Helpers.StructToString(this);
 		}
 	}
 
 	/** Special commands used in Instant Messages */
-	public enum InstantMessageDialog
-	{
-		/* Indicates a regular IM from another agent, ID is meaningless, nothing in the binary bucket.*/
+	public enum InstantMessageDialog {
+		/*
+		 * Indicates a regular IM from another agent, ID is meaningless, nothing in the
+		 * binary bucket.
+		 */
 		MessageFromAgent, // 0
 		/* Simple notification box with an OK button */
 		MessageBox, // 1
 		/* Used to show a countdown notification with an OK button, deprecated now */
 		Deprecated_MessageBoxCountdown, // 2
-		/* You've been invited to join a group. ID is the group id.
-		 * The binary bucket contains a null terminated string representation of the officer/member status
-		 * and join cost for the invitee. The format is 1 byte for officer/member (O for officer, M for member),
-		 * and as many bytes as necessary for cost. */
+		/*
+		 * You've been invited to join a group. ID is the group id. The binary bucket
+		 * contains a null terminated string representation of the officer/member status
+		 * and join cost for the invitee. The format is 1 byte for officer/member (O for
+		 * officer, M for member), and as many bytes as necessary for cost.
+		 */
 		GroupInvitation, // 3
-		/* Inventory offer, ID is the transaction id, binary bucket is a list of inventory uuid and type. */
+		/*
+		 * Inventory offer, ID is the transaction id, binary bucket is a list of
+		 * inventory uuid and type.
+		 */
 		InventoryOffered, // 4
 		/* Accepted inventory offer */
 		InventoryAccepted, // 5
 		/* Declined inventory offer */
 		InventoryDeclined, // 6
-		/* Group vote, Name is name of person who called vote, ID is vote ID used for internal tracking */
+		/*
+		 * Group vote, Name is name of person who called vote, ID is vote ID used for
+		 * internal tracking
+		 */
 		GroupVote, // 7
 		/* A message to everyone in the agent's group, no longer used */
 		Deprecated_GroupMessage, // 8
-		/* An object is offering its inventory, ID is the transaction id, Binary bucket is a (mostly) complete packed inventory item */
+		/*
+		 * An object is offering its inventory, ID is the transaction id, Binary bucket
+		 * is a (mostly) complete packed inventory item
+		 */
 		TaskInventoryOffered, // 9
 		/* Accept an inventory offer from an object */
 		TaskInventoryAccepted, // 10
@@ -151,12 +159,16 @@ public interface Agent {
 		/* Notification of a new group election, this is depreciated */
 		@Deprecated
 		Deprecated_GroupElection, // 27
-		/* IM to tell the user to go to an URL. Put a text message in the message field, and put the
-		 * url with a trailing \0 in the binary bucket. */
+		/*
+		 * IM to tell the user to go to an URL. Put a text message in the message field,
+		 * and put the url with a trailing \0 in the binary bucket.
+		 */
 		GotoUrl, // 28
 		/* IM for help */
 		Session911Start, // 29
-		/* IM sent automatically on call for help, sends a lure to each Helper reached */
+		/*
+		 * IM sent automatically on call for help, sends a lure to each Helper reached
+		 */
 		Lure911, // 30
 		/* Like an IM but won't go to email */
 		FromTaskAsAlert, // 31
@@ -183,51 +195,45 @@ public interface Agent {
 		/* Indicates that a user has stopped typing */
 		StopTyping; // 42
 
-		public static InstantMessageDialog setValue(int value)
-		{
+		public static InstantMessageDialog setValue(int value) {
 			if (values().length > value)
 				return values()[value];
 			Logger.getLogger(InstantMessageDialog.class).error("Invalid InstantMessageDialog value: " + value);
 			return MessageFromAgent;
 		}
 
-		public byte getValue()
-		{
+		public byte getValue() {
 			return (byte) ordinal();
 		}
 	}
-	
+
 	/**
 	 * Flag in Instant Messages, whether the IM should be delivered to offline
 	 * avatars as well
 	 */
-	public enum InstantMessageOnline
-	{
+	public enum InstantMessageOnline {
 		/* Only deliver to online avatars */
 		Online, // 0
 		/*
-		 * If the avatar is offline the message will be held until they login
-		 * next, and possibly forwarded to their e-mail account
+		 * If the avatar is offline the message will be held until they login next, and
+		 * possibly forwarded to their e-mail account
 		 */
 		Offline; // 1
 
-		public static InstantMessageOnline setValue(int value)
-		{
+		public static InstantMessageOnline setValue(int value) {
 			if (values().length > value)
 				return values()[value];
 			Logger.getLogger(InstantMessageOnline.class).error("Invalid InstantMessageOnline value: " + value);
 			return Offline;
 		}
 
-		public byte getValue()
-		{
+		public byte getValue() {
 			return (byte) ordinal();
 		}
 	}
 
 	/* Used to specify movement actions for your agent */
-	public static class ControlFlags
-	{
+	public static class ControlFlags {
 		private static final int CONTROL_AT_POS_INDEX = 0;
 		private static final int CONTROL_AT_NEG_INDEX = 1;
 		private static final int CONTROL_LEFT_POS_INDEX = 2;
@@ -261,7 +267,6 @@ public interface Agent {
 		private static final int CONTROL_ML_LBUTTON_DOWN_INDEX = 30;
 		private static final int CONTROL_ML_LBUTTON_UP_INDEX = 31;
 
-		
 		// Empty flag
 		public static final int NONE = 0;
 		// Move Forward (SL Keybinding: W/Up Arrow)
@@ -337,20 +342,17 @@ public interface Agent {
 		//
 		public static final int AGENT_CONTROL_ML_LBUTTON_UP = 0x1 << CONTROL_ML_LBUTTON_UP_INDEX;
 
-		public static int setValue(int value)
-		{
+		public static int setValue(int value) {
 			return value;
 		}
 
-		public static int getValue(int value)
-		{
+		public static int getValue(int value) {
 			return value;
 		}
 	}
 
 	/* */
-	public static class TeleportFlags
-	{
+	public static class TeleportFlags {
 		/* No flags set, or teleport failed */
 		public static final int Default = 0;
 		/* Set when newbie leaves help island for first time */
@@ -392,13 +394,11 @@ public interface Agent {
 		/* Finished, Same Sim */
 		public static final int FinishedViaSameSim = 1 << 29;
 
-		public static int setValue(int value)
-		{
+		public static int setValue(int value) {
 			return (value & _mask);
 		}
 
-		public static int getValue(int value)
-		{
+		public static int getValue(int value) {
 			return (value & _mask);
 		}
 

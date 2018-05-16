@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -33,36 +33,31 @@ import libomv.primitives.Primitive.AttachmentPoint;
 import libomv.types.UUID;
 
 /** InventoryAttachment Class, contains details on an attachable object */
-public class InventoryAttachment extends InventoryItem
-{
+public class InventoryAttachment extends InventoryItem {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Construct an InventoryAttachment object
-	 * 
+	 *
 	 * @param itemID
 	 *            A {@link OpenMetaverse.UUID} which becomes the
 	 *            {@link OpenMetaverse.InventoryItem} objects AssetUUID
 	 */
-	public InventoryAttachment(UUID itemID)
-	{
+	public InventoryAttachment(UUID itemID) {
 		super(itemID);
 	}
 
 	@Override
-	public InventoryType getType()
-	{
+	public InventoryType getType() {
 		return InventoryType.Attachment;
 	}
 
 	/** Get the last AttachmentPoint this object was attached to */
-	public final AttachmentPoint getAttachmentPoint()
-	{
+	public final AttachmentPoint getAttachmentPoint() {
 		return AttachmentPoint.setValue(ItemFlags & 0xFF);
 	}
 
-	public final void setAttachmentPoint(AttachmentPoint value)
-	{
+	public final void setAttachmentPoint(AttachmentPoint value) {
 		ItemFlags = value.getValue() | (ItemFlags & ~0xFF);
 	}
 }

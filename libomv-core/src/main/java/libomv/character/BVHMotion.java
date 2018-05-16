@@ -20,61 +20,50 @@ package libomv.character;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BVHMotion
-{
+public class BVHMotion {
 	private int frames;
 	private float frameTime;
-	
-	public int getFrames()
-	{
+
+	public int getFrames() {
 		return frames;
 	}
-	
-	public float[] getFrameAt(int index)
-	{
+
+	public float[] getFrameAt(int index) {
 		return motions.get(index);
 	}
-	
-	public void setFrames(int frames)
-	{
+
+	public void setFrames(int frames) {
 		this.frames = frames;
 	}
-	
-	public void syncFrames()
-	{
+
+	public void syncFrames() {
 		setFrames(motions.size());
 	}
 
-	public float getFrameTime()
-	{
+	public float getFrameTime() {
 		return frameTime;
 	}
-	
-	public void setFrameTime(float frameTime)
-	{
+
+	public void setFrameTime(float frameTime) {
 		this.frameTime = frameTime;
 	}
-	
-	public List<float[]> getMotions()
-	{
+
+	public List<float[]> getMotions() {
 		return motions;
 	}
-	
+
 	private List<float[]> motions = new ArrayList<float[]>();
-	
-	public void add(float[] motion)
-	{
+
+	public void add(float[] motion) {
 		motions.add(motion);
 	}
-	
-	public int size()
-	{
+
+	public int size() {
 		return motions.size();
 	}
-	
-	public float getDuration()
-	{
-		//TODO support ignore first
+
+	public float getDuration() {
+		// TODO support ignore first
 		return frameTime * motions.size();
 	}
 }

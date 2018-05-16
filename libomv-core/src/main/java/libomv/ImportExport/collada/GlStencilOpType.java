@@ -5,18 +5,20 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for gl_stencil_op_type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
+ * Java class for gl_stencil_op_type.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ * <p>
+ * 
  * <pre>
  * &lt;simpleType name="gl_stencil_op_type">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -37,21 +39,14 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum GlStencilOpType {
 
-    KEEP,
-    ZERO,
-    REPLACE,
-    INCR,
-    DECR,
-    INVERT,
-    INCR_WRAP,
-    DECR_WRAP;
+	KEEP, ZERO, REPLACE, INCR, DECR, INVERT, INCR_WRAP, DECR_WRAP;
 
-    public String value() {
-        return name();
-    }
+	public String value() {
+		return name();
+	}
 
-    public static GlStencilOpType fromValue(String v) {
-        return valueOf(v);
-    }
+	public static GlStencilOpType fromValue(String v) {
+		return valueOf(v);
+	}
 
 }

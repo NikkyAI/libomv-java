@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -31,146 +31,116 @@ package libomv.StructuredData;
 
 import libomv.utils.Helpers;
 
-public class OSDReal extends OSD
-{
+public class OSDReal extends OSD {
 	private double value;
 
 	@Override
-	public OSDType getType()
-	{
+	public OSDType getType() {
 		return OSDType.Real;
 	}
 
-	public OSDReal(double value)
-	{
+	public OSDReal(double value) {
 		this.value = value;
 	}
 
 	@Override
-	public boolean AsBoolean()
-	{
+	public boolean AsBoolean() {
 		return (!Double.isNaN(value) && value != 0d);
 	}
 
 	@Override
-	public int AsInteger()
-	{
-		if (Double.isNaN(value))
-		{
+	public int AsInteger() {
+		if (Double.isNaN(value)) {
 			return 0;
 		}
-		if (value > Integer.MAX_VALUE)
-		{
+		if (value > Integer.MAX_VALUE) {
 			return Integer.MAX_VALUE;
 		}
-		if (value < Integer.MIN_VALUE)
-		{
+		if (value < Integer.MIN_VALUE) {
 			return Integer.MIN_VALUE;
 		}
 		return Helpers.roundFromZero(value);
 	}
 
 	@Override
-	public int AsUInteger()
-	{
-		if (Double.isNaN(value))
-		{
+	public int AsUInteger() {
+		if (Double.isNaN(value)) {
 			return 0;
 		}
-		if (value > (2 * (double) Integer.MAX_VALUE + 1))
-		{
+		if (value > (2 * (double) Integer.MAX_VALUE + 1)) {
 			return (0xffffffff);
 		}
-		if (value < 0.0f)
-		{
+		if (value < 0.0f) {
 			return 0;
 		}
 		return Helpers.roundFromZero(value);
 	}
 
 	@Override
-	public long AsLong()
-	{
-		if (Double.isNaN(value))
-		{
+	public long AsLong() {
+		if (Double.isNaN(value)) {
 			return 0;
 		}
-		if (value > Long.MAX_VALUE)
-		{
+		if (value > Long.MAX_VALUE) {
 			return Long.MAX_VALUE;
 		}
-		if (value < Long.MIN_VALUE)
-		{
+		if (value < Long.MIN_VALUE) {
 			return Long.MIN_VALUE;
 		}
 		return Helpers.roundFromZero(value);
 	}
 
 	@Override
-	public long AsULong()
-	{
-		if (Double.isNaN(value))
-		{
+	public long AsULong() {
+		if (Double.isNaN(value)) {
 			return 0;
 		}
-		if (value > (2 * (double) Long.MAX_VALUE + 1))
-		{
+		if (value > (2 * (double) Long.MAX_VALUE + 1)) {
 			return 0xffffffffffl;
 		}
-		if (value < 0.0d)
-		{
+		if (value < 0.0d) {
 			return 0;
 		}
 		return Helpers.roundFromZero(value);
 	}
 
 	@Override
-	public double AsReal()
-	{
+	public double AsReal() {
 		return value;
 	}
 
 	@Override
-	public String AsString()
-	{
-		if (Double.isNaN(value))
-		{
+	public String AsString() {
+		if (Double.isNaN(value)) {
 			return "NaN";
-		}
-		else if (Double.isInfinite(value))
-		{
+		} else if (Double.isInfinite(value)) {
 			return (value < 0) ? "-Inf" : "Inf";
 		}
 		return Double.toString(value);
 	}
 
 	@Override
-	public byte[] AsBinary()
-	{
+	public byte[] AsBinary() {
 		return Helpers.DoubleToBytesB(value);
 	}
 
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		long v = Double.doubleToLongBits(value);
-		return (int)(v ^ (v >>> 32));
-	}
-	
-	@Override
-	public boolean equals(Object obj)
-	{
-		return obj != null && obj instanceof OSD && equals((OSD)obj);
+		return (int) (v ^ (v >>> 32));
 	}
 
-	public boolean equals(OSD osd)
-	{
+	@Override
+	public boolean equals(Object obj) {
+		return obj != null && obj instanceof OSD && equals((OSD) obj);
+	}
+
+	public boolean equals(OSD osd) {
 		return osd != null && Double.doubleToLongBits(osd.AsReal()) == Double.doubleToLongBits(value);
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return AsString();
 	}
 }

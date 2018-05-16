@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -36,57 +36,51 @@ import libomv.types.Vector3;
 import libomv.utils.Helpers;
 
 // Represents a Landmark with RegionID and Position vector
-public class AssetLandmark extends AssetItem
-{
+public class AssetLandmark extends AssetItem {
 	@Override
-	public AssetType getAssetType()
-	{
+	public AssetType getAssetType() {
 		return AssetType.Landmark;
 	}
 
 	// UUID of the Landmark target region
-	public UUID getRegionID()
-	{
+	public UUID getRegionID() {
 		return AssetID;
 	}
-	
+
 	// Local position of the target
 	public Vector3 Position = Vector3.Zero;
 
 	/**
 	 * Construct an Asset object of type Landmark
-	 * 
+	 *
 	 * @param assetID
 	 *            A unique <see cref="UUID"/> specific to this asset
 	 * @param assetData
 	 *            A byte array containing the raw asset data
 	 */
-	public AssetLandmark(UUID assetID, byte[] assetData)
-	{
+	public AssetLandmark(UUID assetID, byte[] assetData) {
 		super(assetID, assetData);
 	}
 
 	/**
 	 * Constuct an asset of type Landmark
-	 * 
+	 *
 	 * @param regionID
 	 *            UUID of the target region
 	 * @param pos
 	 *            Local position of landmark
 	 */
-	public AssetLandmark(UUID regionID, Vector3 pos)
-	{
+	public AssetLandmark(UUID regionID, Vector3 pos) {
 		super(regionID, null);
 		Position = pos;
 	}
 
 	/**
 	 * Encode the raw contents of a string with the specific Landmark format
-	 * 
+	 *
 	 */
 	@Override
-	protected void encode()
-	{
+	protected void encode() {
 		String temp = "Landmark version 2\n";
 		temp += "region_id " + getRegionID() + "\n";
 		temp += String.format("local_pos %f %f %f\n", Position.X, Position.Y, Position.Z);
@@ -95,33 +89,26 @@ public class AssetLandmark extends AssetItem
 
 	/**
 	 * Decode the raw asset data, populating the RegionID and Position
-	 * 
-	 * @return true if the AssetData was successfully decoded to a UUID and
-	 *         Vector
+	 *
+	 * @return true if the AssetData was successfully decoded to a UUID and Vector
 	 */
 	@Override
-	protected boolean decode()
-	{
+	protected boolean decode() {
 		if (AssetData == null)
 			return false;
 
-		try
-		{
+		try {
 			String text = Helpers.BytesToString(AssetData);
-			if (text.toLowerCase().contains("landmark version 2"))
-			{
+			if (text.toLowerCase().contains("landmark version 2")) {
 				AssetID = new UUID(text.substring(text.indexOf("region_id") + 10, 36));
 				String[] vecStrings = text.substring(text.indexOf("local_pos") + 10).split(" ");
-				if (vecStrings.length == 3)
-				{
+				if (vecStrings.length == 3) {
 					Position = new Vector3(Helpers.TryParseFloat(vecStrings[0]), Helpers.TryParseFloat(vecStrings[1]),
 							Helpers.TryParseFloat(vecStrings[2]));
 					return true;
 				}
 			}
-		}
-		catch (UnsupportedEncodingException e)
-		{
+		} catch (UnsupportedEncodingException e) {
 		}
 		return false;
 	}

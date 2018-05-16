@@ -5,18 +5,20 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for Common_profile_param.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
+ * Java class for Common_profile_param.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ * <p>
+ * 
  * <pre>
  * &lt;simpleType name="Common_profile_param">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NMTOKEN">
@@ -46,30 +48,14 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum CommonProfileParam {
 
-    A,
-    ANGLE,
-    B,
-    DOUBLE_SIDED,
-    G,
-    P,
-    Q,
-    R,
-    S,
-    T,
-    TIME,
-    U,
-    V,
-    W,
-    X,
-    Y,
-    Z;
+	A, ANGLE, B, DOUBLE_SIDED, G, P, Q, R, S, T, TIME, U, V, W, X, Y, Z;
 
-    public String value() {
-        return name();
-    }
+	public String value() {
+		return name();
+	}
 
-    public static CommonProfileParam fromValue(String v) {
-        return valueOf(v);
-    }
+	public static CommonProfileParam fromValue(String v) {
+		return valueOf(v);
+	}
 
 }

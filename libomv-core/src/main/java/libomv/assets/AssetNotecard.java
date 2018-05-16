@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -49,81 +49,70 @@ import libomv.utils.Helpers;
 /**
  * Represents a string of characters encoded with specific formatting properties
  */
-public class AssetNotecard extends AssetItem
-{
+public class AssetNotecard extends AssetItem {
 	private static final Logger logger = Logger.getLogger(AssetNotecard.class);
-		
+
 	/* Override the base classes getAssetType */
 	@Override
-	public AssetType getAssetType()
-	{
+	public AssetType getAssetType() {
 		return AssetType.Notecard;
 	}
 
 	/** A text string containing main text of the notecard */
 	private String BodyText = null;
 
-	public String getBodyText()
-	{
+	public String getBodyText() {
 		return BodyText;
 	}
-	
-	public void setBodyText(String bodyText)
-	{
+
+	public void setBodyText(String bodyText) {
 		invalidateAssetData();
 		BodyText = bodyText;
 	}
 
 	/**
-	 * List of <see cref="OpenMetaverse.InventoryItem"/>s embedded on the
-	 * notecard
+	 * List of <see cref="OpenMetaverse.InventoryItem"/>s embedded on the notecard
 	 */
 	private List<InventoryItem> EmbeddedItems = null;
 
-	public List<InventoryItem> geEmbeddedItems()
-	{
+	public List<InventoryItem> geEmbeddedItems() {
 		return EmbeddedItems;
 	}
-	
-	public void setEmbeddedItems(List<InventoryItem> embeddedItems)
-	{
+
+	public void setEmbeddedItems(List<InventoryItem> embeddedItems) {
 		invalidateAssetData();
 		EmbeddedItems = embeddedItems;
 	}
 
 	/**
 	 * Construct an Asset object of type Notecard
-	 * 
+	 *
 	 * @param assetID
 	 *            A unique <see cref="UUID"/> specific to this asset
 	 * @param assetData
 	 *            A byte array containing the raw asset data
 	 */
-	public AssetNotecard(UUID assetID, byte[] assetData)
-	{
+	public AssetNotecard(UUID assetID, byte[] assetData) {
 		super(assetID, assetData);
 	}
 
 	/**
 	 * Construct an Asset object of type Notecard
-	 * 
+	 *
 	 * @param text
 	 *            A text string containing the main body text of the notecard
 	 */
-	public AssetNotecard(String text)
-	{
+	public AssetNotecard(String text) {
 		super(null, null);
 		BodyText = text;
 		encode();
 	}
 
 	/*
-	 * Encode the raw contents of a string with the specific Linden Text
-	 * properties
+	 * Encode the raw contents of a string with the specific Linden Text properties
 	 */
 	@Override
-	protected void encode()
-	{
+	protected void encode() {
 		String body = BodyText;
 
 		StringBuilder output = new StringBuilder();
@@ -134,19 +123,16 @@ public class AssetNotecard extends AssetItem
 
 		int count = 0;
 
-		if (EmbeddedItems != null)
-		{
+		if (EmbeddedItems != null) {
 			count = EmbeddedItems.size();
 		}
 
 		output.append("count " + count + "\n");
 
-		if (count > 0)
-		{
+		if (count > 0) {
 			output.append("{\n");
 
-			for (int i = 0; i < EmbeddedItems.size(); i++)
-			{
+			for (int i = 0; i < EmbeddedItems.size(); i++) {
 				InventoryItem item = EmbeddedItems.get(i);
 
 				output.append("ext char index " + i + "\n");
@@ -172,14 +158,11 @@ public class AssetNotecard extends AssetItem
 					output.append("\t\tgroup_owned\t1\n");
 				output.append("\t}\n");
 
-				if (Permissions.hasPermissions(item.Permissions.BaseMask, PermissionMask.Modify | PermissionMask.Copy
-						| PermissionMask.Transfer)
-						|| item.assetID == UUID.Zero)
-				{
+				if (Permissions.hasPermissions(item.Permissions.BaseMask,
+						PermissionMask.Modify | PermissionMask.Copy | PermissionMask.Transfer)
+						|| item.assetID == UUID.Zero) {
 					output.append("\t\tasset_id\t" + item.assetID + "\n");
-				}
-				else
-				{
+				} else {
 					output.append("\t\tshadow_id\t" + Inventory.EncryptAssetID(item.assetID) + "\n");
 				}
 
@@ -199,8 +182,7 @@ public class AssetNotecard extends AssetItem
 
 				output.append("\t}\n");
 
-				if (i != EmbeddedItems.size() - 1)
-				{
+				if (i != EmbeddedItems.size() - 1) {
 					output.append("}\n{\n");
 				}
 			}
@@ -217,26 +199,23 @@ public class AssetNotecard extends AssetItem
 
 	/**
 	 * Decode the raw asset data including the Linden Text properties
-	 * 
+	 *
 	 * @return true if the AssetData was successfully decoded
 	 */
 
-	private Matcher match(String string, String pattern)
-	{
+	private Matcher match(String string, String pattern) {
 		return Pattern.compile(pattern).matcher(string);
 	}
 
 	@Override
-	protected boolean decode()
-	{
+	protected boolean decode() {
 		EmbeddedItems = new ArrayList<InventoryItem>();
 		BodyText = Helpers.EmptyString;
 
-        if (AssetData == null)
+		if (AssetData == null)
 			return false;
 
-        try
-		{
+		try {
 			String data = Helpers.BytesToString(AssetData);
 			String[] lines = data.split("\n");
 			int i = 0;
@@ -267,8 +246,7 @@ public class AssetNotecard extends AssetItem
 			int count = Helpers.TryParseInt(m.group(1));
 
 			// Decode individual items
-			for (int n = 0; n < count; n++)
-			{
+			for (int n = 0; n < count; n++) {
 				if (!(m = match(lines[i++], "^\\s*\\{\\s*$")).matches())
 					throw new Exception("wrong format");
 
@@ -301,8 +279,7 @@ public class AssetNotecard extends AssetItem
 				String description = Helpers.EmptyString;
 				Date creationDate = Helpers.Epoch;
 
-				while (true)
-				{
+				while (true) {
 					if (!(m = match(lines[i++], "([^\\s]+)(\\s+)?(.*)?")).matches())
 						throw new Exception("wrong format");
 					String key = m.group(1);
@@ -311,16 +288,14 @@ public class AssetNotecard extends AssetItem
 						continue;
 					if (key == "}")
 						break;
-					else if (key == "permissions")
-					{
+					else if (key == "permissions") {
 						int baseMask = 0;
 						int ownerMask = 0;
 						int groupMask = 0;
 						int everyoneMask = 0;
 						int nextOwnerMask = 0;
 
-						while (true)
-						{
+						while (true) {
 							if (!(m = match(lines[i++], "([^\\s]+)(\\s+)?([^\\s]+)?")).matches())
 								throw new Exception("wrong format");
 							String pkey = m.group(1);
@@ -330,49 +305,30 @@ public class AssetNotecard extends AssetItem
 								continue;
 							if (pkey == "}")
 								break;
-							else if (pkey == "creator_id")
-							{
+							else if (pkey == "creator_id") {
 								creatorID = new UUID(pval);
-							}
-							else if (pkey == "owner_id")
-							{
+							} else if (pkey == "owner_id") {
 								ownerID = new UUID(pval);
-							}
-							else if (pkey == "last_owner_id")
-							{
+							} else if (pkey == "last_owner_id") {
 								lastOwnerID = new UUID(pval);
-							}
-							else if (pkey == "group_id")
-							{
+							} else if (pkey == "group_id") {
 								groupID = new UUID(pval);
-							}
-							else if (pkey == "base_mask")
-							{
+							} else if (pkey == "base_mask") {
 								baseMask = (int) Helpers.TryParseHex(pval);
-							}
-							else if (pkey == "owner_mask")
-							{
+							} else if (pkey == "owner_mask") {
 								ownerMask = (int) Helpers.TryParseHex(pval);
-							}
-							else if (pkey == "group_mask")
-							{
+							} else if (pkey == "group_mask") {
 								groupMask = (int) Helpers.TryParseHex(pval);
-							}
-							else if (pkey == "everyone_mask")
-							{
+							} else if (pkey == "everyone_mask") {
 								everyoneMask = (int) Helpers.TryParseHex(pval);
-							}
-							else if (pkey == "next_owner_mask")
-							{
+							} else if (pkey == "next_owner_mask") {
 								nextOwnerMask = (int) Helpers.TryParseHex(pval);
 							}
 						}
-						permissions = new Permissions(creatorID, ownerID, lastOwnerID, groupID, baseMask, everyoneMask, groupMask, nextOwnerMask, ownerMask);
-					}
-					else if (key == "sale_info")
-					{
-						while (true)
-						{
+						permissions = new Permissions(creatorID, ownerID, lastOwnerID, groupID, baseMask, everyoneMask,
+								groupMask, nextOwnerMask, ownerMask);
+					} else if (key == "sale_info") {
+						while (true) {
 							if (!(m = match(lines[i++], "([^\\s]+)(\\s+)?([^\\s]+)?")).matches())
 								throw new Exception("wrong format");
 							String pkey = m.group(1);
@@ -382,50 +338,29 @@ public class AssetNotecard extends AssetItem
 								continue;
 							if (pkey == "}")
 								break;
-							else if (pkey == "sale_price")
-							{
+							else if (pkey == "sale_price") {
 								salePrice = Helpers.TryParseInt(pval);
-							}
-							else if (pkey == "sale_type")
-							{
+							} else if (pkey == "sale_type") {
 								saleType = SaleType.setValue(pval);
 							}
 						}
-					}
-					else if (key == "item_id")
-					{
+					} else if (key == "item_id") {
 						uuid = new UUID(val);
-					}
-					else if (key == "parent_id")
-					{
+					} else if (key == "parent_id") {
 						parentID = new UUID(val);
-					}
-					else if (key == "asset_id")
-					{
+					} else if (key == "asset_id") {
 						assetID = new UUID(val);
-					}
-					else if (key == "type")
-					{
+					} else if (key == "type") {
 						assetType = AssetType.setValue(val);
-					}
-					else if (key == "inv_type")
-					{
+					} else if (key == "inv_type") {
 						inventoryType = InventoryType.setValue(val);
-					}
-					else if (key == "flags")
-					{
+					} else if (key == "flags") {
 						flags = (int) Helpers.TryParseHex(val);
-					}
-					else if (key == "name")
-					{
+					} else if (key == "name") {
 						name = val.substring(0, val.lastIndexOf("|"));
-					}
-					else if (key == "desc")
-					{
+					} else if (key == "desc") {
 						description = val.substring(0, val.lastIndexOf("|"));
-					}
-					else if (key == "creation_date")
-					{
+					} else if (key == "creation_date") {
 						creationDate = Helpers.UnixTimeToDateTime(Helpers.TryParseInt(val));
 					}
 				}
@@ -454,15 +389,12 @@ public class AssetNotecard extends AssetItem
 				throw new Exception("could not determine text length");
 
 			// Read the rest of the notecard
-			while (i < lines.length)
-			{
+			while (i < lines.length) {
 				BodyText += lines[i++] + "\n";
 			}
 			BodyText = BodyText.substring(0, BodyText.lastIndexOf("}"));
 			return true;
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			logger.error("Decoding notecard asset failed: " + ex.getMessage());
 			return false;
 		}

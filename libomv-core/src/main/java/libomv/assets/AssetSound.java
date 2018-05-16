@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -32,25 +32,22 @@ package libomv.assets;
 import libomv.types.UUID;
 
 // Represents a Sound Asset
-public class AssetSound extends AssetItem
-{
+public class AssetSound extends AssetItem {
 	// Override the base classes AssetType
 	@Override
-	public AssetType getAssetType()
-	{
+	public AssetType getAssetType() {
 		return AssetType.Sound;
 	}
 
 	/**
 	 * Initializes a new instance of an AssetSound object with parameters
-	 * 
+	 *
 	 * @param assetID
 	 *            A unique <see cref="UUID"/> specific to this asset
 	 * @param assetData
 	 *            A byte array containing the raw asset data
 	 */
-	public AssetSound(UUID assetID, byte[] assetData)
-	{
+	public AssetSound(UUID assetID, byte[] assetData) {
 		super(assetID, assetData);
 	}
 
@@ -58,18 +55,16 @@ public class AssetSound extends AssetItem
 	 * TODO: Encodes a sound file
 	 */
 	@Override
-	protected void encode()
-	{
+	protected void encode() {
 	}
 
 	/**
 	 * TODO: Decode a sound file
-	 * 
+	 *
 	 * @return true
 	 */
 	@Override
-	protected boolean decode()
-	{
+	protected boolean decode() {
 		return true;
 	}
 }

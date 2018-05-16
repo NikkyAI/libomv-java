@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -35,80 +35,68 @@ import libomv.types.UUID;
 import libomv.utils.Helpers;
 
 // Represents an LSL Text object containing a string of UTF encoded characters
-public class AssetScriptText extends AssetItem
-{
+public class AssetScriptText extends AssetItem {
 	// Override the base classes AssetType
 	@Override
-	public AssetType getAssetType()
-	{
+	public AssetType getAssetType() {
 		return AssetType.LSLText;
 	}
 
 	// A string of characters representing the script contents
 	private String Source;
 
-	public String getSource()
-	{
+	public String getSource() {
 		return Source;
 	}
-	
-	public void setParent(String source)
-	{
+
+	public void setParent(String source) {
 		invalidateAssetData();
 		Source = source;
 	}
 
 	/**
 	 * Initializes a new AssetScriptText object with parameters
-	 * 
+	 *
 	 * @param assetID
 	 *            A unique <see cref="UUID"/> specific to this asset
 	 * @param assetData
 	 *            A byte array containing the raw asset data
 	 */
-	public AssetScriptText(UUID assetID, byte[] assetData)
-	{
+	public AssetScriptText(UUID assetID, byte[] assetData) {
 		super(assetID, assetData);
 	}
 
 	/**
 	 * Initializes a new AssetScriptText object with parameters
-	 * 
+	 *
 	 * @param source
 	 *            A string containing the scripts contents
 	 */
-	public AssetScriptText(String source)
-	{
+	public AssetScriptText(String source) {
 		super(null, null);
 		Source = source;
 	}
 
 	/**
-	 * Encode a string containing the scripts contents into byte encoded
-	 * AssetData
-	 * 
+	 * Encode a string containing the scripts contents into byte encoded AssetData
+	 *
 	 */
 	@Override
-	protected void encode()
-	{
+	protected void encode() {
 		AssetData = Helpers.StringToBytes(Source);
 	}
 
 	/**
 	 * Decode a byte array containing the scripts contents into a string
-	 * 
+	 *
 	 * @return true if decoding is successful
 	 */
 	@Override
-	protected boolean decode()
-	{
-		try
-		{
+	protected boolean decode() {
+		try {
 			Source = Helpers.BytesToString(AssetData);
 			return true;
-		}
-		catch (UnsupportedEncodingException e)
-		{
+		} catch (UnsupportedEncodingException e) {
 		}
 		return false;
 	}

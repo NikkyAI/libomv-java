@@ -37,27 +37,23 @@ import javax.swing.JPanel;
 import libomv.Gui.Resources;
 
 // Displays a panel with our logo or a working indicator
-public class LogoPanel extends JPanel
-{
+public class LogoPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	// Are we currently connected
 	private boolean isConnecting = false;
 	// The active subimage to draw
 	private Image activeImage;
 
-	public LogoPanel()
-	{
+	public LogoPanel() {
 	}
 
 	@Override
-	public void paintComponent(Graphics g)
-	{
+	public void paintComponent(Graphics g) {
 		// Call the super class
 		super.paintComponent(g);
 
 		// If we're not connecting
-		if (!isConnecting)
-		{
+		if (!isConnecting) {
 			activeImage = Resources.loadImage(Resources.IMAGE_LOGO);
 		}
 		// Draw the active image
@@ -71,36 +67,30 @@ public class LogoPanel extends JPanel
 	 * @param connecting
 	 *            True if connecting, false if not.
 	 */
-	public void setConnecting(boolean connecting)
-	{
+	public void setConnecting(boolean connecting) {
 		// Set the flag
 		this.isConnecting = connecting;
 		// Repaint (we might need to repaint the logo)
 		repaint();
 
 		// If we're connecting
-		if (connecting)
-		{
+		if (connecting) {
 			// Start a new thread to display the connection spinner
-			new Thread(new Runnable()
-			{
+			new Thread(new Runnable() {
 				/**
 				 * Called when the thread starts.
 				 */
 				@Override
-				public void run()
-				{
+				public void run() {
 					// The image frame index
 					int x, y, imgIndex = 0;
 
 					BufferedImage progress = Resources.loadImage(Resources.IMAGE_WORKING);
 
 					// While we're still connecting
-					while (isConnecting)
-					{
+					while (isConnecting) {
 						// Overflow of frame.
-						if (imgIndex > 31)
-						{
+						if (imgIndex > 31) {
 							imgIndex = 1;
 						}
 
@@ -114,12 +104,9 @@ public class LogoPanel extends JPanel
 						// Repaint the image
 						repaint();
 
-						try
-						{
+						try {
 							Thread.sleep(50);
-						}
-						catch (InterruptedException e)
-						{
+						} catch (InterruptedException e) {
 							// Ignore
 						}
 					}
@@ -133,8 +120,7 @@ public class LogoPanel extends JPanel
 	 * 
 	 * @return True if connecting, false if not
 	 */
-	public boolean getIsConnecting()
-	{
+	public boolean getIsConnecting() {
 		return isConnecting;
 	}
 }

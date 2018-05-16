@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -31,26 +31,26 @@ package libomv.inventory;
 
 import libomv.types.UUID;
 
-/** InventoryGesture Class, details on a series of animations, sounds, and actions */
-public class InventoryGesture extends InventoryItem
-{
+/**
+ * InventoryGesture Class, details on a series of animations, sounds, and
+ * actions
+ */
+public class InventoryGesture extends InventoryItem {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Construct an InventoryGesture object
-	 * 
+	 *
 	 * @param itemID
 	 *            A {@link OpenMetaverse.UUID} which becomes the
 	 *            {@link OpenMetaverse.InventoryItem} objects AssetUUID
 	 */
-	public InventoryGesture(UUID itemID)
-	{
+	public InventoryGesture(UUID itemID) {
 		super(itemID);
 	}
 
 	@Override
-	public InventoryType getType()
-	{
+	public InventoryType getType() {
 		return InventoryType.Gesture;
 	}
 }

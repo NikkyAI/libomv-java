@@ -22,17 +22,16 @@ import java.util.Map;
 
 /**
  * each data target,usually bones x 3
+ * 
  * @author aki
  */
-public class NameAndChannel
-{
+public class NameAndChannel {
 	private String name;
 	private int channelType;
 	private Channels channels;
-	public static Map<String,String> orderMap;
-	static
-	{
-		orderMap = new HashMap<String,String>();
+	public static Map<String, String> orderMap;
+	static {
+		orderMap = new HashMap<String, String>();
 		orderMap.put("X", "XYZ");
 		orderMap.put("XY", "XYZ");
 		orderMap.put("XZ", "XZY");
@@ -47,39 +46,32 @@ public class NameAndChannel
 
 		orderMap.put("", "XYZ");
 	}
-	
-	public String getName() 
-	{
+
+	public String getName() {
 		return name;
 	}
 
-	public void setName(String name)
-	{
+	public void setName(String name) {
 		this.name = name;
 	}
 
-	public int getChannel()
-	{
+	public int getChannel() {
 		return channelType;
 	}
 
-	public void setChannel(int channel)
-	{
+	public void setChannel(int channel) {
 		this.channelType = channel;
 	}
 
-	public NameAndChannel(String name, int channel, Channels channels)
-	{
+	public NameAndChannel(String name, int channel, Channels channels) {
 		this.name = name;
 		this.channelType = channel;
 		this.channels = channels;
 	}
 
-	public String getOrder()
-	{
+	public String getOrder() {
 		String order = channels.getOrder();
-		if (order.length() < 3)
-		{
+		if (order.length() < 3) {
 			order = orderMap.get(order);
 		}
 		return order;

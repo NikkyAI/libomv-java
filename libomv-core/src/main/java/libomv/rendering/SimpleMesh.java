@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -34,28 +34,25 @@ import java.util.List;
 
 import libomv.types.Vector3;
 
-public class SimpleMesh extends Mesh
-{
-    public List<Vertex> Vertices;
-    public List<Short> Indices;
+public class SimpleMesh extends Mesh {
+	public List<Vertex> Vertices;
+	public List<Short> Indices;
 
-    public SimpleMesh()
-    {
-    }
+	public SimpleMesh() {
+	}
 
-    public SimpleMesh(SimpleMesh mesh)
-    {
-        this.Indices = new ArrayList<Short>(mesh.Indices);
-        this.Path.Open = mesh.Path.Open;
-        this.Path.Points = new ArrayList<PathPoint>(mesh.Path.Points);
-        this.Prim = mesh.Prim;
-        this.Profile.Concave = mesh.Profile.Concave;
-        this.Profile.Faces = new ArrayList<ProfileFace>(mesh.Profile.Faces);
-        this.Profile.MaxX = mesh.Profile.MaxX;
-        this.Profile.MinX = mesh.Profile.MinX;
-        this.Profile.Open = mesh.Profile.Open;
-        this.Profile.Positions = new ArrayList<Vector3>(mesh.Profile.Positions);
-        this.Profile.TotalOutsidePoints = mesh.Profile.TotalOutsidePoints;
-        this.Vertices = new ArrayList<Vertex>(mesh.Vertices);
-    }
+	public SimpleMesh(SimpleMesh mesh) {
+		this.Indices = new ArrayList<Short>(mesh.Indices);
+		this.Path.Open = mesh.Path.Open;
+		this.Path.Points = new ArrayList<PathPoint>(mesh.Path.Points);
+		this.Prim = mesh.Prim;
+		this.Profile.Concave = mesh.Profile.Concave;
+		this.Profile.Faces = new ArrayList<ProfileFace>(mesh.Profile.Faces);
+		this.Profile.MaxX = mesh.Profile.MaxX;
+		this.Profile.MinX = mesh.Profile.MinX;
+		this.Profile.Open = mesh.Profile.Open;
+		this.Profile.Positions = new ArrayList<Vector3>(mesh.Profile.Positions);
+		this.Profile.TotalOutsidePoints = mesh.Profile.TotalOutsidePoints;
+		this.Vertices = new ArrayList<Vertex>(mesh.Vertices);
+	}
 }

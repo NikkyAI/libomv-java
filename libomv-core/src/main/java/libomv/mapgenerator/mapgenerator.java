@@ -6,7 +6,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -45,98 +45,88 @@ import libomv.ProtocolManager.MapBlock;
 import libomv.ProtocolManager.MapField;
 import libomv.ProtocolManager.MapPacket;
 import libomv.types.PacketFrequency;
-//import libomv.utils.Helpers;
 
-public class mapgenerator
-{
+public class mapgenerator {
 	private static final Logger logger = Logger.getLogger(mapgenerator.class);
-	
+
 	static String spaces = new String("                        ");
 
-	static String FieldTypeString(int type)
-	{
-		switch (type)
-		{
-			case FieldType.BOOL:
-				return "boolean";
-			case FieldType.F32:
-				return "float";
-			case FieldType.F64:
-				return "double";
-			case FieldType.IPPORT:
-			case FieldType.U16:
-				return "short";
-			case FieldType.IPADDR:
-			case FieldType.U32:
-				return "int";
-			case FieldType.Quaternion:
-				return "Quaternion";
-			case FieldType.UUID:
-				return "UUID";
-			case FieldType.Vector3:
-				return "Vector3";
-			case FieldType.Vector3d:
-				return "Vector3d";
-			case FieldType.Vector4:
-				return "Vector4";
-			case FieldType.I16:
-				return "short";
-			case FieldType.I32:
-				return "int";
-			case FieldType.I8:
-				return "byte";
-			case FieldType.U64:
-				return "long";
-			case FieldType.U8:
-				return "byte";
-			case FieldType.Fixed:
-				return "byte[]";
-            default:
-            	break;
+	static String FieldTypeString(int type) {
+		switch (type) {
+		case FieldType.BOOL:
+			return "boolean";
+		case FieldType.F32:
+			return "float";
+		case FieldType.F64:
+			return "double";
+		case FieldType.IPPORT:
+		case FieldType.U16:
+			return "short";
+		case FieldType.IPADDR:
+		case FieldType.U32:
+			return "int";
+		case FieldType.Quaternion:
+			return "Quaternion";
+		case FieldType.UUID:
+			return "UUID";
+		case FieldType.Vector3:
+			return "Vector3";
+		case FieldType.Vector3d:
+			return "Vector3d";
+		case FieldType.Vector4:
+			return "Vector4";
+		case FieldType.I16:
+			return "short";
+		case FieldType.I32:
+			return "int";
+		case FieldType.I8:
+			return "byte";
+		case FieldType.U64:
+			return "long";
+		case FieldType.U8:
+			return "byte";
+		case FieldType.Fixed:
+			return "byte[]";
+		default:
+			break;
 		}
 		return null;
 	}
-	
-	static String FieldInitString(int type)
-	{
-		switch (type)
-		{
-			case FieldType.BOOL:
-				return "false";
-			case FieldType.I8:
-			case FieldType.I16:
-			case FieldType.I32:
-			case FieldType.U8:
-			case FieldType.U16:
-			case FieldType.U32:
-			case FieldType.U64:
-			case FieldType.IPPORT:
-			case FieldType.IPADDR:
-			case FieldType.F32:
-			case FieldType.F64:
-				return "0";
-			case FieldType.Quaternion:
-			case FieldType.UUID:
-			case FieldType.Vector3:
-			case FieldType.Vector3d:
-			case FieldType.Vector4:
-			case FieldType.Fixed:
-				return "null";
-			default:
-				break;
+
+	static String FieldInitString(int type) {
+		switch (type) {
+		case FieldType.BOOL:
+			return "false";
+		case FieldType.I8:
+		case FieldType.I16:
+		case FieldType.I32:
+		case FieldType.U8:
+		case FieldType.U16:
+		case FieldType.U32:
+		case FieldType.U64:
+		case FieldType.IPPORT:
+		case FieldType.IPADDR:
+		case FieldType.F32:
+		case FieldType.F64:
+			return "0";
+		case FieldType.Quaternion:
+		case FieldType.UUID:
+		case FieldType.Vector3:
+		case FieldType.Vector3d:
+		case FieldType.Vector4:
+		case FieldType.Fixed:
+			return "null";
+		default:
+			break;
 		}
 		return null;
 	}
- 
-	
-	static void WriteFieldMember(PrintWriter writer, String fieldName, MapField field)
-	{
-		if (field.type != FieldType.Variable)
-		{
-			writer.println("        public " + FieldTypeString(field.type) + " " + fieldName + " = " + FieldInitString(field.type) + ";");
-		}
-		else
-		{
+
+	static void WriteFieldMember(PrintWriter writer, String fieldName, MapField field) {
+		if (field.type != FieldType.Variable) {
+			writer.println("        public " + FieldTypeString(field.type) + " " + fieldName + " = "
+					+ FieldInitString(field.type) + ";");
+		} else {
 			writer.println("        private byte[] _" + fieldName.toLowerCase() + ";");
 			writer.println("        public byte[] get" + fieldName + "() {");
 			writer.println("            return _" + fieldName.toLowerCase() + ";");
@@ -151,238 +141,233 @@ public class mapgenerator
 			writer.println("            }");
 			writer.println("            else {");
 			writer.println("                _" + fieldName.toLowerCase() + " = new byte[value.length];");
-			writer.println("                System.arraycopy(value, 0, _" + fieldName.toLowerCase()
-					+ ", 0, value.length);");
+			writer.println(
+					"                System.arraycopy(value, 0, _" + fieldName.toLowerCase() + ", 0, value.length);");
 			writer.println("            }");
 			writer.println("        }\n");
 		}
 	}
 
-	static void WriteFieldFromBytes(PrintWriter writer, int indent, String fieldName, MapField field, String arrayName, String index)
-	{
+	static void WriteFieldFromBytes(PrintWriter writer, int indent, String fieldName, MapField field, String arrayName,
+			String index) {
 		String lead = spaces.substring(0, indent);
 		writer.write(lead);
 
-		switch (field.type)
-		{
-			case FieldType.BOOL:
-				writer.println(fieldName + index + " = (" + arrayName + ".get() != 0) ? (boolean)true : (boolean)false;");
-				break;
-			case FieldType.F32:
-				writer.println(fieldName + index + " = " + arrayName + ".getFloat();");
-				break;
-			case FieldType.F64:
-				writer.println(fieldName + index + " = " + arrayName + ".getDouble();");
-				break;
-			case FieldType.Fixed:
-				writer.println(fieldName + index + " = new byte[" + field.count + "];");
-				writer.println(lead + "" + arrayName + ".get(" + fieldName + index + ");");
-				break;
-			case FieldType.IPADDR:
-			case FieldType.U32:
-				writer.println(fieldName + index + " = " + arrayName + ".getInt();");
-				break;
-			case FieldType.IPPORT:
-				// IPPORT is big endian while U16/S16 are little endian.
-				writer.println(fieldName + index + " = (short)((" + arrayName + ".get() << 8) + " + arrayName + ".get());");
-				break;
-			case FieldType.U16:
-				writer.println(fieldName + index + " = " + arrayName + ".getShort();");
-				break;
-			case FieldType.Quaternion:
-				writer.println(fieldName + index + " = new Quaternion(" + arrayName + ", true);");
-				break;
-			case FieldType.UUID:
-				writer.println(fieldName + index + " = new UUID(" + arrayName + ");");
-				break;
-			case FieldType.Vector3:
-				writer.println(fieldName + index + " = new Vector3(" + arrayName + ");");
-				break;
-			case FieldType.Vector3d:
-				writer.println(fieldName + index + " = new Vector3d(" + arrayName + ");");
-				break;
-			case FieldType.Vector4:
-				writer.println(fieldName + index + " = new Vector4(" + arrayName + ");");
-				break;
-			case FieldType.I16:
-				writer.println(fieldName + index + " = " + arrayName + ".getShort();");
-				break;
-			case FieldType.I32:
-				writer.println(fieldName + index + " = " + arrayName + ".getInt();");
-				break;
-			case FieldType.I8:
-				writer.println(fieldName + index + " = " + arrayName + ".get();");
-				break;
-			case FieldType.U64:
-				writer.println(fieldName + index + " = " + arrayName + ".getLong();");
-				break;
-			case FieldType.U8:
-				writer.println(fieldName + index + " = " + arrayName + ".get();");
-				break;
-			case FieldType.Variable:
-				if (field.count == 1)
-				{
-					writer.println("length = " + arrayName + ".get() & 0xFF;");
-				}
-				else
-				{
-					writer.println("length = " + arrayName + ".getShort() & 0xFFFF;");
-				}
-				writer.println(lead + "_" + fieldName.toLowerCase() + " = new byte[length];");
-				writer.println(lead + "" + arrayName + ".get(_" + fieldName.toLowerCase() + ");");
-				break;
-			default:
-				writer.println("!!! ERROR: Unhandled FieldType: " + field.type + " !!!");
-				break;
+		switch (field.type) {
+		case FieldType.BOOL:
+			writer.println(fieldName + index + " = (" + arrayName + ".get() != 0) ? (boolean)true : (boolean)false;");
+			break;
+		case FieldType.F32:
+			writer.println(fieldName + index + " = " + arrayName + ".getFloat();");
+			break;
+		case FieldType.F64:
+			writer.println(fieldName + index + " = " + arrayName + ".getDouble();");
+			break;
+		case FieldType.Fixed:
+			writer.println(fieldName + index + " = new byte[" + field.count + "];");
+			writer.println(lead + "" + arrayName + ".get(" + fieldName + index + ");");
+			break;
+		case FieldType.IPADDR:
+		case FieldType.U32:
+			writer.println(fieldName + index + " = " + arrayName + ".getInt();");
+			break;
+		case FieldType.IPPORT:
+			// IPPORT is big endian while U16/S16 are little endian.
+			writer.println(fieldName + index + " = (short)((" + arrayName + ".get() << 8) + " + arrayName + ".get());");
+			break;
+		case FieldType.U16:
+			writer.println(fieldName + index + " = " + arrayName + ".getShort();");
+			break;
+		case FieldType.Quaternion:
+			writer.println(fieldName + index + " = new Quaternion(" + arrayName + ", true);");
+			break;
+		case FieldType.UUID:
+			writer.println(fieldName + index + " = new UUID(" + arrayName + ");");
+			break;
+		case FieldType.Vector3:
+			writer.println(fieldName + index + " = new Vector3(" + arrayName + ");");
+			break;
+		case FieldType.Vector3d:
+			writer.println(fieldName + index + " = new Vector3d(" + arrayName + ");");
+			break;
+		case FieldType.Vector4:
+			writer.println(fieldName + index + " = new Vector4(" + arrayName + ");");
+			break;
+		case FieldType.I16:
+			writer.println(fieldName + index + " = " + arrayName + ".getShort();");
+			break;
+		case FieldType.I32:
+			writer.println(fieldName + index + " = " + arrayName + ".getInt();");
+			break;
+		case FieldType.I8:
+			writer.println(fieldName + index + " = " + arrayName + ".get();");
+			break;
+		case FieldType.U64:
+			writer.println(fieldName + index + " = " + arrayName + ".getLong();");
+			break;
+		case FieldType.U8:
+			writer.println(fieldName + index + " = " + arrayName + ".get();");
+			break;
+		case FieldType.Variable:
+			if (field.count == 1) {
+				writer.println("length = " + arrayName + ".get() & 0xFF;");
+			} else {
+				writer.println("length = " + arrayName + ".getShort() & 0xFFFF;");
+			}
+			writer.println(lead + "_" + fieldName.toLowerCase() + " = new byte[length];");
+			writer.println(lead + "" + arrayName + ".get(_" + fieldName.toLowerCase() + ");");
+			break;
+		default:
+			writer.println("!!! ERROR: Unhandled FieldType: " + field.type + " !!!");
+			break;
 		}
 	}
 
-	static void WriteFieldToBytes(PrintWriter writer, int indent, String fieldName, MapField field, String arrayName, String index)
-	{
+	static void WriteFieldToBytes(PrintWriter writer, int indent, String fieldName, MapField field, String arrayName,
+			String index) {
 		String lead = spaces.substring(0, indent);
 		writer.write(lead);
 
-		switch (field.type)
-		{
-			case FieldType.BOOL:
-				writer.println(arrayName + ".put((byte)((" + fieldName + index + ") ? 1 : 0));");
-				break;
-			case FieldType.F32:
-				writer.println(arrayName + ".putFloat(" + fieldName + index + ");");
-				break;
-			case FieldType.F64:
-				writer.println(arrayName + ".putDouble(" + fieldName + index + ");");
-				break;
-			case FieldType.Fixed:
-				writer.println(arrayName + ".put(" + fieldName + index + ");");
-				break;
-			case FieldType.IPPORT:
-				// IPPORT is big endian while U16/S16 is little endian.
-				writer.println(arrayName + ".put((byte)((" + fieldName + index + " >> 8) % 256));");
-				writer.println(lead + arrayName + ".put((byte)(" + fieldName + index + " % 256));");
-				break;
-			case FieldType.U16:
-			case FieldType.I16:
-				writer.println(arrayName + ".putShort(" + fieldName + index + ");");
-				break;
-			case FieldType.UUID:
-			case FieldType.Vector4:
-			case FieldType.Quaternion:
-			case FieldType.Vector3:
-			case FieldType.Vector3d:
-				writer.println(fieldName + index + ".write(" + arrayName + ");");
-				break;
-			case FieldType.U8:
-			case FieldType.I8:
-				writer.println(arrayName + ".put(" + fieldName + index + ");");
-				break;
-			case FieldType.IPADDR:
-			case FieldType.U32:
-			case FieldType.I32:
-				writer.println(arrayName + ".putInt(" + fieldName + index + ");");
-				break;
-			case FieldType.U64:
-				writer.println(arrayName + ".putLong(" + fieldName + index + ");");
-				break;
-			case FieldType.Variable:
-				if (field.count == 1)
-				{
-					writer.print(arrayName + ".put((byte)_");
-				}
-				else
-				{
-					writer.print(arrayName + ".putShort((short)_");
-				}
-				String varName = fieldName.toLowerCase();
-				writer.println(varName + ".length);\n" + lead + arrayName + ".put(_" + varName + ");");
-				break;
-			default:
-				writer.println("!!! ERROR: Unhandled FieldType: " + field.type + " !!!");
-				break;
+		switch (field.type) {
+		case FieldType.BOOL:
+			writer.println(arrayName + ".put((byte)((" + fieldName + index + ") ? 1 : 0));");
+			break;
+		case FieldType.F32:
+			writer.println(arrayName + ".putFloat(" + fieldName + index + ");");
+			break;
+		case FieldType.F64:
+			writer.println(arrayName + ".putDouble(" + fieldName + index + ");");
+			break;
+		case FieldType.Fixed:
+			writer.println(arrayName + ".put(" + fieldName + index + ");");
+			break;
+		case FieldType.IPPORT:
+			// IPPORT is big endian while U16/S16 is little endian.
+			writer.println(arrayName + ".put((byte)((" + fieldName + index + " >> 8) % 256));");
+			writer.println(lead + arrayName + ".put((byte)(" + fieldName + index + " % 256));");
+			break;
+		case FieldType.U16:
+		case FieldType.I16:
+			writer.println(arrayName + ".putShort(" + fieldName + index + ");");
+			break;
+		case FieldType.UUID:
+		case FieldType.Vector4:
+		case FieldType.Quaternion:
+		case FieldType.Vector3:
+		case FieldType.Vector3d:
+			writer.println(fieldName + index + ".write(" + arrayName + ");");
+			break;
+		case FieldType.U8:
+		case FieldType.I8:
+			writer.println(arrayName + ".put(" + fieldName + index + ");");
+			break;
+		case FieldType.IPADDR:
+		case FieldType.U32:
+		case FieldType.I32:
+			writer.println(arrayName + ".putInt(" + fieldName + index + ");");
+			break;
+		case FieldType.U64:
+			writer.println(arrayName + ".putLong(" + fieldName + index + ");");
+			break;
+		case FieldType.Variable:
+			if (field.count == 1) {
+				writer.print(arrayName + ".put((byte)_");
+			} else {
+				writer.print(arrayName + ".putShort((short)_");
+			}
+			String varName = fieldName.toLowerCase();
+			writer.println(varName + ".length);\n" + lead + arrayName + ".put(_" + varName + ");");
+			break;
+		default:
+			writer.println("!!! ERROR: Unhandled FieldType: " + field.type + " !!!");
+			break;
 		}
 	}
 
-	static int GetFieldLength(PrintWriter writer, ProtocolManager protocol, MapField field)
-	{
+	static int GetFieldLength(PrintWriter writer, ProtocolManager protocol, MapField field) {
 		short len = FieldType.TypeSizes[field.type];
 		if (len < 0)
 			writer.println("!!! ERROR: Unhandled FieldType " + field.type + " !!!");
 		return len;
 	}
 
-	static void WriteFieldToString(PrintWriter writer, int indent, String fieldName, MapField field, String index)
-	{
+	static void WriteFieldToString(PrintWriter writer, int indent, String fieldName, MapField field, String index) {
 		String lead = spaces.substring(0, indent);
 		String index1 = new String(), index2 = new String();
-		if (!index.isEmpty())
-		{
+		if (!index.isEmpty()) {
 			index1 = "[\" + " + index + " + \"]";
 			index2 = "[" + index + "]";
 		}
 		writer.write(lead);
 
-		switch (field.type)
-		{
-			case FieldType.Variable:
-				writer.println("output += Helpers.FieldToString(_" + fieldName.toLowerCase() + ", \"" + fieldName + "\") + \"\\n\";");
-				break;
-			case FieldType.Fixed:
-				writer.println("output += Helpers.FieldToString(" + fieldName + ", \"" + fieldName + index2 + "\") + \"\\n\";");
-				break;
-			case FieldType.BOOL:
-				writer.println("output += \"" + fieldName + index1 + ": \" + Boolean.toString(" + fieldName + index2 + ") + \"\\n\";");
-				break;
-			case FieldType.F32:
-				writer.println("output += \"" + fieldName + index1 + ": \" + Float.toString(" + fieldName + index2 + ") + \"\\n\";");
-				break;
-			case FieldType.F64:
-				writer.println("output += \"" + fieldName + index1 + ": \" + Double.toString(" + fieldName + index2 + ") + \"\\n\";");
-				break;
-			case FieldType.I8:
-			case FieldType.U8:
-				writer.println("output += \"" + fieldName + index1 + ": \" + Byte.toString(" + fieldName + index2 + ") + \"\\n\";");
-				break;
-			case FieldType.I16:
-			case FieldType.U16:
-			case FieldType.IPPORT:
-				writer.println("output += \"" + fieldName + index1 + ": \" + Short.toString(" + fieldName + index2 + ") + \"\\n\";");
-				break;
-			case FieldType.I32:
-			case FieldType.U32:
-			case FieldType.IPADDR:
-				writer.println("output += \"" + fieldName + index1 + ": \" + Integer.toString(" + fieldName + index2 + ") + \"\\n\";");
-				break;
-			case FieldType.I64:
-			case FieldType.U64:
-				writer.println("output += \"" + fieldName + index1 + ": \" + Long.toString(" + fieldName + index2 + ") + \"\\n\";");
-				break;
-			case FieldType.UUID:
-			case FieldType.Vector3:
-			case FieldType.Vector3d:
-			case FieldType.Vector4:
-			case FieldType.Quaternion:
-				writer.println("output += \"" + fieldName + index1 + ": \" + " + fieldName + index2 + ".toString() + \"\\n\";");
-				break;
-			default:
-				writer.println("output += \"" + fieldName + index1 + ": \" + Helpers.toString(" + fieldName + index2 + ") + \"\\n\";");
-				break;
+		switch (field.type) {
+		case FieldType.Variable:
+			writer.println("output += Helpers.FieldToString(_" + fieldName.toLowerCase() + ", \"" + fieldName
+					+ "\") + \"\\n\";");
+			break;
+		case FieldType.Fixed:
+			writer.println(
+					"output += Helpers.FieldToString(" + fieldName + ", \"" + fieldName + index2 + "\") + \"\\n\";");
+			break;
+		case FieldType.BOOL:
+			writer.println("output += \"" + fieldName + index1 + ": \" + Boolean.toString(" + fieldName + index2
+					+ ") + \"\\n\";");
+			break;
+		case FieldType.F32:
+			writer.println("output += \"" + fieldName + index1 + ": \" + Float.toString(" + fieldName + index2
+					+ ") + \"\\n\";");
+			break;
+		case FieldType.F64:
+			writer.println("output += \"" + fieldName + index1 + ": \" + Double.toString(" + fieldName + index2
+					+ ") + \"\\n\";");
+			break;
+		case FieldType.I8:
+		case FieldType.U8:
+			writer.println("output += \"" + fieldName + index1 + ": \" + Byte.toString(" + fieldName + index2
+					+ ") + \"\\n\";");
+			break;
+		case FieldType.I16:
+		case FieldType.U16:
+		case FieldType.IPPORT:
+			writer.println("output += \"" + fieldName + index1 + ": \" + Short.toString(" + fieldName + index2
+					+ ") + \"\\n\";");
+			break;
+		case FieldType.I32:
+		case FieldType.U32:
+		case FieldType.IPADDR:
+			writer.println("output += \"" + fieldName + index1 + ": \" + Integer.toString(" + fieldName + index2
+					+ ") + \"\\n\";");
+			break;
+		case FieldType.I64:
+		case FieldType.U64:
+			writer.println("output += \"" + fieldName + index1 + ": \" + Long.toString(" + fieldName + index2
+					+ ") + \"\\n\";");
+			break;
+		case FieldType.UUID:
+		case FieldType.Vector3:
+		case FieldType.Vector3d:
+		case FieldType.Vector4:
+		case FieldType.Quaternion:
+			writer.println(
+					"output += \"" + fieldName + index1 + ": \" + " + fieldName + index2 + ".toString() + \"\\n\";");
+			break;
+		default:
+			writer.println("output += \"" + fieldName + index1 + ": \" + Helpers.toString(" + fieldName + index2
+					+ ") + \"\\n\";");
+			break;
 		}
 	}
-	
-	static PrintWriter WriteHeader(File file, String template) throws IOException
-	{
-		file.getParentFile().mkdirs(); // Useful if we want this during the build, and the target directory does not exist yet ;)
+
+	static PrintWriter WriteHeader(File file, String template) throws IOException {
+		file.getParentFile().mkdirs(); // Useful if we want this during the build, and the target directory does not
+										// exist yet ;)
 		PrintWriter writer = new PrintWriter(new FileWriter(file));
 		BufferedReader reader = new BufferedReader(new FileReader(template));
-		while (reader.ready())
-		{
+		while (reader.ready()) {
 			String line = reader.readLine();
-			if (line != null)
-			{
+			if (line != null) {
 				writer.println(line);
-			}
-			else
-			{
+			} else {
 				break;
 			}
 		}
@@ -390,20 +375,17 @@ public class mapgenerator
 		return writer;
 	}
 
-	static void WriteBlockClass(PrintWriter writer, ProtocolManager protocol, MapBlock block)
-	{
+	static void WriteBlockClass(PrintWriter writer, ProtocolManager protocol, MapBlock block) {
 		boolean variableFields = false;
 		String blockName = protocol.keywordPosition(block.keywordIndex);
 
 		writer.println("    public class " + blockName + "Block\n    {");
 
-		for (int k = 0; k < block.Fields.size(); k++)
-		{
+		for (int k = 0; k < block.Fields.size(); k++) {
 			MapField field = block.Fields.get(k);
 			WriteFieldMember(writer, protocol.keywordPosition(field.keywordIndex), field);
 
-			if (field.type == FieldType.Variable)
-			{
+			if (field.type == FieldType.Variable) {
 				variableFields = true;
 			}
 		}
@@ -412,28 +394,22 @@ public class mapgenerator
 		writer.println("");
 		writer.println("        public int getLength(){");
 		int length = 0;
-		for (int k = 0; k < block.Fields.size(); k++)
-		{
+		for (int k = 0; k < block.Fields.size(); k++) {
 			MapField field = block.Fields.get(k);
 			length += GetFieldLength(writer, protocol, field);
 		}
 
-		if (!variableFields)
-		{
+		if (!variableFields) {
 			writer.println("            return " + length + ";");
-		}
-		else
-		{
+		} else {
 			writer.println("            int length = " + length + ";");
 
-			for (int k = 0; k < block.Fields.size(); k++)
-			{
+			for (int k = 0; k < block.Fields.size(); k++) {
 				MapField field = block.Fields.get(k);
-				if (field.type == FieldType.Variable)
-				{
+				if (field.type == FieldType.Variable) {
 					String fieldName = protocol.keywordPosition(field.keywordIndex);
-					writer.println("            if (_" + fieldName.toLowerCase() + " != null) { length += " + field.count
-							+ " + _" + fieldName.toLowerCase() + ".length; }");
+					writer.println("            if (_" + fieldName.toLowerCase() + " != null) { length += "
+							+ field.count + " + _" + fieldName.toLowerCase() + ".length; }");
 				}
 			}
 			writer.println("            return length;");
@@ -448,13 +424,11 @@ public class mapgenerator
 
 		// Declare a length variable if we need it for variable fields in this
 		// constructor
-		if (variableFields)
-		{
+		if (variableFields) {
 			writer.println("            int length;");
 		}
 
-		for (int k = 0; k < block.Fields.size(); k++)
-		{
+		for (int k = 0; k < block.Fields.size(); k++) {
 			MapField field = block.Fields.get(k);
 			String fieldName = protocol.keywordPosition(field.keywordIndex);
 			WriteFieldFromBytes(writer, 12, fieldName, field, "bytes", new String());
@@ -465,8 +439,7 @@ public class mapgenerator
 		// ToBytes() function
 		writer.println("        public void ToBytes(ByteBuffer bytes) throws Exception\n        {");
 
-		for (int k = 0; k < block.Fields.size(); k++)
-		{
+		for (int k = 0; k < block.Fields.size(); k++) {
 			MapField field = block.Fields.get(k);
 			String fieldName = protocol.keywordPosition(field.keywordIndex);
 			WriteFieldToBytes(writer, 12, fieldName, field, "bytes", new String());
@@ -479,8 +452,7 @@ public class mapgenerator
 		writer.println("            String output = \"-- " + blockName + " --\\n\";");
 		writer.println("            try {");
 
-		for (int k = 0; k < block.Fields.size(); k++)
-		{
+		for (int k = 0; k < block.Fields.size(); k++) {
 			MapField field = block.Fields.get(k);
 			String fieldName = protocol.keywordPosition(field.keywordIndex);
 			WriteFieldToString(writer, 16, fieldName, field, new String());
@@ -496,87 +468,74 @@ public class mapgenerator
 		writer.println("    }\n");
 	}
 
-	static void WriteHelpersImport(PrintWriter writer, MapPacket packet)
-	{
-        for (MapBlock block : packet.Blocks)
-		{
-			for (int k = 0; k < block.Fields.size(); k++)
-			{
+	static void WriteHelpersImport(PrintWriter writer, MapPacket packet) {
+		for (MapBlock block : packet.Blocks) {
+			for (int k = 0; k < block.Fields.size(); k++) {
 				MapField field = block.Fields.get(k);
 
-				if (field.type == FieldType.Variable || field.type == FieldType.Fixed)
-				{
+				if (field.type == FieldType.Variable || field.type == FieldType.Fixed) {
 					writer.println("import libomv.utils.Helpers;");
 					return;
 				}
 			}
-		}		
+		}
 	}
-	
-	static void WritePacketClass(File packets_dir, String template, ProtocolManager protocol, MapPacket packet) throws IOException
-	{
+
+	static void WritePacketClass(File packets_dir, String template, ProtocolManager protocol, MapPacket packet)
+			throws IOException {
 		boolean[] variableField = new boolean[FieldType.NumTypes];
 		boolean cannotMultiple = false, hasVariableBlocks = false;
 		PrintWriter writer = WriteHeader(new File(packets_dir, packet.Name + "Packet.java"), template);
 
+		// Check if there are any variable blocks
+		for (MapBlock block : packet.Blocks) {
+			if (block.count == -1) {
+				hasVariableBlocks = true;
+			} else if (hasVariableBlocks) {
+				// A fixed or single block showed up after a variable count block.
+				// Our automatic splitting algorithm won't work for this packet
+				cannotMultiple = true;
+			}
+		}
 
-        // Check if there are any variable blocks
-        for (MapBlock block : packet.Blocks)
-        {
-            if (block.count == -1)
-            {
-                hasVariableBlocks = true;
-            }
-            else if (hasVariableBlocks)
-            {
-                // A fixed or single block showed up after a variable count block.
-                // Our automatic splitting algorithm won't work for this packet
-            	cannotMultiple = true;
-            }
-        }
+		if (hasVariableBlocks && !cannotMultiple)
+			writer.println("import java.util.ArrayList;");
 
-        if (hasVariableBlocks && !cannotMultiple)
-            writer.println("import java.util.ArrayList;");
-        
-        writer.println();
-        writer.println("import libomv.types.PacketHeader;");
+		writer.println();
+		writer.println("import libomv.types.PacketHeader;");
 		writer.println("import libomv.types.PacketFrequency;");
 
-		for (MapBlock block : packet.Blocks)
-		{
-			for (MapField field : block.Fields)
-			{
-				if (!variableField[field.type])
-				{
-					switch (field.type)
-					{
-						case FieldType.Variable:
-							writer.println("import libomv.types.OverflowException;");
-							variableField[field.type] = true;
-							break;
-						case FieldType.UUID:
-							writer.println("import libomv.types.UUID;");
-							variableField[field.type] = true;
-							break;
-							
-						case FieldType.Vector3:
-							writer.println("import libomv.types.Vector3;");
-							variableField[field.type] = true;
-							break;
-						case FieldType.Vector3d:
-							writer.println("import libomv.types.Vector3d;");
-							variableField[field.type] = true;
-							break;
-						case FieldType.Vector4:
-							writer.println("import libomv.types.Vector4;");
-							variableField[field.type] = true;
-							break;
-						case FieldType.Quaternion:
-							writer.println("import libomv.types.Quaternion;");
-							variableField[field.type] = true;
-							break;
-						default:
-							break;
+		for (MapBlock block : packet.Blocks) {
+			for (MapField field : block.Fields) {
+				if (!variableField[field.type]) {
+					switch (field.type) {
+					case FieldType.Variable:
+						writer.println("import libomv.types.OverflowException;");
+						variableField[field.type] = true;
+						break;
+					case FieldType.UUID:
+						writer.println("import libomv.types.UUID;");
+						variableField[field.type] = true;
+						break;
+
+					case FieldType.Vector3:
+						writer.println("import libomv.types.Vector3;");
+						variableField[field.type] = true;
+						break;
+					case FieldType.Vector3d:
+						writer.println("import libomv.types.Vector3d;");
+						variableField[field.type] = true;
+						break;
+					case FieldType.Vector4:
+						writer.println("import libomv.types.Vector4;");
+						variableField[field.type] = true;
+						break;
+					case FieldType.Quaternion:
+						writer.println("import libomv.types.Quaternion;");
+						variableField[field.type] = true;
+						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -586,10 +545,8 @@ public class mapgenerator
 		writer.println("\npublic class " + packet.Name + "Packet extends Packet\n{");
 
 		// Write out each block class
-		for (MapBlock block : packet.Blocks)
-		{
-			if (block.Fields.size() > 1 || block.Fields.get(0).type == FieldType.Variable)
-			{
+		for (MapBlock block : packet.Blocks) {
+			if (block.Fields.size() > 1 || block.Fields.get(0).type == FieldType.Variable) {
 				WriteBlockClass(writer, protocol, block);
 			}
 		}
@@ -599,21 +556,19 @@ public class mapgenerator
 		writer.println("    public PacketType getType() { return PacketType." + packet.Name + "; }");
 
 		// Block members
-		for (MapBlock block : packet.Blocks)
-		{
+		for (MapBlock block : packet.Blocks) {
 			String blockName = protocol.keywordPosition(block.keywordIndex);
 
 			// TODO: More thorough name blacklisting
 
 			MapField field = block.Fields.get(0);
-			if (block.Fields.size() > 1 || field.type == FieldType.Variable)
-			{
-				writer.println("    public " + blockName + "Block" + ((block.count != 1) ? "[] " : " ") + blockName + ";");
-			}
-			else
-			{
+			if (block.Fields.size() > 1 || field.type == FieldType.Variable) {
+				writer.println(
+						"    public " + blockName + "Block" + ((block.count != 1) ? "[] " : " ") + blockName + ";");
+			} else {
 				String fieldName = protocol.keywordPosition(field.keywordIndex);
-				writer.println("    public " + FieldTypeString(field.type) + ((block.count != 1) ? "[] " : " ") + fieldName + ";");
+				writer.println("    public " + FieldTypeString(field.type) + ((block.count != 1) ? "[] " : " ")
+						+ fieldName + ";");
 			}
 		}
 
@@ -622,79 +577,63 @@ public class mapgenerator
 		// Default constructor
 		writer.println("    public " + packet.Name + "Packet()\n    {");
 		writer.println("        hasVariableBlocks = " + (hasVariableBlocks ? "true" : "false") + ";");
-		writer.println("        _header = new PacketHeader(PacketFrequency." + PacketFrequency.Names[packet.Frequency]
-				+ ");");
+		writer.println(
+				"        _header = new PacketHeader(PacketFrequency." + PacketFrequency.Names[packet.Frequency] + ");");
 		writer.println("        _header.setID((short)" + packet.ID + ");");
 		// Turn the reliable flag on by default
 		writer.println("        _header.setReliable(true);");
-		if (packet.Encoded)
-		{
+		if (packet.Encoded) {
 			writer.println("        _header.setZerocoded(true);");
 		}
-		for (MapBlock block : packet.Blocks)
-		{
+		for (MapBlock block : packet.Blocks) {
 			String blockName = protocol.keywordPosition(block.keywordIndex);
 
 			MapField field = block.Fields.get(0);
-			if (block.Fields.size() > 1 || field.type == FieldType.Variable)
-			{
-				if (block.count == 1)
-				{
+			if (block.Fields.size() > 1 || field.type == FieldType.Variable) {
+				if (block.count == 1) {
 					// Single count block
 					writer.println("        " + blockName + " = new " + blockName + "Block();");
-				}
-				else if (block.count == -1)
-				{
+				} else if (block.count == -1) {
 					// Variable count block
 					writer.println("        " + blockName + " = new " + blockName + "Block[0];");
-				}
-				else
-				{
+				} else {
 					// Multiple count block
 					writer.println("        " + blockName + " = new " + blockName + "Block[" + block.count + "];");
 				}
-			}
-			else
-			{
+			} else {
 				String fieldName = protocol.keywordPosition(field.keywordIndex);
-				if (block.count == 1)
-				{
+				if (block.count == 1) {
 					// Single count block
-					if (field.type == FieldType.UUID || field.type >= FieldType.Vector3 && field.type <= FieldType.Quaternion)
+					if (field.type == FieldType.UUID
+							|| field.type >= FieldType.Vector3 && field.type <= FieldType.Quaternion)
 						writer.println("        " + fieldName + " = new " + FieldTypeString(field.type) + "();");
-				}
-				else if (block.count == -1)
-				{
+				} else if (block.count == -1) {
 					// Variable count block
 					writer.println("        " + fieldName + " = new " + FieldTypeString(field.type) + "[0];");
-				}
-				else
-				{
+				} else {
 					// Multiple count block
-					writer.println("        " + fieldName + " = new " + FieldTypeString(field.type) + "[" + block.count + "];");
+					writer.println("        " + fieldName + " = new " + FieldTypeString(field.type) + "[" + block.count
+							+ "];");
 				}
 			}
 		}
 		writer.println("    }\n");
 
-		// Constructor that takes a byte array and beginning position only (no prebuilt header)
+		// Constructor that takes a byte array and beginning position only (no prebuilt
+		// header)
 		writer.println("    public " + packet.Name + "Packet(ByteBuffer bytes) throws Exception");
 		writer.println("    {");
 		writer.println("        hasVariableBlocks = " + (hasVariableBlocks ? "true" : "false") + ";");
-		writer.println("        _header = new PacketHeader(bytes, PacketFrequency." + PacketFrequency.Names[packet.Frequency] + ");");
-		for (MapBlock block : packet.Blocks)
-		{
+		writer.println("        _header = new PacketHeader(bytes, PacketFrequency."
+				+ PacketFrequency.Names[packet.Frequency] + ");");
+		for (MapBlock block : packet.Blocks) {
 			String blockName = protocol.keywordPosition(block.keywordIndex);
 			MapField field = block.Fields.get(0);
-			if (block.Fields.size() > 1 || field.type == FieldType.Variable)
-			{
-				if (block.count == 1)
-				{
+			if (block.Fields.size() > 1 || field.type == FieldType.Variable) {
+				if (block.count == 1) {
 					// Single count block
 					writer.println("        " + blockName + " = new " + blockName + "Block(bytes);");
-				}
-				else if (block.count == -1)
-				{
+				} else if (block.count == -1) {
 					// Variable count block
 					writer.println("        if (bytes.hasRemaining())\n        {");
 					writer.println("            int count = bytes.get() & 0xFF;");
@@ -703,53 +642,40 @@ public class mapgenerator
 					writer.println("                " + blockName + "[j] = new " + blockName + "Block(bytes);");
 					writer.println("            }\n        }\n        else\n        {");
 					writer.println("            " + blockName + " = new " + blockName + "Block[0];\n        }");
-				}
-				else
-				{
+				} else {
 					// Multiple count block
 					writer.println("        " + blockName + " = new " + blockName + "Block[" + block.count + "];");
 					writer.println("        for (int j = 0; j < " + block.count + "; j++)\n        {");
 					writer.println("            " + blockName + "[j] = new " + blockName + "Block(bytes);");
 					writer.println("        }");
 				}
-			}
-			else
-			{
+			} else {
 				String fieldName = protocol.keywordPosition(field.keywordIndex);
-				if (block.count == 1)
-				{
+				if (block.count == 1) {
 					// Single count block
 					WriteFieldFromBytes(writer, 8, fieldName, field, "bytes", new String());
-				}
-				else if (block.count == -1)
-				{
+				} else if (block.count == -1) {
 					// Variable count block
 					writer.println("        if (bytes.hasRemaining())\n        {");
 					writer.println("            int count = bytes.get() & 0xFF;");
 					writer.println("            " + fieldName + " = new " + FieldTypeString(field.type) + "[count];");
-					if (field.type == FieldType.I8 || field.type == FieldType.U8)
-					{
-						writer.println("            bytes.get(" + fieldName + ");");						
-					}
-					else
-					{
+					if (field.type == FieldType.I8 || field.type == FieldType.U8) {
+						writer.println("            bytes.get(" + fieldName + ");");
+					} else {
 						writer.println("            for (int j = 0; j < count; j++)\n            {");
 						WriteFieldFromBytes(writer, 16, fieldName, field, "bytes", "[j]");
 						writer.println("            }");
 					}
 					writer.println("        }\n        else\n        {");
-					writer.println("            " + fieldName + " = new " + FieldTypeString(field.type) + "[0];\n        }");
-				}
-				else
-				{
+					writer.println(
+							"            " + fieldName + " = new " + FieldTypeString(field.type) + "[0];\n        }");
+				} else {
 					// Multiple count block
-					writer.println("        " + fieldName + " = new " + FieldTypeString(field.type) + "[" + block.count + "];");
-					if (field.type == FieldType.I8 || field.type == FieldType.U8)
-					{
-						writer.println("        bytes.get(" + fieldName + ");");						
-					}
-					else
-					{
+					writer.println("        " + fieldName + " = new " + FieldTypeString(field.type) + "[" + block.count
+							+ "];");
+					if (field.type == FieldType.I8 || field.type == FieldType.U8) {
+						writer.println("        bytes.get(" + fieldName + ");");
+					} else {
 						writer.println("        for (int j = 0; j < " + block.count + "; j++)\n        {");
 						WriteFieldFromBytes(writer, 12, fieldName, field, "bytes", "[j]");
 						writer.println("        }");
@@ -764,19 +690,14 @@ public class mapgenerator
 		writer.println("    {");
 		writer.println("        hasVariableBlocks = " + (hasVariableBlocks ? "true" : "false") + ";");
 		writer.println("        _header = head;");
-		for (MapBlock block : packet.Blocks)
-		{
+		for (MapBlock block : packet.Blocks) {
 			String blockName = protocol.keywordPosition(block.keywordIndex);
 			MapField field = block.Fields.get(0);
-			if (block.Fields.size() > 1 || field.type == FieldType.Variable)
-			{
-				if (block.count == 1)
-				{
+			if (block.Fields.size() > 1 || field.type == FieldType.Variable) {
+				if (block.count == 1) {
 					// Single count block
 					writer.println("        " + blockName + " = new " + blockName + "Block(bytes);");
-				}
-				else if (block.count == -1)
-				{
+				} else if (block.count == -1) {
 					// Variable count block
 					writer.println("        if (bytes.hasRemaining())\n        {");
 					writer.println("            int count = bytes.get() & 0xFF;");
@@ -785,53 +706,40 @@ public class mapgenerator
 					writer.println("                " + blockName + "[j] = new " + blockName + "Block(bytes);");
 					writer.println("            }\n        }\n        else\n        {");
 					writer.println("            " + blockName + " = new " + blockName + "Block[0];\n        }");
-				}
-				else
-				{
+				} else {
 					// Multiple count block
 					writer.println("        " + blockName + " = new " + blockName + "Block[" + block.count + "];");
 					writer.println("        for (int j = 0; j < " + block.count + "; j++)\n        {");
 					writer.println("            " + blockName + "[j] = new " + blockName + "Block(bytes);");
 					writer.println("        }");
 				}
-			}
-			else
-			{
+			} else {
 				String fieldName = protocol.keywordPosition(field.keywordIndex);
-				if (block.count == 1)
-				{
+				if (block.count == 1) {
 					// Single count block
 					WriteFieldFromBytes(writer, 8, fieldName, field, "bytes", new String());
-				}
-				else if (block.count == -1)
-				{
+				} else if (block.count == -1) {
 					// Variable count block
 					writer.println("        if (bytes.hasRemaining())\n        {");
 					writer.println("            int count = bytes.get() & 0xFF;");
 					writer.println("            " + fieldName + " = new " + FieldTypeString(field.type) + "[count];");
-					if (field.type == FieldType.I8 || field.type == FieldType.U8)
-					{
-						writer.println("            bytes.get(" + fieldName + ");");						
-					}
-					else
-					{
+					if (field.type == FieldType.I8 || field.type == FieldType.U8) {
+						writer.println("            bytes.get(" + fieldName + ");");
+					} else {
 						writer.println("            for (int j = 0; j < count; j++)\n            {");
 						WriteFieldFromBytes(writer, 16, fieldName, field, "bytes", "[j]");
 						writer.println("            }");
 					}
 					writer.println("        }\n        else\n        {");
-					writer.println("            " + fieldName + " = new " + FieldTypeString(field.type) + "[0];\n        }");
-				}
-				else
-				{
+					writer.println(
+							"            " + fieldName + " = new " + FieldTypeString(field.type) + "[0];\n        }");
+				} else {
 					// Multiple count block
-					writer.println("        " + fieldName + " = new " + FieldTypeString(field.type) + "[" + block.count + "];");
-					if (field.type == FieldType.I8 || field.type == FieldType.U8)
-					{
-						writer.println("        bytes.get(" + fieldName + ");");						
-					}
-					else
-					{
+					writer.println("        " + fieldName + " = new " + FieldTypeString(field.type) + "[" + block.count
+							+ "];");
+					if (field.type == FieldType.I8 || field.type == FieldType.U8) {
+						writer.println("        bytes.get(" + fieldName + ");");
+					} else {
 						writer.println("        for (int j = 0; j < " + block.count + "; j++)\n        {");
 						WriteFieldFromBytes(writer, 12, fieldName, field, "bytes", "[j]");
 						writer.println("        }");
@@ -848,60 +756,46 @@ public class mapgenerator
 
 		writer.println("        int length = _header.getLength();");
 
-		for (MapBlock block : packet.Blocks)
-		{
+		for (MapBlock block : packet.Blocks) {
 			String blockName = protocol.keywordPosition(block.keywordIndex);
 			MapField field = block.Fields.get(0);
-			if (block.Fields.size() > 1 || field.type == FieldType.Variable)
-			{
-				if (block.count == 1)
-				{
+			if (block.Fields.size() > 1 || field.type == FieldType.Variable) {
+				if (block.count == 1) {
 					// Single count block
 					writer.println("        length += " + blockName + ".getLength();");
 				}
-			}
-			else
-			{
-				if (block.count == 1)
-				{
+			} else {
+				if (block.count == 1) {
 					writer.println("        length += " + GetFieldLength(writer, protocol, field) + ";");
 				}
 			}
 		}
 
-		for (MapBlock block : packet.Blocks)
-		{
+		for (MapBlock block : packet.Blocks) {
 			String blockName = protocol.keywordPosition(block.keywordIndex);
 			MapField field = block.Fields.get(0);
-			if (block.Fields.size() > 1 || field.type == FieldType.Variable)
-			{
-				if (block.count == -1)
-				{
+			if (block.Fields.size() > 1 || field.type == FieldType.Variable) {
+				if (block.count == -1) {
 					writer.println("        length++;");
 					writer.println("        if (" + blockName + " != null)\n        {");
 					writer.println("            for (int j = 0; j < " + blockName + ".length; j++) { length += "
 							+ blockName + "[j].getLength(); }");
 					writer.println("        }");
-				}
-				else if (block.count > 1)
-				{
+				} else if (block.count > 1) {
 					writer.println("        for (int j = 0; j < " + block.count + "; j++) { length += " + blockName
 							+ "[j].getLength(); }");
 				}
-			}
-			else
-			{
+			} else {
 				String fieldName = protocol.keywordPosition(field.keywordIndex);
-				if (block.count == -1)
-				{
+				if (block.count == -1) {
 					writer.println("        length++;");
 					writer.println("        if (" + fieldName + " != null)\n        {");
-					writer.println("            length += " + fieldName + ".length * " + GetFieldLength(writer, protocol, field) + ";");
+					writer.println("            length += " + fieldName + ".length * "
+							+ GetFieldLength(writer, protocol, field) + ";");
 					writer.println("        }");
-				}
-				else if (block.count > 1)
-				{
-					writer.println("        length += " + block.count + " * " + GetFieldLength(writer, protocol, field) + ";");
+				} else if (block.count > 1) {
+					writer.println(
+							"        length += " + block.count + " * " + GetFieldLength(writer, protocol, field) + ";");
 				}
 			}
 		}
@@ -918,80 +812,60 @@ public class mapgenerator
 		writer.close();
 	}
 
-	static void WriteToBytes(PrintWriter writer, ProtocolManager protocol, MapPacket packet)
-	{
+	static void WriteToBytes(PrintWriter writer, ProtocolManager protocol, MapPacket packet) {
 		String blockName;
-		
+
 		writer.println("    @Override");
 		writer.println("    public ByteBuffer ToBytes() throws Exception");
 		writer.println("    {");
 		writer.println("        ByteBuffer bytes = ByteBuffer.allocate(getLength());");
 		writer.println("        _header.ToBytes(bytes);");
 		writer.println("        bytes.order(ByteOrder.LITTLE_ENDIAN);");
-		for (MapBlock block : packet.Blocks)
-		{
+		for (MapBlock block : packet.Blocks) {
 			MapField field = block.Fields.get(0);
 			blockName = protocol.keywordPosition(block.keywordIndex);
-			if (block.Fields.size() > 1 || field.type == FieldType.Variable)
-			{
-				if (block.count == -1)
-				{
+			if (block.Fields.size() > 1 || field.type == FieldType.Variable) {
+				if (block.count == -1) {
 					// Variable count block
 					writer.println("        if (" + blockName + " != null)\n        {");
 					writer.println("            bytes.put((byte)" + blockName + ".length);");
 					writer.println("            for (int j = 0; j < " + blockName + ".length; j++)");
-				    writer.println("            {");
+					writer.println("            {");
 					writer.println("                " + blockName + "[j].ToBytes(bytes);");
 					writer.println("            }");
 					writer.println("        }\n        else\n        {");
 					writer.println("            bytes.put((byte)0);");
-					writer.println("        }");					
-				}
-				else if (block.count == 1)
-				{
+					writer.println("        }");
+				} else if (block.count == 1) {
 					writer.println("        " + blockName + ".ToBytes(bytes);");
-				}
-				else
-				{
+				} else {
 					// Multiple count block
-					writer.println("        for (int j = 0; j < " + block.count + "; j++) { " + blockName + "[j].ToBytes(bytes); }");
+					writer.println("        for (int j = 0; j < " + block.count + "; j++) { " + blockName
+							+ "[j].ToBytes(bytes); }");
 				}
-			}
-			else
-			{
+			} else {
 				String fieldName = protocol.keywordPosition(field.keywordIndex);
-				if (block.count == 1)
-				{
+				if (block.count == 1) {
 					WriteFieldToBytes(writer, 8, fieldName, field, "bytes", new String());
-				}
-				else if (block.count == -1)
-				{
+				} else if (block.count == -1) {
 					// Variable count block
 					writer.println("        if (" + fieldName + " != null)\n        {");
 					writer.println("            bytes.put((byte)" + fieldName + ".length);");
-					if (field.type == FieldType.I8 || field.type == FieldType.U8)
-					{
-						writer.println("            bytes.put(" + fieldName + ");");						
-					}
-					else
-					{
+					if (field.type == FieldType.I8 || field.type == FieldType.U8) {
+						writer.println("            bytes.put(" + fieldName + ");");
+					} else {
 						writer.println("            for (int j = 0; j < " + fieldName + ".length; j++)\n            {");
 						WriteFieldToBytes(writer, 16, fieldName, field, "bytes", "[j]");
 						writer.println("            }");
 					}
 					writer.println("        }\n        else\n        {");
 					writer.println("            bytes.put((byte)0);");
-					writer.println("        }");					
-				}
-				else
-				{
+					writer.println("        }");
+				} else {
 					// Multiple count block
-					if (field.type == FieldType.I8 || field.type == FieldType.U8)
-					{
-						writer.println("        bytes.put(" + fieldName + ");");						
-					}
-					else
-					{
+					if (field.type == FieldType.I8 || field.type == FieldType.U8) {
+						writer.println("        bytes.put(" + fieldName + ");");
+					} else {
 						writer.println("        for (int j = 0; j < " + block.count + "; j++)\n        {");
 						WriteFieldToBytes(writer, 12, fieldName, field, "bytes", "[j]");
 						writer.println("        }");
@@ -1002,12 +876,11 @@ public class mapgenerator
 		writer.println("        return bytes;\n    }\n");
 	}
 
-	static void WriteToBytesMultiple(PrintWriter writer, ProtocolManager protocol, MapPacket packet)
-    {
+	static void WriteToBytesMultiple(PrintWriter writer, ProtocolManager protocol, MapPacket packet) {
 		String blockName;
 		boolean isVariable = false;
-        int variableCountBlock = 0;
- 
+		int variableCountBlock = 0;
+
 		writer.println("    @Override");
 		writer.println("    public ByteBuffer[] ToBytesMultiple() throws Exception\n    {");
 		writer.println("        int maxLength = Math.min(Packet.MTU, getLength());");
@@ -1016,51 +889,36 @@ public class mapgenerator
 		writer.println("        _header.ToBytes(fixedBytes);");
 		writer.println("        fixedBytes.order(ByteOrder.LITTLE_ENDIAN);");
 
-        // Serialize fixed blocks
-        for (MapBlock block : packet.Blocks)
-        {
+		// Serialize fixed blocks
+		for (MapBlock block : packet.Blocks) {
 			MapField field = block.Fields.get(0);
 			blockName = protocol.keywordPosition(block.keywordIndex);
-			if (block.count == -1)
-			{
-                // Variable count block
-            	if (block.Fields.size() > 1 || field.type == FieldType.Variable)
-            		isVariable = true;
-            	if (variableCountBlock == 0)
-            		writer.println();
-				writer.println("        int " + blockName + "Start, " + blockName + "Count = 0;");
-                ++variableCountBlock;
-			}
-			else
-			{
+			if (block.count == -1) {
+				// Variable count block
 				if (block.Fields.size() > 1 || field.type == FieldType.Variable)
-				{
-					if (block.count == 1)
-					{
+					isVariable = true;
+				if (variableCountBlock == 0)
+					writer.println();
+				writer.println("        int " + blockName + "Start, " + blockName + "Count = 0;");
+				++variableCountBlock;
+			} else {
+				if (block.Fields.size() > 1 || field.type == FieldType.Variable) {
+					if (block.count == 1) {
 						writer.println("        " + blockName + ".ToBytes(fixedBytes);");
-					}
-					else
-					{
+					} else {
 						// Multiple count block
-						writer.println("        for (int j = 0; j < " + block.count + "; j++) { " + blockName + "[j].ToBytes(fixedBytes); }");
+						writer.println("        for (int j = 0; j < " + block.count + "; j++) { " + blockName
+								+ "[j].ToBytes(fixedBytes); }");
 					}
-				}
-				else
-				{
+				} else {
 					String fieldName = protocol.keywordPosition(field.keywordIndex);
-					if (block.count == 1)
-					{
+					if (block.count == 1) {
 						WriteFieldToBytes(writer, 8, fieldName, field, "fixedBytes", new String());
-					}
-					else
-					{
+					} else {
 						// Multiple count block
-						if (field.type == FieldType.I8 || field.type == FieldType.U8)
-						{
-							writer.println("        fixedBytes.put(" + fieldName + ");");						
-						}
-						else
-						{
+						if (field.type == FieldType.I8 || field.type == FieldType.U8) {
+							writer.println("        fixedBytes.put(" + fieldName + ");");
+						} else {
 							writer.println("        for (int j = 0; j < " + block.count + "; j++)\n        {");
 							WriteFieldToBytes(writer, 12, fieldName, field, "fixedBytes", "[j]");
 							writer.println("        }");
@@ -1068,207 +926,181 @@ public class mapgenerator
 					}
 				}
 			}
-        }
+		}
 
-		if (variableCountBlock > 0)
-		{
+		if (variableCountBlock > 0) {
 			if (isVariable)
 				writer.println("        int index, blockLength;");
 		}
 		writer.println("        do");
-        writer.println("        {");
-        writer.println("            ByteBuffer bytes = ByteBuffer.allocate(maxLength);");
-        writer.println("            bytes.put(fixedBytes.array(), 0, fixedBytes.position());");
-        writer.println("            bytes.order(ByteOrder.LITTLE_ENDIAN);");
+		writer.println("        {");
+		writer.println("            ByteBuffer bytes = ByteBuffer.allocate(maxLength);");
+		writer.println("            bytes.put(fixedBytes.array(), 0, fixedBytes.position());");
+		writer.println("            bytes.order(ByteOrder.LITTLE_ENDIAN);");
 
-        // Count how many variable blocks can go in this packet
-        for (MapBlock block : packet.Blocks)
-        {
+		// Count how many variable blocks can go in this packet
+		for (MapBlock block : packet.Blocks) {
 			blockName = protocol.keywordPosition(block.keywordIndex);
-            if (block.count == -1)
-            {
-                // Variable count block
-                writer.println("            " + blockName + "Start = " + blockName + "Count;");
-            }
-        }
-        
-    	String fieldName = "";
-    	blockName = "";
-        for (MapBlock block : packet.Blocks)
-        {
-            if (block.count == -1)
-            {
-    			blockName = protocol.keywordPosition(block.keywordIndex);
-                writer.println();
-    			// Variable count block
-    			MapField field = block.Fields.get(0);
-    			if (block.Fields.size() > 1 || field.type == FieldType.Variable)
-            	{	
-            		fieldName = blockName;
-                    writer.println("            index = bytes.position();");
-                    writer.println("            bytes.put((byte)0);");
-            		writer.println("            if (" + fieldName + " != null)");
-            		writer.println("            {");
-	                writer.println("                while (" + blockName + "Count < " + blockName + ".length)");
-	                writer.println("                {");
-	                writer.println("                    blockLength = " + blockName + "[" + blockName + "Count].getLength();");
-	                writer.println("                    if (bytes.position() + blockLength > Packet.MTU)");
-	                writer.println("                        break;");
-	                writer.println("                    " + fieldName + "[" + blockName + "Count++].ToBytes(bytes);");
-	                writer.println("                }");
-	                writer.println("                bytes.put(index, (byte)(" + blockName + "Count - " + blockName + "Start));");
-            	}
-            	else
-            	{
-            		fieldName = protocol.keywordPosition(field.keywordIndex);
+			if (block.count == -1) {
+				// Variable count block
+				writer.println("            " + blockName + "Start = " + blockName + "Count;");
+			}
+		}
 
-                    writer.println("            if (" + fieldName + " != null)");
-            		writer.println("            {");
-					if (field.type == FieldType.I8 || field.type == FieldType.U8)
-					{
-	            		writer.println("                " + blockName + "Count = Packet.MTU - bytes.position() - 1;");
-	            		writer.println("                if (" + blockName + "Count > " + fieldName + ".length - " + blockName + "Start)");
-	            		writer.println("            	    " + blockName + "Count = " + fieldName + ".length - " + blockName + "Start;");
-		                writer.println("                bytes.put((byte)(" + blockName + "Count));");
-	            		writer.println("                bytes.put(" + fieldName + ", " + blockName + "Start, " + blockName + "Count);");
-	            		writer.println("            	" + blockName + "Count += " + blockName + "Start;");
-					}
-					else
-					{
-	            		writer.println("                " + blockName + "Count = (Packet.MTU - bytes.position() - 1) / " + GetFieldLength(writer, protocol, field) + ";");
-	            		writer.println("                if (" + blockName + "Count + " + blockName + "Start >= " + fieldName + ".length)");
-	            		writer.println("            	    " + blockName + "Count = " + fieldName + ".length;");
-	            		writer.println("            	else");
-	            		writer.println("            	    " + blockName + "Count += " + blockName + "Start;");
-		                writer.println("                bytes.put((byte)(" + blockName + "Count - " + blockName + "Start));");
-						writer.println("                for (int j = " + blockName + "Start; j < " + blockName + "Count; j++)");
+		String fieldName = "";
+		blockName = "";
+		for (MapBlock block : packet.Blocks) {
+			if (block.count == -1) {
+				blockName = protocol.keywordPosition(block.keywordIndex);
+				writer.println();
+				// Variable count block
+				MapField field = block.Fields.get(0);
+				if (block.Fields.size() > 1 || field.type == FieldType.Variable) {
+					fieldName = blockName;
+					writer.println("            index = bytes.position();");
+					writer.println("            bytes.put((byte)0);");
+					writer.println("            if (" + fieldName + " != null)");
+					writer.println("            {");
+					writer.println("                while (" + blockName + "Count < " + blockName + ".length)");
+					writer.println("                {");
+					writer.println(
+							"                    blockLength = " + blockName + "[" + blockName + "Count].getLength();");
+					writer.println("                    if (bytes.position() + blockLength > Packet.MTU)");
+					writer.println("                        break;");
+					writer.println("                    " + fieldName + "[" + blockName + "Count++].ToBytes(bytes);");
+					writer.println("                }");
+					writer.println("                bytes.put(index, (byte)(" + blockName + "Count - " + blockName
+							+ "Start));");
+				} else {
+					fieldName = protocol.keywordPosition(field.keywordIndex);
+
+					writer.println("            if (" + fieldName + " != null)");
+					writer.println("            {");
+					if (field.type == FieldType.I8 || field.type == FieldType.U8) {
+						writer.println("                " + blockName + "Count = Packet.MTU - bytes.position() - 1;");
+						writer.println("                if (" + blockName + "Count > " + fieldName + ".length - "
+								+ blockName + "Start)");
+						writer.println("            	    " + blockName + "Count = " + fieldName + ".length - "
+								+ blockName + "Start;");
+						writer.println("                bytes.put((byte)(" + blockName + "Count));");
+						writer.println("                bytes.put(" + fieldName + ", " + blockName + "Start, "
+								+ blockName + "Count);");
+						writer.println("            	" + blockName + "Count += " + blockName + "Start;");
+					} else {
+						writer.println("                " + blockName + "Count = (Packet.MTU - bytes.position() - 1) / "
+								+ GetFieldLength(writer, protocol, field) + ";");
+						writer.println("                if (" + blockName + "Count + " + blockName + "Start >= "
+								+ fieldName + ".length)");
+						writer.println("            	    " + blockName + "Count = " + fieldName + ".length;");
+						writer.println("            	else");
+						writer.println("            	    " + blockName + "Count += " + blockName + "Start;");
+						writer.println(
+								"                bytes.put((byte)(" + blockName + "Count - " + blockName + "Start));");
+						writer.println("                for (int j = " + blockName + "Start; j < " + blockName
+								+ "Count; j++)");
 						writer.println("                {");
 						WriteFieldToBytes(writer, 20, fieldName, field, "bytes", "[j]");
-		                writer.println("                }");
+						writer.println("                }");
 					}
-	                writer.println("            }");
-	                writer.println("            else");
-	                writer.println("            {");
-	                writer.println("                bytes.put((byte)0);");
-            	}
-                writer.println("            }");
-            }
-        }
-        writer.println("            packets.add(bytes);");
-        writer.print("        } while (");
+					writer.println("            }");
+					writer.println("            else");
+					writer.println("            {");
+					writer.println("                bytes.put((byte)0);");
+				}
+				writer.println("            }");
+			}
+		}
+		writer.println("            packets.add(bytes);");
+		writer.print("        } while (");
 
-        variableCountBlock = 0;
-        for (MapBlock block : packet.Blocks)
-        {
-			if (block.count == -1)
-			{
+		variableCountBlock = 0;
+		for (MapBlock block : packet.Blocks) {
+			if (block.count == -1) {
 				if (variableCountBlock > 0)
-		            writer.print(" ||\n                 ");
+					writer.print(" ||\n                 ");
 				variableCountBlock++;
 				blockName = protocol.keywordPosition(block.keywordIndex);
 				MapField field = block.Fields.get(0);
-				if (block.Fields.size() > 1 || field.type == FieldType.Variable)
-            	{
-            		fieldName = blockName;
-            	}
-            	else
-            	{
+				if (block.Fields.size() > 1 || field.type == FieldType.Variable) {
+					fieldName = blockName;
+				} else {
 					fieldName = protocol.keywordPosition(field.keywordIndex);
-            	}
-                writer.print(blockName + "Count < " + fieldName + ".length");
+				}
+				writer.print(blockName + "Count < " + fieldName + ".length");
 			}
-        }
-        writer.println(");");
-        writer.println("        return packets.toArray(new ByteBuffer[0]);");
-        writer.println("    }\n");
-    }
-    
-	static public void WriteToString(PrintWriter writer, ProtocolManager protocol, MapPacket packet)
-	{
+		}
+		writer.println(");");
+		writer.println("        return packets.toArray(new ByteBuffer[0]);");
+		writer.println("    }\n");
+	}
+
+	static public void WriteToString(PrintWriter writer, ProtocolManager protocol, MapPacket packet) {
 		String blockName, sanitizedName;
-		
+
 		writer.println("    @Override");
 		writer.println("    public String toString()\n    {");
 		writer.println("        String output = \"--- " + packet.Name + " ---\\n\";");
 
-		for (int k = 0; k < packet.Blocks.size(); k++)
-		{
+		for (int k = 0; k < packet.Blocks.size(); k++) {
 			MapBlock block = packet.Blocks.get(k);
 			blockName = protocol.keywordPosition(block.keywordIndex);
 			MapField field = block.Fields.get(0);
-			if (block.Fields.size() > 1 || field.type == FieldType.Variable)
-			{
-				if (blockName.equals("Header"))
-				{
+			if (block.Fields.size() > 1 || field.type == FieldType.Variable) {
+				if (blockName.equals("Header")) {
 					sanitizedName = "_" + blockName;
-				}
-				else
-				{
+				} else {
 					sanitizedName = blockName;
 				}
 
-				if (block.count == -1)
-				{
+				if (block.count == -1) {
 					// Variable count block
 					writer.println("        if (" + sanitizedName + " != null)\n        {");
 					writer.println("            for (int j = 0; j < " + sanitizedName + ".length; j++)\n            {");
-					writer.println("                output += " + sanitizedName + "[j].toString() + \"\\n\";\n            }");
+					writer.println(
+							"                output += " + sanitizedName + "[j].toString() + \"\\n\";\n            }");
 					writer.println("        }");
-					
-				}
-				else if (block.count == 1)
-				{
+
+				} else if (block.count == 1) {
 					writer.println("        output += " + sanitizedName + ".toString() + \"\\n\";");
-				}
-				else
-				{
+				} else {
 					// Multiple count block
 					writer.println("        for (int j = 0; j < " + block.count + "; j++)\n        {");
 					writer.println("            output += " + sanitizedName + "[j].toString() + \"\\n\";\n        }");
 				}
-			}
-			else
-			{
+			} else {
 				String fieldName = protocol.keywordPosition(field.keywordIndex);
-				if (block.count == 1)
-				{
+				if (block.count == 1) {
 					WriteFieldToString(writer, 8, fieldName, field, new String());
-				}
-				else if (block.count == -1)
-				{
+				} else if (block.count == -1) {
 					// Variable count block
 					writer.println("        if (" + fieldName + " != null)\n        {");
 					writer.println("            for (int j = 0; j < " + fieldName + ".length; j++)\n            {");
 					WriteFieldToString(writer, 16, fieldName, field, "j");
 					writer.println("            }\n        }");
-				}
-				else
-				{
+				} else {
 					// Multiple count block
 					writer.println("        for (int j = 0; j < " + block.count + "; j++)\n        {");
 					WriteFieldToString(writer, 12, fieldName, field, "j");
 					writer.println("        }");
 				}
-				
+
 			}
 		}
 
 		writer.println("        return output;\n    }");
 	}
-	
-	static public void main(String[] args)
-	{
+
+	static public void main(String[] args) {
 		ProtocolManager protocol = null;
 		PrintWriter writer = null;
 
-		try
-		{
-			if (args.length < 3)
-			{
+		try {
+			if (args.length < 3) {
 				logger.error(
 						"Invalid arguments, using default values for [message_template.msg] [template.java.txt] [Packet.java]");
 				args = new String[] { "src/main/java/libomv/mapgenerator/message_template.msg",
-						"src/main/java/libomv/mapgenerator/template.java.txt", "src/main/java/libomv/packets/Packet.java" };
+						"src/main/java/libomv/mapgenerator/template.java.txt",
+						"src/main/java/libomv/packets/Packet.java" };
 			}
 
 			File packets_dir = new File(args[2]).getParentFile();
@@ -1281,27 +1113,21 @@ public class mapgenerator
 
 			// Write the PacketType enum
 			packettype_writer.println("package libomv.packets;\npublic enum PacketType\n{\n    Default,");
-			for (int k = 0; k < protocol.LowMaps.mapPackets.size(); k++)
-			{
+			for (int k = 0; k < protocol.LowMaps.mapPackets.size(); k++) {
 				MapPacket packet = protocol.LowMaps.mapPackets.get(k);
-				if (packet != null)
-				{
+				if (packet != null) {
 					packettype_writer.println("    " + packet.Name + ",");
 				}
 			}
-			for (int k = 0; k < protocol.MediumMaps.mapPackets.size(); k++)
-			{
+			for (int k = 0; k < protocol.MediumMaps.mapPackets.size(); k++) {
 				MapPacket packet = protocol.MediumMaps.mapPackets.get(k);
-				if (packet != null)
-				{
+				if (packet != null) {
 					packettype_writer.println("    " + packet.Name + ",");
 				}
 			}
-			for (int k = 0; k < protocol.HighMaps.mapPackets.size(); k++)
-			{
+			for (int k = 0; k < protocol.HighMaps.mapPackets.size(); k++) {
 				MapPacket packet = protocol.HighMaps.mapPackets.get(k);
-				if (packet != null)
-				{
+				if (packet != null) {
 					packettype_writer.println("    " + packet.Name + ",");
 				}
 			}
@@ -1310,28 +1136,21 @@ public class mapgenerator
 
 			// Write the base Packet class
 			writer.println("import libomv.StructuredData.OSDMap;\n"
-					+ "import libomv.capabilities.CapsMessage.CapsEventType;\n"
-					+ "import libomv.types.PacketHeader;\n"
-					+ "import libomv.types.PacketFrequency;\n\n"
-					+ "public abstract class Packet\n"
-					+ "{\n"
-					+ "    public static final int MTU = 1200;\n\n"
-					+ "    public boolean hasVariableBlocks;\n"
+					+ "import libomv.capabilities.CapsMessage.CapsEventType;\n" + "import libomv.types.PacketHeader;\n"
+					+ "import libomv.types.PacketFrequency;\n\n" + "public abstract class Packet\n" + "{\n"
+					+ "    public static final int MTU = 1200;\n\n" + "    public boolean hasVariableBlocks;\n"
 					+ "    protected PacketHeader _header;\n"
 					+ "    public PacketHeader getHeader() { return _header; }\n"
 					+ "    public void setHeader(PacketHeader value) { _header = value; };\n"
-					+ "    public abstract PacketType getType();\n"
-					+ "    public abstract int getLength();\n"
+					+ "    public abstract PacketType getType();\n" + "    public abstract int getLength();\n"
 					+ "    // Serializes the packet in to a byte array\n"
 					+ "    // return A byte array containing the serialized packet payload, ready to be sent across the wire\n"
 					+ "    public abstract ByteBuffer ToBytes() throws Exception;\n\n"
 					+ "    public ByteBuffer[] ToBytesMultiple() throws Exception\n    {\n"
 					+ "        if (getLength() > MTU)\n"
 					+ "            throw new UnsupportedOperationException(\"ToBytesMultiple()\");\n\n"
-		            + "        ByteBuffer[] buffer = new ByteBuffer[1];\n"
-		            + "        buffer[0] = ToBytes();\n"
-		            + "        return buffer;\n"
-		            + "    }\n\n"
+					+ "        ByteBuffer[] buffer = new ByteBuffer[1];\n" + "        buffer[0] = ToBytes();\n"
+					+ "        return buffer;\n" + "    }\n\n"
 					+ "    //Get the PacketType for a given packet id and packet frequency\n"
 					+ "    //<param name=\"id\">The packet ID from the header</param>\n"
 					+ "    //<param name=\"frequency\">Frequency of this packet</param>\n"
@@ -1340,11 +1159,9 @@ public class mapgenerator
 					+ "        switch (frequency)\n        {\n            case PacketFrequency.Low:\n"
 					+ "                switch (id)\n                {");
 
-			for (int k = 0; k < protocol.LowMaps.mapPackets.size(); k++)
-			{
+			for (int k = 0; k < protocol.LowMaps.mapPackets.size(); k++) {
 				MapPacket packet = protocol.LowMaps.mapPackets.get(k);
-				if (packet != null)
-				{
+				if (packet != null) {
 					writer.println("                        case (short)" + packet.ID + ": return PacketType."
 							+ packet.Name + ";");
 				}
@@ -1354,13 +1171,11 @@ public class mapgenerator
 			writer.println("                    }\n                    break;\n"
 					+ "                case PacketFrequency.Medium:\n                    switch (id)\n                    {");
 
-			for (int k = 0; k < protocol.MediumMaps.mapPackets.size(); k++)
-			{
+			for (int k = 0; k < protocol.MediumMaps.mapPackets.size(); k++) {
 				MapPacket packet = protocol.MediumMaps.mapPackets.get(k);
-				if (packet != null)
-				{
-					writer.println("                        case " + packet.ID + ": return PacketType."
-							+ packet.Name + ";");
+				if (packet != null) {
+					writer.println(
+							"                        case " + packet.ID + ": return PacketType." + packet.Name + ";");
 				}
 			}
 
@@ -1369,13 +1184,11 @@ public class mapgenerator
 					+ "                case PacketFrequency.High:\n                    switch (id)\n"
 					+ "                    {");
 
-			for (int k = 0; k < protocol.HighMaps.mapPackets.size(); k++)
-			{
+			for (int k = 0; k < protocol.HighMaps.mapPackets.size(); k++) {
 				MapPacket packet = protocol.HighMaps.mapPackets.get(k);
-				if (packet != null)
-				{
-					writer.println("                        case " + packet.ID + ": return PacketType."
-							+ packet.Name + ";");
+				if (packet != null) {
+					writer.println(
+							"                        case " + packet.ID + ": return PacketType." + packet.Name + ";");
 				}
 			}
 
@@ -1394,8 +1207,7 @@ public class mapgenerator
 					+ "        public static Packet BuildPacket(CapsEventType capsKey,  OSDMap map) throws Exception\n"
 					+ "        {\n            return null;\n        }\n\n");
 
-			writer.println("        /**\n"
-					+ "         * Construct a packet in it's native class from a byte array\n"
+			writer.println("        /**\n" + "         * Construct a packet in it's native class from a byte array\n"
 					+ "         *\n"
 					+ "         * @param bytes Byte array containing the packet, starting at position 0\n"
 					+ "         * @param packetEnd The last byte of the packet. If the packet was 76 bytes long, packetEnd would be 75\n"
@@ -1407,75 +1219,64 @@ public class mapgenerator
 					+ "            switch (_header.getFrequency())            {\n"
 					+ "                case PacketFrequency.Low:\n                    switch (_header.getID())\n"
 					+ "                    {");
-			for (int k = 0; k < protocol.LowMaps.mapPackets.size(); k++)
-			{
+			for (int k = 0; k < protocol.LowMaps.mapPackets.size(); k++) {
 				MapPacket packet = protocol.LowMaps.mapPackets.get(k);
-				if (packet != null)
-				{
+				if (packet != null) {
 					writer.println("                        case (short)" + packet.ID + ": return new " + packet.Name
 							+ "Packet(_header,bytes);");
 				}
 			}
 			writer.println("                        default:\n                            break;");
-			writer.println("                    }\n                    break;\n                case PacketFrequency.Medium:\n"
-					+ "                    switch (_header.getID())\n                    {");
-			for (int k = 0; k < protocol.MediumMaps.mapPackets.size(); k++)
-			{
+			writer.println(
+					"                    }\n                    break;\n                case PacketFrequency.Medium:\n"
+							+ "                    switch (_header.getID())\n                    {");
+			for (int k = 0; k < protocol.MediumMaps.mapPackets.size(); k++) {
 				MapPacket packet = protocol.MediumMaps.mapPackets.get(k);
-				if (packet != null)
-				{
+				if (packet != null) {
 					writer.println("                        case " + packet.ID + ": return new " + packet.Name
 							+ "Packet(_header, bytes);");
 				}
 			}
 			writer.println("                        default:\n                            break;");
-			writer.println("                    }\n                    break;\n                case PacketFrequency.High:\n"
-					+ "                    switch (_header.getID())\n                    {");
-			for (int k = 0; k < protocol.HighMaps.mapPackets.size(); k++)
-			{
+			writer.println(
+					"                    }\n                    break;\n                case PacketFrequency.High:\n"
+							+ "                    switch (_header.getID())\n                    {");
+			for (int k = 0; k < protocol.HighMaps.mapPackets.size(); k++) {
 				MapPacket packet = protocol.HighMaps.mapPackets.get(k);
-				if (packet != null)
-				{
+				if (packet != null) {
 					writer.println("                        case " + packet.ID + ": return new " + packet.Name
 							+ "Packet(_header, bytes);");
 				}
 			}
 			writer.println("                        default:\n                            break;");
-			writer.println("                    }\n                    break;\n                default:\n                    break;\n            }\n"
-					+ "            throw new Exception(\"Unknown packet ID\");\n        }\n");
+			writer.println(
+					"                    }\n                    break;\n                default:\n                    break;\n            }\n"
+							+ "            throw new Exception(\"Unknown packet ID\");\n        }\n");
 
 			// Write the packet classes
-			for (int k = 0; k < protocol.LowMaps.mapPackets.size(); k++)
-			{
+			for (int k = 0; k < protocol.LowMaps.mapPackets.size(); k++) {
 				MapPacket packet = protocol.LowMaps.mapPackets.get(k);
-				if (packet != null)
-				{
+				if (packet != null) {
 					WritePacketClass(packets_dir, args[1], protocol, packet);
 				}
 			}
 
-			for (int k = 0; k < protocol.MediumMaps.mapPackets.size(); k++)
-			{
+			for (int k = 0; k < protocol.MediumMaps.mapPackets.size(); k++) {
 				MapPacket packet = protocol.MediumMaps.mapPackets.get(k);
-				if (packet != null)
-				{
+				if (packet != null) {
 					WritePacketClass(packets_dir, args[1], protocol, packet);
 				}
 			}
 
-			for (int k = 0; k < protocol.HighMaps.mapPackets.size(); k++)
-			{
+			for (int k = 0; k < protocol.HighMaps.mapPackets.size(); k++) {
 				MapPacket packet = protocol.HighMaps.mapPackets.get(k);
-				if (packet != null)
-				{
+				if (packet != null) {
 					WritePacketClass(packets_dir, args[1], protocol, packet);
 				}
 			}
 			writer.println("}");
 			writer.close();
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

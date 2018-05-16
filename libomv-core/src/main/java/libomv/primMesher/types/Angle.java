@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -29,16 +29,14 @@
  */
 package libomv.primMesher.types;
 
-public class Angle
-{
-    float angle;
-    float X;
-    float Y;
+public class Angle {
+	float angle;
+	float X;
+	float Y;
 
-    public Angle(float angle, float x, float y)
-    {
-        this.angle = angle;
-        this.X = x;
-        this.Y = y;
-    }
+	public Angle(float angle, float x, float y) {
+		this.angle = angle;
+		this.X = x;
+		this.Y = y;
+	}
 }

@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -37,72 +37,84 @@ import libomv.primitives.TextureEntry;
 import libomv.types.Vector3;
 
 /** Abstract base for rendering plugins */
-public interface IRendering
-{
-    public class RendererNameAttribute
-    {
-        private String _name;
+public interface IRendering {
+	public class RendererNameAttribute {
+		private String _name;
 
-        public RendererNameAttribute(String name)
-         {
-        	super();
-            _name = name;
-        }
+		public RendererNameAttribute(String name) {
+			super();
+			_name = name;
+		}
 
-        @Override
-		public String toString()
-        {
-            return _name;
-        }
-    }
-    
-    /**
-     * Generates a basic mesh structure from a primitive
-     * 
-     * @param prim Primitive to generate the mesh from
-     * @param lod Level of detail to generate the mesh at
-     * @return The generated mesh
-     */
-    public SimpleMesh GenerateSimpleMesh(Primitive prim, Mesh.DetailLevel lod);
+		@Override
+		public String toString() {
+			return _name;
+		}
+	}
 
-    /**
-     * Generates a basic mesh structure from a sculpted primitive and texture
-     * 
-     * @param prim Sculpted primitive to generate the mesh from
-     * @param sculptTexture Sculpt texture
-     * @param lod Level of detail to generate the mesh at
-     * @return The generated mesh
-     */
-    public SimpleMesh GenerateSimpleSculptMesh(Primitive prim, ManagedImage sculptTexture, Mesh.DetailLevel lod);
+	/**
+	 * Generates a basic mesh structure from a primitive
+	 * 
+	 * @param prim
+	 *            Primitive to generate the mesh from
+	 * @param lod
+	 *            Level of detail to generate the mesh at
+	 * @return The generated mesh
+	 */
+	public SimpleMesh GenerateSimpleMesh(Primitive prim, Mesh.DetailLevel lod);
 
-    /** <summary>
-     * Generates a series of faces, each face containing a mesh and metadata
-     * 
-     * @param prim Primitive to generate the mesh from
-     * @param lod Level of detail to generate the mesh at
-     * @return The generated mesh
-     */
-    public FacetedMesh GenerateFacetedMesh(Primitive prim, Mesh.DetailLevel lod);
+	/**
+	 * Generates a basic mesh structure from a sculpted primitive and texture
+	 * 
+	 * @param prim
+	 *            Sculpted primitive to generate the mesh from
+	 * @param sculptTexture
+	 *            Sculpt texture
+	 * @param lod
+	 *            Level of detail to generate the mesh at
+	 * @return The generated mesh
+	 */
+	public SimpleMesh GenerateSimpleSculptMesh(Primitive prim, ManagedImage sculptTexture, Mesh.DetailLevel lod);
 
-    /**
-     * Generates a series of faces for a sculpted prim, each face 
-     * containing a mesh and metadata
-     *
-     * @param prim Sculpted primitive to generate the mesh from</param>
-     * @param sculptTexture Sculpt texture</param>
-     * @param lod Level of detail to generate the mesh at</param>
-     * @returns The generated mesh</returns>
-     */
-    public FacetedMesh GenerateFacetedSculptMesh(Primitive prim, ManagedImage sculptTexture, Mesh.DetailLevel lod);
+	/**
+	 * <summary> Generates a series of faces, each face containing a mesh and
+	 * metadata
+	 * 
+	 * @param prim
+	 *            Primitive to generate the mesh from
+	 * @param lod
+	 *            Level of detail to generate the mesh at
+	 * @return The generated mesh
+	 */
+	public FacetedMesh GenerateFacetedMesh(Primitive prim, Mesh.DetailLevel lod);
 
-    /**
-     * Apply texture coordinate modifications from a
-     * <seealso cref="TextureEntryFace"/> to a list of vertices
-     *
-     * @param vertices Vertex list to modify texture coordinates for</param>
-     * @param center">Center-point of the face</param>
-     * @param teFace">Face texture parameters</param>
-     * @param primScale">Scale of the prim
-     */
-    public void TransformTexCoords (List<Mesh.Vertex> vertices, Vector3 center, TextureEntry.TextureEntryFace teFace, Vector3 primScale);
+	/**
+	 * Generates a series of faces for a sculpted prim, each face containing a mesh
+	 * and metadata
+	 *
+	 * @param prim
+	 *            Sculpted primitive to generate the mesh from</param>
+	 * @param sculptTexture
+	 *            Sculpt texture</param>
+	 * @param lod
+	 *            Level of detail to generate the mesh at</param>
+	 * @returns The generated mesh</returns>
+	 */
+	public FacetedMesh GenerateFacetedSculptMesh(Primitive prim, ManagedImage sculptTexture, Mesh.DetailLevel lod);
+
+	/**
+	 * Apply texture coordinate modifications from a
+	 * <seealso cref="TextureEntryFace"/> to a list of vertices
+	 *
+	 * @param vertices
+	 *            Vertex list to modify texture coordinates for</param>
+	 * @param center">Center-point
+	 *            of the face</param>
+	 * @param teFace">Face
+	 *            texture parameters</param>
+	 * @param primScale">Scale
+	 *            of the prim
+	 */
+	public void TransformTexCoords(List<Mesh.Vertex> vertices, Vector3 center, TextureEntry.TextureEntryFace teFace,
+			Vector3 primScale);
 }

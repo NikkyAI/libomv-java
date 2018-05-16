@@ -55,234 +55,249 @@ import libomv.io.LibSettings;
 import libomv.utils.Callback;
 import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 
-public class CapsClient extends AsyncHTTPClient<OSD>
-{
+public class CapsClient extends AsyncHTTPClient<OSD> {
 	private static final Logger logger = Logger.getLogger(CapsClient.class);
 	private GridClient _Client;
-	
+
 	private boolean trackUtilization;
-	
-	private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs>
-	{
+
+	private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs> {
 		@Override
-		public boolean callback(SettingsUpdateCallbackArgs params)
-		{
+		public boolean callback(SettingsUpdateCallbackArgs params) {
 			String key = params.getName();
-			if (key == null)
-			{
+			if (key == null) {
 				trackUtilization = _Client.Settings.getBool(LibSettings.TRACK_UTILIZATION);
-			}
-			else if (key.equals(LibSettings.TRACK_UTILIZATION))
-			{
+			} else if (key.equals(LibSettings.TRACK_UTILIZATION)) {
 				trackUtilization = params.getValue().AsBoolean();
 			}
 			return false;
 		}
 	}
 
-	public CapsClient(GridClient client, String name) throws IOReactorException
-	{
+	public CapsClient(GridClient client, String name) throws IOReactorException {
 		super(name);
 		_Client = client;
 
-		if (client != null)
-		{
+		if (client != null) {
 			client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
 			trackUtilization = client.Settings.getBool(LibSettings.TRACK_UTILIZATION);
 		}
 	}
-	
+
 	@Override
-	protected void finalize() throws Throwable
-	{
-		try
-		{
+	protected void finalize() throws Throwable {
+		try {
 			shutdown(true);
-		}
-		catch (InterruptedException e)
-		{
+		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}
-		finally
-		{
+		} finally {
 			super.finalize();
 		}
 	}
 
 	/**
 	 * Synchronous HTTP Get request from a capability that requires no further
-	 * request entity. This function returns either after the server responded
-	 * with any data or when the timeout expired
+	 * request entity. This function returns either after the server responded with
+	 * any data or when the timeout expired
 	 * 
-	 * @param address The timeout in ms to wait for a request
-	 * @param acceptHeader The content type to add as Accept: header or null
-	 * @param timeout The timeout in ms to wait for a request
+	 * @param address
+	 *            The timeout in ms to wait for a request
+	 * @param acceptHeader
+	 *            The content type to add as Accept: header or null
+	 * @param timeout
+	 *            The timeout in ms to wait for a request
 	 * @return Returns the response parsed into OSD data
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 * @throws TimeoutException
 	 */
 	public OSD getResponse(URI address, String acceptHeader, long timeout)
-			throws InterruptedException, ExecutionException, TimeoutException
-	{
+			throws InterruptedException, ExecutionException, TimeoutException {
 		Future<OSD> result = executeHttpGet(address, acceptHeader);
 		return result.get(timeout, TimeUnit.MILLISECONDS);
 	}
 
 	/**
 	 * Synchronous HTTP Get request from a capability that requires no further
-	 * request entity. This function returns either after the server responded
-	 * with any data or when the timeout expired
+	 * request entity. This function returns either after the server responded with
+	 * any data or when the timeout expired
 	 * 
-	 * @param address The timeout in ms to wait for a request
-	 * @param acceptHeader The content type to add as Accept: header or null
-	 * @param timeout The timeout in ms to wait for a request
+	 * @param address
+	 *            The timeout in ms to wait for a request
+	 * @param acceptHeader
+	 *            The content type to add as Accept: header or null
+	 * @param timeout
+	 *            The timeout in ms to wait for a request
 	 * @return Returns the response parsed into OSD data
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 * @throws TimeoutException
 	 */
 	public OSD getResponse(URI address, IMessage message, FutureCallback<OSD> callback, long timeout)
-			throws InterruptedException, ExecutionException, TimeoutException
-	{
-		Future<OSD> result = executeHttpPost(address, message.Serialize(), OSD.OSDFormat.Xml, null, null, TIMEOUT_INFINITE);
+			throws InterruptedException, ExecutionException, TimeoutException {
+		Future<OSD> result = executeHttpPost(address, message.Serialize(), OSD.OSDFormat.Xml, null, null,
+				TIMEOUT_INFINITE);
 		return result.get(timeout, TimeUnit.MILLISECONDS);
 	}
 
 	/**
 	 * Synchronous HTTP Post request from a capability that requires a OSD formated
-	 * request entity. This function returns either after the server responded
-	 * with any data or when the timeout expired
+	 * request entity. This function returns either after the server responded with
+	 * any data or when the timeout expired
 	 * 
-	 * @param address The timeout in ms to wait for a request
-	 * @param data The OSD data
-	 * @param format The OSD data format to serialize the data into
-	 * @param timeout The timeout in ms to wait for a request
+	 * @param address
+	 *            The timeout in ms to wait for a request
+	 * @param data
+	 *            The OSD data
+	 * @param format
+	 *            The OSD data format to serialize the data into
+	 * @param timeout
+	 *            The timeout in ms to wait for a request
 	 * @return Returns the response parsed into OSD data
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 * @throws TimeoutException
 	 */
 	public OSD getResponse(URI address, OSD data, OSD.OSDFormat format, long timeout)
-				throws InterruptedException, ExecutionException, TimeoutException, IOException
-	{
+			throws InterruptedException, ExecutionException, TimeoutException, IOException {
 		Future<OSD> result = executeHttpPost(address, data, format, null, null, TIMEOUT_INFINITE);
 		return result.get(timeout, TimeUnit.MILLISECONDS);
 	}
 
 	/**
 	 * Synchronous HTTP Post request from a capability that requires a OSD formated
-	 * request entity. This function returns either after the server responded
-	 * with any data or when the timeout expired
+	 * request entity. This function returns either after the server responded with
+	 * any data or when the timeout expired
 	 * 
-	 * @param address The timeout in ms to wait for a request
-	 * @param data The OSD data
-	 * @param format The OSD data format to serialize the data into
-	 * @param encoding The encoding to use in the header
-	 * @param timeout The timeout in ms to wait for a request
+	 * @param address
+	 *            The timeout in ms to wait for a request
+	 * @param data
+	 *            The OSD data
+	 * @param format
+	 *            The OSD data format to serialize the data into
+	 * @param encoding
+	 *            The encoding to use in the header
+	 * @param timeout
+	 *            The timeout in ms to wait for a request
 	 * @return Returns the response parsed into OSD data
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 * @throws TimeoutException
 	 */
 	public OSD getResponse(URI address, byte[] postData, String contentType, String encoding, long timeout)
-				throws InterruptedException, ExecutionException, TimeoutException
-	{
+			throws InterruptedException, ExecutionException, TimeoutException {
 		Future<OSD> result = executeHttpPost(address, postData, contentType, encoding);
 		return result.get(timeout, TimeUnit.MILLISECONDS);
 	}
 
 	/**
 	 * Asynchronous HTTP Post request from a capability that requires a OSD formated
-	 * request entity. This function returns either after the server responded
-	 * with any data or when the timeout expired
+	 * request entity. This function returns either after the server responded with
+	 * any data or when the timeout expired
 	 * 
-	 * @param address The uri to post the data to
-	 * @param message The Caps message to send
-	 * @param callback The callback to call for reporting of failure, success or cancel and returning a response to
-	 * @param timeout The timeout in ms to wait for a request
-	 * @return A Future that can be used to retrieve the data as OSD or to cancel the request
-	 * @throws IOException 
+	 * @param address
+	 *            The uri to post the data to
+	 * @param message
+	 *            The Caps message to send
+	 * @param callback
+	 *            The callback to call for reporting of failure, success or cancel
+	 *            and returning a response to
+	 * @param timeout
+	 *            The timeout in ms to wait for a request
+	 * @return A Future that can be used to retrieve the data as OSD or to cancel
+	 *         the request
+	 * @throws IOException
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 * @throws TimeoutException
 	 */
-	public Future<OSD> executeHttpPost(URI address, IMessage message, FutureCallback<OSD> callback, long timeout)
-	{
+	public Future<OSD> executeHttpPost(URI address, IMessage message, FutureCallback<OSD> callback, long timeout) {
 		return executeHttpPost(address, message.Serialize(), OSD.OSDFormat.Xml, null, callback, timeout);
 	}
 
 	/**
 	 * Asynchronous HTTP Post request from a capability that requires a OSD formated
-	 * request entity. This function returns either after the server responded
-	 * with any data or when the timeout expired
+	 * request entity. This function returns either after the server responded with
+	 * any data or when the timeout expired
 	 * 
-	 * @param address The uri to post the data to
-	 * @param data The OSD data
-	 * @param format The OSD data format to serialize the data into
-	 * @return A Future that can be used to retrieve the data as OSD or to cancel the request
-	 * @throws IOException 
+	 * @param address
+	 *            The uri to post the data to
+	 * @param data
+	 *            The OSD data
+	 * @param format
+	 *            The OSD data format to serialize the data into
+	 * @return A Future that can be used to retrieve the data as OSD or to cancel
+	 *         the request
+	 * @throws IOException
 	 */
-	public Future<OSD> executeHttpPost(URI address, OSD data, OSD.OSDFormat format)
-	{
+	public Future<OSD> executeHttpPost(URI address, OSD data, OSD.OSDFormat format) {
 		return executeHttpPost(address, data, format, null, null, TIMEOUT_INFINITE);
 	}
 
 	/**
 	 * Asynchronous HTTP Post request from a capability that requires a OSD formated
-	 * request entity. This function returns either after the server responded
-	 * with any data or when the timeout expired
+	 * request entity. This function returns either after the server responded with
+	 * any data or when the timeout expired
 	 * 
-	 * @param address The uri to post the data to
-	 * @param data The OSD data
-	 * @param format The OSD data format to serialize the data into
-	 * @param callback The callback to call for reporting of failure or success or null
-	 * @param timeout The timeout in ms to wait for a request
-	 * @return A Future that can be used to retrieve the data as OSD or to cancel the request
-	 * @throws IOException 
+	 * @param address
+	 *            The uri to post the data to
+	 * @param data
+	 *            The OSD data
+	 * @param format
+	 *            The OSD data format to serialize the data into
+	 * @param callback
+	 *            The callback to call for reporting of failure or success or null
+	 * @param timeout
+	 *            The timeout in ms to wait for a request
+	 * @return A Future that can be used to retrieve the data as OSD or to cancel
+	 *         the request
+	 * @throws IOException
 	 */
-	public Future<OSD> executeHttpPost(URI address, OSD data, OSD.OSDFormat format, FutureCallback<OSD> callback, long timeout)
-	{
+	public Future<OSD> executeHttpPost(URI address, OSD data, OSD.OSDFormat format, FutureCallback<OSD> callback,
+			long timeout) {
 		return executeHttpPost(address, data, format, null, callback, timeout);
 	}
 
 	/**
-	 * Asynchronous HTTP Post request from a capability that requires an OSD formated
-	 * request entity. This function returns either after the server responded
-	 * with any data or when the timeout expired
+	 * Asynchronous HTTP Post request from a capability that requires an OSD
+	 * formated request entity. This function returns either after the server
+	 * responded with any data or when the timeout expired
 	 * 
-	 * @param address The uri to post the data to
-	 * @param data The OSD data
-	 * @param format The OSD data format to serialize the data into
-	 * @param encoding The encoding to use to stream the data
-	 * @param callback The callback to call for reporting of failure or success or null
-	 * @param timeout The timeout in ms to wait for a request
-	 * @return A Future that can be used to retrieve the data as OSD or to cancel the request
+	 * @param address
+	 *            The uri to post the data to
+	 * @param data
+	 *            The OSD data
+	 * @param format
+	 *            The OSD data format to serialize the data into
+	 * @param encoding
+	 *            The encoding to use to stream the data
+	 * @param callback
+	 *            The callback to call for reporting of failure or success or null
+	 * @param timeout
+	 *            The timeout in ms to wait for a request
+	 * @return A Future that can be used to retrieve the data as OSD or to cancel
+	 *         the request
 	 */
 	public Future<OSD> executeHttpPost(URI address, OSD data, OSD.OSDFormat format, String encoding,
-			                           FutureCallback<OSD> callback, long timeout)
-	{
+			FutureCallback<OSD> callback, long timeout) {
 		AbstractHttpEntity entity = new OSDEntity(data, format);
 		if (encoding != null)
 			entity.setContentEncoding(encoding);
 
 		// #region Stats Tracking
-		if (_Client != null && trackUtilization)
-		{
+		if (_Client != null && trackUtilization) {
 			_Client.Stats.updateNetStats(name, Type.Message, entity.getContentLength(), 0);
 		}
 		// #endregion
 		return executeHttpPost(address, entity, callback, timeout);
 	}
-	
-	private class OSDEntity extends AbstractHttpEntity
-	{
+
+	private class OSDEntity extends AbstractHttpEntity {
 		private byte[] bytes;
 		private OSD osd;
 		private OSDFormat format;
-		
-		public OSDEntity(OSD osd, OSDFormat format)
-		{
+
+		public OSDEntity(OSD osd, OSDFormat format) {
 			super();
 			this.osd = osd;
 			this.format = format;
@@ -290,66 +305,51 @@ public class CapsClient extends AsyncHTTPClient<OSD>
 			setContentEncoding(OSDFormat.contentEncodingDefault(format));
 		}
 
-		private byte[] getBytes() throws IOException
-		{
-			if (bytes == null)
-			{
+		private byte[] getBytes() throws IOException {
+			if (bytes == null) {
 				bytes = OSDParser.serializeToBytes(osd, format, false, getContentEncoding().getValue());
 			}
 			return bytes;
 		}
-		
+
 		@Override
-		public boolean isRepeatable()
-		{
+		public boolean isRepeatable() {
 			return true;
 		}
 
 		@Override
-		public long getContentLength()
-		{
-			try
-			{
+		public long getContentLength() {
+			try {
 				return getBytes().length;
-			} 
-			catch (IOException e)
-			{
+			} catch (IOException e) {
 			}
 			return -1;
 		}
 
 		@Override
-		public InputStream getContent() throws IOException
-		{
+		public InputStream getContent() throws IOException {
 			return new ByteArrayInputStream(getBytes());
 		}
 
 		@Override
-		public void writeTo(OutputStream outstream) throws IOException, IllegalArgumentException
-		{
-			if (outstream == null)
-			{
+		public void writeTo(OutputStream outstream) throws IOException, IllegalArgumentException {
+			if (outstream == null) {
 				throw new IllegalArgumentException("Output stream may not be null");
 			}
 			outstream.write(getBytes());
 		}
 
 		@Override
-		public boolean isStreaming()
-		{
+		public boolean isStreaming() {
 			return false;
 		}
 	}
 
 	@Override
-	protected OSD convertContent(InputStream in, String encoding) throws IOException
-	{
-		try
-		{
+	protected OSD convertContent(InputStream in, String encoding) throws IOException {
+		try {
 			return OSDParser.deserialize(in, OSDFormat.Xml, encoding);
-		}
-		catch (ParseException ex)
-		{
+		} catch (ParseException ex) {
 			logger.error("Error converting the HTTP response into structured data at offset " + ex.getErrorOffset());
 		}
 		return null;

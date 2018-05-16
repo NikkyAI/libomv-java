@@ -47,25 +47,23 @@ import libomv.Gui.windows.MainControl;
 import libomv.io.AgentManager.ChatType;
 import libomv.types.UUID;
 
-public class LocalChannel extends AbstractChannel
-{
+public class LocalChannel extends AbstractChannel {
 	private static final long serialVersionUID = 1L;
-	
+
 	private boolean printLocalMessage = false;
 
-	private JScrollPane jScrpAttendents; 
+	private JScrollPane jScrpAttendents;
 	private int chatChannel = 0;
 
 	/**
 	 * This is the default constructor
 	 */
-	public LocalChannel(MainControl main)
-	{
+	public LocalChannel(MainControl main) {
 		super(main, "Local Chat", UUID.Zero, UUID.Zero);
-		
+
 		JPanel panelNorth = new JPanel();
 		panelNorth.setLayout(new BoxLayout(panelNorth, BoxLayout.X_AXIS));
-		
+
 		JTextField textField = new JTextField();
 		textField.setColumns(10);
 		panelNorth.add(textField);
@@ -75,16 +73,14 @@ public class LocalChannel extends AbstractChannel
 		jtbExpandAttendents.setSelected(false);
 		getJScrpAttendents().setVisible(false);
 		add(getJScrpAttendents(), BorderLayout.EAST);
-		jtbExpandAttendents.addItemListener(new ItemListener()
-		{
+		jtbExpandAttendents.addItemListener(new ItemListener() {
 			@Override
-			public void itemStateChanged(ItemEvent e)
-			{
+			public void itemStateChanged(ItemEvent e) {
 				getJScrpAttendents().setVisible(e.getStateChange() == ItemEvent.SELECTED);
 				validate();
 			}
 		});
-	
+
 		panelNorth.add(jtbExpandAttendents);
 		add(panelNorth, BorderLayout.NORTH);
 	}
@@ -92,82 +88,71 @@ public class LocalChannel extends AbstractChannel
 	/**
 	 * Receive a message.
 	 * 
-	 * @param message The message received.
-	 * @throws BadLocationException 
+	 * @param message
+	 *            The message received.
+	 * @throws BadLocationException
 	 */
 	@Override
-	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style) throws BadLocationException
-	{
+	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style)
+			throws BadLocationException {
 		boolean self = fromId != null && fromId.equals(_Client.Self.getAgentID());
 		// Did we already print that message?
-		if (!(self  && printLocalMessage))
-		{
+		if (!(self && printLocalMessage)) {
 			String localStyle = style, localMessage = message, chatStyle = STYLE_CHATREMOTE;
-			if (self)
-			{
+			if (self) {
 				chatStyle = STYLE_CHATLOCAL;
 			}
 			// Determine if this is a friend...
-			else if (_Client.Friends.getFriendList().containsKey(fromId))
-			{
+			else if (_Client.Friends.getFriendList().containsKey(fromId)) {
 				chatStyle = STYLE_CHATREMOTEFRIEND;
 			}
-		
+
 			// If this is an action message
-			if (message.startsWith("/me "))
-			{
+			if (message.startsWith("/me ")) {
 				localStyle = style != null ? style : STYLE_ACTION;
 				// Remove the "/me"
 				localMessage = message.substring(3);
-			}
-			else if (style == null)
-			{
-				 localStyle = STYLE_REGULAR;
-				 localMessage = ": " + message;
+			} else if (style == null) {
+				localStyle = STYLE_REGULAR;
+				localMessage = ": " + message;
 			}
 			addMessage(new ChatItem(timestamp, fromName, chatStyle, localMessage, localStyle));
 		}
 	}
 
-	protected void transmitMessage(String message, ChatType chatType) throws Exception
-	{
-        if (message == null || message.trim().isEmpty())
-        	return;
+	protected void transmitMessage(String message, ChatType chatType) throws Exception {
+		if (message == null || message.trim().isEmpty())
+			return;
 
 		// Indicate that we're no longer typing.
 		super.transmitMessage(message, chatType);
 
-        int channel = 0;
+		int channel = 0;
 		String shortMessage, localMessage = message, style = STYLE_REGULAR, self = _Client.Self.getName();
 		ChatType localType = chatType;
-		
-        if (message.length() >= 1000)
-        {
-        	localMessage = message.substring(0, 1000);
-        }
-		addHistory(localMessage);	
+
+		if (message.length() >= 1000) {
+			localMessage = message.substring(0, 1000);
+		}
+		addHistory(localMessage);
 
 		// Do we have a command?
-		if (localMessage.charAt(0) == '/')
-		{
+		if (localMessage.charAt(0) == '/') {
 			String firstWord = "";
-			try
-			{
+			try {
 				firstWord = localMessage.split("\\s")[0].toLowerCase();
+			} catch (Exception ex) {
 			}
-			catch(Exception ex) { }
 
 			shortMessage = localMessage.substring(firstWord.length()).trim();
 
 			// Deal with actions.
-			if (firstWord.equals("/me"))
-			{
+			if (firstWord.equals("/me")) {
 				style = STYLE_ACTION;
 				// Send the message as is
 			}
 			// Shout
-			else if ((firstWord.startsWith("/shout")) || (firstWord.equals("/s")))
-			{
+			else if ((firstWord.startsWith("/shout")) || (firstWord.equals("/s"))) {
 				localType = ChatType.Shout;
 				style = STYLE_ACTION;
 				// Send the message without the /shout command
@@ -175,67 +160,51 @@ public class LocalChannel extends AbstractChannel
 				shortMessage = " shouts: " + shortMessage;
 			}
 			// Whisper
-			else if ((firstWord.startsWith("/whisper")) || (firstWord.equals("/w")))
-			{
+			else if ((firstWord.startsWith("/whisper")) || (firstWord.equals("/w"))) {
 				localType = ChatType.Whisper;
 				style = STYLE_ACTION;
 				// Send the message without the /whisper command
 				localMessage = shortMessage;
 				shortMessage = " whispers: " + shortMessage;
-			} 
-			else if (firstWord.length() > 1)
-			{
+			} else if (firstWord.length() > 1) {
 				// Is there a channel request?
-				if (firstWord.equals("//"))
-				{
+				if (firstWord.equals("//")) {
 					// Use previous channel
 					channel = chatChannel;
-				}
-				else
-				{
-					try
-					{
+				} else {
+					try {
 						channel = Integer.parseInt(firstWord.substring(1));
 						chatChannel = channel;
+					} catch (Exception ex) {
 					}
-					catch (Exception ex) { }
 				}
 
-				if (channel != 0)
-				{
+				if (channel != 0) {
 					localMessage = shortMessage;
 					// Remove the channel command from the message
 					shortMessage = "(" + channel + ") " + shortMessage;
-				}
-				else
-				{
+				} else {
 					shortMessage = ": " + shortMessage;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			shortMessage = ": " + message;
 		}
 
-		if (printLocalMessage)
-		{
+		if (printLocalMessage) {
 			addMessage(new ChatItem(self, STYLE_CHATLOCAL, shortMessage, style));
 		}
 
 		// Send the message.
 		_Client.Self.Chat(localMessage, channel, localType);
 	}
-	
-	protected void triggerTyping(boolean start) throws Exception
-	{
-		_Client.Self.Chat("typing", 0, start ? ChatType.StartTyping : ChatType.StopTyping);		
+
+	protected void triggerTyping(boolean start) throws Exception {
+		_Client.Self.Chat("typing", 0, start ? ChatType.StartTyping : ChatType.StopTyping);
 	}
 
-	private JScrollPane getJScrpAttendents()
-	{
-		if (jScrpAttendents == null)
-		{
+	private JScrollPane getJScrpAttendents() {
+		if (jScrpAttendents == null) {
 			jScrpAttendents = new JScrollPane();
 			add(jScrpAttendents, BorderLayout.EAST);
 

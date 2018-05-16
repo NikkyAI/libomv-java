@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import java.util.ArrayList;
@@ -20,15 +19,17 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
 /**
  * 
- * 			A two-dimensional texture sampler.
- * 			
+ * A two-dimensional texture sampler.
  * 
- * <p>Java class for fx_sampler2D_common complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * Java class for fx_sampler2D_common complex type.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="fx_sampler2D_common">
@@ -54,301 +55,264 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "fx_sampler2D_common", propOrder = {
-    "source",
-    "wrapS",
-    "wrapT",
-    "minfilter",
-    "magfilter",
-    "mipfilter",
-    "borderColor",
-    "mipmapMaxlevel",
-    "mipmapBias",
-    "extra"
-})
-@XmlSeeAlso({
-    GlSampler2D.class,
-    CgSampler2D.class
-})
+@XmlType(name = "fx_sampler2D_common", propOrder = { "source", "wrapS", "wrapT", "minfilter", "magfilter", "mipfilter",
+		"borderColor", "mipmapMaxlevel", "mipmapBias", "extra" })
+@XmlSeeAlso({ GlSampler2D.class, CgSampler2D.class })
 public class FxSampler2DCommon {
 
-    @XmlElement(required = true)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlSchemaType(name = "NCName")
-    protected String source;
-    @XmlElement(name = "wrap_s", defaultValue = "WRAP")
-    @XmlSchemaType(name = "NMTOKEN")
-    protected FxSamplerWrapCommon wrapS;
-    @XmlElement(name = "wrap_t", defaultValue = "WRAP")
-    @XmlSchemaType(name = "NMTOKEN")
-    protected FxSamplerWrapCommon wrapT;
-    @XmlElement(defaultValue = "NONE")
-    @XmlSchemaType(name = "NMTOKEN")
-    protected FxSamplerFilterCommon minfilter;
-    @XmlElement(defaultValue = "NONE")
-    @XmlSchemaType(name = "NMTOKEN")
-    protected FxSamplerFilterCommon magfilter;
-    @XmlElement(defaultValue = "NONE")
-    @XmlSchemaType(name = "NMTOKEN")
-    protected FxSamplerFilterCommon mipfilter;
-    @XmlList
-    @XmlElement(name = "border_color", type = Double.class)
-    protected List<Double> borderColor;
-    @XmlElement(name = "mipmap_maxlevel", defaultValue = "255")
-    @XmlSchemaType(name = "unsignedByte")
-    protected Short mipmapMaxlevel;
-    @XmlElement(name = "mipmap_bias", defaultValue = "0.0")
-    protected Float mipmapBias;
-    protected List<Extra> extra;
+	@XmlElement(required = true)
+	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+	@XmlSchemaType(name = "NCName")
+	protected String source;
+	@XmlElement(name = "wrap_s", defaultValue = "WRAP")
+	@XmlSchemaType(name = "NMTOKEN")
+	protected FxSamplerWrapCommon wrapS;
+	@XmlElement(name = "wrap_t", defaultValue = "WRAP")
+	@XmlSchemaType(name = "NMTOKEN")
+	protected FxSamplerWrapCommon wrapT;
+	@XmlElement(defaultValue = "NONE")
+	@XmlSchemaType(name = "NMTOKEN")
+	protected FxSamplerFilterCommon minfilter;
+	@XmlElement(defaultValue = "NONE")
+	@XmlSchemaType(name = "NMTOKEN")
+	protected FxSamplerFilterCommon magfilter;
+	@XmlElement(defaultValue = "NONE")
+	@XmlSchemaType(name = "NMTOKEN")
+	protected FxSamplerFilterCommon mipfilter;
+	@XmlList
+	@XmlElement(name = "border_color", type = Double.class)
+	protected List<Double> borderColor;
+	@XmlElement(name = "mipmap_maxlevel", defaultValue = "255")
+	@XmlSchemaType(name = "unsignedByte")
+	protected Short mipmapMaxlevel;
+	@XmlElement(name = "mipmap_bias", defaultValue = "0.0")
+	protected Float mipmapBias;
+	protected List<Extra> extra;
 
-    /**
-     * Gets the value of the source property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getSource() {
-        return source;
-    }
+	/**
+	 * Gets the value of the source property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getSource() {
+		return source;
+	}
 
-    /**
-     * Sets the value of the source property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setSource(String value) {
-        this.source = value;
-    }
+	/**
+	 * Sets the value of the source property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setSource(String value) {
+		this.source = value;
+	}
 
-    /**
-     * Gets the value of the wrapS property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FxSamplerWrapCommon }
-     *     
-     */
-    public FxSamplerWrapCommon getWrapS() {
-        return wrapS;
-    }
+	/**
+	 * Gets the value of the wrapS property.
+	 * 
+	 * @return possible object is {@link FxSamplerWrapCommon }
+	 * 
+	 */
+	public FxSamplerWrapCommon getWrapS() {
+		return wrapS;
+	}
 
-    /**
-     * Sets the value of the wrapS property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FxSamplerWrapCommon }
-     *     
-     */
-    public void setWrapS(FxSamplerWrapCommon value) {
-        this.wrapS = value;
-    }
+	/**
+	 * Sets the value of the wrapS property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link FxSamplerWrapCommon }
+	 * 
+	 */
+	public void setWrapS(FxSamplerWrapCommon value) {
+		this.wrapS = value;
+	}
 
-    /**
-     * Gets the value of the wrapT property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FxSamplerWrapCommon }
-     *     
-     */
-    public FxSamplerWrapCommon getWrapT() {
-        return wrapT;
-    }
+	/**
+	 * Gets the value of the wrapT property.
+	 * 
+	 * @return possible object is {@link FxSamplerWrapCommon }
+	 * 
+	 */
+	public FxSamplerWrapCommon getWrapT() {
+		return wrapT;
+	}
 
-    /**
-     * Sets the value of the wrapT property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FxSamplerWrapCommon }
-     *     
-     */
-    public void setWrapT(FxSamplerWrapCommon value) {
-        this.wrapT = value;
-    }
+	/**
+	 * Sets the value of the wrapT property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link FxSamplerWrapCommon }
+	 * 
+	 */
+	public void setWrapT(FxSamplerWrapCommon value) {
+		this.wrapT = value;
+	}
 
-    /**
-     * Gets the value of the minfilter property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FxSamplerFilterCommon }
-     *     
-     */
-    public FxSamplerFilterCommon getMinfilter() {
-        return minfilter;
-    }
+	/**
+	 * Gets the value of the minfilter property.
+	 * 
+	 * @return possible object is {@link FxSamplerFilterCommon }
+	 * 
+	 */
+	public FxSamplerFilterCommon getMinfilter() {
+		return minfilter;
+	}
 
-    /**
-     * Sets the value of the minfilter property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FxSamplerFilterCommon }
-     *     
-     */
-    public void setMinfilter(FxSamplerFilterCommon value) {
-        this.minfilter = value;
-    }
+	/**
+	 * Sets the value of the minfilter property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link FxSamplerFilterCommon }
+	 * 
+	 */
+	public void setMinfilter(FxSamplerFilterCommon value) {
+		this.minfilter = value;
+	}
 
-    /**
-     * Gets the value of the magfilter property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FxSamplerFilterCommon }
-     *     
-     */
-    public FxSamplerFilterCommon getMagfilter() {
-        return magfilter;
-    }
+	/**
+	 * Gets the value of the magfilter property.
+	 * 
+	 * @return possible object is {@link FxSamplerFilterCommon }
+	 * 
+	 */
+	public FxSamplerFilterCommon getMagfilter() {
+		return magfilter;
+	}
 
-    /**
-     * Sets the value of the magfilter property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FxSamplerFilterCommon }
-     *     
-     */
-    public void setMagfilter(FxSamplerFilterCommon value) {
-        this.magfilter = value;
-    }
+	/**
+	 * Sets the value of the magfilter property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link FxSamplerFilterCommon }
+	 * 
+	 */
+	public void setMagfilter(FxSamplerFilterCommon value) {
+		this.magfilter = value;
+	}
 
-    /**
-     * Gets the value of the mipfilter property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FxSamplerFilterCommon }
-     *     
-     */
-    public FxSamplerFilterCommon getMipfilter() {
-        return mipfilter;
-    }
+	/**
+	 * Gets the value of the mipfilter property.
+	 * 
+	 * @return possible object is {@link FxSamplerFilterCommon }
+	 * 
+	 */
+	public FxSamplerFilterCommon getMipfilter() {
+		return mipfilter;
+	}
 
-    /**
-     * Sets the value of the mipfilter property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FxSamplerFilterCommon }
-     *     
-     */
-    public void setMipfilter(FxSamplerFilterCommon value) {
-        this.mipfilter = value;
-    }
+	/**
+	 * Sets the value of the mipfilter property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link FxSamplerFilterCommon }
+	 * 
+	 */
+	public void setMipfilter(FxSamplerFilterCommon value) {
+		this.mipfilter = value;
+	}
 
-    /**
-     * Gets the value of the borderColor property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the borderColor property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getBorderColor().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Double }
-     * 
-     * 
-     */
-    public List<Double> getBorderColor() {
-        if (borderColor == null) {
-            borderColor = new ArrayList<Double>();
-        }
-        return this.borderColor;
-    }
+	/**
+	 * Gets the value of the borderColor property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the borderColor property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getBorderColor().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link Double }
+	 * 
+	 * 
+	 */
+	public List<Double> getBorderColor() {
+		if (borderColor == null) {
+			borderColor = new ArrayList<Double>();
+		}
+		return this.borderColor;
+	}
 
-    /**
-     * Gets the value of the mipmapMaxlevel property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Short }
-     *     
-     */
-    public Short getMipmapMaxlevel() {
-        return mipmapMaxlevel;
-    }
+	/**
+	 * Gets the value of the mipmapMaxlevel property.
+	 * 
+	 * @return possible object is {@link Short }
+	 * 
+	 */
+	public Short getMipmapMaxlevel() {
+		return mipmapMaxlevel;
+	}
 
-    /**
-     * Sets the value of the mipmapMaxlevel property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Short }
-     *     
-     */
-    public void setMipmapMaxlevel(Short value) {
-        this.mipmapMaxlevel = value;
-    }
+	/**
+	 * Sets the value of the mipmapMaxlevel property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link Short }
+	 * 
+	 */
+	public void setMipmapMaxlevel(Short value) {
+		this.mipmapMaxlevel = value;
+	}
 
-    /**
-     * Gets the value of the mipmapBias property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Float }
-     *     
-     */
-    public Float getMipmapBias() {
-        return mipmapBias;
-    }
+	/**
+	 * Gets the value of the mipmapBias property.
+	 * 
+	 * @return possible object is {@link Float }
+	 * 
+	 */
+	public Float getMipmapBias() {
+		return mipmapBias;
+	}
 
-    /**
-     * Sets the value of the mipmapBias property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Float }
-     *     
-     */
-    public void setMipmapBias(Float value) {
-        this.mipmapBias = value;
-    }
+	/**
+	 * Sets the value of the mipmapBias property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link Float }
+	 * 
+	 */
+	public void setMipmapBias(Float value) {
+		this.mipmapBias = value;
+	}
 
-    /**
-     * Gets the value of the extra property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the extra property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getExtra().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Extra }
-     * 
-     * 
-     */
-    public List<Extra> getExtra() {
-        if (extra == null) {
-            extra = new ArrayList<Extra>();
-        }
-        return this.extra;
-    }
+	/**
+	 * Gets the value of the extra property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the extra property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getExtra().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link Extra }
+	 * 
+	 * 
+	 */
+	public List<Extra> getExtra() {
+		if (extra == null) {
+			extra = new ArrayList<Extra>();
+		}
+		return this.extra;
+	}
 
 }

@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -29,16 +29,14 @@
  */
 package libomv.primMesher.types;
 
-public class ViewerPolygon
-{
-    public int v1;
-    public int v2;
-    public int v3;
+public class ViewerPolygon {
+	public int v1;
+	public int v2;
+	public int v3;
 
-    public ViewerPolygon(int v1, int v2, int v3)
-    {
-        this.v1 = v1;
-        this.v2 = v2;
-        this.v3 = v3;
-    }
+	public ViewerPolygon(int v1, int v2, int v3) {
+		this.v1 = v1;
+		this.v2 = v2;
+		this.v3 = v3;
+	}
 }

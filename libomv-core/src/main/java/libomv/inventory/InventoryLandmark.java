@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -32,46 +32,38 @@ package libomv.inventory;
 import libomv.types.UUID;
 
 /** InventoryLandmark Class, contains details on a specific location */
-public class InventoryLandmark extends InventoryItem
-{
+public class InventoryLandmark extends InventoryItem {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Construct an InventoryLandmark object
-	 * 
+	 *
 	 * @param itemID
 	 *            A {@link OpenMetaverse.UUID} which becomes the
 	 *            {@link OpenMetaverse.InventoryItem} objects AssetUUID
 	 */
-	public InventoryLandmark(UUID itemID)
-	{
+	public InventoryLandmark(UUID itemID) {
 		super(itemID);
 	}
 
 	@Override
-	public InventoryType getType()
-	{
+	public InventoryType getType() {
 		return InventoryType.Landmark;
 
 	}
 
 	/**
-	 * Landmarks use the InventoryItemFlags struct and will have a flag of 1
-	 * set if they have been visited
+	 * Landmarks use the InventoryItemFlags struct and will have a flag of 1 set if
+	 * they have been visited
 	 */
-	public final boolean getLandmarkVisited()
-	{
+	public final boolean getLandmarkVisited() {
 		return (ItemFlags & 1) != 0;
 	}
 
-	public final void setLandmarkVisited(boolean value)
-	{
-		if (value)
-		{
+	public final void setLandmarkVisited(boolean value) {
+		if (value) {
 			ItemFlags |= 1;
-		}
-		else
-		{
+		} else {
 			ItemFlags &= ~1;
 		}
 	}

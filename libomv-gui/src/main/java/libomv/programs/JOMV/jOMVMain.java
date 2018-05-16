@@ -33,35 +33,27 @@ import javax.swing.JPopupMenu;
 import libomv.Gui.windows.MainWindow;
 import libomv.io.GridClient;
 
-public class jOMVMain
-{
+public class jOMVMain {
 	private static MainWindow main;
-	
-	private static void createAndShowGUI() throws Exception
-	{
+
+	private static void createAndShowGUI() throws Exception {
 		JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 		main = new MainWindow(new GridClient());
-		main.setVisible(true);	
+		main.setVisible(true);
 	}
-	
+
 	// The main entry point for the application.
-	static public void main(String[] args) throws Exception
-	{
+	static public void main(String[] args) throws Exception {
 		System.setProperty("teamdev.license.info", "true");
-		java.awt.EventQueue.invokeLater(new Runnable()
-	    {
-	    	@Override
-			public void run()
-	    	{
-	    		try
-				{
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
 					createAndShowGUI();
-				}
-				catch (Exception e)
-				{
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
-	        }
-	    });
+			}
+		});
 	}
 }

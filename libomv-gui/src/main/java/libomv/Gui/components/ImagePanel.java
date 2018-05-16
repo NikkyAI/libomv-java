@@ -46,8 +46,7 @@ import libomv.utils.Callback;
 import libomv.utils.ImageUtil;
 
 // Component to display an image loaded from a resource or other buffered image 
-public class ImagePanel extends JComponent
-{
+public class ImagePanel extends JComponent {
 	private static final Logger logger = Logger.getLogger(ImagePanel.class);
 	private static final long serialVersionUID = 1L;
 	// The image to draw
@@ -59,18 +58,17 @@ public class ImagePanel extends JComponent
 	// Our grid client for the current session
 	private GridClient _Client;
 
-	public ImagePanel()
-	{
+	public ImagePanel() {
 		super();
 	}
+
 	/**
 	 * Constructor to intialize the contained image from a resource
 	 * 
 	 * @param name
 	 *            Resource name to load the image from
 	 */
-	public ImagePanel(String name)
-	{
+	public ImagePanel(String name) {
 		super();
 		this._Image = Resources.loadImage(name);
 	}
@@ -81,8 +79,7 @@ public class ImagePanel extends JComponent
 	 * @param image
 	 *            to use when drawing this object
 	 */
-	public ImagePanel(Image image)
-	{
+	public ImagePanel(Image image) {
 		super();
 		setImage(image, true);
 	}
@@ -91,12 +88,11 @@ public class ImagePanel extends JComponent
 	 * Constructor
 	 * 
 	 * @param client
-	 * 			  The grid client to download the image through
+	 *            The grid client to download the image through
 	 * @param textureID
 	 *            The UUID of the image
 	 */
-	public ImagePanel(GridClient client, UUID textureID)
-	{
+	public ImagePanel(GridClient client, UUID textureID) {
 		super();
 		this._Client = client;
 		this._TextureID = textureID;
@@ -107,18 +103,15 @@ public class ImagePanel extends JComponent
 	 * 
 	 * @return The image contained within this control.
 	 */
-	public Image getImage()
-	{
+	public Image getImage() {
 		return _Image;
 	}
 
-	public void setImage(Image image)
-	{
+	public void setImage(Image image) {
 		setImage(image, true);
 	}
 
-	public void setImage(Image image, boolean resolved)
-	{
+	public void setImage(Image image, boolean resolved) {
 		this._Image = image;
 		this._Resolved = resolved;
 		this.repaint();
@@ -129,21 +122,19 @@ public class ImagePanel extends JComponent
 	 * 
 	 * @return True if resolved, otherwise false
 	 */
-	public boolean isResolved()
-	{
+	public boolean isResolved() {
 		return _Resolved;
 	}
-	
+
 	/**
 	 * Request the image from the server
 	 * 
 	 * @return if request was possible
 	 */
-	public boolean request()
-	{
+	public boolean request() {
 		if (_Client == null || _TextureID == null)
-		    return false;
-	    
+			return false;
+
 		_Client.Assets.RequestImage(_TextureID, new ImageDownloadCallback());
 		return true;
 	}
@@ -152,20 +143,15 @@ public class ImagePanel extends JComponent
 	 * Callback receiving the texture download result
 	 * 
 	 */
-	private class ImageDownloadCallback implements Callback<ImageDownload>
-	{
+	private class ImageDownloadCallback implements Callback<ImageDownload> {
 		@Override
-		public boolean callback(ImageDownload texture)
-		{
-			if (texture.State == TextureRequestState.Finished)
-			{
+		public boolean callback(ImageDownload texture) {
+			if (texture.State == TextureRequestState.Finished) {
 				try {
 					ManagedImage tex = ManagedImage.decode(new ByteArrayInputStream(texture.AssetData), texture.Codec);
 					Image image = ImageUtil.convert(tex);
 					setImage(image, true);
-				}
-				catch (Exception ex)
-				{
+				} catch (Exception ex) {
 					logger.error(GridClient.Log("Error decoding image", _Client), ex);
 				}
 				return true;
@@ -173,7 +159,7 @@ public class ImagePanel extends JComponent
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Called to update the component
 	 * 
@@ -181,8 +167,7 @@ public class ImagePanel extends JComponent
 	 *            The graphics to update
 	 */
 	@Override
-	public void update(Graphics g)
-	{
+	public void update(Graphics g) {
 		// Call to the super class
 		super.update(g);
 
@@ -191,8 +176,7 @@ public class ImagePanel extends JComponent
 	}
 
 	@Override
-	public void paintComponent(Graphics g)
-	{
+	public void paintComponent(Graphics g) {
 		// Call the super class.
 		super.paintComponent(g);
 

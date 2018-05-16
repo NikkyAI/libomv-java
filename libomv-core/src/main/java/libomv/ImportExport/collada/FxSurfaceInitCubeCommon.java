@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import java.util.ArrayList;
@@ -17,11 +16,13 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for fx_surface_init_cube_common complex type.
+ * <p>
+ * Java class for fx_surface_init_cube_common complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="fx_surface_init_cube_common">
@@ -67,287 +68,274 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "fx_surface_init_cube_common", propOrder = {
-    "all",
-    "primary",
-    "face"
-})
+@XmlType(name = "fx_surface_init_cube_common", propOrder = { "all", "primary", "face" })
 public class FxSurfaceInitCubeCommon {
 
-    protected FxSurfaceInitCubeCommon.All all;
-    protected FxSurfaceInitCubeCommon.Primary primary;
-    protected List<FxSurfaceInitCubeCommon.Face> face;
+	protected FxSurfaceInitCubeCommon.All all;
+	protected FxSurfaceInitCubeCommon.Primary primary;
+	protected List<FxSurfaceInitCubeCommon.Face> face;
 
-    /**
-     * Gets the value of the all property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FxSurfaceInitCubeCommon.All }
-     *     
-     */
-    public FxSurfaceInitCubeCommon.All getAll() {
-        return all;
-    }
+	/**
+	 * Gets the value of the all property.
+	 * 
+	 * @return possible object is {@link FxSurfaceInitCubeCommon.All }
+	 * 
+	 */
+	public FxSurfaceInitCubeCommon.All getAll() {
+		return all;
+	}
 
-    /**
-     * Sets the value of the all property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FxSurfaceInitCubeCommon.All }
-     *     
-     */
-    public void setAll(FxSurfaceInitCubeCommon.All value) {
-        this.all = value;
-    }
+	/**
+	 * Sets the value of the all property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link FxSurfaceInitCubeCommon.All }
+	 * 
+	 */
+	public void setAll(FxSurfaceInitCubeCommon.All value) {
+		this.all = value;
+	}
 
-    /**
-     * Gets the value of the primary property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FxSurfaceInitCubeCommon.Primary }
-     *     
-     */
-    public FxSurfaceInitCubeCommon.Primary getPrimary() {
-        return primary;
-    }
+	/**
+	 * Gets the value of the primary property.
+	 * 
+	 * @return possible object is {@link FxSurfaceInitCubeCommon.Primary }
+	 * 
+	 */
+	public FxSurfaceInitCubeCommon.Primary getPrimary() {
+		return primary;
+	}
 
-    /**
-     * Sets the value of the primary property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FxSurfaceInitCubeCommon.Primary }
-     *     
-     */
-    public void setPrimary(FxSurfaceInitCubeCommon.Primary value) {
-        this.primary = value;
-    }
+	/**
+	 * Sets the value of the primary property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link FxSurfaceInitCubeCommon.Primary }
+	 * 
+	 */
+	public void setPrimary(FxSurfaceInitCubeCommon.Primary value) {
+		this.primary = value;
+	}
 
-    /**
-     * Gets the value of the face property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the face property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFace().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FxSurfaceInitCubeCommon.Face }
-     * 
-     * 
-     */
-    public List<FxSurfaceInitCubeCommon.Face> getFace() {
-        if (face == null) {
-            face = new ArrayList<FxSurfaceInitCubeCommon.Face>();
-        }
-        return this.face;
-    }
+	/**
+	 * Gets the value of the face property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the face property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getFace().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list
+	 * {@link FxSurfaceInitCubeCommon.Face }
+	 * 
+	 * 
+	 */
+	public List<FxSurfaceInitCubeCommon.Face> getFace() {
+		if (face == null) {
+			face = new ArrayList<FxSurfaceInitCubeCommon.Face>();
+		}
+		return this.face;
+	}
 
+	/**
+	 * <p>
+	 * Java class for anonymous complex type.
+	 * 
+	 * <p>
+	 * The following schema fragment specifies the expected content contained within
+	 * this class.
+	 * 
+	 * <pre>
+	 * &lt;complexType>
+	 *   &lt;complexContent>
+	 *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+	 *       &lt;attribute name="ref" use="required" type="{http://www.w3.org/2001/XMLSchema}IDREF" />
+	 *     &lt;/restriction>
+	 *   &lt;/complexContent>
+	 * &lt;/complexType>
+	 * </pre>
+	 * 
+	 * 
+	 */
+	@XmlAccessorType(XmlAccessType.FIELD)
+	@XmlType(name = "")
+	public static class All {
 
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;attribute name="ref" use="required" type="{http://www.w3.org/2001/XMLSchema}IDREF" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
-    public static class All {
+		@XmlAttribute(name = "ref", required = true)
+		@XmlIDREF
+		@XmlSchemaType(name = "IDREF")
+		protected Object ref;
 
-        @XmlAttribute(name = "ref", required = true)
-        @XmlIDREF
-        @XmlSchemaType(name = "IDREF")
-        protected Object ref;
+		/**
+		 * Gets the value of the ref property.
+		 * 
+		 * @return possible object is {@link Object }
+		 * 
+		 */
+		public Object getRef() {
+			return ref;
+		}
 
-        /**
-         * Gets the value of the ref property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Object }
-         *     
-         */
-        public Object getRef() {
-            return ref;
-        }
+		/**
+		 * Sets the value of the ref property.
+		 * 
+		 * @param value
+		 *            allowed object is {@link Object }
+		 * 
+		 */
+		public void setRef(Object value) {
+			this.ref = value;
+		}
 
-        /**
-         * Sets the value of the ref property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Object }
-         *     
-         */
-        public void setRef(Object value) {
-            this.ref = value;
-        }
+	}
 
-    }
+	/**
+	 * <p>
+	 * Java class for anonymous complex type.
+	 * 
+	 * <p>
+	 * The following schema fragment specifies the expected content contained within
+	 * this class.
+	 * 
+	 * <pre>
+	 * &lt;complexType>
+	 *   &lt;complexContent>
+	 *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+	 *       &lt;attribute name="ref" use="required" type="{http://www.w3.org/2001/XMLSchema}IDREF" />
+	 *     &lt;/restriction>
+	 *   &lt;/complexContent>
+	 * &lt;/complexType>
+	 * </pre>
+	 * 
+	 * 
+	 */
+	@XmlAccessorType(XmlAccessType.FIELD)
+	@XmlType(name = "")
+	public static class Face {
 
+		@XmlAttribute(name = "ref", required = true)
+		@XmlIDREF
+		@XmlSchemaType(name = "IDREF")
+		protected Object ref;
 
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;attribute name="ref" use="required" type="{http://www.w3.org/2001/XMLSchema}IDREF" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
-    public static class Face {
+		/**
+		 * Gets the value of the ref property.
+		 * 
+		 * @return possible object is {@link Object }
+		 * 
+		 */
+		public Object getRef() {
+			return ref;
+		}
 
-        @XmlAttribute(name = "ref", required = true)
-        @XmlIDREF
-        @XmlSchemaType(name = "IDREF")
-        protected Object ref;
+		/**
+		 * Sets the value of the ref property.
+		 * 
+		 * @param value
+		 *            allowed object is {@link Object }
+		 * 
+		 */
+		public void setRef(Object value) {
+			this.ref = value;
+		}
 
-        /**
-         * Gets the value of the ref property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Object }
-         *     
-         */
-        public Object getRef() {
-            return ref;
-        }
+	}
 
-        /**
-         * Sets the value of the ref property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Object }
-         *     
-         */
-        public void setRef(Object value) {
-            this.ref = value;
-        }
+	/**
+	 * <p>
+	 * Java class for anonymous complex type.
+	 * 
+	 * <p>
+	 * The following schema fragment specifies the expected content contained within
+	 * this class.
+	 * 
+	 * <pre>
+	 * &lt;complexType>
+	 *   &lt;complexContent>
+	 *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+	 *       &lt;sequence minOccurs="0">
+	 *         &lt;element name="order" type="{http://www.collada.org/2005/11/COLLADASchema}fx_surface_face_enum" maxOccurs="6" minOccurs="6"/>
+	 *       &lt;/sequence>
+	 *       &lt;attribute name="ref" use="required" type="{http://www.w3.org/2001/XMLSchema}IDREF" />
+	 *     &lt;/restriction>
+	 *   &lt;/complexContent>
+	 * &lt;/complexType>
+	 * </pre>
+	 * 
+	 * 
+	 */
+	@XmlAccessorType(XmlAccessType.FIELD)
+	@XmlType(name = "", propOrder = { "order" })
+	public static class Primary {
 
-    }
+		@XmlSchemaType(name = "string")
+		protected List<FxSurfaceFaceEnum> order;
+		@XmlAttribute(name = "ref", required = true)
+		@XmlIDREF
+		@XmlSchemaType(name = "IDREF")
+		protected Object ref;
 
+		/**
+		 * Gets the value of the order property.
+		 * 
+		 * <p>
+		 * This accessor method returns a reference to the live list, not a snapshot.
+		 * Therefore any modification you make to the returned list will be present
+		 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+		 * for the order property.
+		 * 
+		 * <p>
+		 * For example, to add a new item, do as follows:
+		 * 
+		 * <pre>
+		 * getOrder().add(newItem);
+		 * </pre>
+		 * 
+		 * 
+		 * <p>
+		 * Objects of the following type(s) are allowed in the list
+		 * {@link FxSurfaceFaceEnum }
+		 * 
+		 * 
+		 */
+		public List<FxSurfaceFaceEnum> getOrder() {
+			if (order == null) {
+				order = new ArrayList<FxSurfaceFaceEnum>();
+			}
+			return this.order;
+		}
 
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence minOccurs="0">
-     *         &lt;element name="order" type="{http://www.collada.org/2005/11/COLLADASchema}fx_surface_face_enum" maxOccurs="6" minOccurs="6"/>
-     *       &lt;/sequence>
-     *       &lt;attribute name="ref" use="required" type="{http://www.w3.org/2001/XMLSchema}IDREF" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "order"
-    })
-    public static class Primary {
+		/**
+		 * Gets the value of the ref property.
+		 * 
+		 * @return possible object is {@link Object }
+		 * 
+		 */
+		public Object getRef() {
+			return ref;
+		}
 
-        @XmlSchemaType(name = "string")
-        protected List<FxSurfaceFaceEnum> order;
-        @XmlAttribute(name = "ref", required = true)
-        @XmlIDREF
-        @XmlSchemaType(name = "IDREF")
-        protected Object ref;
+		/**
+		 * Sets the value of the ref property.
+		 * 
+		 * @param value
+		 *            allowed object is {@link Object }
+		 * 
+		 */
+		public void setRef(Object value) {
+			this.ref = value;
+		}
 
-        /**
-         * Gets the value of the order property.
-         * 
-         * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the order property.
-         * 
-         * <p>
-         * For example, to add a new item, do as follows:
-         * <pre>
-         *    getOrder().add(newItem);
-         * </pre>
-         * 
-         * 
-         * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link FxSurfaceFaceEnum }
-         * 
-         * 
-         */
-        public List<FxSurfaceFaceEnum> getOrder() {
-            if (order == null) {
-                order = new ArrayList<FxSurfaceFaceEnum>();
-            }
-            return this.order;
-        }
-
-        /**
-         * Gets the value of the ref property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Object }
-         *     
-         */
-        public Object getRef() {
-            return ref;
-        }
-
-        /**
-         * Sets the value of the ref property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Object }
-         *     
-         */
-        public void setRef(Object value) {
-            this.ref = value;
-        }
-
-    }
+	}
 
 }

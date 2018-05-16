@@ -32,7 +32,6 @@ package libomv.io.capabilities;
 import libomv.capabilities.IMessage;
 import libomv.io.SimulatorManager;
 
-public interface CapsCallback
-{
+public interface CapsCallback {
 	public void capsCallback(IMessage message, SimulatorManager simulator) throws Exception;
 }

@@ -54,8 +54,7 @@ import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDString;
 import libomv.utils.Helpers;
 
-public class RpcClient extends AsyncHTTPClient<OSD>
-{
+public class RpcClient extends AsyncHTTPClient<OSD> {
 	private static final String METHOD_CALL = "methodCall";
 	private static final String METHOD_NAME = "methodName";
 	private static final String METHOD_RESPONSE = "methodResponse";
@@ -84,36 +83,28 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat(DATETIME_FORMAT);
 
-	public RpcClient(String name) throws IOReactorException
-	{
+	public RpcClient(String name) throws IOReactorException {
 		super(name);
 	}
 
 	@Override
-	protected void finalize() throws Throwable
-	{
-		try
-		{
+	protected void finalize() throws Throwable {
+		try {
 			shutdown(true);
-		}
-		catch (InterruptedException e)
-		{
+		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}
-		finally
-		{
+		} finally {
 			super.finalize();
 		}
 	}
 
-	public Future<OSD> call(URI address, String method, OSDArray params, FutureCallback<OSD> callback, long timeout) throws XmlPullParserException
-	{
+	public Future<OSD> call(URI address, String method, OSDArray params, FutureCallback<OSD> callback, long timeout)
+			throws XmlPullParserException {
 		return executeHttpPost(address, new OSDEntity(method, params), callback, timeout);
 	}
-	
 
-	private void methodCall(XmlSerializer serializer, String method, OSDArray params) throws IllegalArgumentException, IllegalStateException, IOException
-	{
+	private void methodCall(XmlSerializer serializer, String method, OSDArray params)
+			throws IllegalArgumentException, IllegalStateException, IOException {
 		serializer.startDocument(null, null);
 		serializer.startTag(null, METHOD_CALL);
 		// set method name
@@ -125,14 +116,12 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 		serializer.endDocument();
 	}
 
-	private void serializeParams(XmlSerializer serializer, OSDArray params) throws IllegalArgumentException, IllegalStateException, IOException
-	{
-		if (params != null && params.size() != 0)
-		{
+	private void serializeParams(XmlSerializer serializer, OSDArray params)
+			throws IllegalArgumentException, IllegalStateException, IOException {
+		if (params != null && params.size() != 0) {
 			// set method params
 			serializer.startTag(null, PARAMS);
-			for (int i = 0; i < params.size(); i++)
-			{
+			for (int i = 0; i < params.size(); i++) {
 				serializer.startTag(null, PARAM).startTag(null, TAG_VALUE);
 				serialize(serializer, params.get(i));
 				serializer.endTag(null, TAG_VALUE).endTag(null, PARAM);
@@ -141,17 +130,14 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 		}
 	}
 
-	private class OSDEntity extends AbstractHttpEntity
-	{
+	private class OSDEntity extends AbstractHttpEntity {
 		private byte[] bytes;
 		private OSDArray params;
 		private String method;
 		private XmlSerializer serializer;
 
-		
-		public OSDEntity(String method, OSDArray params) throws XmlPullParserException
-		{
-	        super();
+		public OSDEntity(String method, OSDArray params) throws XmlPullParserException {
+			super();
 			this.method = method;
 			this.params = params;
 			serializer = XmlPullParserFactory.newInstance().newSerializer();
@@ -159,10 +145,8 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 			setContentEncoding(Helpers.UTF8_ENCODING);
 		}
 
-		private byte[] getBytes() throws IllegalArgumentException, IllegalStateException, IOException
-		{
-			if (bytes == null)
-			{
+		private byte[] getBytes() throws IllegalArgumentException, IllegalStateException, IOException {
+			if (bytes == null) {
 				ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 				serializer.setOutput(outstream, getContentEncoding().getValue());
 				methodCall(serializer, method, params);
@@ -170,55 +154,44 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 			}
 			return bytes;
 		}
-		
+
 		@Override
-		public boolean isRepeatable()
-		{
+		public boolean isRepeatable() {
 			return true;
 		}
 
 		@Override
-		public long getContentLength()
-		{
-			try
-			{
+		public long getContentLength() {
+			try {
 				return getBytes().length;
-			} 
-			catch (IOException e)
-			{
+			} catch (IOException e) {
 			}
 			return -1;
 		}
 
 		@Override
-		public InputStream getContent() throws IOException, IllegalStateException
-		{
+		public InputStream getContent() throws IOException, IllegalStateException {
 			return new ByteArrayInputStream(getBytes());
 		}
 
 		@Override
-		public void writeTo(OutputStream outstream) throws IOException
-		{
-	        if (outstream == null)
-	        {
-	            throw new IllegalArgumentException("Output stream may not be null");
-	        }
+		public void writeTo(OutputStream outstream) throws IOException {
+			if (outstream == null) {
+				throw new IllegalArgumentException("Output stream may not be null");
+			}
 			serializer.setOutput(outstream, getContentEncoding().getValue());
 			methodCall(serializer, method, params);
 		}
 
 		@Override
-		public boolean isStreaming()
-		{
+		public boolean isStreaming() {
 			return false;
 		}
 	}
 
 	@Override
-	protected OSD convertContent(InputStream in, String encoding) throws IOException
-	{
-		try
-		{
+	protected OSD convertContent(InputStream in, String encoding) throws IOException {
+		try {
 			// parse response stuff
 			//
 			// setup pull parser
@@ -231,8 +204,7 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 
 			pullParser.nextTag(); // either Tag.PARAMS (<params>) or Tag.FAULT (<fault>)
 			String tag = pullParser.getName();
-			if (tag.equals(PARAMS))
-			{
+			if (tag.equals(PARAMS)) {
 				// normal response
 				pullParser.nextTag(); // Tag.PARAM (<param>)
 				pullParser.require(XmlPullParser.START_TAG, null, PARAM);
@@ -241,188 +213,148 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 				// deserialize result
 				pullParser.require(XmlPullParser.START_TAG, null, TAG_VALUE);
 				return deserialize(pullParser);
-			}
-			else if (tag.equals(FAULT))
-			{
+			} else if (tag.equals(FAULT)) {
 				// fault response
 				pullParser.nextTag(); // Tag.VALUE (<value>)
 
 				// deserialize fault result
 				pullParser.require(XmlPullParser.START_TAG, null, TAG_VALUE);
 				return deserialize(pullParser);
-			}
-			else
-			{
+			} else {
 				throw new IOException("Bad tag <" + tag + "> in XMLRPC response - neither <params> nor <fault>");
 			}
-		}
-		catch (XmlPullParserException ex)
-		{
-			throw new IOException("PullParserExeception in XMLRPC response: " + ex.getMessage());			
+		} catch (XmlPullParserException ex) {
+			throw new IOException("PullParserExeception in XMLRPC response: " + ex.getMessage());
 		}
 	}
-	
 
-	private void serialize(XmlSerializer serializer, OSD data) throws IOException
-	{
+	private void serialize(XmlSerializer serializer, OSD data) throws IOException {
 		// check for scalar types:
-		switch (data.getType())
-		{
-		    case Unknown:
-				serializer.startTag(null, TYPE_NIL).endTag(null, TYPE_NIL);
-			    break;
-		    case Boolean:
-				serializer.startTag(null, TYPE_BOOLEAN).text(data.AsString()).endTag(null, TYPE_BOOLEAN);
-		    	break;
-			case Integer:
-				serializer.startTag(null, TYPE_I4).text(data.AsString()).endTag(null, TYPE_I4);
-				break;
-//			case Long:
-//			    serializer.startTag(null, TYPE_I8).text(data.AsString()).endTag(null, TYPE_I8);
-//				break;
-			case Real:
-			    serializer.startTag(null, TYPE_DOUBLE).text(data.AsString()).endTag(null, TYPE_DOUBLE);
-			    break;
-			case String:
-			case URI:
-			case UUID:
-				serializer.startTag(null, TYPE_STRING).text(data.AsString()).endTag(null, TYPE_STRING);
-			    break;
-			case Date:
-				String dateStr = dateFormat.format(data.AsDate());
-				serializer.startTag(null, TYPE_DATE_TIME_ISO8601).text(dateStr).endTag(null, TYPE_DATE_TIME_ISO8601);
-			    break;
-			case Binary:
-				String value = new String(Base64.encodeBase64(data.AsBinary()));
-				serializer.startTag(null, TYPE_BASE64).text(value).endTag(null, TYPE_BASE64);
-			    break;
-			case Array:
-				serializer.startTag(null, TYPE_ARRAY).startTag(null, TAG_DATA);
-				OSDArray array = (OSDArray)data;
-				for (int i = 0; i < array.size(); i++)
-				{
-					serializer.startTag(null, TAG_VALUE);
-					serialize(serializer, array.get(i));
-					serializer.endTag(null, TAG_VALUE);
-				}
-				serializer.endTag(null, TAG_DATA).endTag(null, TYPE_ARRAY);
-			    break;
-			case Map:
-				serializer.startTag(null, TYPE_STRUCT);
-				OSDMap map = (OSDMap) data;
-				Iterator<String> iter = map.keySet().iterator();
-				while (iter.hasNext())
-				{
-					String key = iter.next();
-					serializer.startTag(null, TAG_MEMBER);
-					serializer.startTag(null, TAG_NAME).text(key).endTag(null, TAG_NAME);
-					serializer.startTag(null, TAG_VALUE);
-					serialize(serializer, map.get(key));
-					serializer.endTag(null, TAG_VALUE);
-					serializer.endTag(null, TAG_MEMBER);
-				}
-				serializer.endTag(null, TYPE_STRUCT);
-			    break;
-            default:
-            	break;
+		switch (data.getType()) {
+		case Unknown:
+			serializer.startTag(null, TYPE_NIL).endTag(null, TYPE_NIL);
+			break;
+		case Boolean:
+			serializer.startTag(null, TYPE_BOOLEAN).text(data.AsString()).endTag(null, TYPE_BOOLEAN);
+			break;
+		case Integer:
+			serializer.startTag(null, TYPE_I4).text(data.AsString()).endTag(null, TYPE_I4);
+			break;
+		// case Long:
+		// serializer.startTag(null, TYPE_I8).text(data.AsString()).endTag(null,
+		// TYPE_I8);
+		// break;
+		case Real:
+			serializer.startTag(null, TYPE_DOUBLE).text(data.AsString()).endTag(null, TYPE_DOUBLE);
+			break;
+		case String:
+		case URI:
+		case UUID:
+			serializer.startTag(null, TYPE_STRING).text(data.AsString()).endTag(null, TYPE_STRING);
+			break;
+		case Date:
+			String dateStr = dateFormat.format(data.AsDate());
+			serializer.startTag(null, TYPE_DATE_TIME_ISO8601).text(dateStr).endTag(null, TYPE_DATE_TIME_ISO8601);
+			break;
+		case Binary:
+			String value = new String(Base64.encodeBase64(data.AsBinary()));
+			serializer.startTag(null, TYPE_BASE64).text(value).endTag(null, TYPE_BASE64);
+			break;
+		case Array:
+			serializer.startTag(null, TYPE_ARRAY).startTag(null, TAG_DATA);
+			OSDArray array = (OSDArray) data;
+			for (int i = 0; i < array.size(); i++) {
+				serializer.startTag(null, TAG_VALUE);
+				serialize(serializer, array.get(i));
+				serializer.endTag(null, TAG_VALUE);
+			}
+			serializer.endTag(null, TAG_DATA).endTag(null, TYPE_ARRAY);
+			break;
+		case Map:
+			serializer.startTag(null, TYPE_STRUCT);
+			OSDMap map = (OSDMap) data;
+			Iterator<String> iter = map.keySet().iterator();
+			while (iter.hasNext()) {
+				String key = iter.next();
+				serializer.startTag(null, TAG_MEMBER);
+				serializer.startTag(null, TAG_NAME).text(key).endTag(null, TAG_NAME);
+				serializer.startTag(null, TAG_VALUE);
+				serialize(serializer, map.get(key));
+				serializer.endTag(null, TAG_VALUE);
+				serializer.endTag(null, TAG_MEMBER);
+			}
+			serializer.endTag(null, TYPE_STRUCT);
+			break;
+		default:
+			break;
 		}
 	}
 
-	private OSD deserialize(XmlPullParser parser) throws XmlPullParserException, IOException
-	{
-		if (parser.isEmptyElementTag())
-		{
+	private OSD deserialize(XmlPullParser parser) throws XmlPullParserException, IOException {
+		if (parser.isEmptyElementTag()) {
 			// degenerated <value />, return empty string
 			return new OSDString("");
 		}
 
 		OSD ret = null;
-		try
-		{
+		try {
 			parser.nextTag();
 			String value = null, name = parser.getName();
-			if (name.equals(TAG_VALUE) && parser.getEventType() == XmlPullParser.END_TAG)
-			{
+			if (name.equals(TAG_VALUE) && parser.getEventType() == XmlPullParser.END_TAG) {
 				// empty <value></value>, return empty string
 				return new OSDString("");
-			}
-			else if (name.equals(TYPE_NIL))
-			{
+			} else if (name.equals(TYPE_NIL)) {
 				ret = new OSD();
 			}
-			
+
 			boolean notEmpty = !parser.isEmptyElementTag();
-			if (name.equals(TYPE_INT) || name.equals(TYPE_I4))
-			{
+			if (name.equals(TYPE_INT) || name.equals(TYPE_I4)) {
 				int num = 0;
-				if (notEmpty)
-				{
+				if (notEmpty) {
 					num = Helpers.TryParseInt(parser.nextText());
 				}
 				ret = OSD.FromInteger(num);
-			}
-			else if (name.equals(TYPE_I8))
-			{
+			} else if (name.equals(TYPE_I8)) {
 				long num = 0;
-				if (notEmpty)
-				{
+				if (notEmpty) {
 					num = Helpers.TryParseLong(parser.nextText());
 				}
 				ret = OSD.FromLong(num);
-			}
-			else if (name.equals(TYPE_DOUBLE))
-			{
+			} else if (name.equals(TYPE_DOUBLE)) {
 				double num = 0d;
-				if (notEmpty)
-				{
+				if (notEmpty) {
 					num = Helpers.TryParseDouble(parser.nextText());
 				}
 				ret = OSD.FromReal(num);
-			}
-			else if (name.equals(TYPE_BOOLEAN))
-			{
+			} else if (name.equals(TYPE_BOOLEAN)) {
 				boolean bool = false;
-				if (notEmpty)
-				{
+				if (notEmpty) {
 					value = parser.nextText().trim();
 					bool = (value != null && !value.isEmpty() && value.equals("1"));
 				}
 				ret = OSD.FromBoolean(bool);
-			}
-			else if (name.equals(TYPE_STRING))
-			{
+			} else if (name.equals(TYPE_STRING)) {
 				ret = OSD.FromUUID(parser.nextText());
-			}
-			else if (name.equals(TYPE_DATE_TIME_ISO8601))
-			{
+			} else if (name.equals(TYPE_DATE_TIME_ISO8601)) {
 				value = parser.nextText();
-				try
-				{
+				try {
 					ret = OSD.FromDate(dateFormat.parse(value));
-				}
-				catch (ParseException e)
-				{
+				} catch (ParseException e) {
 					throw new IOException("Cannot deserialize dateTime " + value);
 				}
-			}
-			else if (name.equals(TYPE_BASE64))
-			{
+			} else if (name.equals(TYPE_BASE64)) {
 				byte[] data = Helpers.EmptyBytes;
-				if (notEmpty)
-				{
+				if (notEmpty) {
 					data = Base64.decodeBase64(parser.nextText());
 				}
 				ret = OSD.FromBinary(data);
-			}
-			else if (name.equals(TYPE_ARRAY))
-			{
+			} else if (name.equals(TYPE_ARRAY)) {
 				parser.nextTag(); // TAG_DATA (<data>)
 				parser.require(XmlPullParser.START_TAG, null, TAG_DATA);
 
 				parser.nextTag();
 				OSDArray list = new OSDArray();
-				while (parser.getName().equals(TAG_VALUE))
-				{
+				while (parser.getName().equals(TAG_VALUE)) {
 					parser.require(XmlPullParser.START_TAG, null, TAG_VALUE);
 					list.add(deserialize(parser));
 					parser.nextTag();
@@ -431,35 +363,25 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 				parser.nextTag(); // TAG_ARRAY (</array>)
 				parser.require(XmlPullParser.END_TAG, null, TYPE_ARRAY);
 				ret = list;
-			}
-			else if (name.equals(TYPE_STRUCT))
-			{
+			} else if (name.equals(TYPE_STRUCT)) {
 				parser.nextTag();
 				OSDMap map = new OSDMap();
-				while (parser.getName().equals(TAG_MEMBER))
-				{
+				while (parser.getName().equals(TAG_MEMBER)) {
 					String memberName = null;
 					OSD memberValue = null;
-					while (true)
-					{
+					while (true) {
 						parser.nextTag();
 						String key = parser.getName();
-						if (key.equals(TAG_NAME))
-						{
+						if (key.equals(TAG_NAME)) {
 							memberName = parser.nextText();
-						}
-						else if (key.equals(TAG_VALUE))
-						{
+						} else if (key.equals(TAG_VALUE)) {
 							parser.require(XmlPullParser.START_TAG, null, TAG_VALUE);
 							memberValue = deserialize(parser);
-						}
-						else
-						{
+						} else {
 							break;
 						}
 					}
-					if (memberName != null && memberValue != null)
-					{
+					if (memberName != null && memberValue != null) {
 						map.put(memberName, memberValue);
 					}
 					parser.require(XmlPullParser.END_TAG, null, TAG_MEMBER);
@@ -467,14 +389,10 @@ public class RpcClient extends AsyncHTTPClient<OSD>
 				}
 				parser.require(XmlPullParser.END_TAG, null, TYPE_STRUCT);
 				ret = map;
-			}
-			else
-			{
+			} else {
 				throw new IOException("Cannot deserialize " + name);
 			}
-		}
-		catch (XmlPullParserException e)
-		{
+		} catch (XmlPullParserException e) {
 			// TYPE_STRING (<string>) is not required
 			ret = new OSDString(parser.getText());
 		}

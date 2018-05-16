@@ -5,18 +5,20 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for fx_surface_format_hint_range_enum.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
+ * Java class for fx_surface_format_hint_range_enum.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ * <p>
+ * 
  * <pre>
  * &lt;simpleType name="fx_surface_format_hint_range_enum">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -34,43 +36,46 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum FxSurfaceFormatHintRangeEnum {
 
+	/**
+	 * Format is representing a decimal value that remains within the -1 to 1 range.
+	 * Implimentation could be integer-fixedpoint or floats.
+	 * 
+	 */
+	SNORM,
 
-    /**
-     * Format is representing a decimal value that remains within the -1 to 1 range. Implimentation could be integer-fixedpoint or floats.
-     * 
-     */
-    SNORM,
+	/**
+	 * Format is representing a decimal value that remains within the 0 to 1 range.
+	 * Implimentation could be integer-fixedpoint or floats.
+	 * 
+	 */
+	UNORM,
 
-    /**
-     * Format is representing a decimal value that remains within the 0 to 1 range. Implimentation could be integer-fixedpoint or floats.
-     * 
-     */
-    UNORM,
+	/**
+	 * Format is representing signed integer numbers. (ex. 8bits = -128 to 127)
+	 * 
+	 */
+	SINT,
 
-    /**
-     * Format is representing signed integer numbers.  (ex. 8bits = -128 to 127)
-     * 
-     */
-    SINT,
+	/**
+	 * Format is representing unsigned integer numbers. (ex. 8bits = 0 to 255)
+	 * 
+	 */
+	UINT,
 
-    /**
-     * Format is representing unsigned integer numbers.  (ex. 8bits = 0 to 255)
-     * 
-     */
-    UINT,
+	/**
+	 * Format should support full floating point ranges. High precision is expected
+	 * to be 32bit. Mid precision may be 16 to 32 bit. Low precision is expected to
+	 * be 16 bit.
+	 * 
+	 */
+	FLOAT;
 
-    /**
-     * Format should support full floating point ranges.  High precision is expected to be 32bit. Mid precision may be 16 to 32 bit.  Low precision is expected to be 16 bit.
-     * 
-     */
-    FLOAT;
+	public String value() {
+		return name();
+	}
 
-    public String value() {
-        return name();
-    }
-
-    public static FxSurfaceFormatHintRangeEnum fromValue(String v) {
-        return valueOf(v);
-    }
+	public static FxSurfaceFormatHintRangeEnum fromValue(String v) {
+		return valueOf(v);
+	}
 
 }

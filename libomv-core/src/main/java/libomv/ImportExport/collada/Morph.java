@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import java.util.ArrayList;
@@ -18,11 +17,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -54,255 +55,241 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "source",
-    "targets",
-    "extra"
-})
+@XmlType(name = "", propOrder = { "source", "targets", "extra" })
 @XmlRootElement(name = "morph")
 public class Morph {
 
-    @XmlElement(required = true)
-    protected List<Source> source;
-    @XmlElement(required = true)
-    protected Morph.Targets targets;
-    protected List<Extra> extra;
-    @XmlAttribute(name = "method")
-    protected MorphMethodType method;
-    @XmlAttribute(name = "sourceUri", required = true)
-    @XmlSchemaType(name = "anyURI")
-    protected String sourceUri;
+	@XmlElement(required = true)
+	protected List<Source> source;
+	@XmlElement(required = true)
+	protected Morph.Targets targets;
+	protected List<Extra> extra;
+	@XmlAttribute(name = "method")
+	protected MorphMethodType method;
+	@XmlAttribute(name = "sourceUri", required = true)
+	@XmlSchemaType(name = "anyURI")
+	protected String sourceUri;
 
-    /**
-     * 
-     * 						The morph element must contain at least two source elements.
-     * 						Gets the value of the source property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the source property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getSource().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Source }
-     * 
-     * 
-     */
-    public List<Source> getSource() {
-        if (source == null) {
-            source = new ArrayList<Source>();
-        }
-        return this.source;
-    }
+	/**
+	 * 
+	 * The morph element must contain at least two source elements. Gets the value
+	 * of the source property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the source property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getSource().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link Source }
+	 * 
+	 * 
+	 */
+	public List<Source> getSource() {
+		if (source == null) {
+			source = new ArrayList<Source>();
+		}
+		return this.source;
+	}
 
-    /**
-     * Gets the value of the targets property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Morph.Targets }
-     *     
-     */
-    public Morph.Targets getTargets() {
-        return targets;
-    }
+	/**
+	 * Gets the value of the targets property.
+	 * 
+	 * @return possible object is {@link Morph.Targets }
+	 * 
+	 */
+	public Morph.Targets getTargets() {
+		return targets;
+	}
 
-    /**
-     * Sets the value of the targets property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Morph.Targets }
-     *     
-     */
-    public void setTargets(Morph.Targets value) {
-        this.targets = value;
-    }
+	/**
+	 * Sets the value of the targets property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link Morph.Targets }
+	 * 
+	 */
+	public void setTargets(Morph.Targets value) {
+		this.targets = value;
+	}
 
-    /**
-     * 
-     * 						The extra element may appear any number of times.
-     * 						Gets the value of the extra property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the extra property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getExtra().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Extra }
-     * 
-     * 
-     */
-    public List<Extra> getExtra() {
-        if (extra == null) {
-            extra = new ArrayList<Extra>();
-        }
-        return this.extra;
-    }
+	/**
+	 * 
+	 * The extra element may appear any number of times. Gets the value of the extra
+	 * property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the extra property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getExtra().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link Extra }
+	 * 
+	 * 
+	 */
+	public List<Extra> getExtra() {
+		if (extra == null) {
+			extra = new ArrayList<Extra>();
+		}
+		return this.extra;
+	}
 
-    /**
-     * Gets the value of the method property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link MorphMethodType }
-     *     
-     */
-    public MorphMethodType getMethod() {
-        if (method == null) {
-            return MorphMethodType.NORMALIZED;
-        } else {
-            return method;
-        }
-    }
+	/**
+	 * Gets the value of the method property.
+	 * 
+	 * @return possible object is {@link MorphMethodType }
+	 * 
+	 */
+	public MorphMethodType getMethod() {
+		if (method == null) {
+			return MorphMethodType.NORMALIZED;
+		} else {
+			return method;
+		}
+	}
 
-    /**
-     * Sets the value of the method property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link MorphMethodType }
-     *     
-     */
-    public void setMethod(MorphMethodType value) {
-        this.method = value;
-    }
+	/**
+	 * Sets the value of the method property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link MorphMethodType }
+	 * 
+	 */
+	public void setMethod(MorphMethodType value) {
+		this.method = value;
+	}
 
-    /**
-     * Gets the value of the sourceUri property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getSourceUri() {
-        return sourceUri;
-    }
+	/**
+	 * Gets the value of the sourceUri property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getSourceUri() {
+		return sourceUri;
+	}
 
-    /**
-     * Sets the value of the sourceUri property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setSourceUri(String value) {
-        this.sourceUri = value;
-    }
+	/**
+	 * Sets the value of the sourceUri property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setSourceUri(String value) {
+		this.sourceUri = value;
+	}
 
+	/**
+	 * <p>
+	 * Java class for anonymous complex type.
+	 * 
+	 * <p>
+	 * The following schema fragment specifies the expected content contained within
+	 * this class.
+	 * 
+	 * <pre>
+	 * &lt;complexType>
+	 *   &lt;complexContent>
+	 *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+	 *       &lt;sequence>
+	 *         &lt;element name="input" type="{http://www.collada.org/2005/11/COLLADASchema}InputLocal" maxOccurs="unbounded" minOccurs="2"/>
+	 *         &lt;element ref="{http://www.collada.org/2005/11/COLLADASchema}extra" maxOccurs="unbounded" minOccurs="0"/>
+	 *       &lt;/sequence>
+	 *     &lt;/restriction>
+	 *   &lt;/complexContent>
+	 * &lt;/complexType>
+	 * </pre>
+	 * 
+	 * 
+	 */
+	@XmlAccessorType(XmlAccessType.FIELD)
+	@XmlType(name = "", propOrder = { "input", "extra" })
+	public static class Targets {
 
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element name="input" type="{http://www.collada.org/2005/11/COLLADASchema}InputLocal" maxOccurs="unbounded" minOccurs="2"/>
-     *         &lt;element ref="{http://www.collada.org/2005/11/COLLADASchema}extra" maxOccurs="unbounded" minOccurs="0"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "input",
-        "extra"
-    })
-    public static class Targets {
+		@XmlElement(required = true)
+		protected List<InputLocal> input;
+		protected List<Extra> extra;
 
-        @XmlElement(required = true)
-        protected List<InputLocal> input;
-        protected List<Extra> extra;
+		/**
+		 * Gets the value of the input property.
+		 * 
+		 * <p>
+		 * This accessor method returns a reference to the live list, not a snapshot.
+		 * Therefore any modification you make to the returned list will be present
+		 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+		 * for the input property.
+		 * 
+		 * <p>
+		 * For example, to add a new item, do as follows:
+		 * 
+		 * <pre>
+		 * getInput().add(newItem);
+		 * </pre>
+		 * 
+		 * 
+		 * <p>
+		 * Objects of the following type(s) are allowed in the list {@link InputLocal }
+		 * 
+		 * 
+		 */
+		public List<InputLocal> getInput() {
+			if (input == null) {
+				input = new ArrayList<InputLocal>();
+			}
+			return this.input;
+		}
 
-        /**
-         * Gets the value of the input property.
-         * 
-         * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the input property.
-         * 
-         * <p>
-         * For example, to add a new item, do as follows:
-         * <pre>
-         *    getInput().add(newItem);
-         * </pre>
-         * 
-         * 
-         * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link InputLocal }
-         * 
-         * 
-         */
-        public List<InputLocal> getInput() {
-            if (input == null) {
-                input = new ArrayList<InputLocal>();
-            }
-            return this.input;
-        }
+		/**
+		 * 
+		 * The extra element may appear any number of times. Gets the value of the extra
+		 * property.
+		 * 
+		 * <p>
+		 * This accessor method returns a reference to the live list, not a snapshot.
+		 * Therefore any modification you make to the returned list will be present
+		 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+		 * for the extra property.
+		 * 
+		 * <p>
+		 * For example, to add a new item, do as follows:
+		 * 
+		 * <pre>
+		 * getExtra().add(newItem);
+		 * </pre>
+		 * 
+		 * 
+		 * <p>
+		 * Objects of the following type(s) are allowed in the list {@link Extra }
+		 * 
+		 * 
+		 */
+		public List<Extra> getExtra() {
+			if (extra == null) {
+				extra = new ArrayList<Extra>();
+			}
+			return this.extra;
+		}
 
-        /**
-         * 
-         * 									The extra element may appear any number of times.
-         * 									Gets the value of the extra property.
-         * 
-         * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the extra property.
-         * 
-         * <p>
-         * For example, to add a new item, do as follows:
-         * <pre>
-         *    getExtra().add(newItem);
-         * </pre>
-         * 
-         * 
-         * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link Extra }
-         * 
-         * 
-         */
-        public List<Extra> getExtra() {
-            if (extra == null) {
-                extra = new ArrayList<Extra>();
-            }
-            return this.extra;
-        }
-
-    }
+	}
 
 }

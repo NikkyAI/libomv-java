@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import java.util.ArrayList;
@@ -22,11 +21,13 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -50,261 +51,248 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "asset",
-    "annotate",
-    "image",
-    "newparam",
-    "fxProfileAbstract",
-    "extra"
-})
+@XmlType(name = "", propOrder = { "asset", "annotate", "image", "newparam", "fxProfileAbstract", "extra" })
 @XmlRootElement(name = "effect")
 public class Effect {
 
-    protected Asset asset;
-    protected List<FxAnnotateCommon> annotate;
-    protected List<Image> image;
-    protected List<FxNewparamCommon> newparam;
-    @XmlElementRef(name = "fx_profile_abstract", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class)
-    protected List<Object> fxProfileAbstract;
-    protected List<Extra> extra;
-    @XmlAttribute(name = "id", required = true)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlID
-    @XmlSchemaType(name = "ID")
-    protected String id;
-    @XmlAttribute(name = "name")
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlSchemaType(name = "NCName")
-    protected String name;
+	protected Asset asset;
+	protected List<FxAnnotateCommon> annotate;
+	protected List<Image> image;
+	protected List<FxNewparamCommon> newparam;
+	@XmlElementRef(name = "fx_profile_abstract", namespace = "http://www.collada.org/2005/11/COLLADASchema", type = JAXBElement.class)
+	protected List<Object> fxProfileAbstract;
+	protected List<Extra> extra;
+	@XmlAttribute(name = "id", required = true)
+	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+	@XmlID
+	@XmlSchemaType(name = "ID")
+	protected String id;
+	@XmlAttribute(name = "name")
+	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+	@XmlSchemaType(name = "NCName")
+	protected String name;
 
-    /**
-     * 
-     * 						The effect element may contain an asset element.
-     * 						
-     * 
-     * @return
-     *     possible object is
-     *     {@link Asset }
-     *     
-     */
-    public Asset getAsset() {
-        return asset;
-    }
+	/**
+	 * 
+	 * The effect element may contain an asset element.
+	 * 
+	 * 
+	 * @return possible object is {@link Asset }
+	 * 
+	 */
+	public Asset getAsset() {
+		return asset;
+	}
 
-    /**
-     * Sets the value of the asset property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Asset }
-     *     
-     */
-    public void setAsset(Asset value) {
-        this.asset = value;
-    }
+	/**
+	 * Sets the value of the asset property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link Asset }
+	 * 
+	 */
+	public void setAsset(Asset value) {
+		this.asset = value;
+	}
 
-    /**
-     * Gets the value of the annotate property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the annotate property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAnnotate().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FxAnnotateCommon }
-     * 
-     * 
-     */
-    public List<FxAnnotateCommon> getAnnotate() {
-        if (annotate == null) {
-            annotate = new ArrayList<FxAnnotateCommon>();
-        }
-        return this.annotate;
-    }
+	/**
+	 * Gets the value of the annotate property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the annotate property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getAnnotate().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list
+	 * {@link FxAnnotateCommon }
+	 * 
+	 * 
+	 */
+	public List<FxAnnotateCommon> getAnnotate() {
+		if (annotate == null) {
+			annotate = new ArrayList<FxAnnotateCommon>();
+		}
+		return this.annotate;
+	}
 
-    /**
-     * 
-     * 						The image element allows you to create image resources which can be shared by multipe profiles.
-     * 						Gets the value of the image property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the image property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getImage().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Image }
-     * 
-     * 
-     */
-    public List<Image> getImage() {
-        if (image == null) {
-            image = new ArrayList<Image>();
-        }
-        return this.image;
-    }
+	/**
+	 * 
+	 * The image element allows you to create image resources which can be shared by
+	 * multipe profiles. Gets the value of the image property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the image property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getImage().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link Image }
+	 * 
+	 * 
+	 */
+	public List<Image> getImage() {
+		if (image == null) {
+			image = new ArrayList<Image>();
+		}
+		return this.image;
+	}
 
-    /**
-     * Gets the value of the newparam property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the newparam property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getNewparam().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FxNewparamCommon }
-     * 
-     * 
-     */
-    public List<FxNewparamCommon> getNewparam() {
-        if (newparam == null) {
-            newparam = new ArrayList<FxNewparamCommon>();
-        }
-        return this.newparam;
-    }
+	/**
+	 * Gets the value of the newparam property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the newparam property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getNewparam().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list
+	 * {@link FxNewparamCommon }
+	 * 
+	 * 
+	 */
+	public List<FxNewparamCommon> getNewparam() {
+		if (newparam == null) {
+			newparam = new ArrayList<FxNewparamCommon>();
+		}
+		return this.newparam;
+	}
 
-    /**
-     * 
-     * 						This is the substituion group hook which allows you to swap in other COLLADA FX profiles.
-     * 						Gets the value of the fxProfileAbstract property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the fxProfileAbstract property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFxProfileAbstract().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link JAXBElement }{@code <}{@link ProfileCG }{@code >}
-     * {@link JAXBElement }{@code <}{@link ProfileCOMMON }{@code >}
-     * {@link JAXBElement }{@code <}{@link ProfileGLSL }{@code >}
-     * {@link JAXBElement }{@code <}{@link ProfileGLES }{@code >}
-     * {@link JAXBElement }{@code <}{@link Object }{@code >}
-     * 
-     * 
-     */
-    public List<Object> getFxProfileAbstract() {
-        if (fxProfileAbstract == null) {
-            fxProfileAbstract = new ArrayList<Object>();
-        }
-        return this.fxProfileAbstract;
-    }
+	/**
+	 * 
+	 * This is the substituion group hook which allows you to swap in other COLLADA
+	 * FX profiles. Gets the value of the fxProfileAbstract property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the fxProfileAbstract property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getFxProfileAbstract().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link JAXBElement
+	 * }{@code <}{@link ProfileCG }{@code >} {@link JAXBElement
+	 * }{@code <}{@link ProfileCOMMON }{@code >} {@link JAXBElement
+	 * }{@code <}{@link ProfileGLSL }{@code >} {@link JAXBElement
+	 * }{@code <}{@link ProfileGLES }{@code >} {@link JAXBElement
+	 * }{@code <}{@link Object }{@code >}
+	 * 
+	 * 
+	 */
+	public List<Object> getFxProfileAbstract() {
+		if (fxProfileAbstract == null) {
+			fxProfileAbstract = new ArrayList<Object>();
+		}
+		return this.fxProfileAbstract;
+	}
 
-    /**
-     * 
-     * 						The extra element may appear any number of times.
-     * 						Gets the value of the extra property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the extra property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getExtra().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Extra }
-     * 
-     * 
-     */
-    public List<Extra> getExtra() {
-        if (extra == null) {
-            extra = new ArrayList<Extra>();
-        }
-        return this.extra;
-    }
+	/**
+	 * 
+	 * The extra element may appear any number of times. Gets the value of the extra
+	 * property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the extra property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getExtra().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link Extra }
+	 * 
+	 * 
+	 */
+	public List<Extra> getExtra() {
+		if (extra == null) {
+			extra = new ArrayList<Extra>();
+		}
+		return this.extra;
+	}
 
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getId() {
-        return id;
-    }
+	/**
+	 * Gets the value of the id property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getId() {
+		return id;
+	}
 
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setId(String value) {
-        this.id = value;
-    }
+	/**
+	 * Sets the value of the id property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setId(String value) {
+		this.id = value;
+	}
 
-    /**
-     * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getName() {
-        return name;
-    }
+	/**
+	 * Gets the value of the name property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
+	/**
+	 * Sets the value of the name property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setName(String value) {
+		this.name = value;
+	}
 
 }

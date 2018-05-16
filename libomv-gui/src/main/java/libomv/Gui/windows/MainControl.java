@@ -39,8 +39,7 @@ import libomv.Gui.StateController;
 import libomv.io.GridClient;
 import libomv.utils.Settings;
 
-public interface MainControl extends ActionListener
-{
+public interface MainControl extends ActionListener {
 	public static final String cmdLogout = "logout";
 	public static final String cmdLogin = "login";
 	public static final String cmdQuit = "quit";
@@ -52,10 +51,16 @@ public interface MainControl extends ActionListener
 
 	/* interface methods */
 	public JFrame getJFrame();
+
 	public GridClient getGridClient();
+
 	public Settings getAppSettings();
+
 	public StateController getStateControl();
+
 	public void setJMenuBar(JMenuBar menuBar);
+
 	public void setContentPane(Component pane);
+
 	public void setControlPane(JPanel panel);
 }

@@ -41,29 +41,25 @@ import libomv.Gui.components.list.InventoryTreeModel;
 import libomv.inventory.InventoryNode;
 import libomv.io.GridClient;
 
-public class InventoryTree extends JScrollPane implements TreeWillExpandListener
-{
+public class InventoryTree extends JScrollPane implements TreeWillExpandListener {
 	private static final long serialVersionUID = 1L;
 
 	private GridClient _Client;
 
 	private JTree jTrInventory;
 
-	public InventoryTree(GridClient client)
-	{
+	public InventoryTree(GridClient client) {
 		super();
 		this._Client = client;
 
 		setViewportView(getJTInventory());
 	}
 
-	private JTree getJTInventory()
-	{
-		if (jTrInventory == null)
-		{
-            jTrInventory = new JTree(new InventoryTreeModel(_Client.Inventory));
-            jTrInventory.setRootVisible(false);
-            jTrInventory.setCellRenderer(new CellRenderer(jTrInventory.getCellRenderer()));
+	private JTree getJTInventory() {
+		if (jTrInventory == null) {
+			jTrInventory = new JTree(new InventoryTreeModel(_Client.Inventory));
+			jTrInventory.setRootVisible(false);
+			jTrInventory.setCellRenderer(new CellRenderer(jTrInventory.getCellRenderer()));
 		}
 		return jTrInventory;
 	}
@@ -71,43 +67,38 @@ public class InventoryTree extends JScrollPane implements TreeWillExpandListener
 	/**
 	 * A TreeCellRenderer displays each node of a tree. The default renderer
 	 * displays arbitrary Object nodes by calling their toString() method. The
-	 * Component.toString() method returns long strings with extraneous
-	 * information. Therefore, we use this "wrapper" implementation of
-	 * TreeCellRenderer to convert nodes from Component objects to useful String
-	 * values before passing those String values on to the default renderer.
+	 * Component.toString() method returns long strings with extraneous information.
+	 * Therefore, we use this "wrapper" implementation of TreeCellRenderer to
+	 * convert nodes from Component objects to useful String values before passing
+	 * those String values on to the default renderer.
 	 */
-	static class CellRenderer implements TreeCellRenderer
-	{
+	static class CellRenderer implements TreeCellRenderer {
 		TreeCellRenderer renderer; // The renderer we are a wrapper for
 
 		// Constructor: just remember the renderer
-		public CellRenderer(TreeCellRenderer renderer)
-		{
+		public CellRenderer(TreeCellRenderer renderer) {
 			this.renderer = renderer;
 		}
 
 		// This is the only TreeCellRenderer method.
 		// Compute the string to display, and pass it to the wrapped renderer
 		@Override
-		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected,
-				                                      boolean expanded, boolean leaf, int row, boolean hasFocus)
-		{
-			String name = ((InventoryNode)value).name; // Component name
+		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded,
+				boolean leaf, int row, boolean hasFocus) {
+			String name = ((InventoryNode) value).name; // Component name
 			// Use the wrapped renderer object to do the real work
 			return renderer.getTreeCellRendererComponent(tree, name, selected, expanded, leaf, row, hasFocus);
 		}
 	}
 
 	@Override
-	public void treeWillCollapse(TreeExpansionEvent e) throws ExpandVetoException
-	{
+	public void treeWillCollapse(TreeExpansionEvent e) throws ExpandVetoException {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void treeWillExpand(TreeExpansionEvent e) throws ExpandVetoException
-	{
+	public void treeWillExpand(TreeExpansionEvent e) throws ExpandVetoException {
 		// TODO Auto-generated method stub
 
 	}

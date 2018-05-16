@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -17,16 +16,18 @@ import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
 /**
  * 
- * 			The TargetableFloat type is used to represent elements which contain a single float value which can 
- * 			be targeted for animation.
- * 			
+ * The TargetableFloat type is used to represent elements which contain a single
+ * float value which can be targeted for animation.
  * 
- * <p>Java class for TargetableFloat complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * Java class for TargetableFloat complex type.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="TargetableFloat">
@@ -41,56 +42,51 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TargetableFloat", propOrder = {
-    "value"
-})
+@XmlType(name = "TargetableFloat", propOrder = { "value" })
 public class TargetableFloat {
 
-    @XmlValue
-    protected double value;
-    @XmlAttribute(name = "sid")
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlSchemaType(name = "NCName")
-    protected String sid;
+	@XmlValue
+	protected double value;
+	@XmlAttribute(name = "sid")
+	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+	@XmlSchemaType(name = "NCName")
+	protected String sid;
 
-    /**
-     * Gets the value of the value property.
-     * 
-     */
-    public double getValue() {
-        return value;
-    }
+	/**
+	 * Gets the value of the value property.
+	 * 
+	 */
+	public double getValue() {
+		return value;
+	}
 
-    /**
-     * Sets the value of the value property.
-     * 
-     */
-    public void setValue(double value) {
-        this.value = value;
-    }
+	/**
+	 * Sets the value of the value property.
+	 * 
+	 */
+	public void setValue(double value) {
+		this.value = value;
+	}
 
-    /**
-     * Gets the value of the sid property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getSid() {
-        return sid;
-    }
+	/**
+	 * Gets the value of the sid property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getSid() {
+		return sid;
+	}
 
-    /**
-     * Sets the value of the sid property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setSid(String value) {
-        this.sid = value;
-    }
+	/**
+	 * Sets the value of the sid property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setSid(String value) {
+		this.sid = value;
+	}
 
 }

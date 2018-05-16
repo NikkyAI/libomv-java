@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,11 +12,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for gles_texcombiner_command_type complex type.
+ * <p>
+ * Java class for gles_texcombiner_command_type complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="gles_texcombiner_command_type">
@@ -36,88 +37,75 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "gles_texcombiner_command_type", propOrder = {
-    "constant",
-    "rgb",
-    "alpha"
-})
+@XmlType(name = "gles_texcombiner_command_type", propOrder = { "constant", "rgb", "alpha" })
 public class GlesTexcombinerCommandType {
 
-    protected GlesTextureConstantType constant;
-    @XmlElement(name = "RGB")
-    protected GlesTexcombinerCommandRGBType rgb;
-    protected GlesTexcombinerCommandAlphaType alpha;
+	protected GlesTextureConstantType constant;
+	@XmlElement(name = "RGB")
+	protected GlesTexcombinerCommandRGBType rgb;
+	protected GlesTexcombinerCommandAlphaType alpha;
 
-    /**
-     * Gets the value of the constant property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link GlesTextureConstantType }
-     *     
-     */
-    public GlesTextureConstantType getConstant() {
-        return constant;
-    }
+	/**
+	 * Gets the value of the constant property.
+	 * 
+	 * @return possible object is {@link GlesTextureConstantType }
+	 * 
+	 */
+	public GlesTextureConstantType getConstant() {
+		return constant;
+	}
 
-    /**
-     * Sets the value of the constant property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link GlesTextureConstantType }
-     *     
-     */
-    public void setConstant(GlesTextureConstantType value) {
-        this.constant = value;
-    }
+	/**
+	 * Sets the value of the constant property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link GlesTextureConstantType }
+	 * 
+	 */
+	public void setConstant(GlesTextureConstantType value) {
+		this.constant = value;
+	}
 
-    /**
-     * Gets the value of the rgb property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link GlesTexcombinerCommandRGBType }
-     *     
-     */
-    public GlesTexcombinerCommandRGBType getRGB() {
-        return rgb;
-    }
+	/**
+	 * Gets the value of the rgb property.
+	 * 
+	 * @return possible object is {@link GlesTexcombinerCommandRGBType }
+	 * 
+	 */
+	public GlesTexcombinerCommandRGBType getRGB() {
+		return rgb;
+	}
 
-    /**
-     * Sets the value of the rgb property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link GlesTexcombinerCommandRGBType }
-     *     
-     */
-    public void setRGB(GlesTexcombinerCommandRGBType value) {
-        this.rgb = value;
-    }
+	/**
+	 * Sets the value of the rgb property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link GlesTexcombinerCommandRGBType }
+	 * 
+	 */
+	public void setRGB(GlesTexcombinerCommandRGBType value) {
+		this.rgb = value;
+	}
 
-    /**
-     * Gets the value of the alpha property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link GlesTexcombinerCommandAlphaType }
-     *     
-     */
-    public GlesTexcombinerCommandAlphaType getAlpha() {
-        return alpha;
-    }
+	/**
+	 * Gets the value of the alpha property.
+	 * 
+	 * @return possible object is {@link GlesTexcombinerCommandAlphaType }
+	 * 
+	 */
+	public GlesTexcombinerCommandAlphaType getAlpha() {
+		return alpha;
+	}
 
-    /**
-     * Sets the value of the alpha property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link GlesTexcombinerCommandAlphaType }
-     *     
-     */
-    public void setAlpha(GlesTexcombinerCommandAlphaType value) {
-        this.alpha = value;
-    }
+	/**
+	 * Sets the value of the alpha property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link GlesTexcombinerCommandAlphaType }
+	 * 
+	 */
+	public void setAlpha(GlesTexcombinerCommandAlphaType value) {
+		this.alpha = value;
+	}
 
 }

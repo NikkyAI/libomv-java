@@ -63,44 +63,40 @@ import libomv.utils.RefObject;
 import libomv.utils.TimeoutEvent;
 import libomv.utils.TimeoutEventQueue;
 
-public class LoginManager implements libomv.model.Login
-{
+public class LoginManager implements libomv.model.Login {
 	private static final Logger logger = Logger.getLogger(LoginManager.class);
 
 	// #region Enums
-	public enum LoginStatus
-	{
+	public enum LoginStatus {
 		None, Failed, ConnectingToLogin, ReadingResponse, Redirecting, ConnectingToSim, Success;
 	}
 
-    // Status of the last application run.
-    // Used for error reporting to the grid login service for statistical purposes.
-    public enum LastExecStatus
-    {
-        // Application exited normally
-        Normal,
-        // Application froze
-        Froze,
-        // Application detected error and exited abnormally
-        ForcedCrash,
-        // Other crash
-        OtherCrash,
-        // Application froze during logout
-        LogoutFroze,
-        // Application crashed during logout
-        LogoutCrash;
-    }
-    // #endregion Enums
+	// Status of the last application run.
+	// Used for error reporting to the grid login service for statistical purposes.
+	public enum LastExecStatus {
+		// Application exited normally
+		Normal,
+		// Application froze
+		Froze,
+		// Application detected error and exited abnormally
+		ForcedCrash,
+		// Other crash
+		OtherCrash,
+		// Application froze during logout
+		LogoutFroze,
+		// Application crashed during logout
+		LogoutCrash;
+	}
+	// #endregion Enums
 
 	// #region Structs
 	/** Login Request Parameters */
-	public class LoginParams
-	{
+	public class LoginParams {
 		/** The URL of the Login Server */
 		public String URI;
 		/**
-		 * The number of milliseconds to wait before a login is considered
-		 * failed due to timeout
+		 * The number of milliseconds to wait before a login is considered failed due to
+		 * timeout
 		 */
 		public int Timeout;
 		/**
@@ -112,25 +108,23 @@ public class LoginManager implements libomv.model.Login
 		/** The Agents First name */
 		public String LastName;
 		/**
-		 * A md5 hashed password, plaintext password will be automatically
-		 * hashed
+		 * A md5 hashed password, plaintext password will be automatically hashed
 		 */
 		public String Password;
 		/**
-		 * The agents starting location once logged in Either "last", "home", or
-		 * a string encoded URI containing the simulator name and x/y/z
-		 * coordinates e.g: uri:hooper&amp;128&amp;152&amp;17
+		 * The agents starting location once logged in Either "last", "home", or a
+		 * string encoded URI containing the simulator name and x/y/z coordinates e.g:
+		 * uri:hooper&amp;128&amp;152&amp;17
 		 */
 		public String Start;
 		/**
-		 * A string containing the client software channel information
-		 * <example>Second Life Release</example>
+		 * A string containing the client software channel information <example>Second
+		 * Life Release</example>
 		 */
 		public String Channel;
 		/**
-		 * The client software version information The official viewer uses:
-		 * Second Life Release n.n.n.n where n is replaced with the current
-		 * version of the viewer
+		 * The client software version information The official viewer uses: Second Life
+		 * Release n.n.n.n where n is replaced with the current version of the viewer
 		 */
 		public String Version;
 		/** A string containing the platform information the agent is running on */
@@ -142,31 +136,32 @@ public class LoginManager implements libomv.model.Login
 		/** Unknown or deprecated */
 		public String ViewerDigest;
 		/**
-		 * A string hash of the first disk drives ID used to identify this
-		 * clients uniqueness
+		 * A string hash of the first disk drives ID used to identify this clients
+		 * uniqueness
 		 */
 		public String ID0;
 		/**
-		 * A string containing the viewers Software, this is not directly sent
-		 * to the login server but is used by the library to generate the
-		 * Version information
+		 * A string containing the viewers Software, this is not directly sent to the
+		 * login server but is used by the library to generate the Version information
 		 */
 		public String UserAgent;
 		/**
-		 * A string representing the software creator. This is not directly sent
-		 * to the login server but is used by the library to generate the
-		 * Version information
+		 * A string representing the software creator. This is not directly sent to the
+		 * login server but is used by the library to generate the Version information
 		 */
 		public String Author;
 		/**
-		 * If true, this agent agrees to the Terms of Service of the grid its
-		 * connecting to
+		 * If true, this agent agrees to the Terms of Service of the grid its connecting
+		 * to
 		 */
 		public boolean AgreeToTos;
 		/** Unknown */
 		public boolean ReadCritical;
-		/** Status of the last application run sent to the grid login server for statistical purposes */
-        public LastExecStatus LastExecEvent = LastExecStatus.Normal;
+		/**
+		 * Status of the last application run sent to the grid login server for
+		 * statistical purposes
+		 */
+		public LastExecStatus LastExecEvent = LastExecStatus.Normal;
 		/**
 		 * An array of string sent to the login server to enable various options
 		 */
@@ -175,8 +170,7 @@ public class LoginManager implements libomv.model.Login
 		/**
 		 * Default constructor, initializes sane default values
 		 */
-		public LoginParams()
-		{
+		public LoginParams() {
 			this.Options = new String[] { "inventory-root", "inventory-skeleton", "inventory-lib-root",
 					"inventory-lib-owner", "inventory-skel-lib", "initial-outfit", "gestures", "event_categories",
 					"event_notifications", "classified_categories", "adult_compliant", "buddy-list", "ui-config",
@@ -195,31 +189,26 @@ public class LoginManager implements libomv.model.Login
 			this.LastExecEvent = LastExecStatus.Normal;
 		}
 
-
-		public LoginParams(GridClient client)
-		{
+		public LoginParams(GridClient client) {
 			this();
 			this.Timeout = client.Settings.LOGIN_TIMEOUT;
 			GridInfo gridInfo = client.getDefaultGrid();
 			this.URI = gridInfo.loginuri;
-			
+
 			String names[] = gridInfo.username.split("[\\. ]");
-			
+
 			this.FirstName = names[0];
-			if (names.length >= 2)
-			{
+			if (names.length >= 2) {
 				this.LastName = names[1];
-			}
-			else
-			{
+			} else {
 				this.LastName = "Resident";
 			}
-				
+
 			this.Password = gridInfo.getPassword();
 			if (gridInfo.startLocation != null)
 				this.Start = gridInfo.startLocation;
 		}
-		
+
 		/**
 		 * Instantiates new LoginParams object and fills in the values
 		 * 
@@ -234,8 +223,8 @@ public class LoginManager implements libomv.model.Login
 		 * @param startLocation
 		 *            location to start in, if null, "last" is used
 		 */
-		public LoginParams(GridClient client, String firstName, String lastName, String password, String startLocation)
-		{
+		public LoginParams(GridClient client, String firstName, String lastName, String password,
+				String startLocation) {
 			this();
 			this.URI = client.getDefaultGrid().loginuri;
 			this.Timeout = client.Settings.LOGIN_TIMEOUT;
@@ -247,16 +236,14 @@ public class LoginManager implements libomv.model.Login
 		}
 	}
 
-	public final class BuddyListEntry
-	{
+	public final class BuddyListEntry {
 		public int buddy_rights_given;
 		public String buddy_id;
 		public int buddy_rights_has;
 	}
 
 	/** The decoded data returned from the login server after a successful login */
-	public final class LoginResponseData
-	{
+	public final class LoginResponseData {
 		/**
 		 * true, false, indeterminate [XmlRpcMember("login")]
 		 */
@@ -304,20 +291,19 @@ public class LoginManager implements libomv.model.Login
 		public String[] NextOptions;
 		public int NextDuration;
 		// #endregion
-		
+
 		// These aren't currently being utilized by the library
 		public boolean AOTransition;
 		public String InventoryHost;
-        public int MaxAgentGroups;
-        public String MapServerUrl;
-        public String OpenIDUrl;
-        public String AgentAppearanceServiceURL;
-        public int COFVersion;
-        public String InitialOutfit;
-        public boolean FirstLogin;
-        public Map<UUID, UUID> Gestures;
+		public int MaxAgentGroups;
+		public String MapServerUrl;
+		public String OpenIDUrl;
+		public String AgentAppearanceServiceURL;
+		public int COFVersion;
+		public String InitialOutfit;
+		public boolean FirstLogin;
+		public Map<UUID, UUID> Gestures;
 
-                 
 		// Unhandled:
 		// reply.gestures
 		// reply.event_categories
@@ -331,24 +317,19 @@ public class LoginManager implements libomv.model.Login
 		 * Parse LLSD Login Reply Data
 		 * 
 		 * @param reply
-		 *            An {@link OSDMap} containing the login response data.
-		 *            XML-RPC logins do not require this as XML-RPC.NET
-		 *            automatically populates the struct properly using
-		 *            attributes
-		 * @return this object pointer 
+		 *            An {@link OSDMap} containing the login response data. XML-RPC
+		 *            logins do not require this as XML-RPC.NET automatically populates
+		 *            the struct properly using attributes
+		 * @return this object pointer
 		 */
-		private LoginResponseData ParseLoginReply(OSDMap reply)
-		{
-			if (reply.containsKey("login"))
-			{
+		private LoginResponseData ParseLoginReply(OSDMap reply) {
+			if (reply.containsKey("login")) {
 				Login = reply.get("login").AsString();
 			}
 			Success = reply.get("login").AsBoolean();
 			Message = reply.get("message").AsString();
-			if (!Success)
-			{
-				if (Login != null && Login.equals("indeterminate"))
-				{
+			if (!Success) {
+				if (Login != null && Login.equals("indeterminate")) {
 					// Parse redirect options
 					if (reply.containsKey("next_url"))
 						NextUrl = reply.get("next_url").AsString();
@@ -356,15 +337,12 @@ public class LoginManager implements libomv.model.Login
 						NextMethod = reply.get("next_method").AsString();
 					if (reply.containsKey("next_duration"))
 						NextDuration = reply.get("next_duration").AsUInteger();
-					if (reply.containsKey("next_options"))
-					{
+					if (reply.containsKey("next_options")) {
 						OSD osd = reply.get("next_options");
 						if (osd.getType().equals(OSDType.Array))
-							NextOptions = ((OSDArray)osd).toArray(NextOptions);
+							NextOptions = ((OSDArray) osd).toArray(NextOptions);
 					}
-				}
-				else
-				{
+				} else {
 					// login failed
 					// Reason can be: tos, critical, key, update, optional, presence
 					Reason = reply.get("reason").AsString();
@@ -373,10 +351,9 @@ public class LoginManager implements libomv.model.Login
 			}
 
 			// UDP Blacklist
-            if (reply.containsKey("udp_blacklist"))
-            {
-                UDPBlacklist = reply.get("udp_blacklist").AsString();
-            }
+			if (reply.containsKey("udp_blacklist")) {
+				UDPBlacklist = reply.get("udp_blacklist").AsString();
+			}
 			AgentID = reply.get("agent_id").AsUUID();
 			SessionID = reply.get("session_id").AsUUID();
 			SecureSessionID = reply.get("secure_session_id").AsUUID();
@@ -384,8 +361,7 @@ public class LoginManager implements libomv.model.Login
 			LastName = reply.get("last_name").AsString();
 
 			AgentAccessMax = reply.get("agent_access_max").AsString();
-			if (AgentAccessMax.isEmpty())
-			{
+			if (AgentAccessMax.isEmpty()) {
 				// we're on an older sim version (probably an opensim)
 				AgentAccessMax = reply.get("agent_access").AsString();
 			}
@@ -405,16 +381,12 @@ public class LoginManager implements libomv.model.Login
 			HomeRegion = 0;
 			HomePosition = Vector3.Zero;
 			HomeLookAt = Vector3.Zero;
-			try
-			{
-				if (reply.containsKey("home"))
-				{
+			try {
+				if (reply.containsKey("home")) {
 					ParseHome(reply.get("home").AsString());
 				}
 				LookAt = ParseVector3("look_at", reply);
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				logger.warn("Login server returned (some) invalid data: " + ex.getMessage(), ex);
 			}
 
@@ -422,14 +394,11 @@ public class LoginManager implements libomv.model.Login
 
 			// Buddy list
 			OSD buddyLLSD = reply.get("buddy-list");
-			if (buddyLLSD != null && buddyLLSD.getType().equals(OSDType.Array))
-			{
+			if (buddyLLSD != null && buddyLLSD.getType().equals(OSDType.Array)) {
 				OSDArray buddyArray = (OSDArray) buddyLLSD;
 				BuddyList = new BuddyListEntry[buddyArray.size()];
-				for (int i = 0; i < buddyArray.size(); i++)
-				{
-					if (buddyArray.get(i).getType().equals(OSDType.Map))
-					{
+				for (int i = 0; i < buddyArray.size(); i++) {
+					if (buddyArray.get(i).getType().equals(OSDType.Map)) {
 						BuddyListEntry bud = new BuddyListEntry();
 						OSDMap buddy = (OSDMap) buddyArray.get(i);
 
@@ -450,119 +419,97 @@ public class LoginManager implements libomv.model.Login
 			LibrarySkeleton = ParseInventorySkeleton("inventory-skel-lib", reply);
 
 			Grid = ParseGridInfo(reply);
-					
-			if (reply.containsKey("max-agent-groups"))
-            {
-                MaxAgentGroups = reply.get("max-agent-groups").AsUInteger();
-            }
-            else
-            {
-            	// OpenSIM
-    			if (reply.containsKey("max_groups"))
-                    MaxAgentGroups = reply.get("max_groups").AsUInteger();
-    			else
-    				MaxAgentGroups = -1;
-            }
+
+			if (reply.containsKey("max-agent-groups")) {
+				MaxAgentGroups = reply.get("max-agent-groups").AsUInteger();
+			} else {
+				// OpenSIM
+				if (reply.containsKey("max_groups"))
+					MaxAgentGroups = reply.get("max_groups").AsUInteger();
+				else
+					MaxAgentGroups = -1;
+			}
 
 			MapServerUrl = reply.get("map_server_url").AsString();
 
-			if (reply.containsKey("openid_url"))
-            {
-                OpenIDUrl = reply.get("openid_url").AsString();
-            }
+			if (reply.containsKey("openid_url")) {
+				OpenIDUrl = reply.get("openid_url").AsString();
+			}
 
-            if (reply.containsKey("agent_appearance_service"))
-            {
-            	AgentAppearanceServiceURL = reply.get("agent_appearance_service").AsString();
-            }
-            
-            COFVersion = 0;
-            if (reply.containsKey("cof_version"))
-            {
-                COFVersion = reply.get("cof_version").AsUInteger();
-            }
+			if (reply.containsKey("agent_appearance_service")) {
+				AgentAppearanceServiceURL = reply.get("agent_appearance_service").AsString();
+			}
 
-            InitialOutfit = Helpers.EmptyString;
-            OSD osd = reply.get("initial-outfit");
-            if (osd != null && osd.getType() == OSDType.Array)
-            {
-                OSDArray array = (OSDArray)osd;
-                for (int i = 0; i < array.size(); i++)
-                {
-                	osd = array.get(i);
-                    if (osd.getType() == OSDType.Map)
-                    {
-                        OSDMap map = (OSDMap)osd;
-                        InitialOutfit = map.get("folder_name").AsString();
-                    }
-                }
-            }
+			COFVersion = 0;
+			if (reply.containsKey("cof_version")) {
+				COFVersion = reply.get("cof_version").AsUInteger();
+			}
 
-            Gestures = new HashMap<UUID, UUID>();
-            osd = reply.get("gestures");
-            if (osd != null && osd.getType() == OSDType.Array)
-            {
-                OSDArray array = (OSDArray)osd;
-                for (int i = 0; i < array.size(); i++)
-                {
-                	osd = array.get(i);
-                	if (osd.getType() == OSDType.Map)
-                	{
-                		OSDMap map = (OSDMap)array.get(i);
-                		if (!map.containsKey("item_id") || !map.containsKey("asset_id"))
-                		{
-                			continue;
-                		}
-            
-                		UUID itemId = null;
-                		RefObject<UUID> refItemId = new RefObject<UUID>(itemId);
-                		if (!UUID.TryParse(map.get("item_id").toString(), refItemId))
-                		{
-                			continue;
-                		}
-            
-                		UUID assetId = null;
-                		RefObject<UUID> refAssetId = new RefObject<UUID>(assetId);
-                		if (!UUID.TryParse(map.get("asset_id").toString(), refAssetId))
-                		{
-                			continue;
-                		}
-            
-                		Gestures.put(itemId, assetId);
-                	}
-                }
-            }
+			InitialOutfit = Helpers.EmptyString;
+			OSD osd = reply.get("initial-outfit");
+			if (osd != null && osd.getType() == OSDType.Array) {
+				OSDArray array = (OSDArray) osd;
+				for (int i = 0; i < array.size(); i++) {
+					osd = array.get(i);
+					if (osd.getType() == OSDType.Map) {
+						OSDMap map = (OSDMap) osd;
+						InitialOutfit = map.get("folder_name").AsString();
+					}
+				}
+			}
 
-            FirstLogin = false;
-            osd = reply.get("login-flags");
-            if (osd != null && osd.getType() == OSDType.Array)
-            {
-                OSDArray array = (OSDArray)osd;
-                for (int i = 0; i < array.size(); i++)
-                {
-                	osd = array.get(i);
-                    if (osd.getType() == OSDType.Map)
-                    {
-                    	OSDMap map = (OSDMap)osd;
-                        FirstLogin = map.get("ever_logged_in").AsString().equalsIgnoreCase("N");
-                    }
-                }
-            }
-            return this;
+			Gestures = new HashMap<UUID, UUID>();
+			osd = reply.get("gestures");
+			if (osd != null && osd.getType() == OSDType.Array) {
+				OSDArray array = (OSDArray) osd;
+				for (int i = 0; i < array.size(); i++) {
+					osd = array.get(i);
+					if (osd.getType() == OSDType.Map) {
+						OSDMap map = (OSDMap) array.get(i);
+						if (!map.containsKey("item_id") || !map.containsKey("asset_id")) {
+							continue;
+						}
+
+						UUID itemId = null;
+						RefObject<UUID> refItemId = new RefObject<UUID>(itemId);
+						if (!UUID.TryParse(map.get("item_id").toString(), refItemId)) {
+							continue;
+						}
+
+						UUID assetId = null;
+						RefObject<UUID> refAssetId = new RefObject<UUID>(assetId);
+						if (!UUID.TryParse(map.get("asset_id").toString(), refAssetId)) {
+							continue;
+						}
+
+						Gestures.put(itemId, assetId);
+					}
+				}
+			}
+
+			FirstLogin = false;
+			osd = reply.get("login-flags");
+			if (osd != null && osd.getType() == OSDType.Array) {
+				OSDArray array = (OSDArray) osd;
+				for (int i = 0; i < array.size(); i++) {
+					osd = array.get(i);
+					if (osd.getType() == OSDType.Map) {
+						OSDMap map = (OSDMap) osd;
+						FirstLogin = map.get("ever_logged_in").AsString().equalsIgnoreCase("N");
+					}
+				}
+			}
+			return this;
 		}
 
-		private void ParseHome(String value) throws ParseException, IOException
-		{
+		private void ParseHome(String value) throws ParseException, IOException {
 			OSD osdHome = OSDParser.deserialize(value, OSDFormat.Notation);
-			if (osdHome != null && osdHome.getType().equals(OSDType.Map))
-			{
+			if (osdHome != null && osdHome.getType().equals(OSDType.Map)) {
 				OSDMap home = (OSDMap) osdHome;
 				OSD homeRegion = home.get("region_handle");
-				if (homeRegion != null && homeRegion.getType().equals(OSDType.Array))
-				{
+				if (homeRegion != null && homeRegion.getType().equals(OSDType.Array)) {
 					OSDArray homeArray = (OSDArray) homeRegion;
-					if (homeArray.size() == 2)
-					{
+					if (homeArray.size() == 2) {
 						HomeRegion = Helpers.UIntsToLong(homeArray.get(0).AsInteger(), homeArray.get(1).AsInteger());
 					}
 				}
@@ -571,92 +518,74 @@ public class LoginManager implements libomv.model.Login
 			}
 		}
 
-		private GridInfo ParseGridInfo(OSDMap reply)
-		{
+		private GridInfo ParseGridInfo(OSDMap reply) {
 			GridInfo grid = _Client.new GridInfo();
 			boolean update = false;
-			if (reply.containsKey("gridname"))
-			{
+			if (reply.containsKey("gridname")) {
 				grid.gridname = reply.get("gridname").AsString();
 				update = true;
 			}
-			if (reply.containsKey("loginuri"))
-			{
+			if (reply.containsKey("loginuri")) {
 				grid.loginuri = reply.get("loginuri").AsString();
 				update = true;
 			}
-			if (reply.containsKey("welcome"))
-			{
+			if (reply.containsKey("welcome")) {
 				grid.loginpage = reply.get("welcome").AsString();
 				update = true;
 			}
-			if (reply.containsKey("loginpage"))
-			{
+			if (reply.containsKey("loginpage")) {
 				grid.loginpage = reply.get("loginpage").AsString();
 				update = true;
 			}
-			if (reply.containsKey("economy"))
-			{
+			if (reply.containsKey("economy")) {
 				grid.helperuri = reply.get("economy").AsString();
 				update = true;
 			}
-			if (reply.containsKey("helperuri"))
-			{
+			if (reply.containsKey("helperuri")) {
 				grid.helperuri = reply.get("helperuri").AsString();
 				update = true;
 			}
-			if (reply.containsKey("about"))
-			{
+			if (reply.containsKey("about")) {
 				grid.website = reply.get("about").AsString();
 				update = true;
 			}
-			if (reply.containsKey("website"))
-			{
+			if (reply.containsKey("website")) {
 				grid.website = reply.get("website").AsString();
 				update = true;
 			}
-			if (reply.containsKey("help"))
-			{
+			if (reply.containsKey("help")) {
 				grid.support = reply.get("help").AsString();
 				update = true;
 			}
-			if (reply.containsKey("support"))
-			{
+			if (reply.containsKey("support")) {
 				grid.support = reply.get("support").AsString();
 				update = true;
 			}
-			if (reply.containsKey("register"))
-			{
+			if (reply.containsKey("register")) {
 				grid.register = reply.get("register").AsString();
 				update = true;
 			}
-			if (reply.containsKey("account"))
-			{
+			if (reply.containsKey("account")) {
 				grid.register = reply.get("account").AsString();
 				update = true;
 			}
-			if (reply.containsKey("password"))
-			{
+			if (reply.containsKey("password")) {
 				grid.passworduri = reply.get("password").AsString();
 				update = true;
 			}
-			if (reply.containsKey("search"))
-			{
+			if (reply.containsKey("search")) {
 				grid.searchurl = reply.get("search").AsString();
 				update = true;
 			}
-			if (reply.containsKey("currency"))
-			{
+			if (reply.containsKey("currency")) {
 				grid.currencySym = reply.get("currency").AsString();
 				update = true;
 			}
-			if (reply.containsKey("real_currency"))
-			{
+			if (reply.containsKey("real_currency")) {
 				grid.realCurrencySym = reply.get("real_currency").AsString();
 				update = true;
 			}
-			if (reply.containsKey("directory_fee"))
-			{
+			if (reply.containsKey("directory_fee")) {
 				grid.directoryFee = reply.get("directory_fee").AsString();
 				update = true;
 			}
@@ -664,30 +593,24 @@ public class LoginManager implements libomv.model.Login
 				return grid;
 			return null;
 		}
-		
-		private InventoryFolder[] ParseInventorySkeleton(String key, OSDMap reply)
-		{
+
+		private InventoryFolder[] ParseInventorySkeleton(String key, OSDMap reply) {
 			UUID ownerID;
-			if (key.equals("inventory-skel-lib"))
-			{
+			if (key.equals("inventory-skel-lib")) {
 				ownerID = LibraryOwner;
-			}
-			else
-			{
+			} else {
 				ownerID = AgentID;
 			}
 
 			OSD skeleton = reply.get(key);
-			if (skeleton != null && skeleton.getType().equals(OSDType.Array))
-			{
+			if (skeleton != null && skeleton.getType().equals(OSDType.Array)) {
 				OSDArray array = (OSDArray) skeleton;
 				InventoryFolder[] folders = new InventoryFolder[array.size()];
-				for (int i = 0; i < array.size(); i++)
-				{
-					if (array.get(i).getType().equals(OSDType.Map))
-					{
+				for (int i = 0; i < array.size(); i++) {
+					if (array.get(i).getType().equals(OSDType.Map)) {
 						OSDMap map = (OSDMap) array.get(i);
-						folders[i] = new InventoryFolder(map.get("folder_id").AsUUID(), map.get("parent_id").AsUUID(), ownerID);
+						folders[i] = new InventoryFolder(map.get("folder_id").AsUUID(), map.get("parent_id").AsUUID(),
+								ownerID);
 						folders[i].name = map.get("name").AsString();
 						folders[i].preferredType = FolderType.setValue(map.get("type_default").AsInteger());
 						folders[i].version = map.get("version").AsInteger();
@@ -698,27 +621,21 @@ public class LoginManager implements libomv.model.Login
 			return null;
 		}
 
-		private Vector3 ParseVector3(String key, OSDMap reply) throws ParseException, IOException
-		{
-			if (reply.containsKey(key))
-			{
+		private Vector3 ParseVector3(String key, OSDMap reply) throws ParseException, IOException {
+			if (reply.containsKey(key)) {
 				return reply.get(key).AsVector3();
 			}
 			return Vector3.Zero;
 		}
 
-		private UUID ParseMappedUUID(String key, String key2, OSDMap reply)
-		{
+		private UUID ParseMappedUUID(String key, String key2, OSDMap reply) {
 			OSD folderOSD = reply.get(key);
-			if (folderOSD != null && folderOSD.getType().equals(OSDType.Array))
-			{
+			if (folderOSD != null && folderOSD.getType().equals(OSDType.Array)) {
 				OSDArray array = (OSDArray) folderOSD;
-				if (array.size() == 1 && array.get(0).getType().equals(OSDType.Map))
-				{
+				if (array.size() == 1 && array.get(0).getType().equals(OSDType.Map)) {
 					OSDMap map = (OSDMap) array.get(0);
 					OSD folder = map.get(key2);
-					if (folder != null)
-					{
+					if (folder != null) {
 						return folder.AsUUID();
 					}
 				}
@@ -732,35 +649,29 @@ public class LoginManager implements libomv.model.Login
 
 	// An event for being logged out either through client request, server
 	// forced, or network error
-	public class LoginProgressCallbackArgs implements CallbackArgs
-	{
+	public class LoginProgressCallbackArgs implements CallbackArgs {
 		private final LoginStatus m_Status;
 		private final String m_Message;
 		private final String m_Reason;
 		private LoginResponseData m_Reply;
 
-		public final LoginStatus getStatus()
-		{
+		public final LoginStatus getStatus() {
 			return m_Status;
 		}
 
-		public final String getMessage()
-		{
+		public final String getMessage() {
 			return m_Message;
 		}
 
-		public final String getReason()
-		{
+		public final String getReason() {
 			return m_Reason;
 		}
 
-		public LoginResponseData getReply()
-		{
+		public LoginResponseData getReply() {
 			return m_Reply;
 		}
 
-		public LoginProgressCallbackArgs(LoginStatus login, String message, String reason, LoginResponseData reply)
-		{
+		public LoginProgressCallbackArgs(LoginStatus login, String message, String reason, LoginResponseData reply) {
 			this.m_Reply = reply;
 			this.m_Status = login;
 			this.m_Message = message;
@@ -773,15 +684,13 @@ public class LoginManager implements libomv.model.Login
 	private HashMap<Callback<LoginProgressCallbackArgs>, String[]> CallbackOptions = new HashMap<Callback<LoginProgressCallbackArgs>, String[]>();
 
 	public final void RegisterLoginProgressCallback(Callback<LoginProgressCallbackArgs> callback, String[] options,
-			boolean autoremove)
-	{
+			boolean autoremove) {
 		if (options != null)
 			CallbackOptions.put(callback, options);
 		OnLoginProgress.add(callback, autoremove);
 	}
 
-	public final void UnregisterLoginProgressCallback(Callback<LoginProgressCallbackArgs> callback)
-	{
+	public final void UnregisterLoginProgressCallback(Callback<LoginProgressCallbackArgs> callback) {
 		CallbackOptions.remove(callback);
 		OnLoginProgress.remove(callback);
 	}
@@ -795,8 +704,7 @@ public class LoginManager implements libomv.model.Login
 
 	// #endregion
 
-	public LoginManager(GridClient client)
-	{
+	public LoginManager(GridClient client) {
 		this._Client = client;
 	}
 
@@ -818,8 +726,8 @@ public class LoginManager implements libomv.model.Login
 	 *            start location
 	 * @return A populated {@link LoginParams} struct containing sane defaults
 	 */
-	public final LoginParams DefaultLoginParams(String firstName, String lastName, String password, String startLocation)
-	{
+	public final LoginParams DefaultLoginParams(String firstName, String lastName, String password,
+			String startLocation) {
 		return new LoginParams(_Client, firstName, lastName, password, startLocation);
 	}
 
@@ -839,8 +747,7 @@ public class LoginManager implements libomv.model.Login
 	 * @return A populated {@link LoginParams} struct containing sane defaults
 	 */
 	public final LoginParams DefaultLoginParams(String firstName, String lastName, String password, String channel,
-			String version)
-	{
+			String version) {
 		LoginParams params = new LoginParams(_Client, firstName, lastName, password, null);
 		params.Channel = channel;
 		params.Version = version;
@@ -848,8 +755,8 @@ public class LoginManager implements libomv.model.Login
 	}
 
 	/**
-	 * Simplified login that takes the most common and required fields to
-	 * receive Logs in to the last known position the avatar was in
+	 * Simplified login that takes the most common and required fields to receive
+	 * Logs in to the last known position the avatar was in
 	 * 
 	 * @param firstName
 	 *            Account first name
@@ -858,18 +765,16 @@ public class LoginManager implements libomv.model.Login
 	 * @param password
 	 *            Account password
 	 * @return Whether the login was successful or not. Register to the
-	 *         OnLoginResponse callback to receive more detailed information
-	 *         about the errors that have occurred
+	 *         OnLoginResponse callback to receive more detailed information about
+	 *         the errors that have occurred
 	 * @throws Exception
 	 */
-	public final boolean Login(String firstName, String lastName, String password) throws Exception
-	{
+	public final boolean Login(String firstName, String lastName, String password) throws Exception {
 		return Login(new LoginParams(_Client, firstName, lastName, password, null));
 	}
 
 	/**
-	 * Simplified login that takes the most common and required fields to
-	 * receive
+	 * Simplified login that takes the most common and required fields to receive
 	 * 
 	 * @param firstName
 	 *            Account first name
@@ -878,22 +783,20 @@ public class LoginManager implements libomv.model.Login
 	 * @param password
 	 *            Account password
 	 * @param startLocation
-	 *            The location to login too, such as "last", "home", or an
-	 *            explicit start location
+	 *            The location to login too, such as "last", "home", or an explicit
+	 *            start location
 	 * @return Whether the login was successful or not. Register to the
-	 *         OnLoginResponse callback to receive more detailed information
-	 *         about the errors that have occurred
+	 *         OnLoginResponse callback to receive more detailed information about
+	 *         the errors that have occurred
 	 * @throws Exception
 	 */
 	public final boolean Login(String firstName, String lastName, String password, String startLocation)
-			throws Exception
-	{
+			throws Exception {
 		return Login(new LoginParams(_Client, firstName, lastName, password, startLocation));
 	}
 
 	/**
-	 * Simplified login that takes the most common and required fields To
-	 * receive
+	 * Simplified login that takes the most common and required fields To receive
 	 * 
 	 * @param firstName
 	 *            Account first name
@@ -906,20 +809,18 @@ public class LoginManager implements libomv.model.Login
 	 * @param version
 	 *            Client application version
 	 * @return Whether the login was successful or not. Register to the
-	 *         OnLoginResponse callback to receive more detailed information
-	 *         about the errors that have occurred
+	 *         OnLoginResponse callback to receive more detailed information about
+	 *         the errors that have occurred
 	 * @throws Exception
 	 */
 	public final boolean Login(String firstName, String lastName, String password, String channel, String version)
-			throws Exception
-	{
+			throws Exception {
 		return Login(DefaultLoginParams(firstName, lastName, password, channel, version));
 	}
 
 	/**
 	 * Simplified login that takes the most common fields along with a starting
-	 * location URI, and can accept an MD5 string instead of a plaintext
-	 * password
+	 * location URI, and can accept an MD5 string instead of a plaintext password
 	 * 
 	 * @param firstName
 	 *            Account first name
@@ -935,13 +836,12 @@ public class LoginManager implements libomv.model.Login
 	 * @param version
 	 *            Client application version
 	 * @return Whether the login was successful or not. Register to the
-	 *         OnLoginResponse callback to receive more detailed information
-	 *         about the errors that have occurred
+	 *         OnLoginResponse callback to receive more detailed information about
+	 *         the errors that have occurred
 	 * @throws Exception
 	 */
 	public final boolean Login(String firstName, String lastName, String password, String start, String channel,
-			String version) throws Exception
-	{
+			String version) throws Exception {
 		LoginParams loginParams = DefaultLoginParams(firstName, lastName, password, channel, version);
 		loginParams.Start = start;
 
@@ -949,40 +849,39 @@ public class LoginManager implements libomv.model.Login
 	}
 
 	/**
-	 * Login that takes a struct of all the values that will be passed to the
-	 * login server
+	 * Login that takes a struct of all the values that will be passed to the login
+	 * server
 	 * 
 	 * @param loginParams
 	 *            The values that will be passed to the login server, all fields
 	 *            must be set even if they are ""
 	 * @return Whether the login was successful or not. Register to the
-	 *         OnLoginResponse callback to receive more detailed information
-	 *         about the errors that have occurred
+	 *         OnLoginResponse callback to receive more detailed information about
+	 *         the errors that have occurred
 	 * @throws Exception
 	 */
-	public final boolean Login(LoginParams loginParams) throws Exception
-	{
+	public final boolean Login(LoginParams loginParams) throws Exception {
 		return Login(loginParams, null);
 	}
-	
+
 	/**
-	 * Login that takes a struct of all the values that will be passed to the
-	 * login server
+	 * Login that takes a struct of all the values that will be passed to the login
+	 * server
 	 * 
 	 * @param loginParams
 	 *            The values that will be passed to the login server, all fields
 	 *            must be set even if they are ""
-	 * @param callback the progress callback to invoke with login progress updates 
+	 * @param callback
+	 *            the progress callback to invoke with login progress updates
 	 * @return Whether the login was successful or not. Register to the
-	 *         OnLoginResponse callback to receive more detailed information
-	 *         about the errors that have occurred
+	 *         OnLoginResponse callback to receive more detailed information about
+	 *         the errors that have occurred
 	 * @throws Exception
 	 */
-	public final boolean Login(LoginParams loginParams, Callback<LoginProgressCallbackArgs> callback) throws Exception
-	{
-		// FIXME: Now that we're using CAPS we could cancel the current login and start a new one
-		if (LoginEvents.size() != 0)
-		{
+	public final boolean Login(LoginParams loginParams, Callback<LoginProgressCallbackArgs> callback) throws Exception {
+		// FIXME: Now that we're using CAPS we could cancel the current login and start
+		// a new one
+		if (LoginEvents.size() != 0) {
 			throw new Exception("Login already in progress");
 		}
 
@@ -990,8 +889,7 @@ public class LoginManager implements libomv.model.Login
 		RequestLogin(loginParams, callback);
 		LoginStatus status = loginEvent.waitOne(loginParams.Timeout);
 		LoginEvents.cancel(loginEvent);
-		if (status == null)
-		{
+		if (status == null) {
 			UpdateLoginStatus(LoginStatus.Failed, "Logon timed out", "timeout", null);
 			return false;
 		}
@@ -1009,28 +907,26 @@ public class LoginManager implements libomv.model.Login
 	 *            Y coordinate to start at
 	 * @param z
 	 *            Z coordinate to start at
-	 * @return String with a URI that can be used to login to a specified
-	 *         location
+	 * @return String with a URI that can be used to login to a specified location
 	 */
-	public static String StartLocation(String sim, int x, int y, int z)
-	{
+	public static String StartLocation(String sim, int x, int y, int z) {
 		return String.format("uri:%s&%d&%d&%d", sim, x, y, z);
 	}
 
 	/**
-	 * Abort any ongoing login. If no login is currently ongoing, this function does nothing 
+	 * Abort any ongoing login. If no login is currently ongoing, this function does
+	 * nothing
 	 */
-	public void AbortLogin()
-	{
-		// FIXME: Now that we're using CAPS we could cancel the current login and start a new one	
-		if (LoginEvents.size() != 0)
-		{
+	public void AbortLogin() {
+		// FIXME: Now that we're using CAPS we could cancel the current login and start
+		// a new one
+		if (LoginEvents.size() != 0) {
 			UpdateLoginStatus(LoginStatus.Failed, "Abort Requested", " aborted", null);
 		}
 	}
 
-	public void RequestLogin(final LoginParams loginParams, Callback<LoginProgressCallbackArgs> callback) throws Exception
-	{
+	public void RequestLogin(final LoginParams loginParams, Callback<LoginProgressCallbackArgs> callback)
+			throws Exception {
 		// #region Sanity Check loginParams
 		if (loginParams.Options == null)
 			loginParams.Options = new String[] {};
@@ -1041,55 +937,50 @@ public class LoginManager implements libomv.model.Login
 		// Convert the password to MD5 if it isn't already
 		if (loginParams.Password.length() != 35 && !loginParams.Password.startsWith("$1$"))
 			loginParams.Password = Helpers.MD5Password(loginParams.Password);
-		
-        if (loginParams.ViewerDigest == null)
-        	loginParams.ViewerDigest = Helpers.EmptyString;
-        	 
-        if (loginParams.UserAgent == null)
-        	loginParams.UserAgent = Helpers.EmptyString;
 
-        if (loginParams.Version == null)
-            loginParams.Version = Helpers.EmptyString;
+		if (loginParams.ViewerDigest == null)
+			loginParams.ViewerDigest = Helpers.EmptyString;
 
-        if (loginParams.Platform == null)
-        	loginParams.Platform = Helpers.getPlatform();
+		if (loginParams.UserAgent == null)
+			loginParams.UserAgent = Helpers.EmptyString;
 
-        if (loginParams.PlatformVersion == null)
-        	loginParams.PlatformVersion = Helpers.getPlatformVersion();
+		if (loginParams.Version == null)
+			loginParams.Version = Helpers.EmptyString;
 
-        if (loginParams.MAC == null)
-        	loginParams.MAC = Helpers.getMAC();
-        
-        if (loginParams.Channel == null || loginParams.Channel.isEmpty())
-        {
-	 	    logger.warn("Viewer channel not set. This is a TOS violation on some grids.");
-   	 	    loginParams.Channel = LibSettings.LIBRARY_NAME;
-        }
+		if (loginParams.Platform == null)
+			loginParams.Platform = Helpers.getPlatform();
 
-        if (loginParams.Author == null)
-            loginParams.Author = Helpers.EmptyString;
-        // #endregion
+		if (loginParams.PlatformVersion == null)
+			loginParams.PlatformVersion = Helpers.getPlatformVersion();
+
+		if (loginParams.MAC == null)
+			loginParams.MAC = Helpers.getMAC();
+
+		if (loginParams.Channel == null || loginParams.Channel.isEmpty()) {
+			logger.warn("Viewer channel not set. This is a TOS violation on some grids.");
+			loginParams.Channel = LibSettings.LIBRARY_NAME;
+		}
+
+		if (loginParams.Author == null)
+			loginParams.Author = Helpers.EmptyString;
+		// #endregion
 
 		if (callback != null)
 			RegisterLoginProgressCallback(callback, loginParams.Options, false);
 
 		URI loginUri;
-		try
-		{
+		try {
 			loginUri = new URI(loginParams.URI);
-		}
-		catch (Exception ex)
-		{
-			logger.error(GridClient.Log(String.format("Failed to parse login URI %s, %s", loginParams.URI, ex.getMessage()),
-					_Client));
+		} catch (Exception ex) {
+			logger.error(GridClient
+					.Log(String.format("Failed to parse login URI %s, %s", loginParams.URI, ex.getMessage()), _Client));
 			throw ex;
 		}
 
-		UpdateLoginStatus(LoginStatus.ConnectingToLogin, "Logging in as " + loginParams.FirstName + " " 
-				          + loginParams.LastName + " ...", null, null);
+		UpdateLoginStatus(LoginStatus.ConnectingToLogin,
+				"Logging in as " + loginParams.FirstName + " " + loginParams.LastName + " ...", null, null);
 
-		try
-		{
+		try {
 			// Create the CAPS login structure
 			OSDMap loginLLSD = new OSDMap();
 			loginLLSD.put("first", OSD.FromString(loginParams.FirstName));
@@ -1109,54 +1000,41 @@ public class LoginManager implements libomv.model.Login
 
 			OSDArray optionsOSD;
 			// Create the options LLSD array
-			if (loginParams.Options != null && loginParams.Options.length > 0)
-			{
+			if (loginParams.Options != null && loginParams.Options.length > 0) {
 				optionsOSD = new OSDArray(loginParams.Options.length);
-				for (int i = 0; i < loginParams.Options.length; i++)
-				{
+				for (int i = 0; i < loginParams.Options.length; i++) {
 					optionsOSD.add(OSD.FromString(loginParams.Options[i]));
 				}
 
-				for (String[] callbackOpts : CallbackOptions.values())
-				{
-					if (callbackOpts != null)
-					{
-						for (int i = 0; i < callbackOpts.length; i++)
-						{
-							if (!optionsOSD.contains(callbackOpts[i]))
-							{
+				for (String[] callbackOpts : CallbackOptions.values()) {
+					if (callbackOpts != null) {
+						for (int i = 0; i < callbackOpts.length; i++) {
+							if (!optionsOSD.contains(callbackOpts[i])) {
 								optionsOSD.add(OSD.FromString(callbackOpts[i]));
 							}
 						}
 					}
 				}
-			}
-			else
-			{
-				optionsOSD = new OSDArray();					
+			} else {
+				optionsOSD = new OSDArray();
 			}
 			loginLLSD.put("options", optionsOSD);
 
-			LoginReplyHandler handler = new LoginReplyHandler(loginParams); 
-			if (_Client.Settings.getBool(LibSettings.USE_LLSD_LOGIN))
-			{
+			LoginReplyHandler handler = new LoginReplyHandler(loginParams);
+			if (_Client.Settings.getBool(LibSettings.USE_LLSD_LOGIN)) {
 				// Make the CAPS POST for login
 				CapsClient loginRequest = new CapsClient(_Client, "LoginAgent");
 				httpClient = loginRequest;
 				loginRequest.executeHttpPost(loginUri, loginLLSD, OSDFormat.Xml, handler, loginParams.Timeout);
-			}
-			else
-			{
+			} else {
 				// Make the RPC call for login
 				OSDArray request = new OSDArray(1);
 				request.add(loginLLSD);
-			    RpcClient loginRequest = new RpcClient("LoginAgent");
-			    httpClient = loginRequest;
-			    loginRequest.call(loginUri, loginParams.MethodName, request, handler, loginParams.Timeout);
+				RpcClient loginRequest = new RpcClient("LoginAgent");
+				httpClient = loginRequest;
+				loginRequest.call(loginUri, loginParams.MethodName, request, handler, loginParams.Timeout);
 			}
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			UpdateLoginStatus(LoginStatus.Failed, ex.toString(), ex.getClass().toString(), null);
 			throw ex;
 		}
@@ -1166,14 +1044,12 @@ public class LoginManager implements libomv.model.Login
 
 	// #region Private Methods
 
-	private void UpdateLoginStatus(LoginStatus status, String message, String reason, LoginResponseData reply)
-	{
+	private void UpdateLoginStatus(LoginStatus status, String message, String reason, LoginResponseData reply) {
 		// Fire the login status callback
 		OnLoginProgress.dispatch(new LoginProgressCallbackArgs(status, message, reason, reply));
 
 		// If we reached a login resolution
-		if (status == LoginStatus.Success || status == LoginStatus.Failed)
-		{
+		if (status == LoginStatus.Success || status == LoginStatus.Failed) {
 			// trigger the event
 			LoginEvents.set(status);
 			// register our client for cleanup
@@ -1189,73 +1065,57 @@ public class LoginManager implements libomv.model.Login
 	 * @param result
 	 * @param error
 	 */
-	private class LoginReplyHandler implements FutureCallback<OSD>
-	{
+	private class LoginReplyHandler implements FutureCallback<OSD> {
 		private final LoginParams loginParams;
 
-		public LoginReplyHandler(LoginParams loginParams)
-		{
+		public LoginReplyHandler(LoginParams loginParams) {
 			this.loginParams = loginParams;
 		}
 
 		@Override
-		public void completed(OSD result)
-		{
-			if (result != null && result.getType().equals(OSDType.Map))
-			{
+		public void completed(OSD result) {
+			if (result != null && result.getType().equals(OSDType.Map)) {
 				UpdateLoginStatus(LoginStatus.ReadingResponse, "Parsing Reply data", "parsing", null);
 
-				LoginResponseData reply = new LoginResponseData().ParseLoginReply((OSDMap)result);
+				LoginResponseData reply = new LoginResponseData().ParseLoginReply((OSDMap) result);
 
-				if (reply.Success)
-				{
+				if (reply.Success) {
 					// Remove the quotes around our first name.
-					if (reply.FirstName.charAt(0) == '"')
-					{
+					if (reply.FirstName.charAt(0) == '"') {
 						reply.FirstName = reply.FirstName.substring(1);
 					}
-					if (reply.FirstName.charAt(reply.FirstName.length() - 1) == '"')
-					{
+					if (reply.FirstName.charAt(reply.FirstName.length() - 1) == '"') {
 						reply.FirstName = reply.FirstName.substring(0, reply.FirstName.length() - 1);
 					}
 				}
 
-				try
-				{
+				try {
 					HandleLoginResponse(reply, loginParams);
-				}
-				catch (Exception ex)
-				{
+				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
-			}
-			else
-			{
+			} else {
 				// No LLSD response
 				UpdateLoginStatus(LoginStatus.Failed, "Empty or unparseable login response", "bad response", null);
 			}
 		}
 
 		@Override
-		public void failed(Exception ex)
-		{
+		public void failed(Exception ex) {
 			logger.error(GridClient.Log(String.format("Login exception %s", ex.getMessage()), _Client), ex);
 			// Connection error
 			UpdateLoginStatus(LoginStatus.Failed, ex.getMessage(), ex.getClass().toString(), null);
 		}
 
 		@Override
-		public void cancelled()
-		{
+		public void cancelled() {
 			// Connection canceled
 			UpdateLoginStatus(LoginStatus.Failed, "connection canceled", "canceled", null);
 		}
 	}
 
-	private void HandleLoginResponse(LoginResponseData reply, LoginParams loginParams) throws Exception
-	{
-		if (reply.Login.equals("indeterminate"))
-		{
+	private void HandleLoginResponse(LoginResponseData reply, LoginParams loginParams) throws Exception {
+		if (reply.Login.equals("indeterminate")) {
 			// Login redirected
 
 			// Make the next login URL jump
@@ -1267,16 +1127,13 @@ public class LoginManager implements libomv.model.Login
 			// Sleep for some amount of time while the servers work
 			int seconds = reply.NextDuration;
 			logger.info(GridClient.Log("Sleeping for " + seconds + " seconds during a login redirect", _Client));
-			try
-			{
+			try {
 				Thread.sleep(seconds * 1000);
+			} catch (InterruptedException ex) {
 			}
-			catch (InterruptedException ex) { }
 
 			RequestLogin(loginParams, null);
-		}
-		else if (reply.Success)
-		{
+		} else if (reply.Success) {
 			// Login succeeded
 			_Client.Network.setCircuitCode(reply.CircuitCode);
 			_Client.Network.setUDPBlacklist(reply.UDPBlacklist);
@@ -1284,35 +1141,28 @@ public class LoginManager implements libomv.model.Login
 
 			UpdateLoginStatus(LoginStatus.ConnectingToSim, "Connecting to simulator...", "connecting", reply);
 
-			if (reply.SimIP != null && reply.SimPort != 0)
-			{
+			if (reply.SimIP != null && reply.SimPort != 0) {
 				// Connect to the sim given in the login reply
-				if (_Client.Network.connect(reply.SimIP, reply.SimPort, reply.Region, true, reply.SeedCapability) != null)
-				{
+				if (_Client.Network.connect(reply.SimIP, reply.SimPort, reply.Region, true,
+						reply.SeedCapability) != null) {
 					_Client.setCurrentGrid(reply.Grid);
 
 					// Request the economy data right after login
 					_Client.Network.sendPacket(new EconomyDataRequestPacket());
-					
+
 					// Update the login message with the MOTD returned from the server
 					UpdateLoginStatus(LoginStatus.Success, reply.Message, reply.Reason, reply);
-				}
-				else
-				{
+				} else {
 					UpdateLoginStatus(LoginStatus.Failed, "Unable to establish a UDP connection to the simulator",
 							"connection failed", null);
 				}
+			} else {
+				UpdateLoginStatus(LoginStatus.Failed, "Login server did not return a valid simulator address", "no sim",
+						null);
 			}
-			else
-			{
-				UpdateLoginStatus(LoginStatus.Failed, "Login server did not return a valid simulator address", "no sim", null);
-			}
-		}
-		else
-		{
+		} else {
 			// Login failed, make sure a usable error key is set
-			if (reply.Reason == null || reply.Reason.isEmpty())
-			{
+			if (reply.Reason == null || reply.Reason.isEmpty()) {
 				reply.Reason = "unknown";
 			}
 			UpdateLoginStatus(LoginStatus.Failed, reply.Message, reply.Reason, reply);

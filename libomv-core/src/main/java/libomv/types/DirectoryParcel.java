@@ -6,7 +6,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -31,8 +31,7 @@
 package libomv.types;
 
 /* A parcel retrieved from the dataserver such as results from the "For-Sale" listings */
-public class DirectoryParcel
-{
+public class DirectoryParcel {
 	public UUID ID;
 
 	public UUID OwnerID;
@@ -57,8 +56,7 @@ public class DirectoryParcel
 
 	public float Dwell;
 
-	public DirectoryParcel()
-	{
+	public DirectoryParcel() {
 		GlobalPosition = new Vector3(0.0f);
 		SimPosition = new Vector3(0.0f);
 	}

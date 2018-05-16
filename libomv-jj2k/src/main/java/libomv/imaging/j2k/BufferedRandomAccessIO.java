@@ -8,7 +8,7 @@ import jj2000.j2k.io.EndianType;
 
 class BufferedRandomAccessIO implements OSRandomAccessIO {
 	/*
-	 * Tha maximum size, in bytes, of the in memory buffer. The maximum size
+	 * The maximum size, in bytes, of the in memory buffer. The maximum size
 	 * includes the EOF.
 	 */
 	private int maxsize;
@@ -30,14 +30,17 @@ class BufferedRandomAccessIO implements OSRandomAccessIO {
 		if (size < 0 || maxsize <= 0) {
 			throw new IllegalArgumentException();
 		}
+
 		// Increase size by one to count in EOF
-		if (size < Integer.MAX_VALUE)
-			size++;
-		buf = new byte[size];
+		if (size == Integer.MAX_VALUE)
+			buf = new byte[size];
+		else
+			buf = new byte[size + 1];
+
 		// The maximum size is one byte more, to allow reading the EOF.
-		if (maxsize < Integer.MAX_VALUE)
-			maxsize++;
 		this.maxsize = maxsize;
+		if (maxsize < Integer.MAX_VALUE)
+			this.maxsize++;
 		pos = 0;
 		length = 0;
 	}
@@ -49,22 +52,22 @@ class BufferedRandomAccessIO implements OSRandomAccessIO {
 
 		buf = data;
 		// The maximum size is one byte more, to allow reading the EOF.
-		if (maxsize < Integer.MAX_VALUE)
-			maxsize++;
 		this.maxsize = maxsize;
+		if (maxsize < Integer.MAX_VALUE)
+			this.maxsize++;
 		pos = 0;
 		length = data.length;
 	}
 
 	/**
 	 * Checks if the cache buffer can accept 'inc' bytes and if that is not the
-	 * case, it grows the cache buffer by doubling the buffer size, upto a
-	 * maximum of 'maxsize', making sure that at least 'inc' bytes are available
-	 * after the growing of the buffer.
+	 * case, it grows the cache buffer by doubling the buffer size, upto a maximum
+	 * of 'maxsize', making sure that at least 'inc' bytes are available after the
+	 * growing of the buffer.
 	 *
 	 * @exception IOException
-	 *                If the maximum cache size is reached or if not enough
-	 *                memory is available to grow the buffer.
+	 *                If the maximum cache size is reached or if not enough memory
+	 *                is available to grow the buffer.
 	 */
 	private void growBuffer(int inc) throws IOException {
 		if (pos + inc > buf.length) {
@@ -78,7 +81,7 @@ class BufferedRandomAccessIO implements OSRandomAccessIO {
 			try {
 				newbuf = new byte[buf.length + effinc];
 			} catch (OutOfMemoryError e) {
-				throw new IOException("Out of memory to cache input data");
+				throw new IOException("Out of memory to cache input data", e);
 			}
 			System.arraycopy(buf, 0, newbuf, 0, length);
 			buf = newbuf;
@@ -137,7 +140,7 @@ class BufferedRandomAccessIO implements OSRandomAccessIO {
 		if (pos + 1 >= length) {
 			throw new EOFException();
 		}
-		return (short) ((buf[pos++] << 8) | (0xFF & buf[pos++]));
+		return (short) (buf[pos++] << 8 | 0xFF & buf[pos++]);
 	}
 
 	/**
@@ -154,7 +157,7 @@ class BufferedRandomAccessIO implements OSRandomAccessIO {
 		if (pos + 1 >= length) {
 			throw new EOFException();
 		}
-		return ((0xFF & buf[pos++]) << 8) | (0xFF & buf[pos++]);
+		return (0xFF & buf[pos++]) << 8 | 0xFF & buf[pos++];
 	}
 
 	/**
@@ -171,7 +174,7 @@ class BufferedRandomAccessIO implements OSRandomAccessIO {
 		if (pos + 3 >= length) {
 			throw new EOFException();
 		}
-		return ((buf[pos++] << 24) | ((0xFF & buf[pos++]) << 16) | ((0xFF & buf[pos++]) << 8) | (0xFF & buf[pos++]));
+		return buf[pos++] << 24 | (0xFF & buf[pos++]) << 16 | (0xFF & buf[pos++]) << 8 | 0xFF & buf[pos++];
 	}
 
 	/**
@@ -188,8 +191,8 @@ class BufferedRandomAccessIO implements OSRandomAccessIO {
 		if (pos + 3 >= length) {
 			throw new EOFException();
 		}
-		return (0xFFFFFFFFL & ((buf[pos++] << 24) | ((0xFF & buf[pos++]) << 16) | ((0xFF & buf[pos++]) << 8)
-				| (0xFF & buf[pos++])));
+		return (0xFFFFFFFFL
+				& (buf[pos++] << 24 | (0xFF & buf[pos++]) << 16 | (0xFF & buf[pos++]) << 8 | 0xFF & buf[pos++]));
 	}
 
 	/**
@@ -206,14 +209,14 @@ class BufferedRandomAccessIO implements OSRandomAccessIO {
 		if (pos + 7 >= length) {
 			throw new EOFException();
 		}
-		return (((long) buf[pos++] << 56) | ((long) (0xFF & buf[pos++]) << 48) | ((long) (0xFF & buf[pos++]) << 40)
-				| ((long) (0xFF & buf[pos++]) << 32) | ((long) (0xFF & buf[pos++]) << 24)
-				| ((long) (0xFF & buf[pos++]) << 16) | ((long) (0xFF & buf[pos++]) << 8) | (0xFF & buf[pos++]));
+		return (long) buf[pos++] << 56 | (long) (0xFF & buf[pos++]) << 48 | (long) (0xFF & buf[pos++]) << 40
+				| (long) (0xFF & buf[pos++]) << 32 | (long) (0xFF & buf[pos++]) << 24 | (long) (0xFF & buf[pos++]) << 16
+				| (long) (0xFF & buf[pos++]) << 8 | 0xFF & buf[pos++];
 	}
 
 	/**
-	 * Reads an IEEE single precision (i.e., 32 bit) floating-point number from
-	 * the internal buffer.
+	 * Reads an IEEE single precision (i.e., 32 bit) floating-point number from the
+	 * internal buffer.
 	 *
 	 * @return The next byte-aligned IEEE float (32 bit) from the input.
 	 *
@@ -227,8 +230,8 @@ class BufferedRandomAccessIO implements OSRandomAccessIO {
 	}
 
 	/**
-	 * Reads an IEEE double precision (i.e., 64 bit) floating-point number from
-	 * the input.
+	 * Reads an IEEE double precision (i.e., 64 bit) floating-point number from the
+	 * input.
 	 *
 	 * @return The next byte-aligned IEEE double (64 bit) from the input.
 	 *
@@ -376,11 +379,13 @@ class BufferedRandomAccessIO implements OSRandomAccessIO {
 	 * internally.
 	 */
 	@Override
-	public void flush() {}
+	public void flush() {
+		// See above
+	}
 
 	/**
-	 * Closes this object for reading and writing. The memory used by the cache
-	 * is released.
+	 * Closes this object for reading and writing. The memory used by the cache is
+	 * released.
 	 */
 	@Override
 	public void close() {
@@ -388,9 +393,9 @@ class BufferedRandomAccessIO implements OSRandomAccessIO {
 	}
 
 	/**
-	 * Returns the current position in the stream, which is the position from
-	 * where the next byte of data would be read or written to. The first byte
-	 * in the stream is in position 0.
+	 * Returns the current position in the stream, which is the position from where
+	 * the next byte of data would be read or written to. The first byte in the
+	 * stream is in position 0.
 	 */
 	@Override
 	public int getPos() {
@@ -398,8 +403,8 @@ class BufferedRandomAccessIO implements OSRandomAccessIO {
 	}
 
 	/**
-	 * Returns the current length of the stream, that is the position just
-	 * beyond the furthest byte written to it so far.
+	 * Returns the current length of the stream, that is the position just beyond
+	 * the furthest byte written to it so far.
 	 *
 	 * @return The length of the stream, in bytes.
 	 */
@@ -409,11 +414,11 @@ class BufferedRandomAccessIO implements OSRandomAccessIO {
 	}
 
 	/**
-	 * Moves the current position for the next read/write operation to offset.
-	 * The offset is measured from the beginning of the stream. If the offset is
-	 * set beyond the currently cached data, the missing data will be
-	 * uninitialized. Setting the offset beyond the end of the internal buffer
-	 * will cause this buffer to be grown accordingly.
+	 * Moves the current position for the next read/write operation to offset. The
+	 * offset is measured from the beginning of the stream. If the offset is set
+	 * beyond the currently cached data, the missing data will be uninitialized.
+	 * Setting the offset beyond the end of the internal buffer will cause this
+	 * buffer to be grown accordingly.
 	 *
 	 * @param off
 	 *            The offset where to move to.

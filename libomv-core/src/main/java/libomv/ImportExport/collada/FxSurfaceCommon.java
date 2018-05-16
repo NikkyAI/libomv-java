@@ -5,7 +5,6 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import java.util.ArrayList;
@@ -21,15 +20,18 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
 /**
  * 
- * 			The fx_surface_common type is used to declare a resource that can be used both as the source for texture samples and as the target of a rendering pass.
- * 			
+ * The fx_surface_common type is used to declare a resource that can be used
+ * both as the source for texture samples and as the target of a rendering pass.
  * 
- * <p>Java class for fx_surface_common complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * Java class for fx_surface_common complex type.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType name="fx_surface_common">
@@ -56,413 +58,368 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "fx_surface_common", propOrder = {
-    "initAsNull",
-    "initAsTarget",
-    "initCube",
-    "initVolume",
-    "initPlanar",
-    "initFrom",
-    "format",
-    "formatHint",
-    "size",
-    "viewportRatio",
-    "mipLevels",
-    "mipmapGenerate",
-    "extra"
-})
-@XmlSeeAlso({
-    GlslSurfaceType.class,
-    CgSurfaceType.class
-})
+@XmlType(name = "fx_surface_common", propOrder = { "initAsNull", "initAsTarget", "initCube", "initVolume", "initPlanar",
+		"initFrom", "format", "formatHint", "size", "viewportRatio", "mipLevels", "mipmapGenerate", "extra" })
+@XmlSeeAlso({ GlslSurfaceType.class, CgSurfaceType.class })
 public class FxSurfaceCommon {
 
-    @XmlElement(name = "init_as_null")
-    protected Object initAsNull;
-    @XmlElement(name = "init_as_target")
-    protected Object initAsTarget;
-    @XmlElement(name = "init_cube")
-    protected FxSurfaceInitCubeCommon initCube;
-    @XmlElement(name = "init_volume")
-    protected FxSurfaceInitVolumeCommon initVolume;
-    @XmlElement(name = "init_planar")
-    protected FxSurfaceInitPlanarCommon initPlanar;
-    @XmlElement(name = "init_from")
-    protected List<FxSurfaceInitFromCommon> initFrom;
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlSchemaType(name = "token")
-    protected String format;
-    @XmlElement(name = "format_hint")
-    protected FxSurfaceFormatHintCommon formatHint;
-    @XmlList
-    @XmlElement(type = Long.class, defaultValue = "0 0 0")
-    protected List<Long> size;
-    @XmlList
-    @XmlElement(name = "viewport_ratio", type = Double.class, defaultValue = "1 1")
-    protected List<Double> viewportRatio;
-    @XmlElement(name = "mip_levels", defaultValue = "0")
-    @XmlSchemaType(name = "unsignedInt")
-    protected Long mipLevels;
-    @XmlElement(name = "mipmap_generate")
-    protected Boolean mipmapGenerate;
-    protected List<Extra> extra;
-    @XmlAttribute(name = "type", required = true)
-    protected String type;
+	@XmlElement(name = "init_as_null")
+	protected Object initAsNull;
+	@XmlElement(name = "init_as_target")
+	protected Object initAsTarget;
+	@XmlElement(name = "init_cube")
+	protected FxSurfaceInitCubeCommon initCube;
+	@XmlElement(name = "init_volume")
+	protected FxSurfaceInitVolumeCommon initVolume;
+	@XmlElement(name = "init_planar")
+	protected FxSurfaceInitPlanarCommon initPlanar;
+	@XmlElement(name = "init_from")
+	protected List<FxSurfaceInitFromCommon> initFrom;
+	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+	@XmlSchemaType(name = "token")
+	protected String format;
+	@XmlElement(name = "format_hint")
+	protected FxSurfaceFormatHintCommon formatHint;
+	@XmlList
+	@XmlElement(type = Long.class, defaultValue = "0 0 0")
+	protected List<Long> size;
+	@XmlList
+	@XmlElement(name = "viewport_ratio", type = Double.class, defaultValue = "1 1")
+	protected List<Double> viewportRatio;
+	@XmlElement(name = "mip_levels", defaultValue = "0")
+	@XmlSchemaType(name = "unsignedInt")
+	protected Long mipLevels;
+	@XmlElement(name = "mipmap_generate")
+	protected Boolean mipmapGenerate;
+	protected List<Extra> extra;
+	@XmlAttribute(name = "type", required = true)
+	protected String type;
 
-    /**
-     * Gets the value of the initAsNull property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Object }
-     *     
-     */
-    public Object getInitAsNull() {
-        return initAsNull;
-    }
+	/**
+	 * Gets the value of the initAsNull property.
+	 * 
+	 * @return possible object is {@link Object }
+	 * 
+	 */
+	public Object getInitAsNull() {
+		return initAsNull;
+	}
 
-    /**
-     * Sets the value of the initAsNull property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Object }
-     *     
-     */
-    public void setInitAsNull(Object value) {
-        this.initAsNull = value;
-    }
+	/**
+	 * Sets the value of the initAsNull property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link Object }
+	 * 
+	 */
+	public void setInitAsNull(Object value) {
+		this.initAsNull = value;
+	}
 
-    /**
-     * Gets the value of the initAsTarget property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Object }
-     *     
-     */
-    public Object getInitAsTarget() {
-        return initAsTarget;
-    }
+	/**
+	 * Gets the value of the initAsTarget property.
+	 * 
+	 * @return possible object is {@link Object }
+	 * 
+	 */
+	public Object getInitAsTarget() {
+		return initAsTarget;
+	}
 
-    /**
-     * Sets the value of the initAsTarget property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Object }
-     *     
-     */
-    public void setInitAsTarget(Object value) {
-        this.initAsTarget = value;
-    }
+	/**
+	 * Sets the value of the initAsTarget property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link Object }
+	 * 
+	 */
+	public void setInitAsTarget(Object value) {
+		this.initAsTarget = value;
+	}
 
-    /**
-     * Gets the value of the initCube property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FxSurfaceInitCubeCommon }
-     *     
-     */
-    public FxSurfaceInitCubeCommon getInitCube() {
-        return initCube;
-    }
+	/**
+	 * Gets the value of the initCube property.
+	 * 
+	 * @return possible object is {@link FxSurfaceInitCubeCommon }
+	 * 
+	 */
+	public FxSurfaceInitCubeCommon getInitCube() {
+		return initCube;
+	}
 
-    /**
-     * Sets the value of the initCube property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FxSurfaceInitCubeCommon }
-     *     
-     */
-    public void setInitCube(FxSurfaceInitCubeCommon value) {
-        this.initCube = value;
-    }
+	/**
+	 * Sets the value of the initCube property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link FxSurfaceInitCubeCommon }
+	 * 
+	 */
+	public void setInitCube(FxSurfaceInitCubeCommon value) {
+		this.initCube = value;
+	}
 
-    /**
-     * Gets the value of the initVolume property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FxSurfaceInitVolumeCommon }
-     *     
-     */
-    public FxSurfaceInitVolumeCommon getInitVolume() {
-        return initVolume;
-    }
+	/**
+	 * Gets the value of the initVolume property.
+	 * 
+	 * @return possible object is {@link FxSurfaceInitVolumeCommon }
+	 * 
+	 */
+	public FxSurfaceInitVolumeCommon getInitVolume() {
+		return initVolume;
+	}
 
-    /**
-     * Sets the value of the initVolume property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FxSurfaceInitVolumeCommon }
-     *     
-     */
-    public void setInitVolume(FxSurfaceInitVolumeCommon value) {
-        this.initVolume = value;
-    }
+	/**
+	 * Sets the value of the initVolume property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link FxSurfaceInitVolumeCommon }
+	 * 
+	 */
+	public void setInitVolume(FxSurfaceInitVolumeCommon value) {
+		this.initVolume = value;
+	}
 
-    /**
-     * Gets the value of the initPlanar property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FxSurfaceInitPlanarCommon }
-     *     
-     */
-    public FxSurfaceInitPlanarCommon getInitPlanar() {
-        return initPlanar;
-    }
+	/**
+	 * Gets the value of the initPlanar property.
+	 * 
+	 * @return possible object is {@link FxSurfaceInitPlanarCommon }
+	 * 
+	 */
+	public FxSurfaceInitPlanarCommon getInitPlanar() {
+		return initPlanar;
+	}
 
-    /**
-     * Sets the value of the initPlanar property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FxSurfaceInitPlanarCommon }
-     *     
-     */
-    public void setInitPlanar(FxSurfaceInitPlanarCommon value) {
-        this.initPlanar = value;
-    }
+	/**
+	 * Sets the value of the initPlanar property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link FxSurfaceInitPlanarCommon }
+	 * 
+	 */
+	public void setInitPlanar(FxSurfaceInitPlanarCommon value) {
+		this.initPlanar = value;
+	}
 
-    /**
-     * Gets the value of the initFrom property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the initFrom property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getInitFrom().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FxSurfaceInitFromCommon }
-     * 
-     * 
-     */
-    public List<FxSurfaceInitFromCommon> getInitFrom() {
-        if (initFrom == null) {
-            initFrom = new ArrayList<FxSurfaceInitFromCommon>();
-        }
-        return this.initFrom;
-    }
+	/**
+	 * Gets the value of the initFrom property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the initFrom property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getInitFrom().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list
+	 * {@link FxSurfaceInitFromCommon }
+	 * 
+	 * 
+	 */
+	public List<FxSurfaceInitFromCommon> getInitFrom() {
+		if (initFrom == null) {
+			initFrom = new ArrayList<FxSurfaceInitFromCommon>();
+		}
+		return this.initFrom;
+	}
 
-    /**
-     * Gets the value of the format property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getFormat() {
-        return format;
-    }
+	/**
+	 * Gets the value of the format property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getFormat() {
+		return format;
+	}
 
-    /**
-     * Sets the value of the format property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setFormat(String value) {
-        this.format = value;
-    }
+	/**
+	 * Sets the value of the format property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setFormat(String value) {
+		this.format = value;
+	}
 
-    /**
-     * Gets the value of the formatHint property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FxSurfaceFormatHintCommon }
-     *     
-     */
-    public FxSurfaceFormatHintCommon getFormatHint() {
-        return formatHint;
-    }
+	/**
+	 * Gets the value of the formatHint property.
+	 * 
+	 * @return possible object is {@link FxSurfaceFormatHintCommon }
+	 * 
+	 */
+	public FxSurfaceFormatHintCommon getFormatHint() {
+		return formatHint;
+	}
 
-    /**
-     * Sets the value of the formatHint property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FxSurfaceFormatHintCommon }
-     *     
-     */
-    public void setFormatHint(FxSurfaceFormatHintCommon value) {
-        this.formatHint = value;
-    }
+	/**
+	 * Sets the value of the formatHint property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link FxSurfaceFormatHintCommon }
+	 * 
+	 */
+	public void setFormatHint(FxSurfaceFormatHintCommon value) {
+		this.formatHint = value;
+	}
 
-    /**
-     * Gets the value of the size property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the size property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getSize().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Long }
-     * 
-     * 
-     */
-    public List<Long> getSize() {
-        if (size == null) {
-            size = new ArrayList<Long>();
-        }
-        return this.size;
-    }
+	/**
+	 * Gets the value of the size property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the size property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getSize().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link Long }
+	 * 
+	 * 
+	 */
+	public List<Long> getSize() {
+		if (size == null) {
+			size = new ArrayList<Long>();
+		}
+		return this.size;
+	}
 
-    /**
-     * Gets the value of the viewportRatio property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the viewportRatio property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getViewportRatio().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Double }
-     * 
-     * 
-     */
-    public List<Double> getViewportRatio() {
-        if (viewportRatio == null) {
-            viewportRatio = new ArrayList<Double>();
-        }
-        return this.viewportRatio;
-    }
+	/**
+	 * Gets the value of the viewportRatio property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the viewportRatio property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getViewportRatio().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link Double }
+	 * 
+	 * 
+	 */
+	public List<Double> getViewportRatio() {
+		if (viewportRatio == null) {
+			viewportRatio = new ArrayList<Double>();
+		}
+		return this.viewportRatio;
+	}
 
-    /**
-     * Gets the value of the mipLevels property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Long }
-     *     
-     */
-    public Long getMipLevels() {
-        return mipLevels;
-    }
+	/**
+	 * Gets the value of the mipLevels property.
+	 * 
+	 * @return possible object is {@link Long }
+	 * 
+	 */
+	public Long getMipLevels() {
+		return mipLevels;
+	}
 
-    /**
-     * Sets the value of the mipLevels property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Long }
-     *     
-     */
-    public void setMipLevels(Long value) {
-        this.mipLevels = value;
-    }
+	/**
+	 * Sets the value of the mipLevels property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link Long }
+	 * 
+	 */
+	public void setMipLevels(Long value) {
+		this.mipLevels = value;
+	}
 
-    /**
-     * Gets the value of the mipmapGenerate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean isMipmapGenerate() {
-        return mipmapGenerate;
-    }
+	/**
+	 * Gets the value of the mipmapGenerate property.
+	 * 
+	 * @return possible object is {@link Boolean }
+	 * 
+	 */
+	public Boolean isMipmapGenerate() {
+		return mipmapGenerate;
+	}
 
-    /**
-     * Sets the value of the mipmapGenerate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setMipmapGenerate(Boolean value) {
-        this.mipmapGenerate = value;
-    }
+	/**
+	 * Sets the value of the mipmapGenerate property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link Boolean }
+	 * 
+	 */
+	public void setMipmapGenerate(Boolean value) {
+		this.mipmapGenerate = value;
+	}
 
-    /**
-     * Gets the value of the extra property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the extra property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getExtra().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Extra }
-     * 
-     * 
-     */
-    public List<Extra> getExtra() {
-        if (extra == null) {
-            extra = new ArrayList<Extra>();
-        }
-        return this.extra;
-    }
+	/**
+	 * Gets the value of the extra property.
+	 * 
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the extra property.
+	 * 
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getExtra().add(newItem);
+	 * </pre>
+	 * 
+	 * 
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link Extra }
+	 * 
+	 * 
+	 */
+	public List<Extra> getExtra() {
+		if (extra == null) {
+			extra = new ArrayList<Extra>();
+		}
+		return this.extra;
+	}
 
-    /**
-     * Gets the value of the type property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getType() {
-        return type;
-    }
+	/**
+	 * Gets the value of the type property.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getType() {
+		return type;
+	}
 
-    /**
-     * Sets the value of the type property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setType(String value) {
-        this.type = value;
-    }
+	/**
+	 * Sets the value of the type property.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setType(String value) {
+		this.type = value;
+	}
 
 }

@@ -149,19 +149,14 @@ public class ParcelImpl implements Parcel {
 	 * @return string containing key=value pairs of a parcel object
 	 */
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		String result = "";
 		Class<? extends Parcel> parcelType = this.getClass();
 		Field[] fields = parcelType.getFields();
-		for (Field field : fields)
-		{
-			try
-			{
+		for (Field field : fields) {
+			try {
 				result += (field.getName() + " = " + field.get(this) + " ");
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 			}
 		}
 		return result;
@@ -173,8 +168,7 @@ public class ParcelImpl implements Parcel {
 	 * @param localID
 	 *            Local ID of this parcel
 	 */
-	public ParcelImpl(int localID)
-	{
+	public ParcelImpl(int localID) {
 		LocalID = localID;
 		ClaimDate = Helpers.Epoch;
 		Bitmap = Helpers.EmptyBytes;
@@ -192,15 +186,13 @@ public class ParcelImpl implements Parcel {
 	 * @param simulator
 	 *            Simulator to send updates to
 	 * @param wantReply
-	 *            Whether we want the simulator to confirm the update with a
-	 *            reply packet or not
+	 *            Whether we want the simulator to confirm the update with a reply
+	 *            packet or not
 	 * @throws Exception
 	 */
-	public final void Update(SimulatorManager simulator, boolean wantReply) throws Exception
-	{
+	public final void Update(SimulatorManager simulator, boolean wantReply) throws Exception {
 		URI url = simulator.getClient().Network.getCapabilityURI("ParcelPropertiesUpdate");
-		if (url != null)
-		{
+		if (url != null) {
 			ParcelPropertiesUpdateMessage req = simulator.getClient().Messages.new ParcelPropertiesUpdateMessage();
 			req.AuthBuyerID = this.AuthBuyerID;
 			req.Category = this.Category;
@@ -231,10 +223,9 @@ public class ParcelImpl implements Parcel {
 			req.AnyAVSounds = this.AnyAVSounds;
 			req.GroupAVSounds = this.GroupAVSounds;
 
-			new CapsClient(simulator.getClient(), "UpdateParcel").executeHttpPost(url, req, null, simulator.getClient().Settings.CAPS_TIMEOUT);
-		}
-		else
-		{
+			new CapsClient(simulator.getClient(), "UpdateParcel").executeHttpPost(url, req, null,
+					simulator.getClient().Settings.CAPS_TIMEOUT);
+		} else {
 			ParcelPropertiesUpdatePacket request = new ParcelPropertiesUpdatePacket();
 
 			request.AgentData.AgentID = simulator.getClient().Self.getAgentID();
@@ -252,8 +243,7 @@ public class ParcelImpl implements Parcel {
 			request.ParcelData.setMediaURL(Helpers.StringToBytes(this.Media.MediaURL.toString()));
 			request.ParcelData.setMusicURL(Helpers.StringToBytes(this.MusicURL.toString()));
 			request.ParcelData.setName(Helpers.StringToBytes(this.Name));
-			if (wantReply)
-			{
+			if (wantReply) {
 				request.ParcelData.Flags = 1;
 			}
 			request.ParcelData.ParcelFlags = this.Flags;
@@ -276,8 +266,7 @@ public class ParcelImpl implements Parcel {
 	 *            Simulator to send the update to
 	 * @throws Exception
 	 */
-	public final void UpdateOtherCleanTime(SimulatorManager simulator) throws Exception
-	{
+	public final void UpdateOtherCleanTime(SimulatorManager simulator) throws Exception {
 		ParcelSetOtherCleanTimePacket request = new ParcelSetOtherCleanTimePacket();
 		request.AgentData.AgentID = simulator.getClient().Self.getAgentID();
 		request.AgentData.SessionID = simulator.getClient().Self.getSessionID();

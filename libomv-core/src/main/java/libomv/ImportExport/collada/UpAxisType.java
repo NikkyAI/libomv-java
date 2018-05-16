@@ -5,18 +5,20 @@
 // Generated on: 2017.03.20 at 10:56:33 PM CET 
 //
 
-
 package libomv.ImportExport.collada;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for UpAxisType.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
+ * Java class for UpAxisType.
+ * 
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ * <p>
+ * 
  * <pre>
  * &lt;simpleType name="UpAxisType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -32,16 +34,14 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum UpAxisType {
 
-    X_UP,
-    Y_UP,
-    Z_UP;
+	X_UP, Y_UP, Z_UP;
 
-    public String value() {
-        return name();
-    }
+	public String value() {
+		return name();
+	}
 
-    public static UpAxisType fromValue(String v) {
-        return valueOf(v);
-    }
+	public static UpAxisType fromValue(String v) {
+		return valueOf(v);
+	}
 
 }

@@ -30,9 +30,85 @@ import jj2000.j2k.wavelet.analysis.ForwardWT;
 public class ImgEncoder {
 	private static final Logger logger = Logger.getLogger(ImgEncoder.class);
 
+	private static final String[][] pinfo = {
+			{ "debug", null, "Print debugging messages when an error is encountered.", "off" },
+			{ "disable_jp2_extension", "[on|off]",
+					"JJ2000 automatically adds .jp2 extension when using 'file_format'"
+							+ "option. This option disables it when on.",
+					"off" },
+			{ "file_format", "[on|off]", "Puts the JPEG 2000 codestream in a JP2 file format wrapper.", "off" },
+			{ "pph_tile", "[on|off]", "Packs the packet headers in the tile headers.", "off" },
+			{ "pph_main", "[on|off]", "Packs the packet headers in the main header.", "off" },
+			{ "pfile", "<filename of arguments file>",
+					"Loads the arguments from the specified file. Arguments that are "
+							+ "specified on the command line override the ones from the file.\n"
+							+ "The arguments file is a simple text file with one argument per "
+							+ "line of the following form:\n  <argument name>=<argument value>\n"
+							+ "If the argument is of boolean type (i.e. its presence turns a "
+							+ "feature on), then the 'on' value turns it on, while the 'off' "
+							+ "value turns it off. The argument name does not include the '-' "
+							+ "or '+' character. Long lines can be broken into several lines "
+							+ "by terminating them with '\'. Lines starting with '#' are "
+							+ "considered as comments. This option is not recursive: any 'pfile' "
+							+ "argument appearing in the file is ignored.",
+					null },
+			{ "tile_parts", "<packets per tile-part>",
+					"This option specifies the maximum number of packets to have in "
+							+ "one tile-part. 0 means include all packets in first tile-part of each tile",
+					"0" },
+			{ "tiles", "<nominal tile width> <nominal tile height>",
+					"This option specifies the maximum tile dimensions to use. "
+							+ "If both dimensions are 0 then no tiling is used.",
+					"0 0" },
+			{ "ref", "<x> <y>",
+					"Sets the origin of the image in the canvas system. It sets the "
+							+ "coordinate of the top-left corner of the image reference grid, "
+							+ "with respect to the canvas origin",
+					"0 0" },
+			{ "tref", "<x> <y>",
+					"Sets the origin of the tile partitioning on the reference grid, "
+							+ "with respect to the canvas origin. The value of 'x' ('y') "
+							+ "specified can not be larger than the 'x' one specified in the ref option.",
+					"0 0" },
+			{ "rate", "<output bitrate in bpp>",
+					"This is the output bitrate of the codestream in bits per pixel."
+							+ " When equal to -1, no image information (beside quantization "
+							+ "effects) is discarded during compression.\n"
+							+ "Note: In the case where '-file_format' option is used, the "
+							+ "resulting file may have a larger bitrate.",
+					"-1" },
+			{ "lossless", "[on|off]",
+					"Specifies a lossless compression for the encoder. This options"
+							+ " is equivalent to use reversible quantization ('-Qtype reversible')"
+							+ " and 5x3 wavelet filters pair ('-Ffilters w5x3'). Note that "
+							+ "this option cannot be used with '-rate'. When this option is "
+							+ "off, the quantization type and the filters pair is defined by "
+							+ "'-Qtype' and '-Ffilters' respectively.",
+					"off" },
+			{ "i", "<image file> [,<image file> [,<image file> ... ]]",
+					"Mandatory argument. This option specifies the name of the input "
+							+ "image files. If several image files are provided, they have to be"
+							+ " separated by commas in the command line. Supported formats are "
+							+ "PGM (raw), PPM (raw) and PGX, "
+							+ "which is a simple extension of the PGM file format for single "
+							+ "component data supporting arbitrary bitdepths. If the extension "
+							+ "is '.pgm', PGM-raw file format is assumed, if the extension is "
+							+ "'.ppm', PPM-raw file format is assumed, otherwise PGX file "
+							+ "format is assumed. PGM and PPM files are assumed to be 8 bits "
+							+ "deep. A multi-component image can be specified by either "
+							+ "specifying several PPM and/or PGX files, or by specifying one PPM file.",
+					null },
+			{ "o", "<file name>",
+					"Mandatory argument. This option specifies the name of the output "
+							+ "file to which the codestream will be written.",
+					null },
+			{ "verbose", null, "Prints information about the obtained bit stream.", "on" },
+			{ "v", "[on|off]", "Prints version and copyright information.", "off" }, { "u", "[on|off]",
+					"Prints usage information. If specified all other arguments (except 'v') are ignored", "off" }, };
+
 	/** The default parameter list (arguments) */
 	private ParameterList pl;
-	
+
 	/** The parameter list (arguments) */
 	private ParameterList defpl;
 
@@ -42,17 +118,17 @@ public class ImgEncoder {
 	}
 
 	/**
-	 * Returns the parameters that are used in this class and implementing
-	 * classes. It returns a 2D String array. Each of the 1D arrays is for a
-	 * different option, and they have 4 elements. The first element is the
-	 * option name, the second one is the synopsis, the third one is a long
-	 * description of what the parameter is and the fourth is its default value.
-	 * The synopsis or description may be 'null', in which case it is assumed
-	 * that there is no synopsis or description of the option, respectively.
-	 * Null may be returned if no options are supported.
+	 * Returns the parameters that are used in this class and implementing classes.
+	 * It returns a 2D String array. Each of the 1D arrays is for a different
+	 * option, and they have 4 elements. The first element is the option name, the
+	 * second one is the synopsis, the third one is a long description of what the
+	 * parameter is and the fourth is its default value. The synopsis or description
+	 * may be 'null', in which case it is assumed that there is no synopsis or
+	 * description of the option, respectively. Null may be returned if no options
+	 * are supported.
 	 * 
-	 * @return the options name, their synopsis and their explanation, or null
-	 *         if no options are supported.
+	 * @return the options name, their synopsis and their explanation, or null if no
+	 *         options are supported.
 	 */
 	private static String[][] getParameterInfo() {
 		return pinfo;
@@ -157,26 +233,26 @@ public class ImgEncoder {
 			return -1;
 		}
 
-		if (pl.getParameter("pph_tile").equals("on")) {
+		if ("on".equals(pl.getParameter("pph_tile"))) {
 			pphTile = true;
-			if (pl.getParameter("Psop").equals("off")) {
+			if ("off".equals(pl.getParameter("Psop"))) {
 				pl.put("Psop", "on");
 				tempSop = true;
 			}
-			if (pl.getParameter("Peph").equals("off")) {
+			if ("off".equals(pl.getParameter("Peph"))) {
 				pl.put("Peph", "on");
 				tempEph = true;
 			}
 		}
 
-		if (pl.getParameter("pph_main").equals("on")) {
+		if ("on".equals(pl.getParameter("pph_main"))) {
 			pphMain = true;
 
-			if (pl.getParameter("Psop").equals("off")) {
+			if ("off".equals(pl.getParameter("Psop"))) {
 				pl.put("Psop", "on");
 				tempSop = true;
 			}
-			if (pl.getParameter("Peph").equals("off")) {
+			if ("off".equals(pl.getParameter("Peph"))) {
 				pl.put("Peph", "on");
 				tempEph = true;
 			}
@@ -208,11 +284,11 @@ public class ImgEncoder {
 		try {
 			pktspertp = pl.getIntParameter("tile_parts");
 			if (pktspertp != 0) {
-				if (pl.getParameter("Psop").equals("off")) {
+				if ("off".equals(pl.getParameter("Psop"))) {
 					pl.put("Psop", "on");
 					tempSop = true;
 				}
-				if (pl.getParameter("Peph").equals("off")) {
+				if ("off".equals(pl.getParameter("Peph"))) {
 					pl.put("Peph", "on");
 					tempEph = true;
 				}
@@ -246,9 +322,9 @@ public class ImgEncoder {
 			refx = Integer.parseInt(sgtok.nextToken());
 			refy = Integer.parseInt(sgtok.nextToken());
 		} catch (NoSuchElementException e) {
-			throw new IllegalArgumentException("Error while parsing 'ref' option");
+			throw new IllegalArgumentException("Error while parsing 'ref' option", e);
 		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException("Invalid number type in 'ref' option");
+			throw new IllegalArgumentException("Invalid number type in 'ref' option", e);
 		}
 		if (refx < 0 || refy < 0) {
 			throw new IllegalArgumentException("Invalid value in 'ref' option ");
@@ -260,9 +336,9 @@ public class ImgEncoder {
 			trefx = Integer.parseInt(sgtok.nextToken());
 			trefy = Integer.parseInt(sgtok.nextToken());
 		} catch (NoSuchElementException e) {
-			throw new IllegalArgumentException("Error while parsing 'tref' option");
+			throw new IllegalArgumentException("Error while parsing 'tref' option", e);
 		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException("Invalid number type in 'tref' option");
+			throw new IllegalArgumentException("Invalid number type in 'tref' option", e);
 		}
 		if (trefx < 0 || trefy < 0 || trefx > refx || trefy > refy) {
 			throw new IllegalArgumentException("Invalid value in 'tref' option ");
@@ -281,7 +357,7 @@ public class ImgEncoder {
 		encSpec = new EncoderSpecs(ntiles, components, source, pl);
 
 		// **** Component transformation ****
-		if (ppminput && pl.getParameter("Mct") != null && pl.getParameter("Mct").equals("off")) {
+		if (ppminput && pl.getParameter("Mct") != null && "off".equals(pl.getParameter("Mct"))) {
 			logger.warn("Input image is RGB and no color transform has "
 					+ "been specified. Compression performance and " + "image quality might be greatly degraded. Use "
 					+ "the 'Mct' option to specify a color transform");
@@ -429,7 +505,7 @@ public class ImgEncoder {
 					fileLength += ffw.length();
 				} catch (IOException e) {
 					io.close();
-					throw new Error("Error while writing JP2 file format");
+					throw new IOException("Error while writing JP2 file format", e);
 				}
 			}
 			io.writeTo(out);
@@ -438,81 +514,5 @@ public class ImgEncoder {
 
 		return fileLength;
 	}
-
-	private final static String[][] pinfo = {
-			{ "debug", null, "Print debugging messages when an error is encountered.", "off" },
-			{ "disable_jp2_extension", "[on|off]",
-					"JJ2000 automatically adds .jp2 extension when using 'file_format'"
-							+ "option. This option disables it when on.",
-					"off" },
-			{ "file_format", "[on|off]", "Puts the JPEG 2000 codestream in a JP2 file format wrapper.", "off" },
-			{ "pph_tile", "[on|off]", "Packs the packet headers in the tile headers.", "off" },
-			{ "pph_main", "[on|off]", "Packs the packet headers in the main header.", "off" },
-			{ "pfile", "<filename of arguments file>",
-					"Loads the arguments from the specified file. Arguments that are "
-							+ "specified on the command line override the ones from the file.\n"
-							+ "The arguments file is a simple text file with one argument per "
-							+ "line of the following form:\n  <argument name>=<argument value>\n"
-							+ "If the argument is of boolean type (i.e. its presence turns a "
-							+ "feature on), then the 'on' value turns it on, while the 'off' "
-							+ "value turns it off. The argument name does not include the '-' "
-							+ "or '+' character. Long lines can be broken into several lines "
-							+ "by terminating them with '\'. Lines starting with '#' are "
-							+ "considered as comments. This option is not recursive: any 'pfile' "
-							+ "argument appearing in the file is ignored.",
-					null },
-			{ "tile_parts", "<packets per tile-part>",
-					"This option specifies the maximum number of packets to have in "
-							+ "one tile-part. 0 means include all packets in first tile-part of each tile",
-					"0" },
-			{ "tiles", "<nominal tile width> <nominal tile height>",
-					"This option specifies the maximum tile dimensions to use. "
-							+ "If both dimensions are 0 then no tiling is used.",
-					"0 0" },
-			{ "ref", "<x> <y>",
-					"Sets the origin of the image in the canvas system. It sets the "
-							+ "coordinate of the top-left corner of the image reference grid, "
-							+ "with respect to the canvas origin",
-					"0 0" },
-			{ "tref", "<x> <y>",
-					"Sets the origin of the tile partitioning on the reference grid, "
-							+ "with respect to the canvas origin. The value of 'x' ('y') "
-							+ "specified can not be larger than the 'x' one specified in the ref option.",
-					"0 0" },
-			{ "rate", "<output bitrate in bpp>",
-					"This is the output bitrate of the codestream in bits per pixel."
-							+ " When equal to -1, no image information (beside quantization "
-							+ "effects) is discarded during compression.\n"
-							+ "Note: In the case where '-file_format' option is used, the "
-							+ "resulting file may have a larger bitrate.",
-					"-1" },
-			{ "lossless", "[on|off]",
-					"Specifies a lossless compression for the encoder. This options"
-							+ " is equivalent to use reversible quantization ('-Qtype reversible')"
-							+ " and 5x3 wavelet filters pair ('-Ffilters w5x3'). Note that "
-							+ "this option cannot be used with '-rate'. When this option is "
-							+ "off, the quantization type and the filters pair is defined by "
-							+ "'-Qtype' and '-Ffilters' respectively.",
-					"off" },
-			{ "i", "<image file> [,<image file> [,<image file> ... ]]",
-					"Mandatory argument. This option specifies the name of the input "
-							+ "image files. If several image files are provided, they have to be"
-							+ " separated by commas in the command line. Supported formats are "
-							+ "PGM (raw), PPM (raw) and PGX, "
-							+ "which is a simple extension of the PGM file format for single "
-							+ "component data supporting arbitrary bitdepths. If the extension "
-							+ "is '.pgm', PGM-raw file format is assumed, if the extension is "
-							+ "'.ppm', PPM-raw file format is assumed, otherwise PGX file "
-							+ "format is assumed. PGM and PPM files are assumed to be 8 bits "
-							+ "deep. A multi-component image can be specified by either "
-							+ "specifying several PPM and/or PGX files, or by specifying one PPM file.",
-					null },
-			{ "o", "<file name>",
-					"Mandatory argument. This option specifies the name of the output "
-							+ "file to which the codestream will be written.",
-					null },
-			{ "verbose", null, "Prints information about the obtained bit stream.", "on" },
-			{ "v", "[on|off]", "Prints version and copyright information.", "off" }, { "u", "[on|off]",
-					"Prints usage information. If specified all other arguments (except 'v') are ignored", "off" }, };
 
 }

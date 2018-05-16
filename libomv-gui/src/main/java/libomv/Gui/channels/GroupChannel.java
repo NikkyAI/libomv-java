@@ -51,23 +51,21 @@ import libomv.io.GridClient;
 import libomv.io.AgentManager.ChatType;
 import libomv.types.UUID;
 
-public class GroupChannel extends AbstractChannel
-{
+public class GroupChannel extends AbstractChannel {
 	private static final Logger logger = Logger.getLogger(GroupChannel.class);
 	private static final long serialVersionUID = 1L;
 
-	private JScrollPane jScrpAttendents; 
+	private JScrollPane jScrpAttendents;
 
 	/**
 	 * This is the default constructor
 	 */
-	public GroupChannel(MainControl main, String name, UUID id, UUID session)
-	{
+	public GroupChannel(MainControl main, String name, UUID id, UUID session) {
 		super(main, name, id, session);
-		
+
 		JPanel panelNorth = new JPanel();
 		panelNorth.setLayout(new BoxLayout(panelNorth, BoxLayout.X_AXIS));
-		
+
 		JTextField textField = new JTextField();
 		textField.setColumns(10);
 		panelNorth.add(textField);
@@ -76,29 +74,23 @@ public class GroupChannel extends AbstractChannel
 		jtbExpandAttendents.setHorizontalAlignment(SwingConstants.RIGHT);
 		jtbExpandAttendents.setSelected(false);
 		getJScrpAttendents().setVisible(false);
-		jtbExpandAttendents.addItemListener(new ItemListener()
-		{
+		jtbExpandAttendents.addItemListener(new ItemListener() {
 			@Override
-			public void itemStateChanged(ItemEvent e)
-			{
+			public void itemStateChanged(ItemEvent e) {
 				getJScrpAttendents().setVisible(e.getStateChange() == ItemEvent.SELECTED);
 			}
 		});
-	
+
 		panelNorth.add(jtbExpandAttendents);
 		add(panelNorth, BorderLayout.NORTH);
 
 		add(getJScrpAttendents(), BorderLayout.EAST);
-		
-    	try
-    	{
-    		if (!_Client.Self.GroupChatSessions.containsKey(session))
-    		{
+
+		try {
+			if (!_Client.Self.GroupChatSessions.containsKey(session)) {
 				_Client.Self.ChatterBoxAcceptInvite(session);
-    		}
-		}
-    	catch (Exception ex)
-    	{
+			}
+		} catch (Exception ex) {
 			logger.error(GridClient.Log("Failed to join group chat", _Client), ex);
 		}
 	}
@@ -106,68 +98,59 @@ public class GroupChannel extends AbstractChannel
 	/**
 	 * Receive a message.
 	 * 
-	 * @param message The message received.
-	 * @throws BadLocationException 
+	 * @param message
+	 *            The message received.
+	 * @throws BadLocationException
 	 */
 	@Override
-	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style) throws BadLocationException
-	{
+	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style)
+			throws BadLocationException {
 		// Determine if this is a friend...
 		boolean friend = _Client.Friends.getFriendList().containsKey(fromId);
 		String localStyle = style, localMessage = message;
-		
+
 		// If this is an action message.
-		if (message.startsWith("/me "))
-		{
+		if (message.startsWith("/me ")) {
 			localStyle = STYLE_ACTION;
 			// Remove the "/me".
 			localMessage = message.substring(3);
-		}
-		else if (style == null)
-		{
+		} else if (style == null) {
 			localStyle = STYLE_REGULAR;
 			// This is a normal message.
 			localMessage = ": " + message;
 		}
-		addMessage(new ChatItem(timestamp, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, localMessage, localStyle));
+		addMessage(new ChatItem(timestamp, fromName, friend ? STYLE_CHATREMOTEFRIEND : STYLE_CHATREMOTE, localMessage,
+				localStyle));
 	}
 
 	@Override
-	public void receiveStatus(UUID sourceID, final String message, final String style) throws BadLocationException
-	{
-		
+	public void receiveStatus(UUID sourceID, final String message, final String style) throws BadLocationException {
+
 	}
 
 	@Override
-	public void transmitMessage(String message, ChatType type) throws UnsupportedEncodingException, Exception
-	{
+	public void transmitMessage(String message, ChatType type) throws UnsupportedEncodingException, Exception {
 		String localMessage = message, self = _Client.Self.getName();
 
-		if (message.length() >= 1000)
-        {
-        	localMessage = message.substring(0, 1000);
-        }
-		addHistory(localMessage);	
-		
+		if (message.length() >= 1000) {
+			localMessage = message.substring(0, 1000);
+		}
+		addHistory(localMessage);
+
 		// Do we have an action command?
-		if (localMessage.charAt(0) == '/')
-		{
+		if (localMessage.charAt(0) == '/') {
 			String firstWord = "";
-			try
-			{
+			try {
 				firstWord = localMessage.split("\\s")[0].toLowerCase();
+			} catch (Exception ex) {
 			}
-			catch (Exception ex) { }
 			localMessage = localMessage.substring(firstWord.length()).trim();
 
 			// Deal with actions.
-			if (firstWord.equals("/me"))
-			{
+			if (firstWord.equals("/me")) {
 				addMessage(new ChatItem(self, STYLE_CHATLOCAL, localMessage, STYLE_ACTION));
 			}
-		}
-		else
-		{
+		} else {
 			// Normal
 			addMessage(new ChatItem(self, STYLE_CHATLOCAL, ": " + localMessage, STYLE_REGULAR));
 		}
@@ -177,16 +160,13 @@ public class GroupChannel extends AbstractChannel
 		// Send the message.
 		_Client.Self.InstantMessageGroup(getUUID(), localMessage);
 	}
-				
-	protected void triggerTyping(boolean start) throws Exception
-	{
-		_Client.Self.SendTypingState(getUUID(), getSession(), start);		
+
+	protected void triggerTyping(boolean start) throws Exception {
+		_Client.Self.SendTypingState(getUUID(), getSession(), start);
 	}
 
-	private JScrollPane getJScrpAttendents()
-	{
-		if (jScrpAttendents == null)
-		{
+	private JScrollPane getJScrpAttendents() {
+		if (jScrpAttendents == null) {
 			jScrpAttendents = new JScrollPane();
 			add(jScrpAttendents, BorderLayout.EAST);
 

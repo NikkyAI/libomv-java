@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -30,20 +30,17 @@ package libomv.utils;
 
 import java.util.ArrayList;
 
-public class TimeoutEventQueue<T>
-{
+public class TimeoutEventQueue<T> {
 	private ArrayList<TimeoutEvent<T>> list = new ArrayList<TimeoutEvent<T>>();
 
 	/**
 	 * Create a new timeout event and add it to the internal list of events
-	 * 
+	 *
 	 * @return a timeout event object that is in a reset state
 	 */
-	public TimeoutEvent<T> create()
-	{
+	public TimeoutEvent<T> create() {
 		TimeoutEvent<T> event = new TimeoutEvent<T>();
-		synchronized (list)
-		{
+		synchronized (list) {
 			list.add(event);
 		}
 		return event;
@@ -52,12 +49,9 @@ public class TimeoutEventQueue<T>
 	/**
 	 * Signals every event in the list and then cleans out the list
 	 */
-	public void set(T object)
-	{
-		synchronized (list)
-		{
-			for (TimeoutEvent<T> e : list)
-			{
+	public void set(T object) {
+		synchronized (list) {
+			for (TimeoutEvent<T> e : list) {
 				e.set(object);
 			}
 		}
@@ -65,16 +59,13 @@ public class TimeoutEventQueue<T>
 
 	/**
 	 * Resets every event in the list and then cleans out the list
-	 * 
+	 *
 	 * @returns the number of events that have been reset
 	 */
-	public int cancel()
-	{
-		synchronized (list)
-		{
+	public int cancel() {
+		synchronized (list) {
 			int count = list.size();
-			for (TimeoutEvent<T> e : list)
-			{
+			for (TimeoutEvent<T> e : list) {
 				e.reset();
 			}
 			list.clear();
@@ -83,21 +74,17 @@ public class TimeoutEventQueue<T>
 	}
 
 	/**
-	 * Signals the specified event in the list and then cleans it out from the
-	 * list
-	 * 
+	 * Signals the specified event in the list and then cleans it out from the list
+	 *
 	 * @param event
 	 *            the timeout event to look for in the list
 	 * @return a boolean indicating if the event was found in the list
 	 */
-	public boolean cancel(TimeoutEvent<T> event)
-	{
+	public boolean cancel(TimeoutEvent<T> event) {
 		boolean success = false;
-		synchronized (list)
-		{
+		synchronized (list) {
 			int idx = list.indexOf(event);
-			if (idx >= 0)
-			{
+			if (idx >= 0) {
 				list.remove(idx);
 			}
 		}
@@ -107,13 +94,11 @@ public class TimeoutEventQueue<T>
 
 	/**
 	 * Returns the number of events that are currently in the list
-	 * 
+	 *
 	 * @returns the number of events that are currently in the list
 	 */
-	public int size()
-	{
-		synchronized (list)
-		{
+	public int size() {
+		synchronized (list) {
 			return list.size();
 		}
 	}
