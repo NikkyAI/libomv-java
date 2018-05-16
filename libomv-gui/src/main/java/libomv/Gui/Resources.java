@@ -148,7 +148,7 @@ public final class Resources
 
 	public static BufferedImage loadImage(String location)
 	{
-		InputStream is = Resources.class.getClassLoader().getResourceAsStream("res/" + location);
+		InputStream is = Resources.class.getClassLoader().getResourceAsStream(location);
 		try
 		{
 			return ImageIO.read(is);
@@ -175,7 +175,7 @@ public final class Resources
 	
 	public static ImageIcon loadIcon(String location, String name)
 	{
-		InputStream is = Resources.class.getClassLoader().getResourceAsStream("res/" + location);
+		InputStream is = Resources.class.getClassLoader().getResourceAsStream(location);
 		try
 		{
 			return new ImageIcon(ImageIO.read(is), name);
@@ -197,7 +197,7 @@ public final class Resources
 
 	public static String loadTextFile(String location)
 	{
-		InputStream is = Resources.class.getClassLoader().getResourceAsStream("res/" + location);
+		InputStream is = Resources.class.getClassLoader().getResourceAsStream(location);
 		try
 		{
 			return loadTextFile(is);

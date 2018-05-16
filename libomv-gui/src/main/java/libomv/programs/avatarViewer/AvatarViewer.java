@@ -59,6 +59,7 @@ public class AvatarViewer
 	
     static public void main(String[] args)
 	{
+    	System.setProperty("teamdev.license.info", "true");
 		java.awt.EventQueue.invokeLater(new Runnable()
 	    {
 	    	@Override

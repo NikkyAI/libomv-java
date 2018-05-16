@@ -328,6 +328,14 @@ public class LindenMesh extends ReferenceMesh
 
         while (!morphName.equals(MORPH_FOOTER))
         {
+        	//TODO:FIXME
+        	// There is a missing if statement in the original source code
+        	// which needs to be translated
+
+        	//if (reader.BaseStream.Position + 48 >= reader.BaseStream.Length)
+            //    throw new FileLoadException("Encountered end of file while parsing morphs");
+        	
+        	
             Morph morph = new Morph();
             morph.Name = morphName;
             morph.NumVertices = fis.readInt();

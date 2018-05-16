@@ -30,7 +30,6 @@
  */
 package libomv.io;
 
-import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,7 +46,6 @@ import libomv.capabilities.CapsMessage.LandResourcesMessage;
 import libomv.capabilities.CapsMessage.LandResourcesRequest;
 import libomv.capabilities.CapsMessage.ParcelObjectOwnersReplyMessage;
 import libomv.capabilities.CapsMessage.ParcelPropertiesMessage;
-import libomv.capabilities.CapsMessage.ParcelPropertiesUpdateMessage;
 import libomv.capabilities.CapsMessage.RemoteParcelRequestMessage;
 import libomv.capabilities.CapsMessage.RemoteParcelRequestReply;
 import libomv.capabilities.CapsMessage.RemoteParcelRequestRequest;
@@ -80,12 +78,10 @@ import libomv.packets.ParcelObjectOwnersRequestPacket;
 import libomv.packets.ParcelOverlayPacket;
 import libomv.packets.ParcelPropertiesRequestByIDPacket;
 import libomv.packets.ParcelPropertiesRequestPacket;
-import libomv.packets.ParcelPropertiesUpdatePacket;
 import libomv.packets.ParcelReclaimPacket;
 import libomv.packets.ParcelReleasePacket;
 import libomv.packets.ParcelReturnObjectsPacket;
 import libomv.packets.ParcelSelectObjectsPacket;
-import libomv.packets.ParcelSetOtherCleanTimePacket;
 import libomv.types.PacketCallback;
 import libomv.types.UUID;
 import libomv.types.Vector3;
