@@ -56,21 +56,21 @@ public class InventoryObject extends InventoryItem {
 
 	/** Gets or sets the upper byte of the Flags value */
 	public final int getItemFlags() {
-		return ItemFlags & ~0xFF;
+		return itemFlags & ~0xFF;
 	}
 
 	public final void setItemFlags(int value) {
-		ItemFlags = value | (ItemFlags & 0xFF);
+		itemFlags = value | (itemFlags & 0xFF);
 	}
 
 	/**
 	 * Gets or sets the object attachment point, the lower byte of the Flags value
 	 */
 	public final AttachmentPoint getAttachPoint() {
-		return AttachmentPoint.setValue(ItemFlags & 0xFF);
+		return AttachmentPoint.setValue(itemFlags & 0xFF);
 	}
 
 	public final void setAttachPoint(AttachmentPoint value) {
-		ItemFlags = value.getValue() | (ItemFlags & ~0xFF);
+		itemFlags = value.getValue() | (itemFlags & ~0xFF);
 	}
 }

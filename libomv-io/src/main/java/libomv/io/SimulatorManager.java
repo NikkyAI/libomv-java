@@ -6,7 +6,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -257,14 +257,14 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 		public long ReceivedPongs;
 		/*
 		 * Incoming bytes per second
-		 * 
+		 *
 		 * It would be nice to have this calculated on the fly, but this is far, far
 		 * easier
 		 */
 		public int IncomingBPS;
 		/*
 		 * Outgoing bytes per second
-		 * 
+		 *
 		 * It would be nice to have this claculated on the fly, but this is far, far
 		 * easier
 		 */
@@ -397,7 +397,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 		 */
 		/**
 		 * Offer a new value to put in the queue
-		 * 
+		 *
 		 * @param value
 		 *            The value to put in the queue
 		 * @return The previous value that was in the queue at that position
@@ -508,7 +508,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 	/**
 	 * Checks simulator parcel map to make sure it has downloaded all data
 	 * successfully
-	 * 
+	 *
 	 * @return true if map is full (contains no 0's)
 	 */
 	public final boolean IsParcelMapFull() {
@@ -653,7 +653,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 				Iterator<Entry<Integer, Avatar>> iter = _ObjectsAvatars.entrySet().iterator();
 				while (iter.hasNext()) {
 					Entry<Integer, Avatar> e = iter.next();
-					if (id.equals(e.getValue().ID)) {
+					if (id.equals(e.getValue().id)) {
 						if (remove)
 							iter.remove();
 						return e.getValue();
@@ -690,7 +690,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 				Iterator<Entry<Integer, Primitive>> iter = _ObjectsPrimitives.entrySet().iterator();
 				while (iter.hasNext()) {
 					Entry<Integer, Primitive> e = iter.next();
-					if (id.equals(e.getValue().ID)) {
+					if (id.equals(e.getValue().id)) {
 						if (remove)
 							iter.remove();
 						return e.getValue();
@@ -781,7 +781,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 		super("Simulator: " + endPoint.getHostName());
 		_Client = client;
 
-		_Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
+		_Client.Settings.onSettingsUpdate.add(new SettingsUpdate());
 		trackUtilization = _Client.Settings.getBool(LibSettings.TRACK_UTILIZATION);
 		throttleOutgoingPackets = _Client.Settings.getBool(LibSettings.THROTTLE_OUTGOING_PACKETS);
 
@@ -818,7 +818,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 
 	/**
 	 * Attempt to connect to this simulator
-	 * 
+	 *
 	 * @param moveToSim
 	 *            Whether to move our agent in to this sim or not
 	 * @return True if the connection succeeded or connection status is unknown,
@@ -1008,7 +1008,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 
 	/**
 	 * Retrieve the terrain height at a given coordinate
-	 * 
+	 *
 	 * @param x
 	 *            Sim X coordinate, valid range is from 0 to 255
 	 * @param y
@@ -1327,31 +1327,31 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 			for (int i = 0; i < array.size(); i++) {
 				NetworkManager.OutgoingPacket outgoing = array.get(i);
 
-				if (outgoing.TickCount != 0 && now - outgoing.TickCount > _Client.Settings.RESEND_TIMEOUT) {
-					if (outgoing.ResendCount < _Client.Settings.MAX_RESEND_COUNT) {
+				if (outgoing.tickCount != 0 && now - outgoing.tickCount > _Client.Settings.RESEND_TIMEOUT) {
+					if (outgoing.resendCount < _Client.Settings.MAX_RESEND_COUNT) {
 						if (_Client.Settings.LOG_RESENDS) {
 							logger.debug(GridClient.Log(String.format("Resending %s packet #%d, %d ms have passed",
-									outgoing.Type, outgoing.SequenceNumber, now - outgoing.TickCount), _Client));
+									outgoing.Type, outgoing.sequenceNumber, now - outgoing.tickCount), _Client));
 						}
 
 						// The TickCount will be set to the current time when
 						// the packet is actually sent out again
-						outgoing.TickCount = 0;
+						outgoing.tickCount = 0;
 
 						// Set the resent flag
-						outgoing.Buffer.array()[0] |= PacketHeader.MSG_RESENT;
+						outgoing.buffer.array()[0] |= PacketHeader.MSG_RESENT;
 
 						// Stats tracking
-						outgoing.ResendCount++;
+						outgoing.resendCount++;
 						Statistics.ResentPackets++;
 
 						sendPacketFinal(outgoing);
 					} else {
 						logger.debug(String.format("Dropping packet #%d after %d failed attempts",
-								outgoing.SequenceNumber, outgoing.ResendCount, _Client));
+								outgoing.sequenceNumber, outgoing.resendCount, _Client));
 
 						synchronized (_NeedAck) {
-							_NeedAck.remove(outgoing.SequenceNumber);
+							_NeedAck.remove(outgoing.sequenceNumber);
 						}
 					}
 				}
@@ -1360,14 +1360,14 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 	}
 
 	public final void sendPacketFinal(NetworkManager.OutgoingPacket outgoingPacket) {
-		ByteBuffer buffer = outgoingPacket.Buffer;
+		ByteBuffer buffer = outgoingPacket.buffer;
 		byte[] bytes = buffer.array();
 		byte flags = buffer.get(0);
 		boolean isResend = (flags & PacketHeader.MSG_RESENT) != 0;
 		boolean isReliable = (flags & PacketHeader.MSG_RELIABLE) != 0;
 
 		// Keep track of when this packet was sent out (right now)
-		outgoingPacket.TickCount = System.currentTimeMillis();
+		outgoingPacket.tickCount = System.currentTimeMillis();
 
 		// #region ACK Appending
 		int dataLength = buffer.limit();
@@ -1395,14 +1395,14 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 
 		if (!isResend) {
 			// Not a resend, assign a new sequence number
-			outgoingPacket.SequenceNumber = _Sequence.incrementAndGet();
-			Helpers.UInt32ToBytesB(outgoingPacket.SequenceNumber, bytes, 1);
+			outgoingPacket.sequenceNumber = _Sequence.incrementAndGet();
+			Helpers.UInt32ToBytesB(outgoingPacket.sequenceNumber, bytes, 1);
 
 			if (isReliable) {
 				// Add this packet to the list of ACK responses we are waiting
 				// on from the server
 				synchronized (_NeedAck) {
-					_NeedAck.put(outgoingPacket.SequenceNumber, outgoingPacket);
+					_NeedAck.put(outgoingPacket.sequenceNumber, outgoingPacket);
 				}
 			}
 		}
@@ -1471,7 +1471,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 	 * how many zeroes to expand. One zero is encoded with 0x00 0x01, two zeroes is
 	 * 0x00 0x02, three zeroes is 0x00 0x03, etc. The first six bytes puls and extra
 	 * bytes are copied directly to the output buffer.
-	 * 
+	 *
 	 * @param src
 	 *            The byte array to decode
 	 * @param srclen

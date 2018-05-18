@@ -517,13 +517,13 @@ public class TextureEntry {
 
 	// Controls the texture animation of a particular prim
 	public class TextureAnimation {
-		public byte Flags;
-		public int Face;
-		public int SizeX;
-		public int SizeY;
-		public float Start;
-		public float Length;
-		public float Rate;
+		public byte flags;
+		public int face;
+		public int sizeX;
+		public int sizeY;
+		public float start;
+		public float length;
+		public float rate;
 
 		public TextureAnimation() {
 			init();
@@ -531,14 +531,14 @@ public class TextureEntry {
 
 		public TextureAnimation(byte[] data, int pos) {
 			if (data.length >= (16 + pos)) {
-				Flags = TextureAnimMode.setValue(data[pos++]);
-				Face = data[pos++];
-				SizeX = data[pos++];
-				SizeY = data[pos++];
+				flags = TextureAnimMode.setValue(data[pos++]);
+				face = data[pos++];
+				sizeX = data[pos++];
+				sizeY = data[pos++];
 
-				Start = Helpers.BytesToFloatL(data, pos);
-				Length = Helpers.BytesToFloatL(data, pos + 4);
-				Rate = Helpers.BytesToFloatL(data, pos + 8);
+				start = Helpers.BytesToFloatL(data, pos);
+				length = Helpers.BytesToFloatL(data, pos + 4);
+				rate = Helpers.BytesToFloatL(data, pos + 8);
 			} else {
 				init();
 			}
@@ -546,14 +546,14 @@ public class TextureEntry {
 
 		public TextureAnimation(byte[] data, int pos, int length) {
 			if (length >= 16 && data.length >= (length + pos)) {
-				Flags = TextureAnimMode.setValue(data[pos++]);
-				Face = data[pos++];
-				SizeX = data[pos++];
-				SizeY = data[pos++];
+				flags = TextureAnimMode.setValue(data[pos++]);
+				face = data[pos++];
+				sizeX = data[pos++];
+				sizeY = data[pos++];
 
-				Start = Helpers.BytesToFloatL(data, pos);
-				Length = Helpers.BytesToFloatL(data, pos + 4);
-				Rate = Helpers.BytesToFloatL(data, pos + 8);
+				start = Helpers.BytesToFloatL(data, pos);
+				this.length = Helpers.BytesToFloatL(data, pos + 4);
+				rate = Helpers.BytesToFloatL(data, pos + 8);
 			} else {
 				init();
 			}
@@ -564,38 +564,38 @@ public class TextureEntry {
 		}
 
 		public TextureAnimation(TextureAnimation textureAnim) {
-			Flags = textureAnim.Flags;
-			Face = textureAnim.Face;
-			SizeX = textureAnim.SizeX;
-			SizeY = textureAnim.SizeY;
-			Start = textureAnim.Start;
-			Length = textureAnim.Length;
-			Rate = textureAnim.Rate;
+			flags = textureAnim.flags;
+			face = textureAnim.face;
+			sizeX = textureAnim.sizeX;
+			sizeY = textureAnim.sizeY;
+			start = textureAnim.start;
+			length = textureAnim.length;
+			rate = textureAnim.rate;
 		}
 
 		private void init() {
-			Flags = TextureAnimMode.ANIM_OFF;
-			Face = 0;
-			SizeX = 0;
-			SizeY = 0;
+			flags = TextureAnimMode.ANIM_OFF;
+			face = 0;
+			sizeX = 0;
+			sizeY = 0;
 
-			Start = 0.0f;
-			Length = 0.0f;
-			Rate = 0.0f;
+			start = 0.0f;
+			length = 0.0f;
+			rate = 0.0f;
 		}
 
 		public byte[] getBytes() {
 			byte[] data = new byte[16];
 			int pos = 0;
 
-			data[pos++] = TextureAnimMode.getValue(Flags);
-			data[pos++] = (byte) Face;
-			data[pos++] = (byte) SizeX;
-			data[pos++] = (byte) SizeY;
+			data[pos++] = TextureAnimMode.getValue(flags);
+			data[pos++] = (byte) face;
+			data[pos++] = (byte) sizeX;
+			data[pos++] = (byte) sizeY;
 
-			Helpers.FloatToBytesL(Start, data, pos);
-			Helpers.FloatToBytesL(Length, data, pos + 4);
-			Helpers.FloatToBytesL(Rate, data, pos + 8);
+			Helpers.FloatToBytesL(start, data, pos);
+			Helpers.FloatToBytesL(length, data, pos + 4);
+			Helpers.FloatToBytesL(rate, data, pos + 8);
 
 			return data;
 		}
@@ -603,13 +603,13 @@ public class TextureEntry {
 		public OSD serialize() {
 			OSDMap map = new OSDMap();
 
-			map.put("face", OSD.FromInteger(Face));
-			map.put("flags", OSD.FromInteger(Flags));
-			map.put("length", OSD.FromReal(Length));
-			map.put("rate", OSD.FromReal(Rate));
-			map.put("size_x", OSD.FromInteger(SizeX));
-			map.put("size_y", OSD.FromInteger(SizeY));
-			map.put("start", OSD.FromReal(Start));
+			map.put("face", OSD.FromInteger(face));
+			map.put("flags", OSD.FromInteger(flags));
+			map.put("length", OSD.FromReal(length));
+			map.put("rate", OSD.FromReal(rate));
+			map.put("size_x", OSD.FromInteger(sizeX));
+			map.put("size_y", OSD.FromInteger(sizeY));
+			map.put("start", OSD.FromReal(start));
 
 			return map;
 		}
@@ -618,13 +618,13 @@ public class TextureEntry {
 			if (osd instanceof OSDMap) {
 				OSDMap map = (OSDMap) osd;
 
-				Face = map.get("face").AsUInteger();
-				Flags = TextureAnimMode.setValue(map.get("flags").AsUInteger());
-				Length = (float) map.get("length").AsReal();
-				Rate = (float) map.get("rate").AsReal();
-				SizeX = map.get("size_x").AsUInteger();
-				SizeY = map.get("size_y").AsUInteger();
-				Start = (float) map.get("start").AsReal();
+				face = map.get("face").AsUInteger();
+				flags = TextureAnimMode.setValue(map.get("flags").AsUInteger());
+				length = (float) map.get("length").AsReal();
+				rate = (float) map.get("rate").AsReal();
+				sizeX = map.get("size_x").AsUInteger();
+				sizeY = map.get("size_y").AsUInteger();
+				start = (float) map.get("start").AsReal();
 			} else {
 				init();
 			}

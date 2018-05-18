@@ -32,7 +32,7 @@ package libomv.rendering;
 import java.util.List;
 
 import libomv.primitives.Primitive;
-import libomv.primitives.TextureEntry;
+import libomv.primitives.TextureEntry.TextureEntryFace;
 import libomv.types.Quaternion;
 import libomv.types.Vector2;
 import libomv.types.Vector3;
@@ -96,87 +96,87 @@ public abstract class Mesh {
 	// #region Structs
 
 	public class Vertex {
-		public Vector3 Position;
-		public Vector3 Normal;
-		public Vector2 TexCoord;
+		public Vector3 position;
+		public Vector3 normal;
+		public Vector2 texCoord;
 
 		@Override
 		public String toString() {
-			return String.format("P: %s N: %s T: %s", Position, Normal, TexCoord);
+			return String.format("P: %s N: %s T: %s", position, normal, texCoord);
 		}
 	}
 
 	public class ProfileFace {
-		public int Index;
-		public int Count;
-		public float ScaleU;
-		public boolean Cap;
-		public boolean Flat;
-		public FaceType Type;
+		public int index;
+		public int count;
+		public float scaleU;
+		public boolean cap;
+		public boolean flat;
+		public FaceType type;
 
 		@Override
 		public String toString() {
-			return Type.toString();
+			return type.toString();
 		}
 	};
 
 	public class Profile {
-		public float MinX;
-		public float MaxX;
-		public boolean Open;
-		public boolean Concave;
-		public int TotalOutsidePoints;
-		public List<Vector3> Positions;
-		public List<ProfileFace> Faces;
+		public float minX;
+		public float maxX;
+		public boolean open;
+		public boolean concave;
+		public int totalOutsidePoints;
+		public List<Vector3> positions;
+		public List<ProfileFace> faces;
 	}
 
 	public class PathPoint {
-		public Vector3 Position;
-		public Vector2 Scale;
-		public Quaternion Rotation;
-		public float TexT;
+		public Vector3 position;
+		public Vector2 scale;
+		public Quaternion rotation;
+		public float texT;
 	}
 
 	public class Path {
-		public List<PathPoint> Points;
-		public boolean Open;
+		public List<PathPoint> points;
+		public boolean open;
 	}
 
 	public class Face {
 		// Only used for Inner/Outer faces
-		public int BeginS;
-		public int BeginT;
-		public int NumS;
-		public int NumT;
+		public int beginS;
+		public int beginT;
+		public int numS;
+		public int numT;
 
-		public int ID;
-		public Vector3 Center;
-		public Vector3 MinExtent;
-		public Vector3 MaxExtent;
-		public List<Vertex> Vertices;
-		public List<Integer> Indices;
-		public List<Integer> Edge;
-		public FaceMask Mask;
-		public TextureEntry.TextureEntryFace TextureFace;
-		public Object UserData;
+		public int id;
+		public Vector3 center;
+		public Vector3 minExtent;
+		public Vector3 maxExtent;
+		public List<Vertex> vertices;
+		public List<Integer> indices;
+		public List<Integer> edge;
+		public FaceMask mask;
+		public TextureEntryFace textureFace;
+		public Object userData;
 
 		@Override
 		public String toString() {
-			return Mask.toString();
+			return mask.toString();
 		}
 	}
 
 	// #endregion Structs
 
-	public Primitive Prim;
-	public Path Path;
-	public Profile Profile;
+	public Primitive prim;
+	public Path path;
+	public Profile profile;
 
 	@Override
 	public String toString() {
-		if (Prim.Properties != null && !Prim.Properties.Name.isEmpty()) {
-			return Prim.Properties.Name;
+		if (prim.properties != null && !prim.properties.name.isEmpty()) {
+			return prim.properties.name;
 		}
-		return String.format("(%d) (%s)", Prim.LocalID, Prim.PrimData.toString());
+		return String.format("(%d) (%s)", prim.localID, prim.primData.toString());
 	}
 }

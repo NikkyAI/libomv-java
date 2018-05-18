@@ -59,29 +59,29 @@ public class AssetNotecard extends AssetItem {
 	}
 
 	/** A text string containing main text of the notecard */
-	private String BodyText = null;
+	private String bodyText = null;
 
 	public String getBodyText() {
-		return BodyText;
+		return bodyText;
 	}
 
 	public void setBodyText(String bodyText) {
 		invalidateAssetData();
-		BodyText = bodyText;
+		this.bodyText = bodyText;
 	}
 
 	/**
 	 * List of <see cref="OpenMetaverse.InventoryItem"/>s embedded on the notecard
 	 */
-	private List<InventoryItem> EmbeddedItems = null;
+	private List<InventoryItem> embeddedItems = null;
 
 	public List<InventoryItem> geEmbeddedItems() {
-		return EmbeddedItems;
+		return embeddedItems;
 	}
 
 	public void setEmbeddedItems(List<InventoryItem> embeddedItems) {
 		invalidateAssetData();
-		EmbeddedItems = embeddedItems;
+		this.embeddedItems = embeddedItems;
 	}
 
 	/**
@@ -104,7 +104,7 @@ public class AssetNotecard extends AssetItem {
 	 */
 	public AssetNotecard(String text) {
 		super(null, null);
-		BodyText = text;
+		bodyText = text;
 		encode();
 	}
 
@@ -113,7 +113,7 @@ public class AssetNotecard extends AssetItem {
 	 */
 	@Override
 	protected void encode() {
-		String body = BodyText;
+		String body = bodyText;
 
 		StringBuilder output = new StringBuilder();
 		output.append("Linden text version 2\n");
@@ -123,8 +123,8 @@ public class AssetNotecard extends AssetItem {
 
 		int count = 0;
 
-		if (EmbeddedItems != null) {
-			count = EmbeddedItems.size();
+		if (embeddedItems != null) {
+			count = embeddedItems.size();
 		}
 
 		output.append("count " + count + "\n");
@@ -132,8 +132,8 @@ public class AssetNotecard extends AssetItem {
 		if (count > 0) {
 			output.append("{\n");
 
-			for (int i = 0; i < EmbeddedItems.size(); i++) {
-				InventoryItem item = EmbeddedItems.get(i);
+			for (int i = 0; i < embeddedItems.size(); i++) {
+				InventoryItem item = embeddedItems.get(i);
 
 				output.append("ext char index " + i + "\n");
 
@@ -145,44 +145,44 @@ public class AssetNotecard extends AssetItem {
 
 				output.append("\tpermissions 0\n");
 				output.append("\t{\n");
-				output.append("\t\tbase_mask\t" + String.format("08x", item.Permissions.BaseMask) + "\n");
-				output.append("\t\towner_mask\t" + String.format("08x", item.Permissions.OwnerMask) + "\n");
-				output.append("\t\tgroup_mask\t" + String.format("08x", item.Permissions.GroupMask) + "\n");
-				output.append("\t\teveryone_mask\t" + String.format("08x", item.Permissions.EveryoneMask) + "\n");
-				output.append("\t\tnext_owner_mask\t" + String.format("08x", item.Permissions.NextOwnerMask) + "\n");
-				output.append("\t\tcreator_id\t" + item.Permissions.creatorID.toString() + "\n");
-				output.append("\t\towner_id\t" + item.Permissions.ownerID.toString() + "\n");
-				output.append("\t\tlast_owner_id\t" + item.Permissions.lastOwnerID.toString() + "\n");
-				output.append("\t\tgroup_id\t" + item.Permissions.groupID.toString() + "\n");
-				if (item.Permissions.isGroupOwned)
+				output.append("\t\tbase_mask\t" + String.format("08x", item.permissions.BaseMask) + "\n");
+				output.append("\t\towner_mask\t" + String.format("08x", item.permissions.OwnerMask) + "\n");
+				output.append("\t\tgroup_mask\t" + String.format("08x", item.permissions.GroupMask) + "\n");
+				output.append("\t\teveryone_mask\t" + String.format("08x", item.permissions.EveryoneMask) + "\n");
+				output.append("\t\tnext_owner_mask\t" + String.format("08x", item.permissions.NextOwnerMask) + "\n");
+				output.append("\t\tcreator_id\t" + item.permissions.creatorID.toString() + "\n");
+				output.append("\t\towner_id\t" + item.permissions.ownerID.toString() + "\n");
+				output.append("\t\tlast_owner_id\t" + item.permissions.lastOwnerID.toString() + "\n");
+				output.append("\t\tgroup_id\t" + item.permissions.groupID.toString() + "\n");
+				if (item.permissions.isGroupOwned)
 					output.append("\t\tgroup_owned\t1\n");
 				output.append("\t}\n");
 
-				if (Permissions.hasPermissions(item.Permissions.BaseMask,
+				if (Permissions.hasPermissions(item.permissions.BaseMask,
 						PermissionMask.Modify | PermissionMask.Copy | PermissionMask.Transfer)
 						|| item.assetID == UUID.Zero) {
 					output.append("\t\tasset_id\t" + item.assetID + "\n");
 				} else {
-					output.append("\t\tshadow_id\t" + Inventory.EncryptAssetID(item.assetID) + "\n");
+					output.append("\t\tshadow_id\t" + Inventory.encryptAssetID(item.assetID) + "\n");
 				}
 
 				output.append("\t\ttype\t" + item.assetType.toString() + "\n");
 				output.append("\t\tinv_type\t" + item.getType().toString() + "\n");
-				output.append("\t\tflags\t" + String.format("08x", item.ItemFlags) + "\n");
+				output.append("\t\tflags\t" + String.format("08x", item.itemFlags) + "\n");
 
 				output.append("\tsale_info\t0\n");
 				output.append("\t{\n");
 				output.append("\t\tsale_type\t" + item.saleType.toString() + "\n");
-				output.append("\t\tsale_price\t" + item.SalePrice + "\n");
+				output.append("\t\tsale_price\t" + item.salePrice + "\n");
 				output.append("\t}\n");
 
 				output.append("\t\tname\t" + item.name.replace('|', '_') + "|\n");
-				output.append("\t\tdesc\t" + item.Description.replace('|', '_') + "|\n");
-				output.append("\t\tcreation_date\t" + Helpers.DateTimeToUnixTime(item.CreationDate) + "\n");
+				output.append("\t\tdesc\t" + item.description.replace('|', '_') + "|\n");
+				output.append("\t\tcreation_date\t" + Helpers.DateTimeToUnixTime(item.creationDate) + "\n");
 
 				output.append("\t}\n");
 
-				if (i != EmbeddedItems.size() - 1) {
+				if (i != embeddedItems.size() - 1) {
 					output.append("}\n{\n");
 				}
 			}
@@ -194,7 +194,7 @@ public class AssetNotecard extends AssetItem {
 		output.append("Text length " + String.format("%d", Helpers.StringToBytes(body).length - 1) + "\n");
 		output.append(body + "}\n");
 
-		AssetData = Helpers.StringToBytes(output.toString());
+		assetData = Helpers.StringToBytes(output.toString());
 	}
 
 	/**
@@ -209,14 +209,14 @@ public class AssetNotecard extends AssetItem {
 
 	@Override
 	protected boolean decode() {
-		EmbeddedItems = new ArrayList<InventoryItem>();
-		BodyText = Helpers.EmptyString;
+		embeddedItems = new ArrayList<InventoryItem>();
+		bodyText = Helpers.EmptyString;
 
-		if (AssetData == null)
+		if (assetData == null)
 			return false;
 
 		try {
-			String data = Helpers.BytesToString(AssetData);
+			String data = Helpers.BytesToString(assetData);
 			String[] lines = data.split("\n");
 			int i = 0;
 			Matcher m;
@@ -366,17 +366,17 @@ public class AssetNotecard extends AssetItem {
 				}
 				InventoryItem finalEmbedded = InventoryItem.create(inventoryType, uuid, parentID, ownerID);
 
-				finalEmbedded.Permissions = permissions;
-				finalEmbedded.SalePrice = salePrice;
+				finalEmbedded.permissions = permissions;
+				finalEmbedded.salePrice = salePrice;
 				finalEmbedded.saleType = saleType;
 				finalEmbedded.assetID = assetID;
 				finalEmbedded.assetType = assetType;
-				finalEmbedded.ItemFlags = flags;
+				finalEmbedded.itemFlags = flags;
 				finalEmbedded.name = name;
-				finalEmbedded.Description = description;
-				finalEmbedded.CreationDate = creationDate;
+				finalEmbedded.description = description;
+				finalEmbedded.creationDate = creationDate;
 
-				EmbeddedItems.add(finalEmbedded);
+				embeddedItems.add(finalEmbedded);
 
 				if (!(m = match(lines[i++], "^\\s*\\}\\s*$")).matches())
 					throw new Exception("wrong format");
@@ -390,9 +390,9 @@ public class AssetNotecard extends AssetItem {
 
 			// Read the rest of the notecard
 			while (i < lines.length) {
-				BodyText += lines[i++] + "\n";
+				bodyText += lines[i++] + "\n";
 			}
-			BodyText = BodyText.substring(0, BodyText.lastIndexOf("}"));
+			bodyText = bodyText.substring(0, bodyText.lastIndexOf("}"));
 			return true;
 		} catch (Exception ex) {
 			logger.error("Decoding notecard asset failed: " + ex.getMessage());

@@ -6,7 +6,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -607,7 +607,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/*
 	 * Flags sent when a script takes or releases a control
-	 * 
+	 *
 	 * NOTE: (need to verify) These might be a subset of the ControlFlags enum in
 	 * Movement,
 	 */
@@ -831,7 +831,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 		/*
 		 * Print the struct data as a string
-		 * 
+		 *
 		 * @return A string containing the field name, and field value
 		 */
 		@Override
@@ -1017,7 +1017,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 		/**
 		 * Construct a new instance of the InstantMessageEventArgs object
-		 * 
+		 *
 		 * @param im
 		 *            the InstantMessage object
 		 * @param simulator
@@ -1138,7 +1138,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 		/**
 		 * Construct a new instance of the BalanceCallbackArgs object
-		 * 
+		 *
 		 * @param balance
 		 *            the InstantMessage object
 		 */
@@ -1216,7 +1216,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 		/**
 		 * Construct a new instance of the ScriptControlEventArgs class
-		 * 
+		 *
 		 * @param controls
 		 *            The controls the script is attempting to take or release to the
 		 *            agent
@@ -1634,7 +1634,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 		/**
 		 * Construct a new instance of the MoneyBalanceReplyEventArgs object
-		 * 
+		 *
 		 * @param transactionID
 		 *            The ID of the transaction
 		 * @param transactionSuccess
@@ -1953,21 +1953,21 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 		synchronized (primitives) {
 			p = primitives.get(sittingOn);
 			if (p != null) {
-				fullPosition.add(Vector3.add(p.Position, Vector3.multiply(relativePosition, p.Rotation)));
+				fullPosition.add(Vector3.add(p.position, Vector3.multiply(relativePosition, p.rotation)));
 			}
 		}
 
 		// go up the hiearchy trying to find the root prim
-		while (p != null && p.ParentID != 0) {
+		while (p != null && p.parentID != 0) {
 			synchronized (primitives) {
-				t = sim.getObjectsAvatars().get(p.ParentID);
+				t = sim.getObjectsAvatars().get(p.parentID);
 				if (t != null) {
-					fullPosition.add(t.Position);
+					fullPosition.add(t.position);
 					t = p;
 				} else {
-					p = primitives.get(p.ParentID);
+					p = primitives.get(p.parentID);
 					if (p != null) {
-						fullPosition.add(p.Position);
+						fullPosition.add(p.position);
 					}
 				}
 			}
@@ -1997,7 +1997,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 				synchronized (_Client.Network.getCurrentSim().getObjectsPrimitives()) {
 					if (_Client.Network.getCurrentSim().getObjectsPrimitives().containsKey(sittingOn)) {
 						parent = _Client.Network.getCurrentSim().getObjectsPrimitives().get(sittingOn);
-						return Quaternion.multiply(relativeRotation, parent.Rotation);
+						return Quaternion.multiply(relativeRotation, parent.rotation);
 					}
 				}
 			}
@@ -2047,7 +2047,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	/**
 	 * Finds if a MuteEntry exists by using a predicate function that is passed in
 	 * as object parameter
-	 * 
+	 *
 	 * @param predicate
 	 *            The Predicate object that implements the test
 	 * @return true if a matching MuteEntry was found, or false otherwise
@@ -2130,7 +2130,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	public AgentManager(GridClient client) {
 		_Client = client;
 
-		_Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
+		_Client.Settings.onSettingsUpdate.add(new SettingsUpdate());
 		sendAgentUpdates = _Client.Settings.getBool(LibSettings.SEND_AGENT_UPDATES);
 
 		_Movement = new AgentMovement(client);
@@ -2320,7 +2320,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Send a text message from the Agent to the Simulator
-	 * 
+	 *
 	 * @param message
 	 *            A <see cref="string"/> containing the message
 	 * @param channel
@@ -2343,7 +2343,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Request any instant messages sent while the client was offline to be resent.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public final void RetrieveInstantMessages() throws Exception {
@@ -2355,7 +2355,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Send an Instant Message to another Avatar
-	 * 
+	 *
 	 * @param target
 	 *            The recipients <see cref="UUID"/>
 	 * @param message
@@ -2368,7 +2368,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Send an Instant Message to an existing group chat or conference chat
-	 * 
+	 *
 	 * @param target
 	 *            The recipients <see cref="UUID"/>
 	 * @param message
@@ -2388,7 +2388,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Send an Instant Message
-	 * 
+	 *
 	 * @param fromName
 	 *            The name this IM will show up as being from
 	 * @param target
@@ -2419,7 +2419,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Send an Instant Message
-	 * 
+	 *
 	 * @param fromName
 	 *            The name this IM will show up as being from
 	 * @param target
@@ -2440,7 +2440,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	 *            timestamp of message or 0
 	 * @param binaryBucket
 	 *            Packed binary data that is specific to the dialog type
-	 * 
+	 *
 	 * @throws Exception
 	 * @throws UnsupportedEncodingException
 	 */
@@ -2495,7 +2495,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Send an Instant Message to a group
-	 * 
+	 *
 	 * @param groupID
 	 *            {@link UUID} of the group to send message to
 	 * @param message
@@ -2509,7 +2509,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Send an Instant Message to a group the agent is a member of
-	 * 
+	 *
 	 * @param fromName
 	 *            The name this IM will show up as being from
 	 * @param groupID
@@ -2532,7 +2532,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Send a typing status update
-	 * 
+	 *
 	 * @param otherID
 	 *            {@link UUID} of the group to send the status update to
 	 * @param sessionID
@@ -2549,7 +2549,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Send a request to join a group chat session
-	 * 
+	 *
 	 * @param groupID
 	 *            {@link UUID} of Group to leave
 	 */
@@ -2561,7 +2561,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	/**
 	 * Exit a group chat session. This will stop further Group chat messages from
 	 * being sent until session is rejoined.
-	 * 
+	 *
 	 * @param groupID
 	 *            {@link UUID} of Group chat session to leave
 	 * @throws Exception
@@ -2579,7 +2579,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Reply to script dialog questions.
-	 * 
+	 *
 	 * @param channel
 	 *            Channel initial request came on
 	 * @param buttonIndex
@@ -2589,7 +2589,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	 * @param objectID
 	 *            {@link UUID} of Object that sent the dialog request
 	 *            {@link OnScriptDialog}
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public final void ReplyToScriptDialog(int channel, int buttonIndex, String buttonlabel, UUID objectID)
@@ -2609,7 +2609,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Accept invite for a chatterbox session
-	 * 
+	 *
 	 * @param session_id
 	 *            {@link UUID} of session to accept invite to
 	 * @throws Exception
@@ -2618,7 +2618,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 		URI uri = _Client.Network.getCapabilityURI(CapsEventType.ChatSessionRequest.toString());
 		if (uri != null) {
 			ChatSessionAcceptInvitation acceptInvite = _Client.Messages.new ChatSessionAcceptInvitation();
-			acceptInvite.SessionID = session_id;
+			acceptInvite.sessionID = session_id;
 			new CapsClient(_Client, CapsEventType.ChatSessionAcceptInvitation.toString()).executeHttpPost(uri,
 					acceptInvite, null, _Client.Settings.CAPS_TIMEOUT);
 
@@ -2635,7 +2635,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Start a friends conference
-	 * 
+	 *
 	 * @param participants
 	 *            {@link UUID} List of UUIDs to start a conference with
 	 * @param tmp_session_id
@@ -2648,11 +2648,11 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 		if (url != null) {
 			ChatSessionRequestStartConference startConference = _Client.Messages.new ChatSessionRequestStartConference();
 
-			startConference.AgentsBlock = new UUID[participants.length];
+			startConference.agentsBlock = new UUID[participants.length];
 			for (int i = 0; i < participants.length; i++) {
-				startConference.AgentsBlock[i] = participants[i];
+				startConference.agentsBlock[i] = participants[i];
 			}
-			startConference.SessionID = tmp_session_id;
+			startConference.sessionID = tmp_session_id;
 			new CapsClient(_Client, CapsEventType.ChatSessionRequestStartConference.toString()).executeHttpPost(url,
 					startConference, null, _Client.Settings.CAPS_TIMEOUT);
 		} else {
@@ -2666,7 +2666,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Start a particle stream between an agent and an object
-	 * 
+	 *
 	 * @param sourceAvatar
 	 *            {@link UUID} Key of the source agent
 	 * @param targetObject
@@ -2710,7 +2710,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Start a particle stream between an agent and an object
-	 * 
+	 *
 	 * @param sourceAvatar
 	 *            {@link UUID} Key of the source agent
 	 * @param targetObject
@@ -2781,7 +2781,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Create a particle beam between an avatar and an primitive
-	 * 
+	 *
 	 * @param sourceAvatar
 	 *            The ID of source avatar
 	 * @param targetObject
@@ -2825,7 +2825,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	/**
 	 * Create a particle swirl around a target position using a
 	 * {@link ViewerEffectPacket} packet
-	 * 
+	 *
 	 * @param globalOffset
 	 *            global offset
 	 * @param color
@@ -2868,7 +2868,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Sends a request to sit on the specified object
-	 * 
+	 *
 	 * @param targetID
 	 *            {@link UUID} of the object to sit on
 	 * @param offset
@@ -2886,9 +2886,9 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Follows a call to {@link RequestSit} to actually sit on the object
-	 * 
+	 *
 	 * @throws Exception
-	 * 
+	 *
 	 */
 	public final void Sit() throws Exception {
 		AgentSitPacket sit = new AgentSitPacket();
@@ -2899,7 +2899,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Stands up from sitting on a prim or the ground
-	 * 
+	 *
 	 * @return true of AgentUpdate was sent
 	 * @throws Exception
 	 */
@@ -2918,7 +2918,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Does a "ground sit" at the avatar's current position
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public final void SitOnGround() throws Exception {
@@ -2928,7 +2928,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Starts or stops flying
-	 * 
+	 *
 	 * @param start
 	 *            True to start flying, false to stop flying
 	 * @throws Exception
@@ -2944,7 +2944,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Starts or stops crouching
-	 * 
+	 *
 	 * @param crouching
 	 *            True to start crouching, false to stop crouching
 	 * @throws Exception
@@ -2966,9 +2966,9 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	/**
 	 * Use the autopilot sim function to move the avatar to a new position. Uses
 	 * double precision to get precise movements
-	 * 
+	 *
 	 * The z value is currently not handled properly by the simulator
-	 * 
+	 *
 	 * @param globalX
 	 *            Global X coordinate to move to
 	 * @param globalY
@@ -2998,9 +2998,9 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Use the autopilot sim function to move the avatar to a new position
-	 * 
+	 *
 	 * The z value is currently not handled properly by the simulator
-	 * 
+	 *
 	 * @param globalX
 	 *            Long integer value for the global X coordinate to move to
 	 * @param globalY
@@ -3030,9 +3030,9 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Use the autopilot sim function to move the avatar to a new position
-	 * 
+	 *
 	 * The z value is currently not handled properly by the simulator
-	 * 
+	 *
 	 * @param localX
 	 *            Integer value for the local X coordinate to move to
 	 * @param localY
@@ -3050,7 +3050,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	/**
 	 * Macro to cancel autopilot sim function Not certain if this is how it is
 	 * really done
-	 * 
+	 *
 	 * @return true if control flags were set and AgentUpdate was sent to the
 	 *         simulator
 	 * @throws Exception
@@ -3132,7 +3132,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	 * Drag an object
 	 *
 	 * @param objectID
-	 * 			@see cref="UUID" of the object to drag
+	 * @see cref="UUID" of the object to drag
 	 * @param grabPosition
 	 *            Drag target in region coordinates
 	 * @throws Exception
@@ -3146,7 +3146,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	 * Overload: Drag an object
 	 *
 	 * @param objectID
-	 * 			@see cref="UUID" of the object to drag
+	 * @see cref="UUID" of the object to drag
 	 * @param grabPosition
 	 *            Drag target in region coordinates
 	 * @param grabOffset
@@ -3272,13 +3272,13 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 		AvatarPropertiesUpdatePacket apup = new AvatarPropertiesUpdatePacket();
 		apup.AgentData.AgentID = this.agentID;
 		apup.AgentData.SessionID = this.sessionID;
-		apup.PropertiesData.setAboutText(Helpers.StringToBytes(profile.AboutText));
+		apup.PropertiesData.setAboutText(Helpers.StringToBytes(profile.aboutText));
 		apup.PropertiesData.AllowPublish = profile.getAllowPublish();
-		apup.PropertiesData.setFLAboutText(Helpers.StringToBytes(profile.FirstLifeText));
-		apup.PropertiesData.FLImageID = profile.FirstLifeImage;
-		apup.PropertiesData.ImageID = profile.ProfileImage;
+		apup.PropertiesData.setFLAboutText(Helpers.StringToBytes(profile.firstLifeText));
+		apup.PropertiesData.FLImageID = profile.firstLifeImage;
+		apup.PropertiesData.ImageID = profile.profileImage;
 		apup.PropertiesData.MaturePublish = profile.getMaturePublish();
-		apup.PropertiesData.setProfileURL(Helpers.StringToBytes(profile.ProfileURL));
+		apup.PropertiesData.setProfileURL(Helpers.StringToBytes(profile.profileURL));
 
 		_Client.Network.sendPacket(apup);
 	}
@@ -3294,18 +3294,18 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 		AvatarInterestsUpdatePacket aiup = new AvatarInterestsUpdatePacket();
 		aiup.AgentData.AgentID = this.agentID;
 		aiup.AgentData.SessionID = this.sessionID;
-		aiup.PropertiesData.setLanguagesText(Helpers.StringToBytes(interests.LanguagesText));
-		aiup.PropertiesData.SkillsMask = interests.SkillsMask;
-		aiup.PropertiesData.setSkillsText(Helpers.StringToBytes(interests.SkillsText));
-		aiup.PropertiesData.WantToMask = interests.WantToMask;
-		aiup.PropertiesData.setWantToText(Helpers.StringToBytes(interests.WantToText));
+		aiup.PropertiesData.setLanguagesText(Helpers.StringToBytes(interests.languagesText));
+		aiup.PropertiesData.SkillsMask = interests.skillsMask;
+		aiup.PropertiesData.setSkillsText(Helpers.StringToBytes(interests.skillsText));
+		aiup.PropertiesData.WantToMask = interests.wantToMask;
+		aiup.PropertiesData.setWantToText(Helpers.StringToBytes(interests.wantToText));
 
 		_Client.Network.sendPacket(aiup);
 	}
 
 	/**
 	 * Set the height and the width of your avatar. This is used to scale
-	 * 
+	 *
 	 * @param height
 	 *            New height of the avatar
 	 * @param width
@@ -3328,7 +3328,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Request the current L$ balance
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void RequestBalance() throws Exception {
@@ -3342,7 +3342,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Give Money to destination Avatar
-	 * 
+	 *
 	 * @param target
 	 *            UUID of the Target Avatar
 	 * @param amount
@@ -3355,7 +3355,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Give Money to destination Avatar
-	 * 
+	 *
 	 * @param target
 	 *            UUID of the Target Avatar
 	 * @param amount
@@ -3371,7 +3371,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Give L$ to an object
-	 * 
+	 *
 	 * @param target
 	 *            object {@link UUID} to give money to
 	 * @param amount
@@ -3386,7 +3386,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Give L$ to a group
-	 * 
+	 *
 	 * @param target
 	 *            group {@link UUID} to give money to
 	 * @param amount
@@ -3399,7 +3399,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Give L$ to a group
-	 * 
+	 *
 	 * @param target
 	 *            group {@link UUID} to give money to
 	 * @param amount
@@ -3414,9 +3414,9 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Pay texture/animation upload fee
-	 * 
+	 *
 	 * @throws Exception
-	 * 
+	 *
 	 */
 	public final void PayUploadFee() throws Exception {
 		GiveMoney(UUID.Zero, _Client.Settings.getUploadPrice(), Helpers.EmptyString, MoneyTransactionType.UploadCharge,
@@ -3425,7 +3425,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Pay texture/animation upload fee
-	 * 
+	 *
 	 * @param description
 	 *            description of the transaction
 	 * @throws Exception
@@ -3437,7 +3437,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Give Money to destination Object or Avatar
-	 * 
+	 *
 	 * @param target
 	 *            UUID of the Target Object/Avatar
 	 * @param amount
@@ -3473,7 +3473,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	// #region Gestures
 	/**
 	 * Plays a gesture
-	 * 
+	 *
 	 * @param gestureID
 	 *            Asset {@link UUID} of the gesture
 	 */
@@ -3531,7 +3531,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 						try {
 							switch (step.getGestureStepType()) {
 							case Chat:
-								String text = ((GestureStepChat) step).Text;
+								String text = ((GestureStepChat) step).text;
 								int channel = 0;
 								Pattern p = Pattern.compile("^/(?<channel>-?[0-9]+) *(?<text>.*)");
 								Matcher m = p.matcher(text);
@@ -3548,13 +3548,13 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 								break;
 							case Animation:
 								GestureStepAnimation anim = (GestureStepAnimation) step;
-								if (anim.AnimationStart) {
-									if (SignaledAnimations.containsKey(anim.ID)) {
-										AnimationStop(anim.ID);
+								if (anim.animationStart) {
+									if (SignaledAnimations.containsKey(anim.id)) {
+										AnimationStop(anim.id);
 									}
-									AnimationStart(anim.ID);
+									AnimationStart(anim.id);
 								} else {
-									AnimationStop(anim.ID);
+									AnimationStop(anim.id);
 								}
 								break;
 							case Sound:
@@ -3563,10 +3563,10 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 								break;
 							case Wait:
 								GestureStepWait wait = (GestureStepWait) step;
-								if (wait.WaitForTime) {
-									Thread.sleep((int) (1000f * wait.WaitTime));
+								if (wait.waitForTime) {
+									Thread.sleep((int) (1000f * wait.waitTime));
 								}
-								if (wait.WaitForAnimation) {
+								if (wait.waitForAnimation) {
 
 								}
 								break;
@@ -3587,9 +3587,9 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/*
 	 * Mark gesture active
-	 * 
+	 *
 	 * @param invID Inventory {@link UUID} of the gesture
-	 * 
+	 *
 	 * @param assetID Asset {@link UUID} of the gesture
 	 */
 	public final void ActivateGesture(UUID invID, UUID assetID) throws Exception {
@@ -3614,7 +3614,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Mark gesture inactive
-	 * 
+	 *
 	 * @param invID
 	 *            Inventory {@link UUID} of the gesture
 	 */
@@ -3643,7 +3643,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Send an AgentAnimation packet that toggles a single animation on
-	 * 
+	 *
 	 * @param animation
 	 *            The {@link UUID} of the animation to start playing
 	 * @throws Exception
@@ -3654,7 +3654,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Send an AgentAnimation packet that toggles a single animation off
-	 * 
+	 *
 	 * @param animation
 	 *            The {@link UUID} of a currently playing animation to stop playing
 	 * @throws Exception
@@ -3665,7 +3665,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Send an AgentAnimation packet that will toggle an animations on or off
-	 * 
+	 *
 	 * @param uuid
 	 *            The animation {@link UUID} s, and whether to turn that animation
 	 *            on or off
@@ -3690,7 +3690,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Send an AgentAnimation packet that will toggle animations on or off
-	 * 
+	 *
 	 * @param animations
 	 *            A list of animation {@link UUID} s, and whether to turn that
 	 *            animation on or off
@@ -3721,7 +3721,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Teleports agent to their stored home location
-	 * 
+	 *
 	 * @return true on successful teleport to home location
 	 * @throws Exception
 	 */
@@ -3731,7 +3731,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Teleport agent to a landmark
-	 * 
+	 *
 	 * @param landmark
 	 *            {@link UUID} of the landmark to teleport agent to
 	 * @return true on success, false on failure
@@ -3755,7 +3755,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Teleport agent to a landmark
-	 * 
+	 *
 	 * @param landmark
 	 *            {@link UUID} of the landmark to teleport agent to
 	 * @throws Exception
@@ -3781,18 +3781,18 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	 * Start a Teleport request asynchronously. You can either use the callback
 	 * handler to wait for any message or the returned timeoutEvent to abort the
 	 * request prematurely if desired.
-	 * 
+	 *
 	 * <example> // Using a callback handler final Callback<TeleportCallbackArgs>
 	 * handler = new Callback<TeleportCallbackArgs>() { public void
 	 * callback(TeleportCallbackArgs args) { // Do something with the callback args:
 	 * args.status, args.message, args.flags switch (args.status) { case Start: case
 	 * Progress: break; case Canceled: case Failed: case Finished: break; } } }
 	 * BeginTeleport(handle, pos, handler);
-	 * 
+	 *
 	 * // Using the timeout event TimeoutEvent<TeleportStatus> timo =
 	 * BeginTeleport(handle, pos, null); TeleportStatus stat = timo.waitms(timeout);
 	 * if (stat == null) { // The timeout occurred } </example>
-	 * 
+	 *
 	 * @param regionHandle
 	 *            The region handle of the region to teleport to
 	 * @param position
@@ -3812,7 +3812,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	 * Start a Teleport request asynchronously. You can either use the callback
 	 * handler to wait for any message or the returned timeoutEvent to abort the
 	 * request prematurely if desired.
-	 * 
+	 *
 	 * @param regionHandle
 	 *            The region handle of the region to teleport to
 	 * @param position
@@ -3838,7 +3838,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Request teleport to a another simulator
-	 * 
+	 *
 	 * @param regionHandle
 	 *            handle of region to teleport agent to
 	 * @param position
@@ -3851,7 +3851,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Request teleport to a another simulator
-	 * 
+	 *
 	 * @param regionHandle
 	 *            handle of region to teleport agent to
 	 * @param position
@@ -3882,7 +3882,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Teleport agent to another region
-	 * 
+	 *
 	 * @param regionHandle
 	 *            handle of region to teleport agent to
 	 * @param position
@@ -3895,7 +3895,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Teleport agent to another region
-	 * 
+	 *
 	 * @param regionHandle
 	 *            handle of region to teleport agent to
 	 * @param position
@@ -3910,7 +3910,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Teleport agent to another region
-	 * 
+	 *
 	 * @param regionHandle
 	 *            handle of region to teleport agent to
 	 * @param position
@@ -3937,7 +3937,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	/**
 	 * Attempt to look up a simulator name and teleport to the discovered
 	 * destination
-	 * 
+	 *
 	 * @param simName
 	 *            Region name to look up
 	 * @param position
@@ -3951,7 +3951,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	/**
 	 * Attempt to look up a simulator name and teleport to the discovered
 	 * destination
-	 * 
+	 *
 	 * @param simName
 	 *            Region name to look up
 	 * @param position
@@ -3987,7 +3987,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	/**
 	 * Send a teleport lure to another avatar with default "Join me in ..."
 	 * invitation message
-	 * 
+	 *
 	 * @param targetID
 	 *            Target avatars {@link UUID} to lure
 	 * @throws Exception
@@ -3998,7 +3998,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Send a teleport lure to another avatar with custom invitation message
-	 * 
+	 *
 	 * @param targetID
 	 *            target avatars {@link UUID} to lure
 	 * @param message
@@ -4019,7 +4019,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	/**
 	 * Respond to a teleport lure by either accepting it and initiating the
 	 * teleport, or denying it
-	 * 
+	 *
 	 * @param requesterID
 	 *            {@link UUID} of the avatar sending the lure
 	 * @param lureID
@@ -4054,7 +4054,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Request the list of muted objects and avatars for this agent
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void RequestMuteList() throws Exception {
@@ -4150,7 +4150,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	 * Sets home location to agents current position Will fire an AlertMessage
 	 * (<seealso cref="E:OpenMetaverse.AgentManager.OnAlertMessage"/>) with success
 	 * or failure message
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void SetHome() throws Exception {
@@ -4162,7 +4162,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	 * an AlertMessage
 	 * (<seealso cref="E:OpenMetaverse.AgentManager.OnAlertMessage"/>) with success
 	 * or failure message
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void SetHome(int id, Vector3 pos, Vector3 lookAt) throws Exception {
@@ -4227,7 +4227,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Acknowledge agent movement complete
-	 * 
+	 *
 	 * @param simulator
 	 *            {@link T:OpenMetaverse.Simulator} Object
 	 * @throws Exception
@@ -4248,7 +4248,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Reply to script permissions request
-	 * 
+	 *
 	 * @param simulator
 	 *            {@link T:OpenMetaverse.Simulator} Object
 	 * @param itemID
@@ -4274,7 +4274,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Respond to a group invitation by either accepting or denying it
-	 * 
+	 *
 	 * @param groupID
 	 *            UUID of the group (sent in the AgentID field of the invite
 	 *            message)
@@ -4292,7 +4292,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Requests script detection of objects and avatars
-	 * 
+	 *
 	 * @param name
 	 *            name of the object/avatar to search for
 	 * @param searchID
@@ -4330,7 +4330,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Create or update profile pick
-	 * 
+	 *
 	 * @param pickID
 	 *            UUID of the pick to update, or random UUID to create a new pick
 	 * @param topPick
@@ -4368,7 +4368,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Delete profile pick
-	 * 
+	 *
 	 * @param pickID
 	 *            UUID of the pick to delete
 	 */
@@ -4383,7 +4383,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Create or update profile Classified
-	 * 
+	 *
 	 * @param classifiedID
 	 *            UUID of the classified to update, or random UUID to create a new
 	 *            classified
@@ -4431,7 +4431,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Create or update profile Classified
-	 * 
+	 *
 	 * @param classifiedID
 	 *            UUID of the classified to update, or random UUID to create a new
 	 *            classified
@@ -4457,7 +4457,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Delete a classified ad
-	 * 
+	 *
 	 * @param classifiedID
 	 *            The classified ads ID
 	 * @throws Exception
@@ -4473,7 +4473,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Fetches resource usage by agents attachmetns
-	 * 
+	 *
 	 * @param callback
 	 *            Called when the requested information is collected
 	 */
@@ -4490,7 +4490,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 				callback.callback(new AttachmentResourcesCallbackArgs(false, null));
 			}
 			AttachmentResourcesMessage info = (AttachmentResourcesMessage) _Client.Messages
-					.DecodeEvent(CapsEventType.AttachmentResources, (OSDMap) result);
+					.decodeEvent(CapsEventType.AttachmentResources, (OSDMap) result);
 			callback.callback(new AttachmentResourcesCallbackArgs(true, info));
 		}
 
@@ -4517,7 +4517,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Initates request to set a new display name
-	 * 
+	 *
 	 * @param oldName
 	 *            Previous display name
 	 * @param newName
@@ -4532,8 +4532,8 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 		}
 
 		SetDisplayNameMessage msg = _Client.Messages.new SetDisplayNameMessage();
-		msg.OldDisplayName = oldName;
-		msg.NewDisplayName = newName;
+		msg.oldDisplayName = oldName;
+		msg.newDisplayName = newName;
 
 		new CapsClient(_Client, CapsEventType.SetDisplayName.toString()).executeHttpPost(url, msg, null,
 				_Client.Settings.CAPS_TIMEOUT);
@@ -4542,7 +4542,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	/**
 	 * Tells the sim what UI language is used, and if it's ok to share that with
 	 * scripts
-	 * 
+	 *
 	 * @param language
 	 *            Two letter language code
 	 * @param isPublic
@@ -4551,8 +4551,8 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	public void UpdateAgentLanguage(String language, boolean isPublic) {
 		try {
 			UpdateAgentLanguageMessage msg = _Client.Messages.new UpdateAgentLanguageMessage();
-			msg.Language = language;
-			msg.LanguagePublic = isPublic;
+			msg.language = language;
+			msg.languagePublic = isPublic;
 
 			URI url = _Client.Network.getCapabilityURI(CapsEventType.UpdateAgentLanguage.toString());
 			if (url != null) {
@@ -4566,7 +4566,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Sets agents maturity access level
-	 * 
+	 *
 	 * @param access
 	 *            PG, M or A
 	 * @throws IOReactorException
@@ -4577,7 +4577,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Sets agents maturity access level
-	 * 
+	 *
 	 * @param access
 	 *            PG, M or A
 	 * @param callback
@@ -4932,7 +4932,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	 */
 	private void HandleTeleportFailed(IMessage message, SimulatorManager simulator) {
 		TeleportFailedMessage failed = (TeleportFailedMessage) message;
-		OnTeleport.dispatch(new TeleportCallbackArgs(failed.Reason, TeleportStatus.Failed, 0));
+		OnTeleport.dispatch(new TeleportCallbackArgs(failed.reason, TeleportStatus.Failed, 0));
 		teleportTimeout.set(TeleportStatus.Failed);
 	}
 
@@ -4941,11 +4941,11 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 		String teleportMessage = Helpers.EmptyString;
 		TeleportFinishMessage msg = (TeleportFinishMessage) message;
 
-		logger.debug(GridClient.Log("TeleportFinish received, Flags: " + msg.Flags, _Client));
+		logger.debug(GridClient.Log("TeleportFinish received, Flags: " + msg.flags, _Client));
 
 		// Connect to the new sim
-		SimulatorManager newSimulator = _Client.Network.connect(msg.IP, (short) msg.Port, msg.RegionHandle, true,
-				msg.SeedCapability.toString());
+		SimulatorManager newSimulator = _Client.Network.connect(msg.ip, (short) msg.port, msg.regionHandle, true,
+				msg.seedCapability.toString());
 		if (newSimulator != null) {
 			teleportMessage = "Teleport finished";
 			teleportStatus = TeleportStatus.Finished;
@@ -4958,7 +4958,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 			logger.error(GridClient.Log(teleportMessage, _Client));
 		}
-		OnTeleport.dispatch(new TeleportCallbackArgs(teleportMessage, teleportStatus, msg.Flags));
+		OnTeleport.dispatch(new TeleportCallbackArgs(teleportMessage, teleportStatus, msg.flags));
 		teleportTimeout.set(teleportStatus);
 	}
 
@@ -4967,25 +4967,25 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 		EstablishAgentCommunicationMessage msg = (EstablishAgentCommunicationMessage) message;
 
 		if (_Client.Settings.getBool(LibSettings.MULTIPLE_SIMS)) {
-			InetSocketAddress endPoint = new InetSocketAddress(msg.Address, msg.Port);
+			InetSocketAddress endPoint = new InetSocketAddress(msg.address, msg.port);
 			SimulatorManager sim = _Client.Network.FindSimulator(endPoint);
 
 			if (sim == null) {
 				logger.error(GridClient.Log(
-						"Got EstablishAgentCommunication for unknown sim " + msg.Address + ":" + msg.Port, _Client));
+						"Got EstablishAgentCommunication for unknown sim " + msg.address + ":" + msg.port, _Client));
 
 				// FIXME: Should we use this opportunity to connect to the simulator?
 			} else {
 				logger.debug(GridClient.Log("Got EstablishAgentCommunication for " + sim.getName(), _Client));
 
-				sim.setSeedCaps(msg.SeedCapability.toString());
+				sim.setSeedCaps(msg.seedCapability.toString());
 			}
 		}
 	}
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @throws UnsupportedEncodingException
 	 */
 	private void HandleAgentDataUpdate(Packet packet, Simulator sim) throws UnsupportedEncodingException {
@@ -5017,7 +5017,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	private void HandleMoneyBalanceReply(Packet packet, Simulator simulator) throws Exception {
@@ -5052,7 +5052,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	 */
 	private void HandleSetDisplayNameReply(IMessage message, SimulatorManager simulator) {
 		SetDisplayNameReplyMessage msg = (SetDisplayNameReplyMessage) message;
-		OnSetDisplayNameReply.dispatch(new SetDisplayNameReplyCallbackArgs(msg.Status, msg.Reason, msg.DisplayName));
+		OnSetDisplayNameReply.dispatch(new SetDisplayNameReplyCallbackArgs(msg.status, msg.reason, msg.displayName));
 	}
 
 	private void HandleAvatarAnimation(Packet packet, Simulator simulator) throws Exception {
@@ -5136,8 +5136,8 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	 */
 	private void HandleCrossedRegion(IMessage message, SimulatorManager simulator) throws Exception {
 		CrossedRegionMessage crossed = (CrossedRegionMessage) message;
-		HandleCrossedRegion(new InetSocketAddress(crossed.IP, crossed.Port), crossed.RegionHandle,
-				crossed.SeedCapability.toString());
+		HandleCrossedRegion(new InetSocketAddress(crossed.ip, crossed.port), crossed.regionHandle,
+				crossed.seedCapability.toString());
 	}
 
 	private void HandleCrossedRegion(Packet packet, Simulator simulator) throws Exception {
@@ -5181,9 +5181,9 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	private void HandleChatterBoxSessionEventReply(IMessage message, SimulatorManager simulator) throws Exception {
 		ChatterBoxSessionEventReplyMessage msg = (ChatterBoxSessionEventReplyMessage) message;
 
-		if (!msg.Success) {
-			RequestJoinGroupChat(msg.SessionID);
-			logger.info(GridClient.Log("Attempt to send group chat to non-existant session for group " + msg.SessionID,
+		if (!msg.success) {
+			RequestJoinGroupChat(msg.sessionID);
+			logger.info(GridClient.Log("Attempt to send group chat to non-existant session for group " + msg.sessionID,
 					_Client));
 		}
 	}
@@ -5200,14 +5200,14 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 	private void HandleChatterBoxSessionStartReply(IMessage message, SimulatorManager simulator) {
 		ChatterBoxSessionStartReplyMessage msg = (ChatterBoxSessionStartReplyMessage) message;
 
-		if (msg.Success) {
+		if (msg.success) {
 			synchronized (GroupChatSessions) {
-				if (!GroupChatSessions.containsKey(msg.SessionID))
-					GroupChatSessions.put(msg.SessionID, new ArrayList<ChatSessionMember>());
+				if (!GroupChatSessions.containsKey(msg.sessionID))
+					GroupChatSessions.put(msg.sessionID, new ArrayList<ChatSessionMember>());
 			}
 		}
 		OnGroupChatJoined.dispatch(
-				new GroupChatJoinedCallbackArgs(msg.SessionID, msg.SessionName, msg.TempSessionID, msg.Success));
+				new GroupChatJoinedCallbackArgs(msg.sessionID, msg.sessionName, msg.tempSessionID, msg.success));
 	}
 
 	/**
@@ -5223,53 +5223,53 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 		ChatterBoxSessionAgentListUpdatesMessage msg = (ChatterBoxSessionAgentListUpdatesMessage) message;
 
 		synchronized (GroupChatSessions) {
-			if (!GroupChatSessions.containsKey(msg.SessionID))
-				GroupChatSessions.put(msg.SessionID, new ArrayList<ChatSessionMember>());
+			if (!GroupChatSessions.containsKey(msg.sessionID))
+				GroupChatSessions.put(msg.sessionID, new ArrayList<ChatSessionMember>());
 		}
 
-		for (int i = 0; i < msg.Updates.length; i++) {
+		for (int i = 0; i < msg.updates.length; i++) {
 			ChatSessionMember fndMbr = null;
 			synchronized (GroupChatSessions) {
-				for (ChatSessionMember member : GroupChatSessions.get(msg.SessionID)) {
-					if (member.AvatarKey.equals(msg.Updates[i].AgentID)) {
+				for (ChatSessionMember member : GroupChatSessions.get(msg.sessionID)) {
+					if (member.AvatarKey.equals(msg.updates[i].agentID)) {
 						fndMbr = member;
 						break;
 					}
 				}
 			}
 
-			if (msg.Updates[i].Transition != null) {
-				if (msg.Updates[i].Transition.equals("ENTER")) {
+			if (msg.updates[i].transition != null) {
+				if (msg.updates[i].transition.equals("ENTER")) {
 					if (fndMbr == null || fndMbr.AvatarKey.equals(UUID.Zero)) {
 						fndMbr = _Client.Groups.new ChatSessionMember();
-						fndMbr.AvatarKey = msg.Updates[i].AgentID;
+						fndMbr.AvatarKey = msg.updates[i].agentID;
 
 						synchronized (GroupChatSessions) {
-							GroupChatSessions.get(msg.SessionID).add(fndMbr);
+							GroupChatSessions.get(msg.sessionID).add(fndMbr);
 						}
 						OnChatSessionMember.dispatch(
-								new ChatSessionMemberCallbackArgs(msg.SessionID, msg.Updates[i].AgentID, true));
+								new ChatSessionMemberCallbackArgs(msg.sessionID, msg.updates[i].agentID, true));
 					}
-				} else if (msg.Updates[i].Transition.equals("LEAVE")) {
+				} else if (msg.updates[i].transition.equals("LEAVE")) {
 					if (fndMbr != null && !fndMbr.AvatarKey.equals(UUID.Zero)) {
 						synchronized (GroupChatSessions) {
-							GroupChatSessions.get(msg.SessionID).remove(fndMbr);
+							GroupChatSessions.get(msg.sessionID).remove(fndMbr);
 						}
 						fndMbr = null;
 					}
 					OnChatSessionMember
-							.dispatch(new ChatSessionMemberCallbackArgs(msg.SessionID, msg.Updates[i].AgentID, false));
+							.dispatch(new ChatSessionMemberCallbackArgs(msg.sessionID, msg.updates[i].agentID, false));
 				}
 			}
 
 			if (fndMbr != null) {
 				// update existing member record
 				synchronized (GroupChatSessions) {
-					fndMbr.MuteText = msg.Updates[i].MuteText;
-					fndMbr.MuteVoice = msg.Updates[i].MuteVoice;
+					fndMbr.MuteText = msg.updates[i].muteText;
+					fndMbr.MuteVoice = msg.updates[i].muteVoice;
 
-					fndMbr.CanVoiceChat = msg.Updates[i].CanVoiceChat;
-					fndMbr.IsModerator = msg.Updates[i].IsModerator;
+					fndMbr.CanVoiceChat = msg.updates[i].canVoiceChat;
+					fndMbr.IsModerator = msg.updates[i].isModerator;
 				}
 			}
 		}
@@ -5290,26 +5290,26 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 			// TODO: do something about invitations to voice group chat/friends conference
 			// Skip for now
-			if (msg.Voice)
+			if (msg.voice)
 				return;
 
 			InstantMessage im = new InstantMessage();
 
-			im.FromAgentID = msg.FromAgentID;
-			im.FromAgentName = msg.FromAgentName;
-			im.ToAgentID = msg.ToAgentID;
-			im.ParentEstateID = msg.ParentEstateID;
-			im.RegionID = msg.RegionID;
-			im.Position = msg.Position;
-			im.Dialog = msg.Dialog;
-			im.GroupIM = msg.GroupIM;
-			im.IMSessionID = msg.IMSessionID;
-			im.Timestamp = msg.Timestamp;
-			im.Message = msg.Message;
-			im.Offline = msg.Offline;
-			im.BinaryBucket = msg.BinaryBucket;
+			im.FromAgentID = msg.fromAgentID;
+			im.FromAgentName = msg.fromAgentName;
+			im.ToAgentID = msg.toAgentID;
+			im.ParentEstateID = msg.parentEstateID;
+			im.RegionID = msg.regionID;
+			im.Position = msg.position;
+			im.Dialog = msg.dialog;
+			im.GroupIM = msg.groupIM;
+			im.IMSessionID = msg.imSessionID;
+			im.Timestamp = msg.timestamp;
+			im.Message = msg.message;
+			im.Offline = msg.offline;
+			im.BinaryBucket = msg.binaryBucket;
 			try {
-				ChatterBoxAcceptInvite(msg.IMSessionID);
+				ChatterBoxAcceptInvite(msg.imSessionID);
 			} catch (Exception ex) {
 				logger.warn(GridClient.Log("Failed joining IM:", _Client), ex);
 			}
@@ -5337,10 +5337,10 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 		if (url != null) {
 			ChatSessionRequestMuteUpdate req = _Client.Messages.new ChatSessionRequestMuteUpdate();
 
-			req.RequestKey = key;
-			req.RequestValue = moderate;
-			req.SessionID = sessionID;
-			req.AgentID = memberID;
+			req.requestKey = key;
+			req.requestValue = moderate;
+			req.sessionID = sessionID;
+			req.agentID = memberID;
 
 			CapsClient request = new CapsClient(_Client, CapsEventType.ChatSessionRequest.toString());
 			request.getResponse(url, req, null, _Client.Settings.CAPS_TIMEOUT);
@@ -5483,12 +5483,12 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 	/*
 	 * Agent movement and camera control
-	 * 
+	 *
 	 * Agent movement is controlled by setting specific {@link
 	 * T:AgentManager.ControlFlags} After the control flags are set, An AgentUpdate
 	 * is required to update the simulator of the specified flags This is most
 	 * easily accomplished by setting one or more of the AgentMovement properties
-	 * 
+	 *
 	 * Movement of an avatar is always based on a compass direction, for example
 	 * AtPos will move the agent from West to East or forward on the X Axis, AtNeg
 	 * will of course move agent from East to West or backward on the X Axis,
@@ -5691,7 +5691,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 			/**
 			 * Align the coordinate frame X and Y axis with a given rotation around the Z
 			 * axis in radians
-			 * 
+			 *
 			 * @param heading
 			 *            Absolute rotation around the Z axis in radians
 			 */
@@ -6147,7 +6147,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 		/**
 		 * Send an AgentUpdate with the camera set at the current agent
-		 * 
+		 *
 		 * @param heading
 		 *            Camera rotation in radians
 		 * @param reliable
@@ -6168,7 +6168,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 		/**
 		 * Rotates the avatar body and camera toward a target position. This This will
 		 * also anchor the camera position on the avatar
-		 * 
+		 *
 		 * @param target
 		 *            Region coordinates to turn toward
 		 * @return True for success, false otherwise
@@ -6181,7 +6181,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 		/**
 		 * Rotates the avatar body and camera toward a target position. This will also
 		 * anchor the camera position on the avatar
-		 * 
+		 *
 		 * @param target
 		 *            Region coordinates to turn toward
 		 * @param sendUpdate
@@ -6196,7 +6196,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 				if (_Client.Self.sittingOn > 0) {
 					synchronized (_Client.Network.getCurrentSim().getObjectsPrimitives()) {
 						if (_Client.Network.getCurrentSim().getObjectsPrimitives().containsKey(sittingOn)) {
-							parentRot = _Client.Network.getCurrentSim().getObjectsPrimitives().get(sittingOn).Rotation;
+							parentRot = _Client.Network.getCurrentSim().getObjectsPrimitives().get(sittingOn).rotation;
 						} else {
 							logger.warn(GridClient.Log("Attempted TurnToward but parent prim is not in dictionary",
 									Client));
@@ -6226,7 +6226,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 		/**
 		 * Send new AgentUpdate packet to update our current camera position and
 		 * rotation
-		 * 
+		 *
 		 * @throws Exception
 		 */
 		public final void SendUpdate() throws Exception {
@@ -6236,7 +6236,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 		/**
 		 * Send new AgentUpdate packet to update our current camera position and
 		 * rotation
-		 * 
+		 *
 		 * @param reliable
 		 *            Whether to require server acknowledgement of this packet
 		 * @throws Exception
@@ -6248,7 +6248,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 		/**
 		 * Send new AgentUpdate packet to update our current camera position and
 		 * rotation
-		 * 
+		 *
 		 * @param reliable
 		 *            Whether to require server acknowledgement of this packet
 		 * @param simulator
@@ -6299,7 +6299,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 		/**
 		 * Builds an AgentUpdate packet entirely from parameters. This will not touch
 		 * the state of Self.Movement or Self.Movement.Camera in any way
-		 * 
+		 *
 		 * @param controlFlags
 		 * @param origin
 		 * @param forwardAxis
@@ -6371,7 +6371,7 @@ public class AgentManager implements PacketCallback, CapsCallback, libomv.model.
 
 		/**
 		 * Sends update of Field of Vision vertical angle to the simulator
-		 * 
+		 *
 		 * @param angle
 		 *            Angle in radians
 		 * @throws Exception

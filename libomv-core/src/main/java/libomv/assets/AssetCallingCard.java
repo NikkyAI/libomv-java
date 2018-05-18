@@ -44,7 +44,7 @@ public class AssetCallingCard extends AssetItem {
 
 	/** UUID of the Callingcard target avatar */
 	public UUID getAvatarID() {
-		return AssetID;
+		return assetID;
 	}
 
 	/**
@@ -74,8 +74,8 @@ public class AssetCallingCard extends AssetItem {
 	 */
 	@Override
 	protected void encode() {
-		String temp = "Callingcard version 2\n" + "avatar_id " + AssetID.toString() + "\n";
-		AssetData = Helpers.StringToBytes(temp);
+		String temp = "Callingcard version 2\n" + "avatar_id " + assetID.toString() + "\n";
+		assetData = Helpers.StringToBytes(temp);
 	}
 
 	/**
@@ -85,13 +85,13 @@ public class AssetCallingCard extends AssetItem {
 	 */
 	@Override
 	protected boolean decode() {
-		if (AssetData == null)
+		if (assetData == null)
 			return false;
 
 		try {
-			String text = Helpers.BytesToString(AssetData);
+			String text = Helpers.BytesToString(assetData);
 			if (text != null && text.toLowerCase().contains("callingcard version 2")) {
-				AssetID = new UUID(text.substring(text.indexOf("avatar_id") + 9, 38).trim());
+				assetID = new UUID(text.substring(text.indexOf("avatar_id") + 9, 38).trim());
 				return true;
 			}
 		} catch (UnsupportedEncodingException e) {

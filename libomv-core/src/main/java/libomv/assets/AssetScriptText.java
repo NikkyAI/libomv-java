@@ -43,15 +43,15 @@ public class AssetScriptText extends AssetItem {
 	}
 
 	// A string of characters representing the script contents
-	private String Source;
+	private String source;
 
 	public String getSource() {
-		return Source;
+		return source;
 	}
 
 	public void setParent(String source) {
 		invalidateAssetData();
-		Source = source;
+		this.source = source;
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class AssetScriptText extends AssetItem {
 	 */
 	public AssetScriptText(String source) {
 		super(null, null);
-		Source = source;
+		this.source = source;
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class AssetScriptText extends AssetItem {
 	 */
 	@Override
 	protected void encode() {
-		AssetData = Helpers.StringToBytes(Source);
+		assetData = Helpers.StringToBytes(source);
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class AssetScriptText extends AssetItem {
 	@Override
 	protected boolean decode() {
 		try {
-			Source = Helpers.BytesToString(AssetData);
+			source = Helpers.BytesToString(assetData);
 			return true;
 		} catch (UnsupportedEncodingException e) {
 		}

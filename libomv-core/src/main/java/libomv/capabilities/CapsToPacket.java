@@ -58,10 +58,10 @@ public class CapsToPacket {
 	// #region Serialization/Deserialization
 	public static String ToXmlString(Packet packet)
 			throws IOException, IllegalArgumentException, IllegalAccessException {
-		return OSDParser.serializeToString(GetLLSD(packet), OSDFormat.Xml);
+		return OSDParser.serializeToString(getLLSD(packet), OSDFormat.Xml);
 	}
 
-	public static OSD GetLLSD(Packet packet) throws IllegalArgumentException, IllegalAccessException {
+	public static OSD getLLSD(Packet packet) throws IllegalArgumentException, IllegalAccessException {
 		OSDMap body = new OSDMap();
 		java.lang.Class<? extends PacketType> type = packet.getType().getClass();
 
@@ -73,28 +73,28 @@ public class CapsToPacket {
 					OSDArray blockList = new OSDArray(length);
 					for (int i = 0; i < length; i++) {
 						Object block = Array.get(object, i);
-						blockList.add(BuildLLSDBlock(block));
+						blockList.add(buildLLSDBlock(block));
 					}
 					body.put(field.getName(), blockList);
 				} else {
-					body.put(field.getName(), BuildLLSDBlock(object));
+					body.put(field.getName(), buildLLSDBlock(object));
 				}
 			}
 		}
 		return body;
 	}
 
-	public static byte[] ToBinary(Packet packet) throws IOException, IllegalArgumentException, IllegalAccessException {
+	public static byte[] toBinary(Packet packet) throws IOException, IllegalArgumentException, IllegalAccessException {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		OSDParser.serialize(stream, GetLLSD(packet), OSDFormat.Binary);
+		OSDParser.serialize(stream, getLLSD(packet), OSDFormat.Binary);
 		return stream.toByteArray();
 	}
 
-	public static Packet FromXmlString(String xml) throws IOException, ParseException {
-		return FromLLSD(OSDParser.deserialize(xml));
+	public static Packet fromXmlString(String xml) throws IOException, ParseException {
+		return fromLLSD(OSDParser.deserialize(xml));
 	}
 
-	public static Packet FromLLSD(OSD osd) {
+	public static Packet fromLLSD(OSD osd) {
 		// FIXME: Need the inverse of the reflection magic above done here
 		throw new UnsupportedOperationException();
 	}
@@ -112,7 +112,7 @@ public class CapsToPacket {
 	 * @return A Packet on success, otherwise null
 	 * @throws ClassNotFoundException
 	 */
-	public static Packet BuildPacket(String capsKey, OSDMap body) {
+	public static Packet buildPacket(String capsKey, OSDMap body) {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
 		// Check if we have a subclass of packet with the same name as this
@@ -143,12 +143,12 @@ public class CapsToPacket {
 
 						for (int i = 0; i < array.size(); i++) {
 							OSDMap map = (OSDMap) array.get(i);
-							blockArray[i] = ParseLLSDBlock(map, elementType);
+							blockArray[i] = parseLLSDBlock(map, elementType);
 						}
 						field.set(packet, blockArray);
 					} else {
 						OSDMap map = (OSDMap) body.get(field.getName());
-						field.set(packet, ParseLLSDBlock(map, blockType));
+						field.set(packet, parseLLSDBlock(map, blockType));
 					}
 				}
 			}
@@ -160,7 +160,7 @@ public class CapsToPacket {
 		return packet;
 	}
 
-	private static Object ParseLLSDBlock(OSDMap blockData, Class<?> blockType)
+	private static Object parseLLSDBlock(OSDMap blockData, Class<?> blockType)
 			throws IllegalArgumentException, IllegalAccessException, InstantiationException {
 		Object block = blockType.newInstance();
 
@@ -211,7 +211,7 @@ public class CapsToPacket {
 		return block;
 	}
 
-	private static OSD BuildLLSDBlock(Object block) throws IllegalArgumentException, IllegalAccessException {
+	private static OSD buildLLSDBlock(Object block) throws IllegalArgumentException, IllegalAccessException {
 		OSDMap map = new OSDMap();
 		Class<?> blockType = block.getClass();
 

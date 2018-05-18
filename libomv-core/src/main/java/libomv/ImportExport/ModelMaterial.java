@@ -32,8 +32,8 @@ package libomv.ImportExport;
 import libomv.types.Color4;
 
 public class ModelMaterial {
-	public String ID;
-	public Color4 DiffuseColor = Color4.White;
-	public String Texture;
-	public byte[] TextureData;
+	public String id;
+	public Color4 diffuseColor = Color4.White;
+	public String texture;
+	public byte[] textureData;
 }

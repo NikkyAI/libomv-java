@@ -45,22 +45,22 @@ public class TGAImage extends ManagedImage {
 		super(width, height, type);
 	}
 
-	private void UnpackColor(int[] values, int pixel, TGAColorMap cd) {
+	private void unpackColor(int[] values, int pixel, TGAColorMap cd) {
 		for (int x = 0; x < getWidth(); x++, pixel++) {
 			int val = values[x];
-			if (cd.RMask == 0 && cd.GMask == 0 && cd.BMask == 0 && cd.AMask == 0xFF) {
+			if (cd.rMask == 0 && cd.gMask == 0 && cd.bMask == 0 && cd.aMask == 0xFF) {
 				// Special case to deal with 8-bit TGA files that we treat as alpha masks
 				setAlpha(pixel, (byte) val);
 			} else if (cd.length > 0) {
-				setRed(pixel, cd.RedM[val]);
-				setGreen(pixel, cd.GreenM[val]);
-				setBlue(pixel, cd.BlueM[val]);
-				setAlpha(pixel, cd.AlphaM[val]);
+				setRed(pixel, cd.redM[val]);
+				setGreen(pixel, cd.greenM[val]);
+				setBlue(pixel, cd.blueM[val]);
+				setAlpha(pixel, cd.alphaM[val]);
 			} else {
-				setRed(pixel, (byte) ((val >> cd.RShift) & cd.RMask));
-				setGreen(pixel, (byte) ((val >> cd.GShift) & cd.GMask));
-				setBlue(pixel, (byte) ((val >> cd.BShift) & cd.BMask));
-				setAlpha(pixel, (byte) ((val >> cd.AShift) & cd.AMask));
+				setRed(pixel, (byte) ((val >> cd.rShift) & cd.rMask));
+				setGreen(pixel, (byte) ((val >> cd.gShift) & cd.gMask));
+				setBlue(pixel, (byte) ((val >> cd.bShift) & cd.bMask));
+				setAlpha(pixel, (byte) ((val >> cd.aShift) & cd.aMask));
 			}
 		}
 	}
@@ -104,7 +104,7 @@ public class TGAImage extends ManagedImage {
 					}
 				}
 			}
-			UnpackColor(vals, pixel, cd);
+			unpackColor(vals, pixel, cd);
 			if (x > getWidth()) {
 				System.arraycopy(vals, getWidth(), vals, 0, x - getWidth());
 				x -= getWidth();
@@ -138,7 +138,7 @@ public class TGAImage extends ManagedImage {
 					vals[x] |= is.readUnsignedByte() << (k << 3);
 				}
 			}
-			UnpackColor(vals, pixel, cd);
+			unpackColor(vals, pixel, cd);
 			pixel += bottomUp ? -getWidth() : getWidth();
 		}
 	}
@@ -149,28 +149,28 @@ public class TGAImage extends ManagedImage {
 		TGAHeader header = new TGAHeader(sis);
 		byte channels = 0;
 
-		if (header.ImageSpec.Width > 4096 || header.ImageSpec.Height > 4096)
+		if (header.imageSpec.width > 4096 || header.imageSpec.height > 4096)
 			throw new IllegalArgumentException("Image too large.");
 
-		if (header.ImageSpec.PixelDepth != 8 && header.ImageSpec.PixelDepth != 16 && header.ImageSpec.PixelDepth != 24
-				&& header.ImageSpec.PixelDepth != 32)
+		if (header.imageSpec.pixelDepth != 8 && header.imageSpec.pixelDepth != 16 && header.imageSpec.pixelDepth != 24
+				&& header.imageSpec.pixelDepth != 32)
 			throw new IllegalArgumentException("Not a supported tga file.");
 
-		if (header.ColorMap.alphaBits > 0) {
+		if (header.colorMap.alphaBits > 0) {
 			channels = ImageChannels.Alpha;
 		}
-		if (header.ColorMap.colorBits > 0) {
+		if (header.colorMap.colorBits > 0) {
 			channels += ImageChannels.Color;
-		} else if (header.ColorMap.bits > header.ColorMap.alphaBits) {
+		} else if (header.colorMap.bits > header.colorMap.alphaBits) {
 			channels += ImageChannels.Gray;
 		}
 
-		TGAImage image = new TGAImage(header.ImageSpec.Width, header.ImageSpec.Height, channels);
+		TGAImage image = new TGAImage(header.imageSpec.width, header.imageSpec.height, channels);
 
 		if (header.getRleEncoded())
-			image.decodeRle(sis, header.ImageSpec.PixelDepth / 8, header.ColorMap, header.ImageSpec.getBottomUp());
+			image.decodeRle(sis, header.imageSpec.pixelDepth / 8, header.colorMap, header.imageSpec.getBottomUp());
 		else
-			image.decodePlain(sis, header.ImageSpec.PixelDepth / 8, header.ColorMap, header.ImageSpec.getBottomUp());
+			image.decodePlain(sis, header.imageSpec.pixelDepth / 8, header.colorMap, header.imageSpec.getBottomUp());
 		return image;
 	}
 

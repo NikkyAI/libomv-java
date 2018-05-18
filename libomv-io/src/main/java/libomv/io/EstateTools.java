@@ -6,7 +6,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -226,7 +226,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 
 		/**
 		 * Construct a new instance of the TopCollidersReplyEventArgs class
-		 * 
+		 *
 		 * @param objectCount
 		 *            The number of returned items in LandStatReply
 		 * @param tasks
@@ -259,7 +259,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 
 		/**
 		 * Construct a new instance of the TopScriptsReplyEventArgs class
-		 * 
+		 *
 		 * @param objectCount
 		 *            The number of returned items in LandStatReply
 		 * @param tasks
@@ -298,7 +298,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 
 		/**
 		 * Construct a new instance of the EstateBansReplyEventArgs class
-		 * 
+		 *
 		 * @param estateID
 		 *            The estate's identifier on the grid
 		 * @param count
@@ -340,7 +340,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 
 		/**
 		 * Construct a new instance of the EstateUsersReplyEventArgs class
-		 * 
+		 *
 		 * @param estateID
 		 *            The estate's identifier on the grid
 		 * @param count
@@ -424,7 +424,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 
 		/**
 		 * Construct a new instance of the EstateManagersReplyEventArgs class
-		 * 
+		 *
 		 * @param estateID
 		 *            The estate's identifier on the grid
 		 * @param count
@@ -472,7 +472,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 
 		/**
 		 * Construct a new instance of the EstateCovenantReplyEventArgs class
-		 * 
+		 *
 		 * @param covenantID
 		 *            The Covenant ID
 		 * @param timestamp
@@ -522,7 +522,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 
 		/**
 		 * Construct a new instance of the EstateUpdateInfoReplyEventArgs class
-		 * 
+		 *
 		 * @param estateName
 		 *            The estate's name
 		 * @param estateOwner
@@ -732,7 +732,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 	 *
 	 * @param userID
 	 *            Key of Agent to remove
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void KickUser(UUID userID) throws Exception {
@@ -746,7 +746,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 	 *            Key of Agent to remove
 	 * @param ban
 	 *            also ban user from estate if true
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void EjectUser(UUID targetID, boolean ban) throws Exception {
@@ -769,7 +769,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 	 *            target key to freeze
 	 * @param freeze
 	 *            true to freeze, false to unfreeze
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void FreezeUser(UUID targetID, boolean freeze) throws Exception {
@@ -793,7 +793,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 	 * @param allEstates
 	 *            allEstates Ban user from this estate and all others owned by the
 	 *            estate owner
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void BanUser(UUID userID, boolean allEstates) throws Exception {
@@ -808,13 +808,13 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 
 	/**
 	 * Unban an avatar from an estate
-	 * 
+	 *
 	 * @param userID
 	 *            Key of Agent to remove
 	 * @param allEstates
 	 *            allEstates Unban user from this estate and all others owned by the
 	 *            estate owner
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void UnbanUser(UUID userID, boolean allEstates) throws Exception {
@@ -832,7 +832,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 	 *
 	 * @param message
 	 *            Message to send all users in the estate
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void EstateMessage(String message) throws Exception {
@@ -847,7 +847,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 	 *
 	 * @param message
 	 *            Message to send all users in the simulator
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void SimulatorMessage(String message) throws Exception {
@@ -865,7 +865,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 	 *
 	 * @param userID
 	 *            Key of avatar to send home
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void TeleportHomeUser(UUID userID) throws Exception {
@@ -880,7 +880,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 	 *
 	 * @param userID
 	 *            Key of avatar to send home
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void TeleportHomeAllUsers(UUID userID) throws Exception {
@@ -891,7 +891,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 
 	/**
 	 * Begin the region restart process
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void RestartRegion() throws Exception {
@@ -900,7 +900,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 
 	/**
 	 * Cancels a region restart
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void CancelRestart() throws Exception {
@@ -909,7 +909,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 
 	/**
 	 * Estate panel "Region" tab settings
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void SetRegionInfo(boolean blockTerraform, boolean blockFly, boolean allowDamage, boolean allowLandResell,
@@ -951,7 +951,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 
 	/**
 	 * Estate panel "Debug" tab settings
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void SetRegionDebug(boolean disableScripts, boolean disableCollisions, boolean disablePhysics)
@@ -974,12 +974,12 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 
 	/**
 	 * Used for setting the region's terrain textures for its four height levels
-	 * 
+	 *
 	 * @param low
 	 * @param midLow
 	 * @param midHigh
 	 * @param high
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void SetRegionTerrain(UUID low, UUID midLow, UUID midHigh, UUID high) throws Exception {
@@ -994,7 +994,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 
 	/**
 	 * Used for setting sim terrain texture heights
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void SetRegionTerrainHeights(float lowSW, float highSW, float lowNW, float highNW, float lowSE, float highSE,
@@ -1010,7 +1010,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 
 	/**
 	 * Requests the estate covenant
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void RequestCovenant() throws Exception {
@@ -1048,7 +1048,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 
 	/**
 	 * Teleports all users home in current Estate
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void TeleportHomeAllUsers() throws Exception {
@@ -1059,13 +1059,13 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 
 	/**
 	 * Remove estate manager
-	 * 
+	 *
 	 * @param userID
 	 *            Key of Agent to Remove
 	 * @param allEstates
 	 *            removes manager to this estate and all others owned by the estate
 	 *            owner
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void RemoveEstateManager(UUID userID, boolean allEstates) throws Exception {
@@ -1086,7 +1086,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 	 * @param allEstates
 	 *            Add agent as manager to this estate and all others owned by the
 	 *            estate owner
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void AddEstateManager(UUID userID, boolean allEstates) throws Exception {
@@ -1101,12 +1101,12 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 
 	/**
 	 * Add's an agent to the estate allowed list
-	 * 
+	 *
 	 * @param userID
 	 *            Key of Agent to add
 	 * @param allEstates
 	 *            Add agent as an allowed resident to all estates if true\
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void AddAllowedUser(UUID userID, boolean allEstates) throws Exception {
@@ -1121,7 +1121,7 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 
 	/**
 	 * Removes an agent from the estate Allowed list
-	 * 
+	 *
 	 * @param userID
 	 *            Key of Agent to Remove
 	 * @param allEstates
@@ -1140,12 +1140,12 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 
 	/**
 	 * Add's a group to the estate Allowed list
-	 * 
+	 *
 	 * @param groupID
 	 *            Key of group to add
 	 * @param allEstates
 	 *            Add group as an allowed group to All estates if true
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void AddAllowedGroup(UUID groupID, boolean allEstates) throws Exception {
@@ -1161,12 +1161,12 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 
 	/**
 	 * Removes a group from the estate Allowed list
-	 * 
+	 *
 	 * @param groupID
 	 *            Key of group to remove</param>
 	 * @param allEstates
 	 *            Removes group as an allowed group from all estates if true
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void RemoveAllowedGroup(UUID groupID, boolean allEstates) throws Exception {
@@ -1357,26 +1357,26 @@ public class EstateTools implements PacketCallback, CapsCallback, libomv.model.E
 
 	private void HandleLandStatReply(IMessage message, Simulator simulator) {
 		LandStatReplyMessage m = (LandStatReplyMessage) message;
-		HashMap<UUID, EstateTask> Tasks = new HashMap<UUID, EstateTask>(m.ReportDataBlocks.length);
+		HashMap<UUID, EstateTask> Tasks = new HashMap<UUID, EstateTask>(m.reportDataBlocks.length);
 
-		for (LandStatReplyMessage.ReportDataBlock rep : m.ReportDataBlocks) {
+		for (LandStatReplyMessage.ReportDataBlock rep : m.reportDataBlocks) {
 			EstateTask task = new EstateTask();
-			task.Position = rep.Location;
-			task.Score = rep.Score;
-			task.MonoScore = rep.MonoScore;
-			task.TaskID = rep.TaskID;
-			task.TaskLocalID = rep.TaskLocalID;
-			task.TaskName = rep.TaskName;
-			task.OwnerName = rep.OwnerName;
+			task.Position = rep.location;
+			task.Score = rep.score;
+			task.MonoScore = rep.monoScore;
+			task.TaskID = rep.taskID;
+			task.TaskLocalID = rep.taskLocalID;
+			task.TaskName = rep.taskName;
+			task.OwnerName = rep.ownerName;
 			Tasks.put(task.TaskID, task);
 		}
 
-		LandStatReportType type = LandStatReportType.setValue(m.ReportType);
+		LandStatReportType type = LandStatReportType.setValue(m.reportType);
 
 		if (type == LandStatReportType.TopScripts) {
-			OnTopScriptsReply.dispatch(new TopScriptsReplyCallbackArgs(m.TotalObjectCount, Tasks));
+			OnTopScriptsReply.dispatch(new TopScriptsReplyCallbackArgs(m.totalObjectCount, Tasks));
 		} else if (type == LandStatReportType.TopColliders) {
-			OnTopCollidersReply.dispatch(new TopCollidersReplyCallbackArgs(m.TotalObjectCount, Tasks));
+			OnTopCollidersReply.dispatch(new TopCollidersReplyCallbackArgs(m.totalObjectCount, Tasks));
 		}
 	}
 	// #endregion

@@ -59,17 +59,17 @@ public class PhysicsProperties {
 	}
 
 	// Primitive's local ID
-	public int LocalID;
+	public int localID;
 	// Density (1000 for normal density)
-	public float Density;
+	public float density;
 	// Friction
-	public float Friction;
+	public float friction;
 	// Gravity multiplier (1 for normal gravity)
-	public float GravityMultiplier;
+	public float gravityMultiplier;
 	// Type of physics representation of this primitive in the simulator
-	public PhysicsShapeType ShapeType;
+	public PhysicsShapeType shapeType;
 	// Restitution
-	public float Restitution;
+	public float restitution;
 
 	/**
 	 * Creates PhysicsProperties from OSD
@@ -80,12 +80,12 @@ public class PhysicsProperties {
 	public PhysicsProperties(OSD osd) {
 		if (osd instanceof OSDMap) {
 			OSDMap map = (OSDMap) osd;
-			LocalID = map.get("LocalID").AsUInteger();
-			Density = (float) map.get("Density").AsReal();
-			Friction = (float) map.get("Friction").AsReal();
-			GravityMultiplier = (float) map.get("GravityMultiplier").AsReal();
-			Restitution = (float) map.get("Restitution").AsReal();
-			ShapeType = PhysicsShapeType.setValue(map.get("PhysicsShapeType").AsInteger());
+			localID = map.get("LocalID").AsUInteger();
+			density = (float) map.get("Density").AsReal();
+			friction = (float) map.get("Friction").AsReal();
+			gravityMultiplier = (float) map.get("GravityMultiplier").AsReal();
+			restitution = (float) map.get("Restitution").AsReal();
+			shapeType = PhysicsShapeType.setValue(map.get("PhysicsShapeType").AsInteger());
 		}
 	}
 
@@ -96,12 +96,12 @@ public class PhysicsProperties {
 	 */
 	public OSDMap getOSD() {
 		OSDMap map = new OSDMap(6);
-		map.put("LocalID", OSD.FromUInteger(LocalID));
-		map.put("Density", OSD.FromReal(Density));
-		map.put("Friction", OSD.FromReal(Friction));
-		map.put("GravityMultiplier", OSD.FromReal(GravityMultiplier));
-		map.put("Restitution", OSD.FromReal(Restitution));
-		map.put("PhysicsShapeType", OSD.FromInteger(ShapeType.getValue()));
+		map.put("LocalID", OSD.FromUInteger(localID));
+		map.put("Density", OSD.FromReal(density));
+		map.put("Friction", OSD.FromReal(friction));
+		map.put("GravityMultiplier", OSD.FromReal(gravityMultiplier));
+		map.put("Restitution", OSD.FromReal(restitution));
+		map.put("PhysicsShapeType", OSD.FromInteger(shapeType.getValue()));
 		return map;
 	}
 }

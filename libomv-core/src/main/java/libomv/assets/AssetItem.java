@@ -36,18 +36,18 @@ import libomv.types.UUID;
 public abstract class AssetItem implements Asset {
 
 	/** True if the asset is only stored on the server temporarily */
-	public boolean Temporary;
+	public boolean temporary;
 	/** The assets unique unique ID */
-	public UUID AssetID;
+	public UUID assetID;
 	/** A byte array containing the raw asset data */
-	public byte[] AssetData;
+	public byte[] assetData;
 
 	public UUID getAssetID() {
-		return AssetID;
+		return assetID;
 	}
 
 	public void setAssetID(UUID value) {
-		AssetID = value;
+		assetID = value;
 	}
 
 	/**
@@ -55,9 +55,9 @@ public abstract class AssetItem implements Asset {
 	 * available
 	 */
 	public byte[] getAssetData() {
-		if (AssetData == null)
+		if (assetData == null)
 			encode();
-		return AssetData;
+		return assetData;
 	}
 
 	/**
@@ -66,7 +66,7 @@ public abstract class AssetItem implements Asset {
 	 * data
 	 */
 	public void invalidateAssetData() {
-		AssetData = null;
+		assetData = null;
 	}
 
 	/**
@@ -78,8 +78,8 @@ public abstract class AssetItem implements Asset {
 	 *            A byte array containing the raw asset data
 	 */
 	public AssetItem(UUID assetID, byte[] assetData) {
-		AssetID = assetID;
-		AssetData = assetData;
+		this.assetID = assetID;
+		this.assetData = assetData;
 		decode();
 	}
 

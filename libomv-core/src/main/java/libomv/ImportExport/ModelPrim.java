@@ -46,42 +46,42 @@ import libomv.types.Vector3;
 import libomv.utils.Helpers;
 
 public class ModelPrim {
-	public List<Vector3> Positions;
-	public Vector3 BoundMin = new Vector3(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
-	public Vector3 BoundMax = new Vector3(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
-	public Vector3 Position;
-	public Vector3 Scale;
-	public Quaternion Rotation = Quaternion.Identity;
-	public List<ModelFace> Faces = new ArrayList<ModelFace>();
-	public String ID;
-	public byte[] Asset;
+	public List<Vector3> positions;
+	public Vector3 boundMin = new Vector3(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
+	public Vector3 boundMax = new Vector3(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
+	public Vector3 position;
+	public Vector3 scale;
+	public Quaternion rotation = Quaternion.Identity;
+	public List<ModelFace> faces = new ArrayList<ModelFace>();
+	public String id;
+	public byte[] asset;
 
-	public void CreateAsset(UUID creator) throws IOException {
+	public void createAsset(UUID creator) throws IOException {
 		OSDMap header = new OSDMap();
 		header.put("version", OSD.FromInteger(1));
 		header.put("creator", OSD.FromUUID(creator));
 		header.put("date", OSD.FromDate(new Date()));
 
-		header.put("rez_position", OSD.FromVector3(Position));
-		header.put("rez_scale", OSD.FromVector3(Scale));
+		header.put("rez_position", OSD.FromVector3(position));
+		header.put("rez_scale", OSD.FromVector3(scale));
 
-		OSDArray faces = new OSDArray();
-		for (ModelFace face : Faces) {
+		OSDArray facesOSD = new OSDArray();
+		for (ModelFace face : faces) {
 			OSDMap faceMap = new OSDMap();
 
 			// Find UV min/max
 			Vector2 uvMin = new Vector2(Float.MAX_VALUE, Float.MAX_VALUE);
 			Vector2 uvMax = new Vector2(Float.MIN_VALUE, Float.MIN_VALUE);
-			for (Vertex v : face.Vertices) {
-				if (v.TexCoord.X < uvMin.X)
-					uvMin.X = v.TexCoord.X;
-				if (v.TexCoord.Y < uvMin.Y)
-					uvMin.Y = v.TexCoord.Y;
+			for (Vertex v : face.vertices) {
+				if (v.texCoord.X < uvMin.X)
+					uvMin.X = v.texCoord.X;
+				if (v.texCoord.Y < uvMin.Y)
+					uvMin.Y = v.texCoord.Y;
 
-				if (v.TexCoord.X > uvMax.X)
-					uvMax.X = v.TexCoord.X;
-				if (v.TexCoord.Y > uvMax.Y)
-					uvMax.Y = v.TexCoord.Y;
+				if (v.texCoord.X > uvMax.X)
+					uvMax.X = v.texCoord.X;
+				if (v.texCoord.Y > uvMax.Y)
+					uvMax.Y = v.texCoord.Y;
 			}
 			OSDMap uvDomain = new OSDMap();
 			uvDomain.put("Min", OSD.FromVector2(uvMin));
@@ -93,29 +93,29 @@ public class ModelPrim {
 			positionDomain.put("Max", OSD.FromVector3(new Vector3(0.5f, 0.5f, 0.5f)));
 			faceMap.put("PositionDomain", positionDomain);
 
-			byte[] posBytes = new byte[face.Vertices.size() * 2 * 3];
-			byte[] norBytes = new byte[face.Vertices.size() * 2 * 3];
-			byte[] uvBytes = new byte[face.Vertices.size() * 2 * 2];
+			byte[] posBytes = new byte[face.vertices.size() * 2 * 3];
+			byte[] norBytes = new byte[face.vertices.size() * 2 * 3];
+			byte[] uvBytes = new byte[face.vertices.size() * 2 * 2];
 
 			int offp = 0, offn = 0, offu = 0;
-			for (Vertex v : face.Vertices) {
-				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.Position.X, -0.5f, 0.5f), posBytes, offp);
+			for (Vertex v : face.vertices) {
+				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.position.X, -0.5f, 0.5f), posBytes, offp);
 				offp += 2;
-				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.Position.Y, -0.5f, 0.5f), posBytes, offp);
+				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.position.Y, -0.5f, 0.5f), posBytes, offp);
 				offp += 2;
-				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.Position.Z, -0.5f, 0.5f), posBytes, offp);
+				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.position.Z, -0.5f, 0.5f), posBytes, offp);
 				offp += 2;
 
-				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.Normal.X, -1f, 1f), norBytes, offn);
+				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.normal.X, -1f, 1f), norBytes, offn);
 				offn += 2;
-				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.Normal.Y, -1f, 1f), norBytes, offn);
+				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.normal.Y, -1f, 1f), norBytes, offn);
 				offn += 2;
-				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.Normal.Z, -1f, 1f), norBytes, offn);
+				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.normal.Z, -1f, 1f), norBytes, offn);
 				offn += 2;
 
-				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.TexCoord.X, uvMin.X, uvMax.X), uvBytes, offu);
+				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.texCoord.X, uvMin.X, uvMax.X), uvBytes, offu);
 				offu += 2;
-				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.TexCoord.Y, uvMin.Y, uvMax.Y), uvBytes, offu);
+				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.texCoord.Y, uvMin.Y, uvMax.Y), uvBytes, offu);
 				offu += 2;
 			}
 
@@ -124,19 +124,19 @@ public class ModelPrim {
 			faceMap.put("TexCoord0", OSD.FromBinary(uvBytes));
 
 			int offi = 0;
-			byte[] indexBytes = new byte[face.Indices.size() * 2];
-			for (int t : face.Indices) {
+			byte[] indexBytes = new byte[face.indices.size() * 2];
+			for (int t : face.indices) {
 				Helpers.UInt16ToBytesL(t, indexBytes, offi);
 				offi += 2;
 			}
 			faceMap.put("TriangleList", OSD.FromBinary(indexBytes));
 
-			faces.add(faceMap);
+			facesOSD.add(faceMap);
 		}
 
 		byte[] physicStubBytes = Helpers.ZCompressOSD(Model.PhysicsStub());
 
-		byte[] meshBytes = Helpers.ZCompressOSD(faces);
+		byte[] meshBytes = Helpers.ZCompressOSD(facesOSD);
 		int n = 0;
 
 		OSDMap lodParms = new OSDMap();
@@ -154,16 +154,16 @@ public class ModelPrim {
 		byte[] headerBytes = OSDParser.serializeToBytes(header, OSD.OSDFormat.Binary, false);
 		n += headerBytes.length;
 
-		Asset = new byte[n];
+		asset = new byte[n];
 
 		int offset = 0;
-		System.arraycopy(headerBytes, 0, Asset, offset, headerBytes.length);
+		System.arraycopy(headerBytes, 0, asset, offset, headerBytes.length);
 		offset += headerBytes.length;
 
-		System.arraycopy(meshBytes, 0, Asset, offset, meshBytes.length);
+		System.arraycopy(meshBytes, 0, asset, offset, meshBytes.length);
 		offset += meshBytes.length;
 
-		System.arraycopy(physicStubBytes, 0, Asset, offset, physicStubBytes.length);
+		System.arraycopy(physicStubBytes, 0, asset, offset, physicStubBytes.length);
 		offset += physicStubBytes.length;
 
 	}

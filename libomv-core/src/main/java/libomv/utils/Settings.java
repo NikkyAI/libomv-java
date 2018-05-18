@@ -77,11 +77,11 @@ public class Settings {
 		}
 	}
 
-	private File settingsPath;
+	protected File settingsPath;
 	private OSDMap settings;
 	private OSDMap defaults;
 
-	public CallbackHandler<SettingsUpdateCallbackArgs> OnSettingsUpdate = new CallbackHandler<SettingsUpdateCallbackArgs>();
+	public CallbackHandler<SettingsUpdateCallbackArgs> onSettingsUpdate = new CallbackHandler<SettingsUpdateCallbackArgs>();
 
 	public Settings(String settingsPath) {
 		this.settingsPath = new File(System.getProperty("user.home"), settingsPath);
@@ -106,7 +106,7 @@ public class Settings {
 				for (Entry<String, OSD> entry : ((OSDMap) OSDParser.deserialize(reader)).entrySet()) {
 					settings.put(entry.getKey(), entry.getValue());
 				}
-				OnSettingsUpdate.dispatch(new SettingsUpdateCallbackArgs(null, null));
+				onSettingsUpdate.dispatch(new SettingsUpdateCallbackArgs(null, null));
 			} finally {
 				reader.close();
 			}
@@ -251,7 +251,7 @@ public class Settings {
 		if (def == null)
 			osd = settings.put(name, value);
 
-		OnSettingsUpdate.dispatch(new SettingsUpdateCallbackArgs(name, value));
+		onSettingsUpdate.dispatch(new SettingsUpdateCallbackArgs(name, value));
 		return osd == null ? new OSD() : osd;
 	}
 

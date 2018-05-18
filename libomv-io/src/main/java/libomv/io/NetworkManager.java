@@ -6,7 +6,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -127,7 +127,7 @@ public class NetworkManager implements PacketCallback, CapsCallback, libomv.mode
 
 	/**
 	 * Fire an event when an event queue connects for capabilities
-	 * 
+	 *
 	 * @param simulator
 	 *            Simulator the event queue is attached to
 	 */
@@ -383,7 +383,7 @@ public class NetworkManager implements PacketCallback, CapsCallback, libomv.mode
 							// remains), _Client);
 							Thread.sleep(remains);
 						}
-						outgoingPacket.Simulator.sendPacketFinal(outgoingPacket);
+						outgoingPacket.simulator.sendPacketFinal(outgoingPacket);
 						count++;
 					} else {
 						count += 10;
@@ -478,10 +478,10 @@ public class NetworkManager implements PacketCallback, CapsCallback, libomv.mode
 
 		@Override
 		public void run() {
-			if (packet.Packet != null)
-				FirePacketCallbacks(packet.Packet, packet.Simulator);
+			if (packet.packet != null)
+				FirePacketCallbacks(packet.packet, packet.simulator);
 			else
-				FireCapsCallbacks(packet.Message, (SimulatorManager) packet.Simulator);
+				FireCapsCallbacks(packet.message, (SimulatorManager) packet.simulator);
 		}
 	}
 
@@ -498,23 +498,23 @@ public class NetworkManager implements PacketCallback, CapsCallback, libomv.mode
 				try {
 					IncomingPacket incomingPacket = _PacketInbox.poll(100, TimeUnit.MILLISECONDS);
 					if (incomingPacket != null) {
-						if (incomingPacket.Packet != null) {
+						if (incomingPacket.packet != null) {
 							// skip blacklisted packets
-							if (_UDPBlacklist.contains(incomingPacket.Packet.getType())) {
+							if (_UDPBlacklist.contains(incomingPacket.packet.getType())) {
 								logger.warn(GridClient.Log(
 										String.format("Discarding Blacklisted packet %s from %s",
-												incomingPacket.Packet.getType(),
-												((SimulatorManager) incomingPacket.Simulator).getIPEndPoint()),
+												incomingPacket.packet.getType(),
+												((SimulatorManager) incomingPacket.simulator).getIPEndPoint()),
 										_Client));
 							} else if (syncPacketCallbacks) {
-								FirePacketCallbacks(incomingPacket.Packet, incomingPacket.Simulator);
+								FirePacketCallbacks(incomingPacket.packet, incomingPacket.simulator);
 							} else {
 								if (!threadPool.isShutdown())
 									threadPool.submit(new PacketCallbackExecutor(incomingPacket));
 							}
-						} else if (incomingPacket.Message != null) {
+						} else if (incomingPacket.message != null) {
 							if (syncPacketCallbacks) {
-								FireCapsCallbacks(incomingPacket.Message, (SimulatorManager) incomingPacket.Simulator);
+								FireCapsCallbacks(incomingPacket.message, (SimulatorManager) incomingPacket.simulator);
 							} else {
 								if (!threadPool.isShutdown())
 									threadPool.submit(new PacketCallbackExecutor(incomingPacket));
@@ -617,7 +617,7 @@ public class NetworkManager implements PacketCallback, CapsCallback, libomv.mode
 
 	/**
 	 * Constructor for this manager
-	 * 
+	 *
 	 * @param client
 	 *            The GridClient which controls this manager
 	 * @throws Exception
@@ -634,7 +634,7 @@ public class NetworkManager implements PacketCallback, CapsCallback, libomv.mode
 		syncPacketCallbacks = _Client.Settings.getBool(LibSettings.SYNC_PACKETCALLBACKS);
 		sendAgentUpdates = _Client.Settings.getBool(LibSettings.SEND_AGENT_UPDATES);
 		enableSimStats = _Client.Settings.getBool(LibSettings.ENABLE_SIMSTATS);
-		_Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
+		_Client.Settings.onSettingsUpdate.add(new SettingsUpdate());
 
 		// Register internal CAPS callbacks
 		RegisterCallback(CapsEventType.EnableSimulator, this);
@@ -652,7 +652,7 @@ public class NetworkManager implements PacketCallback, CapsCallback, libomv.mode
 
 	/**
 	 * Get the capability URL from the current simulator
-	 * 
+	 *
 	 * @param capability
 	 *            The name of the capability to retrieve the URL from
 	 * @return The URI for the capability or null if it doesn't exist
@@ -663,7 +663,7 @@ public class NetworkManager implements PacketCallback, CapsCallback, libomv.mode
 
 	/**
 	 * Get the capability URL from the currenta specific simulator
-	 * 
+	 *
 	 * @param capability
 	 *            The name of the capability to retrieve the URL from
 	 * @param simulator
@@ -767,7 +767,7 @@ public class NetworkManager implements PacketCallback, CapsCallback, libomv.mode
 
 	/**
 	 * Send an UDP packet to the current simulator
-	 * 
+	 *
 	 * @param packet
 	 *            The packet to send
 	 * @throws Exception
@@ -825,7 +825,7 @@ public class NetworkManager implements PacketCallback, CapsCallback, libomv.mode
 
 	/**
 	 * Connect to a simulator
-	 * 
+	 *
 	 * @param endPoint
 	 *            IP address and port to connect to
 	 * @param handle
@@ -933,7 +933,7 @@ public class NetworkManager implements PacketCallback, CapsCallback, libomv.mode
 	 * Begins the non-blocking logout. Makes sure that the LoggedOut event is called
 	 * even if the server does not send a logout reply, and shutdown() is properly
 	 * called.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void BeginLogout() throws Exception {
@@ -1078,7 +1078,7 @@ public class NetworkManager implements PacketCallback, CapsCallback, libomv.mode
 	 * Shutdown will disconnect all the sims except for the current sim first, and
 	 * then kill the connection to CurrentSim. This should only be called if the
 	 * logout process times out on <code>RequestLogout</code>
-	 * 
+	 *
 	 * @param type
 	 *            Type of shutdown
 	 * @throws Exception
@@ -1194,7 +1194,7 @@ public class NetworkManager implements PacketCallback, CapsCallback, libomv.mode
 	/**
 	 * Searches through the list of currently connected simulators to find one
 	 * attached to the given IPEndPoint
-	 * 
+	 *
 	 * @param endPoint
 	 *            InetSocketAddress of the Simulator to search for
 	 * @return A Simulator reference on success, otherwise null
@@ -1266,7 +1266,7 @@ public class NetworkManager implements PacketCallback, CapsCallback, libomv.mode
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param packet
 	 *            The packet data
 	 * @param simulator
@@ -1308,7 +1308,7 @@ public class NetworkManager implements PacketCallback, CapsCallback, libomv.mode
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param packet
 	 *            The packet data
 	 * @param simulator
@@ -1451,15 +1451,15 @@ public class NetworkManager implements PacketCallback, CapsCallback, libomv.mode
 		if (_Client.Settings.getBool(LibSettings.MULTIPLE_SIMS)) {
 			EnableSimulatorMessage msg = (EnableSimulatorMessage) message;
 
-			for (int i = 0; i < msg.Simulators.length; i++) {
-				InetAddress ip = msg.Simulators[i].IP;
-				InetSocketAddress endPoint = new InetSocketAddress(ip, msg.Simulators[i].Port);
+			for (int i = 0; i < msg.simulators.length; i++) {
+				InetAddress ip = msg.simulators[i].ip;
+				InetSocketAddress endPoint = new InetSocketAddress(ip, msg.simulators[i].port);
 
 				if (FindSimulator(endPoint) != null)
 					return;
 
-				if (connect(endPoint, msg.Simulators[i].RegionHandle, false, null) == null) {
-					logger.error(GridClient.Log("Unable to connect to new sim " + ip + ":" + msg.Simulators[i].Port,
+				if (connect(endPoint, msg.simulators[i].regionHandle, false, null) == null) {
+					logger.error(GridClient.Log("Unable to connect to new sim " + ip + ":" + msg.simulators[i].port,
 							_Client));
 				}
 			}
@@ -1485,7 +1485,7 @@ public class NetworkManager implements PacketCallback, CapsCallback, libomv.mode
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param simulator
 	 *            The sender
 	 * @param packet
@@ -1498,7 +1498,7 @@ public class NetworkManager implements PacketCallback, CapsCallback, libomv.mode
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param packet
 	 *            The packet data
 	 * @param simulator
@@ -1532,7 +1532,7 @@ public class NetworkManager implements PacketCallback, CapsCallback, libomv.mode
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param simulator
 	 *            The sender
 	 * @param packet

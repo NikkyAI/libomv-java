@@ -54,10 +54,10 @@ public class InventoryAttachment extends InventoryItem {
 
 	/** Get the last AttachmentPoint this object was attached to */
 	public final AttachmentPoint getAttachmentPoint() {
-		return AttachmentPoint.setValue(ItemFlags & 0xFF);
+		return AttachmentPoint.setValue(itemFlags & 0xFF);
 	}
 
 	public final void setAttachmentPoint(AttachmentPoint value) {
-		ItemFlags = value.getValue() | (ItemFlags & ~0xFF);
+		itemFlags = value.getValue() | (itemFlags & ~0xFF);
 	}
 }

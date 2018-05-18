@@ -111,13 +111,13 @@ public class InventoryItem extends InventoryNode {
 	/* The {@link OpenMetaverse.UUID} of this item */
 	public UUID assetID;
 	/* The combined {@link OpenMetaverse.Permissions} of this item */
-	public Permissions Permissions;
+	public Permissions permissions;
 	/* The type of item from {@link libomv.assets.AssetItem.AssetType} */
 	public AssetType assetType;
 	/* The {@link OpenMetaverse.UUID} of the creator of this item */
 	// public UUID CreatorID;
 	/* A Description of this item */
-	public String Description;
+	public String description;
 	/*
 	 * The {@link OpenMetaverse.Group} s {@link OpenMetaverse.UUID} this item is set
 	 * to or owned by
@@ -128,21 +128,21 @@ public class InventoryItem extends InventoryNode {
 	 */
 	// public boolean GroupOwned;
 	/* The price this item can be purchased for */
-	public int SalePrice;
+	public int salePrice;
 	/* The type of sale from the {@link OpenMetaverse.SaleType} enum */
 	public SaleType saleType;
 	/*
 	 * Combined flags from {@link libomv.InventoryItem.InventoryItemFlags} and item
 	 * specific types
 	 */
-	public int ItemFlags;
+	public int itemFlags;
 	/*
 	 * Time and date this inventory item was created, stored as UTC (Coordinated
 	 * Universal Time)
 	 */
-	public Date CreationDate;
+	public Date creationDate;
 	/* Used to update the AssetID in requests sent to the server */
-	public UUID TransactionID;
+	public UUID transactionID;
 	/* The {@link OpenMetaverse.UUID} of the previous owner of the item */
 	// public UUID LastOwnerID;
 
@@ -244,7 +244,7 @@ public class InventoryItem extends InventoryNode {
 
 	@Override
 	public Date getModifyTime() {
-		return CreationDate;
+		return creationDate;
 	}
 
 	/**
@@ -264,11 +264,11 @@ public class InventoryItem extends InventoryNode {
 		map.put("type", OSD.FromInteger(assetType.getValue()));
 		map.put("inv_type", OSD.FromInteger(getType().getValue()));
 
-		map.put("flags", OSD.FromUInteger(ItemFlags));
+		map.put("flags", OSD.FromUInteger(itemFlags));
 
-		map.put("permissions", Permissions.serialize());
+		map.put("permissions", permissions.serialize());
 
-		map.put("created_at", OSD.FromDate(CreationDate));
+		map.put("created_at", OSD.FromDate(creationDate));
 		return map;
 	}
 
@@ -287,15 +287,15 @@ public class InventoryItem extends InventoryNode {
 		item.parentID = map.get("parent_id").AsUUID();
 
 		item.name = map.get("name").AsString();
-		item.Description = map.get("desc").AsString();
+		item.description = map.get("desc").AsString();
 		item.assetID = map.get("asset_id").AsUUID();
 		item.assetType = AssetType.setValue(map.get("type").AsInteger());
-		item.CreationDate = Helpers.UnixTimeToDateTime(map.get("created_at").AsReal());
-		item.ItemFlags = map.get("flags").AsUInteger();
-		item.Permissions = libomv.types.Permissions.fromOSD(map.get("permissions"));
+		item.creationDate = Helpers.UnixTimeToDateTime(map.get("created_at").AsReal());
+		item.itemFlags = map.get("flags").AsUInteger();
+		item.permissions = libomv.types.Permissions.fromOSD(map.get("permissions"));
 
 		OSDMap sale = (OSDMap) map.get("sale_info");
-		item.SalePrice = sale.get("sale_price").AsInteger();
+		item.salePrice = sale.get("sale_price").AsInteger();
 		item.saleType = SaleType.setValue(sale.get("sale_type").AsInteger());
 	}
 
@@ -313,13 +313,13 @@ public class InventoryItem extends InventoryNode {
 		if (serialVersionUID != info.readLong())
 			throw new InvalidObjectException("InventoryItem serial version mismatch");
 		assetID = (UUID) info.readObject();
-		Permissions = (Permissions) info.readObject();
+		permissions = (Permissions) info.readObject();
 		assetType = AssetType.setValue(info.readByte());
-		Description = info.readUTF();
-		SalePrice = info.readInt();
+		description = info.readUTF();
+		salePrice = info.readInt();
 		saleType = SaleType.setValue(info.readByte());
-		ItemFlags = info.readInt();
-		CreationDate = (Date) info.readObject();
+		itemFlags = info.readInt();
+		creationDate = (Date) info.readObject();
 	}
 
 	/**
@@ -334,19 +334,19 @@ public class InventoryItem extends InventoryNode {
 		super.writeObject(info);
 		info.writeLong(serialVersionUID);
 		info.writeObject(assetID);
-		info.writeObject(Permissions);
+		info.writeObject(permissions);
 		info.writeByte(assetType.getValue());
-		info.writeUTF(Description);
-		info.writeInt(SalePrice);
+		info.writeUTF(description);
+		info.writeInt(salePrice);
 		info.writeByte(saleType.getValue());
-		info.writeInt(ItemFlags);
-		info.writeObject(CreationDate);
+		info.writeInt(itemFlags);
+		info.writeObject(creationDate);
 	}
 
 	@Override
 	public String toString() {
-		return assetType + " " + assetID + " (" + assetType + " " + itemID + ") '" + name + "'/'" + Description + "' "
-				+ Permissions;
+		return assetType + " " + assetID + " (" + assetType + " " + itemID + ") '" + name + "'/'" + description + "' "
+				+ permissions;
 	}
 
 	/**
@@ -358,8 +358,8 @@ public class InventoryItem extends InventoryNode {
 	 */
 	@Override
 	public int hashCode() {
-		return assetID.hashCode() ^ Permissions.hashCode() ^ assetType.hashCode() ^ getType().hashCode()
-				^ Description.hashCode() ^ SalePrice ^ saleType.hashCode() ^ ItemFlags ^ CreationDate.hashCode();
+		return assetID.hashCode() ^ permissions.hashCode() ^ assetType.hashCode() ^ getType().hashCode()
+				^ description.hashCode() ^ salePrice ^ saleType.hashCode() ^ itemFlags ^ creationDate.hashCode();
 	}
 
 	/**
@@ -399,8 +399,8 @@ public class InventoryItem extends InventoryNode {
 	 */
 	public final boolean equals(InventoryItem o) {
 		return o != null && super.equals(o) && o.assetType.equals(assetType) && o.assetID.equals(assetID)
-				&& o.CreationDate.equals(CreationDate) && o.Description.equals(Description) && o.ItemFlags == ItemFlags
-				&& o.getType().equals(getType()) && o.Permissions.equals(Permissions) && o.SalePrice == SalePrice
+				&& o.creationDate.equals(creationDate) && o.description.equals(description) && o.itemFlags == itemFlags
+				&& o.getType().equals(getType()) && o.permissions.equals(permissions) && o.salePrice == salePrice
 				&& o.saleType.equals(saleType);
 	}
 }

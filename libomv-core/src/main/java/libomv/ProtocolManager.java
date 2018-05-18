@@ -30,6 +30,8 @@
  */
 package libomv;
 
+import static libomv.utils.Helpers.BytesToInt16L;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -145,7 +147,7 @@ public class ProtocolManager {
 
 		public short count;
 
-		public ArrayList<MapField> Fields;
+		public ArrayList<MapField> fields;
 
 		@Override
 		public Object clone() {
@@ -165,19 +167,19 @@ public class ProtocolManager {
 
 	public class MapPacket {
 
-		public int ID;
+		public int id;
 
-		public String Name;
+		public String name;
 
-		public int Frequency;
+		public int frequency;
 
-		public boolean Trusted;
+		public boolean trusted;
 
-		public boolean Encoded;
+		public boolean encoded;
 
-		public boolean Deprecated;
+		public boolean deprecated;
 
-		public ArrayList<MapBlock> Blocks;
+		public ArrayList<MapBlock> blocks;
 	}
 
 	public class MapPacketMap {
@@ -204,42 +206,42 @@ public class ProtocolManager {
 		public void addPacket(int id, MapPacket packet) {
 			mapPackets.add(packet);
 			commandMapPacket.put(id, packet);
-			nameMapPacket.put(packet.Name, packet);
+			nameMapPacket.put(packet.name, packet);
 		}
 	}
 
-	private ArrayList<String> KeywordList;
-	private HashMapInt<String> KeywordPositions;
+	private ArrayList<String> keywordList;
+	private HashMapInt<String> keywordPositions;
 
-	public MapPacketMap LowMaps;
+	public MapPacketMap lowMaps;
 
-	public MapPacketMap MediumMaps;
+	public MapPacketMap mediumMaps;
 
-	public MapPacketMap HighMaps;
+	public MapPacketMap highMaps;
 
-	private boolean Sort;
+	private boolean sort;
 
 	public ProtocolManager(String mapFile, boolean sort) throws Exception {
-		Sort = sort;
+		this.sort = sort;
 
 		// Initialize the map arrays
-		LowMaps = new MapPacketMap(256);
-		MediumMaps = new MapPacketMap(256);
-		HighMaps = new MapPacketMap(256);
+		lowMaps = new MapPacketMap(256);
+		mediumMaps = new MapPacketMap(256);
+		highMaps = new MapPacketMap(256);
 
-		KeywordPositions = new HashMapInt<String>();
-		KeywordList = new ArrayList<String>();
-		LoadMapFile(mapFile);
+		keywordPositions = new HashMapInt<String>();
+		keywordList = new ArrayList<String>();
+		loadMapFile(mapFile);
 	}
 
-	public MapPacket Command(String command) throws Exception {
+	public MapPacket command(String command) throws Exception {
 		// TODO: Get a hashtable in here quick!
 
-		MapPacket map = HighMaps.getMapPacketByName(command);
+		MapPacket map = highMaps.getMapPacketByName(command);
 		if (map == null) {
-			map = MediumMaps.getMapPacketByName(command);
+			map = mediumMaps.getMapPacketByName(command);
 			if (map == null) {
-				map = LowMaps.getMapPacketByName(command);
+				map = lowMaps.getMapPacketByName(command);
 			} else {
 				throw new Exception("Cannot find map for command \"" + command + "\"");
 			}
@@ -251,7 +253,7 @@ public class ProtocolManager {
 		 */
 	}
 
-	public MapPacket Command(byte[] data) throws Exception {
+	public MapPacket command(byte[] data) throws Exception {
 		int command;
 
 		if (data.length < 7) {
@@ -262,27 +264,27 @@ public class ProtocolManager {
 			if (data[7] == (byte) 0xFF) {
 				// Low frequency
 				command = (data[8] * 256 + data[9]);
-				return Command(command, PacketFrequency.Low);
+				return command(command, PacketFrequency.Low);
 			}
 
 			// Medium frequency
 			command = data[7];
-			return Command(command, PacketFrequency.Medium);
+			return command(command, PacketFrequency.Medium);
 		}
 
 		// High frequency
 		command = data[6];
-		return Command(command, PacketFrequency.High);
+		return command(command, PacketFrequency.High);
 	}
 
-	public MapPacket Command(int command, int frequency) throws Exception {
+	public MapPacket command(int command, int frequency) throws Exception {
 		switch (frequency) {
 		case PacketFrequency.High:
-			return HighMaps.getMapPacketByCommand(command);
+			return highMaps.getMapPacketByCommand(command);
 		case PacketFrequency.Medium:
-			return MediumMaps.getMapPacketByCommand(command);
+			return mediumMaps.getMapPacketByCommand(command);
 		case PacketFrequency.Low:
-			return LowMaps.getMapPacketByCommand(command);
+			return lowMaps.getMapPacketByCommand(command);
 		default:
 			break;
 		}
@@ -290,24 +292,24 @@ public class ProtocolManager {
 		throw new Exception("Cannot find map for command \"" + command + "\" with frequency \"" + frequency + "\"");
 	}
 
-	public void PrintMap() {
-		PrintOneMap(LowMaps, "Low   ");
-		PrintOneMap(MediumMaps, "Medium");
-		PrintOneMap(HighMaps, "High  ");
+	public void printMap() {
+		printOneMap(lowMaps, "Low   ");
+		printOneMap(mediumMaps, "Medium");
+		printOneMap(highMaps, "High  ");
 	}
 
-	private void PrintOneMap(MapPacketMap map, String frequency) {
+	private void printOneMap(MapPacketMap map, String frequency) {
 		int i;
 
 		for (i = 0; i < map.mapPackets.size(); ++i) {
 			MapPacket map_packet = map.mapPackets.get(i);
 			if (map_packet != null) {
-				System.out.format("%s %d %d %4x - %s - %s - %s\n", frequency, i, map_packet.ID, map_packet.Frequency,
-						map_packet.Name, map_packet.Trusted ? "Trusted" : "Untrusted",
-						map_packet.Encoded ? "Unencoded" : "Zerocoded");
+				System.out.format("%s %d %d %4x - %s - %s - %s\n", frequency, i, map_packet.id, map_packet.frequency,
+						map_packet.name, map_packet.trusted ? "Trusted" : "Untrusted",
+						map_packet.encoded ? "Unencoded" : "Zerocoded");
 
-				for (int j = 0; j < map_packet.Blocks.size(); j++) {
-					MapBlock block = map_packet.Blocks.get(j);
+				for (int j = 0; j < map_packet.blocks.size(); j++) {
+					MapBlock block = map_packet.blocks.get(j);
 					if (block.count == -1) {
 						System.out.format("\t%4d %s (Variable)\n", block.keywordIndex,
 								keywordPosition(block.keywordIndex));
@@ -316,8 +318,8 @@ public class ProtocolManager {
 								block.count);
 					}
 
-					for (int k = 0; k < block.Fields.size(); k++) {
-						MapField field = block.Fields.get(k);
+					for (int k = 0; k < block.fields.size(); k++) {
+						MapField field = block.fields.get(k);
 						System.out.format("\t\t%4d %s (%d / %d)", field.keywordIndex,
 								keywordPosition(block.keywordIndex), field.type, field.count);
 					}
@@ -326,7 +328,7 @@ public class ProtocolManager {
 		}
 	}
 
-	public static void DecodeMapFile(String mapFile, String outputFile) throws Exception {
+	public static void decodeMapFile(String mapFile, String outputFile) throws Exception {
 		byte magicKey = 0;
 		byte[] buffer = new byte[2048];
 		int nread;
@@ -358,7 +360,7 @@ public class ProtocolManager {
 		output.close();
 	}
 
-	private void LoadMapFile(String mapFile) throws Exception {
+	private void loadMapFile(String mapFile) throws Exception {
 		FileReader map;
 		int low = 1;
 		int medium = 1;
@@ -402,8 +404,8 @@ public class ProtocolManager {
 							fieldOffset = 0;
 						} else if (trimmedline.equals("}")) {
 							// Reached the end of the packet
-							if (Sort)
-								Collections.sort(currentPacket.Blocks);
+							if (sort)
+								Collections.sort(currentPacket.blocks);
 							inPacket = false;
 						} else if (trimmedline.startsWith("//")) {
 							// ignore comment lines
@@ -425,51 +427,51 @@ public class ProtocolManager {
 									// Truncate the id to a short
 									int fixedID = (int) (l_fixedID ^ 0xFFFF0000);
 									currentPacket = new MapPacket();
-									currentPacket.ID = fixedID;
-									currentPacket.Frequency = PacketFrequency.Low;
-									currentPacket.Name = tokens[0];
-									currentPacket.Trusted = tokens[3].equals("Trusted");
-									currentPacket.Encoded = tokens[4].equals("Zerocoded");
-									currentPacket.Deprecated = tokens.length > 5 ? tokens[5].contains("Deprecated")
+									currentPacket.id = fixedID;
+									currentPacket.frequency = PacketFrequency.Low;
+									currentPacket.name = tokens[0];
+									currentPacket.trusted = tokens[3].equals("Trusted");
+									currentPacket.encoded = tokens[4].equals("Zerocoded");
+									currentPacket.deprecated = tokens.length > 5 ? tokens[5].contains("Deprecated")
 											: false;
-									currentPacket.Blocks = new ArrayList<MapBlock>();
-									LowMaps.addPacket(fixedID, currentPacket);
+									currentPacket.blocks = new ArrayList<MapBlock>();
+									lowMaps.addPacket(fixedID, currentPacket);
 								} else if (tokens[1].equals("Low")) {
 									currentPacket = new MapPacket();
-									currentPacket.ID = low;
-									currentPacket.Frequency = PacketFrequency.Low;
-									currentPacket.Name = tokens[0];
-									currentPacket.Trusted = tokens[2].equals("Trusted");
-									currentPacket.Encoded = tokens[3].equals("Zerocoded");
-									currentPacket.Deprecated = tokens.length > 4 ? tokens[4].contains("Deprecated")
+									currentPacket.id = low;
+									currentPacket.frequency = PacketFrequency.Low;
+									currentPacket.name = tokens[0];
+									currentPacket.trusted = tokens[2].equals("Trusted");
+									currentPacket.encoded = tokens[3].equals("Zerocoded");
+									currentPacket.deprecated = tokens.length > 4 ? tokens[4].contains("Deprecated")
 											: false;
-									currentPacket.Blocks = new ArrayList<MapBlock>();
-									LowMaps.addPacket(low, currentPacket);
+									currentPacket.blocks = new ArrayList<MapBlock>();
+									lowMaps.addPacket(low, currentPacket);
 									low++;
 								} else if (tokens[1].equals("Medium")) {
 									currentPacket = new MapPacket();
-									currentPacket.ID = medium;
-									currentPacket.Frequency = PacketFrequency.Medium;
-									currentPacket.Name = tokens[0];
-									currentPacket.Trusted = tokens[2].equals("Trusted");
-									currentPacket.Encoded = tokens[3].equals("Zerocoded");
-									currentPacket.Deprecated = tokens.length > 4 ? tokens[4].contains("Deprecated")
+									currentPacket.id = medium;
+									currentPacket.frequency = PacketFrequency.Medium;
+									currentPacket.name = tokens[0];
+									currentPacket.trusted = tokens[2].equals("Trusted");
+									currentPacket.encoded = tokens[3].equals("Zerocoded");
+									currentPacket.deprecated = tokens.length > 4 ? tokens[4].contains("Deprecated")
 											: false;
-									currentPacket.Blocks = new ArrayList<MapBlock>();
-									MediumMaps.addPacket(medium, currentPacket);
+									currentPacket.blocks = new ArrayList<MapBlock>();
+									mediumMaps.addPacket(medium, currentPacket);
 
 									medium++;
 								} else if (tokens[1].equals("High")) {
 									currentPacket = new MapPacket();
-									currentPacket.ID = high;
-									currentPacket.Frequency = PacketFrequency.High;
-									currentPacket.Name = tokens[0];
-									currentPacket.Trusted = tokens[2].equals("Trusted");
-									currentPacket.Encoded = tokens[3].equals("Zerocoded");
-									currentPacket.Deprecated = tokens.length > 4 ? tokens[4].contains("Deprecated")
+									currentPacket.id = high;
+									currentPacket.frequency = PacketFrequency.High;
+									currentPacket.name = tokens[0];
+									currentPacket.trusted = tokens[2].equals("Trusted");
+									currentPacket.encoded = tokens[3].equals("Zerocoded");
+									currentPacket.deprecated = tokens.length > 4 ? tokens[4].contains("Deprecated")
 											: false;
-									currentPacket.Blocks = new ArrayList<MapBlock>();
-									HighMaps.addPacket(high, currentPacket);
+									currentPacket.blocks = new ArrayList<MapBlock>();
+									highMaps.addPacket(high, currentPacket);
 
 									high++;
 								} else {
@@ -505,10 +507,10 @@ public class ProtocolManager {
 							}
 
 							// Save this field to the current block
-							currentBlock.Fields.add(field);
+							currentBlock.fields.add(field);
 						} else if (trimmedline.equals("}")) {
-							if (Sort)
-								Collections.sort(currentBlock.Fields);
+							if (sort)
+								Collections.sort(currentBlock.fields);
 							currentBlock.size = fieldOffset;
 							inBlock = false;
 						} else if (trimmedline.length() != 0 && trimmedline.substring(0, 2).equals("//") == false) {
@@ -521,8 +523,8 @@ public class ProtocolManager {
 							String[] tokens = trimmedline.split("\\s+");
 
 							currentBlock.keywordIndex = keywordPosition(tokens[0]);
-							currentBlock.Fields = new ArrayList<MapField>();
-							currentPacket.Blocks.add(currentBlock);
+							currentBlock.fields = new ArrayList<MapField>();
+							currentPacket.blocks.add(currentBlock);
 
 							if (tokens[1].equals("Single")) {
 								currentBlock.count = 1;
@@ -558,7 +560,7 @@ public class ProtocolManager {
 
 	public short getBlockNum(MapPacket packet, byte[] message, int blockIndex) throws Exception {
 		short blocks, offset = 0;
-		for (MapBlock block : packet.Blocks) {
+		for (MapBlock block : packet.blocks) {
 			if (block.count >= 0) {
 				blocks = block.count;
 			} else {
@@ -573,7 +575,7 @@ public class ProtocolManager {
 				offset += block.size * blocks;
 			} else {
 				for (int j = 0; j < blocks; j++) {
-					offset += getBlockSize(block.Fields, message, offset);
+					offset += getBlockSize(block.fields, message, offset);
 				}
 			}
 		}
@@ -583,7 +585,7 @@ public class ProtocolManager {
 	public MapField getFieldOffset(MapPacket packet, byte[] message, int blockIndex, int fieldIndex, short blockNumber)
 			throws Exception {
 		short blocks, offset = 0;
-		for (MapBlock block : packet.Blocks) {
+		for (MapBlock block : packet.blocks) {
 			if (block.count >= 0) {
 				blocks = block.count;
 			} else {
@@ -599,14 +601,14 @@ public class ProtocolManager {
 					offset += block.size * blocks;
 				} else {
 					for (int j = 0; j < blocks; j++) {
-						offset += getBlockSize(block.Fields, message, offset);
+						offset += getBlockSize(block.fields, message, offset);
 					}
 				}
 			}
 
 			if (block.keywordIndex == blockIndex) {
 				MapField result = null;
-				for (MapField field : block.Fields) {
+				for (MapField field : block.fields) {
 					if (field.keywordIndex == fieldIndex) {
 						result = (MapField) field.clone();
 						result.offset = offset;
@@ -627,6 +629,8 @@ public class ProtocolManager {
 			if (field.count == 1)
 				return (short) (message[offset] + 1);
 			else if (field.count == 2)
+				// TODO:FIXME
+				// Kinda awkward, this is the only reason Helpers is included :(
 				return (short) (BytesToInt16L(message, offset) + 2);
 			else
 				throw new Exception("Invalid count for variable sized field!");
@@ -635,38 +639,21 @@ public class ProtocolManager {
 	}
 
 	public String keywordPosition(int position) {
-		if (position >= 0 && position < KeywordList.size()) {
-			return KeywordList.get(position);
+		if (position >= 0 && position < keywordList.size()) {
+			return keywordList.get(position);
 		}
 		return null;
 	}
 
 	public int keywordPosition(String keyword) {
-		if (KeywordPositions.containsKey(keyword)) {
-			return KeywordPositions.get(keyword);
+		if (keywordPositions.containsKey(keyword)) {
+			return keywordPositions.get(keyword);
 		}
 
-		int position = KeywordList.size();
-		KeywordList.add(keyword);
-		KeywordPositions.put(keyword, position);
+		int position = keywordList.size();
+		keywordList.add(keyword);
+		keywordPositions.put(keyword, position);
 		return position;
 	}
 
-	/**
-	 * Convert the first two bytes starting at the given position in little endian
-	 * ordering to a signed short integer
-	 *
-	 * @param bytes
-	 *            An array two bytes or longer
-	 * @param pos
-	 *            Position in the array to start reading
-	 * @return A signed short integer, will be zero if a short can't be read at the
-	 *         given position
-	 */
-	public static short BytesToInt16L(byte[] bytes, int pos) {
-		if (bytes.length < pos + 2) {
-			return 0;
-		}
-		return (short) (((bytes[pos + 0] & 0xff) << 0) + ((bytes[pos + 1] & 0xff) << 8));
-	}
 }

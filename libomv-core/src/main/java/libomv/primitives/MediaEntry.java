@@ -75,50 +75,50 @@ public class MediaEntry {
 	// #endregion enums
 
 	// Is display of the alternative image enabled
-	public boolean EnableAlterntiveImage;
+	public boolean enableAlterntiveImage;
 
 	// Should media auto loop
-	public boolean AutoLoop;
+	public boolean autoLoop;
 
 	// Shoule media be auto played
-	public boolean AutoPlay;
+	public boolean autoPlay;
 
 	// Auto scale media to prim face
-	public boolean AutoScale;
+	public boolean autoScale;
 
 	// Should viewer automatically zoom in on the face when clicked
-	public boolean AutoZoom;
+	public boolean autoZoom;
 
 	// Should viewer interpret first click as interaction with the media
 	// or when false should the first click be treated as zoom in command
-	public boolean InteractOnFirstClick;
+	public boolean interactOnFirstClick;
 
 	// Style of controls viewer should display when viewer media on this face
-	public MediaControls Controls;
+	public MediaControls controls;
 
 	// Starting URL for the media
-	public String HomeURL;
+	public String homeURL;
 
 	// Currently navigated URL
-	public String CurrentURL;
+	public String currentURL;
 
 	// Media height in pixes
-	public int Height;
+	public int height;
 
 	// Media width in pixels
-	public int Width;
+	public int width;
 
 	// Who can controls the media, flags MediaPermission
-	public byte ControlPermissions;
+	public byte controlPermissions;
 
 	// Who can interact with the media, flags MediaPermission
-	public byte InteractPermissions;
+	public byte interactPermissions;
 
 	// Is URL whitelist enabled
-	public boolean EnableWhiteList;
+	public boolean enableWhiteList;
 
 	// Array of URLs that are whitelisted
-	public String[] WhiteList;
+	public String[] whiteList;
 
 	public MediaEntry() {
 
@@ -133,31 +133,31 @@ public class MediaEntry {
 	 *
 	 * @return OSDMap with the serialized data
 	 */
-	public OSDMap Serialize() {
+	public OSDMap serialize() {
 		OSDMap map = new OSDMap();
 
-		map.put("alt_image_enable", OSD.FromBoolean(EnableAlterntiveImage));
-		map.put("auto_loop", OSD.FromBoolean(AutoLoop));
-		map.put("auto_play", OSD.FromBoolean(AutoPlay));
-		map.put("auto_scale", OSD.FromBoolean(AutoScale));
-		map.put("auto_zoom", OSD.FromBoolean(AutoZoom));
-		map.put("controls", OSD.FromInteger(Controls.getValue()));
-		map.put("current_url", OSD.FromString(CurrentURL));
-		map.put("first_click_interact", OSD.FromBoolean(InteractOnFirstClick));
-		map.put("height_pixels", OSD.FromInteger(Height));
-		map.put("home_url", OSD.FromString(HomeURL));
-		map.put("perms_control", OSD.FromInteger(ControlPermissions));
-		map.put("perms_interact", OSD.FromInteger(InteractPermissions));
+		map.put("alt_image_enable", OSD.FromBoolean(enableAlterntiveImage));
+		map.put("auto_loop", OSD.FromBoolean(autoLoop));
+		map.put("auto_play", OSD.FromBoolean(autoPlay));
+		map.put("auto_scale", OSD.FromBoolean(autoScale));
+		map.put("auto_zoom", OSD.FromBoolean(autoZoom));
+		map.put("controls", OSD.FromInteger(controls.getValue()));
+		map.put("current_url", OSD.FromString(currentURL));
+		map.put("first_click_interact", OSD.FromBoolean(interactOnFirstClick));
+		map.put("height_pixels", OSD.FromInteger(height));
+		map.put("home_url", OSD.FromString(homeURL));
+		map.put("perms_control", OSD.FromInteger(controlPermissions));
+		map.put("perms_interact", OSD.FromInteger(interactPermissions));
 
 		OSDArray wl = new OSDArray();
-		if (WhiteList != null && WhiteList.length > 0) {
-			for (int i = 0; i < WhiteList.length; i++)
-				wl.add(OSD.FromString(WhiteList[i]));
+		if (whiteList != null && whiteList.length > 0) {
+			for (int i = 0; i < whiteList.length; i++)
+				wl.add(OSD.FromString(whiteList[i]));
 		}
 
 		map.put("whitelist", wl);
-		map.put("whitelist_enable", OSD.FromBoolean(EnableWhiteList));
-		map.put("width_pixels", OSD.FromInteger(Width));
+		map.put("whitelist_enable", OSD.FromBoolean(enableWhiteList));
+		map.put("width_pixels", OSD.FromInteger(width));
 
 		return map;
 	}
@@ -173,30 +173,30 @@ public class MediaEntry {
 		if (osd instanceof OSDMap) {
 			OSDMap map = (OSDMap) osd;
 
-			EnableAlterntiveImage = map.get("alt_image_enable").AsBoolean();
-			AutoLoop = map.get("auto_loop").AsBoolean();
-			AutoPlay = map.get("auto_play").AsBoolean();
-			AutoScale = map.get("auto_scale").AsBoolean();
-			AutoZoom = map.get("auto_zoom").AsBoolean();
-			Controls = MediaControls.setValue(map.get("controls").AsInteger());
-			CurrentURL = map.get("current_url").AsString();
-			InteractOnFirstClick = map.get("first_click_interact").AsBoolean();
-			Height = map.get("height_pixels").AsInteger();
-			HomeURL = map.get("home_url").AsString();
-			ControlPermissions = MediaPermission.setValue(map.get("perms_control").AsInteger());
-			InteractPermissions = MediaPermission.setValue(map.get("perms_interact").AsInteger());
+			enableAlterntiveImage = map.get("alt_image_enable").AsBoolean();
+			autoLoop = map.get("auto_loop").AsBoolean();
+			autoPlay = map.get("auto_play").AsBoolean();
+			autoScale = map.get("auto_scale").AsBoolean();
+			autoZoom = map.get("auto_zoom").AsBoolean();
+			controls = MediaControls.setValue(map.get("controls").AsInteger());
+			currentURL = map.get("current_url").AsString();
+			interactOnFirstClick = map.get("first_click_interact").AsBoolean();
+			height = map.get("height_pixels").AsInteger();
+			homeURL = map.get("home_url").AsString();
+			controlPermissions = MediaPermission.setValue(map.get("perms_control").AsInteger());
+			interactPermissions = MediaPermission.setValue(map.get("perms_interact").AsInteger());
 
 			if (map.get("whitelist").getType() == OSDType.Array) {
 				OSDArray wl = (OSDArray) map.get("whitelist");
 				if (wl.size() > 0) {
-					WhiteList = new String[wl.size()];
+					whiteList = new String[wl.size()];
 					for (int i = 0; i < wl.size(); i++) {
-						WhiteList[i] = wl.get(i).AsString();
+						whiteList[i] = wl.get(i).AsString();
 					}
 				}
 			}
-			EnableWhiteList = map.get("whitelist_enable").AsBoolean();
-			Width = map.get("width_pixels").AsInteger();
+			enableWhiteList = map.get("whitelist_enable").AsBoolean();
+			width = map.get("width_pixels").AsInteger();
 		}
 	}
 }

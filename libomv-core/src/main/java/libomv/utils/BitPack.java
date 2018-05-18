@@ -35,7 +35,7 @@ import libomv.types.Color4;
 import libomv.types.UUID;
 
 public class BitPack {
-	public byte[] Data;
+	public byte[] data;
 
 	public int getBytePos() {
 		if (bytePos != 0 && bitPos == 0)
@@ -62,7 +62,7 @@ public class BitPack {
 	 *            Byte array to pack bits in to or unpack from
 	 */
 	public BitPack(byte[] data) {
-		Data = data;
+		this.data = data;
 		bytePos = 0;
 	}
 
@@ -76,13 +76,13 @@ public class BitPack {
 	 *            Starting position in the byte array
 	 */
 	public BitPack(byte[] data, int pos) {
-		Data = data;
+		this.data = data;
 		bytePos = pos;
 	}
 
 	public byte[] getData() {
 		byte[] dest = new byte[getBytePos()];
-		System.arraycopy(Data, 0, dest, 0, getBytePos());
+		System.arraycopy(data, 0, dest, 0, getBytePos());
 		return dest;
 	}
 
@@ -92,8 +92,8 @@ public class BitPack {
 	 * @param data
 	 *            byte array to pack
 	 */
-	public void PackBits(byte[] data, int count) {
-		PackBitArray(data, count);
+	public void packBits(byte[] data, int count) {
+		packBitArray(data, count);
 	}
 
 	/**
@@ -102,8 +102,8 @@ public class BitPack {
 	 * @param data
 	 *            integer to pack
 	 */
-	public void PackBits(int data, int count) {
-		PackBitArray(Helpers.UInt32ToBytesL(data), count);
+	public void packBits(int data, int count) {
+		packBitArray(Helpers.UInt32ToBytesL(data), count);
 	}
 
 	/**
@@ -112,8 +112,8 @@ public class BitPack {
 	 * @param data
 	 *            Floating point value to pack
 	 */
-	public void PackFloat(float data) {
-		PackBitArray(Helpers.FloatToBytesL(data), 32);
+	public void packFloat(float data) {
+		packBitArray(Helpers.FloatToBytesL(data), 32);
 	}
 
 	/**
@@ -121,58 +121,58 @@ public class BitPack {
 	 *
 	 * @bit Bit to pack
 	 */
-	public void PackBit(boolean bit) {
+	public void packBit(boolean bit) {
 		if (bit)
-			PackBitArray(ON, 1);
+			packBitArray(ON, 1);
 		else
-			PackBitArray(OFF, 1);
+			packBitArray(OFF, 1);
 	}
 
 	/**
 	 * Pack a fixed floating point in to the data
-	 * 
+	 *
 	 * @param data
 	 * @param isSigned
 	 * @param intBits
 	 * @param fracBits
 	 */
-	public void PackFixed(float data, boolean isSigned, int intBits, int fracBits) {
+	public void packFixed(float data, boolean isSigned, int intBits, int fracBits) {
 		int totalBits = intBits + fracBits;
 		if (isSigned)
 			totalBits++;
 		byte[] dest = new byte[(totalBits + 7) / 8];
 		Helpers.FixedToBytesL(dest, 0, data, isSigned, intBits, fracBits);
-		PackBitArray(dest, totalBits);
+		packBitArray(dest, totalBits);
 	}
 
 	/**
 	 * Pack an UUID in to the data
-	 * 
+	 *
 	 * @param data
 	 */
-	public void PackUUID(UUID data) {
+	public void packUUID(UUID data) {
 		if (bitPos > 0) {
 			bitPos = 0;
 			bytePos++;
 		}
-		PackBitArray(data.getBytes(), 128);
+		packBitArray(data.getBytes(), 128);
 	}
 
-	public void PackString(String str) throws UnsupportedEncodingException {
+	public void packString(String str) throws UnsupportedEncodingException {
 		if (bitPos > 0) {
 			bitPos = 0;
 			bytePos++;
 		}
-		PackBitArray(str.getBytes(Helpers.UTF8_ENCODING), str.length());
+		packBitArray(str.getBytes(Helpers.UTF8_ENCODING), str.length());
 	}
 
 	/*
 	 *
-	 * 
+	 *
 	 * @param data
 	 */
-	public void PackColor(Color4 data) {
-		PackBitArray(data.getBytes(), 32);
+	public void packColor(Color4 data) {
+		packBitArray(data.getBytes(), 32);
 	}
 
 	/**
@@ -180,8 +180,8 @@ public class BitPack {
 	 *
 	 * @returns Unpacked floating point value
 	 */
-	public float UnpackFloat() {
-		return Helpers.BytesToFloatL(UnpackBitsArray(32), 0);
+	public float unpackFloat() {
+		return Helpers.BytesToFloatL(unpackBitsArray(32), 0);
 	}
 
 	/**
@@ -192,8 +192,8 @@ public class BitPack {
 	 * @returns An integer containing the unpacked bits
 	 * @remarks This function is only useful up to 32 bits
 	 */
-	public int UnpackBits(int totalCount) {
-		return Helpers.BytesToInt32L(UnpackBitsArray(totalCount), 0);
+	public int unpackBits(int totalCount) {
+		return Helpers.BytesToInt32L(unpackBitsArray(totalCount), 0);
 	}
 
 	/**
@@ -204,8 +204,8 @@ public class BitPack {
 	 * @returns An unsigned integer containing the unpacked bits
 	 * @remarks This function is only useful up to 32 bits
 	 */
-	public long UnpackUBits(int totalCount) {
-		return Helpers.BytesToUInt32L(UnpackBitsArray(totalCount), 0);
+	public long unpackUBits(int totalCount) {
+		return Helpers.BytesToUInt32L(unpackBitsArray(totalCount), 0);
 	}
 
 	/**
@@ -213,8 +213,8 @@ public class BitPack {
 	 *
 	 * @returns 16-bit signed integer
 	 */
-	public short UnpackShort() {
-		return Helpers.BytesToInt16L(UnpackBitsArray(16), 0);
+	public short unpackShort() {
+		return Helpers.BytesToInt16L(unpackBitsArray(16), 0);
 	}
 
 	/**
@@ -222,8 +222,8 @@ public class BitPack {
 	 *
 	 * @returns 16-bit unsigned integer
 	 */
-	public int UnpackUShort() {
-		return Helpers.BytesToUInt16L(UnpackBitsArray(16), 0);
+	public int unpackUShort() {
+		return Helpers.BytesToUInt16L(unpackBitsArray(16), 0);
 	}
 
 	/**
@@ -231,8 +231,8 @@ public class BitPack {
 	 *
 	 * @returns 32-bit signed integer
 	 */
-	public int UnpackInt() {
-		return Helpers.BytesToInt32L(UnpackBitsArray(32), 0);
+	public int unpackInt() {
+		return Helpers.BytesToInt32L(unpackBitsArray(32), 0);
 	}
 
 	/**
@@ -240,43 +240,43 @@ public class BitPack {
 	 *
 	 * @returns 32-bit unsigned integer
 	 */
-	public long UnpackUInt() {
-		return Helpers.BytesToUInt32L(UnpackBitsArray(32), 0);
+	public long unpackUInt() {
+		return Helpers.BytesToUInt32L(unpackBitsArray(32), 0);
 	}
 
-	public byte UnpackByte() {
-		byte[] output = UnpackBitsArray(8);
+	public byte unpackByte() {
+		byte[] output = unpackBitsArray(8);
 		return output[0];
 	}
 
-	public float UnpackFixed(boolean signed, int intBits, int fracBits) {
+	public float unpackFixed(boolean signed, int intBits, int fracBits) {
 		int totalBits = intBits + fracBits;
 		if (signed) {
 			totalBits++;
 		}
 
-		return Helpers.BytesToFixedL(UnpackBitsArray(totalBits), 0, signed, intBits, fracBits);
+		return Helpers.BytesToFixedL(unpackBitsArray(totalBits), 0, signed, intBits, fracBits);
 	}
 
-	public String UnpackString(int size) throws UnsupportedEncodingException {
-		if (bitPos != 0 || bytePos + size > Data.length)
+	public String unpackString(int size) throws UnsupportedEncodingException {
+		if (bitPos != 0 || bytePos + size > data.length)
 			throw new IndexOutOfBoundsException();
 
-		String str = new String(Data, bytePos, size, Helpers.UTF8_ENCODING);
+		String str = new String(data, bytePos, size, Helpers.UTF8_ENCODING);
 		bytePos += size;
 		return str;
 	}
 
-	public UUID UnpackUUID() {
+	public UUID unpackUUID() {
 		if (bitPos != 0)
 			throw new IndexOutOfBoundsException();
 
-		UUID val = new UUID(Data, bytePos);
+		UUID val = new UUID(data, bytePos);
 		bytePos += 16;
 		return val;
 	}
 
-	private void PackBitArray(byte[] data, int totalCount) {
+	private void packBitArray(byte[] data, int totalCount) {
 		int count = 0;
 		int curBytePos = 0;
 		int curBitPos = 0;
@@ -294,9 +294,9 @@ public class BitPack {
 				byte curBit = (byte) (0x80 >> bitPos);
 
 				if ((data[curBytePos] & (0x01 << (count - 1))) != 0)
-					Data[bytePos] |= curBit;
+					this.data[bytePos] |= curBit;
 				else
-					Data[bytePos] &= (byte) ~curBit;
+					this.data[bytePos] &= (byte) ~curBit;
 
 				--count;
 				++bitPos;
@@ -314,7 +314,7 @@ public class BitPack {
 		}
 	}
 
-	private byte[] UnpackBitsArray(int totalCount) {
+	private byte[] unpackBitsArray(int totalCount) {
 		int count = 0;
 		byte[] output = new byte[4];
 		int curBytePos = 0;
@@ -334,7 +334,7 @@ public class BitPack {
 				output[curBytePos] <<= 1;
 
 				// Grab one bit
-				if ((Data[bytePos] & (0x80 >> bitPos++)) != 0)
+				if ((data[bytePos] & (0x80 >> bitPos++)) != 0)
 					++output[curBytePos];
 
 				--count;

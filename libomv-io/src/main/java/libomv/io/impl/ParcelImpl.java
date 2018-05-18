@@ -145,7 +145,7 @@ public class ParcelImpl implements Parcel {
 
 	/**
 	 * Displays a parcel object in string format
-	 * 
+	 *
 	 * @return string containing key=value pairs of a parcel object
 	 */
 	@Override
@@ -164,7 +164,7 @@ public class ParcelImpl implements Parcel {
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param localID
 	 *            Local ID of this parcel
 	 */
@@ -182,7 +182,7 @@ public class ParcelImpl implements Parcel {
 
 	/**
 	 * Update the simulator with any local changes to this Parcel object
-	 * 
+	 *
 	 * @param simulator
 	 *            Simulator to send updates to
 	 * @param wantReply
@@ -194,34 +194,34 @@ public class ParcelImpl implements Parcel {
 		URI url = simulator.getClient().Network.getCapabilityURI("ParcelPropertiesUpdate");
 		if (url != null) {
 			ParcelPropertiesUpdateMessage req = simulator.getClient().Messages.new ParcelPropertiesUpdateMessage();
-			req.AuthBuyerID = this.AuthBuyerID;
-			req.Category = this.Category;
-			req.Desc = this.Desc;
-			req.GroupID = this.GroupID;
-			req.LandingType = this.Landing;
-			req.LocalID = this.LocalID;
-			req.MediaAutoScale = this.Media.MediaAutoScale;
-			req.MediaDesc = this.Media.MediaDesc;
-			req.MediaHeight = this.Media.MediaHeight;
-			req.MediaID = this.Media.MediaID;
-			req.MediaLoop = this.Media.MediaLoop;
-			req.MediaType = this.Media.MediaType;
-			req.MediaURL = this.Media.MediaURL;
-			req.MediaWidth = this.Media.MediaWidth;
-			req.MusicURL = this.MusicURL;
-			req.Name = this.Name;
-			req.ObscureMedia = this.ObscureMedia;
-			req.ObscureMusic = this.ObscureMusic;
-			req.ParcelFlags = this.Flags;
-			req.PassHours = this.PassHours;
-			req.PassPrice = this.PassPrice;
-			req.SalePrice = this.SalePrice;
-			req.SnapshotID = this.SnapshotID;
-			req.UserLocation = this.UserLocation;
-			req.UserLookAt = this.UserLookAt;
-			req.SeeAVs = this.SeeAVs;
-			req.AnyAVSounds = this.AnyAVSounds;
-			req.GroupAVSounds = this.GroupAVSounds;
+			req.authBuyerID = this.AuthBuyerID;
+			req.category = this.Category;
+			req.desc = this.Desc;
+			req.groupID = this.GroupID;
+			req.landingType = this.Landing;
+			req.localID = this.LocalID;
+			req.mediaAutoScale = this.Media.mediaAutoScale;
+			req.mediaDesc = this.Media.mediaDesc;
+			req.mediaHeight = this.Media.mediaHeight;
+			req.mediaID = this.Media.mediaID;
+			req.mediaLoop = this.Media.mediaLoop;
+			req.mediaType = this.Media.mediaType;
+			req.mediaURL = this.Media.mediaURL;
+			req.mediaWidth = this.Media.mediaWidth;
+			req.musicURL = this.MusicURL;
+			req.name = this.Name;
+			req.obscureMedia = this.ObscureMedia;
+			req.obscureMusic = this.ObscureMusic;
+			req.parcelFlags = this.Flags;
+			req.passHours = this.PassHours;
+			req.passPrice = this.PassPrice;
+			req.salePrice = this.SalePrice;
+			req.snapshotID = this.SnapshotID;
+			req.userLocation = this.UserLocation;
+			req.userLookAt = this.UserLookAt;
+			req.seeAVs = this.SeeAVs;
+			req.anyAVSounds = this.AnyAVSounds;
+			req.groupAVSounds = this.GroupAVSounds;
 
 			new CapsClient(simulator.getClient(), "UpdateParcel").executeHttpPost(url, req, null,
 					simulator.getClient().Settings.CAPS_TIMEOUT);
@@ -238,9 +238,9 @@ public class ParcelImpl implements Parcel {
 			request.ParcelData.setDesc(Helpers.StringToBytes(this.Desc));
 			request.ParcelData.GroupID = this.GroupID;
 			request.ParcelData.LandingType = this.Landing.getValue();
-			request.ParcelData.MediaAutoScale = (this.Media.MediaAutoScale) ? (byte) 0x1 : (byte) 0x0;
-			request.ParcelData.MediaID = this.Media.MediaID;
-			request.ParcelData.setMediaURL(Helpers.StringToBytes(this.Media.MediaURL.toString()));
+			request.ParcelData.MediaAutoScale = (this.Media.mediaAutoScale) ? (byte) 0x1 : (byte) 0x0;
+			request.ParcelData.MediaID = this.Media.mediaID;
+			request.ParcelData.setMediaURL(Helpers.StringToBytes(this.Media.mediaURL.toString()));
 			request.ParcelData.setMusicURL(Helpers.StringToBytes(this.MusicURL.toString()));
 			request.ParcelData.setName(Helpers.StringToBytes(this.Name));
 			if (wantReply) {
@@ -261,7 +261,7 @@ public class ParcelImpl implements Parcel {
 
 	/**
 	 * Set Autoreturn time
-	 * 
+	 *
 	 * @param simulator
 	 *            Simulator to send the update to
 	 * @throws Exception

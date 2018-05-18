@@ -3,9 +3,9 @@ package libomv.model;
 public interface Terrain {
 
 	public final class GroupHeader {
-		public int Stride;
-		public int PatchSize;
-		public LayerType Type;
+		public int stride;
+		public int patchSize;
+		public LayerType type;
 	}
 
 	public enum LayerType {

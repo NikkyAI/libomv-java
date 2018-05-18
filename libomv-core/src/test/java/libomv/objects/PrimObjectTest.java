@@ -42,8 +42,8 @@ import libomv.utils.Helpers;
 public class PrimObjectTest extends TestCase {
 	public void testPathBegin() {
 		for (byte i = 0; i < Byte.MAX_VALUE; i++) {
-			float floatValue = Primitive.UnpackBeginCut(i);
-			short result = Primitive.PackBeginCut(floatValue);
+			float floatValue = Primitive.unpackBeginCut(i);
+			short result = Primitive.packBeginCut(floatValue);
 
 			assertTrue("Started with " + i + ", float value was " + floatValue + ", and ended up with " + result,
 					result == i);
@@ -52,8 +52,8 @@ public class PrimObjectTest extends TestCase {
 
 	public void testPathEnd() {
 		for (byte i = 0; i < Byte.MAX_VALUE; i++) {
-			float floatValue = Primitive.UnpackEndCut(i);
-			short result = Primitive.PackEndCut(floatValue);
+			float floatValue = Primitive.unpackEndCut(i);
+			short result = Primitive.packEndCut(floatValue);
 
 			assertTrue("Started with " + i + ", float value was " + floatValue + ", and ended up with " + result,
 					result == i);
@@ -62,8 +62,8 @@ public class PrimObjectTest extends TestCase {
 
 	public void testPathRevolutions() {
 		for (byte i = 0; i < Byte.MAX_VALUE; i++) {
-			float floatValue = Primitive.UnpackPathRevolutions(i);
-			byte result = Primitive.PackPathRevolutions(floatValue);
+			float floatValue = Primitive.unpackPathRevolutions(i);
+			byte result = Primitive.packPathRevolutions(floatValue);
 
 			assertTrue("Started with " + i + ", float value was " + floatValue + ", and ended up with " + result,
 					result == i);
@@ -72,8 +72,8 @@ public class PrimObjectTest extends TestCase {
 
 	public void testPathScale() {
 		for (byte i = 0; i < Byte.MAX_VALUE; i++) {
-			float floatValue = Primitive.UnpackPathScale(i);
-			byte result = Primitive.PackPathScale(floatValue);
+			float floatValue = Primitive.unpackPathScale(i);
+			byte result = Primitive.packPathScale(floatValue);
 
 			assertTrue("Started with " + i + ", float value was " + floatValue + ", and ended up with " + result,
 					result == i);
@@ -82,8 +82,8 @@ public class PrimObjectTest extends TestCase {
 
 	public void testPathShear() {
 		for (byte i = 0; i < Byte.MAX_VALUE; i++) {
-			float floatValue = Primitive.UnpackPathShear(i);
-			byte result = Primitive.PackPathShear(floatValue);
+			float floatValue = Primitive.unpackPathShear(i);
+			byte result = Primitive.packPathShear(floatValue);
 
 			assertTrue("Started with " + i + ", float value was " + floatValue + ", and ended up with " + result,
 					result == i);
@@ -92,8 +92,8 @@ public class PrimObjectTest extends TestCase {
 
 	public void testPathTaper() {
 		for (byte i = Byte.MIN_VALUE; i < Byte.MAX_VALUE; i++) {
-			float floatValue = Primitive.UnpackPathTaper(i);
-			byte result = Primitive.PackPathTaper(floatValue);
+			float floatValue = Primitive.unpackPathTaper(i);
+			byte result = Primitive.packPathTaper(floatValue);
 
 			assertTrue("Started with " + i + ", float value was " + floatValue + ", and ended up with " + result,
 					result == i);

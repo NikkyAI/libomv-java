@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -386,7 +386,7 @@ public class LibSettings extends Settings implements PacketCallback {
 	/*
 	 * The Refresh timer inteval is used to set the delay between checks for stalled
 	 * texture downloads
-	 * 
+	 *
 	 * This is a static variable which applies to all instances
 	 */
 	public static long PIPELINE_REFRESH_INTERVAL = 500;
@@ -435,13 +435,11 @@ public class LibSettings extends Settings implements PacketCallback {
 			new DefaultSetting(TRACK_UTILIZATION, false), new DefaultSetting(THROTTLE_OUTGOING_PACKETS, true),
 			new DefaultSetting(USE_ASSET_CACHE, true), new DefaultSetting(ASSET_CACHE_DIR, "cache"),
 			new DefaultSetting(ASSET_CACHE_MAX_SIZE, (long) 1024 * 1024 * 1024), // 1GB
-			new DefaultSetting(PACKET_ARCHIVE_SIZE, 1000),
-
-	};
+			new DefaultSetting(PACKET_ARCHIVE_SIZE, 1000), };
 
 	/**
 	 * Starts the settings update
-	 * 
+	 *
 	 * @param client
 	 *            Reference to a GridClient object
 	 */

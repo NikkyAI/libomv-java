@@ -6,7 +6,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -511,13 +511,13 @@ public class AvatarManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Add an Avatar into the Avatars Dictionary
-	 * 
+	 *
 	 * @param avatar
 	 *            Filled-out Avatar class to insert
 	 */
 	public void add(Avatar avatar) {
 		synchronized (_Avatars) {
-			_Avatars.put(avatar.ID, avatar);
+			_Avatars.put(avatar.id, avatar);
 		}
 	}
 
@@ -530,7 +530,7 @@ public class AvatarManager implements PacketCallback, CapsCallback, libomv.model
 	/**
 	 * This function will only check if the avatar name exists locally, it will not
 	 * do any networking calls to fetch the name
-	 * 
+	 *
 	 * @param id
 	 *            The uuid of the avatar to get the name for
 	 * @return The avatar name, or an empty String if it's not found
@@ -546,7 +546,7 @@ public class AvatarManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Request retrieval of display names (max 90 names per request)
-	 * 
+	 *
 	 * @param ids
 	 *            List of UUIDs to lookup
 	 * @param callback
@@ -573,8 +573,8 @@ public class AvatarManager implements PacketCallback, CapsCallback, libomv.model
 			@Override
 			public void completed(OSD result) {
 				GetDisplayNamesMessage msg = _Client.Messages.new GetDisplayNamesMessage();
-				msg.Deserialize((OSDMap) result);
-				callback.callback(new DisplayNamesCallbackArgs(true, msg.Agents, msg.BadIDs));
+				msg.deserialize((OSDMap) result);
+				callback.callback(new DisplayNamesCallbackArgs(true, msg.agents, msg.badIDs));
 			}
 
 			@Override
@@ -594,7 +594,7 @@ public class AvatarManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Tracks the specified avatar on your map
-	 * 
+	 *
 	 * @param preyID
 	 *            Avatar ID to track
 	 * @throws Exception
@@ -625,7 +625,7 @@ public class AvatarManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Search for an avatar (first name, last name)
-	 * 
+	 *
 	 * @param name
 	 *            The name to search for
 	 * @param queryID
@@ -745,7 +745,7 @@ public class AvatarManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Request a name update for an avatar
-	 * 
+	 *
 	 * @param id
 	 *            The uuid of the avatar to get the name for
 	 * @param anc
@@ -775,7 +775,7 @@ public class AvatarManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Request several name updates for a list of avatar uuids
-	 * 
+	 *
 	 * @param ids
 	 *            The list of uuids of the avatars to get the names for
 	 * @param anc
@@ -852,7 +852,7 @@ public class AvatarManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Process an incoming UUIDNameReply Packet and insert Full Names into the
-	 * 
+	 *
 	 * @param packet
 	 *            Incoming Packet to process
 	 * @param simulator
@@ -883,17 +883,17 @@ public class AvatarManager implements PacketCallback, CapsCallback, libomv.model
 
 		for (int i = 0; i < data.AnimationList.length; i++) {
 			Animation animation = new Animation();
-			animation.AnimationID = data.AnimationList[i].AnimID;
-			animation.AnimationSequence = data.AnimationList[i].AnimSequenceID;
+			animation.animationID = data.AnimationList[i].AnimID;
+			animation.animationSequence = data.AnimationList[i].AnimSequenceID;
 			if (i < data.ObjectID.length) {
-				animation.AnimationSourceObjectID = data.ObjectID[i];
+				animation.animationSourceObjectID = data.ObjectID[i];
 			}
 			signaledAnimations.add(animation);
 		}
 
 		Avatar avatar = simulator.findAvatar(data.ID);
 		if (avatar != null) {
-			avatar.Animations = signaledAnimations;
+			avatar.animations = signaledAnimations;
 		}
 
 		OnAvatarAnimation.dispatch(new AvatarAnimationCallbackArgs(data.ID, signaledAnimations));
@@ -922,11 +922,11 @@ public class AvatarManager implements PacketCallback, CapsCallback, libomv.model
 
 			Avatar av = simulator.findAvatar(appearance.Sender.ID);
 			if (av != null) {
-				av.Textures = textureEntry;
-				av.VisualParameters = appearance.ParamValue;
-				av.AppearanceVersion = appearanceVersion;
-				av.COFVersion = COFVersion;
-				av.AppearanceFlags = appearanceFlags;
+				av.textures = textureEntry;
+				av.visualParameters = appearance.ParamValue;
+				av.appearanceVersion = appearanceVersion;
+				av.cofVersion = COFVersion;
+				av.appearanceFlags = appearanceFlags;
 			}
 
 			OnAvatarAppearance.dispatch(new AvatarAppearanceCallbackArgs(simulator, appearance.Sender.ID,
@@ -939,26 +939,26 @@ public class AvatarManager implements PacketCallback, CapsCallback, libomv.model
 		if (OnAvatarPropertiesReply.count() > 0) {
 			AvatarPropertiesReplyPacket reply = (AvatarPropertiesReplyPacket) packet;
 			Avatar av = findAvatar(simulator, reply.AgentData.AvatarID);
-			av.ProfileProperties = av.new AvatarProperties();
+			av.profileProperties = av.new AvatarProperties();
 
-			av.ProfileProperties.ProfileImage = reply.PropertiesData.ImageID;
-			av.ProfileProperties.FirstLifeImage = reply.PropertiesData.FLImageID;
-			av.ProfileProperties.Partner = reply.PropertiesData.PartnerID;
-			av.ProfileProperties.AboutText = Helpers.BytesToString(reply.PropertiesData.getAboutText());
-			av.ProfileProperties.FirstLifeText = Helpers.BytesToString(reply.PropertiesData.getFLAboutText());
-			av.ProfileProperties.BornOn = Helpers.BytesToString(reply.PropertiesData.getBornOn());
+			av.profileProperties.profileImage = reply.PropertiesData.ImageID;
+			av.profileProperties.firstLifeImage = reply.PropertiesData.FLImageID;
+			av.profileProperties.partner = reply.PropertiesData.PartnerID;
+			av.profileProperties.aboutText = Helpers.BytesToString(reply.PropertiesData.getAboutText());
+			av.profileProperties.firstLifeText = Helpers.BytesToString(reply.PropertiesData.getFLAboutText());
+			av.profileProperties.bornOn = Helpers.BytesToString(reply.PropertiesData.getBornOn());
 			long charter = Helpers.BytesToUInt32L(reply.PropertiesData.getCharterMember());
 			if (charter == 0) {
-				av.ProfileProperties.CharterMember = "Resident";
+				av.profileProperties.charterMember = "Resident";
 			} else if (charter == 2) {
-				av.ProfileProperties.CharterMember = "Charter";
+				av.profileProperties.charterMember = "Charter";
 			} else if (charter == 3) {
-				av.ProfileProperties.CharterMember = "Linden";
+				av.profileProperties.charterMember = "Linden";
 			} else {
-				av.ProfileProperties.CharterMember = Helpers.BytesToString(reply.PropertiesData.getCharterMember());
+				av.profileProperties.charterMember = Helpers.BytesToString(reply.PropertiesData.getCharterMember());
 			}
-			av.ProfileProperties.Flags = ProfileFlags.setValue(reply.PropertiesData.Flags);
-			av.ProfileProperties.ProfileURL = Helpers.BytesToString(reply.PropertiesData.getProfileURL());
+			av.profileProperties.flags = ProfileFlags.setValue(reply.PropertiesData.Flags);
+			av.profileProperties.profileURL = Helpers.BytesToString(reply.PropertiesData.getProfileURL());
 
 			OnAvatarPropertiesReply.dispatch(new AvatarPropertiesReplyCallbackArgs(av));
 		}
@@ -968,13 +968,13 @@ public class AvatarManager implements PacketCallback, CapsCallback, libomv.model
 		if (OnAvatarInterestsReply.count() > 0) {
 			AvatarInterestsReplyPacket airp = (AvatarInterestsReplyPacket) packet;
 			Avatar av = findAvatar(simulator, airp.AgentData.AvatarID);
-			av.ProfileInterests = av.new Interests();
+			av.profileInterests = av.new Interests();
 
-			av.ProfileInterests.WantToMask = airp.PropertiesData.WantToMask;
-			av.ProfileInterests.WantToText = Helpers.BytesToString(airp.PropertiesData.getWantToText());
-			av.ProfileInterests.SkillsMask = airp.PropertiesData.SkillsMask;
-			av.ProfileInterests.SkillsText = Helpers.BytesToString(airp.PropertiesData.getSkillsText());
-			av.ProfileInterests.LanguagesText = Helpers.BytesToString(airp.PropertiesData.getLanguagesText());
+			av.profileInterests.wantToMask = airp.PropertiesData.WantToMask;
+			av.profileInterests.wantToText = Helpers.BytesToString(airp.PropertiesData.getWantToText());
+			av.profileInterests.skillsMask = airp.PropertiesData.SkillsMask;
+			av.profileInterests.skillsText = Helpers.BytesToString(airp.PropertiesData.getSkillsText());
+			av.profileInterests.languagesText = Helpers.BytesToString(airp.PropertiesData.getLanguagesText());
 
 			OnAvatarInterestsReply.dispatch(new AvatarInterestsReplyCallbackArgs(av));
 		}
@@ -986,33 +986,33 @@ public class AvatarManager implements PacketCallback, CapsCallback, libomv.model
 	private void HandleDisplayNameUpdate(IMessage message, SimulatorManager simulator) {
 		DisplayNameUpdateMessage msg = (DisplayNameUpdateMessage) message;
 		synchronized (_Avatars) {
-			UUID id = msg.DisplayName.ID;
+			UUID id = msg.displayName.id;
 			if (!_Avatars.containsKey(id)) {
 				_Avatars.put(id, new Avatar(id));
 			}
-			_Avatars.get(id).setDisplayName(msg.DisplayName.DisplayName);
+			_Avatars.get(id).setDisplayName(msg.displayName.displayName);
 		}
-		OnDisplayNameUpdate.dispatch(new DisplayNameUpdateCallbackArgs(msg.OldDisplayName, msg.DisplayName));
+		OnDisplayNameUpdate.dispatch(new DisplayNameUpdateCallbackArgs(msg.oldDisplayName, msg.displayName));
 	}
 
 	private void HandleAvatarGroupsReply(IMessage message, SimulatorManager simulator) {
 		if (OnAvatarGroupsReply.count() > 0) {
 			AgentGroupDataUpdateMessage msg = (AgentGroupDataUpdateMessage) message;
-			ArrayList<AvatarGroup> avatarGroups = new ArrayList<AvatarGroup>(msg.GroupDataBlock.length);
-			for (int i = 0; i < msg.GroupDataBlock.length; i++) {
+			ArrayList<AvatarGroup> avatarGroups = new ArrayList<AvatarGroup>(msg.groupDataBlock.length);
+			for (int i = 0; i < msg.groupDataBlock.length; i++) {
 				AvatarGroup avatarGroup = new AvatarGroup();
-				avatarGroup.AcceptNotices = msg.GroupDataBlock[i].AcceptNotices;
-				avatarGroup.GroupID = msg.GroupDataBlock[i].GroupID;
-				avatarGroup.GroupInsigniaID = msg.GroupDataBlock[i].GroupInsigniaID;
-				avatarGroup.GroupName = msg.GroupDataBlock[i].GroupName;
-				avatarGroup.GroupTitle = msg.GroupDataBlock[i].GroupTitle;
-				avatarGroup.GroupPowers = msg.GroupDataBlock[i].GroupPowers;
-				avatarGroup.ListInProfile = msg.NewGroupDataBlock[i].ListInProfile;
+				avatarGroup.AcceptNotices = msg.groupDataBlock[i].acceptNotices;
+				avatarGroup.GroupID = msg.groupDataBlock[i].groupID;
+				avatarGroup.GroupInsigniaID = msg.groupDataBlock[i].groupInsigniaID;
+				avatarGroup.GroupName = msg.groupDataBlock[i].groupName;
+				avatarGroup.GroupTitle = msg.groupDataBlock[i].groupTitle;
+				avatarGroup.GroupPowers = msg.groupDataBlock[i].groupPowers;
+				avatarGroup.ListInProfile = msg.newGroupDataBlock[i].listInProfile;
 
 				avatarGroups.add(avatarGroup);
 			}
 
-			OnAvatarGroupsReply.dispatch(new AvatarGroupsReplyCallbackArgs(msg.AgentID, avatarGroups));
+			OnAvatarGroupsReply.dispatch(new AvatarGroupsReplyCallbackArgs(msg.agentID, avatarGroups));
 		}
 	}
 

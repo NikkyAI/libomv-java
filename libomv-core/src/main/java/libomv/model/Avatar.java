@@ -8,13 +8,13 @@ public interface Avatar {
 	 */
 	public class Animation {
 		// The ID of the animation asset
-		public UUID AnimationID;
+		public UUID animationID;
 		// A number to indicate start order of currently playing animations
 		// On Linden Grids this number is unique per region, with OpenSim it is
 		// per client
-		public int AnimationSequence;
+		public int animationSequence;
 		//
-		public UUID AnimationSourceObjectID;
+		public UUID animationSourceObjectID;
 	}
 
 }

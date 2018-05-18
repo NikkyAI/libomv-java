@@ -6,7 +6,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -261,7 +261,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Provides data for the <see cref="ObjectManager.ObjectUpdate"/> event
-	 * 
+	 *
 	 * <p>
 	 * The <see cref="ObjectManager.ObjectUpdate"/> event occurs when the simulator
 	 * sends an <see cref="ObjectUpdatePacket"/> containing a Primitive, Foliage or
@@ -277,7 +277,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	 * simulator, then returned to the current simulator or if an Avatar crosses the
 	 * border into a new simulator and returns to the current simulator
 	 * </p>
-	 * 
+	 *
 	 * <example> The following code example uses the
 	 * <see cref="PrimCallbackArgs.Prim"/>,
 	 * <see cref="PrimCallbackArgs.Simulator"/>, and
@@ -285,8 +285,8 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	 * Primitives and Attachments on the <see cref="Console"/> window. <code>
 	 *     // Subscribe to the event that gives us prim and foliage information
 	 *     _Client.Objects.OnObjectUpdate.add(new Objects_ObjectUpdate());
-	 * 
-	 * 
+	 *
+	 *
 	 *     private Objects_ObjectUpdate implements CallbackHandler<PrimCallbackArgs>
 	 *     {
 	 *         void callback(PrimCallbackArgs e)
@@ -326,7 +326,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 		/**
 		 * Construct a new instance of the PrimEventArgs class
-		 * 
+		 *
 		 * @param simulator
 		 *            The simulator the object originated from
 		 * @param prim
@@ -346,7 +346,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Raised when the simulator sends us data containing
-	 * 
+	 *
 	 * A <see cref="Primitive"/>, Foliage or Attachment {@link RequestObject}
 	 * {@link RequestObjects}
 	 */
@@ -391,7 +391,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Raised when the simulator sends us data containing
-	 * 
+	 *
 	 * A <see cref="Primitive"/>, Foliage or Attachment {@link RequestObject}
 	 * {@link RequestObjects}
 	 */
@@ -409,7 +409,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	 * The <see cref="ObjectManager.ObjectProperties"/> event is also raised when a
 	 * <see cref="ObjectManager.SelectObject"/> request is made.
 	 * </p>
-	 * 
+	 *
 	 * <example> The following code example uses the
 	 * <see cref="PrimEventArgs.Prim"/>, <see cref="PrimEventArgs.Simulator"/> and
 	 * <see cref="ObjectPropertiesEventArgs.Properties"/> properties to display new
@@ -417,7 +417,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	 * of the attachment then display it on the <see cref="Console"/> window. <code>
 	 *     // Subscribe to the event that provides additional primitive details
 	 *     _Client.Objects.ObjectProperties += Objects_ObjectProperties;
-	 * 
+	 *
 	 *     // handle the properties data that arrives
 	 *     private void Objects_ObjectProperties(object sender, ObjectPropertiesEventArgs e)
 	 *     {
@@ -441,7 +441,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 		/**
 		 * Construct a new instance of the ObjectPropertiesEventArgs class
-		 * 
+		 *
 		 * @param simulator
 		 *            The simulator the object is located
 		 * @param props
@@ -484,7 +484,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 		/**
 		 * Construct a new instance of the ObjectPropertiesUpdatedEvenrArgs class
-		 * 
+		 *
 		 * @param simulator
 		 *            The simulator the object is located
 		 * @param prim
@@ -516,7 +516,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	 * <see cref="ObjectManager.RequestObjectPropertiesFamily"/> request is made,
 	 * the viewer equivalent is hovering the mouse cursor over an object
 	 * </p>
-	 * 
+	 *
 	 */
 	public class ObjectPropertiesFamilyCallbackArgs extends ObjectPropertiesCallbackArgs {
 		private final ReportType m_Type;
@@ -552,19 +552,19 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	 * be raised twice for the same avatar if for example the avatar moved to a new
 	 * simulator, then returned to the current simulator
 	 * </p>
-	 * 
+	 *
 	 * <example> The following code example uses the
 	 * <see cref="AvatarUpdateCallbackArgs.Avatar"/> property to make a request for
 	 * the top picks using the <see cref="AvatarManager.RequestAvatarPicks"/> method
 	 * in the <see cref="AvatarManager"/> class to display the names of our own
 	 * agents picks listings on the <see cref="Console"/> window. <code>
 	 *     // subscribe to the OnAvatarUpdate event to get our information
-	 * 
+	 *
 	 *     CallbackHandler<AvatarUpdateCallbackArgs> cbu = new Objects_AvatarUpdate();
 	 *     CallbackHandler<AvatarPicksReplyCallbackArgs> cba = new Objects_AvatarPicksReply();
 	 *     _Client.Objects.OnAvatarUpdate.add(cbu, false);
 	 *     _Client.Avatars.OnAvatarPicksReply.add(cba, true);
-	 * 
+	 *
 	 *     private class Objects_AvatarUpdate implements CallbackHandler<AvatarUpdateCallbackArgs>
 	 *     {
 	 *     	   public void callback(AvatarUpdateCallbackArgs e)
@@ -580,7 +580,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	 *             }
 	 *         }
 	 *     }
-	 * 
+	 *
 	 *     private class Avatars_AvatarPicksReply implements CallbackHandler<AvatarPicksReplyCallbackArgs>
 	 *     {
 	 *         public void callback(AvatarPicksReplyCallbackArgs e)
@@ -626,7 +626,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 		/**
 		 * Construct a new instance of the AvatarUpdateEventArgs class
-		 * 
+		 *
 		 * @param simulator
 		 *            The simulator the packet originated from
 		 * @param avatar
@@ -897,7 +897,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param sim
 		 *            Simulator where the message originated
 		 * @param props
@@ -957,20 +957,20 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 								// #region Linear Motion
 								// Only do movement interpolation (extrapolation) when there is a non-zero
 								// velocity and/or acceleration
-								if (!Vector3.isZeroOrNull(avatar.Acceleration)) {
+								if (!Vector3.isZeroOrNull(avatar.acceleration)) {
 									// avatar.Position += (avatar.Velocity + (avatar.Acceleration * (0.5f *
 									// (adjSeconds - HAVOK_TIMESTEP)))) * adjSeconds;
 									// avatar.Velocity += avatar.Acceleration * adjSeconds;
-									avatar.Position
+									avatar.position
 											.add(Vector3.multiply(
-													Vector3.add(avatar.Velocity,
-															Vector3.multiply(avatar.Acceleration,
+													Vector3.add(avatar.velocity,
+															Vector3.multiply(avatar.acceleration,
 																	(0.5f * (adjSeconds - HAVOK_TIMESTEP)))),
 													adjSeconds));
-									avatar.Velocity.add(Vector3.multiply(avatar.Acceleration, adjSeconds));
-								} else if (!Vector3.isZeroOrNull(avatar.Velocity)) {
+									avatar.velocity.add(Vector3.multiply(avatar.acceleration, adjSeconds));
+								} else if (!Vector3.isZeroOrNull(avatar.velocity)) {
 									// avatar.Position += avatar.Velocity * adjSeconds;
-									avatar.Position.add(Vector3.multiply(avatar.Velocity, adjSeconds));
+									avatar.position.add(Vector3.multiply(avatar.velocity, adjSeconds));
 								}
 								// #endregion Linear Motion
 							}
@@ -979,18 +979,18 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 						// Iterate through all of this sims primitives
 						synchronized (sim.getObjectsPrimitives()) {
 							for (Primitive prim : sim.getObjectsPrimitives().values()) {
-								if (prim.Joint != null) {
-									if (prim.Joint == JointType.Invalid) {
+								if (prim.joint != null) {
+									if (prim.joint == JointType.Invalid) {
 										// #region Angular Velocity
-										if (prim.AngularVelocity != null) {
-											Vector3 angVel = prim.AngularVelocity;
+										if (prim.angularVelocity != null) {
+											Vector3 angVel = prim.angularVelocity;
 											float omega = angVel.lengthSquared();
 											if (omega > 0.00001f) {
 												omega = (float) Math.sqrt(omega);
 												float angle = omega * adjSeconds;
 												angVel.multiply(1.0f / omega);
 												Quaternion dQ = Quaternion.createFromAxisAngle(angVel, angle);
-												prim.Rotation.multiply(dQ);
+												prim.rotation.multiply(dQ);
 											}
 										}
 										// #endregion Angular Velocity
@@ -998,29 +998,29 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 										// #region Linear Motion
 										// Only do movement interpolation (extrapolation) when there is a non-zero
 										// velocity and/or acceleration
-										if (!Vector3.isZeroOrNull(prim.Acceleration)) {
+										if (!Vector3.isZeroOrNull(prim.acceleration)) {
 											// prim.Position += (prim.Velocity + (prim.Acceleration * (0.5f *
 											// (adjSeconds - HAVOK_TIMESTEP)))) * adjSeconds;
 											// prim.Velocity += prim.Acceleration * adjSeconds;
-											prim.Position
+											prim.position
 													.add(Vector3
 															.multiply(
-																	Vector3.add(prim.Velocity,
-																			Vector3.multiply(prim.Acceleration, (0.5f
+																	Vector3.add(prim.velocity,
+																			Vector3.multiply(prim.acceleration, (0.5f
 																					* (adjSeconds - HAVOK_TIMESTEP)))),
 																	adjSeconds));
-											prim.Velocity.add(Vector3.multiply(prim.Acceleration, adjSeconds));
-										} else if (!Vector3.isZeroOrNull(prim.Velocity)) {
+											prim.velocity.add(Vector3.multiply(prim.acceleration, adjSeconds));
+										} else if (!Vector3.isZeroOrNull(prim.velocity)) {
 											// prim.Position += prim.Velocity * adjSeconds;
-											prim.Position.add(Vector3.multiply(prim.Velocity, adjSeconds));
+											prim.position.add(Vector3.multiply(prim.velocity, adjSeconds));
 										}
 										// #endregion Linear Motion
-									} else if (prim.Joint == JointType.Hinge) {
+									} else if (prim.joint == JointType.Hinge) {
 										// FIXME: Hinge movement extrapolation
-									} else if (prim.Joint == JointType.Point) {
+									} else if (prim.joint == JointType.Point) {
 										// FIXME: Point movement extrapolation
 									} else {
-										logger.warn(GridClient.Log("Unhandled joint type " + prim.Joint, _Client));
+										logger.warn(GridClient.Log("Unhandled joint type " + prim.joint, _Client));
 										break;
 									}
 								}
@@ -1076,7 +1076,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	public ObjectManager(GridClient client) {
 		_Client = client;
 
-		_Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
+		_Client.Settings.onSettingsUpdate.add(new SettingsUpdate());
 		objectTracking = _Client.Settings.getBool(LibSettings.OBJECT_TRACKING);
 		alwaysDecodeObjects = _Client.Settings.getBool(LibSettings.ALWAYS_DECODE_OBJECTS);
 		alwaysRequestObjects = _Client.Settings.getBool(LibSettings.ALWAYS_REQUEST_OBJECTS);
@@ -1142,7 +1142,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	/**
 	 * Request information for a single object from a <see cref="Simulator"/> you
 	 * are currently connected to
-	 * 
+	 *
 	 * @param simulator
 	 *            The <see cref="Simulator"/> the object is located
 	 * @param localID
@@ -1162,7 +1162,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Request information for multiple objects contained in the same simulator
-	 * 
+	 *
 	 * @param simulator
 	 *            The <see cref="Simulator"/> the objects are located
 	 * @param localIDs
@@ -1185,7 +1185,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Attempt to purchase an original object, a copy, or the contents of an object
-	 * 
+	 *
 	 * @param simulator
 	 *            The <see cref="Simulator"/> the object is located
 	 * @param localID
@@ -1228,12 +1228,12 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	 * Request prices that should be displayed in pay dialog. This will trigger the
 	 * simulator to send us back a PayPriceReply which can be handled by
 	 * OnPayPriceReply event
-	 * 
+	 *
 	 * @param simulator
 	 *            The <see cref="Simulator"/> the object is located
 	 * @param objectID
 	 *            The ID of the object
-	 * 
+	 *
 	 *            The result is raised in the <see cref="OnPayPriceReply"/> event
 	 */
 	public final void RequestPayPrice(Simulator simulator, UUID objectID) throws Exception {
@@ -1246,7 +1246,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	 * Select a single object. This will cause the <see cref="Simulator"/> to send
 	 * us an <see cref="ObjectPropertiesPacket"/> which will raise the
 	 * <see cref="OnObjectProperties"/> event
-	 * 
+	 *
 	 * @param simulator
 	 *            The <see cref="Simulator"/> the object is located
 	 * @param localID
@@ -1262,7 +1262,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	 * Select a single object. This will cause the <see cref="Simulator"/> to send
 	 * us an <see cref="ObjectPropertiesPacket"/> which will raise the
 	 * <see cref="OnObjectProperties"/> event
-	 * 
+	 *
 	 * @param simulator
 	 *            The <see cref="Simulator"/> the object is located
 	 * @param localID
@@ -1293,7 +1293,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	 * Select multiple objects. This will cause the <see cref="Simulator"/> to send
 	 * us an <see cref="ObjectPropertiesPacket"/> which will raise the
 	 * <see cref="OnObjectProperties"/> event
-	 * 
+	 *
 	 * @param simulator
 	 *            The <see cref="Simulator"/> the objects are located
 	 * @param localIDs
@@ -1309,7 +1309,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	 * Select multiple objects. This will cause the <see cref="Simulator"/> to send
 	 * us an <see cref="ObjectPropertiesPacket"/> which will raise the
 	 * <see cref="OnObjectProperties"/> event
-	 * 
+	 *
 	 * @param simulator
 	 *            The <see cref="Simulator"/> the objects are located
 	 * @param localIDs
@@ -1340,7 +1340,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Sets the sale properties of a single object
-	 * 
+	 *
 	 * @param simulator
 	 *            The <see cref="Simulator"/> the object is located
 	 * @param localID
@@ -1366,7 +1366,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Sets the sale properties of multiple objects
-	 * 
+	 *
 	 * @param simulator
 	 *            The <see cref="Simulator"/> the objects are located
 	 * @param localIDs
@@ -1395,7 +1395,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Deselect a single object
-	 * 
+	 *
 	 * @param simulator
 	 *            The <see cref="Simulator"/> the object is located
 	 * @param localID
@@ -1416,7 +1416,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Deselect multiple objects.
-	 * 
+	 *
 	 * @param simulator
 	 *            The <see cref="Simulator"/> the objects are located
 	 * @param localIDs
@@ -1440,7 +1440,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Perform a click action on an object
-	 * 
+	 *
 	 * @param simulator
 	 *            The <see cref="Simulator"/> the object is located
 	 * @param localID
@@ -1453,7 +1453,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Perform a click action (Grab) on a single object
-	 * 
+	 *
 	 * @param simulator
 	 *            The <see cref="Simulator"/> the object is located
 	 * @param localID
@@ -1515,7 +1515,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Create (rez) a new prim object in a simulator
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object to place the
 	 *            object in
@@ -1545,7 +1545,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Create (rez) a new prim object in a simulator
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator} object to place the object in
 	 * @param prim
@@ -1576,33 +1576,33 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 		packet.AgentData.SessionID = _Client.Self.getSessionID();
 		packet.AgentData.GroupID = groupID;
 
-		packet.ObjectData.State = prim.State;
+		packet.ObjectData.State = prim.state;
 		packet.ObjectData.AddFlags = createFlags;
 		packet.ObjectData.PCode = PCode.Prim.getValue();
 
-		packet.ObjectData.Material = (byte) prim.Material.ordinal();
+		packet.ObjectData.Material = (byte) prim.material.ordinal();
 		packet.ObjectData.Scale = scale;
 		packet.ObjectData.Rotation = rotation;
 
-		packet.ObjectData.PathCurve = prim.PathCurve.getValue();
-		packet.ObjectData.PathBegin = Primitive.PackBeginCut(prim.PathBegin);
-		packet.ObjectData.PathEnd = Primitive.PackEndCut(prim.PathEnd);
-		packet.ObjectData.PathRadiusOffset = Primitive.PackPathTwist(prim.PathRadiusOffset);
-		packet.ObjectData.PathRevolutions = Primitive.PackPathRevolutions(prim.PathRevolutions);
-		packet.ObjectData.PathScaleX = Primitive.PackPathScale(prim.PathScaleX);
-		packet.ObjectData.PathScaleY = Primitive.PackPathScale(prim.PathScaleY);
-		packet.ObjectData.PathShearX = Primitive.PackPathShear(prim.PathShearX);
-		packet.ObjectData.PathShearY = Primitive.PackPathShear(prim.PathShearY);
-		packet.ObjectData.PathSkew = Primitive.PackPathTwist(prim.PathSkew);
-		packet.ObjectData.PathTaperX = Primitive.PackPathTaper(prim.PathTaperX);
-		packet.ObjectData.PathTaperY = Primitive.PackPathTaper(prim.PathTaperY);
-		packet.ObjectData.PathTwist = Primitive.PackPathTwist(prim.PathTwist);
-		packet.ObjectData.PathTwistBegin = Primitive.PackPathTwist(prim.PathTwistBegin);
+		packet.ObjectData.PathCurve = prim.pathCurve.getValue();
+		packet.ObjectData.PathBegin = Primitive.packBeginCut(prim.pathBegin);
+		packet.ObjectData.PathEnd = Primitive.packEndCut(prim.pathEnd);
+		packet.ObjectData.PathRadiusOffset = Primitive.packPathTwist(prim.pathRadiusOffset);
+		packet.ObjectData.PathRevolutions = Primitive.packPathRevolutions(prim.pathRevolutions);
+		packet.ObjectData.PathScaleX = Primitive.packPathScale(prim.pathScaleX);
+		packet.ObjectData.PathScaleY = Primitive.packPathScale(prim.pathScaleY);
+		packet.ObjectData.PathShearX = Primitive.packPathShear(prim.pathShearX);
+		packet.ObjectData.PathShearY = Primitive.packPathShear(prim.pathShearY);
+		packet.ObjectData.PathSkew = Primitive.packPathTwist(prim.pathSkew);
+		packet.ObjectData.PathTaperX = Primitive.packPathTaper(prim.pathTaperX);
+		packet.ObjectData.PathTaperY = Primitive.packPathTaper(prim.pathTaperY);
+		packet.ObjectData.PathTwist = Primitive.packPathTwist(prim.pathTwist);
+		packet.ObjectData.PathTwistBegin = Primitive.packPathTwist(prim.pathTwistBegin);
 
 		packet.ObjectData.ProfileCurve = prim.getProfileValue();
-		packet.ObjectData.ProfileBegin = Primitive.PackBeginCut(prim.ProfileBegin);
-		packet.ObjectData.ProfileEnd = Primitive.PackEndCut(prim.ProfileEnd);
-		packet.ObjectData.ProfileHollow = Primitive.PackProfileHollow(prim.ProfileHollow);
+		packet.ObjectData.ProfileBegin = Primitive.packBeginCut(prim.profileBegin);
+		packet.ObjectData.ProfileEnd = Primitive.packEndCut(prim.profileEnd);
+		packet.ObjectData.ProfileHollow = Primitive.packProfileHollow(prim.profileHollow);
 
 		packet.ObjectData.RayStart = position;
 		packet.ObjectData.RayEnd = position;
@@ -1615,7 +1615,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Rez a Linden tree
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            object resides
@@ -1657,7 +1657,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Rez grass and ground cover
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            object resides
@@ -1697,7 +1697,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Set the textures to apply to the faces of an object
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            object resides
@@ -1715,7 +1715,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Set the textures to apply to the faces of an object
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            object resides
@@ -1744,7 +1744,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Set the Light data on an object
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            object resides
@@ -1763,21 +1763,21 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 		extra.ObjectData[0] = extra.new ObjectDataBlock();
 		extra.ObjectData[0].ObjectLocalID = localID;
 		extra.ObjectData[0].ParamType = ExtraParamType.Light.getValue();
-		if (light.Intensity == 0.0f) {
+		if (light.intensity == 0.0f) {
 			// Disables the light if intensity is 0
 			extra.ObjectData[0].ParamInUse = false;
 		} else {
 			extra.ObjectData[0].ParamInUse = true;
 		}
-		extra.ObjectData[0].setParamData(light.GetBytes());
-		extra.ObjectData[0].ParamSize = light.GetBytes().length;
+		extra.ObjectData[0].setParamData(light.getBytes());
+		extra.ObjectData[0].ParamSize = light.getBytes().length;
 
 		simulator.sendPacket(extra);
 	}
 
 	/**
 	 * Set the flexible data on an object
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            object resides
@@ -1797,15 +1797,15 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 		extra.ObjectData[0].ObjectLocalID = localID;
 		extra.ObjectData[0].ParamType = ExtraParamType.Flexible.getValue();
 		extra.ObjectData[0].ParamInUse = true;
-		extra.ObjectData[0].setParamData(flexible.GetBytes());
-		extra.ObjectData[0].ParamSize = flexible.GetBytes().length;
+		extra.ObjectData[0].setParamData(flexible.getBytes());
+		extra.ObjectData[0].ParamSize = flexible.getBytes().length;
 
 		simulator.sendPacket(extra);
 	}
 
 	/**
 	 * Set the sculptie texture and data on an object
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            object resides
@@ -1826,8 +1826,8 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 		extra.ObjectData[0].ObjectLocalID = localID;
 		extra.ObjectData[0].ParamType = ExtraParamType.Sculpt.getValue();
 		extra.ObjectData[0].ParamInUse = true;
-		extra.ObjectData[0].setParamData(sculpt.GetBytes());
-		extra.ObjectData[0].ParamSize = sculpt.GetBytes().length;
+		extra.ObjectData[0].setParamData(sculpt.getBytes());
+		extra.ObjectData[0].ParamSize = sculpt.getBytes().length;
 
 		simulator.sendPacket(extra);
 
@@ -1849,7 +1849,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Unset additional primitive parameters on an object
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            object resides
@@ -1877,7 +1877,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Link multiple prims into a linkset
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            objects reside
@@ -1904,7 +1904,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Delink/Unlink multiple prims from a linkset
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            objects reside
@@ -1929,7 +1929,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Change the rotation of an object
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            object resides
@@ -1954,7 +1954,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Set the name of an object
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            object resides
@@ -1970,7 +1970,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Set the name of multiple objects
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            objects reside
@@ -1999,7 +1999,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Set the description of an object
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            object resides
@@ -2015,7 +2015,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Set the descriptions of multiple objects
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            objects reside
@@ -2044,7 +2044,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Attach an object to this avatar
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            object resides
@@ -2073,12 +2073,12 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Drop an attached object from this avatar
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            objects reside. This will always be the simulator the avatar is
 	 *            currently in
-	 * 
+	 *
 	 * @param localID
 	 *            The object's ID which is local to the simulator the object is in
 	 * @throws Exception
@@ -2095,13 +2095,13 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Detach an object from yourself
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            objects reside
-	 * 
+	 *
 	 *            This will always be the simulator the avatar is currently in
-	 * 
+	 *
 	 * @param localIDs
 	 *            An array which contains the IDs of the objects to detach
 	 * @throws Exception
@@ -2121,7 +2121,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Change the position of an object, Will change position of entire linkset
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            object resides
@@ -2138,7 +2138,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Change the position of an object
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            object resides
@@ -2164,7 +2164,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Change the Scale (size) of an object
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            object resides
@@ -2195,7 +2195,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Change the Rotation of an object that is either a child or a whole linkset
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            object resides
@@ -2233,7 +2233,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	/**
 	 * Send a Multiple Object Update packet to change the size, scale or rotation of
 	 * a primitive
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            object resides
@@ -2263,7 +2263,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	/**
 	 * Deed an object (prim) to a group, Object must be shared with group which can
 	 * be accomplished with SetPermissions()
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            object resides
@@ -2293,7 +2293,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	/**
 	 * Deed multiple objects (prims) to a group, Objects must be shared with group
 	 * which can be accomplished with SetPermissions()
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            object resides
@@ -2323,7 +2323,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Set the permissions on multiple objects
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            objects reside
@@ -2364,7 +2364,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Request additional properties for an object
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            object resides
@@ -2377,7 +2377,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Request additional properties for an object
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            object resides
@@ -2405,7 +2405,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Set the ownership of a list of objects to the specified group
-	 * 
+	 *
 	 * @param simulator
 	 *            A reference to the {@link Simulator.Simulator} object where the
 	 *            objects reside
@@ -2436,27 +2436,27 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	private static ConstructionData CreateConstructionData(Primitive enclosing, PCode pcode,
 			ObjectUpdatePacket.ObjectDataBlock block) {
 		ConstructionData data = enclosing.new ConstructionData();
-		data.State = block.State;
-		data.Material = Material.setValue(block.Material);
-		data.PathCurve = PathCurve.setValue(block.PathCurve);
+		data.state = block.State;
+		data.material = Material.setValue(block.Material);
+		data.pathCurve = PathCurve.setValue(block.PathCurve);
 		data.setProfileValue(block.ProfileCurve);
-		data.PathBegin = Primitive.UnpackBeginCut(block.PathBegin);
-		data.PathEnd = Primitive.UnpackEndCut(block.PathEnd);
-		data.PathScaleX = Primitive.UnpackPathScale(block.PathScaleX);
-		data.PathScaleY = Primitive.UnpackPathScale(block.PathScaleY);
-		data.PathShearX = Primitive.UnpackPathShear(block.PathShearX);
-		data.PathShearY = Primitive.UnpackPathShear(block.PathShearY);
-		data.PathTwist = Primitive.UnpackPathTwist(block.PathTwist);
-		data.PathTwistBegin = Primitive.UnpackPathTwist(block.PathTwistBegin);
-		data.PathRadiusOffset = Primitive.UnpackPathTwist(block.PathRadiusOffset);
-		data.PathTaperX = Primitive.UnpackPathTaper(block.PathTaperX);
-		data.PathTaperY = Primitive.UnpackPathTaper(block.PathTaperY);
-		data.PathRevolutions = Primitive.UnpackPathRevolutions(block.PathRevolutions);
-		data.PathSkew = Primitive.UnpackPathTwist(block.PathSkew);
-		data.ProfileBegin = Primitive.UnpackBeginCut(block.ProfileBegin);
-		data.ProfileEnd = Primitive.UnpackEndCut(block.ProfileEnd);
-		data.ProfileHollow = Primitive.UnpackProfileHollow(block.ProfileHollow);
-		data.PCode = pcode;
+		data.pathBegin = Primitive.unpackBeginCut(block.PathBegin);
+		data.pathEnd = Primitive.unpackEndCut(block.PathEnd);
+		data.pathScaleX = Primitive.unpackPathScale(block.PathScaleX);
+		data.pathScaleY = Primitive.unpackPathScale(block.PathScaleY);
+		data.pathShearX = Primitive.unpackPathShear(block.PathShearX);
+		data.pathShearY = Primitive.unpackPathShear(block.PathShearY);
+		data.pathTwist = Primitive.unpackPathTwist(block.PathTwist);
+		data.pathTwistBegin = Primitive.unpackPathTwist(block.PathTwistBegin);
+		data.pathRadiusOffset = Primitive.unpackPathTwist(block.PathRadiusOffset);
+		data.pathTaperX = Primitive.unpackPathTaper(block.PathTaperX);
+		data.pathTaperY = Primitive.unpackPathTaper(block.PathTaperY);
+		data.pathRevolutions = Primitive.unpackPathRevolutions(block.PathRevolutions);
+		data.pathSkew = Primitive.unpackPathTwist(block.PathSkew);
+		data.profileBegin = Primitive.unpackBeginCut(block.ProfileBegin);
+		data.profileEnd = Primitive.unpackEndCut(block.ProfileEnd);
+		data.profileHollow = Primitive.unpackProfileHollow(block.ProfileHollow);
+		data.primCode = pcode;
 		return data;
 	}
 
@@ -2647,57 +2647,57 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 						new ObjectDataBlockUpdateCallbackArgs(simulator, prim, data, block, objectupdate, nameValues));
 
 				// #region Update Prim Info with decoded data
-				prim.Flags = PrimFlags.setValue(block.UpdateFlags);
-				if ((prim.Flags & PrimFlags.ZlibCompressed) != 0) {
+				prim.flags = PrimFlags.setValue(block.UpdateFlags);
+				if ((prim.flags & PrimFlags.ZlibCompressed) != 0) {
 					logger.warn(GridClient.Log("Got a ZlibCompressed ObjectUpdate, implement me!", _Client));
 					continue;
 				}
 
 				// Automatically request ObjectProperties for prim if it was rezzed selected.
-				if ((prim.Flags & PrimFlags.CreateSelected) != 0) {
+				if ((prim.flags & PrimFlags.CreateSelected) != 0) {
 					try {
-						SelectObject(simulator, prim.LocalID);
+						SelectObject(simulator, prim.localID);
 					} catch (Exception e) {
 						logger.warn("Requesting object properties update failed.", e);
 					}
 				}
 
-				prim.NameValues = nameValues;
-				prim.ParentID = block.ParentID;
-				prim.RegionHandle = update.RegionData.RegionHandle;
-				prim.Scale = block.Scale;
+				prim.nameValues = nameValues;
+				prim.parentID = block.ParentID;
+				prim.regionHandle = update.RegionData.RegionHandle;
+				prim.scale = block.Scale;
 				prim.clickAction = ClickAction.setValue(block.ClickAction);
-				prim.OwnerID = block.OwnerID;
+				prim.ownerID = block.OwnerID;
 				try {
-					prim.MediaURL = Helpers.BytesToString(block.getMediaURL());
-					prim.Text = Helpers.BytesToString(block.getText());
+					prim.mediaURL = Helpers.BytesToString(block.getMediaURL());
+					prim.text = Helpers.BytesToString(block.getText());
 				} catch (UnsupportedEncodingException e) {
 					logger.warn("Extracting MediaURL or Text for object properties update failed.", e);
 				}
-				prim.TextColor = new Color4(block.TextColor, 0, false, true);
-				prim.IsAttachment = attachment;
+				prim.textColor = new Color4(block.TextColor, 0, false, true);
+				prim.isAttachment = attachment;
 
 				// Sound information
-				prim.SoundID = block.Sound;
-				prim.SoundFlags = SoundFlags.setValue(block.Flags);
-				prim.SoundGain = block.Gain;
-				prim.SoundRadius = block.Radius;
+				prim.soundID = block.Sound;
+				prim.soundFlags = SoundFlags.setValue(block.Flags);
+				prim.soundGain = block.Gain;
+				prim.soundRadius = block.Radius;
 
 				// Joint information
-				prim.Joint = JointType.setValue(block.JointType);
-				prim.JointPivot = block.JointPivot;
-				prim.JointAxisOrAnchor = block.JointAxisOrAnchor;
+				prim.joint = JointType.setValue(block.JointType);
+				prim.jointPivot = block.JointPivot;
+				prim.jointAxisOrAnchor = block.JointAxisOrAnchor;
 
 				// Object parameters
-				prim.PrimData = data;
+				prim.primData = data;
 
 				// Textures, texture animations, particle system, and extra
 				// params
-				prim.Textures = objectupdate.Textures;
+				prim.textures = objectupdate.Textures;
 
-				prim.TextureAnim = prim.Textures.new TextureAnimation(block.getTextureAnim(), 0);
-				prim.ParticleSys = new ParticleSystem(block.getPSBlock(), 0);
-				prim.SetExtraParamsFromBytes(block.getExtraParams(), 0);
+				prim.textureAnim = prim.textures.new TextureAnimation(block.getTextureAnim(), 0);
+				prim.particleSys = new ParticleSystem(block.getPSBlock(), 0);
+				prim.setExtraParamsFromBytes(block.getExtraParams(), 0);
 
 				// PCode-specific data
 				switch (pcode) {
@@ -2705,7 +2705,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				case Tree:
 				case NewTree:
 					if (block.getData().length == 1) {
-						prim.TreeSpecies = Tree.setValue(block.getData()[0]);
+						prim.treeSpecies = Tree.setValue(block.getData()[0]);
 					} else {
 						logger.warn("Got a foliage update with an invalid TreeSpecies field");
 					}
@@ -2720,15 +2720,15 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				default:
 					break;
 				}
-				prim.ScratchPad = Helpers.EmptyBytes;
+				prim.scratchPad = Helpers.EmptyBytes;
 
 				// Packed parameters
-				prim.CollisionPlane = objectupdate.CollisionPlane;
-				prim.Position = objectupdate.Position;
-				prim.Velocity = objectupdate.Velocity;
-				prim.Acceleration = objectupdate.Acceleration;
-				prim.Rotation = objectupdate.Rotation;
-				prim.AngularVelocity = objectupdate.AngularVelocity;
+				prim.collisionPlane = objectupdate.CollisionPlane;
+				prim.position = objectupdate.Position;
+				prim.velocity = objectupdate.Velocity;
+				prim.acceleration = objectupdate.Acceleration;
+				prim.rotation = objectupdate.Rotation;
+				prim.angularVelocity = objectupdate.AngularVelocity;
 				// #endregion
 
 				OnObjectUpdate.dispatch(
@@ -2736,8 +2736,8 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 				// OnParticleUpdate handler replacing decode particles, PCode.Particle system
 				// appears to be deprecated this is a fix
-				if (prim.ParticleSys.PartMaxAge != 0) {
-					OnParticleUpdate.dispatch(new ParticleUpdateCallbackArgs(simulator, prim.ParticleSys, prim));
+				if (prim.particleSys.partMaxAge != 0) {
+					OnParticleUpdate.dispatch(new ParticleUpdateCallbackArgs(simulator, prim.particleSys, prim));
 				}
 				break;
 			// #endregion Prim and Foliage
@@ -2779,27 +2779,27 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				OnObjectDataBlockUpdate.dispatch(new ObjectDataBlockUpdateCallbackArgs(simulator, avatar, data, block,
 						objectupdate, nameValues));
 
-				int oldSeatID = avatar.ParentID;
+				int oldSeatID = avatar.parentID;
 
-				avatar.Scale = block.Scale;
-				avatar.CollisionPlane = objectupdate.CollisionPlane;
-				avatar.Position = objectupdate.Position;
-				avatar.Velocity = objectupdate.Velocity;
-				avatar.Acceleration = objectupdate.Acceleration;
-				avatar.Rotation = objectupdate.Rotation;
-				avatar.AngularVelocity = objectupdate.AngularVelocity;
-				avatar.NameValues = nameValues;
-				avatar.PrimData = data;
+				avatar.scale = block.Scale;
+				avatar.collisionPlane = objectupdate.CollisionPlane;
+				avatar.position = objectupdate.Position;
+				avatar.velocity = objectupdate.Velocity;
+				avatar.acceleration = objectupdate.Acceleration;
+				avatar.rotation = objectupdate.Rotation;
+				avatar.angularVelocity = objectupdate.AngularVelocity;
+				avatar.nameValues = nameValues;
+				avatar.primData = data;
 				if (block.getData().length > 0) {
 					logger.warn("Unexpected Data field for an avatar update, length " + block.getData().length);
 				}
-				avatar.ParentID = block.ParentID;
-				avatar.RegionHandle = update.RegionData.RegionHandle;
+				avatar.parentID = block.ParentID;
+				avatar.regionHandle = update.RegionData.RegionHandle;
 
 				SetAvatarSittingOn(simulator, avatar, block.ParentID, oldSeatID);
 
 				// Textures
-				avatar.Textures = objectupdate.Textures;
+				avatar.textures = objectupdate.Textures;
 
 				// #endregion Create an Avatar from the decoded data
 
@@ -2915,17 +2915,17 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				// #endregion Update _Client.Self
 
 				if (obj != null && objectTracking) {
-					obj.Position = update.Position;
-					obj.Rotation = update.Rotation;
-					obj.Velocity = update.Velocity;
-					obj.CollisionPlane = update.CollisionPlane;
-					obj.Acceleration = update.Acceleration;
-					obj.AngularVelocity = update.AngularVelocity;
-					if (obj.PrimData == null)
-						obj.PrimData = obj.new ConstructionData();
-					obj.PrimData.State = update.State;
+					obj.position = update.Position;
+					obj.rotation = update.Rotation;
+					obj.velocity = update.Velocity;
+					obj.collisionPlane = update.CollisionPlane;
+					obj.acceleration = update.Acceleration;
+					obj.angularVelocity = update.AngularVelocity;
+					if (obj.primData == null)
+						obj.primData = obj.new ConstructionData();
+					obj.primData.state = update.State;
 					if (update.Textures != null)
-						obj.Textures = update.Textures;
+						obj.textures = update.Textures;
 				}
 			} catch (Throwable ex) {
 				logger.warn(GridClient.Log(ex.getMessage(), _Client), ex);
@@ -2935,8 +2935,8 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
-	 * 
+	 *
+	 *
 	 */
 	private final void HandleObjectUpdateCompressed(Packet packet, Simulator sim) {
 		SimulatorManager simulator = (SimulatorManager) sim;
@@ -2976,70 +2976,70 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 			RefObject<Boolean> isNewObject = new RefObject<Boolean>(false);
 			Primitive prim = getPrimitive(simulator, localid, fullID, isNewObject);
 
-			prim.Flags = PrimFlags.setValue(block.UpdateFlags);
-			prim.PrimData = prim.new ConstructionData();
-			prim.PrimData.PCode = pcode;
+			prim.flags = PrimFlags.setValue(block.UpdateFlags);
+			prim.primData = prim.new ConstructionData();
+			prim.primData.primCode = pcode;
 
 			// /#region Decode block and update Prim
 
 			// State
-			prim.PrimData.State = data[i++];
+			prim.primData.state = data[i++];
 			// CRC
 			i += 4;
 			// Material
-			prim.PrimData.Material = Material.setValue(data[i++]);
+			prim.primData.material = Material.setValue(data[i++]);
 			// Click action
 			prim.clickAction = ClickAction.setValue(data[i++]);
 			// Scale
-			prim.Scale = new Vector3(data, i, true);
+			prim.scale = new Vector3(data, i, true);
 			i += 12;
 			// Position
-			prim.Position = new Vector3(data, i, true);
+			prim.position = new Vector3(data, i, true);
 			i += 12;
 			// Rotation
-			prim.Rotation = new Quaternion(data, i, true, true);
+			prim.rotation = new Quaternion(data, i, true, true);
 			i += 12;
 			// Compressed flags
 			int flags = (int) Helpers.BytesToUInt32L(data, i);
 			i += 4;
 
-			prim.OwnerID = new UUID(data, i);
+			prim.ownerID = new UUID(data, i);
 			i += 16;
 
 			// Angular velocity
 			if ((flags & CompressedFlags.HasAngularVelocity) != 0) {
-				prim.AngularVelocity = new Vector3(data, i, true);
+				prim.angularVelocity = new Vector3(data, i, true);
 				i += 12;
 			}
 
 			// Parent ID
 			if ((flags & CompressedFlags.HasParent) != 0) {
-				prim.ParentID = (int) Helpers.BytesToUInt32L(data, i);
+				prim.parentID = (int) Helpers.BytesToUInt32L(data, i);
 				i += 4;
 			} else {
-				prim.ParentID = 0;
+				prim.parentID = 0;
 			}
 
-			prim.ScratchPad = Helpers.EmptyBytes;
+			prim.scratchPad = Helpers.EmptyBytes;
 			// Tree data
 			if ((flags & CompressedFlags.Tree) != 0) {
-				prim.TreeSpecies = Tree.setValue(data[i++]);
+				prim.treeSpecies = Tree.setValue(data[i++]);
 			}
 			// Scratch pad
 			else {
-				prim.TreeSpecies = Tree.setValue((byte) 0);
+				prim.treeSpecies = Tree.setValue((byte) 0);
 
 				if ((flags & CompressedFlags.ScratchPad) != 0) {
 					int size = (int) Helpers.BytesToUInt32L(data, i);
 					i += 4;
-					prim.ScratchPad = new byte[size];
-					System.arraycopy(data, i, prim.ScratchPad, 0, size);
+					prim.scratchPad = new byte[size];
+					System.arraycopy(data, i, prim.scratchPad, 0, size);
 					i += size;
 				}
 			}
 
 			// Floating text
-			prim.Text = Helpers.EmptyString;
+			prim.text = Helpers.EmptyString;
 			if ((flags & CompressedFlags.HasText) != 0) {
 				int idx = i;
 				while (data[i] != 0) {
@@ -3047,19 +3047,19 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				}
 				;
 				try {
-					prim.Text = Helpers.BytesToString(data, idx, i - idx, Helpers.UTF8_ENCODING);
+					prim.text = Helpers.BytesToString(data, idx, i - idx, Helpers.UTF8_ENCODING);
 				} catch (UnsupportedEncodingException e) {
 				}
 				i++;
 				// Text color
-				prim.TextColor = new Color4(data, i, false, true);
+				prim.textColor = new Color4(data, i, false, true);
 				i += 4;
 			}
 
-			prim.IsAttachment = (((flags & CompressedFlags.HasNameValues) != 0) && prim.ParentID != 0);
+			prim.isAttachment = (((flags & CompressedFlags.HasNameValues) != 0) && prim.parentID != 0);
 
 			// Media URL
-			prim.MediaURL = Helpers.EmptyString;
+			prim.mediaURL = Helpers.EmptyString;
 			if ((flags & CompressedFlags.MediaURL) != 0) {
 				int idx = i;
 				while (data[i] != 0) {
@@ -3067,7 +3067,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				}
 				;
 				try {
-					prim.MediaURL = Helpers.BytesToString(data, idx, i - idx, Helpers.UTF8_ENCODING);
+					prim.mediaURL = Helpers.BytesToString(data, idx, i - idx, Helpers.UTF8_ENCODING);
 				} catch (UnsupportedEncodingException e) {
 				}
 				i++;
@@ -3075,24 +3075,24 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 			// Particle system
 			if ((flags & CompressedFlags.HasParticles) != 0) {
-				prim.ParticleSys = new ParticleSystem(data, i);
+				prim.particleSys = new ParticleSystem(data, i);
 				i += 86;
 			} else {
-				prim.ParticleSys = null;
+				prim.particleSys = null;
 			}
 
 			// Extra parameters
-			i += prim.SetExtraParamsFromBytes(data, i);
+			i += prim.setExtraParamsFromBytes(data, i);
 
 			// Sound data
 			if ((flags & CompressedFlags.HasSound) != 0) {
-				prim.SoundID = new UUID(data, i);
+				prim.soundID = new UUID(data, i);
 				i += 16;
 
-				prim.SoundGain = Helpers.BytesToFloatL(data, i);
+				prim.soundGain = Helpers.BytesToFloatL(data, i);
 				i += 4;
-				prim.SoundFlags = SoundFlags.setValue(data[i++]);
-				prim.SoundRadius = Helpers.BytesToFloatL(data, i);
+				prim.soundFlags = SoundFlags.setValue(data[i++]);
+				prim.soundRadius = Helpers.BytesToFloatL(data, i);
 				i += 4;
 			}
 
@@ -3113,42 +3113,42 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				// Parse the name values
 				if (text.length() > 0) {
 					String[] lines = text.split("\n");
-					prim.NameValues = new NameValue[lines.length];
+					prim.nameValues = new NameValue[lines.length];
 
 					for (int j = 0; j < lines.length; j++) {
 						if (!Helpers.isEmpty(lines[j])) {
 							NameValue nv = new NameValue(lines[j]);
-							prim.NameValues[j] = nv;
+							prim.nameValues[j] = nv;
 						}
 					}
 				}
 			}
 
 			if (data.length >= i + 23) {
-				prim.PrimData.PathCurve = PathCurve.setValue(data[i++]);
+				prim.primData.pathCurve = PathCurve.setValue(data[i++]);
 
-				prim.PrimData.PathBegin = Primitive.UnpackBeginCut((short) Helpers.BytesToUInt16L(data, i));
+				prim.primData.pathBegin = Primitive.unpackBeginCut((short) Helpers.BytesToUInt16L(data, i));
 				i += 2;
-				prim.PrimData.PathEnd = Primitive.UnpackEndCut((short) Helpers.BytesToUInt16L(data, i));
+				prim.primData.pathEnd = Primitive.unpackEndCut((short) Helpers.BytesToUInt16L(data, i));
 				i += 2;
-				prim.PrimData.PathScaleX = Primitive.UnpackPathScale(data[i++]);
-				prim.PrimData.PathScaleY = Primitive.UnpackPathScale(data[i++]);
-				prim.PrimData.PathShearX = Primitive.UnpackPathShear(data[i++]);
-				prim.PrimData.PathShearY = Primitive.UnpackPathShear(data[i++]);
-				prim.PrimData.PathTwist = Primitive.UnpackPathTwist(data[i++]);
-				prim.PrimData.PathTwistBegin = Primitive.UnpackPathTwist(data[i++]);
-				prim.PrimData.PathRadiusOffset = Primitive.UnpackPathTwist(data[i++]);
-				prim.PrimData.PathTaperX = Primitive.UnpackPathTaper(data[i++]);
-				prim.PrimData.PathTaperY = Primitive.UnpackPathTaper(data[i++]);
-				prim.PrimData.PathRevolutions = Primitive.UnpackPathRevolutions(data[i++]);
-				prim.PrimData.PathSkew = Primitive.UnpackPathTwist(data[i++]);
+				prim.primData.pathScaleX = Primitive.unpackPathScale(data[i++]);
+				prim.primData.pathScaleY = Primitive.unpackPathScale(data[i++]);
+				prim.primData.pathShearX = Primitive.unpackPathShear(data[i++]);
+				prim.primData.pathShearY = Primitive.unpackPathShear(data[i++]);
+				prim.primData.pathTwist = Primitive.unpackPathTwist(data[i++]);
+				prim.primData.pathTwistBegin = Primitive.unpackPathTwist(data[i++]);
+				prim.primData.pathRadiusOffset = Primitive.unpackPathTwist(data[i++]);
+				prim.primData.pathTaperX = Primitive.unpackPathTaper(data[i++]);
+				prim.primData.pathTaperY = Primitive.unpackPathTaper(data[i++]);
+				prim.primData.pathRevolutions = Primitive.unpackPathRevolutions(data[i++]);
+				prim.primData.pathSkew = Primitive.unpackPathTwist(data[i++]);
 
-				prim.PrimData.ProfileCurve = ProfileCurve.setValue(data[i++]);
-				prim.PrimData.ProfileBegin = Primitive.UnpackBeginCut((short) Helpers.BytesToUInt16L(data, i));
+				prim.primData.profileCurve = ProfileCurve.setValue(data[i++]);
+				prim.primData.profileBegin = Primitive.unpackBeginCut((short) Helpers.BytesToUInt16L(data, i));
 				i += 2;
-				prim.PrimData.ProfileEnd = Primitive.UnpackEndCut((short) Helpers.BytesToUInt16L(data, i));
+				prim.primData.profileEnd = Primitive.unpackEndCut((short) Helpers.BytesToUInt16L(data, i));
 				i += 2;
-				prim.PrimData.ProfileHollow = Primitive.UnpackProfileHollow((short) Helpers.BytesToUInt16L(data, i));
+				prim.primData.profileHollow = Primitive.unpackProfileHollow((short) Helpers.BytesToUInt16L(data, i));
 				i += 2;
 			}
 
@@ -3156,7 +3156,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				// TextureEntry
 				int textureEntryLength = (int) Helpers.BytesToUInt32L(data, i);
 				i += 4;
-				prim.Textures = new TextureEntry(data, i, textureEntryLength);
+				prim.textures = new TextureEntry(data, i, textureEntryLength);
 				i += textureEntryLength;
 			}
 			// int textureAnimLength = (int)Helpers.BytesToUInt32L(data, i);
@@ -3164,11 +3164,11 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				// Texture animation
 				int textureAnimationLength = (int) Helpers.BytesToUInt32L(data, i);
 				i += 4;
-				prim.TextureAnim = prim.Textures.new TextureAnimation(data, i, textureAnimationLength);
+				prim.textureAnim = prim.textures.new TextureAnimation(data, i, textureAnimationLength);
 				i += textureAnimationLength;
 			}
 
-			prim.IsAttachment = (flags & CompressedFlags.HasNameValues) != 0 && prim.ParentID != 0;
+			prim.isAttachment = (flags & CompressedFlags.HasNameValues) != 0 && prim.parentID != 0;
 
 			if (data.length > i) {
 				logger.debug("CompressedUpdate has extra data of " + (data.length - i) + " bytes.");
@@ -3178,8 +3178,8 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 			OnObjectUpdate.dispatch(
 					new PrimCallbackArgs(simulator, prim, update.RegionData.TimeDilation, isNewObject.argvalue));
 
-			if (prim.ParticleSys != null && prim.ParticleSys.PartMaxAge != 0) {
-				OnParticleUpdate.dispatch(new ParticleUpdateCallbackArgs(simulator, prim.ParticleSys, prim));
+			if (prim.particleSys != null && prim.particleSys.partMaxAge != 0) {
+				OnParticleUpdate.dispatch(new ParticleUpdateCallbackArgs(simulator, prim.particleSys, prim));
 			}
 		}
 	}
@@ -3231,7 +3231,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 					}
 
 					for (Entry<Integer, Primitive> e : simulator.getObjectsPrimitives().entrySet()) {
-						if (e.getValue().ParentID == localID) {
+						if (e.getValue().parentID == localID) {
 							removePrims.add(e.getKey());
 						}
 					}
@@ -3249,14 +3249,14 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 						ArrayList<Integer> rootPrims = new ArrayList<Integer>();
 
 						for (Entry<Integer, Primitive> e : primitives.entrySet()) {
-							if (e.getValue().ParentID == localID) {
+							if (e.getValue().parentID == localID) {
 								removePrims.add(e.getKey());
 								rootPrims.add(e.getKey());
 							}
 						}
 
 						for (Entry<Integer, Primitive> e : primitives.entrySet()) {
-							if (rootPrims.contains(e.getValue().ParentID)) {
+							if (rootPrims.contains(e.getValue().parentID)) {
 								removePrims.add(e.getKey());
 							}
 						}
@@ -3295,48 +3295,48 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 			ObjectPropertiesPacket.ObjectDataBlock objectData = datablocks[i];
 			ObjectProperties props = new ObjectProperties();
 
-			props.ObjectID = objectData.ObjectID;
-			props.AggregatePerms = objectData.AggregatePerms;
-			props.AggregatePermTextures = objectData.AggregatePermTextures;
-			props.AggregatePermTexturesOwner = objectData.AggregatePermTexturesOwner;
-			props.Category = ObjectCategory.setValue(objectData.Category);
-			props.FolderID = objectData.FolderID;
-			props.FromTaskID = objectData.FromTaskID;
-			props.InventorySerial = objectData.InventorySerial;
-			props.ItemID = objectData.ItemID;
-			props.OwnershipCost = objectData.OwnershipCost;
-			props.SalePrice = objectData.SalePrice;
-			props.SaleType = SaleType.setValue(objectData.SaleType);
-			props.Permissions = new Permissions(objectData.CreatorID, objectData.OwnerID, objectData.LastOwnerID,
+			props.objectID = objectData.ObjectID;
+			props.aggregatePerms = objectData.AggregatePerms;
+			props.aggregatePermTextures = objectData.AggregatePermTextures;
+			props.aggregatePermTexturesOwner = objectData.AggregatePermTexturesOwner;
+			props.category = ObjectCategory.setValue(objectData.Category);
+			props.folderID = objectData.FolderID;
+			props.fromTaskID = objectData.FromTaskID;
+			props.inventorySerial = objectData.InventorySerial;
+			props.itemID = objectData.ItemID;
+			props.ownershipCost = objectData.OwnershipCost;
+			props.salePrice = objectData.SalePrice;
+			props.saleType = SaleType.setValue(objectData.SaleType);
+			props.permissions = new Permissions(objectData.CreatorID, objectData.OwnerID, objectData.LastOwnerID,
 					objectData.GroupID, objectData.BaseMask, objectData.EveryoneMask, objectData.GroupMask,
 					objectData.NextOwnerMask, objectData.OwnerMask);
 
 			try {
-				props.Name = Helpers.BytesToString(objectData.getName());
-				props.Description = Helpers.BytesToString(objectData.getDescription());
-				props.CreationDate = Helpers.UnixTimeToDateTime(objectData.CreationDate);
-				props.SitName = Helpers.BytesToString(objectData.getSitName());
-				props.TouchName = Helpers.BytesToString(objectData.getTouchName());
+				props.name = Helpers.BytesToString(objectData.getName());
+				props.description = Helpers.BytesToString(objectData.getDescription());
+				props.creationDate = Helpers.UnixTimeToDateTime(objectData.CreationDate);
+				props.sitName = Helpers.BytesToString(objectData.getSitName());
+				props.touchName = Helpers.BytesToString(objectData.getTouchName());
 			} catch (UnsupportedEncodingException e) {
 				logger.warn("Encoding Exception when decoding object properties reply.", e);
 				return;
 			}
 
 			int numTextures = objectData.getTextureID().length / 16;
-			props.TextureIDs = new UUID[numTextures];
+			props.textureIDs = new UUID[numTextures];
 			for (int j = 0; j < numTextures; ++j) {
-				props.TextureIDs[j] = new UUID(objectData.getTextureID(), j * 16);
+				props.textureIDs[j] = new UUID(objectData.getTextureID(), j * 16);
 			}
 
 			if (objectTracking) {
 				synchronized (simulator.getObjectsPrimitives()) {
 					for (Primitive prim : simulator.getObjectsPrimitives().values()) {
-						if (prim.ID.equals(props.ObjectID)) {
+						if (prim.id.equals(props.objectID)) {
 							OnObjectPropertiesUpdated
 									.dispatch(new ObjectPropertiesUpdatedCallbackArgs(simulator, prim, props));
 
-							if (simulator.getObjectsPrimitives().containsKey(prim.LocalID)) {
-								simulator.getObjectsPrimitives().get(prim.LocalID).Properties = props;
+							if (simulator.getObjectsPrimitives().containsKey(prim.localID)) {
+								simulator.getObjectsPrimitives().get(prim.localID).properties = props;
 							}
 							break;
 						}
@@ -3357,17 +3357,17 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 		ReportType requestType = ReportType.setValue(op.ObjectData.RequestFlags);
 
-		props.ObjectID = op.ObjectData.ObjectID;
-		props.Category = ObjectCategory.setValue(op.ObjectData.Category);
-		props.OwnershipCost = op.ObjectData.OwnershipCost;
-		props.SalePrice = op.ObjectData.SalePrice;
-		props.SaleType = SaleType.setValue(op.ObjectData.SaleType);
-		props.Permissions = new Permissions(null, op.ObjectData.OwnerID, op.ObjectData.LastOwnerID,
+		props.objectID = op.ObjectData.ObjectID;
+		props.category = ObjectCategory.setValue(op.ObjectData.Category);
+		props.ownershipCost = op.ObjectData.OwnershipCost;
+		props.salePrice = op.ObjectData.SalePrice;
+		props.saleType = SaleType.setValue(op.ObjectData.SaleType);
+		props.permissions = new Permissions(null, op.ObjectData.OwnerID, op.ObjectData.LastOwnerID,
 				op.ObjectData.GroupID, op.ObjectData.BaseMask, op.ObjectData.EveryoneMask, op.ObjectData.GroupMask,
 				op.ObjectData.NextOwnerMask, op.ObjectData.OwnerMask);
 		try {
-			props.Name = Helpers.BytesToString(op.ObjectData.getName());
-			props.Description = Helpers.BytesToString(op.ObjectData.getDescription());
+			props.name = Helpers.BytesToString(op.ObjectData.getName());
+			props.description = Helpers.BytesToString(op.ObjectData.getDescription());
 		} catch (UnsupportedEncodingException e) {
 			logger.warn("Encoding Exception when decoding object properties family reply.", e);
 			return;
@@ -3376,12 +3376,12 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 		if (objectTracking) {
 			synchronized (simulator.getObjectsPrimitives()) {
 				for (Primitive prim : simulator.getObjectsPrimitives().values()) {
-					if (prim.ID.equals(op.ObjectData.ObjectID)) {
-						if (simulator.getObjectsPrimitives().containsKey(prim.LocalID)) {
-							if (simulator.getObjectsPrimitives().get(prim.LocalID).Properties == null) {
-								simulator.getObjectsPrimitives().get(prim.LocalID).Properties = new ObjectProperties();
+					if (prim.id.equals(op.ObjectData.ObjectID)) {
+						if (simulator.getObjectsPrimitives().containsKey(prim.localID)) {
+							if (simulator.getObjectsPrimitives().get(prim.localID).properties == null) {
+								simulator.getObjectsPrimitives().get(prim.localID).properties = new ObjectProperties();
 							}
-							simulator.getObjectsPrimitives().get(prim.LocalID).Properties.SetFamilyProperties(props);
+							simulator.getObjectsPrimitives().get(prim.localID).properties.setFamilyProperties(props);
 						}
 						break;
 					}
@@ -3414,20 +3414,20 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 		ObjectPhysicsPropertiesMessage msg = (ObjectPhysicsPropertiesMessage) message;
 
 		if (objectTracking) {
-			for (int i = 0; i < msg.ObjectPhysicsProperties.length; i++) {
+			for (int i = 0; i < msg.objectPhysicsProperties.length; i++) {
 				synchronized (simulator.getObjectsPrimitives()) {
-					if (simulator.getObjectsPrimitives().containsKey(msg.ObjectPhysicsProperties[i].LocalID)) {
+					if (simulator.getObjectsPrimitives().containsKey(msg.objectPhysicsProperties[i].localID)) {
 						simulator.getObjectsPrimitives().get(
-								msg.ObjectPhysicsProperties[i].LocalID).PhysicsProps = msg.ObjectPhysicsProperties[i];
+								msg.objectPhysicsProperties[i].localID).physicsProps = msg.objectPhysicsProperties[i];
 					}
 				}
 			}
 		}
 
 		if (OnPhysicsProperties.count() > 0) {
-			for (int i = 0; i < msg.ObjectPhysicsProperties.length; i++) {
+			for (int i = 0; i < msg.objectPhysicsProperties.length; i++) {
 				OnPhysicsProperties
-						.dispatch(new PhysicsPropertiesCallbackArgs(simulator, msg.ObjectPhysicsProperties[i]));
+						.dispatch(new PhysicsPropertiesCallbackArgs(simulator, msg.objectPhysicsProperties[i]));
 			}
 		}
 	}
@@ -3435,7 +3435,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 	// #region Utility Functions
 	/**
-	 * 
+	 *
 	 *
 	 * @param sim
 	 * @param av
@@ -3443,11 +3443,11 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	 * @param oldSeatID
 	 */
 	protected final void SetAvatarSittingOn(Simulator sim, Avatar av, int localid, int oldSeatID) {
-		if (_Client.Network.getCurrentSim() == sim && av.LocalID == _Client.Self.getLocalID()) {
+		if (_Client.Network.getCurrentSim() == sim && av.localID == _Client.Self.getLocalID()) {
 			_Client.Self.setSittingOn(localid);
 		}
 
-		av.ParentID = localid;
+		av.parentID = localid;
 
 		if (OnAvatarSitChanged.count() > 0 && oldSeatID != localid) {
 			OnAvatarSitChanged.dispatch(new AvatarSitChangedCallbackArgs(sim, av, localid, oldSeatID));
@@ -3477,25 +3477,25 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 		shape.ObjectData[0].ObjectLocalID = localID;
 
-		shape.ObjectData[0].PathCurve = prim.PathCurve.getValue();
-		shape.ObjectData[0].PathBegin = Primitive.PackBeginCut(prim.PathBegin);
-		shape.ObjectData[0].PathEnd = Primitive.PackEndCut(prim.PathEnd);
-		shape.ObjectData[0].PathScaleX = Primitive.PackPathScale(prim.PathScaleX);
-		shape.ObjectData[0].PathScaleY = Primitive.PackPathScale(prim.PathScaleY);
-		shape.ObjectData[0].PathShearX = Primitive.PackPathShear(prim.PathShearX);
-		shape.ObjectData[0].PathShearY = Primitive.PackPathShear(prim.PathShearY);
-		shape.ObjectData[0].PathTwist = Primitive.PackPathTwist(prim.PathTwist);
-		shape.ObjectData[0].PathTwistBegin = Primitive.PackPathTwist(prim.PathTwistBegin);
-		shape.ObjectData[0].PathRadiusOffset = Primitive.PackPathTwist(prim.PathRadiusOffset);
-		shape.ObjectData[0].PathTaperX = Primitive.PackPathTaper(prim.PathTaperX);
-		shape.ObjectData[0].PathTaperY = Primitive.PackPathTaper(prim.PathTaperY);
-		shape.ObjectData[0].PathRevolutions = Primitive.PackPathRevolutions(prim.PathRevolutions);
-		shape.ObjectData[0].PathSkew = Primitive.PackPathTwist(prim.PathSkew);
+		shape.ObjectData[0].PathCurve = prim.pathCurve.getValue();
+		shape.ObjectData[0].PathBegin = Primitive.packBeginCut(prim.pathBegin);
+		shape.ObjectData[0].PathEnd = Primitive.packEndCut(prim.pathEnd);
+		shape.ObjectData[0].PathScaleX = Primitive.packPathScale(prim.pathScaleX);
+		shape.ObjectData[0].PathScaleY = Primitive.packPathScale(prim.pathScaleY);
+		shape.ObjectData[0].PathShearX = Primitive.packPathShear(prim.pathShearX);
+		shape.ObjectData[0].PathShearY = Primitive.packPathShear(prim.pathShearY);
+		shape.ObjectData[0].PathTwist = Primitive.packPathTwist(prim.pathTwist);
+		shape.ObjectData[0].PathTwistBegin = Primitive.packPathTwist(prim.pathTwistBegin);
+		shape.ObjectData[0].PathRadiusOffset = Primitive.packPathTwist(prim.pathRadiusOffset);
+		shape.ObjectData[0].PathTaperX = Primitive.packPathTaper(prim.pathTaperX);
+		shape.ObjectData[0].PathTaperY = Primitive.packPathTaper(prim.pathTaperY);
+		shape.ObjectData[0].PathRevolutions = Primitive.packPathRevolutions(prim.pathRevolutions);
+		shape.ObjectData[0].PathSkew = Primitive.packPathTwist(prim.pathSkew);
 
 		shape.ObjectData[0].ProfileCurve = prim.getProfileValue();
-		shape.ObjectData[0].ProfileBegin = Primitive.PackBeginCut(prim.ProfileBegin);
-		shape.ObjectData[0].ProfileEnd = Primitive.PackEndCut(prim.ProfileEnd);
-		shape.ObjectData[0].ProfileHollow = Primitive.PackProfileHollow(prim.ProfileHollow);
+		shape.ObjectData[0].ProfileBegin = Primitive.packBeginCut(prim.profileBegin);
+		shape.ObjectData[0].ProfileEnd = Primitive.packEndCut(prim.profileEnd);
+		shape.ObjectData[0].ProfileHollow = Primitive.packProfileHollow(prim.profileHollow);
 
 		simulator.sendPacket(shape);
 	}
@@ -3533,7 +3533,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	/**
 	 * Find the object with localID in the simulator and add it with fullID if it is
 	 * not there
-	 * 
+	 *
 	 * @param simulator
 	 *            The simulator in which the object is located
 	 * @param localID
@@ -3555,12 +3555,12 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				prim = simulator.findPrimitive(fullID, true);
 				if (prim == null) {
 					prim = new Primitive();
-					prim.ID = fullID;
-					prim.RegionHandle = simulator.getHandle();
+					prim.id = fullID;
+					prim.regionHandle = simulator.getHandle();
 					if (created != null)
 						created.argvalue = true;
 				}
-				prim.LocalID = localID;
+				prim.localID = localID;
 
 				simulator.getObjectsPrimitives().put(localID, prim);
 
@@ -3573,7 +3573,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	/**
 	 * Find the avatar with localID in the simulator and add it with fullID if it is
 	 * not there
-	 * 
+	 *
 	 * @param simulator
 	 *            The simulator in which the avatar is located
 	 * @param localID
@@ -3595,16 +3595,16 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				avatar = simulator.findAvatar(fullID, true);
 				if (avatar == null) {
 					avatar = new Avatar();
-					avatar.ID = fullID;
-					avatar.RegionHandle = simulator.getHandle();
+					avatar.id = fullID;
+					avatar.regionHandle = simulator.getHandle();
 					if (created != null)
 						created.argvalue = true;
 				} else {
-					if (avatar.LocalID == _Client.Self.getLocalID()) {
+					if (avatar.localID == _Client.Self.getLocalID()) {
 						_Client.Self.setLocalID(localID);
 					}
 				}
-				avatar.LocalID = localID;
+				avatar.localID = localID;
 
 				avatars.put(localID, avatar);
 

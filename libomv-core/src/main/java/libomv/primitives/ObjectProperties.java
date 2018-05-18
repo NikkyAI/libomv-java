@@ -40,56 +40,56 @@ import libomv.utils.Helpers;
 
 // Extended properties to describe an object
 public class ObjectProperties {
-	public UUID ObjectID;
-	public Date CreationDate;
-	public Permissions Permissions;
-	public int OwnershipCost;
-	public SaleType SaleType;
-	public int SalePrice;
-	public byte AggregatePerms;
-	public byte AggregatePermTextures;
-	public byte AggregatePermTexturesOwner;
-	public ObjectCategory Category;
-	public short InventorySerial;
-	public UUID ItemID;
-	public UUID FolderID;
-	public UUID FromTaskID;
-	public String Name;
-	public String Description;
-	public String TouchName;
-	public String SitName;
-	public UUID[] TextureIDs;
+	public UUID objectID;
+	public Date creationDate;
+	public Permissions permissions;
+	public int ownershipCost;
+	public SaleType saleType;
+	public int salePrice;
+	public byte aggregatePerms;
+	public byte aggregatePermTextures;
+	public byte aggregatePermTexturesOwner;
+	public ObjectCategory category;
+	public short inventorySerial;
+	public UUID itemID;
+	public UUID folderID;
+	public UUID fromTaskID;
+	public String name;
+	public String description;
+	public String touchName;
+	public String sitName;
+	public UUID[] textureIDs;
 
 	// Default constructor
 	public ObjectProperties() {
-		Name = Helpers.EmptyString;
-		Description = Helpers.EmptyString;
-		TouchName = Helpers.EmptyString;
-		SitName = Helpers.EmptyString;
+		name = Helpers.EmptyString;
+		description = Helpers.EmptyString;
+		touchName = Helpers.EmptyString;
+		sitName = Helpers.EmptyString;
 	}
 
 	public ObjectProperties(ObjectProperties p) {
-		ObjectID = p.ObjectID;
-		CreationDate = p.CreationDate;
-		Permissions = new Permissions(p.Permissions);
-		OwnershipCost = p.OwnershipCost;
-		SaleType = p.SaleType;
-		SalePrice = p.SalePrice;
-		AggregatePerms = p.AggregatePerms;
-		AggregatePermTextures = p.AggregatePermTextures;
-		AggregatePermTexturesOwner = p.AggregatePermTexturesOwner;
-		Category = p.Category;
-		InventorySerial = p.InventorySerial;
-		ItemID = p.ItemID;
-		FolderID = p.FolderID;
-		FromTaskID = p.FromTaskID;
-		Name = p.Name;
-		Description = p.Description;
-		TouchName = p.TouchName;
-		SitName = p.SitName;
-		TextureIDs = new UUID[p.TextureIDs.length];
-		for (int i = 0; i < p.TextureIDs.length; i++)
-			TextureIDs[i] = p.TextureIDs[i];
+		objectID = p.objectID;
+		creationDate = p.creationDate;
+		permissions = new Permissions(p.permissions);
+		ownershipCost = p.ownershipCost;
+		saleType = p.saleType;
+		salePrice = p.salePrice;
+		aggregatePerms = p.aggregatePerms;
+		aggregatePermTextures = p.aggregatePermTextures;
+		aggregatePermTexturesOwner = p.aggregatePermTexturesOwner;
+		category = p.category;
+		inventorySerial = p.inventorySerial;
+		itemID = p.itemID;
+		folderID = p.folderID;
+		fromTaskID = p.fromTaskID;
+		name = p.name;
+		description = p.description;
+		touchName = p.touchName;
+		sitName = p.sitName;
+		textureIDs = new UUID[p.textureIDs.length];
+		for (int i = 0; i < p.textureIDs.length; i++)
+			textureIDs[i] = p.textureIDs[i];
 	}
 
 	/**
@@ -99,24 +99,24 @@ public class ObjectProperties {
 	 *            {@link ObjectProperties} that has been partially filled by an
 	 *            ObjectPropertiesFamily packet
 	 */
-	public void SetFamilyProperties(ObjectProperties props) {
-		ObjectID = props.ObjectID;
-		Permissions = props.Permissions;
-		OwnershipCost = props.OwnershipCost;
-		SaleType = props.SaleType;
-		SalePrice = props.SalePrice;
-		Category = props.Category;
-		Name = props.Name;
-		Description = props.Description;
+	public void setFamilyProperties(ObjectProperties props) {
+		objectID = props.objectID;
+		permissions = props.permissions;
+		ownershipCost = props.ownershipCost;
+		saleType = props.saleType;
+		salePrice = props.salePrice;
+		category = props.category;
+		name = props.name;
+		description = props.description;
 	}
 
-	public byte[] GetTextureIDBytes() {
-		if (TextureIDs == null || TextureIDs.length == 0)
+	public byte[] getTextureIDBytes() {
+		if (textureIDs == null || textureIDs.length == 0)
 			return Helpers.EmptyBytes;
 
-		byte[] bytes = new byte[16 * TextureIDs.length];
-		for (int i = 0; i < TextureIDs.length; i++)
-			TextureIDs[i].toBytes(bytes, 16 * i);
+		byte[] bytes = new byte[16 * textureIDs.length];
+		for (int i = 0; i < textureIDs.length; i++)
+			textureIDs[i].toBytes(bytes, 16 * i);
 
 		return bytes;
 	}

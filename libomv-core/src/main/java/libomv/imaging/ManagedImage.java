@@ -64,14 +64,14 @@ public class ManagedImage implements Cloneable {
 		public static final byte Bump = 8;
 
 		public void setValue(int value) {
-			_value = (byte) value;
+			this.value = (byte) value;
 		}
 
 		public byte getValue() {
-			return _value;
+			return value;
 		}
 
-		private byte _value;
+		private byte value;
 	};
 
 	public enum ImageResizeAlgorithm {
@@ -415,12 +415,12 @@ public class ManagedImage implements Cloneable {
 	/**
 	 * Saves the image data into an output stream with whatever encoding this object
 	 * supports
-	 * 
+	 *
 	 * Note: This method does currently nothing as it does not support a native raw
 	 * image format This method should be overwritten by derived classes to save the
 	 * image data with whatever default options makes most sense for the image
 	 * format.
-	 * 
+	 *
 	 * @param os
 	 *            Stream in which to write the image data
 	 * @return number of bytes written into the stream or -1 on error
@@ -433,12 +433,12 @@ public class ManagedImage implements Cloneable {
 	/**
 	 * Saves the image data into an output stream with whatever encoding this object
 	 * supports
-	 * 
+	 *
 	 * Note: This method does currently nothing as it does not support a native raw
 	 * image format This method should be overwritten by derived classes to save the
 	 * image data with whatever default options makes most sense for the image
 	 * format.
-	 * 
+	 *
 	 * @param os
 	 *            Stream in which to write the image data
 	 * @return number of bytes written into the stream or -1 on error

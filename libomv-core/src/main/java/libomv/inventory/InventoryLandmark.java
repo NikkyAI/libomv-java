@@ -57,14 +57,14 @@ public class InventoryLandmark extends InventoryItem {
 	 * they have been visited
 	 */
 	public final boolean getLandmarkVisited() {
-		return (ItemFlags & 1) != 0;
+		return (itemFlags & 1) != 0;
 	}
 
 	public final void setLandmarkVisited(boolean value) {
 		if (value) {
-			ItemFlags |= 1;
+			itemFlags |= 1;
 		} else {
-			ItemFlags &= ~1;
+			itemFlags &= ~1;
 		}
 	}
 }

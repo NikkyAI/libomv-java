@@ -63,20 +63,20 @@ public class AssetGesture extends AssetItem {
 		/*
 		 * If true, this step represents start of animation, otherwise animation stop
 		 */
-		public boolean AnimationStart = true;
+		public boolean animationStart = true;
 
 		/* Animation asset <see cref="UUID"/> */
-		public UUID ID;
+		public UUID id;
 
 		/* Animation inventory name */
-		public String Name;
+		public String name;
 
 		@Override
 		public String toString() {
-			if (AnimationStart) {
-				return "Start animation: " + Name;
+			if (animationStart) {
+				return "Start animation: " + name;
 			}
-			return "Stop animation: " + Name;
+			return "Stop animation: " + name;
 		}
 	}
 
@@ -89,14 +89,14 @@ public class AssetGesture extends AssetItem {
 		}
 
 		/* Sound asset <see cref="UUID"/> */
-		public UUID ID;
+		public UUID id;
 
 		/* Sound inventory name */
-		public String Name;
+		public String name;
 
 		@Override
 		public String toString() {
-			return "Sound: " + Name;
+			return "Sound: " + name;
 		}
 
 	}
@@ -110,11 +110,11 @@ public class AssetGesture extends AssetItem {
 		}
 
 		/* Text to output in chat */
-		public String Text;
+		public String text;
 
 		@Override
 		public String toString() {
-			return "Chat: " + Text;
+			return "Chat: " + text;
 		}
 	}
 
@@ -127,24 +127,24 @@ public class AssetGesture extends AssetItem {
 		}
 
 		/* If true in this step we wait for all animations to finish */
-		public boolean WaitForAnimation;
+		public boolean waitForAnimation;
 
 		/* If true gesture player should wait for the specified amount of time */
-		public boolean WaitForTime;
+		public boolean waitForTime;
 
 		/* Time in seconds to wait if WaitForAnimation is false */
-		public float WaitTime;
+		public float waitTime;
 
 		@Override
 		public String toString() {
 			StringBuilder ret = new StringBuilder("-- Wait for: ");
 
-			if (WaitForAnimation) {
+			if (waitForAnimation) {
 				ret.append("(animations to finish) ");
 			}
 
-			if (WaitForTime) {
-				ret.append(String.format("(time {0:0.0}s)", WaitTime));
+			if (waitForTime) {
+				ret.append(String.format("(time {0:0.0}s)", waitTime));
 			}
 
 			return ret.toString();
@@ -172,63 +172,63 @@ public class AssetGesture extends AssetItem {
 	}
 
 	/* Keyboard key that triggers the gesture */
-	private byte TriggerKey;
+	private byte triggerKey;
 
 	public byte getTriggerKey() {
-		return TriggerKey;
+		return triggerKey;
 	}
 
 	public void setTriggerKey(byte triggerKey) {
 		invalidateAssetData();
-		TriggerKey = triggerKey;
+		this.triggerKey = triggerKey;
 	}
 
 	/* Modifier to the trigger key */
-	private int TriggerKeyMask;
+	private int triggerKeyMask;
 
 	public int getTriggerKeyMask() {
-		return TriggerKeyMask;
+		return triggerKeyMask;
 	}
 
 	public void setTriggerKeyMask(int triggerKeyMask) {
 		invalidateAssetData();
-		TriggerKeyMask = triggerKeyMask;
+		this.triggerKeyMask = triggerKeyMask;
 	}
 
 	/* String that triggers playing of the gesture sequence */
-	private String Trigger;
+	private String trigger;
 
 	public String getTrigger() {
-		return Trigger;
+		return trigger;
 	}
 
 	public void setTrigger(String trigger) {
 		invalidateAssetData();
-		Trigger = trigger;
+		this.trigger = trigger;
 	}
 
 	/* Text that replaces trigger in chat once gesture is triggered */
-	private String ReplaceWith;
+	private String replaceWith;
 
 	public String getReplaceWith() {
-		return ReplaceWith;
+		return replaceWith;
 	}
 
 	public void setReplaceWith(String replaceWith) {
 		invalidateAssetData();
-		ReplaceWith = replaceWith;
+		this.replaceWith = replaceWith;
 	}
 
 	/* Sequence of gesture steps */
-	private List<GestureStep> Sequence;
+	private List<GestureStep> sequence;
 
 	public List<GestureStep> getSequence() {
-		return Sequence;
+		return sequence;
 	}
 
 	public void setSequence(List<GestureStep> sequence) {
 		invalidateAssetData();
-		Sequence = sequence;
+		this.sequence = sequence;
 	}
 
 	/**
@@ -250,20 +250,20 @@ public class AssetGesture extends AssetItem {
 	protected void encode() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("2\n");
-		sb.append(TriggerKey + "\n");
-		sb.append(TriggerKeyMask + "\n");
-		sb.append(Trigger + "\n");
-		sb.append(ReplaceWith + "\n");
+		sb.append(triggerKey + "\n");
+		sb.append(triggerKeyMask + "\n");
+		sb.append(trigger + "\n");
+		sb.append(replaceWith + "\n");
 
 		int count = 0;
-		if (Sequence != null) {
-			count = Sequence.size();
+		if (sequence != null) {
+			count = sequence.size();
 		}
 
 		sb.append(count + "\n");
 
 		for (int i = 0; i < count; i++) {
-			GestureStep step = Sequence.get(i);
+			GestureStep step = sequence.get(i);
 			sb.append(step.getGestureStepType() + "\n");
 
 			switch (step.getGestureStepType()) {
@@ -272,10 +272,10 @@ public class AssetGesture extends AssetItem {
 
 			case Animation:
 				GestureStepAnimation animstep = (GestureStepAnimation) step;
-				sb.append(animstep.Name + "\n");
-				sb.append(animstep.ID + "\n");
+				sb.append(animstep.name + "\n");
+				sb.append(animstep.id + "\n");
 
-				if (animstep.AnimationStart) {
+				if (animstep.animationStart) {
 					sb.append("0\n");
 				} else {
 					sb.append("1\n");
@@ -284,27 +284,27 @@ public class AssetGesture extends AssetItem {
 
 			case Sound:
 				GestureStepSound soundstep = (GestureStepSound) step;
-				sb.append(soundstep.Name + "\n");
-				sb.append(soundstep.ID + "\n");
+				sb.append(soundstep.name + "\n");
+				sb.append(soundstep.id + "\n");
 				sb.append("0\n");
 				break;
 
 			case Chat:
 				GestureStepChat chatstep = (GestureStepChat) step;
-				sb.append(chatstep.Text + "\n");
+				sb.append(chatstep.text + "\n");
 				sb.append("0\n");
 				break;
 
 			case Wait:
 				GestureStepWait waitstep = (GestureStepWait) step;
-				sb.append(String.format("{0:0.000000}\n", waitstep.WaitTime));
+				sb.append(String.format("{0:0.000000}\n", waitstep.waitTime));
 				int waitflags = 0;
 
-				if (waitstep.WaitForTime) {
+				if (waitstep.waitForTime) {
 					waitflags |= 0x01;
 				}
 
-				if (waitstep.WaitForAnimation) {
+				if (waitstep.waitForAnimation) {
 					waitflags |= 0x02;
 				}
 
@@ -314,7 +314,7 @@ public class AssetGesture extends AssetItem {
 				break;
 			}
 		}
-		AssetData = Helpers.StringToBytes(sb.toString());
+		assetData = Helpers.StringToBytes(sb.toString());
 	}
 
 	/**
@@ -324,12 +324,12 @@ public class AssetGesture extends AssetItem {
 	 */
 	@Override
 	protected boolean decode() {
-		if (AssetData == null)
+		if (assetData == null)
 			return false;
 
 		try {
-			String[] lines = Helpers.BytesToString(AssetData).split("\n");
-			Sequence = new ArrayList<GestureStep>();
+			String[] lines = Helpers.BytesToString(assetData).split("\n");
+			sequence = new ArrayList<GestureStep>();
 
 			int i = 0;
 
@@ -339,10 +339,10 @@ public class AssetGesture extends AssetItem {
 				throw new Exception("Only know how to decode version 2 of gesture asset");
 			}
 
-			TriggerKey = Byte.parseByte(lines[i++]);
-			TriggerKeyMask = Integer.parseInt(lines[i++]);
-			Trigger = lines[i++];
-			ReplaceWith = lines[i++];
+			triggerKey = Byte.parseByte(lines[i++]);
+			triggerKeyMask = Integer.parseInt(lines[i++]);
+			trigger = lines[i++];
+			replaceWith = lines[i++];
 
 			int count = Integer.parseInt(lines[i++]);
 
@@ -359,41 +359,41 @@ public class AssetGesture extends AssetItem {
 					break;
 				case Animation:
 					GestureStepAnimation ani = new GestureStepAnimation();
-					ani.Name = lines[i++];
-					ani.ID = new UUID(lines[i++]);
+					ani.name = lines[i++];
+					ani.id = new UUID(lines[i++]);
 					flags = Integer.parseInt(lines[i++]);
 
 					if (flags == 0) {
-						ani.AnimationStart = true;
+						ani.animationStart = true;
 					} else {
-						ani.AnimationStart = false;
+						ani.animationStart = false;
 					}
 
-					Sequence.add(ani);
+					sequence.add(ani);
 					break;
 				case Sound:
 					GestureStepSound snd = new GestureStepSound();
-					snd.Name = lines[i++].replace("\r", "");
-					snd.ID = new UUID(lines[i++]);
+					snd.name = lines[i++].replace("\r", "");
+					snd.id = new UUID(lines[i++]);
 					flags = Integer.parseInt(lines[i++]);
 
-					Sequence.add(snd);
+					sequence.add(snd);
 					break;
 				case Chat:
 					GestureStepChat chat = new GestureStepChat();
-					chat.Text = lines[i++];
+					chat.text = lines[i++];
 					flags = Integer.parseInt(lines[i++]);
 
-					Sequence.add(chat);
+					sequence.add(chat);
 					break;
 				case Wait:
 					GestureStepWait wait = new GestureStepWait();
-					wait.WaitTime = Float.parseFloat(lines[i++]);
+					wait.waitTime = Float.parseFloat(lines[i++]);
 					flags = Integer.parseInt(lines[i++]);
 
-					wait.WaitForTime = (flags & 0x01) != 0;
-					wait.WaitForAnimation = (flags & 0x02) != 0;
-					Sequence.add(wait);
+					wait.waitForTime = (flags & 0x01) != 0;
+					wait.waitForAnimation = (flags & 0x02) != 0;
+					sequence.add(wait);
 					break;
 				default:
 					break;

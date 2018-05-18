@@ -6,7 +6,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -255,7 +255,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	/**
 	 * Parcel overlay type. This is used primarily for highlighting and coloring
 	 * which is why it is a single integer instead of a set of flags
-	 * 
+	 *
 	 * These values seem to be poorly thought out. The first three bits represent a
 	 * single value, not flags. For example Auction (0x05) is not a combination of
 	 * OwnedByOther (0x01) and ForSale(0x04). However, the BorderWest and
@@ -444,7 +444,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 		/**
 		 * Construct a new instance of the ParcelDwellReplyCallbackArgs class
-		 * 
+		 *
 		 * @param parcelID
 		 *            The global ID of the parcel
 		 * @param localID
@@ -473,7 +473,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 		/**
 		 * Construct a new instance of the ParcelInfoReplyCallbackArgs class
-		 * 
+		 *
 		 * @param parcel
 		 *            The <see cref="ParcelInfo"/> object containing basic parcel info
 		 */
@@ -529,7 +529,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 		/**
 		 * Construct a new instance of the ParcelPropertiesCallbackArgs class
-		 * 
+		 *
 		 * @param simulator
 		 *            The <see cref="Parcel"/> object containing the details
 		 * @param parcel
@@ -595,7 +595,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 		/**
 		 * Construct a new instance of the ParcelAccessListReplyCallbackArgs class
-		 * 
+		 *
 		 * @param simulator
 		 *            The simulator the parcel is located in
 		 * @param sequenceID
@@ -638,7 +638,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 		/**
 		 * Construct a new instance of the ParcelObjectOwnersReplyCallbackArgs class
-		 * 
+		 *
 		 * @param simulator
 		 *            The simulator the parcel is located in
 		 * @param primOwners
@@ -679,7 +679,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 		/**
 		 * Construct a new instance of the SimParcelsDownloadedCallbackArgs class
-		 * 
+		 *
 		 * @param simulator
 		 *            The simulator the parcel data was retrieved from
 		 * @param simParcels
@@ -722,7 +722,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 		/**
 		 * Construct a new instance of the ForceSelectObjectsReplyCallbackArgs class
-		 * 
+		 *
 		 * @param simulator
 		 *            The simulator the parcel data was retrieved from
 		 * @param objectIDs
@@ -757,7 +757,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 		/**
 		 * Construct a new instance of the ParcelMediaUpdateReplyCallbackArgs class
-		 * 
+		 *
 		 * @param simulator
 		 *            the simulator the parcel media data was updated in
 		 * @param media
@@ -803,7 +803,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 		/**
 		 * Construct a new instance of the ParcelMediaCommandCallbackArgs class
-		 * 
+		 *
 		 * @param simulator
 		 *            The simulator the parcel media command was issued in
 		 * @param sequence
@@ -895,7 +895,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Request basic information for a single parcel
-	 * 
+	 *
 	 * @param parcelID
 	 *            Simulator-local ID of the parcel
 	 * @throws Exception
@@ -911,7 +911,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Request properties of a single parcel
-	 * 
+	 *
 	 * @param simulator
 	 *            Simulator containing the parcel
 	 * @param localID
@@ -936,7 +936,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Request the access list for a single parcel
-	 * 
+	 *
 	 * @param simulator
 	 *            Simulator containing the parcel
 	 * @param localID
@@ -963,7 +963,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Request properties of parcels using a bounding box selection
-	 * 
+	 *
 	 * @param simulator
 	 *            Simulator containing the parcel
 	 * @param north
@@ -1002,7 +1002,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	/**
 	 * Request all simulator parcel properties (used for populating the
 	 * <code>Simulator.Parcels</code> dictionary)
-	 * 
+	 *
 	 * @param simulator
 	 *            Simulator to request parcels from (must be connected)
 	 * @throws Exception
@@ -1014,7 +1014,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	/**
 	 * Request all simulator parcel properties (used for populating the
 	 * <code>Simulator.Parcels</code> dictionary)
-	 * 
+	 *
 	 * @param simulator
 	 *            Simulator to request parcels from (must be connected)
 	 * @param refresh
@@ -1074,7 +1074,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Request the dwell value for a parcel
-	 * 
+	 *
 	 * @param simulator
 	 *            Simulator containing the parcel
 	 * @param localID
@@ -1093,7 +1093,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Send a request to Purchase a parcel of land
-	 * 
+	 *
 	 * @param simulator
 	 *            The Simulator the parcel is located in
 	 * @param localID
@@ -1131,7 +1131,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Reclaim a parcel of land
-	 * 
+	 *
 	 * @param simulator
 	 *            The simulator the parcel is in
 	 * @param localID
@@ -1150,7 +1150,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Deed a parcel to a group
-	 * 
+	 *
 	 * @param simulator
 	 *            The simulator the parcel is in
 	 * @param localID
@@ -1172,7 +1172,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Request prim owners of a parcel of land.
-	 * 
+	 *
 	 * @param simulator
 	 *            Simulator parcel is in
 	 * @param localID
@@ -1191,7 +1191,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Return objects from a parcel
-	 * 
+	 *
 	 * @param simulator
 	 *            Simulator parcel is in
 	 * @param localID
@@ -1232,7 +1232,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Subdivide (split) a parcel
-	 * 
+	 *
 	 * @param simulator
 	 * @param west
 	 * @param south
@@ -1255,7 +1255,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Join two parcels of land creating a single parcel
-	 * 
+	 *
 	 * @param simulator
 	 * @param west
 	 * @param south
@@ -1278,7 +1278,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Get a parcels LocalID
-	 * 
+	 *
 	 * @param simulator
 	 *            Simulator parcel is in
 	 * @param position
@@ -1301,7 +1301,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Terraform (raise, lower, etc) an area or whole parcel of land
-	 * 
+	 *
 	 * @param simulator
 	 *            Simulator land area is in.
 	 * @param localID
@@ -1322,7 +1322,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Terraform (raise, lower, etc) an area or whole parcel of land
-	 * 
+	 *
 	 * @param simulator
 	 *            Simulator land area is in.
 	 * @param west
@@ -1349,7 +1349,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Terraform (raise, lower, etc) an area or whole parcel of land
-	 * 
+	 *
 	 * @param simulator
 	 *            Simulator land area is in.
 	 * @param localID
@@ -1403,7 +1403,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Terraform (raise, lower, etc) an area or whole parcel of land
-	 * 
+	 *
 	 * @param simulator
 	 *            Simulator land area is in.
 	 * @param localID
@@ -1454,7 +1454,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 	/**
 	 * Sends a request to the simulator to return a list of objects owned by
 	 * specific owners
-	 * 
+	 *
 	 * @param localID
 	 *            Simulator local ID of parcel
 	 * @param selectType
@@ -1480,7 +1480,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Eject and optionally ban a user from a parcel
-	 * 
+	 *
 	 * @param targetID
 	 *            target key of avatar to eject
 	 * @param ban
@@ -1501,7 +1501,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Freeze or unfreeze an avatar over your land
-	 * 
+	 *
 	 * @param targetID
 	 *            target key to freeze
 	 * @param freeze
@@ -1523,7 +1523,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Abandon a parcel of land
-	 * 
+	 *
 	 * @param simulator
 	 *            Simulator parcel is in
 	 * @param localID
@@ -1540,7 +1540,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Requests the UUID of the parcel in a remote region at a specified location
-	 * 
+	 *
 	 * @param location
 	 *            Location of the parcel in the remote region
 	 * @param regionHandle
@@ -1553,16 +1553,16 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		URI url = _Client.Network.getCapabilityURI("RemoteParcelRequest");
 		if (url != null) {
 			RemoteParcelRequestRequest req = _Client.Messages.new RemoteParcelRequestRequest();
-			req.Location = location;
-			req.RegionHandle = regionHandle;
-			req.RegionID = regionID;
+			req.location = location;
+			req.regionHandle = regionHandle;
+			req.regionID = regionID;
 
 			try {
 				OSD result = new CapsClient(_Client, "RequestRemoteParcelID").getResponse(url, req, null,
 						_Client.Settings.CAPS_TIMEOUT);
 				RemoteParcelRequestMessage response = (RemoteParcelRequestMessage) _Client.Messages
-						.DecodeEvent(CapsEventType.RemoteParcelRequest, (OSDMap) result);
-				return ((RemoteParcelRequestReply) response.Request).ParcelID;
+						.decodeEvent(CapsEventType.RemoteParcelRequest, (OSDMap) result);
+				return ((RemoteParcelRequestReply) response.request).parcelID;
 			} catch (Throwable t) {
 				logger.debug(GridClient.Log("Failed to fetch remote parcel ID", _Client));
 			}
@@ -1578,7 +1578,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Retrieves information on resources used by the parcel
-	 * 
+	 *
 	 * @param parcelID
 	 *            UUID of the parcel
 	 * @param getDetails
@@ -1591,7 +1591,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 			URI url = _Client.Network.getCapabilityURI(CapsEventType.LandResources.toString());
 			CapsClient request = new CapsClient(_Client, CapsEventType.LandResources.toString());
 			LandResourcesRequest req = _Client.Messages.new LandResourcesRequest();
-			req.ParcelID = parcelID;
+			req.parcelID = parcelID;
 			request.executeHttpPost(url, req, new LandResourcesMessageHandler(getDetails, callback),
 					_Client.Settings.CAPS_TIMEOUT);
 
@@ -1619,16 +1619,16 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 					callback.callback(false, null);
 				}
 				LandResourcesMessage response = _Client.Messages.new LandResourcesMessage();
-				response.Deserialize((OSDMap) result);
+				response.deserialize((OSDMap) result);
 				OSD osd = new CapsClient(_Client, CapsEventType.LandResources.toString()).getResponse(
-						response.ScriptResourceSummary, Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT);
+						response.scriptResourceSummary, Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT);
 
 				LandResourcesInfo info = _Client.Messages.new LandResourcesInfo();
-				info.Deserialize((OSDMap) osd);
-				if (response.ScriptResourceDetails != null && getDetails) {
+				info.deserialize((OSDMap) osd);
+				if (response.scriptResourceDetails != null && getDetails) {
 					osd = new CapsClient(_Client, CapsEventType.LandResources.toString()).getResponse(
-							response.ScriptResourceDetails, Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT);
-					info.Deserialize((OSDMap) osd);
+							response.scriptResourceDetails, Helpers.EmptyString, _Client.Settings.CAPS_TIMEOUT);
+					info.deserialize((OSDMap) osd);
 				}
 				callback.callback(true, info);
 			} catch (Exception ex) {
@@ -1666,65 +1666,65 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		if (OnParcelProperties.count() > 0 || _Client.Settings.PARCEL_TRACKING == true) {
 			ParcelPropertiesMessage msg = (ParcelPropertiesMessage) message;
 
-			ParcelImpl parcel = new ParcelImpl(msg.LocalID);
+			ParcelImpl parcel = new ParcelImpl(msg.localID);
 
-			parcel.AABBMax = msg.AABBMax;
-			parcel.AABBMin = msg.AABBMin;
-			parcel.Area = msg.Area;
-			parcel.AuctionID = msg.AuctionID;
-			parcel.AuthBuyerID = msg.AuthBuyerID;
-			parcel.Bitmap = msg.Bitmap;
-			parcel.Category = msg.Category;
-			parcel.ClaimDate = msg.ClaimDate;
-			parcel.ClaimPrice = msg.ClaimPrice;
-			parcel.Desc = msg.Desc;
-			parcel.Flags = msg.ParcelFlags;
-			parcel.GroupID = msg.GroupID;
-			parcel.GroupPrims = msg.GroupPrims;
-			parcel.IsGroupOwned = msg.IsGroupOwned;
-			parcel.Landing = msg.LandingType;
-			parcel.MaxPrims = msg.MaxPrims;
-			parcel.Media.MediaAutoScale = msg.MediaAutoScale;
-			parcel.Media.MediaID = msg.MediaID;
-			parcel.Media.MediaURL = msg.MediaURL;
-			parcel.MusicURL = msg.MusicURL;
-			parcel.Name = msg.Name;
-			parcel.OtherCleanTime = msg.OtherCleanTime;
-			parcel.OtherCount = msg.OtherCount;
-			parcel.OtherPrims = msg.OtherPrims;
-			parcel.OwnerID = msg.OwnerID;
-			parcel.OwnerPrims = msg.OwnerPrims;
-			parcel.ParcelPrimBonus = msg.ParcelPrimBonus;
-			parcel.PassHours = msg.PassHours;
-			parcel.PassPrice = msg.PassPrice;
-			parcel.PublicCount = msg.PublicCount;
-			parcel.RegionDenyAgeUnverified = msg.RegionDenyAgeUnverified;
-			parcel.RegionDenyAnonymous = msg.RegionDenyAnonymous;
-			parcel.RegionPushOverride = msg.RegionPushOverride;
-			parcel.RentPrice = msg.RentPrice;
-			ParcelResult result = msg.RequestResult;
-			parcel.SalePrice = msg.SalePrice;
-			int selectedPrims = msg.SelectedPrims;
-			parcel.SelfCount = msg.SelfCount;
-			int sequenceID = msg.SequenceID;
-			parcel.SimWideMaxPrims = msg.SimWideMaxPrims;
-			parcel.SimWideTotalPrims = msg.SimWideTotalPrims;
-			boolean snapSelection = msg.SnapSelection;
-			parcel.SnapshotID = msg.SnapshotID;
-			parcel.Status = msg.Status;
-			parcel.TotalPrims = msg.TotalPrims;
-			parcel.UserLocation = msg.UserLocation;
-			parcel.UserLookAt = msg.UserLookAt;
-			parcel.Media.MediaDesc = msg.MediaDesc;
-			parcel.Media.MediaHeight = msg.MediaHeight;
-			parcel.Media.MediaWidth = msg.MediaWidth;
-			parcel.Media.MediaLoop = msg.MediaLoop;
-			parcel.Media.MediaType = msg.MediaType;
-			parcel.ObscureMedia = msg.ObscureMedia;
-			parcel.ObscureMusic = msg.ObscureMusic;
-			parcel.SeeAVs = msg.SeeAVs;
-			parcel.AnyAVSounds = msg.AnyAVSounds;
-			parcel.GroupAVSounds = msg.GroupAVSounds;
+			parcel.AABBMax = msg.aabbMax;
+			parcel.AABBMin = msg.aabbMin;
+			parcel.Area = msg.area;
+			parcel.AuctionID = msg.auctionID;
+			parcel.AuthBuyerID = msg.authBuyerID;
+			parcel.Bitmap = msg.bitmap;
+			parcel.Category = msg.category;
+			parcel.ClaimDate = msg.claimDate;
+			parcel.ClaimPrice = msg.claimPrice;
+			parcel.Desc = msg.desc;
+			parcel.Flags = msg.parcelFlags;
+			parcel.GroupID = msg.groupID;
+			parcel.GroupPrims = msg.groupPrims;
+			parcel.IsGroupOwned = msg.isGroupOwned;
+			parcel.Landing = msg.landingType;
+			parcel.MaxPrims = msg.maxPrims;
+			parcel.Media.mediaAutoScale = msg.mediaAutoScale;
+			parcel.Media.mediaID = msg.mediaID;
+			parcel.Media.mediaURL = msg.mediaURL;
+			parcel.MusicURL = msg.musicURL;
+			parcel.Name = msg.name;
+			parcel.OtherCleanTime = msg.otherCleanTime;
+			parcel.OtherCount = msg.otherCount;
+			parcel.OtherPrims = msg.otherPrims;
+			parcel.OwnerID = msg.ownerID;
+			parcel.OwnerPrims = msg.ownerPrims;
+			parcel.ParcelPrimBonus = msg.parcelPrimBonus;
+			parcel.PassHours = msg.passHours;
+			parcel.PassPrice = msg.passPrice;
+			parcel.PublicCount = msg.publicCount;
+			parcel.RegionDenyAgeUnverified = msg.regionDenyAgeUnverified;
+			parcel.RegionDenyAnonymous = msg.regionDenyAnonymous;
+			parcel.RegionPushOverride = msg.regionPushOverride;
+			parcel.RentPrice = msg.rentPrice;
+			ParcelResult result = msg.requestResult;
+			parcel.SalePrice = msg.salePrice;
+			int selectedPrims = msg.selectedPrims;
+			parcel.SelfCount = msg.selfCount;
+			int sequenceID = msg.sequenceID;
+			parcel.SimWideMaxPrims = msg.simWideMaxPrims;
+			parcel.SimWideTotalPrims = msg.simWideTotalPrims;
+			boolean snapSelection = msg.snapSelection;
+			parcel.SnapshotID = msg.snapshotID;
+			parcel.Status = msg.status;
+			parcel.TotalPrims = msg.totalPrims;
+			parcel.UserLocation = msg.userLocation;
+			parcel.UserLookAt = msg.userLookAt;
+			parcel.Media.mediaDesc = msg.mediaDesc;
+			parcel.Media.mediaHeight = msg.mediaHeight;
+			parcel.Media.mediaWidth = msg.mediaWidth;
+			parcel.Media.mediaLoop = msg.mediaLoop;
+			parcel.Media.mediaType = msg.mediaType;
+			parcel.ObscureMedia = msg.obscureMedia;
+			parcel.ObscureMusic = msg.obscureMusic;
+			parcel.SeeAVs = msg.seeAVs;
+			parcel.AnyAVSounds = msg.anyAVSounds;
+			parcel.GroupAVSounds = msg.groupAVSounds;
 
 			if (_Client.Settings.PARCEL_TRACKING) {
 				synchronized (simulator.getParcels()) {
@@ -1808,7 +1808,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * Raises the <see cref="ParcelAccessListReply"/> event
 	 */
 	private final void HandleParcelAccessListReply(Packet packet, Simulator simulator) {
@@ -1872,11 +1872,11 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 			for (int i = 0; i < msg.PrimOwnersBlock.length; i++) {
 				ParcelPrimOwners primOwner = new ParcelPrimOwners();
-				primOwner.OwnerID = msg.PrimOwnersBlock[i].OwnerID;
-				primOwner.Count = msg.PrimOwnersBlock[i].Count;
-				primOwner.IsGroupOwned = msg.PrimOwnersBlock[i].IsGroupOwned;
-				primOwner.OnlineStatus = msg.PrimOwnersBlock[i].OnlineStatus;
-				primOwner.NewestPrim = msg.PrimOwnersBlock[i].TimeStamp;
+				primOwner.OwnerID = msg.PrimOwnersBlock[i].ownerID;
+				primOwner.Count = msg.PrimOwnersBlock[i].count;
+				primOwner.IsGroupOwned = msg.PrimOwnersBlock[i].isGroupOwned;
+				primOwner.OnlineStatus = msg.PrimOwnersBlock[i].onlineStatus;
+				primOwner.NewestPrim = msg.PrimOwnersBlock[i].timeStamp;
 
 				primOwners.add(primOwner);
 			}
@@ -1886,7 +1886,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * Raises the <see cref="ForceSelectObjectsReply"/> event
 	 */
 	private final void HandleSelectParcelObjectsReply(Packet packet, Simulator simulator) {
@@ -1904,9 +1904,9 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * Raises the <see cref="ParcelMediaUpdateReply"/> event
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	private final void HandleParcelMediaUpdate(Packet packet, Simulator simulator) throws Exception {
@@ -1914,14 +1914,14 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 			ParcelMediaUpdatePacket reply = (ParcelMediaUpdatePacket) packet;
 			ParcelMedia media = new ParcelMedia();
 
-			media.MediaAutoScale = (reply.DataBlock.MediaAutoScale == (byte) 0x1) ? true : false;
-			media.MediaID = reply.DataBlock.MediaID;
-			media.MediaDesc = Helpers.BytesToString(reply.DataBlockExtended.getMediaDesc());
-			media.MediaHeight = reply.DataBlockExtended.MediaHeight;
-			media.MediaLoop = ((reply.DataBlockExtended.MediaLoop & 1) != 0) ? true : false;
-			media.MediaType = Helpers.BytesToString(reply.DataBlockExtended.getMediaType());
-			media.MediaWidth = reply.DataBlockExtended.MediaWidth;
-			media.MediaURL = Helpers.BytesToString(reply.DataBlock.getMediaURL());
+			media.mediaAutoScale = (reply.DataBlock.MediaAutoScale == (byte) 0x1) ? true : false;
+			media.mediaID = reply.DataBlock.MediaID;
+			media.mediaDesc = Helpers.BytesToString(reply.DataBlockExtended.getMediaDesc());
+			media.mediaHeight = reply.DataBlockExtended.MediaHeight;
+			media.mediaLoop = ((reply.DataBlockExtended.MediaLoop & 1) != 0) ? true : false;
+			media.mediaType = Helpers.BytesToString(reply.DataBlockExtended.getMediaType());
+			media.mediaWidth = reply.DataBlockExtended.MediaWidth;
+			media.mediaURL = Helpers.BytesToString(reply.DataBlock.getMediaURL());
 
 			OnParcelMediaUpdateReply.dispatch(new ParcelMediaUpdateReplyCallbackArgs(simulator, media));
 		}
@@ -1953,7 +1953,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * Raises the <see cref="ParcelMediaCommand"/> event
 	 */
 	private final void HandleParcelMediaCommandMessagePacket(Packet packet, Simulator simulator) {

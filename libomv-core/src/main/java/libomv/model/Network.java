@@ -26,20 +26,20 @@ public interface Network {
 	 */
 	public final class IncomingPacket {
 		/** Reference to the simulator that this packet came from */
-		public Simulator Simulator;
+		public Simulator simulator;
 		/** Packet that needs to be processed */
-		public Packet Packet;
+		public Packet packet;
 		/** CapsMessage that needs to be processed */
-		public IMessage Message;
+		public IMessage message;
 
 		public IncomingPacket(Simulator simulator, Packet packet) {
-			Simulator = simulator;
-			Packet = packet;
+			this.simulator = simulator;
+			this.packet = packet;
 		}
 
 		public IncomingPacket(Simulator simulator, IMessage message) {
-			Simulator = simulator;
-			Message = message;
+			this.simulator = simulator;
+			this.message = message;
 		}
 	}
 
@@ -49,22 +49,22 @@ public interface Network {
 	 */
 	public class OutgoingPacket {
 		/** Reference to the simulator this packet is destined for */
-		public final Simulator Simulator;
+		public final Simulator simulator;
 		/** Packet that needs to be sent */
-		public final ByteBuffer Buffer;
+		public final ByteBuffer buffer;
 		/** PacketType */
 		public PacketType Type;
 		/** Sequence number of the wrapped packet */
-		public int SequenceNumber;
+		public int sequenceNumber;
 		/** Number of times this packet has been resent */
-		public int ResendCount;
+		public int resendCount;
 		/** Environment.TickCount when this packet was last sent over the wire */
-		public long TickCount;
+		public long tickCount;
 
 		public OutgoingPacket(Simulator simulator, PacketType type, ByteBuffer buffer) {
-			Simulator = simulator;
-			Type = type;
-			Buffer = buffer;
+			this.simulator = simulator;
+			this.Type = type;
+			this.buffer = buffer;
 		}
 	}
 

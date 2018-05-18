@@ -50,7 +50,7 @@ public class Program
                 "TestClient.exe [--first firstname --last lastname --pass password] [--file userlist.txt] [--loginuri=\"uri\"] [--startpos \"sim/x/y/z\"] [--master \"master name\"] [--masterkey \"master uuid\"] [--gettextures] [--scriptfile \"filename\"]");
     }
 
-    static public void main(String[] args) throws Exception
+    public static void main(String[] args) throws Exception
     {
         Arguments arguments = new Arguments(args);
 

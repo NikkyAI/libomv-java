@@ -47,7 +47,7 @@ public class FacetedMesh extends Mesh {
 	private static final Logger logger = Logger.getLogger(FacetedMesh.class);
 
 	/// List of primitive faces
-	public List<Mesh.Face> Faces;
+	public List<Face> faces;
 
 	/**
 	 * Decodes mesh asset into FacetedMesh
@@ -62,7 +62,7 @@ public class FacetedMesh extends Mesh {
 	 *            Resulting decoded FacetedMesh
 	 * @returns True if mesh asset decoding was successful
 	 */
-	public static FacetedMesh TryDecodeFromAsset(Primitive prim, AssetMesh meshAsset, DetailLevel LOD) {
+	public static FacetedMesh tryDecodeFromAsset(Primitive prim, AssetMesh meshAsset, DetailLevel LOD) {
 		try {
 			OSDMap meshData = meshAsset.getMeshData();
 			OSD facesOSD = null;
@@ -91,11 +91,11 @@ public class FacetedMesh extends Mesh {
 			}
 
 			FacetedMesh mesh = new FacetedMesh();
-			mesh.Faces = new ArrayList<Face>();
-			mesh.Prim = prim;
-			mesh.Profile.Faces = new ArrayList<ProfileFace>();
-			mesh.Profile.Positions = new ArrayList<Vector3>();
-			mesh.Path.Points = new ArrayList<PathPoint>();
+			mesh.faces = new ArrayList<Face>();
+			mesh.prim = prim;
+			mesh.profile.faces = new ArrayList<ProfileFace>();
+			mesh.profile.positions = new ArrayList<Vector3>();
+			mesh.path.points = new ArrayList<PathPoint>();
 
 			OSDArray decodedMeshOsdArray = (OSDArray) facesOSD;
 
@@ -114,10 +114,10 @@ public class FacetedMesh extends Mesh {
 						continue;
 
 					Face oface = mesh.new Face();
-					oface.ID = faceNr;
-					oface.Vertices = new ArrayList<Vertex>();
-					oface.Indices = new ArrayList<Integer>();
-					oface.TextureFace = prim.Textures.getFace(faceNr);
+					oface.id = faceNr;
+					oface.vertices = new ArrayList<Vertex>();
+					oface.indices = new ArrayList<Integer>();
+					oface.textureFace = prim.textures.getFace(faceNr);
 
 					Vector3 posMax;
 					Vector3 posMin;
@@ -158,35 +158,35 @@ public class FacetedMesh extends Mesh {
 					for (int i = 0; i < posBytes.length; i += 6) {
 						Vertex vx = mesh.new Vertex();
 
-						vx.Position = new Vector3(Helpers.UInt16ToFloatL(posBytes, i, posMin.X, posMax.X),
+						vx.position = new Vector3(Helpers.UInt16ToFloatL(posBytes, i, posMin.X, posMax.X),
 								Helpers.UInt16ToFloatL(posBytes, i + 2, posMin.Y, posMax.Y),
 								Helpers.UInt16ToFloatL(posBytes, i + 4, posMin.Z, posMax.Z));
 
 						if (norBytes != null && norBytes.length >= i + 6) {
-							vx.Normal = new Vector3(Helpers.UInt16ToFloatL(norBytes, i, posMin.X, posMax.X),
+							vx.normal = new Vector3(Helpers.UInt16ToFloatL(norBytes, i, posMin.X, posMax.X),
 									Helpers.UInt16ToFloatL(norBytes, i + 2, posMin.Y, posMax.Y),
 									Helpers.UInt16ToFloatL(norBytes, i + 4, posMin.Z, posMax.Z));
 						}
 
-						int vertexIndexOffset = oface.Vertices.size() * 4;
+						int vertexIndexOffset = oface.vertices.size() * 4;
 
 						if (texBytes != null && texBytes.length >= vertexIndexOffset + 4) {
-							vx.TexCoord = new Vector2(
+							vx.texCoord = new Vector2(
 									Helpers.UInt16ToFloatL(texBytes, vertexIndexOffset, texPosMin.X, texPosMax.X),
 									Helpers.UInt16ToFloatL(texBytes, vertexIndexOffset + 2, texPosMin.Y, texPosMax.Y));
 						}
 
-						oface.Vertices.add(vx);
+						oface.vertices.add(vx);
 					}
 
 					byte[] triangleBytes = subMeshMap.get("TriangleList").AsBinary();
 					for (int i = 0; i < triangleBytes.length; i += 6) {
-						oface.Indices.add(Helpers.BytesToUInt16L(triangleBytes, i));
-						oface.Indices.add(Helpers.BytesToUInt16L(triangleBytes, i + 2));
-						oface.Indices.add(Helpers.BytesToUInt16L(triangleBytes, i + 4));
+						oface.indices.add(Helpers.BytesToUInt16L(triangleBytes, i));
+						oface.indices.add(Helpers.BytesToUInt16L(triangleBytes, i + 2));
+						oface.indices.add(Helpers.BytesToUInt16L(triangleBytes, i + 4));
 					}
 
-					mesh.Faces.add(oface);
+					mesh.faces.add(oface);
 				}
 			}
 			return mesh;

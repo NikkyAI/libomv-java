@@ -51,35 +51,35 @@ public class AssetTexture extends AssetItem {
 	}
 
 	// A {@link Image} object containing image data
-	private ManagedImage Image;
+	private ManagedImage image;
 
 	public ManagedImage getImage() {
-		return Image;
+		return image;
 	}
 
 	public void setImage(ManagedImage image) {
 		invalidateAssetData();
-		Image = image;
+		this.image = image;
 	}
 
-	private J2KLayerInfo[] LayerInfo;
+	private J2KLayerInfo[] layerInfo;
 
 	public J2KLayerInfo[] getLayerInfo() {
-		return LayerInfo;
+		return layerInfo;
 	}
 
 	public int getComponents() {
-		if (Image != null) {
+		if (image != null) {
 			int components = 0;
 
-			if ((Image.getChannels() & ManagedImage.ImageChannels.Color) != 0)
+			if ((image.getChannels() & ManagedImage.ImageChannels.Color) != 0)
 				components = 3;
-			else if ((Image.getChannels() & ManagedImage.ImageChannels.Gray) != 0)
+			else if ((image.getChannels() & ManagedImage.ImageChannels.Gray) != 0)
 				components = 1;
 
-			if ((Image.getChannels() & ManagedImage.ImageChannels.Bump) != 0)
+			if ((image.getChannels() & ManagedImage.ImageChannels.Bump) != 0)
 				components++;
-			if ((Image.getChannels() & ManagedImage.ImageChannels.Alpha) != 0)
+			if ((image.getChannels() & ManagedImage.ImageChannels.Alpha) != 0)
 				components++;
 
 			return components;
@@ -107,7 +107,7 @@ public class AssetTexture extends AssetItem {
 	 */
 	public AssetTexture(ManagedImage image) {
 		super(null, null);
-		Image = image;
+		this.image = image;
 	}
 
 	/**
@@ -118,8 +118,8 @@ public class AssetTexture extends AssetItem {
 	protected void encode() {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try {
-			J2KImage.encode(bos, Image, false);
-			AssetData = bos.toByteArray();
+			J2KImage.encode(bos, image, false);
+			assetData = bos.toByteArray();
 		} catch (Exception ex) {
 			logger.error("Failed to encode JPEG2000 image", ex);
 		} finally {
@@ -139,14 +139,14 @@ public class AssetTexture extends AssetItem {
 	 */
 	@Override
 	protected boolean decode() {
-		Image = null;
+		image = null;
 
-		if (AssetData == null)
+		if (assetData == null)
 			return false;
 
-		InputStream is = new ByteArrayInputStream(AssetData);
+		InputStream is = new ByteArrayInputStream(assetData);
 		try {
-			Image = J2KImage.decode(is);
+			image = J2KImage.decode(is);
 			return true;
 		} catch (Exception ex) {
 			logger.error("Error decoding asset texture data", ex);
@@ -165,11 +165,11 @@ public class AssetTexture extends AssetItem {
 	 * @return
 	 */
 	public boolean decodeLayerBoundaries() {
-		if (AssetData == null)
+		if (assetData == null)
 			encode();
 
-		LayerInfo = J2KImage.decodeLayerBoundaries(AssetData);
-		return (LayerInfo.length > 0);
+		layerInfo = J2KImage.decodeLayerBoundaries(assetData);
+		return (layerInfo.length > 0);
 	}
 
 }

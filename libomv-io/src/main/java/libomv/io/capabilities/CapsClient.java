@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -79,7 +79,7 @@ public class CapsClient extends AsyncHTTPClient<OSD> {
 		_Client = client;
 
 		if (client != null) {
-			client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
+			client.Settings.onSettingsUpdate.add(new SettingsUpdate());
 			trackUtilization = client.Settings.getBool(LibSettings.TRACK_UTILIZATION);
 		}
 	}
@@ -99,7 +99,7 @@ public class CapsClient extends AsyncHTTPClient<OSD> {
 	 * Synchronous HTTP Get request from a capability that requires no further
 	 * request entity. This function returns either after the server responded with
 	 * any data or when the timeout expired
-	 * 
+	 *
 	 * @param address
 	 *            The timeout in ms to wait for a request
 	 * @param acceptHeader
@@ -121,7 +121,7 @@ public class CapsClient extends AsyncHTTPClient<OSD> {
 	 * Synchronous HTTP Get request from a capability that requires no further
 	 * request entity. This function returns either after the server responded with
 	 * any data or when the timeout expired
-	 * 
+	 *
 	 * @param address
 	 *            The timeout in ms to wait for a request
 	 * @param acceptHeader
@@ -135,7 +135,7 @@ public class CapsClient extends AsyncHTTPClient<OSD> {
 	 */
 	public OSD getResponse(URI address, IMessage message, FutureCallback<OSD> callback, long timeout)
 			throws InterruptedException, ExecutionException, TimeoutException {
-		Future<OSD> result = executeHttpPost(address, message.Serialize(), OSD.OSDFormat.Xml, null, null,
+		Future<OSD> result = executeHttpPost(address, message.serialize(), OSD.OSDFormat.Xml, null, null,
 				TIMEOUT_INFINITE);
 		return result.get(timeout, TimeUnit.MILLISECONDS);
 	}
@@ -144,7 +144,7 @@ public class CapsClient extends AsyncHTTPClient<OSD> {
 	 * Synchronous HTTP Post request from a capability that requires a OSD formated
 	 * request entity. This function returns either after the server responded with
 	 * any data or when the timeout expired
-	 * 
+	 *
 	 * @param address
 	 *            The timeout in ms to wait for a request
 	 * @param data
@@ -168,7 +168,7 @@ public class CapsClient extends AsyncHTTPClient<OSD> {
 	 * Synchronous HTTP Post request from a capability that requires a OSD formated
 	 * request entity. This function returns either after the server responded with
 	 * any data or when the timeout expired
-	 * 
+	 *
 	 * @param address
 	 *            The timeout in ms to wait for a request
 	 * @param data
@@ -194,7 +194,7 @@ public class CapsClient extends AsyncHTTPClient<OSD> {
 	 * Asynchronous HTTP Post request from a capability that requires a OSD formated
 	 * request entity. This function returns either after the server responded with
 	 * any data or when the timeout expired
-	 * 
+	 *
 	 * @param address
 	 *            The uri to post the data to
 	 * @param message
@@ -212,14 +212,14 @@ public class CapsClient extends AsyncHTTPClient<OSD> {
 	 * @throws TimeoutException
 	 */
 	public Future<OSD> executeHttpPost(URI address, IMessage message, FutureCallback<OSD> callback, long timeout) {
-		return executeHttpPost(address, message.Serialize(), OSD.OSDFormat.Xml, null, callback, timeout);
+		return executeHttpPost(address, message.serialize(), OSD.OSDFormat.Xml, null, callback, timeout);
 	}
 
 	/**
 	 * Asynchronous HTTP Post request from a capability that requires a OSD formated
 	 * request entity. This function returns either after the server responded with
 	 * any data or when the timeout expired
-	 * 
+	 *
 	 * @param address
 	 *            The uri to post the data to
 	 * @param data
@@ -238,7 +238,7 @@ public class CapsClient extends AsyncHTTPClient<OSD> {
 	 * Asynchronous HTTP Post request from a capability that requires a OSD formated
 	 * request entity. This function returns either after the server responded with
 	 * any data or when the timeout expired
-	 * 
+	 *
 	 * @param address
 	 *            The uri to post the data to
 	 * @param data
@@ -262,7 +262,7 @@ public class CapsClient extends AsyncHTTPClient<OSD> {
 	 * Asynchronous HTTP Post request from a capability that requires an OSD
 	 * formated request entity. This function returns either after the server
 	 * responded with any data or when the timeout expired
-	 * 
+	 *
 	 * @param address
 	 *            The uri to post the data to
 	 * @param data

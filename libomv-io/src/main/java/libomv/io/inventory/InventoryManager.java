@@ -6,7 +6,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -214,7 +214,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Callback for inventory item creation finishing
-	 * 
+	 *
 	 * @param success
 	 *            Whether the request to create an inventory item succeeded or not
 	 * @param item
@@ -243,7 +243,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Callback for an inventory item being create from an uploaded asset
-	 * 
+	 *
 	 * @param success
 	 *            true if inventory item creation was successful
 	 * @param status
@@ -284,7 +284,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Callback for an inventory item copying finished
-	 * 
+	 *
 	 * @param item
 	 *            InventoryItem being copied
 	 */
@@ -382,7 +382,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param client
 	 *            Reference to the GridClient object
 	 */
@@ -495,7 +495,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	/**
 	 * Fetch an inventory item from the dataserver Items will also be sent to the
 	 * {@link InventoryManager.OnItemReceived} event
-	 * 
+	 *
 	 * @param itemID
 	 *            The items {@link UUID}
 	 * @param ownerID
@@ -531,7 +531,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Request A single inventory item {@link InventoryManager.OnItemReceived}
-	 * 
+	 *
 	 * @param itemID
 	 *            The items {@link OpenMetaverse.UUID}
 	 * @param ownerID
@@ -548,7 +548,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Request inventory items {@link InventoryManager.OnItemReceived}
-	 * 
+	 *
 	 * @param itemIDs
 	 *            Inventory items to request
 	 * @param ownerIDs
@@ -582,7 +582,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Request inventory items over Caps {@link InventoryManager.OnItemReceived}
-	 * 
+	 *
 	 * @param itemIDs
 	 *            Inventory items to request
 	 * @param ownerIDs
@@ -643,7 +643,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	 * Get contents of a folder {@link InventoryManager.OnRequestFolderContents}
 	 * InventoryFolder.DescendentCount will only be accurate if both folders and
 	 * items are requested
-	 * 
+	 *
 	 * @param folder
 	 *            The {@link UUID} of the folder to search
 	 * @param owner
@@ -669,7 +669,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	 * Get contents of a folder {@link InventoryManager.OnRequestFolderContents}
 	 * InventoryFolder.DescendentCount will only be accurate if both folders and
 	 * items are requested
-	 * 
+	 *
 	 * @param folder
 	 *            The {@link UUID} of the folder to search
 	 * @param owner
@@ -716,7 +716,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	/**
 	 * Request the contents of an inventory folder
 	 * {@link InventoryManager.FolderContents}
-	 * 
+	 *
 	 * @param folderID
 	 *            The folder to search
 	 * @param ownerID
@@ -901,9 +901,9 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	/**
 	 * Returns the UUID of the folder (category) that defaults to containing 'type'.
 	 * The folder is not necessarily only for that type
-	 * 
+	 *
 	 * This will return the root folder if one does not exist
-	 * 
+	 *
 	 * @param type
 	 * @return The UUID of the desired folder if found, the UUID of the RootFolder
 	 *         if not found, or UUID.Zero on failure
@@ -942,7 +942,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Find an object in inventory using a specific path to search
-	 * 
+	 *
 	 * @param baseFolder
 	 *            The folder to begin the search in
 	 * @param inventoryOwner
@@ -979,7 +979,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Find inventory items by path
-	 * 
+	 *
 	 * @param baseFolder
 	 *            The folder to begin the search in
 	 * @param inventoryOwner
@@ -1010,7 +1010,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Search inventory Store object for an item or folder
-	 * 
+	 *
 	 * @param baseFolder
 	 *            The folder to begin the search in
 	 * @param path
@@ -1050,7 +1050,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Move an inventory item or folder to a new location
-	 * 
+	 *
 	 * @param item
 	 *            The {@link T:InventoryBase} item or folder to move
 	 * @param newParent
@@ -1067,7 +1067,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Move an inventory item or folder to a new location and change its name
-	 * 
+	 *
 	 * @param item
 	 *            The {@link T:InventoryBase} item or folder to move
 	 * @param newParent
@@ -1088,7 +1088,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Move and rename a folder
-	 * 
+	 *
 	 * @param folderID
 	 *            The source folders {@link UUID}
 	 * @param newparentID
@@ -1105,7 +1105,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Update folder properties
-	 * 
+	 *
 	 * @param folderID
 	 *            {@link UUID} of the folder to update
 	 * @param parentID
@@ -1142,7 +1142,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Move a folder
-	 * 
+	 *
 	 * @param folderID
 	 *            The source folders {@link UUID}
 	 * @param newParentID
@@ -1172,7 +1172,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	/**
 	 * Move multiple folders, the keys in the Dictionary parameter, to a new
 	 * parents, the value of that folder's key.
-	 * 
+	 *
 	 * @param foldersNewParents
 	 *            A Dictionary containing the {@link UUID} of the source as the key,
 	 *            and the {@link UUID} of the destination as the value
@@ -1208,7 +1208,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Move an inventory item to a new folder
-	 * 
+	 *
 	 * @param itemID
 	 *            The {@link UUID} of the source item to move
 	 * @param folderID
@@ -1222,7 +1222,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Move and rename an inventory item
-	 * 
+	 *
 	 * @param itemID
 	 *            The {@link UUID} of the source item to move
 	 * @param folderID
@@ -1260,7 +1260,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Move multiple inventory items to new locations
-	 * 
+	 *
 	 * @param itemsNewParents
 	 *            A Dictionary containing the {@link UUID} of the source item as the
 	 *            key, and the {@link UUID} of the destination folder as the value
@@ -1301,7 +1301,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Remove descendants of a folder, basically emptying the folder
-	 * 
+	 *
 	 * @param folder
 	 *            The {@link UUID} of the folder
 	 * @throws Exception
@@ -1327,7 +1327,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Remove a single item from inventory
-	 * 
+	 *
 	 * @param item
 	 *            The {@link UUID} of the inventory item to remove
 	 * @throws Exception
@@ -1341,7 +1341,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Remove a folder from inventory
-	 * 
+	 *
 	 * @param folder
 	 *            The {@link UUID} of the folder to remove
 	 * @throws Exception
@@ -1355,7 +1355,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Remove multiple items or folders from inventory
-	 * 
+	 *
 	 * @param items
 	 *            A List containing the {@link UUID} s of items to remove
 	 * @param folders
@@ -1413,7 +1413,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Empty the Lost and Found folder
-	 * 
+	 *
 	 * @throws Exception
 	 * @throws InventoryException
 	 */
@@ -1423,7 +1423,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Empty the Trash folder
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public final void EmptyTrash() throws Exception {
@@ -1432,7 +1432,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Empty the Lost and Found folder
-	 * 
+	 *
 	 * @param folderType
 	 *            The type of folder to empty
 	 * @throws Exception
@@ -1473,8 +1473,8 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	// /#region Create
 
 	/**
-	 * 
-	 * 
+	 *
+	 *
 	 * @param parentFolder
 	 * @param name
 	 * @param description
@@ -1496,8 +1496,8 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	}
 
 	/**
-	 * 
-	 * 
+	 *
+	 *
 	 * @param parentFolder
 	 * @param name
 	 * @param description
@@ -1533,7 +1533,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Creates a new inventory folder
-	 * 
+	 *
 	 * @param parentID
 	 *            ID of the folder to put this folder in
 	 * @param name
@@ -1549,7 +1549,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	 * Creates a new inventory folder. If you specify a preferred type of
 	 * <code>FolderType.Root</code> it will create a new root folder which may
 	 * likely cause all sorts of strange problems
-	 * 
+	 *
 	 * @param parentID
 	 *            ID of the folder to put this folder in
 	 * @param name
@@ -1601,7 +1601,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Create an inventory item and upload asset data
-	 * 
+	 *
 	 * @param data
 	 *            Asset data
 	 * @param name
@@ -1631,7 +1631,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Create an inventory item and upload asset data
-	 * 
+	 *
 	 * @param data
 	 *            Asset data
 	 * @param name
@@ -1680,7 +1680,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Creates inventory link to another inventory item or folder
-	 * 
+	 *
 	 * @param folderID
 	 *            Put newly created link in folder with this UUID
 	 * @param bse
@@ -1696,14 +1696,14 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 			CreateLink(folderID, folder, callback);
 		} else if (bse instanceof InventoryItem) {
 			InventoryItem item = (InventoryItem) bse;
-			CreateLink(folderID, item.itemID, item.name, item.Description, AssetType.Link, item.getType(), new UUID(),
+			CreateLink(folderID, item.itemID, item.name, item.description, AssetType.Link, item.getType(), new UUID(),
 					callback);
 		}
 	}
 
 	/**
 	 * Creates inventory link to another inventory item
-	 * 
+	 *
 	 * @param folderID
 	 *            Put newly created link in folder with this UUID
 	 * @param item
@@ -1714,13 +1714,13 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	 */
 	public final void CreateLink(UUID folderID, InventoryItem item, Callback<ItemCreatedCallbackArgs> callback)
 			throws Exception {
-		CreateLink(folderID, item.itemID, item.name, item.Description, AssetType.Link, item.getType(), new UUID(),
+		CreateLink(folderID, item.itemID, item.name, item.description, AssetType.Link, item.getType(), new UUID(),
 				callback);
 	}
 
 	/**
 	 * Creates inventory link to another inventory folder
-	 * 
+	 *
 	 * @param folderID
 	 *            Put newly created link in folder with this UUID
 	 * @param folder
@@ -1737,7 +1737,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Creates inventory link to another inventory item or folder
-	 * 
+	 *
 	 * @param folderID
 	 *            Put newly created link in folder with this UUID
 	 * @param itemID
@@ -1782,7 +1782,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Copy an item to a new location (folder)
-	 * 
+	 *
 	 * @param item
 	 *            The UUID of the item to copy
 	 * @param newParent
@@ -1801,7 +1801,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Copy an item to a new location (folder)
-	 * 
+	 *
 	 * @param item
 	 *            The UUID of the item to copy
 	 * @param newParent
@@ -1835,7 +1835,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Copy one or more items to a new location (folder)
-	 * 
+	 *
 	 * @param items
 	 *            The UUIDs of the items to copy
 	 * @param newParent
@@ -1859,7 +1859,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Copy one or more items to new locations (folders)
-	 * 
+	 *
 	 * @param items
 	 *            The UUIDs of the items to copy
 	 * @param targetFolders
@@ -1905,7 +1905,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Request a copy of an asset embedded within a notecard
-	 * 
+	 *
 	 * @param objectID
 	 *            Usually UUID.Zero for copying an asset from a notecard
 	 * @param notecardID
@@ -1926,11 +1926,11 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 		URI url = _Client.Network.getCapabilityURI(cap);
 		if (url != null) {
 			CopyInventoryFromNotecardMessage message = _Client.Messages.new CopyInventoryFromNotecardMessage();
-			message.CallbackID = 0;
-			message.FolderID = folderID;
-			message.ItemID = itemID;
-			message.NotecardID = notecardID;
-			message.ObjectID = objectID;
+			message.callbackID = 0;
+			message.folderID = folderID;
+			message.itemID = itemID;
+			message.notecardID = notecardID;
+			message.objectID = objectID;
 
 			new CapsClient(_Client, cap).executeHttpPost(url, message, null, _Client.Settings.CAPS_TIMEOUT);
 		} else {
@@ -1955,8 +1955,8 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	// /#region Update
 
 	/**
-	 * 
-	 * 
+	 *
+	 *
 	 * @param item
 	 * @throws Exception
 	 */
@@ -1968,8 +1968,8 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	}
 
 	/**
-	 * 
-	 * 
+	 *
+	 *
 	 * @param items
 	 * @throws Exception
 	 */
@@ -1978,8 +1978,8 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	}
 
 	/**
-	 * 
-	 * 
+	 *
+	 *
 	 * @param items
 	 * @param items
 	 * @param transactionID
@@ -1996,24 +1996,24 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 			InventoryItem item = items.get(i);
 
 			UpdateInventoryItemPacket.InventoryDataBlock block = update.new InventoryDataBlock();
-			block.BaseMask = item.Permissions.BaseMask;
+			block.BaseMask = item.permissions.BaseMask;
 			block.CRC = ItemCRC(item);
-			block.CreationDate = (int) Helpers.DateTimeToUnixTime(item.CreationDate);
-			block.CreatorID = item.Permissions.creatorID;
-			block.setDescription(Helpers.StringToBytes(item.Description));
-			block.EveryoneMask = item.Permissions.EveryoneMask;
-			block.Flags = item.ItemFlags;
+			block.CreationDate = (int) Helpers.DateTimeToUnixTime(item.creationDate);
+			block.CreatorID = item.permissions.creatorID;
+			block.setDescription(Helpers.StringToBytes(item.description));
+			block.EveryoneMask = item.permissions.EveryoneMask;
+			block.Flags = item.itemFlags;
 			block.FolderID = item.parent.itemID;
-			block.GroupID = item.Permissions.groupID;
-			block.GroupMask = item.Permissions.GroupMask;
-			block.GroupOwned = item.Permissions.isGroupOwned;
+			block.GroupID = item.permissions.groupID;
+			block.GroupMask = item.permissions.GroupMask;
+			block.GroupOwned = item.permissions.isGroupOwned;
 			block.InvType = item.getType().getValue();
 			block.ItemID = item.itemID;
 			block.setName(Helpers.StringToBytes(item.name));
-			block.NextOwnerMask = item.Permissions.NextOwnerMask;
+			block.NextOwnerMask = item.permissions.NextOwnerMask;
 			block.OwnerID = _Store.getOwnerID();
-			block.OwnerMask = item.Permissions.OwnerMask;
-			block.SalePrice = item.SalePrice;
+			block.OwnerMask = item.permissions.OwnerMask;
+			block.SalePrice = item.salePrice;
 			block.SaleType = item.saleType.getValue();
 			block.TransactionID = transactionID;
 			block.Type = item.assetType.getValue();
@@ -2025,8 +2025,8 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	}
 
 	/**
-	 * 
-	 * 
+	 *
+	 *
 	 * @param data
 	 * @param notecardID
 	 * @param callback
@@ -2051,7 +2051,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Save changes to notecard embedded in object contents
-	 * 
+	 *
 	 * @param data
 	 *            Encoded notecard asset data
 	 * @param notecardID
@@ -2082,7 +2082,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Upload new gesture asset for an inventory gesture item
-	 * 
+	 *
 	 * @param data
 	 *            Encoded gesture asset
 	 * @param gestureID
@@ -2110,7 +2110,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Update an existing script in an agents Inventory
-	 * 
+	 *
 	 * @param data
 	 *            A byte[] array containing the encoded scripts contents
 	 * @param itemID
@@ -2140,7 +2140,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Update an existing script in an task Inventory
-	 * 
+	 *
 	 * @param data
 	 *            A byte[] array containing the encoded scripts contents
 	 * @param itemID
@@ -2160,10 +2160,10 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 		URI url = _Client.Network.getCapabilityURI(cap);
 		if (url != null) {
 			UpdateScriptTaskUpdateMessage msg = _Client.Messages.new UpdateScriptTaskUpdateMessage();
-			msg.ItemID = itemID;
-			msg.TaskID = taskID;
-			msg.ScriptRunning = running;
-			msg.Target = mono ? "mono" : "lsl2";
+			msg.itemID = itemID;
+			msg.taskID = taskID;
+			msg.scriptRunning = running;
+			msg.target = mono ? "mono" : "lsl2";
 
 			CapsClient request = new CapsClient(_Client, cap);
 			request.executeHttpPost(url, msg, new UpdateScriptAgentInventoryResponse(callback, data, itemID),
@@ -2179,7 +2179,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Rez an object from inventory
-	 * 
+	 *
 	 * @param simulator
 	 *            Simulator to place object in
 	 * @param rotation
@@ -2199,7 +2199,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Rez an object from inventory
-	 * 
+	 *
 	 * @param simulator
 	 *            Simulator to place object in
 	 * @param rotation
@@ -2220,7 +2220,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Rez an object from inventory
-	 * 
+	 *
 	 * @param simulator
 	 *            Simulator to place object in
 	 * @param rotation
@@ -2245,7 +2245,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Rez an object from inventory
-	 * 
+	 *
 	 * @param simulator
 	 *            Simulator to place object in
 	 * @param taskID
@@ -2280,31 +2280,31 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 		add.RezData.RayEndIsIntersection = false;
 		add.RezData.RezSelected = rezSelected;
 		add.RezData.RemoveItem = false;
-		add.RezData.ItemFlags = item.ItemFlags;
-		add.RezData.GroupMask = item.Permissions.GroupMask;
-		add.RezData.EveryoneMask = item.Permissions.EveryoneMask;
-		add.RezData.NextOwnerMask = item.Permissions.NextOwnerMask;
+		add.RezData.ItemFlags = item.itemFlags;
+		add.RezData.GroupMask = item.permissions.GroupMask;
+		add.RezData.EveryoneMask = item.permissions.EveryoneMask;
+		add.RezData.NextOwnerMask = item.permissions.NextOwnerMask;
 
 		add.InventoryData.ItemID = item.itemID;
 		add.InventoryData.FolderID = item.parent.itemID;
-		add.InventoryData.CreatorID = item.Permissions.creatorID;
-		add.InventoryData.OwnerID = item.Permissions.ownerID;
-		add.InventoryData.GroupID = item.Permissions.groupID;
-		add.InventoryData.BaseMask = item.Permissions.BaseMask;
-		add.InventoryData.OwnerMask = item.Permissions.OwnerMask;
-		add.InventoryData.GroupMask = item.Permissions.GroupMask;
-		add.InventoryData.EveryoneMask = item.Permissions.EveryoneMask;
-		add.InventoryData.NextOwnerMask = item.Permissions.NextOwnerMask;
-		add.InventoryData.GroupOwned = item.Permissions.isGroupOwned;
+		add.InventoryData.CreatorID = item.permissions.creatorID;
+		add.InventoryData.OwnerID = item.permissions.ownerID;
+		add.InventoryData.GroupID = item.permissions.groupID;
+		add.InventoryData.BaseMask = item.permissions.BaseMask;
+		add.InventoryData.OwnerMask = item.permissions.OwnerMask;
+		add.InventoryData.GroupMask = item.permissions.GroupMask;
+		add.InventoryData.EveryoneMask = item.permissions.EveryoneMask;
+		add.InventoryData.NextOwnerMask = item.permissions.NextOwnerMask;
+		add.InventoryData.GroupOwned = item.permissions.isGroupOwned;
 		add.InventoryData.TransactionID = queryID;
 		add.InventoryData.Type = item.getType().getValue();
 		add.InventoryData.InvType = item.getType().getValue();
-		add.InventoryData.Flags = item.ItemFlags;
+		add.InventoryData.Flags = item.itemFlags;
 		add.InventoryData.SaleType = item.saleType.getValue();
-		add.InventoryData.SalePrice = item.SalePrice;
+		add.InventoryData.SalePrice = item.salePrice;
 		add.InventoryData.setName(Helpers.StringToBytes(item.name));
-		add.InventoryData.setDescription(Helpers.StringToBytes(item.Description));
-		add.InventoryData.CreationDate = (int) Helpers.DateTimeToUnixTime(item.CreationDate);
+		add.InventoryData.setDescription(Helpers.StringToBytes(item.description));
+		add.InventoryData.CreationDate = (int) Helpers.DateTimeToUnixTime(item.creationDate);
 
 		simulator.sendPacket(add);
 
@@ -2314,7 +2314,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	/**
 	 * DeRez an object from the simulator to the agents Objects folder in the agents
 	 * Inventory
-	 * 
+	 *
 	 * @param objectLocalID
 	 *            The simulator Local ID of the object If objectLocalID is a child
 	 *            primitive in a linkset, the entire linkset will be derezzed
@@ -2327,7 +2327,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * DeRez an object from the simulator and return to inventory
-	 * 
+	 *
 	 * @param objectLocalID
 	 *            The simulator Local ID of the object
 	 * @param destType
@@ -2363,7 +2363,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Rez an item from inventory to its previous simulator location
-	 * 
+	 *
 	 * @param simulator
 	 * @param item
 	 * @param queryID
@@ -2379,24 +2379,24 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 		add.InventoryData.ItemID = item.itemID;
 		add.InventoryData.FolderID = item.parent.itemID;
-		add.InventoryData.CreatorID = item.Permissions.creatorID;
-		add.InventoryData.OwnerID = item.Permissions.ownerID;
-		add.InventoryData.GroupID = item.Permissions.groupID;
-		add.InventoryData.BaseMask = item.Permissions.BaseMask;
-		add.InventoryData.OwnerMask = item.Permissions.OwnerMask;
-		add.InventoryData.GroupMask = item.Permissions.GroupMask;
-		add.InventoryData.EveryoneMask = item.Permissions.EveryoneMask;
-		add.InventoryData.NextOwnerMask = item.Permissions.NextOwnerMask;
-		add.InventoryData.GroupOwned = item.Permissions.isGroupOwned;
+		add.InventoryData.CreatorID = item.permissions.creatorID;
+		add.InventoryData.OwnerID = item.permissions.ownerID;
+		add.InventoryData.GroupID = item.permissions.groupID;
+		add.InventoryData.BaseMask = item.permissions.BaseMask;
+		add.InventoryData.OwnerMask = item.permissions.OwnerMask;
+		add.InventoryData.GroupMask = item.permissions.GroupMask;
+		add.InventoryData.EveryoneMask = item.permissions.EveryoneMask;
+		add.InventoryData.NextOwnerMask = item.permissions.NextOwnerMask;
+		add.InventoryData.GroupOwned = item.permissions.isGroupOwned;
 		add.InventoryData.TransactionID = queryID;
 		add.InventoryData.Type = item.getType().getValue();
 		add.InventoryData.InvType = item.getType().getValue();
-		add.InventoryData.Flags = item.ItemFlags;
+		add.InventoryData.Flags = item.itemFlags;
 		add.InventoryData.SaleType = item.saleType.getValue();
-		add.InventoryData.SalePrice = item.SalePrice;
+		add.InventoryData.SalePrice = item.salePrice;
 		add.InventoryData.setName(Helpers.StringToBytes(item.name));
-		add.InventoryData.setDescription(Helpers.StringToBytes(item.Description));
-		add.InventoryData.CreationDate = (int) Helpers.DateTimeToUnixTime(item.CreationDate);
+		add.InventoryData.setDescription(Helpers.StringToBytes(item.description));
+		add.InventoryData.CreationDate = (int) Helpers.DateTimeToUnixTime(item.creationDate);
 
 		simulator.sendPacket(add);
 
@@ -2405,7 +2405,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Give an inventory item to another avatar
-	 * 
+	 *
 	 * @param itemID
 	 *            The {@link UUID} of the item to give
 	 * @param itemName
@@ -2437,7 +2437,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Give an inventory Folder with contents to another avatar
-	 * 
+	 *
 	 * @param folderID
 	 *            The {@link UUID} of the Folder to give
 	 * @param folderName
@@ -2487,7 +2487,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	/**
 	 * Copy or move an <see cref="InventoryItem"/> from agent inventory to a task
 	 * (primitive) inventory
-	 * 
+	 *
 	 * @param objectLocalID
 	 *            The target object
 	 * @param item
@@ -2508,24 +2508,24 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 		update.InventoryData.ItemID = item.itemID;
 		update.InventoryData.FolderID = item.parent.itemID;
-		update.InventoryData.CreatorID = item.Permissions.creatorID;
-		update.InventoryData.OwnerID = item.Permissions.ownerID;
-		update.InventoryData.GroupID = item.Permissions.groupID;
-		update.InventoryData.BaseMask = item.Permissions.BaseMask;
-		update.InventoryData.OwnerMask = item.Permissions.OwnerMask;
-		update.InventoryData.GroupMask = item.Permissions.GroupMask;
-		update.InventoryData.EveryoneMask = item.Permissions.EveryoneMask;
-		update.InventoryData.NextOwnerMask = item.Permissions.NextOwnerMask;
-		update.InventoryData.GroupOwned = item.Permissions.isGroupOwned;
+		update.InventoryData.CreatorID = item.permissions.creatorID;
+		update.InventoryData.OwnerID = item.permissions.ownerID;
+		update.InventoryData.GroupID = item.permissions.groupID;
+		update.InventoryData.BaseMask = item.permissions.BaseMask;
+		update.InventoryData.OwnerMask = item.permissions.OwnerMask;
+		update.InventoryData.GroupMask = item.permissions.GroupMask;
+		update.InventoryData.EveryoneMask = item.permissions.EveryoneMask;
+		update.InventoryData.NextOwnerMask = item.permissions.NextOwnerMask;
+		update.InventoryData.GroupOwned = item.permissions.isGroupOwned;
 		update.InventoryData.TransactionID = transactionID;
 		update.InventoryData.Type = item.assetType.getValue();
 		update.InventoryData.InvType = item.getType().getValue();
-		update.InventoryData.Flags = item.ItemFlags;
+		update.InventoryData.Flags = item.itemFlags;
 		update.InventoryData.SaleType = item.saleType.getValue();
-		update.InventoryData.SalePrice = item.SalePrice;
+		update.InventoryData.SalePrice = item.salePrice;
 		update.InventoryData.setName(Helpers.StringToBytes(item.name));
-		update.InventoryData.setDescription(Helpers.StringToBytes(item.Description));
-		update.InventoryData.CreationDate = (int) Helpers.DateTimeToUnixTime(item.CreationDate);
+		update.InventoryData.setDescription(Helpers.StringToBytes(item.description));
+		update.InventoryData.CreationDate = (int) Helpers.DateTimeToUnixTime(item.creationDate);
 		update.InventoryData.CRC = ItemCRC(item);
 
 		_Client.Network.sendPacket(update);
@@ -2536,10 +2536,10 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	/**
 	 * Retrieve a listing of the items contained in a task (Primitive) This request
 	 * blocks until the response from the simulator arrives or timeoutMS is exceeded
-	 * 
+	 *
 	 * NOTE: This requires the asset manager to be instantiated in order for this
 	 * function to succeed
-	 * 
+	 *
 	 * @param objectID
 	 *            The tasks {@link UUID}
 	 * @param objectLocalID
@@ -2612,7 +2612,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	/**
 	 * Request the contents of a tasks (primitives) inventory from the current
 	 * simulator {@link TaskInventoryReply}
-	 * 
+	 *
 	 * @param objectLocalID
 	 *            The LocalID of the object
 	 * @throws Exception
@@ -2624,7 +2624,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	/**
 	 * Request the contents of a tasks (primitives) inventory
 	 * {@link TaskInventoryReply}
-	 * 
+	 *
 	 * @param objectLocalID
 	 *            The simulator Local ID of the object
 	 * @param simulator
@@ -2643,7 +2643,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	/**
 	 * Move an item from a tasks (Primitive) inventory to the specified folder in
 	 * the avatars inventory Raises the <see cref="OnTaskItemReceived"/> event
-	 * 
+	 *
 	 * @param objectLocalID
 	 *            LocalID of the object in the simulator
 	 * @param taskItemID
@@ -2673,7 +2673,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	 * by comparing the tasks inventory serial before and after the request with the
 	 * <see cref="RequestTaskInventory"/> request combined with the
 	 * {@link TaskInventoryReply} event
-	 * 
+	 *
 	 * @param objectLocalID
 	 *            LocalID of the object in the simulator
 	 * @param taskItemID
@@ -2696,7 +2696,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	/**
 	 * Copy an InventoryScript item from the Agents Inventory into a primitives task
 	 * inventory
-	 * 
+	 *
 	 * @param objectLocalID
 	 *            An unsigned integer representing a primitive being simulated
 	 * @param item
@@ -2710,10 +2710,10 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	 *         inventory. <code>
 	 *    int primID = 95899503; // Fake prim ID
 	 *    UUID scriptID = UUID.Parse("92a7fe8a-e949-dd39-a8d8-1681d8673232"); // Fake Script UUID in Inventory
-	 * 
+	 *
 	 *    _Client.Inventory.FolderContents(_Client.Inventory.FindFolderForType(AssetType.LSLText), _Client.Self.AgentID,
 	 *        false, true, InventorySortOrder.ByName, 10000);
-	 * 
+	 *
 	 *    _Client.Inventory.RezScript(primID, (InventoryItem)_Client.Inventory.getStore().get(scriptID));
 	 * </code> </example> TODO: what does the return UUID correlate to if anything?
 	 * @throws Exception
@@ -2730,24 +2730,24 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 		ScriptPacket.InventoryBlock.ItemID = item.itemID;
 		ScriptPacket.InventoryBlock.FolderID = item.parent.itemID;
-		ScriptPacket.InventoryBlock.CreatorID = item.Permissions.creatorID;
-		ScriptPacket.InventoryBlock.OwnerID = item.Permissions.ownerID;
-		ScriptPacket.InventoryBlock.GroupID = item.Permissions.groupID;
-		ScriptPacket.InventoryBlock.BaseMask = item.Permissions.BaseMask;
-		ScriptPacket.InventoryBlock.OwnerMask = item.Permissions.OwnerMask;
-		ScriptPacket.InventoryBlock.GroupMask = item.Permissions.GroupMask;
-		ScriptPacket.InventoryBlock.EveryoneMask = item.Permissions.EveryoneMask;
-		ScriptPacket.InventoryBlock.NextOwnerMask = item.Permissions.NextOwnerMask;
-		ScriptPacket.InventoryBlock.GroupOwned = item.Permissions.isGroupOwned;
+		ScriptPacket.InventoryBlock.CreatorID = item.permissions.creatorID;
+		ScriptPacket.InventoryBlock.OwnerID = item.permissions.ownerID;
+		ScriptPacket.InventoryBlock.GroupID = item.permissions.groupID;
+		ScriptPacket.InventoryBlock.BaseMask = item.permissions.BaseMask;
+		ScriptPacket.InventoryBlock.OwnerMask = item.permissions.OwnerMask;
+		ScriptPacket.InventoryBlock.GroupMask = item.permissions.GroupMask;
+		ScriptPacket.InventoryBlock.EveryoneMask = item.permissions.EveryoneMask;
+		ScriptPacket.InventoryBlock.NextOwnerMask = item.permissions.NextOwnerMask;
+		ScriptPacket.InventoryBlock.GroupOwned = item.permissions.isGroupOwned;
 		ScriptPacket.InventoryBlock.TransactionID = transactionID;
 		ScriptPacket.InventoryBlock.Type = item.assetType.getValue();
 		ScriptPacket.InventoryBlock.InvType = item.getType().getValue();
-		ScriptPacket.InventoryBlock.Flags = item.ItemFlags;
+		ScriptPacket.InventoryBlock.Flags = item.itemFlags;
 		ScriptPacket.InventoryBlock.SaleType = item.saleType.getValue();
-		ScriptPacket.InventoryBlock.SalePrice = item.SalePrice;
+		ScriptPacket.InventoryBlock.SalePrice = item.salePrice;
 		ScriptPacket.InventoryBlock.setName(Helpers.StringToBytes(item.name));
-		ScriptPacket.InventoryBlock.setDescription(Helpers.StringToBytes(item.Description));
-		ScriptPacket.InventoryBlock.CreationDate = (int) Helpers.DateTimeToUnixTime(item.CreationDate);
+		ScriptPacket.InventoryBlock.setDescription(Helpers.StringToBytes(item.description));
+		ScriptPacket.InventoryBlock.CreationDate = (int) Helpers.DateTimeToUnixTime(item.creationDate);
 		ScriptPacket.InventoryBlock.CRC = ItemCRC(item);
 
 		_Client.Network.sendPacket(ScriptPacket);
@@ -2759,7 +2759,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	 * Request the running status of a script contained in a task (primitive)
 	 * inventory The <see cref="ScriptRunningReply"/> event can be used to obtain
 	 * the results of the request {@link ScriptRunningReply}
-	 * 
+	 *
 	 * @param objectID
 	 *            The ID of the primitive containing the script
 	 * @param scriptID
@@ -2779,7 +2779,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	 * (primitive) inventory To verify the change you can use the
 	 * <see cref="RequestGetScriptRunning"/> method combined with the
 	 * <see cref="ScriptRunningReply"/> event
-	 * 
+	 *
 	 * @param objectID
 	 *            The ID of the primitive containing the script
 	 * @param scriptID
@@ -2848,7 +2848,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Create a CRC from an InventoryItem
-	 * 
+	 *
 	 * @param iitem
 	 *            The source InventoryItem
 	 * @return A int representing the source InventoryItem as a CRC
@@ -2862,27 +2862,27 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 		CRC += iitem.itemID.CRC(); // ItemID
 
 		// Permission stuff
-		CRC += iitem.Permissions.creatorID.CRC(); // CreatorID
-		CRC += iitem.Permissions.ownerID.CRC(); // OwnerID
-		CRC += iitem.Permissions.groupID.CRC(); // GroupID
+		CRC += iitem.permissions.creatorID.CRC(); // CreatorID
+		CRC += iitem.permissions.ownerID.CRC(); // OwnerID
+		CRC += iitem.permissions.groupID.CRC(); // GroupID
 
 		// CRC += another 4 words which always seem to be zero -- unclear if
 		// this is a UUID or what
-		CRC += iitem.Permissions.OwnerMask; // owner_mask; // Either owner_mask
+		CRC += iitem.permissions.OwnerMask; // owner_mask; // Either owner_mask
 											// or next_owner_mask may need to be
-		CRC += iitem.Permissions.NextOwnerMask; // next_owner_mask; // switched
+		CRC += iitem.permissions.NextOwnerMask; // next_owner_mask; // switched
 												// with base_mask -- 2 values go
 												// here and in my
-		CRC += iitem.Permissions.EveryoneMask; // everyone_mask; // study item,
+		CRC += iitem.permissions.EveryoneMask; // everyone_mask; // study item,
 												// the three were identical.
-		CRC += iitem.Permissions.GroupMask; // group_mask;
+		CRC += iitem.permissions.GroupMask; // group_mask;
 
 		// The rest of the CRC fields
-		CRC += iitem.ItemFlags; // Flags
+		CRC += iitem.itemFlags; // Flags
 		CRC += iitem.getType().getValue(); // InvType
 		CRC += iitem.assetType.getValue(); // Type
-		CRC += Helpers.DateTimeToUnixTime(iitem.CreationDate); // CreationDate
-		CRC += iitem.SalePrice; // SalePrice
+		CRC += Helpers.DateTimeToUnixTime(iitem.creationDate); // CreationDate
+		CRC += iitem.salePrice; // SalePrice
 		CRC += (iitem.saleType.getValue() * 0x07073096); // SaleType
 
 		return CRC;
@@ -2952,7 +2952,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Parse the results of a RequestTaskInventory() response
-	 * 
+	 *
 	 * @param taskData
 	 *            A string which contains the data from the task reply
 	 * @return A List containing the items contained within the tasks inventory
@@ -3089,7 +3089,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 									}
 								}
 							} else if (key.equals("shadow_id")) {
-								assetID = Inventory.DecryptShadowID(new UUID(val));
+								assetID = Inventory.decryptShadowID(new UUID(val));
 							} else if (key.equals("asset_id")) {
 								assetID = new UUID(val);
 							} else if (key.equals("type")) {
@@ -3116,12 +3116,12 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 					InventoryItem item = InventoryItem.create(inventoryType, itemID, parentID, perms.ownerID);
 					item.assetID = assetID;
 					item.assetType = assetType;
-					item.CreationDate = creationDate;
-					item.Description = desc;
-					item.ItemFlags = flags;
+					item.creationDate = creationDate;
+					item.description = desc;
+					item.itemFlags = flags;
 					item.name = name;
-					item.Permissions = perms;
-					item.SalePrice = salePrice;
+					item.permissions = perms;
+					item.salePrice = salePrice;
 					item.saleType = saleType;
 
 					items.add(item);
@@ -3345,7 +3345,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Reply received when uploading an inventory asset
-	 * 
+	 *
 	 * @param success
 	 *            Has upload been successful
 	 * @param status
@@ -3591,7 +3591,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 					 * Objects that have been attached in-world prior to being stored on the asset
 					 * server are stored with the InventoryType of 0 (Texture) instead of 17
 					 * (Attachment)
-					 * 
+					 *
 					 * This corrects that behavior by forcing Object Asset types that have an
 					 * invalid InventoryType with the proper InventoryType of Attachment.
 					 */
@@ -3605,14 +3605,14 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 					item.name = Helpers.BytesToString(reply.ItemData[i].getName());
 					item.assetType = AssetType.setValue(reply.ItemData[i].Type);
 					item.assetID = reply.ItemData[i].AssetID;
-					item.CreationDate = Helpers.UnixTimeToDateTime(reply.ItemData[i].CreationDate);
-					item.Description = Helpers.BytesToString(reply.ItemData[i].getDescription());
-					item.ItemFlags = reply.ItemData[i].Flags;
-					item.Permissions = new Permissions(reply.ItemData[i].CreatorID, reply.ItemData[i].OwnerID, null,
+					item.creationDate = Helpers.UnixTimeToDateTime(reply.ItemData[i].CreationDate);
+					item.description = Helpers.BytesToString(reply.ItemData[i].getDescription());
+					item.itemFlags = reply.ItemData[i].Flags;
+					item.permissions = new Permissions(reply.ItemData[i].CreatorID, reply.ItemData[i].OwnerID, null,
 							reply.ItemData[i].GroupID, reply.ItemData[i].GroupOwned, reply.ItemData[i].BaseMask,
 							reply.ItemData[i].EveryoneMask, reply.ItemData[i].GroupMask,
 							reply.ItemData[i].NextOwnerMask, reply.ItemData[i].OwnerMask);
-					item.SalePrice = reply.ItemData[i].SalePrice;
+					item.salePrice = reply.ItemData[i].SalePrice;
 					item.saleType = SaleType.setValue(reply.ItemData[i].SaleType);
 					_Store.add(item);
 				}
@@ -3706,7 +3706,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	 * created. This may occur when an object that's rezzed in world is taken into
 	 * inventory, when an item is created using the CreateInventoryItem packet, or
 	 * when an object is purchased
-	 * 
+	 *
 	 * @param sender
 	 *            The sender
 	 * @param e
@@ -3728,13 +3728,13 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 			item.name = Helpers.BytesToString(dataBlock.getName());
 			item.assetType = AssetType.setValue(dataBlock.Type);
 			item.assetID = dataBlock.AssetID;
-			item.CreationDate = Helpers.UnixTimeToDateTime(dataBlock.CreationDate);
-			item.Description = Helpers.BytesToString(dataBlock.getDescription());
-			item.ItemFlags = dataBlock.Flags;
-			item.Permissions = new Permissions(dataBlock.CreatorID, dataBlock.OwnerID, null, dataBlock.GroupID,
+			item.creationDate = Helpers.UnixTimeToDateTime(dataBlock.CreationDate);
+			item.description = Helpers.BytesToString(dataBlock.getDescription());
+			item.itemFlags = dataBlock.Flags;
+			item.permissions = new Permissions(dataBlock.CreatorID, dataBlock.OwnerID, null, dataBlock.GroupID,
 					dataBlock.GroupOwned, dataBlock.BaseMask, dataBlock.EveryoneMask, dataBlock.GroupMask,
 					dataBlock.NextOwnerMask, dataBlock.OwnerMask);
-			item.SalePrice = dataBlock.SalePrice;
+			item.salePrice = dataBlock.SalePrice;
 			item.saleType = SaleType.setValue(dataBlock.SaleType);
 
 			/*
@@ -3787,7 +3787,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 			// This is triggered when an item is received from a task
 			OnTaskItemReceived.dispatch(new TaskItemReceivedCallbackArgs(item.itemID, dataBlock.FolderID,
-					item.Permissions.creatorID, item.assetID, item.getType()));
+					item.permissions.creatorID, item.assetID, item.getType()));
 		}
 	}
 
@@ -3840,14 +3840,14 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 				if (!dataBlock.AssetID.equals(UUID.Zero)) {
 					item.assetID = dataBlock.AssetID;
 				}
-				item.CreationDate = Helpers.UnixTimeToDateTime(dataBlock.CreationDate);
-				item.Description = Helpers.BytesToString(dataBlock.getDescription());
-				item.ItemFlags = dataBlock.Flags;
+				item.creationDate = Helpers.UnixTimeToDateTime(dataBlock.CreationDate);
+				item.description = Helpers.BytesToString(dataBlock.getDescription());
+				item.itemFlags = dataBlock.Flags;
 				item.name = Helpers.BytesToString(dataBlock.getName());
-				item.Permissions = new Permissions(dataBlock.CreatorID, dataBlock.OwnerID, null, dataBlock.GroupID,
+				item.permissions = new Permissions(dataBlock.CreatorID, dataBlock.OwnerID, null, dataBlock.GroupID,
 						dataBlock.GroupOwned, dataBlock.BaseMask, dataBlock.EveryoneMask, dataBlock.GroupMask,
 						dataBlock.NextOwnerMask, dataBlock.OwnerMask);
-				item.SalePrice = dataBlock.SalePrice;
+				item.salePrice = dataBlock.SalePrice;
 				item.saleType = SaleType.setValue(dataBlock.SaleType);
 
 				// Look for an "item created" callback
@@ -3878,52 +3878,52 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	private final void HandleBulkUpdateInventory(IMessage message, Simulator simulator) {
 		BulkUpdateInventoryMessage msg = (BulkUpdateInventoryMessage) message;
 
-		for (BulkUpdateInventoryMessage.FolderDataInfo newFolder : msg.FolderData) {
-			if (UUID.isZeroOrNull(newFolder.FolderID))
+		for (BulkUpdateInventoryMessage.FolderDataInfo newFolder : msg.folderData) {
+			if (UUID.isZeroOrNull(newFolder.folderID))
 				continue;
 
 			synchronized (_Store) {
 				InventoryFolder folder;
 
-				if (!_Store.containsFolder(newFolder.FolderID)) {
-					folder = new InventoryFolder(newFolder.FolderID, newFolder.ParentID, msg.AgentID);
+				if (!_Store.containsFolder(newFolder.folderID)) {
+					folder = new InventoryFolder(newFolder.folderID, newFolder.parentID, msg.agentID);
 				} else {
-					folder = _Store.getFolder(newFolder.FolderID);
-					folder.parentID = newFolder.ParentID;
+					folder = _Store.getFolder(newFolder.folderID);
+					folder.parentID = newFolder.parentID;
 				}
 
-				folder.name = newFolder.Name;
-				folder.preferredType = newFolder.Type;
+				folder.name = newFolder.name;
+				folder.preferredType = newFolder.type;
 				_Store.add(folder);
 			}
 		}
 
-		for (BulkUpdateInventoryMessage.ItemDataInfo newItem : msg.ItemData) {
-			if (UUID.isZeroOrNull(newItem.ItemID))
+		for (BulkUpdateInventoryMessage.ItemDataInfo newItem : msg.itemData) {
+			if (UUID.isZeroOrNull(newItem.itemID))
 				continue;
-			InventoryType invType = newItem.InvType;
+			InventoryType invType = newItem.inventoryType;
 			synchronized (_ItemInventoryTypeRequest) {
-				if (_ItemInventoryTypeRequest.containsKey(newItem.CallbackID)) {
-					invType = _ItemInventoryTypeRequest.remove(newItem.CallbackID);
+				if (_ItemInventoryTypeRequest.containsKey(newItem.callbackID)) {
+					invType = _ItemInventoryTypeRequest.remove(newItem.callbackID);
 				}
 			}
-			InventoryItem item = SafeCreateInventoryItem(invType, newItem.ItemID, newItem.FolderID, newItem.OwnerID);
+			InventoryItem item = SafeCreateInventoryItem(invType, newItem.itemID, newItem.folderID, newItem.ownerID);
 
-			item.assetType = newItem.Type;
-			item.assetID = newItem.AssetID;
-			item.CreationDate = newItem.CreationDate;
-			item.Description = newItem.Description;
-			item.ItemFlags = newItem.Flags;
-			item.name = newItem.Name;
-			item.Permissions = new Permissions(newItem.CreatorID, newItem.OwnerID, null, newItem.GroupID,
-					newItem.GroupOwned, newItem.BaseMask, newItem.EveryoneMask, newItem.GroupMask,
-					newItem.NextOwnerMask, newItem.OwnerMask);
-			item.SalePrice = newItem.SalePrice;
+			item.assetType = newItem.assetType;
+			item.assetID = newItem.assetID;
+			item.creationDate = newItem.creationDate;
+			item.description = newItem.description;
+			item.itemFlags = newItem.flags;
+			item.name = newItem.name;
+			item.permissions = new Permissions(newItem.creatorID, newItem.ownerID, null, newItem.groupID,
+					newItem.groupOwned, newItem.baseMask, newItem.everyoneMask, newItem.groupMask,
+					newItem.nextOwnerMask, newItem.ownerMask);
+			item.salePrice = newItem.salePrice;
 			item.saleType = newItem.saleType;
 
 			// Look for an "item created" callback
-			if (_ItemCreatedCallbacks.containsKey(newItem.CallbackID)) {
-				Callback<ItemCreatedCallbackArgs> callback = _ItemCreatedCallbacks.remove(newItem.CallbackID);
+			if (_ItemCreatedCallbacks.containsKey(newItem.callbackID)) {
+				Callback<ItemCreatedCallbackArgs> callback = _ItemCreatedCallbacks.remove(newItem.callbackID);
 
 				try {
 					callback.callback(new ItemCreatedCallbackArgs(true, item));
@@ -3933,8 +3933,8 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 			}
 
 			// Look for an "item copied" callback
-			if (_ItemCopiedCallbacks.containsKey(newItem.CallbackID)) {
-				Callback<ItemCopiedCallbackArgs> callback = _ItemCopiedCallbacks.remove(newItem.CallbackID);
+			if (_ItemCopiedCallbacks.containsKey(newItem.callbackID)) {
+				Callback<ItemCopiedCallbackArgs> callback = _ItemCopiedCallbacks.remove(newItem.callbackID);
 
 				try {
 					callback.callback(new ItemCopiedCallbackArgs(item));
@@ -3962,14 +3962,14 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 					dataBlock.FolderID, dataBlock.OwnerID);
 			item.assetType = AssetType.setValue(dataBlock.Type);
 			item.assetID = dataBlock.AssetID;
-			item.CreationDate = Helpers.UnixTimeToDateTime(dataBlock.CreationDate);
-			item.Description = Helpers.BytesToString(dataBlock.getDescription());
-			item.ItemFlags = dataBlock.Flags;
+			item.creationDate = Helpers.UnixTimeToDateTime(dataBlock.CreationDate);
+			item.description = Helpers.BytesToString(dataBlock.getDescription());
+			item.itemFlags = dataBlock.Flags;
 			item.name = Helpers.BytesToString(dataBlock.getName());
-			item.Permissions = new Permissions(dataBlock.CreatorID, dataBlock.OwnerID, null, dataBlock.GroupID,
+			item.permissions = new Permissions(dataBlock.CreatorID, dataBlock.OwnerID, null, dataBlock.GroupID,
 					dataBlock.GroupOwned, dataBlock.BaseMask, dataBlock.EveryoneMask, dataBlock.GroupMask,
 					dataBlock.NextOwnerMask, dataBlock.OwnerMask);
-			item.SalePrice = dataBlock.SalePrice;
+			item.salePrice = dataBlock.SalePrice;
 			item.saleType = SaleType.setValue(dataBlock.SaleType);
 
 			_Store.add(item);
@@ -3991,7 +3991,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	private final void HandleScriptRunningReply(IMessage message, Simulator simulator) {
 		ScriptRunningReplyMessage msg = (ScriptRunningReplyMessage) message;
 		OnScriptRunningReply
-				.dispatch(new ScriptRunningReplyCallbackArgs(msg.ObjectID, msg.ItemID, msg.Mono, msg.Running));
+				.dispatch(new ScriptRunningReplyCallbackArgs(msg.objectID, msg.itemID, msg.mono, msg.running));
 	}
 
 	// #endregion Packet Handlers

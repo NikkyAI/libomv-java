@@ -38,6 +38,8 @@ import libomv.utils.Helpers;
 public class TerrainCompressor implements libomv.model.Terrain {
 	private static final Logger logger = Logger.getLogger(TerrainCompressor.class);
 
+	// TODO:FIXME
+	// Shouldn't all these values be final???
 	public static byte PATCHES_PER_EDGE = 16;
 	public static byte END_OF_PATCHES = 97;
 
@@ -59,32 +61,32 @@ public class TerrainCompressor implements libomv.model.Terrain {
 
 	static {
 		// Initialize the decompression tables
-		BuildDequantizeTable16();
-		SetupCosines16();
-		BuildCopyMatrix16();
-		BuildQuantizeTable16();
+		buildDequantizeTable16();
+		setupCosines16();
+		buildCopyMatrix16();
+		buildQuantizeTable16();
 	}
 
-	public static LayerDataPacket CreateLayerDataPacket(TerrainPatch[] patches, LayerType type) throws Exception {
+	public static LayerDataPacket createLayerDataPacket(TerrainPatch[] patches, LayerType type) throws Exception {
 		LayerDataPacket layer = new LayerDataPacket();
 		layer.Type = type.getValue();
 
 		GroupHeader header = new GroupHeader();
-		header.Stride = STRIDE;
-		header.PatchSize = 16;
-		header.Type = type;
+		header.stride = STRIDE;
+		header.patchSize = 16;
+		header.type = type;
 
 		// Should be enough to fit even the most poorly packed data
 		byte[] data = new byte[patches.length * 16 * 16 * 2];
 		BitPack bitpack = new BitPack(data, 0);
-		bitpack.PackBits(Helpers.UInt16ToBytesL(header.Stride), 16);
-		bitpack.PackBits(header.PatchSize, 8);
-		bitpack.PackBits(header.Type.getValue(), 8);
+		bitpack.packBits(Helpers.UInt16ToBytesL(header.stride), 16);
+		bitpack.packBits(header.patchSize, 8);
+		bitpack.packBits(header.type.getValue(), 8);
 
 		for (int j = 0; j < patches.length; j++)
-			CreatePatch(bitpack, patches[j].Data, patches[j].X, patches[j].Y);
+			createPatch(bitpack, patches[j].Data, patches[j].X, patches[j].Y);
 
-		bitpack.PackBits(END_OF_PATCHES, 8);
+		bitpack.packBits(END_OF_PATCHES, 8);
 
 		layer.LayerData.setData(bitpack.getData());
 		return layer;
@@ -104,66 +106,66 @@ public class TerrainCompressor implements libomv.model.Terrain {
 	 * @throws Exception
 	 * @returns the layer data packet
 	 */
-	public static LayerDataPacket CreateLandPacket(float[] heightmap, int[] patches) throws Exception {
+	public static LayerDataPacket createLandPacket(float[] heightmap, int[] patches) throws Exception {
 		LayerDataPacket layer = new LayerDataPacket();
 		layer.Type = LayerType.Land.getValue();
 
 		GroupHeader header = new GroupHeader();
-		header.Stride = STRIDE;
-		header.PatchSize = 16;
-		header.Type = LayerType.Land;
+		header.stride = STRIDE;
+		header.patchSize = 16;
+		header.type = LayerType.Land;
 
 		byte[] data = new byte[1536];
 		BitPack bitpack = new BitPack(data, 0);
-		bitpack.PackBits(Helpers.UInt16ToBytesL(header.Stride), 16);
-		bitpack.PackBits(header.PatchSize, 8);
-		bitpack.PackBits(header.Type.getValue(), 8);
+		bitpack.packBits(Helpers.UInt16ToBytesL(header.stride), 16);
+		bitpack.packBits(header.patchSize, 8);
+		bitpack.packBits(header.type.getValue(), 8);
 
 		for (int j = 0; j < patches.length; j++)
-			CreatePatchFromHeightmap(bitpack, heightmap, patches[j] % 16, (patches[j] - (patches[j] % 16)) / 16);
+			createPatchFromHeightmap(bitpack, heightmap, patches[j] % 16, (patches[j] - (patches[j] % 16)) / 16);
 
-		bitpack.PackBits(END_OF_PATCHES, 8);
+		bitpack.packBits(END_OF_PATCHES, 8);
 
 		layer.LayerData.setData(bitpack.getData());
 		return layer;
 	}
 
-	public static LayerDataPacket CreateLandPacket(float[] patchData, int x, int y) throws Exception {
+	public static LayerDataPacket createLandPacket(float[] patchData, int x, int y) throws Exception {
 		LayerDataPacket layer = new LayerDataPacket();
 		layer.Type = LayerType.Land.getValue();
 
 		GroupHeader header = new GroupHeader();
-		header.Stride = STRIDE;
-		header.PatchSize = 16;
-		header.Type = LayerType.Land;
+		header.stride = STRIDE;
+		header.patchSize = 16;
+		header.type = LayerType.Land;
 
 		byte[] data = new byte[1536];
 		BitPack bitpack = new BitPack(data, 0);
-		bitpack.PackBits(Helpers.UInt16ToBytesL(header.Stride), 16);
-		bitpack.PackBits(header.PatchSize, 8);
-		bitpack.PackBits(header.Type.getValue(), 8);
+		bitpack.packBits(Helpers.UInt16ToBytesL(header.stride), 16);
+		bitpack.packBits(header.patchSize, 8);
+		bitpack.packBits(header.type.getValue(), 8);
 
-		CreatePatch(bitpack, patchData, x, y);
+		createPatch(bitpack, patchData, x, y);
 
-		bitpack.PackBits(END_OF_PATCHES, 8);
+		bitpack.packBits(END_OF_PATCHES, 8);
 
 		layer.LayerData.setData(bitpack.getData());
 		return layer;
 	}
 
-	public static void CreatePatch(BitPack bitpack, float[] patchData, int x, int y) {
+	public static void createPatch(BitPack bitpack, float[] patchData, int x, int y) {
 		if (patchData.length != 16 * 16)
 			throw new IllegalArgumentException("Patch data must be a 16x16 array");
 
-		TerrainHeader header = PrescanPatch(patchData);
+		TerrainHeader header = prescanPatch(patchData);
 		header.QuantWBits = 136;
 		header.PatchIDs = (y & 0x1F);
 		header.PatchIDs += (x << 5);
 
 		// NOTE: No idea what prequant and postquant should be or what they do
-		int[] patch = CompressPatch(patchData, header, 10);
-		int wbits = EncodePatchHeader(bitpack, header, patch);
-		EncodePatch(bitpack, patch, 0, wbits);
+		int[] patch = compressPatch(patchData, header, 10);
+		int wbits = encodePatchHeader(bitpack, header, patch);
+		encodePatch(bitpack, patch, 0, wbits);
 	}
 
 	/**
@@ -178,25 +180,25 @@ public class TerrainCompressor implements libomv.model.Terrain {
 	 * @param y
 	 *            Y offset of the patch to create, valid values are from 0 to 15
 	 */
-	public static void CreatePatchFromHeightmap(BitPack bitpack, float[] heightmap, int x, int y) {
+	public static void createPatchFromHeightmap(BitPack bitpack, float[] heightmap, int x, int y) {
 		if (heightmap.length != 256 * 256)
 			throw new IllegalArgumentException("Heightmap data must be 256x256");
 
 		if (x < 0 || x > 15 || y < 0 || y > 15)
 			throw new IllegalArgumentException("X and Y patch offsets must be from 0 to 15");
 
-		TerrainHeader header = PrescanPatch(heightmap, x, y);
+		TerrainHeader header = prescanPatch(heightmap, x, y);
 		header.QuantWBits = 136;
 		header.PatchIDs = (y & 0x1F);
 		header.PatchIDs += (x << 5);
 
 		// NOTE: No idea what prequant and postquant should be or what they do
-		int[] patch = CompressPatch(heightmap, x, y, header, 10);
-		int wbits = EncodePatchHeader(bitpack, header, patch);
-		EncodePatch(bitpack, patch, 0, wbits);
+		int[] patch = compressPatch(heightmap, x, y, header, 10);
+		int wbits = encodePatchHeader(bitpack, header, patch);
+		encodePatch(bitpack, patch, 0, wbits);
 	}
 
-	private static TerrainHeader PrescanPatch(float[] patch) {
+	private static TerrainHeader prescanPatch(float[] patch) {
 		TerrainHeader header = new TerrainHeader();
 		float zmax = -99999999.0f;
 		float zmin = 99999999.0f;
@@ -217,7 +219,7 @@ public class TerrainCompressor implements libomv.model.Terrain {
 		return header;
 	}
 
-	private static TerrainHeader PrescanPatch(float[] heightmap, int patchX, int patchY) {
+	private static TerrainHeader prescanPatch(float[] heightmap, int patchX, int patchY) {
 		TerrainHeader header = new TerrainHeader();
 		float zmax = -99999999.0f;
 		float zmin = 99999999.0f;
@@ -238,22 +240,22 @@ public class TerrainCompressor implements libomv.model.Terrain {
 		return header;
 	}
 
-	public static TerrainHeader DecodePatchHeader(BitPack bitpack) {
+	public static TerrainHeader decodePatchHeader(BitPack bitpack) {
 		TerrainHeader header = new TerrainHeader();
 
 		// Quantized word bits
-		header.QuantWBits = bitpack.UnpackBits(8);
+		header.QuantWBits = bitpack.unpackBits(8);
 		if (header.QuantWBits == END_OF_PATCHES)
 			return header;
 
 		// DC offset
-		header.DCOffset = bitpack.UnpackFloat();
+		header.DCOffset = bitpack.unpackFloat();
 
 		// Range
-		header.Range = bitpack.UnpackBits(16);
+		header.Range = bitpack.unpackBits(16);
 
 		// Patch IDs (10 bits)
-		header.PatchIDs = bitpack.UnpackBits(10);
+		header.PatchIDs = bitpack.unpackBits(10);
 
 		// Word bits
 		header.WordBits = ((header.QuantWBits & 0x0f) + 2);
@@ -261,7 +263,7 @@ public class TerrainCompressor implements libomv.model.Terrain {
 		return header;
 	}
 
-	private static int EncodePatchHeader(BitPack bitpack, TerrainHeader header, int[] patch) {
+	private static int encodePatchHeader(BitPack bitpack, TerrainHeader header, int[] patch) {
 		int temp;
 		int wbits = (header.QuantWBits & 0x0f) + 2;
 		long maxWbits = wbits + 5;
@@ -297,10 +299,10 @@ public class TerrainCompressor implements libomv.model.Terrain {
 
 		header.QuantWBits |= (wbits - 2);
 
-		bitpack.PackBits(header.QuantWBits, 8);
-		bitpack.PackFloat(header.DCOffset);
-		bitpack.PackBits(header.Range, 16);
-		bitpack.PackBits(header.PatchIDs, 10);
+		bitpack.packBits(header.QuantWBits, 8);
+		bitpack.packFloat(header.DCOffset);
+		bitpack.packBits(header.Range, 16);
+		bitpack.packBits(header.PatchIDs, 10);
 
 		return wbits;
 	}
@@ -379,24 +381,24 @@ public class TerrainCompressor implements libomv.model.Terrain {
 		}
 	}
 
-	public static void DecodePatch(int[] patches, BitPack bitpack, TerrainHeader header, int size) {
+	public static void decodePatch(int[] patches, BitPack bitpack, TerrainHeader header, int size) {
 		int temp;
 		for (int n = 0; n < size * size; n++) {
 			// ?
-			temp = bitpack.UnpackBits(1);
+			temp = bitpack.unpackBits(1);
 			if (temp != 0) {
 				// Value or EOB
-				temp = bitpack.UnpackBits(1);
+				temp = bitpack.unpackBits(1);
 				if (temp != 0) {
 					// Value
-					temp = bitpack.UnpackBits(1);
+					temp = bitpack.unpackBits(1);
 					if (temp != 0) {
 						// Negative
-						temp = bitpack.UnpackBits(header.WordBits);
+						temp = bitpack.unpackBits(header.WordBits);
 						patches[n] = temp * -1;
 					} else {
 						// Positive
-						temp = bitpack.UnpackBits(header.WordBits);
+						temp = bitpack.unpackBits(header.WordBits);
 						patches[n] = temp;
 					}
 				} else {
@@ -413,7 +415,7 @@ public class TerrainCompressor implements libomv.model.Terrain {
 		}
 	}
 
-	private static void EncodePatch(BitPack output, int[] patch, int postquant, int wbits) {
+	private static void encodePatch(BitPack output, int[] patch, int postquant, int wbits) {
 		int temp;
 		boolean eob;
 
@@ -440,10 +442,10 @@ public class TerrainCompressor implements libomv.model.Terrain {
 				}
 
 				if (eob) {
-					output.PackBits(ZERO_EOB, 2);
+					output.packBits(ZERO_EOB, 2);
 					return;
 				}
-				output.PackBits(ZERO_CODE, 1);
+				output.packBits(ZERO_CODE, 1);
 			} else {
 				if (temp < 0) {
 					temp *= -1;
@@ -451,29 +453,29 @@ public class TerrainCompressor implements libomv.model.Terrain {
 					if (temp > (1 << wbits))
 						temp = (1 << wbits);
 
-					output.PackBits(NEGATIVE_VALUE, 3);
-					output.PackBits(temp, wbits);
+					output.packBits(NEGATIVE_VALUE, 3);
+					output.packBits(temp, wbits);
 				} else {
 					if (temp > (1 << wbits))
 						temp = (1 << wbits);
 
-					output.PackBits(POSITIVE_VALUE, 3);
-					output.PackBits(temp, wbits);
+					output.packBits(POSITIVE_VALUE, 3);
+					output.packBits(temp, wbits);
 				}
 			}
 		}
 	}
 
-	public static float[] DecompressPatch(int[] patches, TerrainHeader header, GroupHeader group) {
-		float[] block = new float[group.PatchSize * group.PatchSize];
-		float[] output = new float[group.PatchSize * group.PatchSize];
+	public static float[] decompressPatch(int[] patches, TerrainHeader header, GroupHeader group) {
+		float[] block = new float[group.patchSize * group.patchSize];
+		float[] output = new float[group.patchSize * group.patchSize];
 		int prequant = (header.QuantWBits >> 4) + 2;
 		int quantize = 1 << prequant;
 		float ooq = 1.0f / quantize;
 		float mult = ooq * header.Range;
 		float addval = mult * (1 << (prequant - 1)) + header.DCOffset;
 
-		if (group.PatchSize == 16) {
+		if (group.patchSize == 16) {
 			for (int n = 0; n < 16 * 16; n++) {
 				block[n] = patches[CopyMatrix16[n]] * DequantizeTable16[n];
 			}
@@ -499,7 +501,7 @@ public class TerrainCompressor implements libomv.model.Terrain {
 		return output;
 	}
 
-	private static int[] CompressPatch(float[] patchData, TerrainHeader header, int prequant) {
+	private static int[] compressPatch(float[] patchData, TerrainHeader header, int prequant) {
 		float[] block = new float[16 * 16];
 		int wordsize = prequant;
 		float oozrange = 1.0f / header.Range;
@@ -527,7 +529,7 @@ public class TerrainCompressor implements libomv.model.Terrain {
 		return itemp;
 	}
 
-	private static int[] CompressPatch(float[] heightmap, int patchX, int patchY, TerrainHeader header, int prequant) {
+	private static int[] compressPatch(float[] heightmap, int patchX, int patchY, TerrainHeader header, int prequant) {
 		float[] block = new float[16 * 16];
 		int wordsize = prequant;
 		float oozrange = 1.0f / header.Range;
@@ -557,7 +559,7 @@ public class TerrainCompressor implements libomv.model.Terrain {
 
 	// #region Initialization
 
-	private static void BuildDequantizeTable16() {
+	private static void buildDequantizeTable16() {
 		for (int j = 0; j < 16; j++) {
 			for (int i = 0; i < 16; i++) {
 				DequantizeTable16[j * 16 + i] = 1.0f + 2.0f * (i + j);
@@ -565,7 +567,7 @@ public class TerrainCompressor implements libomv.model.Terrain {
 		}
 	}
 
-	private static void BuildQuantizeTable16() {
+	private static void buildQuantizeTable16() {
 		for (int j = 0; j < 16; j++) {
 			for (int i = 0; i < 16; i++) {
 				QuantizeTable16[j * 16 + i] = 1.0f / (1.0f + 2.0f * ((float) i + (float) j));
@@ -573,7 +575,7 @@ public class TerrainCompressor implements libomv.model.Terrain {
 		}
 	}
 
-	private static void SetupCosines16() {
+	private static void setupCosines16() {
 		float hposz = (float) Math.PI * 0.5f / 16.0f;
 
 		for (int u = 0; u < 16; u++) {
@@ -583,7 +585,7 @@ public class TerrainCompressor implements libomv.model.Terrain {
 		}
 	}
 
-	private static void BuildCopyMatrix16() {
+	private static void buildCopyMatrix16() {
 		boolean diag = false;
 		boolean right = true;
 		int i = 0;

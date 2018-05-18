@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -141,7 +141,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 	/*
 	 * Query Flags used in many of the DirectoryManager methods to specify which
 	 * query to execute and how to return the results.
-	 * 
+	 *
 	 * Flags can be combined using the | (pipe) character, not all flags are
 	 * available in all queries
 	 */
@@ -283,7 +283,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/*
 	 * Classified Ad Options
-	 * 
+	 *
 	 * There appear to be two formats the flags are packed in. This set of flags is
 	 * for the newer style
 	 */
@@ -380,7 +380,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 		/**
 		 * Print the struct data as a string
-		 * 
+		 *
 		 * @return A string containing the field name, and field value
 		 */
 		@Override
@@ -419,7 +419,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 		/**
 		 * Print the struct data as a string
-		 * 
+		 *
 		 * @return A string containing the field name, and field value
 		 */
 		@Override
@@ -444,7 +444,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 		/**
 		 * Print the struct data as a string
-		 * 
+		 *
 		 * @return A string containing the field name, and field value
 		 */
 		@Override
@@ -464,7 +464,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 		/**
 		 * Print the struct data as a string
-		 * 
+		 *
 		 * @return A string containing the field name, and field value
 		 */
 		@Override
@@ -475,15 +475,15 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Parcel information returned from a <see cref="StartPlacesSearch"/> request
-	 * 
+	 *
 	 * Represents one of the following:
-	 * 
+	 *
 	 * A parcel of land on the grid that has its Show In Search flag set A parcel of
 	 * land owned by the agent making the request A parcel of land owned by a group
 	 * the agent making the request is a member of
-	 * 
+	 *
 	 * In a request for Group Land, the First record will contain an empty record
-	 * 
+	 *
 	 * Note: This is not the same as searching the land for sale data source
 	 */
 	public final class PlacesSearchData {
@@ -517,7 +517,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 		public float Dwell;
 		/**
 		 * The billing product SKU
-		 * 
+		 *
 		 * Known values are: <list> <item><term>023</term><description>Mainland / Full
 		 * Region</description></item> <item><term>024</term><description>Estate / Full
 		 * Region</description></item> <item><term>027</term><description>Estate /
@@ -531,7 +531,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 		/**
 		 * Get a SL URL for the parcel
-		 * 
+		 *
 		 * @return A string, containing a standard SLURL
 		 */
 		public String toSLurl() {
@@ -542,7 +542,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 		/**
 		 * Print the struct data as a string
-		 * 
+		 *
 		 * @return A string containing the field name, and field value
 		 */
 		@Override
@@ -568,7 +568,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 		/**
 		 * Print the struct data as a string
-		 * 
+		 *
 		 * @return A string containing the field name, and field value
 		 */
 		@Override
@@ -608,7 +608,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 		/**
 		 * Get a SL URL for the parcel where the event is hosted
-		 * 
+		 *
 		 * @return A string, containing a standard SLURL
 		 */
 		public String toSLurl() {
@@ -619,7 +619,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 		/**
 		 * Print the struct data as a string
-		 * 
+		 *
 		 * @return A string containing the field name, and field value
 		 */
 		@Override
@@ -647,7 +647,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 		/**
 		 * Construct a new instance of the DirEventsReplyEventArgs class
-		 * 
+		 *
 		 * @param queryID
 		 *            The ID of the query returned by the data server. This will
 		 *            correlate to the ID returned by the
@@ -677,7 +677,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 		/**
 		 * Construct a new instance of the EventInfoReplyEventArgs class
-		 * 
+		 *
 		 * @param matchedEvent
 		 *            A single EventInfo object containing the details of an event
 		 */
@@ -707,7 +707,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 		/**
 		 * Construct a new instance of the DirPlacesReplyEventArgs class
-		 * 
+		 *
 		 * @param queryID
 		 *            The ID of the query returned by the data server. This will
 		 *            correlate to the ID returned by the
@@ -741,7 +741,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 		/**
 		 * Construct a new instance of PlacesReplyEventArgs class
-		 * 
+		 *
 		 * @param queryID
 		 *            The ID of the query returned by the data server. This will
 		 *            correlate to the ID returned by the
@@ -768,7 +768,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 		/**
 		 * Construct a new instance of the DirClassifiedsReplyEventArgs class
-		 * 
+		 *
 		 * @param classifieds
 		 *            A list of classified ad data returned from the data server
 		 */
@@ -797,7 +797,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 		/**
 		 * Construct a new instance of the DirGroupsReplyEventArgs class
-		 * 
+		 *
 		 * @param queryID
 		 *            The ID of the query returned by the data server. This will
 		 *            correlate to the ID returned by the <see cref="StartGroupSearch"/>
@@ -831,7 +831,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 		/**
 		 * Construct a new instance of the DirPeopleReplyEventArgs class
-		 * 
+		 *
 		 * @param queryID
 		 *            The ID of the query returned by the data server. This will
 		 *            correlate to the ID returned by the
@@ -858,7 +858,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 		/**
 		 * Construct a new instance of the DirLandReplyEventArgs class
-		 * 
+		 *
 		 * @param dirParcels
 		 *            A list of parcels for sale returned by the data server
 		 */
@@ -876,7 +876,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Constructs a new instance of the DirectoryManager class
-	 * 
+	 *
 	 * @param client
 	 *            An instance of GridClient
 	 */
@@ -950,15 +950,15 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 	 * Query the data server for a list of classified ads containing the specified
 	 * string. Defaults to searching for classified placed in any category, and
 	 * includes PG, Adult and Mature results.
-	 * 
+	 *
 	 * Responses are sent 16 per response packet, there is no way to know how many
 	 * results a query reply will contain however assuming the reply packets arrived
 	 * ordered, a response with less than 16 entries would indicate all results have
 	 * been received
-	 * 
+	 *
 	 * The <see cref="OnClassifiedReply"/> event is raised when a response is
 	 * received from the simulator
-	 * 
+	 *
 	 * @param searchText
 	 *            A string containing a list of keywords to search for
 	 * @return A UUID to correlate the results when the
@@ -972,10 +972,10 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 	/**
 	 * Query the data server for a list of classified ads which contain specified
 	 * keywords (Overload)
-	 * 
+	 *
 	 * The <see cref="OnClassifiedReply"/> event is raised when a response is
 	 * received from the simulator
-	 * 
+	 *
 	 * @param searchText
 	 *            A string containing a list of keywords to search for
 	 * @param category
@@ -986,13 +986,13 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 	 * @return A UUID to correlate the results when the
 	 *         <see cref="OnClassifiedReply"/> event is raised
 	 * @throws Exception
-	 * 
+	 *
 	 *             <example> Search classified ads containing the key words "foo"
 	 *             and "bar" in the "Any" category that are either PG or Mature
 	 *             <code>
 	 *  UUID searchID = StartClassifiedSearch("foo bar", ClassifiedCategories.Any, ClassifiedQueryFlags.PG | ClassifiedQueryFlags.Mature);
 	 *  </code> </example>
-	 * 
+	 *
 	 *             Responses are sent 16 at a time, there is no way to know how many
 	 *             results a query reply will contain however assuming the reply
 	 *             packets arrived ordered, a response with less than 16 entries
@@ -1018,10 +1018,10 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Starts search for places (Overloaded)
-	 * 
+	 *
 	 * The <see cref="OnDirPlacesReply"/> event is raised when a response is
 	 * received from the simulator
-	 * 
+	 *
 	 * @param searchText
 	 *            Search text
 	 * @param queryStart
@@ -1041,10 +1041,10 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 	/**
 	 * Queries the dataserver for parcels of land which are flagged to be shown in
 	 * search
-	 * 
+	 *
 	 * The <see cref="OnDirPlacesReply"/> event is raised when a response is
 	 * received from the simulator
-	 * 
+	 *
 	 * @param searchText
 	 *            A string containing a list of keywords to search for separated by
 	 *            a space character
@@ -1060,12 +1060,12 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 	 * @return A UUID to correlate the results when the
 	 *         <see cref="OnDirPlacesReply"/> event is raised
 	 * @throws Exception
-	 * 
+	 *
 	 *             <example> Search places containing the key words "foo" and "bar"
 	 *             in the "Any" category that are either PG or Adult <code>
 	 *  UUID searchID = StartDirPlacesSearch("foo bar", DirFindFlags.DwellSort | DirFindFlags.IncludePG | DirFindFlags.IncludeAdult, ParcelCategory.Any, 0);
 	 *  </code> </example>
-	 * 
+	 *
 	 *             Additional information on the results can be obtained by using
 	 *             the ParcelManager.InfoRequest method
 	 */
@@ -1092,15 +1092,15 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Starts a search for land sales using the directory
-	 * 
+	 *
 	 * The <see cref="OnDirLandReply"/> event is raised when a response is received
 	 * from the simulator
-	 * 
+	 *
 	 * @param typeFlags
 	 *            What type of land to search for. Auction, estate, mainland, "first
 	 *            land", etc
 	 * @throws Exception
-	 * 
+	 *
 	 *             The OnDirLandReply event handler must be registered before
 	 *             calling this function. There is no way to determine how many
 	 *             results will be returned, or how many times the callback will be
@@ -1114,10 +1114,10 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Starts a search for land sales using the directory
-	 * 
+	 *
 	 * The {@link OnDirLandReply} event is raised when a response is received from
 	 * the simulator
-	 * 
+	 *
 	 * @param typeFlags
 	 *            What type of land to search for. Auction, estate, mainland, "first
 	 *            land", etc
@@ -1143,26 +1143,26 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Send a request to the data server for land sales listings
-	 * 
+	 *
 	 * @param findFlags
 	 *            Flags sent to specify query options
-	 * 
+	 *
 	 *            Available flags: Specify the parcel rating with one or more of the
 	 *            following: IncludePG IncludeMature IncludeAdult
-	 * 
+	 *
 	 *            Specify the field to pre sort the results with ONLY ONE of the
 	 *            following: PerMeterSort NameSort AreaSort PricesSort
-	 * 
+	 *
 	 *            Specify the order the results are returned in, if not specified
 	 *            the results are pre sorted in a Descending Order SortAsc
-	 * 
+	 *
 	 *            Specify additional filters to limit the results with one or both
 	 *            of the following: LimitByPrice LimitByArea
-	 * 
+	 *
 	 *            Flags can be combined by separating them with the or (|) operator
-	 * 
+	 *
 	 *            Additional details can be found in <see cref="DirFindFlags"/>
-	 * 
+	 *
 	 * @param typeFlags
 	 *            What type of land to search for. Auction, Estate or Mainland
 	 * @param priceLimit
@@ -1176,14 +1176,14 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 	 *            first 100 parcels of a request use 0, from 100-199 use 100,
 	 *            200-299 use 200, etc.
 	 * @throws Exception
-	 * 
+	 *
 	 *             The {@link OnDirLandReply} event will be raised with the response
 	 *             from the simulator
-	 * 
+	 *
 	 *             There is no way to determine how many results will be returned,
 	 *             or how many times the callback will be fired other than you won't
 	 *             get more than 100 total parcels from each reply.
-	 * 
+	 *
 	 *             Any land set for sale to either anybody or specific to the
 	 *             connected agent will be included in the results if the land is
 	 *             included in the query. <example> <code>
@@ -1211,7 +1211,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Search for Groups
-	 * 
+	 *
 	 * @param searchText
 	 *            The name or portion of the name of the group you wish to search
 	 *            for
@@ -1228,7 +1228,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Search for Groups
-	 * 
+	 *
 	 * @param searchText
 	 *            The name or portion of the name of the group you wish to search
 	 *            for
@@ -1255,7 +1255,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Search the People directory for other avatars
-	 * 
+	 *
 	 * @param searchText
 	 *            The name or portion of the name of the avatar you wish to search
 	 *            for
@@ -1271,7 +1271,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Search the People directory for other avatars
-	 * 
+	 *
 	 * @param searchText
 	 *            The name or portion of the name of the avatar you wish to search
 	 *            for
@@ -1293,7 +1293,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Search Places for parcels of land you personally own
-	 * 
+	 *
 	 * @return
 	 * @throws Exception
 	 */
@@ -1304,7 +1304,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Searches Places for land owned by the specified group
-	 * 
+	 *
 	 * @param groupID
 	 *            ID of the group you want to recieve land list for (You must be a
 	 *            member of the group)
@@ -1320,7 +1320,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 	/**
 	 * Search the Places directory for parcels that are listed in search and contain
 	 * the specified keywords
-	 * 
+	 *
 	 * @param searchText
 	 *            A string containing the keywords to search for
 	 * @return Transaction (Query) ID which can be associated with results from your
@@ -1335,7 +1335,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Search Places - All Options
-	 * 
+	 *
 	 * @param findFlags
 	 *            One of the Values from the DirFindFlags struct, ie: AgentOwned,
 	 *            GroupOwned, etc.
@@ -1377,7 +1377,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 	/**
 	 * Search All Events with specifid searchText in all categories, includes PG,
 	 * Mature and Adult
-	 * 
+	 *
 	 * @param searchText
 	 *            A string containing a list of keywords to search for separated by
 	 *            a space character
@@ -1398,7 +1398,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Search Events
-	 * 
+	 *
 	 * @param searchText
 	 *            A string containing a list of keywords to search for separated by
 	 *            a space character
@@ -1440,7 +1440,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Requests Event Details
-	 * 
+	 *
 	 * @param eventID
 	 *            ID of Event returned from the <see cref="StartEventsSearch"/>
 	 *            method
@@ -1500,7 +1500,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param packet
 	 *            The packet data
 	 * @param simulator
@@ -1530,7 +1530,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param packet
 	 *            The data packet
 	 * @param simulator
@@ -1560,7 +1560,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Process an incoming <see cref="DirLandReplyMessage"/> event message
-	 * 
+	 *
 	 * @param message
 	 *            The <see cref="DirLandReplyMessage"/> event message containing the
 	 *            data
@@ -1571,15 +1571,15 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 		if (OnDirLand.count() > 0) {
 			ArrayList<DirectoryParcel> parcelsForSale = new ArrayList<DirectoryParcel>();
 			DirLandReplyMessage reply = (DirLandReplyMessage) message;
-			for (DirLandReplyMessage.QueryReply block : reply.QueryReplies) {
+			for (DirLandReplyMessage.QueryReply block : reply.queryReplies) {
 				DirectoryParcel dirParcel = new DirectoryParcel();
 
-				dirParcel.ActualArea = block.ActualArea;
-				dirParcel.ID = block.ParcelID;
-				dirParcel.Name = block.Name;
-				dirParcel.SalePrice = block.SalePrice;
-				dirParcel.Auction = block.Auction;
-				dirParcel.ForSale = block.ForSale;
+				dirParcel.ActualArea = block.actualArea;
+				dirParcel.ID = block.parcelID;
+				dirParcel.Name = block.name;
+				dirParcel.SalePrice = block.salePrice;
+				dirParcel.Auction = block.auction;
+				dirParcel.ForSale = block.forSale;
 
 				parcelsForSale.add(dirParcel);
 			}
@@ -1589,7 +1589,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param packet
 	 *            The data packet
 	 * @param simulator
@@ -1616,7 +1616,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param packet
 	 *            The data packet
 	 * @param simulator
@@ -1640,7 +1640,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Process an incoming <see cref="PlacesReplyMessage"/> event message
-	 * 
+	 *
 	 * @param message
 	 *            The <see cref="PlacesReplyMessage"/> event message containing the
 	 *            data
@@ -1651,31 +1651,31 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 		if (OnPlaces.count() > 0) {
 			ArrayList<PlacesSearchData> places = new ArrayList<PlacesSearchData>();
 			PlacesReplyMessage replyMessage = (PlacesReplyMessage) message;
-			for (PlacesReplyMessage.QueryData block : replyMessage.QueryDataBlocks) {
+			for (PlacesReplyMessage.QueryData block : replyMessage.queryDataBlocks) {
 				PlacesSearchData place = new PlacesSearchData();
-				place.ActualArea = block.ActualArea;
-				place.BillableArea = block.BillableArea;
-				place.Desc = block.Description;
-				place.Dwell = block.Dwell;
-				place.Flags = PlacesFlags.setValue(block.Flags);
-				place.GlobalX = block.GlobalX;
-				place.GlobalY = block.GlobalY;
-				place.GlobalZ = block.GlobalZ;
-				place.Name = block.Name;
-				place.OwnerID = block.OwnerID;
-				place.Price = block.Price;
-				place.SimName = block.SimName;
-				place.SnapshotID = block.SnapShotID;
-				place.SKU = block.ProductSku;
+				place.ActualArea = block.actualArea;
+				place.BillableArea = block.billableArea;
+				place.Desc = block.description;
+				place.Dwell = block.dwell;
+				place.Flags = PlacesFlags.setValue(block.flags);
+				place.GlobalX = block.globalX;
+				place.GlobalY = block.globalY;
+				place.GlobalZ = block.globalZ;
+				place.Name = block.name;
+				place.OwnerID = block.ownerID;
+				place.Price = block.price;
+				place.SimName = block.simName;
+				place.SnapshotID = block.snapShotID;
+				place.SKU = block.productSku;
 				places.add(place);
 			}
-			OnPlaces.dispatch(new PlacesReplyCallbackArgs(replyMessage.QueryID, places));
+			OnPlaces.dispatch(new PlacesReplyCallbackArgs(replyMessage.queryID, places));
 		}
 	}
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param packet
 	 *            The data packet
 	 * @param simulator
@@ -1711,7 +1711,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param packet
 	 *            The data packet
 	 * @param simulator
@@ -1739,7 +1739,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param packet
 	 *            The data packet
 	 * @param simulator
@@ -1770,7 +1770,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback, libomv.mo
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param sender
 	 *            The sender
 	 * @param e

@@ -35,7 +35,7 @@ import libomv.capabilities.CapsMessage.CapsEventType;
 public interface IMessage {
 	public CapsEventType getType();
 
-	public OSDMap Serialize();
+	public OSDMap serialize();
 
-	public void Deserialize(OSDMap map);
+	public void deserialize(OSDMap map);
 }

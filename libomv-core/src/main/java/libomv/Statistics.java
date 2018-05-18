@@ -32,44 +32,47 @@ package libomv;
 import java.util.HashMap;
 
 public class Statistics {
+
+	// TODO:FIXME
+	// Several occurrences of some "Type" enum or class.... Very awkward
 	public enum Type {
 		Packet, Message
 	}
 
 	public class Stat {
-		public Type Type;
-		public long TxCount;
-		public long RxCount;
-		public long TxBytes;
-		public long RxBytes;
+		public Type type;
+		public long txCount;
+		public long rxCount;
+		public long txBytes;
+		public long rxBytes;
 
 		public Stat(Type type, long txCount, long rxCount, long txBytes, long rxBytes) {
-			this.Type = type;
-			this.TxCount = txCount;
-			this.RxCount = rxCount;
-			this.TxBytes = txBytes;
-			this.RxBytes = rxBytes;
+			this.type = type;
+			this.txCount = txCount;
+			this.rxCount = rxCount;
+			this.txBytes = txBytes;
+			this.rxBytes = rxBytes;
 		}
 	}
 
-	private HashMap<String, Stat> m_StatsCollection;
+	private HashMap<String, Stat> statistics;
 
 	public Statistics() {
-		m_StatsCollection = new HashMap<String, Stat>();
+		statistics = new HashMap<String, Stat>();
 	}
 
 	public void updateNetStats(String key, Type Type, long txBytes, long rxBytes) {
-		synchronized (m_StatsCollection) {
-			Stat stat = m_StatsCollection.get(key);
+		synchronized (statistics) {
+			Stat stat = statistics.get(key);
 			if (stat != null) {
 				if (rxBytes > 0) {
-					stat.RxCount++;
-					stat.RxBytes += rxBytes;
+					stat.rxCount++;
+					stat.rxBytes += rxBytes;
 				}
 
 				if (txBytes > 0) {
-					stat.TxCount++;
-					stat.TxBytes += txBytes;
+					stat.txCount++;
+					stat.txBytes += txBytes;
 				}
 
 			} else {
@@ -78,14 +81,14 @@ public class Statistics {
 				else
 					stat = new Stat(Type, 0, 1, 0, rxBytes);
 
-				m_StatsCollection.put(key, stat);
+				statistics.put(key, stat);
 			}
 		}
 	}
 
 	public HashMap<String, Stat> getStatistics() {
-		synchronized (m_StatsCollection) {
-			return new HashMap<String, Stat>(m_StatsCollection);
+		synchronized (statistics) {
+			return new HashMap<String, Stat>(statistics);
 		}
 	}
 }

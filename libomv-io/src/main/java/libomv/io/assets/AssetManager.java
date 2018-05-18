@@ -6,7 +6,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -401,7 +401,7 @@ public class AssetManager implements PacketCallback {
 
 	/**
 	 * Callback used upon completion of baked texture upload
-	 * 
+	 *
 	 * @param newAssetID
 	 *            Asset UUID of the newly uploaded baked texture
 	 */
@@ -505,7 +505,7 @@ public class AssetManager implements PacketCallback {
 
 	/*
 	 * Default constructor
-	 * 
+	 *
 	 * @param client A reference to the GridClient object
 	 */
 	public AssetManager(GridClient client) {
@@ -692,7 +692,7 @@ public class AssetManager implements PacketCallback {
 	 *            The callback to fire when the simulator responds with the asset
 	 *            data
 	 * @return The transaction ID that this asset download identifies
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public UUID RequestAsset(UUID assetID, AssetType type, boolean priority, SourceType sourceType,
@@ -749,7 +749,7 @@ public class AssetManager implements PacketCallback {
 	 *
 	 * @param transactionID
 	 *            The transaction ID of the asset download to abort
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public boolean AbortAssetTransfer(UUID transactionID) throws Exception {
@@ -958,10 +958,10 @@ public class AssetManager implements PacketCallback {
 	 * @throws Exception
 	 */
 	public UUID RequestUpload(AssetItem asset, boolean storeLocal) throws Exception {
-		if (asset.AssetData == null) {
+		if (asset.assetData == null) {
 			throw new IllegalArgumentException("Can't upload an asset with no data (did you forget to call Encode?)");
 		}
-		return RequestUpload(null, asset.getAssetType(), asset.AssetData, storeLocal, new UUID());
+		return RequestUpload(null, asset.getAssetType(), asset.assetData, storeLocal, new UUID());
 	}
 
 	/**
@@ -1082,12 +1082,12 @@ public class AssetManager implements PacketCallback {
 				public void completed(OSD result) {
 					if (result instanceof OSDMap) {
 						UploadBakedTextureMessage message = _Client.Messages.new UploadBakedTextureMessage();
-						message.Deserialize((OSDMap) result);
-						if (message.Request.State.equals("complete")) {
-							callback.callback(((UploaderRequestComplete) message.Request).AssetID);
+						message.deserialize((OSDMap) result);
+						if (message.request.state.equals("complete")) {
+							callback.callback(((UploaderRequestComplete) message.request).assetID);
 							return;
-						} else if (message.Request.State.equals("upload")) {
-							URI uploadUrl = ((UploaderRequestUpload) message.Request).Url;
+						} else if (message.request.state.equals("upload")) {
+							URI uploadUrl = ((UploaderRequestUpload) message.request).url;
 							if (uploadUrl != null) {
 								try {
 									// POST the asset data
@@ -1643,7 +1643,7 @@ public class AssetManager implements PacketCallback {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	private void HandleTransferInfo(Packet packet, Simulator simulator) throws Exception {

@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -848,10 +848,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Request a current list of groups the avatar is a member of.
-	 * 
+	 *
 	 * CAPS Event Queue must be running for this to work since the results come
 	 * across CAPS.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public final void RequestCurrentGroups() throws Exception {
@@ -865,7 +865,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Lookup name of group based on groupID
-	 * 
+	 *
 	 * @param groupID
 	 *            groupID of group to lookup name for.
 	 * @throws Exception
@@ -891,7 +891,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Request lookup of multiple group names
-	 * 
+	 *
 	 * @param groupIDs
 	 *            List of group IDs to request.
 	 * @throws Exception
@@ -926,7 +926,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	/**
 	 * Lookup group profile data such as name, enrollment, founder, logo, etc
 	 * Subscribe to <code>OnGroupProfile</code> event to receive the results.
-	 * 
+	 *
 	 * @param group
 	 * @param group
 	 *            group ID (UUID)
@@ -997,7 +997,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	/**
 	 * Request a list of group members. Subscribe to <code>OnGroupMembers</code>
 	 * event to receive the results.
-	 * 
+	 *
 	 * @param group
 	 *            group ID (UUID)
 	 * @return UUID of the request, use to index into cache
@@ -1032,7 +1032,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	/**
 	 * Request group roles Subscribe to <code>OnGroupRoles</code> event to receive
 	 * the results.
-	 * 
+	 *
 	 * @param group
 	 *            group ID (UUID)
 	 * @return UUID of the request, use to index into cache
@@ -1058,7 +1058,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	/**
 	 * Request members (members,role) role mapping for a group. Subscribe to
 	 * <code>OnGroupRolesMembers</code> event to receive the results.
-	 * 
+	 *
 	 * @param group
 	 *            group ID (UUID)
 	 * @return UUID of the request, use to index into cache
@@ -1082,7 +1082,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	/**
 	 * Request a groups Titles Subscribe to <code>OnGroupTitles</code> event to
 	 * receive the results.
-	 * 
+	 *
 	 * @param group
 	 *            group ID (UUID)
 	 * @return UUID of the request, use to index into cache
@@ -1105,7 +1105,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	/**
 	 * Begin to get the group account summary Subscribe to the
 	 * <code>OnGroupAccountSummary</code> event to receive the results.
-	 * 
+	 *
 	 * @param group
 	 *            group ID (UUID)
 	 * @param intervalDays
@@ -1129,7 +1129,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	/**
 	 * Begin to get the group account details Subscribe to the
 	 * <code>OnGroupAccountDetails</code> event to receive the results.
-	 * 
+	 *
 	 * @param group
 	 *            group ID (UUID)
 	 * @param intervalDays
@@ -1152,7 +1152,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Invites a user to a group
-	 * 
+	 *
 	 * @param group
 	 *            The group to invite to
 	 * @param roles
@@ -1183,7 +1183,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Set a group as the current active group
-	 * 
+	 *
 	 * @param id
 	 *            group ID (UUID)
 	 * @throws Exception
@@ -1199,7 +1199,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Change the role that determines your active title
-	 * 
+	 *
 	 * @param group
 	 *            Group ID to use
 	 * @param role
@@ -1218,7 +1218,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Set this avatar's tier contribution
-	 * 
+	 *
 	 * @param group
 	 *            Group ID to change tier in
 	 * @param contribution
@@ -1238,7 +1238,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	/**
 	 * Save wheather agent wants to accept group notices and list this group in
 	 * their profile
-	 * 
+	 *
 	 * @param groupID
 	 *            Group <see cref="UUID"/>
 	 * @param acceptNotices
@@ -1261,7 +1261,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Request to join a group
-	 * 
+	 *
 	 * @param id
 	 *            group ID (UUID) to join.
 	 * @throws Exception
@@ -1279,9 +1279,9 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	/**
 	 * Request to create a new group. If the group is successfully created, L$100
 	 * will automatically be deducted
-	 * 
+	 *
 	 * Subscribe to <code>OnGroupCreated</code> event to receive confirmation.
-	 * 
+	 *
 	 * @param group
 	 *            Group struct containing the new group info
 	 * @throws Exception
@@ -1307,7 +1307,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Update a group's profile and other information
-	 * 
+	 *
 	 * @param id
 	 *            Groups ID (UUID) to update.
 	 * @param group
@@ -1336,7 +1336,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Eject a user from a group
-	 * 
+	 *
 	 * @param group
 	 *            Group ID to eject the user from
 	 * @param member
@@ -1359,7 +1359,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Update role information
-	 * 
+	 *
 	 * @param role
 	 *            Modified role to be updated
 	 * @throws Exception
@@ -1382,7 +1382,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Create a new group role
-	 * 
+	 *
 	 * @param group
 	 *            Group ID to update
 	 * @param role
@@ -1407,7 +1407,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Delete a group role
-	 * 
+	 *
 	 * @param group
 	 *            Group ID to update
 	 * @param roleID
@@ -1432,7 +1432,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Remove an avatar from a role
-	 * 
+	 *
 	 * @param group
 	 *            Group ID to update
 	 * @param role
@@ -1458,7 +1458,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Assign an avatar to a role
-	 * 
+	 *
 	 * @param group
 	 *            Group ID to update
 	 * @param role
@@ -1484,7 +1484,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Request the group notices list
-	 * 
+	 *
 	 * @param group
 	 *            Group ID to fetch notices for
 	 * @throws Exception
@@ -1499,7 +1499,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Request a group notice by key
-	 * 
+	 *
 	 * @param noticeID
 	 *            ID of group notice
 	 * @throws Exception
@@ -1514,7 +1514,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Send out a group notice
-	 * 
+	 *
 	 * @param group
 	 *            Group ID to update
 	 * @param notice
@@ -1529,7 +1529,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Start a group proposal (vote)
-	 * 
+	 *
 	 * @param group
 	 *            The Group ID to send proposal to
 	 * @param prop
@@ -1550,7 +1550,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Request to leave a group
-	 * 
+	 *
 	 * @param groupID
 	 *            The group to leave
 	 * @throws Exception
@@ -1566,7 +1566,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Gets the URI of the cpability for handling group bans
-	 * 
+	 *
 	 * @param groupID
 	 *            UUID of the group
 	 * @throws URISyntaxException
@@ -1582,7 +1582,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Request a list of residents banned from joining a group
-	 * 
+	 *
 	 * @param groupID
 	 *            UUID of the group
 	 * @throws URISyntaxException
@@ -1594,7 +1594,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Request a list of residents banned from joining a group
-	 * 
+	 *
 	 * @param groupID
 	 *            UUID of the group
 	 * @param callback
@@ -1662,7 +1662,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Request that group of agents be banned or unbanned from the group
-	 * 
+	 *
 	 * @param groupID
 	 *            UUID of the group
 	 * @param action
@@ -1679,7 +1679,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Request that group of agents be banned or unbanned from the group
-	 * 
+	 *
 	 * @param groupID
 	 *            UUID of the group
 	 * @param action
@@ -1748,14 +1748,14 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		HashMap<UUID, Group> currentGroups = OnCurrentGroups.count() > 0 ? new HashMap<UUID, Group>() : null;
 		AgentGroupDataUpdateMessage msg = (AgentGroupDataUpdateMessage) message;
 
-		for (int i = 0; i < msg.GroupDataBlock.length; i++) {
-			Group group = new Group(msg.GroupDataBlock[i].GroupID);
-			group.InsigniaID = msg.GroupDataBlock[i].GroupInsigniaID;
-			group.Name = msg.GroupDataBlock[i].GroupName;
-			group.Contribution = msg.GroupDataBlock[i].Contribution;
-			group.AcceptNotices = msg.GroupDataBlock[i].AcceptNotices;
-			group.Powers = msg.GroupDataBlock[i].GroupPowers;
-			group.ListInProfile = msg.NewGroupDataBlock[i].ListInProfile;
+		for (int i = 0; i < msg.groupDataBlock.length; i++) {
+			Group group = new Group(msg.groupDataBlock[i].groupID);
+			group.InsigniaID = msg.groupDataBlock[i].groupInsigniaID;
+			group.Name = msg.groupDataBlock[i].groupName;
+			group.Contribution = msg.groupDataBlock[i].contribution;
+			group.AcceptNotices = msg.groupDataBlock[i].acceptNotices;
+			group.Powers = msg.groupDataBlock[i].groupPowers;
+			group.ListInProfile = msg.newGroupDataBlock[i].listInProfile;
 
 			if (currentGroups != null)
 				currentGroups.put(group.ID, group);
@@ -1802,7 +1802,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param sender
 	 *            The sender
 	 * @param e
@@ -1811,8 +1811,8 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	private final void HandleAgentDropGroup(IMessage message, Simulator simulator) {
 		if (OnGroupDropped.count() > 0) {
 			AgentDropGroupMessage msg = (AgentDropGroupMessage) message;
-			for (int i = 0; i < msg.AgentDataBlock.length; i++) {
-				OnGroupDropped.dispatch(new GroupDroppedCallbackArgs(msg.AgentDataBlock[i].GroupID));
+			for (int i = 0; i < msg.agentDataBlock.length; i++) {
+				OnGroupDropped.dispatch(new GroupDroppedCallbackArgs(msg.agentDataBlock[i].groupID));
 			}
 		}
 	}
@@ -1823,7 +1823,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param sender
 	 *            The sender
 	 * @param e
@@ -1857,7 +1857,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param sender
 	 *            The sender
 	 * @param e
@@ -1888,7 +1888,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param sender
 	 *            The sender
 	 * @param e
@@ -1917,7 +1917,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param sender
 	 *            The sender
 	 * @param e
@@ -1967,7 +1967,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param sender
 	 *            The sender
 	 * @param e
@@ -2018,7 +2018,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param sender
 	 *            The sender
 	 * @param e
@@ -2062,7 +2062,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param sender
 	 *            The sender
 	 * @param e
@@ -2098,7 +2098,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param sender
 	 *            The sender
 	 * @param e
@@ -2124,7 +2124,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param sender
 	 *            The sender
 	 * @param e
@@ -2164,7 +2164,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param sender
 	 *            The sender
 	 * @param e
@@ -2181,7 +2181,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param sender
 	 *            The sender
 	 * @param e
@@ -2195,7 +2195,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param sender
 	 *            The sender
 	 * @param e
@@ -2209,7 +2209,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param sender
 	 *            The sender
 	 * @param e
@@ -2240,7 +2240,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param sender
 	 *            The sender
 	 * @param e
@@ -2315,7 +2315,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 		/**
 		 * Construct a new instance of the CurrentGroupsCallbackArgs class
-		 * 
+		 *
 		 * @param groups
 		 *            The current groups your agent is a member of
 		 */
@@ -2336,7 +2336,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 		/**
 		 * Construct a new instance of the GroupNamesCallbackArgs class
-		 * 
+		 *
 		 * @param groupNames
 		 *            The Group names dictionary
 		 */
@@ -2369,7 +2369,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 		/**
 		 * Construct a new instance of the GroupMembersReplyCallbackArgs class
-		 * 
+		 *
 		 * @param requestID
 		 *            The ID of the request
 		 * @param groupID
@@ -2408,7 +2408,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 		/**
 		 * Construct a new instance of the GroupRolesDataReplyCallbackArgs class
-		 * 
+		 *
 		 * @param requestID
 		 *            The ID as returned by the request to correlate this result set and
 		 *            the request
@@ -2448,7 +2448,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 		/**
 		 * Construct a new instance of the GroupRolesMembersReplyCallbackArgs class
-		 * 
+		 *
 		 * @param requestID
 		 *            The ID as returned by the request to correlate this result set and
 		 *            the request
@@ -2489,7 +2489,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 		/**
 		 * Construct a new instance of the GroupTitlesReplyCallbackArgs class
-		 * 
+		 *
 		 * @param requestID
 		 *            The ID as returned by the request to correlate this result set and
 		 *            the request
@@ -2522,7 +2522,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 		/**
 		 * Construct a new instance of the GroupAccountSummaryReplyCallbackArgs class
-		 * 
+		 *
 		 * @param groupID
 		 *            The ID of the group
 		 * @param summary
@@ -2557,7 +2557,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 		/**
 		 * Construct a new instance of the GroupCreatedReplyCallbackArgs class
-		 * 
+		 *
 		 * @param groupID
 		 *            The ID of the group
 		 * @param success
@@ -2589,7 +2589,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 		/**
 		 * Construct a new instance of the GroupOperationCallbackArgs class
-		 * 
+		 *
 		 * @param groupID
 		 *            The ID of the group
 		 * @param success
@@ -2612,7 +2612,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 		/**
 		 * Construct a new instance of the GroupDroppedCallbackArgs class
-		 * 
+		 *
 		 * @param groupID
 		 *            The ID of the group
 		 */
@@ -2638,7 +2638,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 		/**
 		 * Construct a new instance of the GroupNoticesListReplyCallbackArgs class
-		 * 
+		 *
 		 * @param groupID
 		 *            The ID of the group
 		 * @param notices
@@ -2661,7 +2661,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 		/**
 		 * Construct a new instance of the GroupProfileCallbackArgs class
-		 * 
+		 *
 		 * @param group
 		 *            The group profile
 		 */
@@ -2672,7 +2672,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	/**
 	 * Provides notification of a group invitation request sent by another Avatar
-	 * 
+	 *
 	 * The <see cref="GroupInvitation"/> invitation is raised when another avatar
 	 * makes an offer for our avatar to join a group.
 	 */

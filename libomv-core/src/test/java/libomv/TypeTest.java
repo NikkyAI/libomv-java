@@ -682,24 +682,24 @@ public class TypeTest extends TestCase {
 		byte[] data = new byte[] { (byte) 0x80, 0x00, 0x0F, 0x50, (byte) 0x83, 0x7D };
 		BitPack bitpacker = new BitPack(data, 0);
 
-		int b = bitpacker.UnpackBits(1);
+		int b = bitpacker.unpackBits(1);
 		assertTrue("Unpacked " + b + " instead of 1", b == 1);
 
-		b = bitpacker.UnpackBits(1);
+		b = bitpacker.unpackBits(1);
 		assertTrue("Unpacked " + b + " instead of 0", b == 0);
 
 		bitpacker = new BitPack(data, 2);
 
-		b = bitpacker.UnpackBits(4);
+		b = bitpacker.unpackBits(4);
 		assertTrue("Unpacked " + b + " instead of 0", b == 0);
 
-		b = bitpacker.UnpackBits(8);
+		b = bitpacker.unpackBits(8);
 		assertTrue("Unpacked " + b + " instead of 0xF5", b == 0xF5);
 
-		b = bitpacker.UnpackBits(4);
+		b = bitpacker.unpackBits(4);
 		assertTrue("Unpacked " + b + " instead of 0", b == 0);
 
-		b = bitpacker.UnpackBits(10);
+		b = bitpacker.unpackBits(10);
 		assertTrue("Unpacked " + b + " instead of 0x0183", b == 0x0183);
 	}
 
@@ -707,40 +707,40 @@ public class TypeTest extends TestCase {
 		byte[] packedBytes = new byte[12];
 		BitPack bitpacker = new BitPack(packedBytes, 0);
 
-		bitpacker.PackBits(0x0ABBCCDD, 32);
-		bitpacker.PackBits(25, 5);
-		bitpacker.PackFloat(123.321f);
-		bitpacker.PackBits(1000, 16);
+		bitpacker.packBits(0x0ABBCCDD, 32);
+		bitpacker.packBits(25, 5);
+		bitpacker.packFloat(123.321f);
+		bitpacker.packBits(1000, 16);
 
 		bitpacker = new BitPack(packedBytes, 0);
 
-		int b = bitpacker.UnpackBits(32);
+		int b = bitpacker.unpackBits(32);
 		assertTrue("Unpacked " + b + " instead of 2864434397", b == 0x0ABBCCDD);
 
-		b = bitpacker.UnpackBits(5);
+		b = bitpacker.unpackBits(5);
 		assertTrue("Unpacked " + b + " instead of 25", b == 25);
 
-		float f = bitpacker.UnpackFloat();
+		float f = bitpacker.unpackFloat();
 		assertTrue("Unpacked " + f + " instead of 123.321", f == 123.321f);
 
-		b = bitpacker.UnpackBits(16);
+		b = bitpacker.unpackBits(16);
 		assertTrue("Unpacked " + b + " instead of 1000", b == 1000);
 
 		packedBytes = new byte[1];
 		bitpacker = new BitPack(packedBytes, 0);
-		bitpacker.PackBit(true);
+		bitpacker.packBit(true);
 
 		bitpacker = new BitPack(packedBytes, 0);
-		b = bitpacker.UnpackBits(1);
+		b = bitpacker.unpackBits(1);
 		assertTrue("Unpacked " + b + " instead of 1", b == 1);
 
 		packedBytes = new byte[1];
 		packedBytes[0] = Byte.MAX_VALUE;
 		bitpacker = new BitPack(packedBytes, 0);
-		bitpacker.PackBit(false);
+		bitpacker.packBit(false);
 
 		bitpacker = new BitPack(packedBytes, 0);
-		b = bitpacker.UnpackBits(1);
+		b = bitpacker.unpackBits(1);
 		assertTrue("Unpacked " + b + " instead of 0", b == 0);
 	}
 

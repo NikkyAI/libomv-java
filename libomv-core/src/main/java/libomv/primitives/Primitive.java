@@ -642,53 +642,53 @@ public class Primitive {
 
 	// Parameters used to construct a visual representation of a primitive
 	public class ConstructionData {
-		public ProfileCurve ProfileCurve;
-		public HoleType ProfileHole;
-		public PathCurve PathCurve;
-		public float PathBegin;
-		public float PathEnd;
-		public float PathRadiusOffset;
-		public float PathSkew;
-		public float PathScaleX;
-		public float PathScaleY;
-		public float PathShearX;
-		public float PathShearY;
-		public float PathTaperX;
-		public float PathTaperY;
-		public float PathTwist;
-		public float PathTwistBegin;
-		public float PathRevolutions;
-		public float ProfileBegin;
-		public float ProfileEnd;
-		public float ProfileHollow;
+		public ProfileCurve profileCurve;
+		public HoleType profileHole;
+		public PathCurve pathCurve;
+		public float pathBegin;
+		public float pathEnd;
+		public float pathRadiusOffset;
+		public float pathSkew;
+		public float pathScaleX;
+		public float pathScaleY;
+		public float pathShearX;
+		public float pathShearY;
+		public float pathTaperX;
+		public float pathTaperY;
+		public float pathTwist;
+		public float pathTwistBegin;
+		public float pathRevolutions;
+		public float profileBegin;
+		public float profileEnd;
+		public float profileHollow;
 
-		public Material Material;
-		public byte State;
-		public PCode PCode;
+		public Material material;
+		public byte state;
+		public PCode primCode;
 
 		public ConstructionData() {
-			ProfileCurve = Primitive.ProfileCurve.Square;
-			ProfileBegin = 0f;
-			ProfileEnd = 1f;
-			ProfileHollow = 0f;
-			PathCurve = Primitive.PathCurve.Line;
-			PathBegin = 0f;
-			PathEnd = 1f;
-			PathRadiusOffset = 0f;
-			PathSkew = 0f;
-			PathScaleX = 1f;
-			PathScaleY = 1f;
-			PathShearX = 0f;
-			PathShearY = 0f;
-			PathTaperX = 0f;
-			PathTaperY = 0f;
-			PathTwist = 0f;
-			PathTwistBegin = 0f;
-			PathRevolutions = 1f;
+			profileCurve = Primitive.ProfileCurve.Square;
+			profileBegin = 0f;
+			profileEnd = 1f;
+			profileHollow = 0f;
+			pathCurve = Primitive.PathCurve.Line;
+			pathBegin = 0f;
+			pathEnd = 1f;
+			pathRadiusOffset = 0f;
+			pathSkew = 0f;
+			pathScaleX = 1f;
+			pathScaleY = 1f;
+			pathShearX = 0f;
+			pathShearY = 0f;
+			pathTaperX = 0f;
+			pathTaperY = 0f;
+			pathTwist = 0f;
+			pathTwistBegin = 0f;
+			pathRevolutions = 1f;
 			/*
 			 * ProfileHole = primData.ProfileHole;
-			 * 
-			 * 
+			 *
+			 *
 			 * Material = primData.Material; State = primData.State; PCode = primData.PCode;
 			 */
 		}
@@ -700,29 +700,29 @@ public class Primitive {
 		// #region Properties
 
 		public ConstructionData(ConstructionData primData) {
-			ProfileCurve = primData.ProfileCurve;
-			ProfileHole = primData.ProfileHole;
-			PathCurve = primData.PathCurve;
-			PathBegin = primData.PathBegin;
-			PathEnd = primData.PathEnd;
-			PathRadiusOffset = primData.PathRadiusOffset;
-			PathSkew = primData.PathSkew;
-			PathScaleX = primData.PathScaleX;
-			PathScaleY = primData.PathScaleY;
-			PathShearX = primData.PathShearX;
-			PathShearY = primData.PathShearY;
-			PathTaperX = primData.PathTaperX;
-			PathTaperY = primData.PathTaperY;
-			PathTwistBegin = primData.PathTwistBegin;
-			PathTwist = primData.PathTwist;
-			PathRevolutions = primData.PathRevolutions;
-			ProfileBegin = primData.ProfileBegin;
-			ProfileEnd = primData.ProfileEnd;
-			ProfileHollow = primData.ProfileHollow;
+			profileCurve = primData.profileCurve;
+			profileHole = primData.profileHole;
+			pathCurve = primData.pathCurve;
+			pathBegin = primData.pathBegin;
+			pathEnd = primData.pathEnd;
+			pathRadiusOffset = primData.pathRadiusOffset;
+			pathSkew = primData.pathSkew;
+			pathScaleX = primData.pathScaleX;
+			pathScaleY = primData.pathScaleY;
+			pathShearX = primData.pathShearX;
+			pathShearY = primData.pathShearY;
+			pathTaperX = primData.pathTaperX;
+			pathTaperY = primData.pathTaperY;
+			pathTwistBegin = primData.pathTwistBegin;
+			pathTwist = primData.pathTwist;
+			pathRevolutions = primData.pathRevolutions;
+			profileBegin = primData.profileBegin;
+			profileEnd = primData.profileEnd;
+			profileHollow = primData.profileHollow;
 
-			Material = primData.Material;
-			State = primData.State;
-			PCode = primData.PCode;
+			material = primData.material;
+			state = primData.state;
+			primCode = primData.primCode;
 		}
 
 		/**
@@ -734,81 +734,81 @@ public class Primitive {
 		 *          <seealso cref="Primitive"/>
 		 */
 		public ConstructionData(PrimType type) {
-			PCode = Primitive.PCode.Prim;
-			Material = Primitive.Material.Wood;
+			primCode = Primitive.PCode.Prim;
+			material = Primitive.Material.Wood;
 
 			switch (type) {
 			case Box:
-				ProfileCurve = Primitive.ProfileCurve.Square;
-				PathCurve = Primitive.PathCurve.Line;
-				ProfileEnd = 1f;
-				PathEnd = 1f;
-				PathScaleX = 1f;
-				PathScaleY = 1f;
-				PathRevolutions = 1f;
+				profileCurve = Primitive.ProfileCurve.Square;
+				pathCurve = Primitive.PathCurve.Line;
+				profileEnd = 1f;
+				pathEnd = 1f;
+				pathScaleX = 1f;
+				pathScaleY = 1f;
+				pathRevolutions = 1f;
 				break;
 			case Cylinder:
-				ProfileCurve = Primitive.ProfileCurve.Circle;
-				PathCurve = Primitive.PathCurve.Line;
-				ProfileEnd = 1f;
-				PathEnd = 1f;
-				PathScaleX = 1f;
-				PathScaleY = 1f;
-				PathRevolutions = 1f;
+				profileCurve = Primitive.ProfileCurve.Circle;
+				pathCurve = Primitive.PathCurve.Line;
+				profileEnd = 1f;
+				pathEnd = 1f;
+				pathScaleX = 1f;
+				pathScaleY = 1f;
+				pathRevolutions = 1f;
 				break;
 			case Prism:
-				ProfileCurve = Primitive.ProfileCurve.EquilateralTriangle;
-				PathCurve = Primitive.PathCurve.Line;
-				ProfileEnd = 1f;
-				PathEnd = 1f;
-				PathScaleX = 0f;
-				PathScaleY = 0f;
-				PathRevolutions = 1f;
+				profileCurve = Primitive.ProfileCurve.EquilateralTriangle;
+				pathCurve = Primitive.PathCurve.Line;
+				profileEnd = 1f;
+				pathEnd = 1f;
+				pathScaleX = 0f;
+				pathScaleY = 0f;
+				pathRevolutions = 1f;
 				break;
 			case Ring:
-				ProfileCurve = Primitive.ProfileCurve.EquilateralTriangle;
-				PathCurve = Primitive.PathCurve.Circle;
-				ProfileEnd = 1f;
-				PathEnd = 1f;
-				PathScaleX = 1f;
-				PathScaleY = 0.25f;
-				PathRevolutions = 1f;
+				profileCurve = Primitive.ProfileCurve.EquilateralTriangle;
+				pathCurve = Primitive.PathCurve.Circle;
+				profileEnd = 1f;
+				pathEnd = 1f;
+				pathScaleX = 1f;
+				pathScaleY = 0.25f;
+				pathRevolutions = 1f;
 				break;
 			case Sphere:
-				ProfileCurve = Primitive.ProfileCurve.HalfCircle;
-				PathCurve = Primitive.PathCurve.Circle;
-				ProfileEnd = 1f;
-				PathEnd = 1f;
-				PathScaleX = 1f;
-				PathScaleY = 1f;
-				PathRevolutions = 1f;
+				profileCurve = Primitive.ProfileCurve.HalfCircle;
+				pathCurve = Primitive.PathCurve.Circle;
+				profileEnd = 1f;
+				pathEnd = 1f;
+				pathScaleX = 1f;
+				pathScaleY = 1f;
+				pathRevolutions = 1f;
 				break;
 			case Torus:
-				ProfileCurve = Primitive.ProfileCurve.Circle;
-				PathCurve = Primitive.PathCurve.Circle;
-				ProfileEnd = 1f;
-				PathEnd = 1f;
-				PathScaleX = 1f;
-				PathScaleY = 0.25f;
-				PathRevolutions = 1f;
+				profileCurve = Primitive.ProfileCurve.Circle;
+				pathCurve = Primitive.PathCurve.Circle;
+				profileEnd = 1f;
+				pathEnd = 1f;
+				pathScaleX = 1f;
+				pathScaleY = 0.25f;
+				pathRevolutions = 1f;
 				break;
 			case Tube:
-				ProfileCurve = Primitive.ProfileCurve.Square;
-				PathCurve = Primitive.PathCurve.Circle;
-				ProfileEnd = 1f;
-				PathEnd = 1f;
-				PathScaleX = 1f;
-				PathScaleY = 0.25f;
-				PathRevolutions = 1f;
+				profileCurve = Primitive.ProfileCurve.Square;
+				pathCurve = Primitive.PathCurve.Circle;
+				profileEnd = 1f;
+				pathEnd = 1f;
+				pathScaleX = 1f;
+				pathScaleY = 0.25f;
+				pathRevolutions = 1f;
 				break;
 			case Sculpt:
-				ProfileCurve = Primitive.ProfileCurve.Circle;
-				PathCurve = Primitive.PathCurve.Circle;
-				ProfileEnd = 1f;
-				PathEnd = 1f;
-				PathScaleX = 1f;
-				PathScaleY = 0.5f;
-				PathRevolutions = 1f;
+				profileCurve = Primitive.ProfileCurve.Circle;
+				pathCurve = Primitive.PathCurve.Circle;
+				profileEnd = 1f;
+				pathEnd = 1f;
+				pathScaleX = 1f;
+				pathScaleY = 0.5f;
+				pathRevolutions = 1f;
 				break;
 			default:
 				throw new UnsupportedOperationException("Unsupported shape: " + type.toString());
@@ -817,81 +817,81 @@ public class Primitive {
 
 		// Attachment point to an avatar
 		public AttachmentPoint getAttachmentPoint() {
-			return AttachmentPoint.values()[Helpers.SwapNibbles(State)];
+			return AttachmentPoint.values()[Helpers.SwapNibbles(state)];
 		}
 
 		public void setAttachmentPoint(AttachmentPoint value) {
-			State = Helpers.SwapNibbles((byte) value.ordinal());
+			state = Helpers.SwapNibbles((byte) value.ordinal());
 		}
 
 		public byte getProfileValue() {
-			return (byte) (ProfileCurve.getValue() | ProfileHole.getValue());
+			return (byte) (profileCurve.getValue() | profileHole.getValue());
 		}
 
 		public void setProfileValue(byte value) {
-			ProfileCurve = Primitive.ProfileCurve.setValue(value & 0xF);
-			ProfileHole = HoleType.setValue(value >> 4);
+			profileCurve = Primitive.ProfileCurve.setValue(value & 0xF);
+			profileHole = HoleType.setValue(value >> 4);
 		}
 
 		public ProfileCurve getProfileCurve() {
-			return ProfileCurve;
+			return profileCurve;
 		}
 
 		public void setProfileCurve(ProfileCurve value) {
-			ProfileCurve = value;
+			profileCurve = value;
 		}
 
 		public HoleType getProfileHole() {
-			return ProfileHole;
+			return profileHole;
 		}
 
 		public void setProfileHole(HoleType value) {
-			ProfileHole = value;
+			profileHole = value;
 		}
 
 		public Vector2 getPathBeginScale() {
 			Vector2 begin = new Vector2(1f, 1f);
-			if (PathScaleX > 1f)
-				begin.X = 2f - PathScaleX;
-			if (PathScaleY > 1f)
-				begin.Y = 2f - PathScaleY;
+			if (pathScaleX > 1f)
+				begin.X = 2f - pathScaleX;
+			if (pathScaleY > 1f)
+				begin.Y = 2f - pathScaleY;
 			return begin;
 		}
 
 		public Vector2 getPathEndScale() {
 			Vector2 end = new Vector2(1f, 1f);
-			if (PathScaleX < 1f)
-				end.X = PathScaleX;
-			if (PathScaleY < 1f)
-				end.Y = PathScaleY;
+			if (pathScaleX < 1f)
+				end.X = pathScaleX;
+			if (pathScaleY < 1f)
+				end.Y = pathScaleY;
 			return end;
 		}
 
 		// #endregion Properties
 
-		public OSD Serialize() {
+		public OSD serialize() {
 			OSDMap path = new OSDMap(14);
-			path.put("begin", OSD.FromReal(PathBegin));
-			path.put("curve", OSD.FromInteger(PathCurve.getValue()));
-			path.put("end", OSD.FromReal(PathEnd));
-			path.put("radius_offset", OSD.FromReal(PathRadiusOffset));
-			path.put("revolutions", OSD.FromReal(PathRevolutions));
-			path.put("scale_x", OSD.FromReal(PathScaleX));
-			path.put("scale_y", OSD.FromReal(PathScaleY));
-			path.put("shear_x", OSD.FromReal(PathShearX));
-			path.put("shear_y", OSD.FromReal(PathShearY));
-			path.put("skew", OSD.FromReal(PathSkew));
-			path.put("taper_x", OSD.FromReal(PathTaperX));
-			path.put("taper_y", OSD.FromReal(PathTaperY));
-			path.put("twist", OSD.FromReal(PathTwist));
-			path.put("twist_begin", OSD.FromReal(PathTwistBegin));
+			path.put("begin", OSD.FromReal(pathBegin));
+			path.put("curve", OSD.FromInteger(pathCurve.getValue()));
+			path.put("end", OSD.FromReal(pathEnd));
+			path.put("radius_offset", OSD.FromReal(pathRadiusOffset));
+			path.put("revolutions", OSD.FromReal(pathRevolutions));
+			path.put("scale_x", OSD.FromReal(pathScaleX));
+			path.put("scale_y", OSD.FromReal(pathScaleY));
+			path.put("shear_x", OSD.FromReal(pathShearX));
+			path.put("shear_y", OSD.FromReal(pathShearY));
+			path.put("skew", OSD.FromReal(pathSkew));
+			path.put("taper_x", OSD.FromReal(pathTaperX));
+			path.put("taper_y", OSD.FromReal(pathTaperY));
+			path.put("twist", OSD.FromReal(pathTwist));
+			path.put("twist_begin", OSD.FromReal(pathTwistBegin));
 
 			OSDMap profile = new OSDMap(4);
-			profile.put("begin", OSD.FromReal(ProfileBegin));
-			profile.put("curve", OSD.FromInteger(ProfileCurve.getValue()));
-			profile.put("hole", OSD.FromInteger(ProfileHole.getValue()));
-			profile.put("end", OSD.FromReal(ProfileEnd));
-			profile.put("hollow", OSD.FromReal(ProfileHollow));
+			profile.put("begin", OSD.FromReal(profileBegin));
+			profile.put("curve", OSD.FromInteger(profileCurve.getValue()));
+			profile.put("hole", OSD.FromInteger(profileHole.getValue()));
+			profile.put("end", OSD.FromReal(profileEnd));
+			profile.put("hollow", OSD.FromReal(profileHollow));
 
 			OSDMap volume = new OSDMap(2);
 			volume.put("path", path);
@@ -908,46 +908,46 @@ public class Primitive {
 				OSDMap path = (OSDMap) volume.get("path");
 				OSDMap profile = (OSDMap) volume.get("profile");
 
-				State = 0;
-				Material = Primitive.Material.setValue(map.get("material").AsInteger());
-				PCode = Primitive.PCode.Prim; // TODO: Put this in SD
+				state = 0;
+				material = Primitive.Material.setValue(map.get("material").AsInteger());
+				primCode = Primitive.PCode.Prim; // TODO: Put this in SD
 
-				PathBegin = (float) path.get("begin").AsReal();
-				PathCurve = Primitive.PathCurve.setValue((byte) path.get("curve").AsInteger());
-				PathEnd = (float) path.get("end").AsReal();
-				PathRadiusOffset = (float) path.get("radius_offset").AsReal();
-				PathRevolutions = (float) path.get("revolutions").AsReal();
-				PathScaleX = (float) path.get("scale_x").AsReal();
-				PathScaleY = (float) path.get("scale_y").AsReal();
-				PathShearX = (float) path.get("shear_x").AsReal();
-				PathShearY = (float) path.get("shear_y").AsReal();
-				PathSkew = (float) path.get("skew").AsReal();
-				PathTaperX = (float) path.get("taper_x").AsReal();
-				PathTaperY = (float) path.get("taper_y").AsReal();
-				PathTwist = (float) path.get("twist").AsReal();
-				PathTwistBegin = (float) path.get("twist_begin").AsReal();
+				pathBegin = (float) path.get("begin").AsReal();
+				pathCurve = Primitive.PathCurve.setValue((byte) path.get("curve").AsInteger());
+				pathEnd = (float) path.get("end").AsReal();
+				pathRadiusOffset = (float) path.get("radius_offset").AsReal();
+				pathRevolutions = (float) path.get("revolutions").AsReal();
+				pathScaleX = (float) path.get("scale_x").AsReal();
+				pathScaleY = (float) path.get("scale_y").AsReal();
+				pathShearX = (float) path.get("shear_x").AsReal();
+				pathShearY = (float) path.get("shear_y").AsReal();
+				pathSkew = (float) path.get("skew").AsReal();
+				pathTaperX = (float) path.get("taper_x").AsReal();
+				pathTaperY = (float) path.get("taper_y").AsReal();
+				pathTwist = (float) path.get("twist").AsReal();
+				pathTwistBegin = (float) path.get("twist_begin").AsReal();
 
-				ProfileBegin = (float) profile.get("begin").AsReal();
-				ProfileEnd = (float) profile.get("end").AsReal();
-				ProfileHollow = (float) profile.get("hollow").AsReal();
-				ProfileCurve = Primitive.ProfileCurve.setValue(profile.get("curve").AsInteger());
-				ProfileHole = Primitive.HoleType.setValue(profile.get("hole").AsInteger());
+				profileBegin = (float) profile.get("begin").AsReal();
+				profileEnd = (float) profile.get("end").AsReal();
+				profileHollow = (float) profile.get("hollow").AsReal();
+				profileCurve = Primitive.ProfileCurve.setValue(profile.get("curve").AsInteger());
+				profileHole = Primitive.HoleType.setValue(profile.get("hole").AsInteger());
 
 			}
 		}
 
 		@Override
 		public int hashCode() {
-			return ((Float) PathBegin).hashCode() ^ ((Float) PathEnd).hashCode() ^ ((Float) PathRadiusOffset).hashCode()
-					^ ((Float) PathRevolutions).hashCode() ^ ((Float) PathScaleX).hashCode()
-					^ ((Float) PathScaleY).hashCode() ^ ((Float) PathShearX).hashCode()
-					^ ((Float) PathShearY).hashCode() ^ ((Float) PathSkew).hashCode() ^ ((Float) PathTaperX).hashCode()
-					^ ((Float) PathTaperY).hashCode() ^ ((Float) PathTwist).hashCode()
-					^ ((Float) PathTwistBegin).hashCode() ^ ((Float) ProfileBegin).hashCode()
-					^ ((Float) ProfileEnd).hashCode() ^ ((Float) ProfileHollow).hashCode() ^ State
-					^ (Material == null ? 0 : Material.hashCode()) ^ (PCode == null ? 0 : PCode.hashCode())
-					^ (ProfileCurve == null ? 0 : ProfileCurve.hashCode())
-					^ (PathCurve == null ? 0 : PathCurve.hashCode());
+			return ((Float) pathBegin).hashCode() ^ ((Float) pathEnd).hashCode() ^ ((Float) pathRadiusOffset).hashCode()
+					^ ((Float) pathRevolutions).hashCode() ^ ((Float) pathScaleX).hashCode()
+					^ ((Float) pathScaleY).hashCode() ^ ((Float) pathShearX).hashCode()
+					^ ((Float) pathShearY).hashCode() ^ ((Float) pathSkew).hashCode() ^ ((Float) pathTaperX).hashCode()
+					^ ((Float) pathTaperY).hashCode() ^ ((Float) pathTwist).hashCode()
+					^ ((Float) pathTwistBegin).hashCode() ^ ((Float) profileBegin).hashCode()
+					^ ((Float) profileEnd).hashCode() ^ ((Float) profileHollow).hashCode() ^ state
+					^ (material == null ? 0 : material.hashCode()) ^ (primCode == null ? 0 : primCode.hashCode())
+					^ (profileCurve == null ? 0 : profileCurve.hashCode())
+					^ (pathCurve == null ? 0 : pathCurve.hashCode());
 		}
 
 		@Override
@@ -957,17 +957,17 @@ public class Primitive {
 
 		public boolean equals(ConstructionData o) {
 			if (o != null) {
-				return PathBegin == o.PathBegin && PathEnd == o.PathEnd && PathRadiusOffset == o.PathRadiusOffset
-						&& PathRevolutions == o.PathRevolutions && PathScaleX == o.PathScaleX
-						&& PathScaleY == o.PathScaleY && PathShearX == o.PathShearX && PathShearY == o.PathShearY
-						&& PathSkew == o.PathSkew && PathTaperX == o.PathTaperX && PathTaperY == o.PathTaperY
-						&& PathTwist == o.PathTwist && PathTwistBegin == o.PathTwistBegin
-						&& ProfileBegin == o.ProfileBegin && ProfileEnd == o.ProfileEnd
-						&& ProfileHollow == o.ProfileHollow && State == o.State
-						&& (Material == null ? Material == o.Material : Material.equals(o.Material))
-						&& (PCode == null ? PCode == o.PCode : PCode.equals(o.PCode))
-						&& (ProfileCurve == null ? ProfileCurve == o.ProfileCurve : ProfileCurve.equals(o.ProfileCurve))
-						&& (PathCurve == null ? PathCurve == o.PathCurve : PathCurve.equals(o.PathCurve));
+				return pathBegin == o.pathBegin && pathEnd == o.pathEnd && pathRadiusOffset == o.pathRadiusOffset
+						&& pathRevolutions == o.pathRevolutions && pathScaleX == o.pathScaleX
+						&& pathScaleY == o.pathScaleY && pathShearX == o.pathShearX && pathShearY == o.pathShearY
+						&& pathSkew == o.pathSkew && pathTaperX == o.pathTaperX && pathTaperY == o.pathTaperY
+						&& pathTwist == o.pathTwist && pathTwistBegin == o.pathTwistBegin
+						&& profileBegin == o.profileBegin && profileEnd == o.profileEnd
+						&& profileHollow == o.profileHollow && state == o.state
+						&& (material == null ? material == o.material : material.equals(o.material))
+						&& (primCode == null ? primCode == o.primCode : primCode.equals(o.primCode))
+						&& (profileCurve == null ? profileCurve == o.profileCurve : profileCurve.equals(o.profileCurve))
+						&& (pathCurve == null ? pathCurve == o.pathCurve : pathCurve.equals(o.pathCurve));
 			}
 			return false;
 		}
@@ -975,21 +975,21 @@ public class Primitive {
 
 	// Information on the flexible properties of a primitive
 	public class FlexibleData {
-		public int Softness;
-		public float Gravity;
-		public float Drag;
-		public float Wind;
-		public float Tension;
-		public Vector3 Force;
+		public int softness;
+		public float gravity;
+		public float drag;
+		public float wind;
+		public float tension;
+		public Vector3 force;
 
 		// Default constructor
 		public FlexibleData() {
-			Softness = 2;
-			Gravity = 0.3f;
-			Drag = 2.0f;
-			Wind = 0.0f;
-			Tension = 1.0f;
-			Force = Vector3.Zero;
+			softness = 2;
+			gravity = 0.3f;
+			drag = 2.0f;
+			wind = 0.0f;
+			tension = 1.0f;
+			force = Vector3.Zero;
 		}
 
 		public FlexibleData(OSD osd) {
@@ -1000,38 +1000,38 @@ public class Primitive {
 		public FlexibleData(byte[] data, int pos, int length) {
 			this();
 			if (length >= 4 && data.length >= pos + 4) {
-				Softness = ((data[pos] & 0x80) >> 6) | ((data[pos + 1] & 0x80) >> 7);
+				softness = ((data[pos] & 0x80) >> 6) | ((data[pos + 1] & 0x80) >> 7);
 
-				Tension = (data[pos++] & 0x7F) / 10.0f;
-				Drag = (data[pos++] & 0x7F) / 10.0f;
-				Gravity = data[pos++] / 10.0f;
-				Wind = data[pos++] / 10.0f;
+				tension = (data[pos++] & 0x7F) / 10.0f;
+				drag = (data[pos++] & 0x7F) / 10.0f;
+				gravity = data[pos++] / 10.0f;
+				wind = data[pos++] / 10.0f;
 				if (length >= 16 && data.length >= pos + 12) {
-					Force = new Vector3(data, pos);
+					force = new Vector3(data, pos);
 				}
 			}
 		}
 
 		public FlexibleData(FlexibleData data) {
-			Softness = data.Softness;
+			softness = data.softness;
 
-			Tension = data.Tension;
-			Drag = data.Drag;
-			Gravity = data.Gravity;
-			Wind = data.Wind;
-			Force = new Vector3(data.Force);
+			tension = data.tension;
+			drag = data.drag;
+			gravity = data.gravity;
+			wind = data.wind;
+			force = new Vector3(data.force);
 		}
 
-		public byte[] GetBytes() {
+		public byte[] getBytes() {
 			byte[] data = new byte[16];
 			int i = 0;
 			// Softness is packed in the upper bits of tension and drag
-			data[i++] = (byte) (((int) (Tension * 10.01f) & 0x7F) | ((Softness & 2) << 6));
-			data[i++] = (byte) (((int) (Drag * 10.01f) & 0x7F) | ((Softness & 1) << 7));
-			data[i++] = (byte) (Gravity * 10.01f);
-			data[i++] = (byte) (Wind * 10.01f);
+			data[i++] = (byte) (((int) (tension * 10.01f) & 0x7F) | ((softness & 2) << 6));
+			data[i++] = (byte) (((int) (drag * 10.01f) & 0x7F) | ((softness & 1) << 7));
+			data[i++] = (byte) (gravity * 10.01f);
+			data[i++] = (byte) (wind * 10.01f);
 
-			Force.toBytes(data, i);
+			force.toBytes(data, i);
 
 			return data;
 		}
@@ -1039,12 +1039,12 @@ public class Primitive {
 		public OSD Serialize() {
 			OSDMap map = new OSDMap();
 
-			map.put("simulate_lod", OSD.FromInteger(Softness));
-			map.put("gravity", OSD.FromReal(Gravity));
-			map.put("air_friction", OSD.FromReal(Drag));
-			map.put("wind_sensitivity", OSD.FromReal(Wind));
-			map.put("tension", OSD.FromReal(Tension));
-			map.put("user_force", OSD.FromVector3(Force));
+			map.put("simulate_lod", OSD.FromInteger(softness));
+			map.put("gravity", OSD.FromReal(gravity));
+			map.put("air_friction", OSD.FromReal(drag));
+			map.put("wind_sensitivity", OSD.FromReal(wind));
+			map.put("tension", OSD.FromReal(tension));
+			map.put("user_force", OSD.FromVector3(force));
 
 			return map;
 		}
@@ -1053,19 +1053,19 @@ public class Primitive {
 			if (osd.getType() == OSDType.Map) {
 				OSDMap map = (OSDMap) osd;
 
-				Softness = map.get("simulate_lod").AsInteger();
-				Gravity = (float) map.get("gravity").AsReal();
-				Drag = (float) map.get("air_friction").AsReal();
-				Wind = (float) map.get("wind_sensitivity").AsReal();
-				Tension = (float) map.get("tension").AsReal();
-				Force = map.get("user_force").AsVector3();
+				softness = map.get("simulate_lod").AsInteger();
+				gravity = (float) map.get("gravity").AsReal();
+				drag = (float) map.get("air_friction").AsReal();
+				wind = (float) map.get("wind_sensitivity").AsReal();
+				tension = (float) map.get("tension").AsReal();
+				force = map.get("user_force").AsVector3();
 			}
 		}
 
 		@Override
 		public int hashCode() {
-			return Softness ^ ((Float) Gravity).hashCode() ^ ((Float) Drag).hashCode() ^ ((Float) Wind).hashCode()
-					^ ((Float) Tension).hashCode() ^ (Force == null ? 0 : Force.hashCode());
+			return softness ^ ((Float) gravity).hashCode() ^ ((Float) drag).hashCode() ^ ((Float) wind).hashCode()
+					^ ((Float) tension).hashCode() ^ (force == null ? 0 : force.hashCode());
 		}
 
 		@Override
@@ -1074,25 +1074,25 @@ public class Primitive {
 		}
 
 		public boolean equals(FlexibleData obj) {
-			return obj != null && Softness == obj.Softness && Gravity == obj.Gravity && Drag == obj.Drag
-					&& Wind == obj.Wind && Tension == obj.Tension && Force == obj.Force;
+			return obj != null && softness == obj.softness && gravity == obj.gravity && drag == obj.drag
+					&& wind == obj.wind && tension == obj.tension && force == obj.force;
 		}
 	}
 
 	// Information on the light properties of a primitive
 	public class LightData {
-		public Color4 Color;
-		public float Intensity;
-		public float Radius;
-		public float Cutoff;
-		public float Falloff;
+		public Color4 color;
+		public float intensity;
+		public float radius;
+		public float cutoff;
+		public float falloff;
 
 		// Default constructor
 		public LightData() {
-			Color = Color4.White;
-			Radius = 10.0f;
-			Cutoff = 0.0f;
-			Falloff = 0.75f;
+			color = Color4.White;
+			radius = 10.0f;
+			cutoff = 0.0f;
+			falloff = 0.75f;
 		}
 
 		public LightData(OSD osd) {
@@ -1103,47 +1103,47 @@ public class Primitive {
 		public LightData(byte[] data, int pos, int length) {
 			this();
 			if (length >= 16 && data.length >= 16 + pos) {
-				Color = new Color4(data, pos, false);
-				Radius = Helpers.BytesToFloatL(data, pos + 4);
-				Cutoff = Helpers.BytesToFloatL(data, pos + 8);
-				Falloff = Helpers.BytesToFloatL(data, pos + 12);
+				color = new Color4(data, pos, false);
+				radius = Helpers.BytesToFloatL(data, pos + 4);
+				cutoff = Helpers.BytesToFloatL(data, pos + 8);
+				falloff = Helpers.BytesToFloatL(data, pos + 12);
 
 				// Alpha in color is actually intensity
-				Intensity = Color.A;
-				Color.A = 1f;
+				intensity = color.A;
+				color.A = 1f;
 			}
 		}
 
 		public LightData(LightData light) {
-			Color = new Color4(light.Color);
-			Radius = light.Radius;
-			Cutoff = light.Cutoff;
-			Falloff = light.Falloff;
-			Intensity = light.Intensity;
+			color = new Color4(light.color);
+			radius = light.radius;
+			cutoff = light.cutoff;
+			falloff = light.falloff;
+			intensity = light.intensity;
 		}
 
-		public byte[] GetBytes() {
+		public byte[] getBytes() {
 			byte[] data = new byte[16];
 
 			// Alpha channel in color is intensity
-			Color4 tmpColor = Color;
-			tmpColor.A = Intensity;
+			Color4 tmpColor = color;
+			tmpColor.A = intensity;
 			tmpColor.toBytes(data, 0);
-			Helpers.FloatToBytesL(Radius, data, 4);
-			Helpers.FloatToBytesL(Cutoff, data, 8);
-			Helpers.FloatToBytesL(Falloff, data, 12);
+			Helpers.FloatToBytesL(radius, data, 4);
+			Helpers.FloatToBytesL(cutoff, data, 8);
+			Helpers.FloatToBytesL(falloff, data, 12);
 
 			return data;
 		}
 
-		public OSD Serialize() {
+		public OSD serialize() {
 			OSDMap map = new OSDMap();
 
-			map.put("color", OSD.FromColor4(Color));
-			map.put("intensity", OSD.FromReal(Intensity));
-			map.put("radius", OSD.FromReal(Radius));
-			map.put("cutoff", OSD.FromReal(Cutoff));
-			map.put("falloff", OSD.FromReal(Falloff));
+			map.put("color", OSD.FromColor4(color));
+			map.put("intensity", OSD.FromReal(intensity));
+			map.put("radius", OSD.FromReal(radius));
+			map.put("cutoff", OSD.FromReal(cutoff));
+			map.put("falloff", OSD.FromReal(falloff));
 
 			return map;
 		}
@@ -1152,18 +1152,18 @@ public class Primitive {
 			if (osd.getType() == OSDType.Map) {
 				OSDMap map = (OSDMap) osd;
 
-				Color = map.get("color").AsColor4();
-				Intensity = (float) map.get("intensity").AsReal();
-				Radius = (float) map.get("radius").AsReal();
-				Cutoff = (float) map.get("cutoff").AsReal();
-				Falloff = (float) map.get("falloff").AsReal();
+				color = map.get("color").AsColor4();
+				intensity = (float) map.get("intensity").AsReal();
+				radius = (float) map.get("radius").AsReal();
+				cutoff = (float) map.get("cutoff").AsReal();
+				falloff = (float) map.get("falloff").AsReal();
 			}
 		}
 
 		@Override
 		public int hashCode() {
-			return (Color != null ? Color.hashCode() : 0) ^ ((Float) Intensity).hashCode() ^ ((Float) Radius).hashCode()
-					^ ((Float) Cutoff).hashCode() ^ ((Float) Falloff).hashCode();
+			return (color != null ? color.hashCode() : 0) ^ ((Float) intensity).hashCode() ^ ((Float) radius).hashCode()
+					^ ((Float) cutoff).hashCode() ^ ((Float) falloff).hashCode();
 		}
 
 		@Override
@@ -1172,21 +1172,21 @@ public class Primitive {
 		}
 
 		public boolean equals(LightData obj) {
-			return obj != null && Color == null ? (Color == obj.Color)
-					: (Color.equals(obj.Color)) && Intensity == obj.Intensity && Radius == obj.Radius
-							&& Cutoff == obj.Cutoff && Falloff == obj.Falloff;
+			return obj != null && color == null ? (color == obj.color)
+					: (color.equals(obj.color)) && intensity == obj.intensity && radius == obj.radius
+							&& cutoff == obj.cutoff && falloff == obj.falloff;
 		}
 
 		@Override
 		public String toString() {
-			return String.format("Color: %s Intensity: %f Radius: %f Cutoff: %f Falloff: %f", Color, Intensity, Radius,
-					Cutoff, Falloff);
+			return String.format("Color: %s Intensity: %f Radius: %f Cutoff: %f Falloff: %f", color, intensity, radius,
+					cutoff, falloff);
 		}
 	}
 
 	// Information on the sculpt properties of a sculpted primitive
 	public class SculptData {
-		public UUID SculptTexture;
+		public UUID sculptTexture;
 		private byte type;
 
 		public SculptType getType() {
@@ -1221,32 +1221,32 @@ public class Primitive {
 
 		public SculptData(byte[] data, int pos, int length) {
 			if (length >= 17 && data.length >= 17 + pos) {
-				SculptTexture = new UUID(data, pos);
+				sculptTexture = new UUID(data, pos);
 				type = data[pos + 16];
 			} else {
-				SculptTexture = UUID.Zero;
+				sculptTexture = UUID.Zero;
 				type = SculptType.None.getValue();
 			}
 		}
 
 		public SculptData(SculptData value) {
-			SculptTexture = value.SculptTexture;
+			sculptTexture = value.sculptTexture;
 			this.type = value.getType().getValue();
 		}
 
-		public byte[] GetBytes() {
+		public byte[] getBytes() {
 			byte[] data = new byte[17];
 
-			SculptTexture.toBytes(data, 0);
+			sculptTexture.toBytes(data, 0);
 			data[16] = type;
 
 			return data;
 		}
 
-		public OSD Serialize() {
+		public OSD serialize() {
 			OSDMap map = new OSDMap();
 
-			map.put("texture", OSD.FromUUID(SculptTexture));
+			map.put("texture", OSD.FromUUID(sculptTexture));
 			map.put("type", OSD.FromInteger(type));
 
 			return map;
@@ -1256,14 +1256,14 @@ public class Primitive {
 			if (osd.getType() == OSDType.Map) {
 				OSDMap map = (OSDMap) osd;
 
-				SculptTexture = map.get("texture").AsUUID();
+				sculptTexture = map.get("texture").AsUUID();
 				type = (byte) map.get("type").AsInteger();
 			}
 		}
 
 		@Override
 		public int hashCode() {
-			return (SculptTexture == null ? 0 : SculptTexture.hashCode()) ^ type;
+			return (sculptTexture == null ? 0 : sculptTexture.hashCode()) ^ type;
 		}
 
 		@Override
@@ -1272,15 +1272,15 @@ public class Primitive {
 		}
 
 		public boolean equals(SculptData obj) {
-			return obj != null && (SculptTexture == null ? (SculptTexture == obj.SculptTexture)
-					: (SculptTexture.equals(obj.SculptTexture))) && type == obj.type;
+			return obj != null && (sculptTexture == null ? (sculptTexture == obj.sculptTexture)
+					: (sculptTexture.equals(obj.sculptTexture))) && type == obj.type;
 		}
 	}
 
 	// Information on the sculpt properties of a sculpted primitive
 	public class LightImage {
-		public UUID LightTexture;
-		public Vector3 Params;
+		public UUID lightTexture;
+		public Vector3 params;
 
 		// Default constructor
 		public LightImage() {
@@ -1292,32 +1292,32 @@ public class Primitive {
 
 		public LightImage(byte[] data, int pos, int length) {
 			if (length >= 28 && data.length >= 28 + pos) {
-				LightTexture = new UUID(data, pos);
-				Params = new Vector3(data, pos + 16, true);
+				lightTexture = new UUID(data, pos);
+				params = new Vector3(data, pos + 16, true);
 			} else {
-				LightTexture = UUID.Zero;
-				Params = new Vector3(Helpers.PI_OVER_TWO, 0.f, 0.f);
+				lightTexture = UUID.Zero;
+				params = new Vector3(Helpers.PI_OVER_TWO, 0.f, 0.f);
 			}
 		}
 
 		public LightImage(LightImage value) {
-			LightTexture = value.LightTexture;
-			Params = value.Params;
+			lightTexture = value.lightTexture;
+			params = value.params;
 		}
 
-		public byte[] GetBytes() {
+		public byte[] getBytes() {
 			byte[] data = new byte[28];
 
-			LightTexture.toBytes(data, 0);
-			Params.toBytes(data, 16, true);
+			lightTexture.toBytes(data, 0);
+			params.toBytes(data, 16, true);
 			return data;
 		}
 
-		public OSD Serialize() {
+		public OSD serialize() {
 			OSDMap map = new OSDMap();
 
-			map.put("texture", OSD.FromUUID(LightTexture));
-			map.put("params", OSD.FromVector3(Params));
+			map.put("texture", OSD.FromUUID(lightTexture));
+			map.put("params", OSD.FromVector3(params));
 
 			return map;
 		}
@@ -1326,24 +1326,24 @@ public class Primitive {
 			if (osd.getType() == OSDType.Map) {
 				OSDMap map = (OSDMap) osd;
 
-				LightTexture = map.get("texture").AsUUID();
-				Params = map.get("params").AsVector3();
+				lightTexture = map.get("texture").AsUUID();
+				params = map.get("params").AsVector3();
 			}
 		}
 
 		public boolean isLightSpotlight() {
-			return LightTexture != null && !LightTexture.equals(UUID.Zero);
+			return lightTexture != null && !lightTexture.equals(UUID.Zero);
 		}
 
 		@Override
 		public String toString() {
-			return String.format("LightTexture: %s Params; %s", LightTexture.toString(), Params.toString());
+			return String.format("LightTexture: %s Params; %s", lightTexture.toString(), params.toString());
 
 		}
 
 		@Override
 		public int hashCode() {
-			return (LightTexture == null ? 0 : LightTexture.hashCode()) ^ (Params == null ? 0 : Params.hashCode());
+			return (lightTexture == null ? 0 : lightTexture.hashCode()) ^ (params == null ? 0 : params.hashCode());
 		}
 
 		@Override
@@ -1352,9 +1352,9 @@ public class Primitive {
 		}
 
 		public boolean equals(LightImage obj) {
-			return obj != null && LightTexture == null ? (LightTexture == obj.LightTexture)
-					: (LightTexture.equals(obj.LightTexture)) && Params == null ? (Params == obj.Params)
-							: (Params.equals(obj.Params));
+			return obj != null && lightTexture == null ? (lightTexture == obj.lightTexture)
+					: (lightTexture.equals(obj.lightTexture)) && params == null ? (params == obj.params)
+							: (params.equals(obj.params));
 		}
 	}
 	// #endregion Subclasses
@@ -1362,64 +1362,64 @@ public class Primitive {
 	// #region Public Members
 
 	// The Object's UUID, asset server
-	public UUID ID;
+	public UUID id;
 
-	public UUID GroupID;
+	public UUID groupID;
 
 	// Object ID in Region (sim) it is in
-	public int LocalID;
+	public int localID;
 
-	public int ParentID;
-	public long RegionHandle;
-	public int Flags;
+	public int parentID;
+	public long regionHandle;
+	public int flags;
 	// Location of Object (x,y,z probably)
-	public Vector3 Position;
+	public Vector3 position;
 	// Rotational Position of Object
-	public Quaternion Rotation = Quaternion.Identity;
-	public Vector3 Scale;
-	public Vector3 Velocity;
-	public Vector3 AngularVelocity;
-	public Vector3 Acceleration;
-	public Vector4 CollisionPlane;
-	public FlexibleData Flexible;
-	public LightData Light;
-	public LightImage LightMap;
-	public SculptData Sculpt;
+	public Quaternion rotation = Quaternion.Identity;
+	public Vector3 scale;
+	public Vector3 velocity;
+	public Vector3 angularVelocity;
+	public Vector3 acceleration;
+	public Vector4 collisionPlane;
+	public FlexibleData flexible;
+	public LightData light;
+	public LightImage lightMap;
+	public SculptData sculpt;
 	public ClickAction clickAction;
-	public UUID SoundID;
+	public UUID soundID;
 
 	// Identifies the owner if audio or a particle system is active
-	public UUID OwnerID;
+	public UUID ownerID;
 	// Foliage type for this primitive. Only applicable if this primitive is
 	// foliage
-	public Tree TreeSpecies;
-	public byte[] ScratchPad;
-	public byte SoundFlags;
-	public float SoundGain;
-	public float SoundRadius;
-	public String Text;
-	public Color4 TextColor;
-	public String MediaURL;
-	public JointType Joint;
-	public Vector3 JointPivot;
-	public Vector3 JointAxisOrAnchor;
-	public NameValue[] NameValues;
-	public ConstructionData PrimData;
-	public ObjectProperties Properties;
-	public PhysicsProperties PhysicsProps;
+	public Tree treeSpecies;
+	public byte[] scratchPad;
+	public byte soundFlags;
+	public float soundGain;
+	public float soundRadius;
+	public String text;
+	public Color4 textColor;
+	public String mediaURL;
+	public JointType joint;
+	public Vector3 jointPivot;
+	public Vector3 jointAxisOrAnchor;
+	public NameValue[] nameValues;
+	public ConstructionData primData;
+	public ObjectProperties properties;
+	public PhysicsProperties physicsProps;
 
-	public boolean IsAttachment;
+	public boolean isAttachment;
 
-	public TextureEntry Textures;
-	public TextureAnimation TextureAnim;
+	public TextureEntry textures;
+	public TextureAnimation textureAnim;
 
-	public ParticleSystem ParticleSys;
+	public ParticleSystem particleSys;
 
 	// Current version of the media data for the prim
-	public String MediaVersion = Helpers.EmptyString;
+	public String mediaVersion = Helpers.EmptyString;
 
 	// Array of media entries indexed by face number
-	public MediaEntry[] FaceMedia;
+	public MediaEntry[] faceMedia;
 
 	// #endregion Public Members
 
@@ -1427,17 +1427,17 @@ public class Primitive {
 
 	// Uses basic heuristics to estimate the primitive shape
 	public PrimType getType() {
-		if (Sculpt != null && Sculpt.getType() != SculptType.None && !Sculpt.SculptTexture.equals(UUID.Zero)) {
-			if (Sculpt.getType() == SculptType.Mesh)
+		if (sculpt != null && sculpt.getType() != SculptType.None && !sculpt.sculptTexture.equals(UUID.Zero)) {
+			if (sculpt.getType() == SculptType.Mesh)
 				return PrimType.Mesh;
 			return PrimType.Sculpt;
 		}
 
-		boolean linearPath = (PrimData.PathCurve == PathCurve.Line || PrimData.PathCurve == PathCurve.Flexible);
-		float scaleY = PrimData.PathScaleY;
+		boolean linearPath = (primData.pathCurve == PathCurve.Line || primData.pathCurve == PathCurve.Flexible);
+		float scaleY = primData.pathScaleY;
 
 		if (linearPath) {
-			switch (PrimData.ProfileCurve) {
+			switch (primData.profileCurve) {
 			case Circle:
 				return PrimType.Cylinder;
 			case Square:
@@ -1452,11 +1452,11 @@ public class Primitive {
 			}
 		}
 
-		switch (PrimData.PathCurve) {
+		switch (primData.pathCurve) {
 		case Flexible:
 			return PrimType.Unknown;
 		case Circle:
-			switch (PrimData.ProfileCurve) {
+			switch (primData.profileCurve) {
 			case Circle:
 				if (scaleY > 0.75f)
 					return PrimType.Sphere;
@@ -1472,7 +1472,7 @@ public class Primitive {
 				return PrimType.Unknown;
 			}
 		case Circle2:
-			if (PrimData.ProfileCurve == ProfileCurve.Circle)
+			if (primData.profileCurve == ProfileCurve.Circle)
 				return PrimType.Sphere;
 		default:
 			return PrimType.Unknown;
@@ -1486,8 +1486,8 @@ public class Primitive {
 	// Default constructor
 	public Primitive() {
 		// Default a few null property values to String.Empty
-		Text = Helpers.EmptyString;
-		MediaURL = Helpers.EmptyString;
+		text = Helpers.EmptyString;
+		mediaURL = Helpers.EmptyString;
 	}
 
 	public Primitive(OSD osd) {
@@ -1496,97 +1496,97 @@ public class Primitive {
 	}
 
 	public Primitive(Primitive prim) {
-		ID = new UUID(prim.ID);
-		GroupID = new UUID(prim.GroupID);
-		LocalID = prim.LocalID;
-		ParentID = prim.ParentID;
-		RegionHandle = prim.RegionHandle;
-		Flags = prim.Flags;
-		TreeSpecies = prim.TreeSpecies;
-		if (prim.ScratchPad != null) {
-			ScratchPad = new byte[prim.ScratchPad.length];
-			System.arraycopy(prim.ScratchPad, 0, ScratchPad, 0, ScratchPad.length);
+		id = new UUID(prim.id);
+		groupID = new UUID(prim.groupID);
+		localID = prim.localID;
+		parentID = prim.parentID;
+		regionHandle = prim.regionHandle;
+		flags = prim.flags;
+		treeSpecies = prim.treeSpecies;
+		if (prim.scratchPad != null) {
+			scratchPad = new byte[prim.scratchPad.length];
+			System.arraycopy(prim.scratchPad, 0, scratchPad, 0, scratchPad.length);
 		} else
-			ScratchPad = Helpers.EmptyBytes;
-		Position = new Vector3(prim.Position);
-		Scale = prim.Scale;
-		Rotation = new Quaternion(prim.Rotation);
-		Velocity = new Vector3(prim.Velocity);
-		AngularVelocity = new Vector3(prim.AngularVelocity);
-		Acceleration = new Vector3(prim.Acceleration);
-		CollisionPlane = new Vector4(prim.CollisionPlane);
-		Flexible = new FlexibleData(prim.Flexible);
-		Light = new LightData(prim.Light);
-		Sculpt = new SculptData(prim.Sculpt);
+			scratchPad = Helpers.EmptyBytes;
+		position = new Vector3(prim.position);
+		scale = prim.scale;
+		rotation = new Quaternion(prim.rotation);
+		velocity = new Vector3(prim.velocity);
+		angularVelocity = new Vector3(prim.angularVelocity);
+		acceleration = new Vector3(prim.acceleration);
+		collisionPlane = new Vector4(prim.collisionPlane);
+		flexible = new FlexibleData(prim.flexible);
+		light = new LightData(prim.light);
+		sculpt = new SculptData(prim.sculpt);
 		clickAction = prim.clickAction;
-		SoundID = new UUID(prim.SoundID);
-		OwnerID = new UUID(prim.OwnerID);
-		SoundFlags = prim.SoundFlags;
-		SoundGain = prim.SoundGain;
-		SoundRadius = prim.SoundRadius;
-		Text = new String(prim.Text);
-		TextColor = new Color4(prim.TextColor);
-		MediaURL = prim.MediaURL;
-		Joint = prim.Joint;
-		JointPivot = prim.JointPivot;
-		JointAxisOrAnchor = prim.JointAxisOrAnchor;
-		if (prim.NameValues != null) {
-			if (NameValues == null || NameValues.length != prim.NameValues.length)
-				NameValues = new NameValue[prim.NameValues.length];
-			for (int i = 0; i < prim.NameValues.length; i++)
-				NameValues[i] = prim.NameValues[i];
+		soundID = new UUID(prim.soundID);
+		ownerID = new UUID(prim.ownerID);
+		soundFlags = prim.soundFlags;
+		soundGain = prim.soundGain;
+		soundRadius = prim.soundRadius;
+		text = new String(prim.text);
+		textColor = new Color4(prim.textColor);
+		mediaURL = prim.mediaURL;
+		joint = prim.joint;
+		jointPivot = prim.jointPivot;
+		jointAxisOrAnchor = prim.jointAxisOrAnchor;
+		if (prim.nameValues != null) {
+			if (nameValues == null || nameValues.length != prim.nameValues.length)
+				nameValues = new NameValue[prim.nameValues.length];
+			for (int i = 0; i < prim.nameValues.length; i++)
+				nameValues[i] = prim.nameValues[i];
 		} else
-			NameValues = null;
-		PrimData = new ConstructionData(prim.PrimData);
-		Properties = new ObjectProperties(prim.Properties);
-		Textures = new TextureEntry(prim.Textures);
-		TextureAnim = Textures.new TextureAnimation(prim.TextureAnim);
-		ParticleSys = new ParticleSystem(prim.ParticleSys);
+			nameValues = null;
+		primData = new ConstructionData(prim.primData);
+		properties = new ObjectProperties(prim.properties);
+		textures = new TextureEntry(prim.textures);
+		textureAnim = textures.new TextureAnimation(prim.textureAnim);
+		particleSys = new ParticleSystem(prim.particleSys);
 	}
 
 	// #endregion Constructors
 
 	// #region Public Methods
 
-	public OSD Serialize() {
+	public OSD serialize() {
 
 		OSDMap prim = new OSDMap(9);
-		if (Properties != null) {
-			prim.put("name", OSD.FromString(Properties.Name));
-			prim.put("description", OSD.FromString(Properties.Description));
+		if (properties != null) {
+			prim.put("name", OSD.FromString(properties.name));
+			prim.put("description", OSD.FromString(properties.description));
 		} else {
 			prim.put("name", OSD.FromString("Object"));
 			prim.put("description", OSD.FromString(Helpers.EmptyString));
 		}
 
-		prim.put("phantom", OSD.FromBoolean((Flags & PrimFlags.Phantom) != 0));
-		prim.put("physical", OSD.FromBoolean((Flags & PrimFlags.Physics) != 0));
-		prim.put("position", OSD.FromVector3(Position));
-		prim.put("rotation", OSD.FromQuaternion(Rotation));
-		prim.put("scale", OSD.FromVector3(Scale));
-		prim.put("material", OSD.FromInteger(PrimData.Material.getValue()));
-		prim.put("shadows", OSD.FromBoolean((Flags & PrimFlags.CastShadows) != 0));
-		prim.put("parentid", OSD.FromInteger(ParentID));
+		prim.put("phantom", OSD.FromBoolean((flags & PrimFlags.Phantom) != 0));
+		prim.put("physical", OSD.FromBoolean((flags & PrimFlags.Physics) != 0));
+		prim.put("position", OSD.FromVector3(position));
+		prim.put("rotation", OSD.FromQuaternion(rotation));
+		prim.put("scale", OSD.FromVector3(scale));
+		prim.put("material", OSD.FromInteger(primData.material.getValue()));
+		prim.put("shadows", OSD.FromBoolean((flags & PrimFlags.CastShadows) != 0));
+		prim.put("parentid", OSD.FromInteger(parentID));
 
-		prim.put("volume", PrimData.Serialize());
+		prim.put("volume", primData.serialize());
 
-		if (Textures != null)
-			prim.put("textures", Textures.serialize());
+		if (textures != null)
+			prim.put("textures", textures.serialize());
 
-		if ((TextureAnim.Flags & TextureAnimMode.ANIM_ON) != 0)
-			prim.put("texture_anim", TextureAnim.serialize());
+		if ((textureAnim.flags & TextureAnimMode.ANIM_ON) != 0)
+			prim.put("texture_anim", textureAnim.serialize());
 
-		if (Light != null)
-			prim.put("light", Light.Serialize());
+		if (light != null)
+			prim.put("light", light.serialize());
 
-		if (LightMap != null)
-			prim.put("light_image", LightMap.Serialize());
+		if (lightMap != null)
+			prim.put("light_image", lightMap.serialize());
 
-		if (Flexible != null)
-			prim.put("flex", Flexible.Serialize());
+		if (flexible != null)
+			prim.put("flex", flexible.Serialize());
 
-		if (Sculpt != null)
-			prim.put("sculpt", Sculpt.Serialize());
+		if (sculpt != null)
+			prim.put("sculpt", sculpt.serialize());
 
 		return prim;
 	}
@@ -1596,47 +1596,47 @@ public class Primitive {
 			OSDMap map = (OSDMap) osd;
 
 			if (map.get("phantom").AsBoolean())
-				Flags = PrimFlags.Phantom;
+				flags = PrimFlags.Phantom;
 
 			if (map.get("physical").AsBoolean())
-				Flags |= PrimFlags.Physics;
+				flags |= PrimFlags.Physics;
 
 			if (map.get("shadows").AsBoolean())
-				Flags |= PrimFlags.CastShadows;
+				flags |= PrimFlags.CastShadows;
 
-			ParentID = map.get("parentid").AsInteger();
-			Position = map.get("position").AsVector3();
-			Rotation = map.get("rotation").AsQuaternion();
-			Scale = map.get("scale").AsVector3();
+			parentID = map.get("parentid").AsInteger();
+			position = map.get("position").AsVector3();
+			rotation = map.get("rotation").AsQuaternion();
+			scale = map.get("scale").AsVector3();
 
-			PrimData = new ConstructionData(map.get("volume"));
-			Flexible = new FlexibleData(map.get("flex"));
-			Light = new LightData(map.get("light"));
-			LightMap = new LightImage(map.get("light_image"));
+			primData = new ConstructionData(map.get("volume"));
+			flexible = new FlexibleData(map.get("flex"));
+			light = new LightData(map.get("light"));
+			lightMap = new LightImage(map.get("light_image"));
 
 			if (map.containsKey("sculpt"))
-				Sculpt = new SculptData(map.get("sculpt"));
+				sculpt = new SculptData(map.get("sculpt"));
 
-			Textures = new TextureEntry(map.get("textures"));
+			textures = new TextureEntry(map.get("textures"));
 
 			if (map.containsKey("texture_anim"))
-				TextureAnim = Textures.new TextureAnimation(map.get("texture_anim"));
+				textureAnim = textures.new TextureAnimation(map.get("texture_anim"));
 
-			Properties = new ObjectProperties();
+			properties = new ObjectProperties();
 
 			String s;
 			s = map.get("name").AsString();
 			if (s != null && !s.isEmpty()) {
-				Properties.Name = s;
+				properties.name = s;
 			}
 			s = map.get("description").AsString();
 			if (s != null && !s.isEmpty()) {
-				Properties.Description = s;
+				properties.description = s;
 			}
 		}
 	}
 
-	public int SetExtraParamsFromBytes(byte[] data, int pos) {
+	public int setExtraParamsFromBytes(byte[] data, int pos) {
 		int i = pos;
 		int totalLength = 1;
 
@@ -1654,17 +1654,17 @@ public class Primitive {
 
 			switch (type) {
 			case Flexible:
-				Flexible = new FlexibleData(data, i, paramLength);
+				flexible = new FlexibleData(data, i, paramLength);
 				break;
 			case Light:
-				Light = new LightData(data, i, paramLength);
+				light = new LightData(data, i, paramLength);
 				break;
 			case LightImage:
-				LightMap = new LightImage(data, i, paramLength);
+				lightMap = new LightImage(data, i, paramLength);
 				break;
 			case Sculpt:
 			case Mesh:
-				Sculpt = new SculptData(data, i, paramLength);
+				sculpt = new SculptData(data, i, paramLength);
 				break;
 			default:
 				break;
@@ -1675,43 +1675,43 @@ public class Primitive {
 		return totalLength;
 	}
 
-	public byte[] GetExtraParamsBytes() throws IOException {
+	public byte[] getExtraParamsBytes() throws IOException {
 		ByteArrayOutputStream data = new ByteArrayOutputStream();
 		byte buffer[];
 		byte count = 0;
 
 		data.write(0);
-		if (Flexible != null) {
+		if (flexible != null) {
 			data.write(Helpers.UInt16ToBytesL(ExtraParamType.Flexible.getValue()));
-			buffer = Flexible.GetBytes();
+			buffer = flexible.getBytes();
 			data.write(Helpers.UInt32ToBytesL(buffer.length));
 			data.write(buffer);
 			++count;
 		}
 
-		if (Light != null) {
+		if (light != null) {
 			data.write(Helpers.UInt16ToBytesL(ExtraParamType.Flexible.getValue()));
-			buffer = Light.GetBytes();
+			buffer = light.getBytes();
 			data.write(Helpers.UInt32ToBytesL(buffer.length));
 			data.write(buffer);
 			++count;
 		}
 
-		if (LightMap != null) {
+		if (lightMap != null) {
 			data.write(Helpers.UInt16ToBytesL(ExtraParamType.LightImage.getValue()));
-			buffer = LightMap.GetBytes();
+			buffer = lightMap.getBytes();
 			data.write(Helpers.UInt32ToBytesL(buffer.length));
 			data.write(buffer);
 			++count;
 		}
 
-		if (Sculpt != null) {
-			if (Sculpt.getType() == SculptType.Mesh) {
+		if (sculpt != null) {
+			if (sculpt.getType() == SculptType.Mesh) {
 				data.write(Helpers.UInt16ToBytesL(ExtraParamType.Mesh.getValue()));
 			} else {
 				data.write(Helpers.UInt16ToBytesL(ExtraParamType.Sculpt.getValue()));
 			}
-			buffer = Sculpt.GetBytes();
+			buffer = sculpt.getBytes();
 			data.write(Helpers.UInt32ToBytesL(buffer.length));
 			data.write(buffer);
 			++count;
@@ -1739,49 +1739,49 @@ public class Primitive {
 		if (lhs == null || rhs == null) {
 			return rhs == lhs;
 		}
-		return (lhs.ID == rhs.ID);
+		return (lhs.id == rhs.id);
 	}
 
 	@Override
 	public String toString() {
-		switch (PrimData.PCode) {
+		switch (primData.primCode) {
 		case Prim:
-			return String.format("%s (%s)", getType().toString(), ID.toString());
+			return String.format("%s (%s)", getType().toString(), id.toString());
 		default:
-			return String.format("%s (%s)", PrimData.PCode.toString(), ID.toString());
+			return String.format("%s (%s)", primData.primCode.toString(), id.toString());
 		}
 	}
 
 	@Override
 	public int hashCode() {
-		return Position.hashCode() ^ Velocity.hashCode() ^ Acceleration.hashCode() ^ Rotation.hashCode()
-				^ AngularVelocity.hashCode() ^ clickAction.hashCode() ^ (Flexible != null ? Flexible.hashCode() : 0)
-				^ (Light != null ? Light.hashCode() : 0) ^ (Sculpt != null ? Sculpt.hashCode() : 0) ^ Flags
-				^ (MediaURL != null ? MediaURL.hashCode() : 0) ^ (OwnerID != null ? OwnerID.hashCode() : 0) ^ ParentID
-				^ (PrimData != null ? PrimData.hashCode() : 0) ^ (ParticleSys != null ? ParticleSys.hashCode() : 0)
-				^ (TextColor != null ? TextColor.hashCode() : 0) ^ (TextureAnim != null ? TextureAnim.hashCode() : 0)
-				^ (Textures != null ? Textures.hashCode() : 0) ^ (int) SoundRadius
-				^ (Scale != null ? Scale.hashCode() : 0) ^ SoundID.hashCode() ^ Text.hashCode()
-				^ TreeSpecies.hashCode();
+		return position.hashCode() ^ velocity.hashCode() ^ acceleration.hashCode() ^ rotation.hashCode()
+				^ angularVelocity.hashCode() ^ clickAction.hashCode() ^ (flexible != null ? flexible.hashCode() : 0)
+				^ (light != null ? light.hashCode() : 0) ^ (sculpt != null ? sculpt.hashCode() : 0) ^ flags
+				^ (mediaURL != null ? mediaURL.hashCode() : 0) ^ (ownerID != null ? ownerID.hashCode() : 0) ^ parentID
+				^ (primData != null ? primData.hashCode() : 0) ^ (particleSys != null ? particleSys.hashCode() : 0)
+				^ (textColor != null ? textColor.hashCode() : 0) ^ (textureAnim != null ? textureAnim.hashCode() : 0)
+				^ (textures != null ? textures.hashCode() : 0) ^ (int) soundRadius
+				^ (scale != null ? scale.hashCode() : 0) ^ soundID.hashCode() ^ text.hashCode()
+				^ treeSpecies.hashCode();
 	}
 
 	// #endregion Overrides
 
 	// #region Parameter Packing Methods
 
-	public static short PackBeginCut(float beginCut) {
+	public static short packBeginCut(float beginCut) {
 		return (short) Helpers.roundFromZero(beginCut / CUT_QUANTA);
 	}
 
-	public static short PackEndCut(float endCut) {
+	public static short packEndCut(float endCut) {
 		return (short) (50000 - Helpers.roundFromZero(endCut / CUT_QUANTA));
 	}
 
-	public static byte PackPathScale(float pathScale) {
+	public static byte packPathScale(float pathScale) {
 		return (byte) (200 - Helpers.roundFromZero(pathScale / SCALE_QUANTA));
 	}
 
-	public static byte PackPathShear(float pathShear) {
+	public static byte packPathShear(float pathShear) {
 		return (byte) Helpers.roundFromZero(pathShear / SHEAR_QUANTA);
 	}
 
@@ -1793,19 +1793,19 @@ public class Primitive {
 	 *            Floating point parameter to pack
 	 * @return Signed eight bit value containing the packed parameter
 	 */
-	public static byte PackPathTwist(float pathTwist) {
+	public static byte packPathTwist(float pathTwist) {
 		return (byte) Helpers.roundFromZero(pathTwist / SCALE_QUANTA);
 	}
 
-	public static byte PackPathTaper(float pathTaper) {
+	public static byte packPathTaper(float pathTaper) {
 		return (byte) Helpers.roundFromZero(pathTaper / TAPER_QUANTA);
 	}
 
-	public static byte PackPathRevolutions(float pathRevolutions) {
+	public static byte packPathRevolutions(float pathRevolutions) {
 		return (byte) Helpers.roundFromZero((pathRevolutions - 1f) / REV_QUANTA);
 	}
 
-	public static short PackProfileHollow(float profileHollow) {
+	public static short packProfileHollow(float profileHollow) {
 		return (short) Helpers.roundFromZero(profileHollow / HOLLOW_QUANTA);
 	}
 
@@ -1813,19 +1813,19 @@ public class Primitive {
 
 	// #region Parameter Unpacking Methods
 
-	public static float UnpackBeginCut(short beginCut) {
+	public static float unpackBeginCut(short beginCut) {
 		return beginCut * CUT_QUANTA;
 	}
 
-	public static float UnpackEndCut(short endCut) {
+	public static float unpackEndCut(short endCut) {
 		return (50000 - endCut) * CUT_QUANTA;
 	}
 
-	public static float UnpackPathScale(byte pathScale) {
+	public static float unpackPathScale(byte pathScale) {
 		return (200 - pathScale) * SCALE_QUANTA;
 	}
 
-	public static float UnpackPathShear(byte pathShear) {
+	public static float unpackPathShear(byte pathShear) {
 		return pathShear * SHEAR_QUANTA;
 	}
 
@@ -1837,19 +1837,19 @@ public class Primitive {
 	 *            Signed eight bit value to unpack
 	 * @return Unpacked floating point value
 	 */
-	public static float UnpackPathTwist(byte pathTwist) {
+	public static float unpackPathTwist(byte pathTwist) {
 		return pathTwist * SCALE_QUANTA;
 	}
 
-	public static float UnpackPathTaper(byte pathTaper) {
+	public static float unpackPathTaper(byte pathTaper) {
 		return pathTaper * TAPER_QUANTA;
 	}
 
-	public static float UnpackPathRevolutions(byte pathRevolutions) {
+	public static float unpackPathRevolutions(byte pathRevolutions) {
 		return pathRevolutions * REV_QUANTA + 1f;
 	}
 
-	public static float UnpackProfileHollow(short profileHollow) {
+	public static float unpackProfileHollow(short profileHollow) {
 		return profileHollow * HOLLOW_QUANTA;
 	}
 }

@@ -51,52 +51,52 @@ public class LindenMesh extends ReferenceMesh {
 	// #region Mesh Structs
 
 	public class Vertex {
-		public Vector3 Position;
-		public Vector3 Normal;
-		public Vector3 BiNormal;
-		public Vector2 TexCoord;
-		public Vector2 DetailTexCoord;
-		public float Weight;
+		public Vector3 position;
+		public Vector3 normal;
+		public Vector3 biNormal;
+		public Vector2 texCoord;
+		public Vector2 detailTexCoord;
+		public float weight;
 
 		@Override
 		public String toString() {
-			return String.format("Position: %s Norm: %s BiNorm: %s TexCoord: %s DetailTexCoord: %s", Position, Normal,
-					BiNormal, TexCoord, DetailTexCoord, Weight);
+			return String.format("Position: %s Norm: %s BiNorm: %s TexCoord: %s DetailTexCoord: %s", position, normal,
+					biNormal, texCoord, detailTexCoord, weight);
 		}
 	}
 
 	public class MorphVertex {
-		public int VertexIndex;
-		public Vector3 Position;
-		public Vector3 Normal;
-		public Vector3 BiNormal;
-		public Vector2 TexCoord;
+		public int vertexIndex;
+		public Vector3 position;
+		public Vector3 normal;
+		public Vector3 biNormal;
+		public Vector2 texCoord;
 
 		@Override
 		public String toString() {
-			return String.format("Index: %d Position: %s Norm: %s BiNorm: %s TexCoord: %s", VertexIndex, Position,
-					Normal, BiNormal, TexCoord);
+			return String.format("Index: %d Position: %s Norm: %s BiNorm: %s TexCoord: %s", vertexIndex, position,
+					normal, biNormal, texCoord);
 		}
 	}
 
 	public class Morph {
-		public String Name;
-		public int NumVertices;
-		public MorphVertex[] Vertices;
+		public String name;
+		public int numVertices;
+		public MorphVertex[] vertices;
 
 		@Override
 		public String toString() {
-			return Name;
+			return name;
 		}
 	}
 
 	public class VertexRemap {
-		public int RemapSource;
-		public int RemapDestination;
+		public int remapSource;
+		public int remapDestination;
 
 		@Override
 		public String toString() {
-			return String.format("%d -> %d", RemapSource, RemapDestination);
+			return String.format("%d -> %d", remapSource, remapDestination);
 		}
 	}
 	// #endregion Mesh Structs
@@ -115,13 +115,13 @@ public class LindenMesh extends ReferenceMesh {
 
 	protected short _numVertices;
 
-	public FloatBuffer Vertices;
+	public FloatBuffer vertices;
 
 	public Vector3 getVerticeCoord(int index) {
 		if (index >= _numVertices)
 			return null;
 		index *= 3;
-		return new Vector3(Vertices.get(index), Vertices.get(index + 1), Vertices.get(index + 2));
+		return new Vector3(vertices.get(index), vertices.get(index + 1), vertices.get(index + 2));
 	}
 
 	protected Vector3 _center;
@@ -130,11 +130,11 @@ public class LindenMesh extends ReferenceMesh {
 		return _center;
 	}
 
-	public FloatBuffer Normals;
-	public FloatBuffer BiNormals;
-	public FloatBuffer TexCoords;
-	public FloatBuffer DetailTexCoords;
-	public FloatBuffer Weights;
+	public FloatBuffer normals;
+	public FloatBuffer biNormals;
+	public FloatBuffer texCoords;
+	public FloatBuffer detailTexCoords;
+	public FloatBuffer weights;
 
 	public Vertex getVertex(int index) {
 		if (index >= _numVertices)
@@ -142,14 +142,14 @@ public class LindenMesh extends ReferenceMesh {
 
 		Vertex vertex = new Vertex();
 		int offset = index * 3;
-		vertex.Position = new Vector3(Vertices.get(offset), Vertices.get(offset + 1), Vertices.get(offset + 2));
-		vertex.Normal = new Vector3(Normals.get(offset), Normals.get(offset + 1), Normals.get(offset + 2));
-		vertex.BiNormal = new Vector3(BiNormals.get(offset), BiNormals.get(offset + 1), BiNormals.get(offset + 2));
+		vertex.position = new Vector3(vertices.get(offset), vertices.get(offset + 1), vertices.get(offset + 2));
+		vertex.normal = new Vector3(normals.get(offset), normals.get(offset + 1), normals.get(offset + 2));
+		vertex.biNormal = new Vector3(biNormals.get(offset), biNormals.get(offset + 1), biNormals.get(offset + 2));
 		offset = index * 2;
-		vertex.TexCoord = new Vector2(TexCoords.get(offset), TexCoords.get(offset + 1));
-		vertex.DetailTexCoord = new Vector2(DetailTexCoords.get(offset), DetailTexCoords.get(offset + 1));
+		vertex.texCoord = new Vector2(texCoords.get(offset), texCoords.get(offset + 1));
+		vertex.detailTexCoord = new Vector2(detailTexCoords.get(offset), detailTexCoords.get(offset + 1));
 
-		vertex.Weight = Weights.get(index);
+		vertex.weight = weights.get(index);
 		return vertex;
 	}
 
@@ -239,78 +239,78 @@ public class LindenMesh extends ReferenceMesh {
 		float minX = Float.MAX_VALUE, minY = Float.MAX_VALUE, minZ = Float.MAX_VALUE, val, maxX = Float.MIN_VALUE,
 				maxY = Float.MIN_VALUE, maxZ = Float.MIN_VALUE;
 		// Populate the vertex array
-		Vertices = FloatBuffer.allocate(3 * _numVertices);
+		vertices = FloatBuffer.allocate(3 * _numVertices);
 		for (int i = 0; i < _numVertices; i++) {
 			val = fis.readFloat();
 			if (val < minX)
 				minX = val;
 			else if (val > maxX)
 				maxX = val;
-			Vertices.put(val);
+			vertices.put(val);
 
 			val = fis.readFloat();
 			if (val < minY)
 				minY = val;
 			else if (val > maxY)
 				maxY = val;
-			Vertices.put(val);
+			vertices.put(val);
 
 			val = fis.readFloat();
 			if (val < minZ)
 				minX = val;
 			else if (val > maxZ)
 				maxZ = val;
-			Vertices.put(val);
+			vertices.put(val);
 		}
 
 		// Store the Center vector
 		_center = new Vector3((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
 
-		Normals = FloatBuffer.allocate(3 * _numVertices);
+		normals = FloatBuffer.allocate(3 * _numVertices);
 		for (int i = 0; i < _numVertices; i++) {
-			Normals.put(fis.readFloat());
-			Normals.put(fis.readFloat());
-			Normals.put(fis.readFloat());
+			normals.put(fis.readFloat());
+			normals.put(fis.readFloat());
+			normals.put(fis.readFloat());
 		}
 
-		BiNormals = FloatBuffer.allocate(3 * _numVertices);
+		biNormals = FloatBuffer.allocate(3 * _numVertices);
 		for (int i = 0; i < _numVertices; i++) {
-			BiNormals.put(fis.readFloat());
-			BiNormals.put(fis.readFloat());
-			BiNormals.put(fis.readFloat());
+			biNormals.put(fis.readFloat());
+			biNormals.put(fis.readFloat());
+			biNormals.put(fis.readFloat());
 		}
 
-		TexCoords = FloatBuffer.allocate(2 * _numVertices);
+		texCoords = FloatBuffer.allocate(2 * _numVertices);
 		for (int i = 0; i < _numVertices; i++) {
-			TexCoords.put(fis.readFloat());
-			TexCoords.put(fis.readFloat());
+			texCoords.put(fis.readFloat());
+			texCoords.put(fis.readFloat());
 		}
 
-		if (_hasDetailTexCoords) {
-			DetailTexCoords = FloatBuffer.allocate(2 * _numVertices);
+		if (hasDetailTexCoords) {
+			detailTexCoords = FloatBuffer.allocate(2 * _numVertices);
 			for (int i = 0; i < _numVertices; i++) {
-				DetailTexCoords.put(fis.readFloat());
-				DetailTexCoords.put(fis.readFloat());
+				detailTexCoords.put(fis.readFloat());
+				detailTexCoords.put(fis.readFloat());
 			}
 		}
 
-		if (_hasWeights) {
-			Weights = FloatBuffer.allocate(_numVertices);
+		if (hasWeights) {
+			weights = FloatBuffer.allocate(_numVertices);
 			for (int i = 0; i < _numVertices; i++) {
-				Weights.put(fis.readFloat());
+				weights.put(fis.readFloat());
 			}
 		}
 
-		_numFaces = fis.readShort();
+		numFaces = fis.readShort();
 
-		Indices = ShortBuffer.allocate(3 * _numFaces);
-		for (int i = 0; i < _numFaces; i++) {
-			Indices.put(fis.readShort());
-			Indices.put(fis.readShort());
-			Indices.put(fis.readShort());
+		indices = ShortBuffer.allocate(3 * numFaces);
+		for (int i = 0; i < numFaces; i++) {
+			indices.put(fis.readShort());
+			indices.put(fis.readShort());
+			indices.put(fis.readShort());
 		}
 
-		if (_hasWeights) {
+		if (hasWeights) {
 			_numSkinJoints = fis.readShort();
 			_skinJoints = new String[_numSkinJoints];
 
@@ -335,17 +335,17 @@ public class LindenMesh extends ReferenceMesh {
 			// throw new FileLoadException("Encountered end of file while parsing morphs");
 
 			Morph morph = new Morph();
-			morph.Name = morphName;
-			morph.NumVertices = fis.readInt();
-			morph.Vertices = new MorphVertex[morph.NumVertices];
+			morph.name = morphName;
+			morph.numVertices = fis.readInt();
+			morph.vertices = new MorphVertex[morph.numVertices];
 
-			for (int i = 0; i < morph.NumVertices; i++) {
-				morph.Vertices[i] = new MorphVertex();
-				morph.Vertices[i].VertexIndex = fis.readInt();
-				morph.Vertices[i].Position = new Vector3(fis);
-				morph.Vertices[i].Normal = new Vector3(fis);
-				morph.Vertices[i].BiNormal = new Vector3(fis);
-				morph.Vertices[i].TexCoord = new Vector2(fis);
+			for (int i = 0; i < morph.numVertices; i++) {
+				morph.vertices[i] = new MorphVertex();
+				morph.vertices[i].vertexIndex = fis.readInt();
+				morph.vertices[i].position = new Vector3(fis);
+				morph.vertices[i].normal = new Vector3(fis);
+				morph.vertices[i].biNormal = new Vector3(fis);
+				morph.vertices[i].texCoord = new Vector2(fis);
 			}
 
 			morphs.add(morph);
@@ -362,8 +362,8 @@ public class LindenMesh extends ReferenceMesh {
 			_vertexRemaps = new VertexRemap[_numRemaps];
 
 			for (int i = 0; i < _numRemaps; i++) {
-				_vertexRemaps[i].RemapSource = fis.readInt();
-				_vertexRemaps[i].RemapDestination = fis.readInt();
+				_vertexRemaps[i].remapSource = fis.readInt();
+				_vertexRemaps[i].remapDestination = fis.readInt();
 			}
 		} catch (IOException ex) {
 			_numRemaps = 0;
@@ -415,7 +415,7 @@ public class LindenMesh extends ReferenceMesh {
 	}
 
 	// List of skinweights, in the same order as the mesh vertices
-	public List<SkinWeightElement> SkinWeights = new ArrayList<SkinWeightElement>();
+	public List<SkinWeightElement> skinWeights = new ArrayList<SkinWeightElement>();
 
 	/**
 	 * Decompress the skinweights
@@ -426,8 +426,8 @@ public class LindenMesh extends ReferenceMesh {
 	 */
 	private void expandCompressedSkinWeights(List<String> expandedJointList) {
 		for (int i = 0; i < _numVertices; i++) {
-			int boneIndex = (int) Math.floor(Weights.get(i)); // Whole number part is the index
-			float boneWeight = (Weights.get(i) - boneIndex); // fractional part is the weight
+			int boneIndex = (int) Math.floor(weights.get(i)); // Whole number part is the index
+			float boneWeight = (weights.get(i) - boneIndex); // fractional part is the weight
 			SkinWeightElement elm = new SkinWeightElement();
 
 			if (boneIndex == 0) // Special case for dealing with eye meshes, which doesn't have any weights
@@ -447,7 +447,7 @@ public class LindenMesh extends ReferenceMesh {
 				elm.bone2 = "mPelvis";
 				elm.weight2 = boneWeight;
 			}
-			SkinWeights.add(elm);
+			skinWeights.add(elm);
 		}
 	}
 	// #endregion Skin weight

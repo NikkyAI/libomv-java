@@ -190,7 +190,7 @@ public class AppearanceManager implements PacketCallback, libomv.model.Appearanc
 		@Override
 		public String toString() {
 			return String.format("ItemID: %s, AssetID: %s, WearableType: %s, AssetType: %s, Asset: %s", ItemID, AssetID,
-					WearableType, AssetType, Asset != null ? Asset.Name : "(null)");
+					WearableType, AssetType, Asset != null ? Asset.name : "(null)");
 		}
 	}
 
@@ -304,7 +304,7 @@ public class AppearanceManager implements PacketCallback, libomv.model.Appearanc
 		/**
 		 * Triggered when the simulator sends a request for this agent to rebake its
 		 * appearance
-		 * 
+		 *
 		 * @param textureID
 		 *            The ID of the Texture Layer to bake
 		 */
@@ -385,7 +385,7 @@ public class AppearanceManager implements PacketCallback, libomv.model.Appearanc
 	public AppearanceManager(GridClient client) {
 		_Client = client;
 
-		_Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
+		_Client.Settings.onSettingsUpdate.add(new SettingsUpdate());
 		sendAppearanceUpdates = _Client.Settings.getBool(LibSettings.SEND_AGENT_APPEARANCE);
 
 		for (int i = 0; i < _Textures.length; i++) {
@@ -442,7 +442,7 @@ public class AppearanceManager implements PacketCallback, libomv.model.Appearanc
 
 	/**
 	 * Starts the appearance setting thread
-	 * 
+	 *
 	 * @param forceRebake
 	 *            True to force rebaking, otherwise false
 	 */
@@ -987,24 +987,24 @@ public class AppearanceManager implements PacketCallback, libomv.model.Appearanc
 			if (attachments.get(i) instanceof InventoryAttachment) {
 				attachmentsPacket.ObjectData[i] = attachmentsPacket.new ObjectDataBlock();
 				attachmentsPacket.ObjectData[i].AttachmentPt = attachment.getAttachmentPoint().getValue(replace);
-				attachmentsPacket.ObjectData[i].EveryoneMask = attachment.Permissions.EveryoneMask;
-				attachmentsPacket.ObjectData[i].GroupMask = attachment.Permissions.GroupMask;
-				attachmentsPacket.ObjectData[i].ItemFlags = attachment.ItemFlags;
+				attachmentsPacket.ObjectData[i].EveryoneMask = attachment.permissions.EveryoneMask;
+				attachmentsPacket.ObjectData[i].GroupMask = attachment.permissions.GroupMask;
+				attachmentsPacket.ObjectData[i].ItemFlags = attachment.itemFlags;
 				attachmentsPacket.ObjectData[i].ItemID = attachment.itemID;
 				attachmentsPacket.ObjectData[i].setName(Helpers.StringToBytes(attachment.name));
-				attachmentsPacket.ObjectData[i].setDescription(Helpers.StringToBytes(attachment.Description));
-				attachmentsPacket.ObjectData[i].NextOwnerMask = attachment.Permissions.NextOwnerMask;
+				attachmentsPacket.ObjectData[i].setDescription(Helpers.StringToBytes(attachment.description));
+				attachmentsPacket.ObjectData[i].NextOwnerMask = attachment.permissions.NextOwnerMask;
 				attachmentsPacket.ObjectData[i].OwnerID = attachment.getOwnerID();
 			} else if (attachments.get(i) instanceof InventoryObject) {
 				attachmentsPacket.ObjectData[i] = attachmentsPacket.new ObjectDataBlock();
 				attachmentsPacket.ObjectData[i].AttachmentPt = AttachmentPoint.Default.getValue(replace);
-				attachmentsPacket.ObjectData[i].EveryoneMask = attachment.Permissions.EveryoneMask;
-				attachmentsPacket.ObjectData[i].GroupMask = attachment.Permissions.GroupMask;
-				attachmentsPacket.ObjectData[i].ItemFlags = attachment.ItemFlags;
+				attachmentsPacket.ObjectData[i].EveryoneMask = attachment.permissions.EveryoneMask;
+				attachmentsPacket.ObjectData[i].GroupMask = attachment.permissions.GroupMask;
+				attachmentsPacket.ObjectData[i].ItemFlags = attachment.itemFlags;
 				attachmentsPacket.ObjectData[i].ItemID = attachment.itemID;
 				attachmentsPacket.ObjectData[i].setName(Helpers.StringToBytes(attachment.name));
-				attachmentsPacket.ObjectData[i].setDescription(Helpers.StringToBytes(attachment.Description));
-				attachmentsPacket.ObjectData[i].NextOwnerMask = attachment.Permissions.NextOwnerMask;
+				attachmentsPacket.ObjectData[i].setDescription(Helpers.StringToBytes(attachment.description));
+				attachmentsPacket.ObjectData[i].NextOwnerMask = attachment.permissions.NextOwnerMask;
 				attachmentsPacket.ObjectData[i].OwnerID = attachment.getOwnerID();
 			} else {
 				logger.warn(GridClient.Log("Cannot attach inventory item " + attachment.name, _Client));
@@ -1024,7 +1024,7 @@ public class AppearanceManager implements PacketCallback, libomv.model.Appearanc
 	 * @throws Exception
 	 */
 	public void Attach(InventoryItem item, AttachmentPoint attachPoint) throws Exception {
-		Attach(item.itemID, item.getOwnerID(), item.name, item.Description, item.Permissions, item.ItemFlags,
+		Attach(item.itemID, item.getOwnerID(), item.name, item.description, item.permissions, item.itemFlags,
 				attachPoint, true);
 	}
 
@@ -1042,7 +1042,7 @@ public class AppearanceManager implements PacketCallback, libomv.model.Appearanc
 	 * @throws Exception
 	 */
 	public void Attach(InventoryItem item, AttachmentPoint attachPoint, boolean replace) throws Exception {
-		Attach(item.itemID, item.getOwnerID(), item.name, item.Description, item.Permissions, item.ItemFlags,
+		Attach(item.itemID, item.getOwnerID(), item.name, item.description, item.permissions, item.itemFlags,
 				attachPoint, replace);
 	}
 
@@ -1136,7 +1136,7 @@ public class AppearanceManager implements PacketCallback, libomv.model.Appearanc
 
 	/**
 	 * Detach an item from our agent
-	 * 
+	 *
 	 * @param itemID
 	 *            The inventory itemID of the item to detach
 	 * @throws Exception
@@ -1233,21 +1233,21 @@ public class AppearanceManager implements PacketCallback, libomv.model.Appearanc
 		Iterator<ColorParamInfo> iter = param.iterator();
 		while (iter.hasNext()) {
 			ColorParamInfo p = iter.next();
-			int n = p.VisualColorParam.Colors.length;
+			int n = p.VisualColorParam.colors.length;
 
 			Color4 paramColor = new Color4(0, 0, 0, 0);
 
 			if (n == 1) {
 				// We got only one color in this param, use it for application
 				// to the final color
-				paramColor = p.VisualColorParam.Colors[0];
+				paramColor = p.VisualColorParam.colors[0];
 			} else if (n > 1) {
 				// We have an array of colors in this parameter
 				// First, we need to find out, based on param value
 				// between which two elements of the array our value lands
 
 				// Size of the step using which we iterate from Min to Max
-				float step = (p.VisualParam.MaxValue - p.VisualParam.MinValue) / ((float) n - 1);
+				float step = (p.VisualParam.maxValue - p.VisualParam.minValue) / ((float) n - 1);
 
 				// Our color should land inbetween colors in the array with index a and b
 				int indexa = 0;
@@ -1255,7 +1255,7 @@ public class AppearanceManager implements PacketCallback, libomv.model.Appearanc
 
 				int i = 0;
 
-				for (float a = p.VisualParam.MinValue; a <= p.VisualParam.MaxValue; a += step) {
+				for (float a = p.VisualParam.minValue; a <= p.VisualParam.maxValue; a += step) {
 					if (a <= p.Value) {
 						indexa = i;
 					} else {
@@ -1278,15 +1278,15 @@ public class AppearanceManager implements PacketCallback, libomv.model.Appearanc
 				// We are at Index A (allowing for some floating point math fuzz),
 				// use the color on that index
 				if (distance < 0.00001f || indexa == indexb) {
-					paramColor = p.VisualColorParam.Colors[indexa];
+					paramColor = p.VisualColorParam.colors[indexa];
 				} else {
 					// Not so simple as being precisely on the index eh? No problem.
 					// We take the two colors that our param value places us between
 					// and then find the value for each ARGB element that is
 					// somewhere on the line between color1 and color2 at some
 					// distance from the first color
-					Color4 c1 = paramColor = p.VisualColorParam.Colors[indexa];
-					Color4 c2 = paramColor = p.VisualColorParam.Colors[indexb];
+					Color4 c1 = paramColor = p.VisualColorParam.colors[indexa];
+					Color4 c2 = paramColor = p.VisualColorParam.colors[indexb];
 
 					// Distance is some fraction of the step, use that fraction
 					// to find the value in the range from color1 to color2
@@ -1309,7 +1309,7 @@ public class AppearanceManager implements PacketCallback, libomv.model.Appearanc
 
 			// Now that we have calculated color from the scale of colors
 			// that visual params provided, lets apply it to the result
-			switch (p.VisualColorParam.Operation) {
+			switch (p.VisualColorParam.operation) {
 			case Add:
 				res = Color4.add(res, paramColor);
 				break;
@@ -1394,19 +1394,19 @@ public class AppearanceManager implements PacketCallback, libomv.model.Appearanc
 
 		// Populate collection of alpha masks from visual params
 		// also add color tinting information
-		for (Entry<Integer, Float> kvp : wearable.Asset.Params.entrySet()) {
-			if (!VisualParams.Params.containsKey(kvp.getKey()))
+		for (Entry<Integer, Float> kvp : wearable.Asset.params.entrySet()) {
+			if (!VisualParams.params.containsKey(kvp.getKey()))
 				continue;
 
-			VisualParam p = VisualParams.Params.get(kvp.getKey());
+			VisualParam p = VisualParams.params.get(kvp.getKey());
 
 			ColorParamInfo colorInfo = new ColorParamInfo();
 			colorInfo.VisualParam = p;
 			colorInfo.Value = kvp.getValue();
 
 			// Color params
-			if (p.ColorParams != null) {
-				colorInfo.VisualColorParam = p.ColorParams;
+			if (p.colorParams != null) {
+				colorInfo.VisualColorParam = p.colorParams;
 				int key = kvp.getKey();
 
 				if (wearable.WearableType == WearableType.Tattoo) {
@@ -1440,19 +1440,19 @@ public class AppearanceManager implements PacketCallback, libomv.model.Appearanc
 			}
 
 			// Add alpha mask
-			if (p.AlphaParams != null && !p.AlphaParams.TGAFile.isEmpty() && !p.IsBumpAttribute
-					&& !alphaMasks.containsKey(p.AlphaParams)) {
-				alphaMasks.put(p.AlphaParams, kvp.getValue() == 0 ? 0.01f : kvp.getValue());
+			if (p.alphaParams != null && !p.alphaParams.tgaFile.isEmpty() && !p.isBumpAttribute
+					&& !alphaMasks.containsKey(p.alphaParams)) {
+				alphaMasks.put(p.alphaParams, kvp.getValue() == 0 ? 0.01f : kvp.getValue());
 			}
 
 			// Alhpa masks can also be specified in sub "driver" params
-			if (p.Drivers != null) {
-				for (int i = 0; i < p.Drivers.length; i++) {
-					if (VisualParams.Params.containsKey(p.Drivers[i])) {
-						VisualParam driver = VisualParams.Params.get(p.Drivers[i]);
-						if (driver.AlphaParams != null && !driver.AlphaParams.TGAFile.isEmpty()
-								&& !driver.IsBumpAttribute && !alphaMasks.containsKey(driver.AlphaParams)) {
-							alphaMasks.put(driver.AlphaParams, kvp.getValue() == 0 ? 0.01f : kvp.getValue());
+			if (p.drivers != null) {
+				for (int i = 0; i < p.drivers.length; i++) {
+					if (VisualParams.params.containsKey(p.drivers[i])) {
+						VisualParam driver = VisualParams.params.get(p.drivers[i]);
+						if (driver.alphaParams != null && !driver.alphaParams.tgaFile.isEmpty()
+								&& !driver.isBumpAttribute && !alphaMasks.containsKey(driver.alphaParams)) {
+							alphaMasks.put(driver.alphaParams, kvp.getValue() == 0 ? 0.01f : kvp.getValue());
 						}
 					}
 				}
@@ -1467,7 +1467,7 @@ public class AppearanceManager implements PacketCallback, libomv.model.Appearanc
 
 		// Loop through all of the texture IDs in this decoded asset and put them in our
 		// cache of worn textures
-		for (Entry<AvatarTextureIndex, UUID> entry : wearable.Asset.Textures.entrySet()) {
+		for (Entry<AvatarTextureIndex, UUID> entry : wearable.Asset.textures.entrySet()) {
 			int i = AvatarTextureIndex.getValue(entry.getKey());
 
 			// Update information about color and alpha masks for this texture
@@ -1505,7 +1505,7 @@ public class AppearanceManager implements PacketCallback, libomv.model.Appearanc
 				if (wearable.Asset != null) {
 					DecodeWearableParams(wearable, _Textures);
 					logger.debug(GridClient.Log("Downloaded wearable asset " + wearable.WearableType + " with "
-							+ wearable.Asset.Params.size() + " visual params and " + wearable.Asset.Textures.size()
+							+ wearable.Asset.params.size() + " visual params and " + wearable.Asset.textures.size()
 							+ " textures", _Client));
 
 				} else {
@@ -1814,7 +1814,7 @@ public class AppearanceManager implements PacketCallback, libomv.model.Appearanc
 
 	/**
 	 * Initate server baking process
-	 * 
+	 *
 	 * @throws Exception
 	 *
 	 * @returns True if the server baking was successful
@@ -1896,7 +1896,7 @@ public class AppearanceManager implements PacketCallback, libomv.model.Appearanc
 
 			set.ParamValue = new byte[nrParams];
 
-			for (Entry<Integer, VisualParam> kvp : VisualParams.Params.entrySet()) {
+			for (Entry<Integer, VisualParam> kvp : VisualParams.params.entrySet()) {
 				VisualParam vp = kvp.getValue();
 				float paramValue = 0f;
 				boolean found = false;
@@ -1904,8 +1904,8 @@ public class AppearanceManager implements PacketCallback, libomv.model.Appearanc
 				// Try and find this value in our collection of downloaded wearables
 				for (Entry<WearableType, List<WearableData>> entry : _Wearables.entrySet()) {
 					for (WearableData data : entry.getValue()) {
-						if (data.Asset != null && data.Asset.Params.containsKey(vp.ParamID)) {
-							paramValue = data.Asset.Params.get(vp.ParamID);
+						if (data.Asset != null && data.Asset.params.containsKey(vp.paramID)) {
+							paramValue = data.Asset.params.get(vp.paramID);
 							found = true;
 							break;
 						}
@@ -1916,17 +1916,17 @@ public class AppearanceManager implements PacketCallback, libomv.model.Appearanc
 
 				// Use a default value if we don't have one set for it
 				if (!found)
-					paramValue = vp.DefaultValue;
+					paramValue = vp.defaultValue;
 
 				// Only Group-0 parameters are sent in AgentSetAppearance packets
-				if (kvp.getValue().Group == 0) {
-					set.ParamValue[vpIndex] = Helpers.FloatToByte(paramValue, vp.MinValue, vp.MaxValue);
+				if (kvp.getValue().group == 0) {
+					set.ParamValue[vpIndex] = Helpers.FloatToByte(paramValue, vp.minValue, vp.maxValue);
 					++vpIndex;
 				}
 
 				// Check if this is one of the visual params used in the agent height
 				// calculation
-				switch (vp.ParamID) {
+				switch (vp.paramID) {
 				case 33:
 					agentSizeVPHeight = paramValue;
 					break;
@@ -2038,8 +2038,8 @@ public class AppearanceManager implements PacketCallback, libomv.model.Appearanc
 			if (_Client.Settings.getBool(LibSettings.AVATAR_TRACKING)) {
 				Avatar me = _Client.Network.getCurrentSim().getObjectsAvatars().get(_Client.Self.getLocalID());
 				if (me != null) {
-					me.Textures = MyTextures;
-					me.VisualParameters = MyVisualParameters;
+					me.textures = MyTextures;
+					me.visualParameters = MyVisualParameters;
 				}
 			}
 		}

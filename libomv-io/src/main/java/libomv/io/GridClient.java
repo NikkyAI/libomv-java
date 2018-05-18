@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Set;
@@ -45,8 +46,8 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HTTP;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -119,7 +120,7 @@ public class GridClient implements Grid {
 
 		/**
 		 * Merge in the grid info for all null fields in our record
-		 * 
+		 *
 		 * @param info
 		 *            The info to merge in
 		 */
@@ -334,7 +335,7 @@ public class GridClient implements Grid {
 
 	public CallbackHandler<GridListUpdateCallbackArgs> OnGridListUpdate = new CallbackHandler<GridListUpdateCallbackArgs>();
 
-	private static final String listUri = "http://libomv-java.sourceforge.net/grids/default_grids.xml";
+	private static final String listUri = "http://www.coolview.nl/grid/default_grids.xml";
 	private static HashMap<String, GridInfo> gridlist = new HashMap<String, GridInfo>();
 	private static int listversion = 0;
 
@@ -472,15 +473,15 @@ public class GridClient implements Grid {
 
 	/**
 	 * Set the current grid
-	 * 
+	 *
 	 * The function uses the info in the passed in grid to both set the currently
 	 * active grid based on the gridnick, as well as merging the information in the
 	 * GridInfo to the already stored Gridinfo.
-	 * 
+	 *
 	 * @param grid
 	 *            The grid info to use to set the current grid. If the GridInfo is
 	 *            null, the currentGrid is set to the current default grid
-	 * 
+	 *
 	 */
 	public boolean setCurrentGrid(GridInfo grid) {
 		if (grid != null) {
@@ -577,7 +578,7 @@ public class GridClient implements Grid {
 	/**
 	 * Retrieves the GridInfo settings from the grid user server, when the server
 	 * supports the GridInfo protocol.
-	 * 
+	 *
 	 * @param loginuri
 	 *            The HTTP address of the user server
 	 * @return a filled in GridInfo if the call was successful, null otherwise
@@ -585,7 +586,7 @@ public class GridClient implements Grid {
 	 */
 	public GridInfo queryGridInfo(GridInfo grid) throws Exception {
 		GridInfo info = null;
-		HttpClient client = new DefaultHttpClient();
+		HttpClient client = getDefaultHttpClient();
 		HttpGet getMethod = new HttpGet(new URI(grid.loginuri + GRID_INFO_PROTOCOL));
 		try {
 			HttpResponse response = client.execute(getMethod);
@@ -604,7 +605,8 @@ public class GridClient implements Grid {
 						}
 					}
 					if (charset == null) {
-						charset = HTTP.DEFAULT_CONTENT_CHARSET;
+						// charset = HTTP.DEFAULT_CONTENT_CHARSET;
+						charset = StandardCharsets.ISO_8859_1.displayName();
 					}
 					XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
 					parser.setInput(stream, charset);
@@ -788,7 +790,7 @@ public class GridClient implements Grid {
 
 	private OSD downloadList() throws IOException, IllegalStateException, URISyntaxException {
 		OSD osd = null;
-		HttpClient client = new DefaultHttpClient();
+		HttpClient client = getDefaultHttpClient();
 		HttpGet getMethod = new HttpGet(new URI(listUri));
 		try {
 			HttpResponse response = client.execute(getMethod);
@@ -811,7 +813,7 @@ public class GridClient implements Grid {
 					}
 				}
 				if (charset == null) {
-					charset = HTTP.DEFAULT_CONTENT_CHARSET;
+					charset = StandardCharsets.ISO_8859_1.displayName();
 				}
 				osd = OSDParser.deserialize(stream, OSDFormat.Xml, charset);
 			}
@@ -820,6 +822,10 @@ public class GridClient implements Grid {
 			getMethod.abort();
 		}
 		return osd;
+	}
+
+	private CloseableHttpClient getDefaultHttpClient() {
+		return HttpClientBuilder.create().build();
 	}
 
 	public String dumpGridlist() {

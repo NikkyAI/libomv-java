@@ -44,11 +44,11 @@ public class AssetLandmark extends AssetItem {
 
 	// UUID of the Landmark target region
 	public UUID getRegionID() {
-		return AssetID;
+		return assetID;
 	}
 
 	// Local position of the target
-	public Vector3 Position = Vector3.Zero;
+	public Vector3 position = Vector3.Zero;
 
 	/**
 	 * Construct an Asset object of type Landmark
@@ -72,7 +72,7 @@ public class AssetLandmark extends AssetItem {
 	 */
 	public AssetLandmark(UUID regionID, Vector3 pos) {
 		super(regionID, null);
-		Position = pos;
+		position = pos;
 	}
 
 	/**
@@ -83,8 +83,8 @@ public class AssetLandmark extends AssetItem {
 	protected void encode() {
 		String temp = "Landmark version 2\n";
 		temp += "region_id " + getRegionID() + "\n";
-		temp += String.format("local_pos %f %f %f\n", Position.X, Position.Y, Position.Z);
-		AssetData = Helpers.StringToBytes(temp);
+		temp += String.format("local_pos %f %f %f\n", position.X, position.Y, position.Z);
+		assetData = Helpers.StringToBytes(temp);
 	}
 
 	/**
@@ -94,16 +94,16 @@ public class AssetLandmark extends AssetItem {
 	 */
 	@Override
 	protected boolean decode() {
-		if (AssetData == null)
+		if (assetData == null)
 			return false;
 
 		try {
-			String text = Helpers.BytesToString(AssetData);
+			String text = Helpers.BytesToString(assetData);
 			if (text.toLowerCase().contains("landmark version 2")) {
-				AssetID = new UUID(text.substring(text.indexOf("region_id") + 10, 36));
+				assetID = new UUID(text.substring(text.indexOf("region_id") + 10, 36));
 				String[] vecStrings = text.substring(text.indexOf("local_pos") + 10).split(" ");
 				if (vecStrings.length == 3) {
-					Position = new Vector3(Helpers.TryParseFloat(vecStrings[0]), Helpers.TryParseFloat(vecStrings[1]),
+					position = new Vector3(Helpers.TryParseFloat(vecStrings[0]), Helpers.TryParseFloat(vecStrings[1]),
 							Helpers.TryParseFloat(vecStrings[2]));
 					return true;
 				}

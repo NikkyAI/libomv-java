@@ -54,10 +54,10 @@ public class InventoryWearable extends InventoryItem {
 
 	/** The {@link OpenMetaverse.WearableType} , Skin, Shape, Skirt, Etc */
 	public final WearableType getWearableType() {
-		return WearableType.setValue(ItemFlags & 0xFF);
+		return WearableType.setValue(itemFlags & 0xFF);
 	}
 
 	public final void setWearableType(WearableType value) {
-		ItemFlags = WearableType.getValue(value) | (ItemFlags & ~0xFF);
+		itemFlags = WearableType.getValue(value) | (itemFlags & ~0xFF);
 	}
 }

@@ -33,6 +33,8 @@ public interface Parcel {
 		private static final byte _mask = 0x1F;
 	}
 
+	// TODO:FIXME
+	// Rename this to LandingType ;)
 	/** Type of teleport landing for a parcel */
 	public enum LandingTypeEnum {
 		// Unset, simulator default
@@ -193,22 +195,22 @@ public interface Parcel {
 	// Parcel Media Information
 	public final class ParcelMedia {
 		// A byte, if 0x1 viewer should auto scale media to fit object
-		public boolean MediaAutoScale;
+		public boolean mediaAutoScale;
 		// A boolean, if true the viewer should loop the media
-		public boolean MediaLoop;
+		public boolean mediaLoop;
 		// The Asset UUID of the Texture which when applied to a primitive will
 		// display the media
-		public UUID MediaID;
+		public UUID mediaID;
 		// A URL which points to any Quicktime supported media type
-		public String MediaURL;
+		public String mediaURL;
 		// A description of the media
-		public String MediaDesc;
+		public String mediaDesc;
 		// An Integer which represents the height of the media
-		public int MediaHeight;
+		public int mediaHeight;
 		// An integer which represents the width of the media
-		public int MediaWidth;
+		public int mediaWidth;
 		// A string which contains the mime type of the media
-		public String MediaType;
+		public String mediaType;
 	}
 
 	/** The result of a request for parcel properties */

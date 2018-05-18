@@ -51,8 +51,8 @@ import libomv.imaging.j2k.ImgEncoder;
 
 public class J2KImage extends ManagedImage {
 	public class J2KLayerInfo {
-		public int Start;
-		public int End;
+		public int start;
+		public int end;
 	}
 
 	private class PixelScale {

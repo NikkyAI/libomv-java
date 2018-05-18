@@ -35,24 +35,24 @@ import java.util.List;
 import libomv.types.Vector3;
 
 public class SimpleMesh extends Mesh {
-	public List<Vertex> Vertices;
-	public List<Short> Indices;
+	public List<Vertex> vertices;
+	public List<Short> indices;
 
 	public SimpleMesh() {
 	}
 
 	public SimpleMesh(SimpleMesh mesh) {
-		this.Indices = new ArrayList<Short>(mesh.Indices);
-		this.Path.Open = mesh.Path.Open;
-		this.Path.Points = new ArrayList<PathPoint>(mesh.Path.Points);
-		this.Prim = mesh.Prim;
-		this.Profile.Concave = mesh.Profile.Concave;
-		this.Profile.Faces = new ArrayList<ProfileFace>(mesh.Profile.Faces);
-		this.Profile.MaxX = mesh.Profile.MaxX;
-		this.Profile.MinX = mesh.Profile.MinX;
-		this.Profile.Open = mesh.Profile.Open;
-		this.Profile.Positions = new ArrayList<Vector3>(mesh.Profile.Positions);
-		this.Profile.TotalOutsidePoints = mesh.Profile.TotalOutsidePoints;
-		this.Vertices = new ArrayList<Vertex>(mesh.Vertices);
+		this.indices = new ArrayList<Short>(mesh.indices);
+		this.path.open = mesh.path.open;
+		this.path.points = new ArrayList<PathPoint>(mesh.path.points);
+		this.prim = mesh.prim;
+		this.profile.concave = mesh.profile.concave;
+		this.profile.faces = new ArrayList<ProfileFace>(mesh.profile.faces);
+		this.profile.maxX = mesh.profile.maxX;
+		this.profile.minX = mesh.profile.minX;
+		this.profile.open = mesh.profile.open;
+		this.profile.positions = new ArrayList<Vector3>(mesh.profile.positions);
+		this.profile.totalOutsidePoints = mesh.profile.totalOutsidePoints;
+		this.vertices = new ArrayList<Vertex>(mesh.vertices);
 	}
 }

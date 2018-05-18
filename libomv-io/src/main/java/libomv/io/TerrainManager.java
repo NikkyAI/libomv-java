@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -115,7 +115,7 @@ public class TerrainManager implements PacketCallback, libomv.model.Terrain {
 		_Client = client;
 
 		storeLandPatches = _Client.Settings.getBool(LibSettings.STORE_LAND_PATCHES);
-		_Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
+		_Client.Settings.onSettingsUpdate.add(new SettingsUpdate());
 
 		_Client.Network.RegisterCallback(PacketType.LayerData, this);
 	}
@@ -136,7 +136,7 @@ public class TerrainManager implements PacketCallback, libomv.model.Terrain {
 		int count = 0;
 
 		while (true) {
-			TerrainHeader header = TerrainCompressor.DecodePatchHeader(bitpack);
+			TerrainHeader header = TerrainCompressor.decodePatchHeader(bitpack);
 
 			if (header.QuantWBits == TerrainCompressor.END_OF_PATCHES)
 				break;
@@ -152,16 +152,16 @@ public class TerrainManager implements PacketCallback, libomv.model.Terrain {
 			}
 
 			// Decode this patch
-			TerrainCompressor.DecodePatch(patches, bitpack, header, group.PatchSize);
+			TerrainCompressor.decodePatch(patches, bitpack, header, group.patchSize);
 
 			// Decompress this patch
-			float[] heightmap = TerrainCompressor.DecompressPatch(patches, header, group);
+			float[] heightmap = TerrainCompressor.decompressPatch(patches, header, group);
 
 			count++;
 
 			try {
 				OnLandPatchReceived
-						.dispatch(new LandPatchReceivedCallbackArgs(simulator, x, y, group.PatchSize, heightmap));
+						.dispatch(new LandPatchReceivedCallbackArgs(simulator, x, y, group.patchSize, heightmap));
 			} catch (Exception e) {
 				logger.error(GridClient.Log(e.getMessage(), _Client), e);
 			}
@@ -180,7 +180,7 @@ public class TerrainManager implements PacketCallback, libomv.model.Terrain {
 		int[] patches = new int[32 * 32];
 
 		// Ignore the simulator stride value
-		group.Stride = group.PatchSize;
+		group.stride = group.patchSize;
 
 		// Each wind packet contains the wind speeds and direction for the entire
 		// simulator
@@ -191,14 +191,14 @@ public class TerrainManager implements PacketCallback, libomv.model.Terrain {
 		// wind_direction = vec2(x,y)
 
 		// X values
-		TerrainHeader header = TerrainCompressor.DecodePatchHeader(bitpack);
-		TerrainCompressor.DecodePatch(patches, bitpack, header, group.PatchSize);
-		float[] xvalues = TerrainCompressor.DecompressPatch(patches, header, group);
+		TerrainHeader header = TerrainCompressor.decodePatchHeader(bitpack);
+		TerrainCompressor.decodePatch(patches, bitpack, header, group.patchSize);
+		float[] xvalues = TerrainCompressor.decompressPatch(patches, header, group);
 
 		// Y values
-		header = TerrainCompressor.DecodePatchHeader(bitpack);
-		TerrainCompressor.DecodePatch(patches, bitpack, header, group.PatchSize);
-		float[] yvalues = TerrainCompressor.DecompressPatch(patches, header, group);
+		header = TerrainCompressor.decodePatchHeader(bitpack);
+		TerrainCompressor.decodePatch(patches, bitpack, header, group.patchSize);
+		float[] yvalues = TerrainCompressor.decompressPatch(patches, header, group);
 
 		if (storeLandPatches) {
 			for (int i = 0; i < 256; i++)
@@ -218,11 +218,11 @@ public class TerrainManager implements PacketCallback, libomv.model.Terrain {
 		LayerType type = LayerType.setValue(layer.Type);
 
 		// Stride
-		header.Stride = bitpack.UnpackBits(16);
+		header.stride = bitpack.unpackBits(16);
 		// Patch size
-		header.PatchSize = bitpack.UnpackBits(8);
+		header.patchSize = bitpack.unpackBits(8);
 		// Layer type
-		header.Type = LayerType.setValue(bitpack.UnpackBits(8));
+		header.type = LayerType.setValue(bitpack.unpackBits(8));
 
 		switch (type) {
 		case Land:

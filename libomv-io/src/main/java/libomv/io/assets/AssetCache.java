@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -144,7 +144,7 @@ public class AssetCache {
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param client
 	 *            A reference to the GridClient object
 	 * @param manager
@@ -153,7 +153,7 @@ public class AssetCache {
 	public AssetCache(GridClient client) {
 		_Client = client;
 
-		_Client.Settings.OnSettingsUpdate.add(new SettingsUpdate());
+		_Client.Settings.onSettingsUpdate.add(new SettingsUpdate());
 		useAssetCache = _Client.Settings.getBool(LibSettings.USE_ASSET_CACHE);
 		cacheAssetMaxSize = _Client.Settings.getLong(LibSettings.ASSET_CACHE_MAX_SIZE);
 		setResourcePath(_Client.Settings.getString(LibSettings.RESOURCE_DIR));
@@ -204,7 +204,7 @@ public class AssetCache {
 
 	/**
 	 * Return bytes read from the local asset cache, null if it does not exist
-	 * 
+	 *
 	 * @param assetID
 	 *            UUID of the asset we want to get
 	 * @return Raw bytes of the asset, or null on failure
@@ -242,7 +242,7 @@ public class AssetCache {
 
 	/**
 	 * Constructs a file name of the cached asset
-	 * 
+	 *
 	 * @param assetID
 	 *            UUID of the asset
 	 * @return String with the file name of the cached asset
@@ -271,7 +271,7 @@ public class AssetCache {
 
 	/**
 	 * Saves an asset to the local cache
-	 * 
+	 *
 	 * @param assetID
 	 *            UUID of the asset
 	 * @param assetData
@@ -300,7 +300,7 @@ public class AssetCache {
 	/**
 	 * Checks if the asset exists in the local cache Note: libOpenMetaverse:
 	 * HasAsset()
-	 * 
+	 *
 	 * @param assetID
 	 *            UUID of the asset
 	 * @return True is the asset is stored in the cache, otherwise false
@@ -334,7 +334,7 @@ public class AssetCache {
 
 	/**
 	 * Wipes out entire cache
-	 * 
+	 *
 	 */
 	public final void clear() {
 		File[] files = ListCacheFiles();
@@ -350,7 +350,7 @@ public class AssetCache {
 
 	/**
 	 * Brings cache size to the 90% of the max size
-	 * 
+	 *
 	 */
 	public final void Prune() {
 		File[] files = ListCacheFiles();
@@ -378,7 +378,7 @@ public class AssetCache {
 
 	/**
 	 * Asynchronously brings cache size to the 90% of the max size
-	 * 
+	 *
 	 */
 	public final void BeginPrune() {
 		// Check if the background cache cleaning thread is active first
@@ -411,7 +411,7 @@ public class AssetCache {
 
 	/**
 	 * Nicely formats file sizes
-	 * 
+	 *
 	 * @param byteCount
 	 *            Byte size we want to output
 	 * @return String with humanly readable file size
@@ -433,7 +433,7 @@ public class AssetCache {
 
 	/**
 	 * Helper class for sorting files by their last accessed time
-	 * 
+	 *
 	 */
 	private class SortFilesByModTimeHelper implements Comparator<File> {
 		@Override

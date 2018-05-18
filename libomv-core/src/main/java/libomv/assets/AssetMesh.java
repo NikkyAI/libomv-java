@@ -47,21 +47,21 @@ public class AssetMesh extends AssetItem {
 	private static final Logger logger = Logger.getLogger(AssetMesh.class);
 
 	// Decoded mesh data
-	private OSDMap MeshData;
+	private OSDMap meshData;
 
 	public OSDMap getMeshData() {
-		return MeshData;
+		return meshData;
 	}
 
 	public void setMeshData(OSDMap meshData) {
 		invalidateAssetData();
-		MeshData = meshData;
+		this.meshData = meshData;
 	}
 
 	// Override the base classes AssetType
 	@Override
-	public AssetItem.AssetType getAssetType() {
-		return AssetItem.AssetType.Mesh;
+	public AssetType getAssetType() {
+		return AssetType.Mesh;
 	}
 
 	/**
@@ -85,21 +85,21 @@ public class AssetMesh extends AssetItem {
 	 * Decodes mesh asset. See <see
 	 * cref="OpenMetaverse.Rendering.FacetedMesh.TryDecodeFromAsset" to further
 	 * decode it for rendering
-	 * 
+	 *
 	 * @returns true
 	 */
 	@Override
 	protected boolean decode() {
-		MeshData = new OSDMap();
+		meshData = new OSDMap();
 
-		if (AssetData == null)
+		if (assetData == null)
 			return false;
 
-		InputStream data = new ByteArrayInputStream(AssetData);
+		InputStream data = new ByteArrayInputStream(assetData);
 		try {
 			OSDMap header = (OSDMap) OSDParser.deserialize(data, Helpers.UTF8_ENCODING);
-			MeshData.put("asset_header", header);
-			data.mark(AssetData.length);
+			meshData.put("asset_header", header);
+			data.mark(assetData.length);
 
 			for (String partName : header.keySet()) {
 				OSD value = header.get(partName);
@@ -112,7 +112,7 @@ public class AssetMesh extends AssetItem {
 						value = Helpers.ZDecompressOSD(data);
 					}
 				}
-				MeshData.put(partName, value);
+				meshData.put(partName, value);
 			}
 			return true;
 		} catch (Exception ex) {

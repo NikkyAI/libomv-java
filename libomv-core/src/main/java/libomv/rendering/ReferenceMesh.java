@@ -52,65 +52,65 @@ public class ReferenceMesh {
 	static final protected String MORPH_FOOTER = "End Morphs";
 
 	public class Face {
-		public short Indices1;
-		public short Indices2;
-		public short Indices3;
+		public short indices1;
+		public short indices2;
+		public short indices3;
 
 		public Face(ShortBuffer indices, int idx) {
-			Indices1 = indices.get(idx++);
-			Indices2 = indices.get(idx++);
-			Indices3 = indices.get(idx++);
+			indices1 = indices.get(idx++);
+			indices2 = indices.get(idx++);
+			indices3 = indices.get(idx++);
 		}
 	}
 
-	public float MinPixelWidth;
+	public float minPixelWidth;
 
-	protected String _header;
-	protected boolean _hasWeights;
-	protected boolean _hasDetailTexCoords;
-	protected Vector3 _position;
-	protected Vector3 _rotationAngles;
-	protected byte _rotationOrder;
-	protected Vector3 _scale;
-	protected short _numFaces;
-	public ShortBuffer Indices;
+	protected String header;
+	protected boolean hasWeights;
+	protected boolean hasDetailTexCoords;
+	protected Vector3 position;
+	protected Vector3 rotationAngles;
+	protected byte rotationOrder;
+	protected Vector3 scale;
+	protected short numFaces;
+	public ShortBuffer indices;
 
 	public String getHeader() {
-		return _header;
+		return header;
 	}
 
 	public boolean getHasWeights() {
-		return _hasWeights;
+		return hasWeights;
 	}
 
 	public boolean getHasDetailTexCoords() {
-		return _hasDetailTexCoords;
+		return hasDetailTexCoords;
 	}
 
 	public Vector3 getPosition() {
-		return _position;
+		return position;
 	}
 
 	public Vector3 getRotationAngles() {
-		return _rotationAngles;
+		return rotationAngles;
 	}
 
 	public byte getRotationOrder() {
-		return _rotationOrder;
+		return rotationOrder;
 	}
 
 	public Vector3 getScale() {
-		return _scale;
+		return scale;
 	}
 
 	public short getNumFaces() {
-		return _numFaces;
+		return numFaces;
 	}
 
 	public Face getFace(int index) {
-		if (index >= _numFaces)
+		if (index >= numFaces)
 			return null;
-		return new Face(Indices, index * 3);
+		return new Face(indices, index * 3);
 	}
 
 	public void load(String filename) throws IOException {
@@ -127,26 +127,26 @@ public class ReferenceMesh {
 
 		load(fis);
 
-		_numFaces = fis.readShort();
-		Indices = ShortBuffer.allocate(3 * _numFaces);
-		for (int i = 0; i < _numFaces; i++) {
-			Indices.put(fis.readShort());
-			Indices.put(fis.readShort());
-			Indices.put(fis.readShort());
+		numFaces = fis.readShort();
+		indices = ShortBuffer.allocate(3 * numFaces);
+		for (int i = 0; i < numFaces; i++) {
+			indices.put(fis.readShort());
+			indices.put(fis.readShort());
+			indices.put(fis.readShort());
 		}
 	}
 
 	protected void load(SwappedDataInputStream fis) throws IOException {
-		_header = Helpers.readString(fis, 24);
-		if (!_header.equals(MESH_HEADER))
+		header = Helpers.readString(fis, 24);
+		if (!header.equals(MESH_HEADER))
 			throw new IOException("Unrecognized mesh format");
 
 		// Populate base mesh variables
-		_hasWeights = fis.readByte() != 1;
-		_hasDetailTexCoords = fis.readByte() != 1;
-		_position = new Vector3(fis);
-		_rotationAngles = new Vector3(fis);
-		_rotationOrder = fis.readByte();
-		_scale = new Vector3(fis);
+		hasWeights = fis.readByte() != 1;
+		hasDetailTexCoords = fis.readByte() != 1;
+		position = new Vector3(fis);
+		rotationAngles = new Vector3(fis);
+		rotationOrder = fis.readByte();
+		scale = new Vector3(fis);
 	}
 }

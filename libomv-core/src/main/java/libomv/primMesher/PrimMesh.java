@@ -313,7 +313,7 @@ public class PrimMesh {
 	/// mesh.
 	/// </summary>
 	/// <returns></returns>
-	public String ParamsToDisplayString() {
+	public String paramsToDisplayString() {
 		String s = "sides..................: " + this.sides + "\nhollowSides..........: " + this.hollowSides
 				+ "\nprofileStart.........: " + this.profileStart + "\nprofileEnd...........: " + this.profileEnd
 				+ "\nhollow...............: " + this.hollow + "\ntwistBegin...........: " + this.twistBegin

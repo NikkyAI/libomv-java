@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -101,7 +101,7 @@ public class Baker {
 	// #region Constructor
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param bakeType
 	 *            Bake type
 	 * @throws URISyntaxException
@@ -125,7 +125,7 @@ public class Baker {
 	// #region Public methods
 	/**
 	 * Adds layer for baking
-	 * 
+	 *
 	 * @param tdata
 	 *            TexturaData struct that contains texture and its params
 	 */
@@ -259,10 +259,10 @@ public class Baker {
 
 					// First add mask in normal blend mode
 					for (Entry<VisualAlphaParam, Float> kvp : tex.AlphaMasks.entrySet()) {
-						if (!MaskBelongsToBake(kvp.getKey().TGAFile))
+						if (!MaskBelongsToBake(kvp.getKey().tgaFile))
 							continue;
 
-						if (kvp.getKey().MultiplyBlend == false && (kvp.getValue() > 0f || !kvp.getKey().SkipIfZero)) {
+						if (kvp.getKey().multiplyBlend == false && (kvp.getValue() > 0f || !kvp.getKey().skipIfZero)) {
 							ApplyAlpha(combinedMask, kvp.getKey(), kvp.getValue());
 							// File.WriteAllBytes(bakeType + "-layer-" + i + "-mask-" + addedMasks + ".tga",
 							// combinedMask.ExportTGA());
@@ -277,10 +277,10 @@ public class Baker {
 
 					// Add masks in multiply blend mode
 					for (Entry<VisualAlphaParam, Float> kvp : tex.AlphaMasks.entrySet()) {
-						if (!MaskBelongsToBake(kvp.getKey().TGAFile))
+						if (!MaskBelongsToBake(kvp.getKey().tgaFile))
 							continue;
 
-						if (kvp.getKey().MultiplyBlend == true && (kvp.getValue() > 0f || !kvp.getKey().SkipIfZero)) {
+						if (kvp.getKey().multiplyBlend == true && (kvp.getValue() > 0f || !kvp.getKey().skipIfZero)) {
 							ApplyAlpha(combinedMask, kvp.getKey(), kvp.getValue());
 							addedMasks++;
 						}
@@ -471,7 +471,7 @@ public class Baker {
 
 	/**
 	 * Make sure images exist, resize source if needed to match the destination
-	 * 
+	 *
 	 * @param dest
 	 *            Destination image
 	 * @param src
@@ -498,7 +498,7 @@ public class Baker {
 	}
 
 	private void ApplyAlpha(ManagedImage dest, VisualAlphaParam param, float val) {
-		ManagedImage src = LoadResourceLayer(param.TGAFile);
+		ManagedImage src = LoadResourceLayer(param.tgaFile);
 
 		if (dest == null || src == null || src.getAlpha() == null)
 			return;
@@ -518,7 +518,7 @@ public class Baker {
 		for (int i = 0; i < dest.getAlpha().length; i++) {
 			byte alpha = src.getAlpha(i) <= ((1 - val) * 255) ? (byte) 0 : (byte) 255;
 
-			if (param.MultiplyBlend) {
+			if (param.multiplyBlend) {
 				dest.setAlpha(i, (byte) ((dest.getAlpha(i) * alpha) >> 8));
 			} else {
 				if (alpha > dest.getAlpha(i)) {

@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -436,9 +436,9 @@ public class OarFile {
 		writeString(writer, "Name", parcel.Name);
 		writeInt(writer, "Status", parcel.Status.getValue());
 		writeInt(writer, "LocalID", parcel.LocalID);
-		writeInt(writer, "MediaAutoScale", parcel.Media.MediaAutoScale ? 1 : 0);
-		parcel.Media.MediaID.serializeXml(writer, null, "MediaID");
-		writeString(writer, "MediaURL", parcel.Media.MediaURL);
+		writeInt(writer, "MediaAutoScale", parcel.Media.mediaAutoScale ? 1 : 0);
+		parcel.Media.mediaID.serializeXml(writer, null, "MediaID");
+		writeString(writer, "MediaURL", parcel.Media.mediaURL);
 		writeString(writer, "MusicURL", parcel.MusicURL);
 		parcel.OwnerID.serializeXml(writer, null, "OwnerID");
 
@@ -535,7 +535,7 @@ public class OarFile {
 		Thread.sleep(100);
 		try {
 			for (AssetPrim assetPrim : prims) {
-				SavePrim(assetPrim, new File(primsDir, "Primitive_" + assetPrim.getParent().ID + ".xml"));
+				SavePrim(assetPrim, new File(primsDir, "Primitive_" + assetPrim.getParent().id + ".xml"));
 
 				CollectTextures(assetPrim.getParent(), textureList);
 				List<PrimObject> children = assetPrim.getChildren();
@@ -550,21 +550,21 @@ public class OarFile {
 	}
 
 	static void CollectTextures(PrimObject prim, Map<UUID, UUID> textureList) {
-		if (prim.Textures != null) {
+		if (prim.textures != null) {
 			// Add all of the textures on this prim to the save list
-			if (prim.Textures.defaultTexture != null)
-				textureList.put(prim.Textures.defaultTexture.getTextureID(),
-						prim.Textures.defaultTexture.getTextureID());
+			if (prim.textures.defaultTexture != null)
+				textureList.put(prim.textures.defaultTexture.getTextureID(),
+						prim.textures.defaultTexture.getTextureID());
 
-			if (prim.Textures.faceTextures != null) {
-				for (int i = 0; i < prim.Textures.faceTextures.length; i++) {
-					TextureEntryFace face = prim.Textures.faceTextures[i];
+			if (prim.textures.faceTextures != null) {
+				for (int i = 0; i < prim.textures.faceTextures.length; i++) {
+					TextureEntryFace face = prim.textures.faceTextures[i];
 					if (face != null)
 						textureList.put(face.getTextureID(), face.getTextureID());
 				}
 			}
-			if (prim.Sculpt != null && !prim.Sculpt.Texture.equals(UUID.Zero))
-				textureList.put(prim.Sculpt.Texture, prim.Sculpt.Texture);
+			if (prim.sculpt != null && !prim.sculpt.texture.equals(UUID.Zero))
+				textureList.put(prim.sculpt.texture, prim.sculpt.texture);
 		}
 	}
 

@@ -43,6 +43,7 @@
       <key>loginuri</key><string>http://127.0.0.1:9000/</string>
       <key>loginpage</key><string />
       <key>helperuri</key><string>http://127.0.0.1:9000/</string>
+      <key>website</key><string>https://docker.local/</string>
       <key>version</key><string>1</string>
     </map>
 

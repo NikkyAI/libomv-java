@@ -61,7 +61,7 @@ public interface IRendering {
 	 *            Level of detail to generate the mesh at
 	 * @return The generated mesh
 	 */
-	public SimpleMesh GenerateSimpleMesh(Primitive prim, Mesh.DetailLevel lod);
+	public SimpleMesh generateSimpleMesh(Primitive prim, Mesh.DetailLevel lod);
 
 	/**
 	 * Generates a basic mesh structure from a sculpted primitive and texture
@@ -74,7 +74,7 @@ public interface IRendering {
 	 *            Level of detail to generate the mesh at
 	 * @return The generated mesh
 	 */
-	public SimpleMesh GenerateSimpleSculptMesh(Primitive prim, ManagedImage sculptTexture, Mesh.DetailLevel lod);
+	public SimpleMesh generateSimpleSculptMesh(Primitive prim, ManagedImage sculptTexture, Mesh.DetailLevel lod);
 
 	/**
 	 * <summary> Generates a series of faces, each face containing a mesh and
@@ -86,7 +86,7 @@ public interface IRendering {
 	 *            Level of detail to generate the mesh at
 	 * @return The generated mesh
 	 */
-	public FacetedMesh GenerateFacetedMesh(Primitive prim, Mesh.DetailLevel lod);
+	public FacetedMesh generateFacetedMesh(Primitive prim, Mesh.DetailLevel lod);
 
 	/**
 	 * Generates a series of faces for a sculpted prim, each face containing a mesh
@@ -100,7 +100,7 @@ public interface IRendering {
 	 *            Level of detail to generate the mesh at</param>
 	 * @returns The generated mesh</returns>
 	 */
-	public FacetedMesh GenerateFacetedSculptMesh(Primitive prim, ManagedImage sculptTexture, Mesh.DetailLevel lod);
+	public FacetedMesh generateFacetedSculptMesh(Primitive prim, ManagedImage sculptTexture, Mesh.DetailLevel lod);
 
 	/**
 	 * Apply texture coordinate modifications from a
@@ -115,6 +115,6 @@ public interface IRendering {
 	 * @param primScale">Scale
 	 *            of the prim
 	 */
-	public void TransformTexCoords(List<Mesh.Vertex> vertices, Vector3 center, TextureEntry.TextureEntryFace teFace,
+	public void transformTexCoords(List<Mesh.Vertex> vertices, Vector3 center, TextureEntry.TextureEntryFace teFace,
 			Vector3 primScale);
 }

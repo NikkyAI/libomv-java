@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -101,7 +101,7 @@ public class CapsManager extends Thread {
 
 	/**
 	 * Request the URI of a named capability
-	 * 
+	 *
 	 * @param capability
 	 *            Name of the capability to request
 	 * @return The URI of the requested capability, or String. Empty if the
@@ -173,7 +173,7 @@ public class CapsManager extends Thread {
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param simulator
 	 * @param seedcaps
 	 * @throws IOReactorException
@@ -397,7 +397,7 @@ public class CapsManager extends Thread {
 						OSDMap body = (OSDMap) osd;
 						String eventName = evt.get("message").AsString();
 
-						IMessage message = _Simulator.getClient().Messages.DecodeEvent(eventName, body);
+						IMessage message = _Simulator.getClient().Messages.decodeEvent(eventName, body);
 						if (message != null) {
 							logger.debug(GridClient.Log("Caps message: " + eventName + ".", _Simulator.getClient()));
 							_Simulator.getClient().Network.DistributeCaps(_Simulator, message);
@@ -413,7 +413,7 @@ public class CapsManager extends Thread {
 
 							// try generic decoder next which takes a caps event and tries to match it to an
 							// existing packet
-							Packet packet = CapsToPacket.BuildPacket(eventName, body);
+							Packet packet = CapsToPacket.buildPacket(eventName, body);
 							if (packet != null) {
 								logger.debug(GridClient.Log("Caps loop: Serializing " + packet.getType()
 										+ " capability with generic handler", _Simulator.getClient()));

@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -100,20 +100,20 @@ public class ModelUploader {
 
 			OSDArray faceList = new OSDArray();
 
-			for (ModelFace face : prim.Faces) {
+			for (ModelFace face : prim.faces) {
 				OSDMap faceMap = new OSDMap();
 
-				faceMap.put("diffuse_color", OSD.FromColor4(face.Material.DiffuseColor));
+				faceMap.put("diffuse_color", OSD.FromColor4(face.material.diffuseColor));
 				faceMap.put("fullbright", OSD.FromBoolean(false));
 
-				if (face.Material.TextureData != null) {
+				if (face.material.textureData != null) {
 					int index;
-					if (ImgIndex.containsKey(face.Material.Texture)) {
-						index = ImgIndex.get(face.Material.Texture);
+					if (ImgIndex.containsKey(face.material.texture)) {
+						index = ImgIndex.get(face.material.texture);
 					} else {
 						index = Images.size();
-						Images.add(face.Material.TextureData);
-						ImgIndex.put(face.Material.Texture, index);
+						Images.add(face.material.textureData);
+						ImgIndex.put(face.material.texture, index);
 					}
 					faceMap.put("image", OSD.FromInteger(index));
 					faceMap.put("scales", OSD.FromReal(1.0f));
@@ -128,14 +128,14 @@ public class ModelUploader {
 
 			primMap.put("face_list", faceList);
 
-			primMap.put("position", OSD.FromVector3(prim.Position));
-			primMap.put("rotation", OSD.FromQuaternion(prim.Rotation));
-			primMap.put("scale", OSD.FromVector3(prim.Scale));
+			primMap.put("position", OSD.FromVector3(prim.position));
+			primMap.put("rotation", OSD.FromQuaternion(prim.rotation));
+			primMap.put("scale", OSD.FromVector3(prim.scale));
 
 			primMap.put("material", OSD.FromInteger(3)); // always sent as "wood" material
 			primMap.put("physics_shape_type", OSD.FromInteger(2)); // always sent as "convex hull";
 			primMap.put("mesh", OSD.FromInteger(meshes.size()));
-			meshes.add(prim.Asset);
+			meshes.add(prim.asset);
 
 			instanceList.add(primMap);
 		}

@@ -150,6 +150,8 @@ public class SculptMesh implements Cloneable {
 		_SculptMesh(rows, sculptType, viewerMode, mirror, invert);
 	}
 
+	// TODO:FIXME
+	// What the ...
 	void _SculptMesh(ArrayList<ArrayList<Vector3>> rows, SculptType sculptType, boolean viewerMode, boolean mirror,
 			boolean invert) {
 		coords = new ArrayList<Vector3>();
@@ -347,7 +349,7 @@ public class SculptMesh implements Cloneable {
 
 	/**
 	 * Adds a value to each XYZ vertex coordinate in the mesh
-	 * 
+	 *
 	 * @param x
 	 * @param y
 	 * @param z
@@ -378,7 +380,7 @@ public class SculptMesh implements Cloneable {
 
 	/**
 	 * Rotates the mesh
-	 * 
+	 *
 	 * @param q
 	 */
 	public void addRot(Quaternion q) {
