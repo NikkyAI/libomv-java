@@ -50,9 +50,9 @@ import libomv.Gui.windows.MainControl;
 import libomv.Gui.windows.MainWindow;
 import libomv.core.RLVManager;
 import libomv.io.GridClient;
-import libomv.model.Agent.BalanceCallbackArgs;
-import libomv.model.Login.LoginProgressCallbackArgs;
-import libomv.model.Login.LoginStatus;
+import libomv.model.agent.BalanceCallbackArgs;
+import libomv.model.login.LoginProgressCallbackArgs;
+import libomv.model.login.LoginStatus;
 import libomv.utils.Callback;
 import libomv.utils.Helpers;
 

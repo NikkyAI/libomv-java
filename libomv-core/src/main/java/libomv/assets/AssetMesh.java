@@ -37,6 +37,7 @@ import org.apache.log4j.Logger;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDType;
+import libomv.model.asset.AssetType;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDParser;
 import libomv.types.UUID;

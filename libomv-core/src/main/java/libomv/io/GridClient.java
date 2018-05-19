@@ -64,14 +64,16 @@ import libomv.StructuredData.OSDString;
 import libomv.capabilities.CapsMessage;
 import libomv.io.assets.AssetManager;
 import libomv.io.inventory.InventoryManager;
-import libomv.model.Grid;
+import libomv.model.grid.GridInfo;
+import libomv.model.grid.GridListUpdate;
+import libomv.model.grid.GridListUpdateCallbackArgs;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 
 /* Main class to expose the functionality of a particular grid to clients. All of the
  * classes needed for sending and receiving data are accessible throug this class.
  */
-public class GridClient implements Grid {
+public class GridClient {
 	public CallbackHandler<GridListUpdateCallbackArgs> OnGridListUpdate = new CallbackHandler<GridListUpdateCallbackArgs>();
 
 	private static final String listUri = "http://www.coolview.nl/grid/default_grids.xml";

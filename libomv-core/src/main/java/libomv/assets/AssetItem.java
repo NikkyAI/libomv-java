@@ -29,11 +29,11 @@
  */
 package libomv.assets;
 
-import libomv.model.Asset;
+import libomv.model.asset.AssetType;
 import libomv.types.UUID;
 
 /** Base class for all Asset types */
-public abstract class AssetItem implements Asset {
+public abstract class AssetItem {
 
 	/** True if the asset is only stored on the server temporarily */
 	public boolean temporary;
@@ -82,6 +82,9 @@ public abstract class AssetItem implements Asset {
 		this.assetData = assetData;
 		decode();
 	}
+
+	/** The "type" of asset, Notecard, Animation, etc */
+	public abstract AssetType getAssetType();
 
 	/**
 	 * Regenerates the <code>AssetData</code> byte array from the properties of the

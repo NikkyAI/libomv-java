@@ -50,8 +50,21 @@ import libomv.capabilities.CapsMessage.GetDisplayNamesMessage;
 import libomv.capabilities.IMessage;
 import libomv.io.capabilities.CapsCallback;
 import libomv.io.capabilities.CapsClient;
-import libomv.model.Agent.EffectType;
 import libomv.model.Simulator;
+import libomv.model.agent.EffectType;
+import libomv.model.appearance.AppearanceFlags;
+import libomv.model.avatar.AgentNamesCallbackArgs;
+import libomv.model.avatar.Animation;
+import libomv.model.avatar.AvatarAnimationCallbackArgs;
+import libomv.model.avatar.AvatarAppearanceCallbackArgs;
+import libomv.model.avatar.AvatarGroup;
+import libomv.model.avatar.AvatarGroupsReplyCallbackArgs;
+import libomv.model.avatar.AvatarInterestsReplyCallbackArgs;
+import libomv.model.avatar.AvatarPickerReplyCallbackArgs;
+import libomv.model.avatar.AvatarPropertiesReplyCallbackArgs;
+import libomv.model.avatar.DisplayNameUpdateCallbackArgs;
+import libomv.model.avatar.DisplayNamesCallbackArgs;
+import libomv.model.avatar.ViewerEffectCallbackArgs;
 import libomv.packets.AvatarAnimationPacket;
 import libomv.packets.AvatarAppearancePacket;
 import libomv.packets.AvatarGroupsReplyPacket;
@@ -77,7 +90,7 @@ import libomv.utils.Callback;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 
-public class AvatarManager implements PacketCallback, CapsCallback, libomv.model.Avatar {
+public class AvatarManager implements PacketCallback, CapsCallback {
 	private static final Logger logger = Logger.getLogger(AvatarManager.class);
 
 	static final int MAX_UUIDS_PER_PACKET = 100;
@@ -600,7 +613,7 @@ public class AvatarManager implements PacketCallback, CapsCallback, libomv.model
 
 			byte appearanceVersion = 0;
 			int COFVersion = 0;
-			AppearanceManager.AppearanceFlags appearanceFlags = AppearanceManager.AppearanceFlags.None;
+			AppearanceFlags appearanceFlags = AppearanceFlags.None;
 
 			if (appearance.AppearanceData != null && appearance.AppearanceData.length > 0) {
 				appearanceVersion = appearance.AppearanceData[0].AppearanceVersion;

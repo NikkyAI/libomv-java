@@ -1,10 +1,9 @@
 package libomv.io.impl;
 
-import libomv.model.Group;
 import libomv.types.UUID;
 
 //Represents a group on the grid
-public class GroupImpl implements Group {
+public class GroupImpl {
 
 	// Key of Group
 	private UUID ID;
@@ -55,10 +54,10 @@ public class GroupImpl implements Group {
 
 	@Override
 	public boolean equals(Object o) {
-		return (o != null && o instanceof Group) ? equals((Group) o) : false;
+		return (o != null && o instanceof GroupImpl) ? equals((GroupImpl) o) : false;
 	}
 
-	public boolean equals(Group o) {
+	public boolean equals(GroupImpl o) {
 		return o != null ? ID.equals(o.getID()) : false;
 	}
 

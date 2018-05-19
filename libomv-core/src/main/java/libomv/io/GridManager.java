@@ -47,6 +47,16 @@ import libomv.StructuredData.OSDMap;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.io.capabilities.CapsClient;
 import libomv.model.Simulator;
+import libomv.model.grid.CoarseLocationUpdateCallbackArgs;
+import libomv.model.grid.GridItemType;
+import libomv.model.grid.GridItemsCallbackArgs;
+import libomv.model.grid.GridLayer;
+import libomv.model.grid.GridLayerCallbackArgs;
+import libomv.model.grid.GridLayerType;
+import libomv.model.grid.GridRegion;
+import libomv.model.grid.GridRegionCallbackArgs;
+import libomv.model.grid.MapItem;
+import libomv.model.grid.RegionHandleReplyCallbackArgs;
 import libomv.packets.CoarseLocationUpdatePacket;
 import libomv.packets.MapBlockReplyPacket;
 import libomv.packets.MapBlockRequestPacket;
@@ -69,7 +79,7 @@ import libomv.utils.Helpers;
 import libomv.utils.TimeoutEvent;
 
 // Manages grid-wide tasks such as the world map
-public class GridManager implements PacketCallback, libomv.model.Grid {
+public class GridManager implements PacketCallback {
 	private static final Logger logger = Logger.getLogger(GridManager.class);
 
 	/* Unknown */

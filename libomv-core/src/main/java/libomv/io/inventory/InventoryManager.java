@@ -67,16 +67,29 @@ import libomv.io.LibSettings;
 import libomv.io.SimulatorManager;
 import libomv.io.capabilities.CapsCallback;
 import libomv.io.capabilities.CapsClient;
-import libomv.model.Agent.InstantMessageCallbackArgs;
-import libomv.model.Agent.InstantMessageDialog;
-import libomv.model.Agent.InstantMessageOnline;
-import libomv.model.Asset.AssetType;
-import libomv.model.Asset.XferDownload;
 import libomv.model.Inventory;
 import libomv.model.LLObject.SaleType;
-import libomv.model.Login.LoginProgressCallbackArgs;
-import libomv.model.Login.LoginResponseData;
-import libomv.model.Login.LoginStatus;
+import libomv.model.agent.InstantMessageCallbackArgs;
+import libomv.model.agent.InstantMessageDialog;
+import libomv.model.agent.InstantMessageOnline;
+import libomv.model.asset.AssetType;
+import libomv.model.asset.XferDownload;
+import libomv.model.inventory.DeRezDestination;
+import libomv.model.inventory.FindObjectByPathReplyCallbackArgs;
+import libomv.model.inventory.FolderUpdatedCallbackArgs;
+import libomv.model.inventory.InventoryObjectOfferedCallbackArgs;
+import libomv.model.inventory.InventorySortOrder;
+import libomv.model.inventory.ItemCopiedCallbackArgs;
+import libomv.model.inventory.ItemCreatedCallbackArgs;
+import libomv.model.inventory.ItemCreatedFromAssetCallbackArgs;
+import libomv.model.inventory.ItemReceivedCallbackArgs;
+import libomv.model.inventory.SaveAssetToInventoryCallbackArgs;
+import libomv.model.inventory.ScriptRunningReplyCallbackArgs;
+import libomv.model.inventory.TaskInventoryReplyCallbackArgs;
+import libomv.model.inventory.TaskItemReceivedCallbackArgs;
+import libomv.model.login.LoginProgressCallbackArgs;
+import libomv.model.login.LoginResponseData;
+import libomv.model.login.LoginStatus;
 import libomv.model.Simulator;
 import libomv.packets.BulkUpdateInventoryPacket;
 import libomv.packets.CopyInventoryFromNotecardPacket;
@@ -586,7 +599,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	 *            in folder
 	 * @param order
 	 *            the sort order to return items in
-	 *            {@link InventoryManager.InventorySortOrder}
+	 *            {@link InventorySortOrder}
 	 * @return True if the request could be sent off
 	 * @throws Exception
 	 */
@@ -642,7 +655,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	 *            in folder
 	 * @param order
 	 *            the sort order to return items in
-	 *            {@link InventoryManager.InventorySortOrder}
+	 *            {@link InventorySortOrder}
 	 * @return True if the request could be sent off
 	 *         {@link InventoryManager.FolderContents}
 	 */

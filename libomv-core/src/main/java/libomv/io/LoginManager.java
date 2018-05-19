@@ -43,7 +43,11 @@ import libomv.StructuredData.OSDMap;
 import libomv.io.capabilities.AsyncHTTPClient;
 import libomv.io.capabilities.CapsClient;
 import libomv.io.capabilities.RpcClient;
-import libomv.model.Grid.GridInfo;
+import libomv.model.grid.GridInfo;
+import libomv.model.login.LastExecStatus;
+import libomv.model.login.LoginProgressCallbackArgs;
+import libomv.model.login.LoginResponseData;
+import libomv.model.login.LoginStatus;
 import libomv.packets.EconomyDataRequestPacket;
 import libomv.utils.Callback;
 import libomv.utils.CallbackHandler;
@@ -51,7 +55,7 @@ import libomv.utils.Helpers;
 import libomv.utils.TimeoutEvent;
 import libomv.utils.TimeoutEventQueue;
 
-public class LoginManager implements libomv.model.Login {
+public class LoginManager {
 	private static final Logger logger = Logger.getLogger(LoginManager.class);
 
 	/** Login Request Parameters */

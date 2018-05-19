@@ -29,6 +29,7 @@
  */
 package libomv.assets;
 
+import libomv.model.asset.AssetType;
 import libomv.types.UUID;
 
 // Represents an {@link AssetWearable} that can be worn on an avatar such as a Shirt, Pants, etc.

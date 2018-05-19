@@ -66,7 +66,7 @@ import org.apache.log4j.Logger;
 
 import libomv.Gui.windows.MainControl;
 import libomv.io.GridClient;
-import libomv.model.Grid.GridInfo;
+import libomv.model.grid.GridInfo;
 import libomv.utils.Helpers;
 
 public class GridEditor extends JDialog {

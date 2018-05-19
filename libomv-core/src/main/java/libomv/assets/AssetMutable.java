@@ -29,6 +29,7 @@
  */
 package libomv.assets;
 
+import libomv.model.asset.AssetType;
 import libomv.types.UUID;
 
 /** Represents mutable asset */

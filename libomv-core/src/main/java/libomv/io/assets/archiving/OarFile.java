@@ -64,16 +64,16 @@ import libomv.assets.archiving.ArchiveConstants;
 import libomv.assets.archiving.RegionSettings;
 import libomv.assets.archiving.TarArchiveReader;
 import libomv.assets.archiving.TarArchiveWriter;
-import libomv.io.ParcelManager;
 import libomv.io.SimulatorManager;
 import libomv.io.assets.AssetManager;
 import libomv.io.impl.ParcelImpl;
-import libomv.model.Asset.AssetDownload;
-import libomv.model.Asset.AssetType;
-import libomv.model.Asset.ImageDownload;
-import libomv.model.Asset.SourceType;
 import libomv.model.Parcel;
-import libomv.model.Simulator.RegionFlags;
+import libomv.model.asset.AssetDownload;
+import libomv.model.asset.AssetType;
+import libomv.model.asset.ImageDownload;
+import libomv.model.asset.SourceType;
+import libomv.model.parcel.ParcelAccessEntry;
+import libomv.model.simulator.RegionFlags;
 import libomv.primitives.TextureEntry.TextureEntryFace;
 import libomv.types.UUID;
 import libomv.utils.Callback;
@@ -443,14 +443,14 @@ public class OarFile {
 		parcel.OwnerID.serializeXml(writer, null, "OwnerID");
 
 		writer.startTag(null, "ParcelAccessList");
-		for (ParcelManager.ParcelAccessEntry pal : parcel.AccessBlackList) {
+		for (ParcelAccessEntry pal : parcel.AccessBlackList) {
 			writer.startTag(null, "ParcelAccessEntry");
 			pal.AgentID.serializeXml(writer, null, "AgentID");
 			writeString(writer, "Time", String.format("%1$tY-%1$tm-%1$tdT%1$tH:%1$tM:%1$tS", pal.Time)); // 2008-06-15T21:15:07
 			writeInt(writer, "AccessList", pal.Flags);
 			writer.endTag(null, "ParcelAccessEntry");
 		}
-		for (ParcelManager.ParcelAccessEntry pal : parcel.AccessWhiteList) {
+		for (ParcelAccessEntry pal : parcel.AccessWhiteList) {
 			writer.startTag(null, "ParcelAccessEntry");
 			pal.AgentID.serializeXml(writer, null, "AgentID");
 			writeString(writer, "Time", String.format("%1$tY-%1$tm-%1$tdT%1$tH:%1$tM:%1$tS", pal.Time)); // 2008-06-15T21:15:07

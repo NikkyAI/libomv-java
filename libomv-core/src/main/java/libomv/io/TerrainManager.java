@@ -33,6 +33,11 @@ import org.apache.log4j.Logger;
 
 import libomv.TerrainCompressor;
 import libomv.model.Simulator;
+import libomv.model.terrain.GroupHeader;
+import libomv.model.terrain.LandPatchReceivedCallbackArgs;
+import libomv.model.terrain.LayerType;
+import libomv.model.terrain.TerrainHeader;
+import libomv.model.terrain.TerrainPatch;
 import libomv.packets.LayerDataPacket;
 import libomv.packets.Packet;
 import libomv.packets.PacketType;
@@ -43,7 +48,7 @@ import libomv.utils.Callback;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 
-public class TerrainManager implements PacketCallback, libomv.model.Terrain {
+public class TerrainManager implements PacketCallback {
 	private static final Logger logger = Logger.getLogger(TerrainManager.class);
 
 	public CallbackHandler<LandPatchReceivedCallbackArgs> OnLandPatchReceived;

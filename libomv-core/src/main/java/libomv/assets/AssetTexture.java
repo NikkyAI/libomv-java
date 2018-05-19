@@ -39,6 +39,7 @@ import org.apache.log4j.Logger;
 import libomv.imaging.ManagedImage;
 import libomv.imaging.J2KImage;
 import libomv.imaging.J2KImage.J2KLayerInfo;
+import libomv.model.asset.AssetType;
 import libomv.types.UUID;
 
 public class AssetTexture extends AssetItem {

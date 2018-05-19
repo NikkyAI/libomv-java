@@ -45,23 +45,21 @@ import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
-import libomv.assets.AssetItem;
 import libomv.inventory.InventoryFolder.FolderType;
 import libomv.inventory.InventoryItem;
 import libomv.inventory.InventoryNode.InventoryType;
-import libomv.model.Agent.AgentDisplayName;
-import libomv.model.Agent.InstantMessageDialog;
-import libomv.model.Agent.InstantMessageOnline;
-import libomv.model.Agent.TeleportFlags;
-import libomv.model.Asset;
-import libomv.model.Asset.AssetType;
 import libomv.model.LLObject.SaleType;
-import libomv.model.Parcel;
-import libomv.model.Parcel.LandingTypeEnum;
-import libomv.model.Parcel.ParcelCategory;
-import libomv.model.Parcel.ParcelResult;
-import libomv.model.Parcel.ParcelStatus;
-import libomv.model.Simulator.SimAccess;
+import libomv.model.agent.AgentDisplayName;
+import libomv.model.agent.InstantMessageDialog;
+import libomv.model.agent.InstantMessageOnline;
+import libomv.model.agent.TeleportFlags;
+import libomv.model.asset.AssetType;
+import libomv.model.parcel.LandingTypeEnum;
+import libomv.model.parcel.ParcelCategory;
+import libomv.model.parcel.ParcelFlags;
+import libomv.model.parcel.ParcelResult;
+import libomv.model.parcel.ParcelStatus;
+import libomv.model.simulator.SimAccess;
 import libomv.primitives.MediaEntry;
 import libomv.primitives.PhysicsProperties;
 import libomv.primitives.Primitive.AttachmentPoint;
@@ -164,7 +162,7 @@ public class CapsMessage implements IMessage {
 			locationID = blockMap.get("LocationID").AsInteger();
 			regionHandle = blockMap.get("RegionHandle").AsULong();
 			seedCapability = blockMap.get("SeedCapability").AsUri();
-			simAccess = libomv.model.Simulator.SimAccess.setValue(blockMap.get("SimAccess").AsInteger());
+			simAccess = libomv.model.simulator.SimAccess.setValue(blockMap.get("SimAccess").AsInteger());
 			ip = blockMap.get("SimIP").AsInetAddress();
 			port = blockMap.get("SimPort").AsInteger();
 			flags = TeleportFlags.setValue(blockMap.get("TeleportFlags").AsUInteger());
@@ -918,9 +916,9 @@ public class CapsMessage implements IMessage {
 			// LL sends this as binary, we'll convert it here
 			if (parcelDataMap.get("ParcelFlags").getType() == OSDType.Binary) {
 				byte[] bytes = parcelDataMap.get("ParcelFlags").AsBinary();
-				parcelFlags = Parcel.ParcelFlags.getValue((int) Helpers.BytesToUInt32B(bytes));
+				parcelFlags = ParcelFlags.getValue((int) Helpers.BytesToUInt32B(bytes));
 			} else {
-				parcelFlags = Parcel.ParcelFlags.getValue(parcelDataMap.get("ParcelFlags").AsUInteger());
+				parcelFlags = ParcelFlags.getValue(parcelDataMap.get("ParcelFlags").AsUInteger());
 			}
 			groupID = parcelDataMap.get("GroupID").AsUUID();
 			groupPrims = parcelDataMap.get("GroupPrims").AsInteger();
@@ -956,7 +954,7 @@ public class CapsMessage implements IMessage {
 			simWideTotalPrims = parcelDataMap.get("SimWideTotalPrims").AsInteger();
 			snapSelection = parcelDataMap.get("SnapSelection").AsBoolean();
 			snapshotID = parcelDataMap.get("SnapshotID").AsUUID();
-			status = Parcel.ParcelStatus.setValue(parcelDataMap.get("Status").AsInteger());
+			status = ParcelStatus.setValue(parcelDataMap.get("Status").AsInteger());
 			totalPrims = parcelDataMap.get("TotalPrims").AsInteger();
 			userLocation = parcelDataMap.get("UserLocation").AsVector3();
 			userLookAt = parcelDataMap.get("UserLookAt").AsVector3();
@@ -1126,7 +1124,7 @@ public class CapsMessage implements IMessage {
 			name = map.get("name").AsString();
 			obscureMedia = map.get("obscure_media").AsBoolean();
 			obscureMusic = map.get("obscure_music").AsBoolean();
-			parcelFlags = Parcel.ParcelFlags.setValue((map.get("parcel_flags").AsUInteger()));
+			parcelFlags = ParcelFlags.setValue((map.get("parcel_flags").AsUInteger()));
 			passHours = (float) map.get("pass_hours").AsReal();
 			passPrice = map.get("pass_price").AsUInteger();
 			privacy = map.get("privacy").AsBoolean();
@@ -1331,7 +1329,7 @@ public class CapsMessage implements IMessage {
 		@Override
 		public void deserialize(OSDMap map) {
 			folderID = map.get("folder_id").AsUUID();
-			assetType = AssetItem.AssetType.setValue(map.get("asset_type").AsString());
+			assetType = AssetType.setValue(map.get("asset_type").AsString());
 			inventoryType = InventoryItem.InventoryType.setValue(map.get("inventory_type").AsString());
 			name = map.get("name").AsString();
 			description = map.get("description").AsString();
@@ -1391,7 +1389,7 @@ public class CapsMessage implements IMessage {
 				nextOwnerMask = PermissionMask.setValue(map.get("NextOwnerMask").AsUInteger());
 				groupOwned = map.get("GroupOwned").AsBoolean();
 				assetID = map.get("AssetID").AsUUID();
-				assetType = Asset.AssetType.setValue(map.get("Type").AsInteger());
+				assetType = AssetType.setValue(map.get("Type").AsInteger());
 				inventoryType = InventoryType.setValue(map.get("InvType").AsInteger());
 				flags = map.get("Flags").AsUInteger();
 				saleType = SaleType.setValue(map.get("SaleType").AsInteger());

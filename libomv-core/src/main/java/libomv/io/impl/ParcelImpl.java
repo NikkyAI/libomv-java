@@ -6,10 +6,14 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import libomv.capabilities.CapsMessage.ParcelPropertiesUpdateMessage;
-import libomv.io.ParcelManager;
 import libomv.io.SimulatorManager;
 import libomv.io.capabilities.CapsClient;
 import libomv.model.Parcel;
+import libomv.model.parcel.LandingTypeEnum;
+import libomv.model.parcel.ParcelAccessEntry;
+import libomv.model.parcel.ParcelCategory;
+import libomv.model.parcel.ParcelMedia;
+import libomv.model.parcel.ParcelStatus;
 import libomv.packets.ParcelPropertiesUpdatePacket;
 import libomv.packets.ParcelSetOtherCleanTimePacket;
 import libomv.types.UUID;
@@ -124,10 +128,10 @@ public class ParcelImpl implements Parcel {
 	public boolean RegionPushOverride;
 	// Access list of who is whitelisted on this
 	// Tangible_doc_comment_body parcel
-	public ArrayList<ParcelManager.ParcelAccessEntry> AccessWhiteList;
+	public ArrayList<ParcelAccessEntry> AccessWhiteList;
 	// Access list of who is blacklisted on this
 	// Tangible_doc_comment_body parcel
-	public ArrayList<ParcelManager.ParcelAccessEntry> AccessBlackList;
+	public ArrayList<ParcelAccessEntry> AccessBlackList;
 	// TRUE of region denies access to age unverified users
 	public boolean RegionDenyAgeUnverified;
 	// true to obscure (hide) media url
@@ -175,8 +179,8 @@ public class ParcelImpl implements Parcel {
 		Name = Helpers.EmptyString;
 		Desc = Helpers.EmptyString;
 		MusicURL = Helpers.EmptyString;
-		AccessWhiteList = new ArrayList<ParcelManager.ParcelAccessEntry>(0);
-		AccessBlackList = new ArrayList<ParcelManager.ParcelAccessEntry>(0);
+		AccessWhiteList = new ArrayList<ParcelAccessEntry>(0);
+		AccessBlackList = new ArrayList<ParcelAccessEntry>(0);
 		Media = new ParcelMedia();
 	}
 

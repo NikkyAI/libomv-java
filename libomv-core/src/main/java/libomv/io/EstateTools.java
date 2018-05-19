@@ -40,8 +40,23 @@ import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.LandStatReplyMessage;
 import libomv.capabilities.IMessage;
 import libomv.io.capabilities.CapsCallback;
-import libomv.model.Asset.AssetType;
 import libomv.model.Simulator;
+import libomv.model.asset.AssetType;
+import libomv.model.estate.EstateAccessDelta;
+import libomv.model.estate.EstateAccessReplyDelta;
+import libomv.model.estate.EstateBansReplyCallbackArgs;
+import libomv.model.estate.EstateCovenantReplyCallbackArgs;
+import libomv.model.estate.EstateGroupsReplyCallbackArgs;
+import libomv.model.estate.EstateManagersReplyCallbackArgs;
+import libomv.model.estate.EstateReturnFlags;
+import libomv.model.estate.EstateTask;
+import libomv.model.estate.EstateUpdateInfoReplyCallbackArgs;
+import libomv.model.estate.EstateUsersReplyCallbackArgs;
+import libomv.model.estate.GroundTextureHeightSettings;
+import libomv.model.estate.GroundTextureSettings;
+import libomv.model.estate.LandStatReportType;
+import libomv.model.estate.TopCollidersReplyCallbackArgs;
+import libomv.model.estate.TopScriptsReplyCallbackArgs;
 import libomv.packets.EjectUserPacket;
 import libomv.packets.EstateCovenantReplyPacket;
 import libomv.packets.EstateCovenantRequestPacket;
@@ -58,7 +73,7 @@ import libomv.types.Vector3;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 
-public class EstateTools implements PacketCallback, CapsCallback, libomv.model.Estate {
+public class EstateTools implements PacketCallback, CapsCallback {
 	private static final Logger logger = Logger.getLogger(EstateTools.class);
 
 	private GridClient _Client;

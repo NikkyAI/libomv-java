@@ -35,8 +35,8 @@ import org.apache.log4j.Logger;
 
 import libomv.assets.AssetSound;
 import libomv.io.assets.AssetManager;
-import libomv.model.Asset.AssetDownload;
-import libomv.model.Asset.AssetType;
+import libomv.model.asset.AssetDownload;
+import libomv.model.asset.AssetType;
 import libomv.types.UUID;
 import libomv.types.Vector3;
 import libomv.utils.Callback;

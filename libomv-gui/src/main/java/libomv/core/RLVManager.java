@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 
 import libomv.Gui.AppSettings;
 import libomv.Gui.windows.MainControl;
-import libomv.model.Agent.ChatCallbackArgs;
+import libomv.model.agent.ChatCallbackArgs;
 import libomv.types.UUID;
 import libomv.utils.Callback;
 import libomv.utils.Settings.SettingsUpdateCallbackArgs;

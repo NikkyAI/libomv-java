@@ -55,9 +55,12 @@ import org.apache.log4j.Logger;
 
 import libomv.Statistics.Type;
 import libomv.io.capabilities.CapsManager;
-import libomv.model.Network.OutgoingPacket;
 import libomv.model.Parcel;
-import libomv.model.Terrain.TerrainPatch;
+import libomv.model.network.OutgoingPacket;
+import libomv.model.simulator.IncomingPacketIDCollection;
+import libomv.model.simulator.SimAccess;
+import libomv.model.simulator.SimStats;
+import libomv.model.terrain.TerrainPatch;
 import libomv.packets.AgentPausePacket;
 import libomv.packets.AgentResumePacket;
 import libomv.packets.CloseCircuitPacket;
@@ -157,7 +160,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 	private TreeSet<Integer> _PendingAcks;
 	/* Packets we sent out that need ACKs from the simulator */
 
-	private TreeMap<Integer, NetworkManager.OutgoingPacket> _NeedAck; // int -> Packet
+	private TreeMap<Integer, OutgoingPacket> _NeedAck; // int -> Packet
 	/* Sequence number for pause/resume */
 	private AtomicInteger _PauseSerial;
 
@@ -510,7 +513,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 
 		// Initialize the dictionary for reliable packets waiting on ACKs from the
 		// server
-		_NeedAck = new TreeMap<Integer, NetworkManager.OutgoingPacket>();
+		_NeedAck = new TreeMap<Integer, OutgoingPacket>();
 
 		// Initialize the lists of sequence numbers we've received so far
 		_PacketArchive = new IncomingPacketIDCollection(_Client.Settings.getInt(LibSettings.PACKET_ARCHIVE_SIZE));
@@ -977,7 +980,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 		}
 
 		// #region Queue or Send
-		NetworkManager.OutgoingPacket outgoingPacket = new OutgoingPacket(this, type, data);
+		OutgoingPacket outgoingPacket = new OutgoingPacket(this, type, data);
 
 		// Send ACK and logout packets directly, everything else goes through
 		// the queue
@@ -1022,11 +1025,11 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 	 */
 	private void resendUnacked() {
 		if (_NeedAck.size() > 0) {
-			ArrayList<NetworkManager.OutgoingPacket> array;
+			ArrayList<OutgoingPacket> array;
 
 			synchronized (_NeedAck) {
 				// Create a temporary copy of the outgoing packets array to iterate over
-				array = new ArrayList<NetworkManager.OutgoingPacket>(_NeedAck.size());
+				array = new ArrayList<OutgoingPacket>(_NeedAck.size());
 				array.addAll(_NeedAck.values());
 			}
 
@@ -1034,7 +1037,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 
 			// Resend packets
 			for (int i = 0; i < array.size(); i++) {
-				NetworkManager.OutgoingPacket outgoing = array.get(i);
+				OutgoingPacket outgoing = array.get(i);
 
 				if (outgoing.tickCount != 0 && now - outgoing.tickCount > _Client.Settings.RESEND_TIMEOUT) {
 					if (outgoing.resendCount < _Client.Settings.MAX_RESEND_COUNT) {
@@ -1068,7 +1071,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 		}
 	}
 
-	public final void sendPacketFinal(NetworkManager.OutgoingPacket outgoingPacket) {
+	public final void sendPacketFinal(OutgoingPacket outgoingPacket) {
 		ByteBuffer buffer = outgoingPacket.buffer;
 		byte[] bytes = buffer.array();
 		byte flags = buffer.get(0);

@@ -41,6 +41,7 @@ import libomv.inventory.InventoryItem;
 import libomv.inventory.InventoryNode.InventoryType;
 import libomv.model.Inventory;
 import libomv.model.LLObject.SaleType;
+import libomv.model.asset.AssetType;
 import libomv.types.Permissions;
 import libomv.types.Permissions.PermissionMask;
 import libomv.types.UUID;

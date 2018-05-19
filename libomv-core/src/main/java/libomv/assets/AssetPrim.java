@@ -51,6 +51,7 @@ import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 import libomv.inventory.InventoryItem;
 import libomv.inventory.InventoryNode.InventoryType;
+import libomv.model.asset.AssetType;
 import libomv.primitives.ObjectProperties;
 import libomv.primitives.ParticleSystem;
 import libomv.primitives.ParticleSystem.SourcePattern;

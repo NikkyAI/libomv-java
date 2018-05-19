@@ -48,7 +48,7 @@ import org.apache.log4j.Logger;
 
 import libomv.Gui.windows.MainControl;
 import libomv.io.GridClient;
-import libomv.model.Agent.ChatType;
+import libomv.model.agent.ChatType;
 import libomv.types.UUID;
 
 public class GroupChannel extends AbstractChannel {

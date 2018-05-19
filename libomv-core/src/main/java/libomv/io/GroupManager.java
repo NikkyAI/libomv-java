@@ -53,25 +53,24 @@ import libomv.capabilities.IMessage;
 import libomv.io.capabilities.CapsCallback;
 import libomv.io.capabilities.CapsClient;
 import libomv.io.impl.GroupImpl;
-import libomv.model.Agent.InstantMessageCallbackArgs;
-import libomv.model.Agent.InstantMessageDialog;
-import libomv.model.Agent.InstantMessageOnline;
-import libomv.model.Asset.AssetType;
-import libomv.model.Group;
-import libomv.model.Group.GroupAccountDetails;
-import libomv.model.Group.GroupAccountSummary;
-import libomv.model.Group.GroupAccountTransactions;
-import libomv.model.Group.GroupAccountTransactions.TransactionEntry;
-import libomv.model.Group.GroupBanAction;
-import libomv.model.Group.GroupMember;
-import libomv.model.Group.GroupNotice;
-import libomv.model.Group.GroupNoticesListEntry;
-import libomv.model.Group.GroupProposal;
-import libomv.model.Group.GroupProposalItem;
-import libomv.model.Group.GroupRole;
-import libomv.model.Group.GroupRoleUpdate;
-import libomv.model.Group.GroupTitle;
 import libomv.model.Simulator;
+import libomv.model.agent.InstantMessageCallbackArgs;
+import libomv.model.agent.InstantMessageDialog;
+import libomv.model.agent.InstantMessageOnline;
+import libomv.model.asset.AssetType;
+import libomv.model.group.GroupAccountDetails;
+import libomv.model.group.GroupAccountSummary;
+import libomv.model.group.GroupAccountTransactions;
+import libomv.model.group.GroupAccountTransactions.TransactionEntry;
+import libomv.model.group.GroupBanAction;
+import libomv.model.group.GroupMember;
+import libomv.model.group.GroupNotice;
+import libomv.model.group.GroupNoticesListEntry;
+import libomv.model.group.GroupProposal;
+import libomv.model.group.GroupProposalItem;
+import libomv.model.group.GroupRole;
+import libomv.model.group.GroupRoleUpdate;
+import libomv.model.group.GroupTitle;
 import libomv.packets.ActivateGroupPacket;
 import libomv.packets.AgentDataUpdateRequestPacket;
 import libomv.packets.AgentDropGroupPacket;
@@ -146,7 +145,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	// Dictionary keeping GroupRole information while request is in progress
 	private HashMap<UUID, HashMap<UUID, GroupRole>> TempGroupRoles;
 	// Caches groups this avatar is member of
-	public HashList<UUID, Group> GroupList;
+	public HashList<UUID, GroupImpl> GroupList;
 	// Caches group names of all groups known to us
 	public HashMap<UUID, String> GroupNames;
 
@@ -216,7 +215,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		GroupRolesRequests = new ArrayList<UUID>();
 		TempGroupRolesMembers = new HashMap<UUID, ArrayList<Entry<UUID, UUID>>>();
 		GroupRolesMembersRequests = new ArrayList<UUID>();
-		GroupList = new HashList<UUID, Group>();
+		GroupList = new HashList<UUID, GroupImpl>();
 		GroupNames = new HashMap<UUID, String>();
 
 		_Client.Self.OnInstantMessage.add(new InstantMessageCallback());
@@ -1220,7 +1219,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	// #region Packet Handlers
 	private final void HandleAgentGroupDataUpdate(IMessage message, Simulator simulator) {
-		HashMap<UUID, Group> currentGroups = OnCurrentGroups.count() > 0 ? new HashMap<UUID, Group>() : null;
+		HashMap<UUID, GroupImpl> currentGroups = OnCurrentGroups.count() > 0 ? new HashMap<UUID, GroupImpl>() : null;
 		AgentGroupDataUpdateMessage msg = (AgentGroupDataUpdateMessage) message;
 
 		for (int i = 0; i < msg.groupDataBlock.length; i++) {
@@ -1248,7 +1247,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	}
 
 	private final void HandleAgentGroupDataUpdate(Packet packet, Simulator simulator) throws Exception {
-		HashMap<UUID, Group> currentGroups = OnCurrentGroups.count() > 0 ? new HashMap<UUID, Group>() : null;
+		HashMap<UUID, GroupImpl> currentGroups = OnCurrentGroups.count() > 0 ? new HashMap<UUID, GroupImpl>() : null;
 		AgentGroupDataUpdatePacket update = (AgentGroupDataUpdatePacket) packet;
 
 		for (AgentGroupDataUpdatePacket.GroupDataBlock block : update.GroupData) {
@@ -1781,10 +1780,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	// Contains the current groups your agent is a member of
 	public class CurrentGroupsCallbackArgs implements CallbackArgs {
-		private final java.util.HashMap<UUID, Group> m_Groups;
+		private final java.util.HashMap<UUID, GroupImpl> m_Groups;
 
 		// Get the current groups your agent is a member of
-		public final java.util.HashMap<UUID, Group> getGroups() {
+		public final java.util.HashMap<UUID, GroupImpl> getGroups() {
 			return m_Groups;
 		}
 
@@ -1794,7 +1793,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		 * @param groups
 		 *            The current groups your agent is a member of
 		 */
-		public CurrentGroupsCallbackArgs(java.util.HashMap<UUID, Group> groups) {
+		public CurrentGroupsCallbackArgs(java.util.HashMap<UUID, GroupImpl> groups) {
 			this.m_Groups = groups;
 		}
 	}
@@ -2127,10 +2126,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	// Represents the profile of a group
 	public class GroupProfileCallbackArgs implements CallbackArgs {
-		private final Group m_Group;
+		private final GroupImpl m_Group;
 
 		// Get the group profile
-		public final Group getGroup() {
+		public final GroupImpl getGroup() {
 			return m_Group;
 		}
 
@@ -2140,7 +2139,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		 * @param group
 		 *            The group profile
 		 */
-		public GroupProfileCallbackArgs(Group group) {
+		public GroupProfileCallbackArgs(GroupImpl group) {
 			this.m_Group = group;
 		}
 	}

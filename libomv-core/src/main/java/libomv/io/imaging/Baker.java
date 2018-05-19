@@ -45,8 +45,8 @@ import libomv.imaging.ManagedImage.ImageChannels;
 import libomv.io.AppearanceManager;
 import libomv.io.GridClient;
 import libomv.io.LibSettings;
-import libomv.model.Appearance.BakeType;
-import libomv.model.Appearance.TextureData;
+import libomv.model.appearance.BakeType;
+import libomv.model.appearance.TextureData;
 import libomv.types.Color4;
 import libomv.utils.Helpers;
 
@@ -61,7 +61,7 @@ public class Baker {
 	}
 
 	// Component layers
-	public List<AppearanceManager.TextureData> getTextures() {
+	public List<TextureData> getTextures() {
 		return textures;
 	}
 
@@ -85,7 +85,7 @@ public class Baker {
 	// Final baked texture
 	private ManagedImage bakedTexture;
 	// Component layers
-	private List<AppearanceManager.TextureData> textures = new ArrayList<AppearanceManager.TextureData>();
+	private List<TextureData> textures = new ArrayList<TextureData>();
 	// Width of the final baked image and scratchpad
 	private int bakeWidth;
 	// Height of the final baked image and scratchpad
@@ -129,7 +129,7 @@ public class Baker {
 	 * @param tdata
 	 *            TexturaData struct that contains texture and its params
 	 */
-	public void AddTexture(AppearanceManager.TextureData tdata) {
+	public void AddTexture(TextureData tdata) {
 		synchronized (textures) {
 			textures.add(tdata);
 		}
@@ -140,8 +140,8 @@ public class Baker {
 				(byte) (ImageChannels.Color | ImageChannels.Alpha | ImageChannels.Bump));
 
 		// These are for head baking, they get special treatment
-		AppearanceManager.TextureData skinTexture = new TextureData();
-		List<AppearanceManager.TextureData> tattooTextures = new ArrayList<AppearanceManager.TextureData>();
+		TextureData skinTexture = new TextureData();
+		List<TextureData> tattooTextures = new ArrayList<TextureData>();
 		List<ManagedImage> alphaWearableTextures = new ArrayList<ManagedImage>();
 
 		// Base color for eye bake is white, color of layer0 for others
@@ -152,7 +152,7 @@ public class Baker {
 		}
 
 		// Sort out the special layers we need for head baking and alpha
-		for (AppearanceManager.TextureData tex : textures) {
+		for (TextureData tex : textures) {
 			if (tex.Texture == null)
 				continue;
 
@@ -318,7 +318,7 @@ public class Baker {
 				DrawLayer(texture, false);
 			}
 
-			for (AppearanceManager.TextureData tex : tattooTextures) {
+			for (TextureData tex : tattooTextures) {
 				// Add head tattoo here (if available, order dependent)
 				if (tex.Texture != null) {
 					texture = tex.Texture.getImage().clone();

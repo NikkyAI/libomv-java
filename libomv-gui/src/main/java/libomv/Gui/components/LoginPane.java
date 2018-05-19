@@ -60,8 +60,8 @@ import libomv.Gui.dialogs.GridEditor;
 import libomv.Gui.windows.MainControl;
 import libomv.Gui.windows.MainWindow;
 import libomv.io.GridClient;
-import libomv.model.Grid.GridInfo;
-import libomv.model.Grid.GridListUpdateCallbackArgs;
+import libomv.model.grid.GridInfo;
+import libomv.model.grid.GridListUpdateCallbackArgs;
 import libomv.utils.Callback;
 
 public class LoginPane extends JPanel implements ActionListener {

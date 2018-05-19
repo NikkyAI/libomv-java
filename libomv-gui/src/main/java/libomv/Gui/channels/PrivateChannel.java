@@ -33,7 +33,7 @@ import java.util.Date;
 import javax.swing.text.BadLocationException;
 
 import libomv.Gui.windows.MainControl;
-import libomv.model.Agent.ChatType;
+import libomv.model.agent.ChatType;
 import libomv.types.UUID;
 
 public class PrivateChannel extends AbstractChannel {

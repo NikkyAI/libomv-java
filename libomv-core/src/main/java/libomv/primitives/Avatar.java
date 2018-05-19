@@ -35,9 +35,9 @@ import java.util.ArrayList;
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
-import libomv.model.Agent;
-import libomv.model.Appearance.AppearanceFlags;
-import libomv.model.Avatar.Animation;
+import libomv.model.agent.ControlFlags;
+import libomv.model.appearance.AppearanceFlags;
+import libomv.model.avatar.Animation;
 import libomv.types.NameValue;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
@@ -448,7 +448,7 @@ public class Avatar extends Primitive {
 		Avi.put("profile_statistics", profileStatistics.serialize());
 		Avi.put("profile_properties", profileProperties.serialize());
 		Avi.put("profile_interest", profileInterests.serialize());
-		Avi.put("control_flags", OSD.FromInteger(Agent.ControlFlags.getValue(controlFlags)));
+		Avi.put("control_flags", OSD.FromInteger(ControlFlags.getValue(controlFlags)));
 		Avi.put("visual_parameters", vp);
 		Avi.put("first_name", OSD.FromString(getFirstName()));
 		Avi.put("last_name", OSD.FromString(getLastName()));
@@ -486,7 +486,7 @@ public class Avatar extends Primitive {
 		profileStatistics = new Statistics(tex.get("profile_statistics"));
 		profileProperties = new AvatarProperties(tex.get("profile_properties"));
 		profileInterests = new Interests(tex.get("profile_interest"));
-		controlFlags = Agent.ControlFlags.setValue(tex.get("control_flags").AsInteger());
+		controlFlags = ControlFlags.setValue(tex.get("control_flags").AsInteger());
 
 		OSDArray vp = (OSDArray) tex.get("visual_parameters");
 		visualParameters = new byte[vp.size()];

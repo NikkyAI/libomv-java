@@ -29,6 +29,7 @@
  */
 package libomv.assets;
 
+import libomv.model.asset.AssetType;
 import libomv.types.UUID;
 
 // Represents an AssetScriptBinary object containing the LSO compiled bytecode of an LSL script

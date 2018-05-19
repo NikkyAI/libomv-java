@@ -31,11 +31,15 @@ package libomv;
 
 import org.apache.log4j.Logger;
 
+import libomv.model.terrain.GroupHeader;
+import libomv.model.terrain.LayerType;
+import libomv.model.terrain.TerrainHeader;
+import libomv.model.terrain.TerrainPatch;
 import libomv.packets.LayerDataPacket;
 import libomv.utils.BitPack;
 import libomv.utils.Helpers;
 
-public class TerrainCompressor implements libomv.model.Terrain {
+public class TerrainCompressor {
 	private static final Logger logger = Logger.getLogger(TerrainCompressor.class);
 
 	// TODO:FIXME

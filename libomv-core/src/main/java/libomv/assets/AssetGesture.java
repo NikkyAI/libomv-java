@@ -34,6 +34,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import libomv.model.asset.AssetType;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
 

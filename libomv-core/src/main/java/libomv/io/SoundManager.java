@@ -30,6 +30,10 @@
 package libomv.io;
 
 import libomv.model.Simulator;
+import libomv.model.sound.AttachedSoundCallbackArgs;
+import libomv.model.sound.AttachedSoundGainChangeCallbackArgs;
+import libomv.model.sound.PreloadSoundCallbackArgs;
+import libomv.model.sound.SoundTriggerCallbackArgs;
 import libomv.packets.AttachedSoundGainChangePacket;
 import libomv.packets.AttachedSoundPacket;
 import libomv.packets.Packet;

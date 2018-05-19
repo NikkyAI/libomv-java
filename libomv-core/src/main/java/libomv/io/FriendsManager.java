@@ -36,12 +36,21 @@ import org.apache.log4j.Logger;
 
 import libomv.inventory.InventoryException;
 import libomv.inventory.InventoryFolder.FolderType;
-import libomv.model.Agent.InstantMessageCallbackArgs;
-import libomv.model.Agent.InstantMessageDialog;
-import libomv.model.Agent.InstantMessageOnline;
-import libomv.model.Login.BuddyListEntry;
-import libomv.model.Login.LoginProgressCallbackArgs;
-import libomv.model.Login.LoginStatus;
+import libomv.model.agent.InstantMessageCallbackArgs;
+import libomv.model.agent.InstantMessageDialog;
+import libomv.model.agent.InstantMessageOnline;
+import libomv.model.friend.FriendFoundReplyCallbackArgs;
+import libomv.model.friend.FriendInfo;
+import libomv.model.friend.FriendListChangedCallbackArgs;
+import libomv.model.friend.FriendNotificationCallbackArgs;
+import libomv.model.friend.FriendRights;
+import libomv.model.friend.FriendRightsCallbackArgs;
+import libomv.model.friend.FriendshipOfferedCallbackArgs;
+import libomv.model.friend.FriendshipResponseCallbackArgs;
+import libomv.model.friend.FriendshipTerminatedCallbackArgs;
+import libomv.model.login.BuddyListEntry;
+import libomv.model.login.LoginProgressCallbackArgs;
+import libomv.model.login.LoginStatus;
 import libomv.model.Simulator;
 import libomv.packets.AcceptFriendshipPacket;
 import libomv.packets.ChangeUserRightsPacket;
@@ -68,7 +77,7 @@ import libomv.utils.Helpers;
  * This class is used to add and remove avatars from your friends list and to
  * manage their permission.
  */
-public class FriendsManager implements PacketCallback, libomv.model.Friend {
+public class FriendsManager implements PacketCallback {
 	private static final Logger logger = Logger.getLogger(FriendsManager.class);
 
 	public final CallbackHandler<FriendNotificationCallbackArgs> OnFriendNotification = new CallbackHandler<FriendNotificationCallbackArgs>();

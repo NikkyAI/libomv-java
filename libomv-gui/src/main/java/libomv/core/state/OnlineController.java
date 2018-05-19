@@ -41,7 +41,7 @@ import libomv.Gui.components.OnlinePane;
 import libomv.Gui.windows.CommWindow;
 import libomv.Gui.windows.MainControl;
 import libomv.Gui.windows.MainWindow;
-import libomv.model.Agent.BalanceCallbackArgs;
+import libomv.model.agent.BalanceCallbackArgs;
 import libomv.utils.Callback;
 
 public class OnlineController implements StateController {

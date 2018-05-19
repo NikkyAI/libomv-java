@@ -31,6 +31,7 @@ package libomv.assets;
 
 import java.io.UnsupportedEncodingException;
 
+import libomv.model.asset.AssetType;
 import libomv.types.UUID;
 import libomv.types.Vector3;
 import libomv.utils.Helpers;

@@ -43,8 +43,8 @@ import libomv.Gui.components.ProgressPane;
 import libomv.Gui.windows.MainControl;
 import libomv.Gui.windows.MainWindow;
 import libomv.io.GridClient;
-import libomv.model.Login.LoginProgressCallbackArgs;
-import libomv.model.Login.LoginStatus;
+import libomv.model.login.LoginProgressCallbackArgs;
+import libomv.model.login.LoginStatus;
 import libomv.utils.Callback;
 
 public class OfflineController implements StateController {

@@ -20,7 +20,7 @@ import javax.swing.ListModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import libomv.model.Group;
+import libomv.io.impl.GroupImpl;
 
 /**
  * SortedListModel decorates an unsorted ListModel to provide a sorted model.
@@ -30,7 +30,7 @@ import libomv.model.Group;
  *
  * @author John O'Conner
  */
-public class SortedListModel extends AbstractListModel<Group> {
+public class SortedListModel extends AbstractListModel<GroupImpl> {
 	// The serialisation UID
 	private static final long serialVersionUID = 9161658455000735352L;
 
@@ -41,7 +41,7 @@ public class SortedListModel extends AbstractListModel<Group> {
 	 * @param model
 	 *            the underlying, unsorted ListModel
 	 */
-	public SortedListModel(ListModel<Group> model) {
+	public SortedListModel(ListModel<GroupImpl> model) {
 		this(model, SortOrder.ASCENDING, null);
 	}
 
@@ -54,7 +54,7 @@ public class SortedListModel extends AbstractListModel<Group> {
 	 * @param sortOrder
 	 *            that should be used
 	 */
-	public SortedListModel(ListModel<Group> model, SortOrder sortOrder) {
+	public SortedListModel(ListModel<GroupImpl> model, SortOrder sortOrder) {
 		this(model, sortOrder, null);
 	}
 
@@ -67,7 +67,7 @@ public class SortedListModel extends AbstractListModel<Group> {
 	 * @param comp
 	 *
 	 */
-	public SortedListModel(ListModel<Group> model, SortOrder sortOrder, Comparator<Object> comperator) {
+	public SortedListModel(ListModel<GroupImpl> model, SortOrder sortOrder, Comparator<Object> comperator) {
 		unsortedModel = model;
 		unsortedModel.addListDataListener(new ListDataListener() {
 			@Override
@@ -111,9 +111,9 @@ public class SortedListModel extends AbstractListModel<Group> {
 	 * @return element in the original model to which our entry points
 	 */
 	@Override
-	public Group getElementAt(int index) throws IndexOutOfBoundsException {
+	public GroupImpl getElementAt(int index) throws IndexOutOfBoundsException {
 		int modelIndex = toUnsortedModelIndex(index);
-		Group element = unsortedModel.getElementAt(modelIndex);
+		GroupImpl element = unsortedModel.getElementAt(modelIndex);
 		return element;
 	}
 
@@ -336,11 +336,11 @@ public class SortedListModel extends AbstractListModel<Group> {
 	}
 
 	private List<SortedListEntry> sortedModel;
-	private ListModel<Group> unsortedModel;
+	private ListModel<GroupImpl> unsortedModel;
 	private Comparator<Object> comparator;
 	private SortOrder sortOrder;
 
-	public ListModel<Group> getUnsortedModel() {
+	public ListModel<GroupImpl> getUnsortedModel() {
 		return unsortedModel;
 	}
 

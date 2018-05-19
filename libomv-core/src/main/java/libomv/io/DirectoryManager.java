@@ -37,7 +37,29 @@ import libomv.capabilities.CapsMessage.DirLandReplyMessage;
 import libomv.capabilities.CapsMessage.PlacesReplyMessage;
 import libomv.capabilities.IMessage;
 import libomv.io.capabilities.CapsCallback;
-import libomv.model.Parcel.ParcelCategory;
+import libomv.model.directory.AgentSearchData;
+import libomv.model.directory.Classified;
+import libomv.model.directory.ClassifiedCategories;
+import libomv.model.directory.ClassifiedFlags;
+import libomv.model.directory.ClassifiedQueryFlags;
+import libomv.model.directory.DirClassifiedsReplyCallbackArgs;
+import libomv.model.directory.DirEventsReplyCallbackArgs;
+import libomv.model.directory.DirFindFlags;
+import libomv.model.directory.DirGroupsReplyCallbackArgs;
+import libomv.model.directory.DirLandReplyCallbackArgs;
+import libomv.model.directory.DirPeopleReplyCallbackArgs;
+import libomv.model.directory.DirPlacesReplyCallbackArgs;
+import libomv.model.directory.DirectoryParcel;
+import libomv.model.directory.EventCategories;
+import libomv.model.directory.EventFlags;
+import libomv.model.directory.EventInfo;
+import libomv.model.directory.EventInfoReplyCallbackArgs;
+import libomv.model.directory.EventsSearchData;
+import libomv.model.directory.GroupSearchData;
+import libomv.model.directory.PlacesFlags;
+import libomv.model.directory.PlacesReplyCallbackArgs;
+import libomv.model.directory.PlacesSearchData;
+import libomv.model.parcel.ParcelCategory;
 import libomv.model.Simulator;
 import libomv.packets.DirClassifiedQueryPacket;
 import libomv.packets.DirClassifiedReplyPacket;
@@ -63,7 +85,7 @@ import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 
 /* Access to the data server which allows searching for land, events, people, etc */
-public class DirectoryManager implements PacketCallback, CapsCallback, libomv.model.Directory {
+public class DirectoryManager implements PacketCallback, CapsCallback {
 	// /#region Enums
 
 	public CallbackHandler<DirEventsReplyCallbackArgs> OnDirEvents = new CallbackHandler<DirEventsReplyCallbackArgs>();

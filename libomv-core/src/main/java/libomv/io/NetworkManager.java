@@ -55,10 +55,21 @@ import libomv.capabilities.IMessage;
 import libomv.io.capabilities.AsyncHTTPClient;
 import libomv.io.capabilities.CapsCallback;
 import libomv.model.Simulator;
-import libomv.model.Simulator.RegionFlags;
-import libomv.model.Simulator.RegionProtocols;
-import libomv.model.Simulator.SimAccess;
-import libomv.model.Simulator.SimStatType;
+import libomv.model.network.DisconnectType;
+import libomv.model.network.DisconnectedCallbackArgs;
+import libomv.model.network.EventQueueRunningCallbackArgs;
+import libomv.model.network.IncomingPacket;
+import libomv.model.network.LoggedOutCallbackArgs;
+import libomv.model.network.OutgoingPacket;
+import libomv.model.network.PacketSentCallbackArgs;
+import libomv.model.network.SimChangedCallbackArgs;
+import libomv.model.network.SimConnectedCallbackArgs;
+import libomv.model.network.SimConnectingCallbackArgs;
+import libomv.model.network.SimDisconnectedCallbackArgs;
+import libomv.model.simulator.RegionFlags;
+import libomv.model.simulator.RegionProtocols;
+import libomv.model.simulator.SimAccess;
+import libomv.model.simulator.SimStatType;
 import libomv.packets.CompletePingCheckPacket;
 import libomv.packets.EnableSimulatorPacket;
 import libomv.packets.KickUserPacket;
@@ -83,7 +94,7 @@ import libomv.utils.TimeoutEvent;
 // outgoing traffic and deserializes incoming traffic, and provides
 // instances of delegates for network-related events.
 
-public class NetworkManager implements PacketCallback, CapsCallback, libomv.model.Network {
+public class NetworkManager implements PacketCallback, CapsCallback {
 	private static final Logger logger = Logger.getLogger(NetworkManager.class);
 
 	public CallbackHandler<SimConnectingCallbackArgs> OnSimConnecting = new CallbackHandler<SimConnectingCallbackArgs>();
@@ -109,7 +120,7 @@ public class NetworkManager implements PacketCallback, CapsCallback, libomv.mode
 	public CallbackHandler<PacketSentCallbackArgs> OnPacketSent = new CallbackHandler<PacketSentCallbackArgs>();
 
 	public void RaisePacketSentCallback(byte[] data, int bytes, Simulator sim) {
-		_Client.Network.OnPacketSent.dispatch(new NetworkManager.PacketSentCallbackArgs(data, bytes, sim));
+		_Client.Network.OnPacketSent.dispatch(new PacketSentCallbackArgs(data, bytes, sim));
 	}
 
 	public CallbackHandler<EventQueueRunningCallbackArgs> OnEventQueueRunning = new CallbackHandler<EventQueueRunningCallbackArgs>();
