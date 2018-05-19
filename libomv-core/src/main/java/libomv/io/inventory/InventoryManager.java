@@ -80,12 +80,14 @@ import libomv.model.inventory.FindObjectByPathReplyCallbackArgs;
 import libomv.model.inventory.FolderUpdatedCallbackArgs;
 import libomv.model.inventory.InventoryObjectOfferedCallbackArgs;
 import libomv.model.inventory.InventorySortOrder;
+import libomv.model.inventory.InventoryUploadedAssetCallbackArgs;
 import libomv.model.inventory.ItemCopiedCallbackArgs;
 import libomv.model.inventory.ItemCreatedCallbackArgs;
 import libomv.model.inventory.ItemCreatedFromAssetCallbackArgs;
 import libomv.model.inventory.ItemReceivedCallbackArgs;
 import libomv.model.inventory.SaveAssetToInventoryCallbackArgs;
 import libomv.model.inventory.ScriptRunningReplyCallbackArgs;
+import libomv.model.inventory.ScriptUpdatedCallbackArgs;
 import libomv.model.inventory.TaskInventoryReplyCallbackArgs;
 import libomv.model.inventory.TaskItemReceivedCallbackArgs;
 import libomv.model.login.LoginProgressCallbackArgs;
@@ -131,7 +133,6 @@ import libomv.types.UUID;
 import libomv.types.Vector3;
 import libomv.types.Vector3d;
 import libomv.utils.Callback;
-import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 import libomv.utils.RefObject;
@@ -3211,33 +3212,6 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		}
 	}
 
-	/**
-	 * Reply received when uploading an inventory asset
-	 *
-	 * @param success
-	 *            Has upload been successful
-	 * @param status
-	 *            Error message if upload failed
-	 * @param itemID
-	 *            Inventory asset UUID
-	 * @param assetID
-	 *            New asset UUID
-	 */
-	public class InventoryUploadedAssetCallbackArgs implements CallbackArgs {
-		public boolean success;
-		public String status;
-		public UUID itemID;
-		public UUID assetID;
-
-		public InventoryUploadedAssetCallbackArgs(boolean success, String status, UUID itemID, UUID assetID) {
-			this.success = success;
-			this.status = status;
-			this.itemID = itemID;
-			this.assetID = assetID;
-		}
-
-	}
-
 	public class UploadInventoryAssetComplete implements FutureCallback<OSD> {
 		private final Callback<InventoryUploadedAssetCallbackArgs> callback;
 		private final byte[] itemData;
@@ -3321,25 +3295,6 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 			if (callback != null)
 				callback.callback(
 						new InventoryUploadedAssetCallbackArgs(false, "Operation cancelled", UUID.Zero, UUID.Zero));
-		}
-	}
-
-	public class ScriptUpdatedCallbackArgs implements CallbackArgs {
-		public boolean success;
-		public String message;
-		public boolean compiled;
-		public ArrayList<String> errors;
-		public UUID itemID;
-		public UUID assetID;
-
-		public ScriptUpdatedCallbackArgs(boolean success, String message, boolean compiled, ArrayList<String> errors,
-				UUID itemID, UUID assetID) {
-			this.success = success;
-			this.message = message;
-			this.compiled = compiled;
-			this.errors = errors;
-			this.itemID = itemID;
-			this.assetID = assetID;
 		}
 	}
 

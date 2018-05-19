@@ -82,7 +82,9 @@ import libomv.model.asset.BakedTextureUploadedCallback;
 import libomv.model.asset.ChannelType;
 import libomv.model.asset.DelayedTransfer;
 import libomv.model.asset.ImageDownload;
+import libomv.model.asset.ImageReceiveProgressCallbackArgs;
 import libomv.model.asset.ImageType;
+import libomv.model.asset.InitiateDownloadCallbackArgs;
 import libomv.model.asset.MeshDownload;
 import libomv.model.asset.SourceType;
 import libomv.model.asset.StatusCode;
@@ -107,7 +109,6 @@ import libomv.packets.TransferRequestPacket;
 import libomv.types.PacketCallback;
 import libomv.types.UUID;
 import libomv.utils.Callback;
-import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 import libomv.utils.RefObject;
@@ -122,56 +123,7 @@ public class AssetManager implements PacketCallback {
 	private CallbackHandler<AssetUpload> OnAssetUploaded = new CallbackHandler<AssetUpload>();
 	private CallbackHandler<AssetUpload> OnUploadProgress = new CallbackHandler<AssetUpload>();
 
-	// Provides data for InitiateDownloaded event
-	public class InitiateDownloadCallbackArgs implements CallbackArgs {
-		private final String m_SimFileName;
-		private final String m_ViewerFileName;
-
-		// Filename used on the simulator
-		public final String getSimFileName() {
-			return m_SimFileName;
-		}
-
-		// Filename used by the client
-		public final String getViewerFileName() {
-			return m_ViewerFileName;
-		}
-
-		public InitiateDownloadCallbackArgs(String simFilename, String viewerFilename) {
-			this.m_SimFileName = simFilename;
-			this.m_ViewerFileName = viewerFilename;
-		}
-	}
-
 	private CallbackHandler<InitiateDownloadCallbackArgs> OnInitiateDownload = new CallbackHandler<InitiateDownloadCallbackArgs>();
-
-	// Provides data for ImageReceiveProgress event
-	public class ImageReceiveProgressCallbackArgs implements CallbackArgs {
-		private final UUID m_ImageID;
-		private final long m_Received;
-		private final long m_Total;
-
-		// UUID of the image that is in progress
-		public final UUID getImageID() {
-			return m_ImageID;
-		}
-
-		// Number of bytes received so far
-		public final long getReceived() {
-			return m_Received;
-		}
-
-		// Image size in bytes
-		public final long getTotal() {
-			return m_Total;
-		}
-
-		public ImageReceiveProgressCallbackArgs(UUID imageID, long received, long total) {
-			this.m_ImageID = imageID;
-			this.m_Received = received;
-			this.m_Total = total;
-		}
-	}
 
 	private CallbackHandler<ImageReceiveProgressCallbackArgs> OnImageReceiveProgress = new CallbackHandler<ImageReceiveProgressCallbackArgs>();
 

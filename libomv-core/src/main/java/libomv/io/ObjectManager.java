@@ -48,6 +48,22 @@ import libomv.model.LLObject.SaleType;
 import libomv.model.login.LoginProgressCallbackArgs;
 import libomv.model.login.LoginStatus;
 import libomv.model.network.DisconnectedCallbackArgs;
+import libomv.model.object.AvatarSitChangedCallbackArgs;
+import libomv.model.object.AvatarUpdateCallbackArgs;
+import libomv.model.object.CompressedFlags;
+import libomv.model.object.KillObjectsCallbackArgs;
+import libomv.model.object.ObjectDataBlockUpdateCallbackArgs;
+import libomv.model.object.ObjectMovementUpdate;
+import libomv.model.object.ObjectPropertiesCallbackArgs;
+import libomv.model.object.ObjectPropertiesFamilyCallbackArgs;
+import libomv.model.object.ObjectPropertiesUpdatedCallbackArgs;
+import libomv.model.object.ParticleUpdateCallbackArgs;
+import libomv.model.object.PayPriceReplyCallbackArgs;
+import libomv.model.object.PhysicsPropertiesCallbackArgs;
+import libomv.model.object.PrimCallbackArgs;
+import libomv.model.object.ReportType;
+import libomv.model.object.TerseObjectUpdateCallbackArgs;
+import libomv.model.object.UpdateType;
 import libomv.model.Simulator;
 import libomv.packets.ImprovedTerseObjectUpdatePacket;
 import libomv.packets.KillObjectPacket;
@@ -86,10 +102,8 @@ import libomv.packets.RequestMultipleObjectsPacket;
 import libomv.packets.RequestObjectPropertiesFamilyPacket;
 import libomv.packets.RequestPayPricePacket;
 import libomv.primitives.Avatar;
-import libomv.primitives.MediaEntry;
 import libomv.primitives.ObjectProperties;
 import libomv.primitives.ParticleSystem;
-import libomv.primitives.PhysicsProperties;
 import libomv.primitives.Primitive;
 import libomv.primitives.Primitive.ClickAction;
 import libomv.primitives.Primitive.ConstructionData;
@@ -117,7 +131,6 @@ import libomv.types.UUID;
 import libomv.types.Vector3;
 import libomv.types.Vector4;
 import libomv.utils.Callback;
-import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 import libomv.utils.RefObject;
@@ -128,221 +141,7 @@ import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 public class ObjectManager implements PacketCallback, CapsCallback {
 	private static final Logger logger = Logger.getLogger(ObjectManager.class);
 
-	public enum ReportType {
-		// No report
-		None,
-		// Unknown report type
-		Unknown,
-		// Bug report
-		Bug,
-		// Complaint report
-		Complaint,
-		// Customer service report
-		CustomerServiceRequest;
-
-		public static ReportType setValue(int value) {
-			if (value >= 0 && value < values().length)
-				return values()[value];
-			return null;
-		}
-
-		public byte getValue() {
-			return (byte) ordinal();
-		}
-	}
-
-	// Bitflag field for ObjectUpdateCompressed data blocks, describing
-	// which options are present for each object
-	public static class CompressedFlags {
-		public static final short None = 0x00;
-		// Unknown
-		public static final short ScratchPad = 0x01;
-		// Whether the object has a TreeSpecies
-		public static final short Tree = 0x02;
-		// Whether the object has floating text ala llSetText
-		public static final short HasText = 0x04;
-		// Whether the object has an active particle system
-		public static final short HasParticles = 0x08;
-		// Whether the object has sound attached to it
-		public static final short HasSound = 0x10;
-		// Whether the object is attached to a root object or not
-		public static final short HasParent = 0x20;
-		// Whether the object has texture animation settings
-		public static final short TextureAnimation = 0x40;
-		// Whether the object has an angular velocity
-		public static final short HasAngularVelocity = 0x80;
-		// Whether the object has a name value pairs string
-		public static final short HasNameValues = 0x100;
-		// Whether the object has a Media URL set
-		public static final short MediaURL = 0x200;
-
-		public static short setValue(short value) {
-			return (short) (value & _mask);
-		}
-
-		public static short getValue(int value) {
-			return (short) (value & _mask);
-		}
-
-		private static final short _mask = 0x3FF;
-	}
-
-	// Specific Flags for MultipleObjectUpdate requests
-	public static class UpdateType {
-		// None
-		public static final byte None = 0x00;
-		// Change position of prims
-		public static final byte Position = 0x01;
-		// Change rotation of prims
-		public static final byte Rotation = 0x02;
-		// Change size of prims
-		public static final byte Scale = 0x04;
-		// Perform operation on link set
-		public static final byte Linked = 0x08;
-		// Scale prims uniformly, same as selecing ctrl+shift in the
-		// viewer. Used in conjunction with Scale
-		public static final byte Uniform = 0x10;
-
-		public static short setValue(byte value) {
-			return (short) (value & _mask);
-		}
-
-		public static byte getValue(int value) {
-			return (byte) (value & _mask);
-		}
-
-		private static final short _mask = 0x1F;
-	}
-
-	// Special values in PayPriceReply. If the price is not one of these
-	// literal value of the price should be use
-	public enum PayPriceType {
-		// Indicates that this pay option should be hidden
-		Hide(-1),
-
-		// Indicates that this pay option should have the default value
-		Default(-2);
-
-		public static PayPriceType setValue(int value) {
-			if (value >= 0 && value < values().length)
-				return values()[value];
-			return null;
-		}
-
-		public byte getValue() {
-			return _value;
-		}
-
-		private final byte _value;
-
-		private PayPriceType(int value) {
-			_value = (byte) value;
-		}
-	}
-
-	/**
-	 * Contains the variables sent in an object update packet for objects. Used to
-	 * track position and movement of prims and avatars
-	 */
-	public final class ObjectMovementUpdate {
-		public boolean Avatar;
-		public Vector4 CollisionPlane;
-		public byte State;
-		public int LocalID; // uint
-		public Vector3 Position;
-		public Vector3 Velocity;
-		public Vector3 Acceleration;
-		public Quaternion Rotation;
-		public Vector3 AngularVelocity;
-		public TextureEntry Textures;
-	}
-
 	public static final float HAVOK_TIMESTEP = 1.0f / 45.0f;
-
-	/**
-	 * Provides data for the <see cref="ObjectManager.ObjectUpdate"/> event
-	 *
-	 * <p>
-	 * The <see cref="ObjectManager.ObjectUpdate"/> event occurs when the simulator
-	 * sends an <see cref="ObjectUpdatePacket"/> containing a Primitive, Foliage or
-	 * Attachment data
-	 * </p>
-	 * <p>
-	 * Note 1: The <see cref="ObjectManager.ObjectUpdate"/> event will not be raised
-	 * when the object is an Avatar
-	 * </p>
-	 * <p>
-	 * Note 2: It is possible for the <see cref="ObjectManager.ObjectUpdate"/> to be
-	 * raised twice for the same object if for example the primitive moved to a new
-	 * simulator, then returned to the current simulator or if an Avatar crosses the
-	 * border into a new simulator and returns to the current simulator
-	 * </p>
-	 *
-	 * <example> The following code example uses the
-	 * <see cref="PrimCallbackArgs.Prim"/>,
-	 * <see cref="PrimCallbackArgs.Simulator"/>, and
-	 * <see cref="PrimCallbackArgs.IsAttachment"/> properties to display new
-	 * Primitives and Attachments on the <see cref="Console"/> window. <code>
-	 *     // Subscribe to the event that gives us prim and foliage information
-	 *     _Client.Objects.OnObjectUpdate.add(new Objects_ObjectUpdate());
-	 *
-	 *
-	 *     private Objects_ObjectUpdate implements CallbackHandler<PrimCallbackArgs>
-	 *     {
-	 *         void callback(PrimCallbackArgs e)
-	 *         {
-	 *              Console.WriteLine("Primitive %s %s in %s is an attachment %s", e.getPrim().ID, e.getPrim().LocalID, e.getSimulator().Name, e.getIsAttachment());
-	 *         }
-	 *     }
-	 * </code> </example> {@link ObjectManager.OnObjectUpdate}
-	 * {@link ObjectManager.OnAvatarUpdate} {@link AvatarUpdateCallbackArgs}
-	 */
-	public class PrimCallbackArgs implements CallbackArgs {
-		private final Simulator m_Simulator;
-		private final boolean m_IsNew;
-		private final Primitive m_Prim;
-		private final short m_TimeDilation;
-
-		// Get the simulator the <see cref="Primitive"/> originated from
-		public final Simulator getSimulator() {
-			return m_Simulator;
-		}
-
-		// Get the <see cref="Primitive"/> details
-		public final Primitive getPrim() {
-			return m_Prim;
-		}
-
-		// true if the <see cref="Primitive"/> did not exist in the dictionary
-		// before this update (always true if object tracking has been disabled)
-		public final boolean getIsNew() {
-			return m_IsNew;
-		}
-
-		// Get the simulator Time Dilation
-		public final short getTimeDilation() {
-			return m_TimeDilation;
-		}
-
-		/**
-		 * Construct a new instance of the PrimEventArgs class
-		 *
-		 * @param simulator
-		 *            The simulator the object originated from
-		 * @param prim
-		 *            The Primitive
-		 * @param timeDilation
-		 *            The simulator time dilation
-		 * @param isNew
-		 *            The prim was not in the dictionary before this update
-		 */
-		public PrimCallbackArgs(Simulator simulator, Primitive prim, short timeDilation, boolean isNew) {
-			this.m_Simulator = simulator;
-			this.m_IsNew = isNew;
-			this.m_Prim = prim;
-			this.m_TimeDilation = timeDilation;
-		}
-	}
 
 	/**
 	 * Raised when the simulator sends us data containing
@@ -352,43 +151,6 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	 */
 	public CallbackHandler<ParticleUpdateCallbackArgs> OnParticleUpdate = new CallbackHandler<ParticleUpdateCallbackArgs>();
 
-	public class ParticleUpdateCallbackArgs implements CallbackArgs {
-		private final Simulator m_Simulator;
-		private final ParticleSystem m_ParticleSystem;
-		private final Primitive m_Source;
-
-		// Get the simulator the object originated from
-		public Simulator getSimulator() {
-			return m_Simulator;
-		}
-
-		// Get the <see cref="ParticleSystem"/> data
-		public ParticleSystem getParticleSystem() {
-			return m_ParticleSystem;
-		}
-
-		// Get <see cref="Primitive"/> source
-		public Primitive getSource() {
-			return m_Source;
-		}
-
-		/**
-		 * Construct a new instance of the ParticleUpdateEventArgs class
-		 *
-		 * @param "simulator"
-		 *            The simulator the packet originated from
-		 * @param "particlesystem"
-		 *            The ParticleSystem data
-		 * @param "source"
-		 *            The Primitive source
-		 */
-		public ParticleUpdateCallbackArgs(Simulator simulator, ParticleSystem particlesystem, Primitive source) {
-			m_Simulator = simulator;
-			m_ParticleSystem = particlesystem;
-			m_Source = source;
-		}
-	}
-
 	/**
 	 * Raised when the simulator sends us data containing
 	 *
@@ -397,517 +159,49 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	 */
 	public CallbackHandler<PrimCallbackArgs> OnObjectUpdate = new CallbackHandler<PrimCallbackArgs>();
 
-	/**
-	 * Provides additional primitive data for the
-	 * <see cref="ObjectManager.ObjectProperties"/> event
-	 * <p>
-	 * The <see cref="ObjectManager.ObjectProperties"/> event occurs when the
-	 * simulator sends an <see cref="ObjectPropertiesPacket"/> containing additional
-	 * details for a Primitive, Foliage data or Attachment data
-	 * </p>
-	 * <p>
-	 * The <see cref="ObjectManager.ObjectProperties"/> event is also raised when a
-	 * <see cref="ObjectManager.SelectObject"/> request is made.
-	 * </p>
-	 *
-	 * <example> The following code example uses the
-	 * <see cref="PrimEventArgs.Prim"/>, <see cref="PrimEventArgs.Simulator"/> and
-	 * <see cref="ObjectPropertiesEventArgs.Properties"/> properties to display new
-	 * attachments and send a request for additional properties containing the name
-	 * of the attachment then display it on the <see cref="Console"/> window. <code>
-	 *     // Subscribe to the event that provides additional primitive details
-	 *     _Client.Objects.ObjectProperties += Objects_ObjectProperties;
-	 *
-	 *     // handle the properties data that arrives
-	 *     private void Objects_ObjectProperties(object sender, ObjectPropertiesEventArgs e)
-	 *     {
-	 *         Console.WriteLine("Primitive Properties: %s, Name is %s", e.Properties.ObjectID, e.Properties.Name);
-	 *     }
-	 * </code> </example>
-	 */
-	public class ObjectPropertiesCallbackArgs implements CallbackArgs {
-		protected final Simulator m_Simulator;
-		protected final ObjectProperties m_Properties;
-
-		// Get the simulator the object is located
-		public final Simulator getSimulator() {
-			return m_Simulator;
-		}
-
-		// Get the primitive properties
-		public final ObjectProperties getProperties() {
-			return m_Properties;
-		}
-
-		/**
-		 * Construct a new instance of the ObjectPropertiesEventArgs class
-		 *
-		 * @param simulator
-		 *            The simulator the object is located
-		 * @param props
-		 *            The primitive Properties
-		 */
-		public ObjectPropertiesCallbackArgs(Simulator simulator, ObjectProperties props) {
-			this.m_Simulator = simulator;
-			this.m_Properties = props;
-		}
-	}
-
 	// Raised when the simulator sends us data containing
 	// additional <seea cref="Primitive"/> information
 	// {@link SelectObject}
 	// {@link SelectObjects}
 	public CallbackHandler<ObjectPropertiesCallbackArgs> OnObjectProperties = new CallbackHandler<ObjectPropertiesCallbackArgs>();
 
-	/**
-	 * Provides additional primitive data for the
-	 * <see cref="ObjectManager.ObjectPropertiesUpdated"/> event
-	 * <p>
-	 * The <see cref="ObjectManager.ObjectPropertiesUpdated"/> event occurs when the
-	 * simulator sends an <see cref="ObjectPropertiesPacket"/> containing additional
-	 * details for a Primitive or Foliage data that is currently being tracked in
-	 * the <see cref="Simulator.ObjectsPrimitives"/> dictionary
-	 * </p>
-	 * <p>
-	 * The <see cref="ObjectManager.ObjectPropertiesUpdated"/> event is also raised
-	 * when a <see cref="ObjectManager.SelectObject"/> request is made and
-	 * <see cref="Settings.OBJECT_TRACKING"/> is enabled
-	 * </p>
-	 */
-	public class ObjectPropertiesUpdatedCallbackArgs extends ObjectPropertiesCallbackArgs {
-		private final Primitive m_Prim;
-
-		// Get the primitive details
-		public final Primitive getPrim() {
-			return m_Prim;
-		}
-
-		/**
-		 * Construct a new instance of the ObjectPropertiesUpdatedEvenrArgs class
-		 *
-		 * @param simulator
-		 *            The simulator the object is located
-		 * @param prim
-		 *            The Primitive
-		 * @param props
-		 *            The primitive Properties
-		 */
-		public ObjectPropertiesUpdatedCallbackArgs(Simulator simulator, Primitive prim, ObjectProperties props) {
-			super(simulator, props);
-			this.m_Prim = prim;
-		}
-	}
-
 	// Raised when the simulator sends us data containing
 	// Primitive.ObjectProperties for an object we are currently tracking
 	public CallbackHandler<ObjectPropertiesUpdatedCallbackArgs> OnObjectPropertiesUpdated = new CallbackHandler<ObjectPropertiesUpdatedCallbackArgs>();
-
-	/**
-	 * Provides additional primitive data, permissions and sale info for the
-	 * <see cref="ObjectManager.ObjectPropertiesFamily"/> event
-	 * <p>
-	 * The <see cref="ObjectManager.ObjectPropertiesFamily"/> event occurs when the
-	 * simulator sends an <see cref="ObjectPropertiesPacket"/> containing additional
-	 * details for a Primitive, Foliage data or Attachment. This includes
-	 * Permissions, Sale info, and other basic details on an object
-	 * </p>
-	 * <p>
-	 * The <see cref="ObjectManager.ObjectProperties"/> event is also raised when a
-	 * <see cref="ObjectManager.RequestObjectPropertiesFamily"/> request is made,
-	 * the viewer equivalent is hovering the mouse cursor over an object
-	 * </p>
-	 *
-	 */
-	public class ObjectPropertiesFamilyCallbackArgs extends ObjectPropertiesCallbackArgs {
-		private final ReportType m_Type;
-
-		//
-		public final ReportType getType() {
-			return m_Type;
-		}
-
-		public ObjectPropertiesFamilyCallbackArgs(Simulator simulator, ObjectProperties props, ReportType type) {
-			super(simulator, props);
-			this.m_Type = type;
-		}
-	}
 
 	// Raised when the simulator sends us data containing
 	// additional <seea cref="Primitive"/> and <see cref="Avatar"/> details
 	// {@link RequestObjectPropertiesFamily}
 	public CallbackHandler<ObjectPropertiesFamilyCallbackArgs> OnObjectPropertiesFamily = new CallbackHandler<ObjectPropertiesFamilyCallbackArgs>();
 
-	/**
-	 * Provides data for the <see cref="ObjectManager.OnAvatarUpdate"/> event
-	 * <p>
-	 * The <see cref="ObjectManager.OnAvatarUpdate"/> event occurs when the
-	 * simulator sends an <see cref="ObjectUpdatePacket"/> containing Avatar data
-	 * </p>
-	 * <p>
-	 * Note 1: The <see cref="ObjectManager.OnAvatarUpdate"/> event will not be
-	 * raised when the object is an Avatar
-	 * </p>
-	 * <p>
-	 * Note 2: It is possible for the <see cref="ObjectManager.OnAvatarUpdate"/> to
-	 * be raised twice for the same avatar if for example the avatar moved to a new
-	 * simulator, then returned to the current simulator
-	 * </p>
-	 *
-	 * <example> The following code example uses the
-	 * <see cref="AvatarUpdateCallbackArgs.Avatar"/> property to make a request for
-	 * the top picks using the <see cref="AvatarManager.RequestAvatarPicks"/> method
-	 * in the <see cref="AvatarManager"/> class to display the names of our own
-	 * agents picks listings on the <see cref="Console"/> window. <code>
-	 *     // subscribe to the OnAvatarUpdate event to get our information
-	 *
-	 *     CallbackHandler<AvatarUpdateCallbackArgs> cbu = new Objects_AvatarUpdate();
-	 *     CallbackHandler<AvatarPicksReplyCallbackArgs> cba = new Objects_AvatarPicksReply();
-	 *     _Client.Objects.OnAvatarUpdate.add(cbu, false);
-	 *     _Client.Avatars.OnAvatarPicksReply.add(cba, true);
-	 *
-	 *     private class Objects_AvatarUpdate implements CallbackHandler<AvatarUpdateCallbackArgs>
-	 *     {
-	 *     	   public void callback(AvatarUpdateCallbackArgs e)
-	 *         {
-	 *             // we only want our own data
-	 *             if (e.Avatar.LocalID == _Client.Self.LocalID)
-	 *             {
-	 *                 // Unsubscribe from the avatar update event to prevent a loop
-	 *                 // where we continually request the picks every time we get an update for ourselves
-	 *                 _Client.Objects.OnAvatarUpdate.remove(cbu);
-	 *                 // make the top picks request through AvatarManager
-	 *                 _Client.Avatars.RequestAvatarPicks(e.Avatar.ID);
-	 *             }
-	 *         }
-	 *     }
-	 *
-	 *     private class Avatars_AvatarPicksReply implements CallbackHandler<AvatarPicksReplyCallbackArgs>
-	 *     {
-	 *         public void callback(AvatarPicksReplyCallbackArgs e)
-	 *         {
-	 *             // we'll unsubscribe from the AvatarPicksReply event since we now have the data
-	 *             // we were looking for
-	 *             _Client.Avatars.AvatarPicksReply.remove(cba);
-	 *             // loop through the dictionary and extract the names of the top picks from our profile
-	 *             for (String pickName : e.Picks.Values)
-	 *             {
-	 *                 Console.WriteLine(pickName);
-	 *             }
-	 *         }
-	 *     }
-	 * </code> </example> {@link ObjectManager.OnObjectUpdate} {@link PrimEventArgs}
-	 */
-	public class AvatarUpdateCallbackArgs implements CallbackArgs {
-		private final Simulator m_Simulator;
-		private final Avatar m_Avatar;
-		private final short m_TimeDilation;
-		private final boolean m_IsNew;
-
-		// Get the simulator the object originated from
-		public final Simulator getSimulator() {
-			return m_Simulator;
-		}
-
-		// Get the <see cref="Avatar"/> data
-		public final Avatar getAvatar() {
-			return m_Avatar;
-		}
-
-		// Get the simulator time dilation
-		public final short getTimeDilation() {
-			return m_TimeDilation;
-		}
-
-		// true if the <see cref="Avatar"/> did not exist in the dictionary
-		// before this update (always true if avatar tracking has been disabled)
-		public final boolean getIsNew() {
-			return m_IsNew;
-		}
-
-		/**
-		 * Construct a new instance of the AvatarUpdateEventArgs class
-		 *
-		 * @param simulator
-		 *            The simulator the packet originated from
-		 * @param avatar
-		 *            The <see cref="Avatar"/> data
-		 * @param timeDilation
-		 *            The simulator time dilation
-		 * @param isNew
-		 *            The avatar was not in the dictionary before this update
-		 */
-		public AvatarUpdateCallbackArgs(Simulator simulator, Avatar avatar, short timeDilation, boolean isNew) {
-			this.m_Simulator = simulator;
-			this.m_Avatar = avatar;
-			this.m_TimeDilation = timeDilation;
-			this.m_IsNew = isNew;
-		}
-	}
-
 	// Raised when the simulator sends us data containing updated information
 	// for an <see cref="Avatar"/>
 	public CallbackHandler<AvatarUpdateCallbackArgs> OnAvatarUpdate = new CallbackHandler<AvatarUpdateCallbackArgs>();
-
-	/**
-	 * Provides primitive data containing updated location, velocity, rotation,
-	 * textures for the <see cref="ObjectManager.TerseObjectUpdate"/> event
-	 * <p>
-	 * The <see cref="ObjectManager.TerseObjectUpdate"/> event occurs when the
-	 * simulator sends updated location, velocity, rotation, etc
-	 * </p>
-	 */
-	public class TerseObjectUpdateCallbackArgs implements CallbackArgs {
-		private final Simulator m_Simulator;
-		private final Primitive m_Prim;
-		private final ObjectMovementUpdate m_Update;
-
-		private final short m_TimeDilation;
-
-		// Get the simulator the object is located
-		public final Simulator getSimulator() {
-			return m_Simulator;
-		}
-
-		// Get the primitive details
-		public final Primitive getPrim() {
-			return m_Prim;
-		}
-
-		public final ObjectMovementUpdate getUpdate() {
-			return m_Update;
-		}
-
-		public final short getTimeDilation() {
-			return m_TimeDilation;
-		}
-
-		public TerseObjectUpdateCallbackArgs(Simulator simulator, Primitive prim, ObjectMovementUpdate update,
-				short timeDilation) {
-			this.m_Simulator = simulator;
-			this.m_Prim = prim;
-			this.m_Update = update;
-			this.m_TimeDilation = timeDilation;
-		}
-	}
 
 	// Raised when the simulator sends us data containing
 	// <see cref="Primitive"/> and <see cref="Avatar"/> movement changes
 	public CallbackHandler<TerseObjectUpdateCallbackArgs> OnTerseObjectUpdate = new CallbackHandler<TerseObjectUpdateCallbackArgs>();
 
-	public class ObjectDataBlockUpdateCallbackArgs implements CallbackArgs {
-		private final Simulator m_Simulator;
-		private final Primitive m_Prim;
-		private final Primitive.ConstructionData m_ConstructionData;
-		private final ObjectUpdatePacket.ObjectDataBlock m_Block;
-		private final ObjectMovementUpdate m_Update;
-		private final NameValue[] m_NameValues;
-
-		// Get the simulator the object is located
-		public final Simulator getSimulator() {
-			return m_Simulator;
-		}
-
-		// Get the primitive details
-		public final Primitive getPrim() {
-			return m_Prim;
-		}
-
-		//
-		public final Primitive.ConstructionData getConstructionData() {
-			return m_ConstructionData;
-		}
-
-		//
-		public final ObjectUpdatePacket.ObjectDataBlock getBlock() {
-			return m_Block;
-		}
-
-		public final ObjectMovementUpdate getUpdate() {
-			return m_Update;
-		}
-
-		public final NameValue[] getNameValues() {
-			return m_NameValues;
-		}
-
-		public ObjectDataBlockUpdateCallbackArgs(Simulator simulator, Primitive prim,
-				Primitive.ConstructionData constructionData, ObjectUpdatePacket.ObjectDataBlock block,
-				ObjectMovementUpdate objectupdate, NameValue[] nameValues) {
-			this.m_Simulator = simulator;
-			this.m_Prim = prim;
-			this.m_ConstructionData = constructionData;
-			this.m_Block = block;
-			this.m_Update = objectupdate;
-			this.m_NameValues = nameValues;
-		}
-	}
-
 	// Raised when the simulator sends us data containing updates to an Objects
 	// DataBlock
 	public CallbackHandler<ObjectDataBlockUpdateCallbackArgs> OnObjectDataBlockUpdate = new CallbackHandler<ObjectDataBlockUpdateCallbackArgs>();
-
-	// Provides notification when an Avatar, Object or Attachment is DeRezzed or
-	// moves out of the avatars view for the
-	// <see cref="ObjectManager.KillObject"/> event
-	public class KillObjectsCallbackArgs implements CallbackArgs {
-		private final Simulator m_Simulator;
-
-		private final int[] m_ObjectLocalIDs;
-
-		// Get the simulator the object is located
-		public final Simulator getSimulator() {
-			return m_Simulator;
-		}
-
-		// The LocalID of the object
-		public final int[] getObjectLocalIDs() {
-			return m_ObjectLocalIDs;
-		}
-
-		public KillObjectsCallbackArgs(Simulator simulator, int[] objectIDs) {
-			this.m_Simulator = simulator;
-			this.m_ObjectLocalIDs = objectIDs;
-		}
-	}
 
 	// Raised when the simulator informs us an <see cref="Primitive"/> or <see
 	// cref="Avatar"/> is no longer within view
 	public CallbackHandler<KillObjectsCallbackArgs> OnKillObject = new CallbackHandler<KillObjectsCallbackArgs>();
 
-	// Provides updates sit position data
-	public class AvatarSitChangedCallbackArgs implements CallbackArgs {
-		private final Simulator m_Simulator;
-		private final Avatar m_Avatar;
-
-		private final int m_SittingOn;
-
-		private final int m_OldSeat;
-
-		// Get the simulator the object is located
-		public final Simulator getSimulator() {
-			return m_Simulator;
-		}
-
-		public final Avatar getAvatar() {
-			return m_Avatar;
-		}
-
-		public final int getSittingOn() {
-			return m_SittingOn;
-		}
-
-		public final int getOldSeat() {
-			return m_OldSeat;
-		}
-
-		public AvatarSitChangedCallbackArgs(Simulator simulator, Avatar avatar, int sittingOn, int oldSeat) {
-			this.m_Simulator = simulator;
-			this.m_Avatar = avatar;
-			this.m_SittingOn = sittingOn;
-			this.m_OldSeat = oldSeat;
-		}
-	}
-
 	// Raised when the simulator sends us data containing updated sit
 	// information for our <see cref="Avatar"/>
 	public CallbackHandler<AvatarSitChangedCallbackArgs> OnAvatarSitChanged = new CallbackHandler<AvatarSitChangedCallbackArgs>();
-
-	public class PayPriceReplyCallbackArgs implements CallbackArgs {
-		private final Simulator m_Simulator;
-		private final UUID m_ObjectID;
-		private final int m_DefaultPrice;
-		private final int[] m_ButtonPrices;
-
-		// Get the simulator the object is located
-		public final Simulator getSimulator() {
-			return m_Simulator;
-		}
-
-		public final UUID getObjectID() {
-			return m_ObjectID;
-		}
-
-		public final int getDefaultPrice() {
-			return m_DefaultPrice;
-		}
-
-		public final int[] getButtonPrices() {
-			return m_ButtonPrices;
-		}
-
-		public PayPriceReplyCallbackArgs(Simulator simulator, UUID objectID, int defaultPrice, int[] buttonPrices) {
-			this.m_Simulator = simulator;
-			this.m_ObjectID = objectID;
-			this.m_DefaultPrice = defaultPrice;
-			this.m_ButtonPrices = buttonPrices;
-		}
-	}
 
 	// Raised when the simulator sends us data containing purchase price
 	// information for a <see cref="Primitive"/>
 	public CallbackHandler<PayPriceReplyCallbackArgs> OnPayPriceReply = new CallbackHandler<PayPriceReplyCallbackArgs>();
 
-	public class ObjectMediaCallbackArgs implements CallbackArgs {
-		private boolean m_Success;
-		private String m_Version;
-		private MediaEntry[] m_FaceMedia;
-
-		// Indicates if the operation was successful
-		public final boolean getSuccess() {
-			return m_Success;
-		}
-
-		public final void setSuccess(boolean value) {
-			m_Success = value;
-		}
-
-		// Media version string
-		public final String getVersion() {
-			return m_Version;
-		}
-
-		public final void setVersion(String value) {
-			m_Version = value;
-		}
-
-		// Array of media entries indexed by face number
-		public final MediaEntry[] getFaceMedia() {
-			return m_FaceMedia;
-		}
-
-		public final void setFaceMedia(MediaEntry[] value) {
-			m_FaceMedia = value;
-		}
-
-		public ObjectMediaCallbackArgs(boolean success, String version, MediaEntry[] faceMedia) {
-			this.m_Success = success;
-			this.m_Version = version;
-			this.m_FaceMedia = faceMedia;
-		}
-	}
-
 	// Set when simulator sends us infomation on primitive's physical properties
 	public CallbackHandler<PhysicsPropertiesCallbackArgs> OnPhysicsProperties = new CallbackHandler<PhysicsPropertiesCallbackArgs>();
 
-	public class PhysicsPropertiesCallbackArgs implements CallbackArgs {
-		// Simulator where the message originated
-		public Simulator Simulator;
-		// Updated physical properties
-		public PhysicsProperties PhysicsProperties;
-
-		/**
-		 * Constructor
-		 *
-		 * @param sim
-		 *            Simulator where the message originated
-		 * @param props
-		 *            Updated physical properties
-		 */
-		public PhysicsPropertiesCallbackArgs(Simulator sim, PhysicsProperties props) {
-			Simulator = sim;
-			PhysicsProperties = props;
-		}
-	}
+	
 
 	// /#region Internal event handlers
 

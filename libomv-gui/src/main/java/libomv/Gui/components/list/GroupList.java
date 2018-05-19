@@ -57,9 +57,9 @@ import libomv.Gui.windows.CommWindow;
 import libomv.Gui.windows.MainControl;
 import libomv.Gui.windows.MainWindow;
 import libomv.io.GridClient;
-import libomv.io.GroupManager.CurrentGroupsCallbackArgs;
-import libomv.io.GroupManager.GroupOperationCallbackArgs;
 import libomv.model.Group;
+import libomv.model.group.CurrentGroupsCallbackArgs;
+import libomv.model.group.GroupOperationCallbackArgs;
 import libomv.types.UUID;
 import libomv.utils.Callback;
 
