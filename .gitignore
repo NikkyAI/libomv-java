@@ -1,0 +1,9 @@
+# Ignore all Eclipse related directories and files
+/.project
+/.settings/
+/*/.classpath
+/*/.project
+/*/.settings/
+
+# Ignore all generated target folders
+/*/target/
