@@ -3,16 +3,16 @@ package libomv.model.asset;
 import libomv.types.UUID;
 
 public class ImageRequest {
-	public UUID ImageID;
-	public ImageType Type;
-	public float Priority;
-	public int DiscardLevel;
+	public UUID imageID;
+	public ImageType type;
+	public float priority;
+	public int discardLevel;
 
 	public ImageRequest(UUID imageid, ImageType type, float priority, int discardLevel) {
-		ImageID = imageid;
-		Type = type;
-		Priority = priority;
-		DiscardLevel = discardLevel;
+		this.imageID = imageid;
+		this.type = type;
+		this.priority = priority;
+		this.discardLevel = discardLevel;
 	}
 
 }

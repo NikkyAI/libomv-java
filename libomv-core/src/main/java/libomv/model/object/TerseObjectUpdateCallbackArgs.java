@@ -13,35 +13,35 @@ import libomv.utils.CallbackArgs;
  * </p>
  */
 public class TerseObjectUpdateCallbackArgs implements CallbackArgs {
-	private final Simulator m_Simulator;
-	private final Primitive m_Prim;
-	private final ObjectMovementUpdate m_Update;
+	private final Simulator simulator;
+	private final Primitive prim;
+	private final ObjectMovementUpdate update;
+	private final short timeDilation;
 
-	private final short m_TimeDilation;
+	public TerseObjectUpdateCallbackArgs(Simulator simulator, Primitive prim, ObjectMovementUpdate update,
+			short timeDilation) {
+		this.simulator = simulator;
+		this.prim = prim;
+		this.update = update;
+		this.timeDilation = timeDilation;
+	}
 
 	// Get the simulator the object is located
 	public final Simulator getSimulator() {
-		return m_Simulator;
+		return simulator;
 	}
 
 	// Get the primitive details
 	public final Primitive getPrim() {
-		return m_Prim;
+		return prim;
 	}
 
 	public final ObjectMovementUpdate getUpdate() {
-		return m_Update;
+		return update;
 	}
 
 	public final short getTimeDilation() {
-		return m_TimeDilation;
+		return timeDilation;
 	}
 
-	public TerseObjectUpdateCallbackArgs(Simulator simulator, Primitive prim, ObjectMovementUpdate update,
-			short timeDilation) {
-		this.m_Simulator = simulator;
-		this.m_Prim = prim;
-		this.m_Update = update;
-		this.m_TimeDilation = timeDilation;
-	}
 }

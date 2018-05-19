@@ -12,22 +12,22 @@ import libomv.utils.Helpers;
 // Struct representing a group notice
 public final class GroupNotice {
 	//
-	public String Subject;
+	public String subject;
 	//
-	public String Message;
+	public String message;
 	//
-	public UUID AttachmentID;
+	public UUID attachmentID;
 	//
-	public UUID OwnerID;
+	public UUID ownerID;
 
-	public byte[] SerializeAttachment() throws IOException {
-		if (OwnerID.equals(UUID.Zero) || AttachmentID.equals(UUID.Zero)) {
+	public byte[] serializeAttachment() throws IOException {
+		if (ownerID.equals(UUID.Zero) || attachmentID.equals(UUID.Zero)) {
 			return Helpers.EmptyBytes;
 		}
 
 		OSDMap att = new OSDMap();
-		att.put("item_id", OSD.FromUUID(AttachmentID));
-		att.put("owner_id", OSD.FromUUID(OwnerID));
+		att.put("item_id", OSD.FromUUID(attachmentID));
+		att.put("owner_id", OSD.FromUUID(ownerID));
 
 		return OSDParser.serializeToBytes(att, OSDFormat.Xml, true, Helpers.UTF8_ENCODING);
 	}

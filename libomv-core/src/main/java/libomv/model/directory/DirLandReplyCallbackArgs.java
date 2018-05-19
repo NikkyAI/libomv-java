@@ -6,12 +6,7 @@ import libomv.utils.CallbackArgs;
 
 /** Contains the land sales data returned from the data server */
 public class DirLandReplyCallbackArgs implements CallbackArgs {
-	private final ArrayList<DirectoryParcel> m_DirParcels;
-
-	// A list containing land forsale data returned by the data server
-	public final ArrayList<DirectoryParcel> getDirParcels() {
-		return m_DirParcels;
-	}
+	private final ArrayList<DirectoryParcel> dirParcels;
 
 	/**
 	 * Construct a new instance of the DirLandReplyEventArgs class
@@ -20,6 +15,12 @@ public class DirLandReplyCallbackArgs implements CallbackArgs {
 	 *            A list of parcels for sale returned by the data server
 	 */
 	public DirLandReplyCallbackArgs(ArrayList<DirectoryParcel> dirParcels) {
-		this.m_DirParcels = dirParcels;
+		this.dirParcels = dirParcels;
 	}
+
+	// A list containing land forsale data returned by the data server
+	public final ArrayList<DirectoryParcel> getDirParcels() {
+		return dirParcels;
+	}
+
 }

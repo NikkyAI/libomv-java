@@ -5,18 +5,18 @@ import libomv.model.texture.TextureRequestState;
 import libomv.utils.CallbackHandler;
 
 public class ImageDownload extends Transfer {
-	public ImageType ImageType;
-	public ImageCodec Codec;
-	public int DiscardLevel;
-	public float Priority;
+	public ImageType imageType;
+	public ImageCodec codec;
+	public int discardLevel;
+	public float priority;
 	// The current {@link TextureRequestState} which identifies the current
 	// status of the request
-	public TextureRequestState State;
+	public TextureRequestState state;
 	// If true, indicates the callback will be fired whenever new data is
 	// returned from the simulator.
 	// This is used to progressively render textures as portions of the
 	// texture are received.
-	public boolean ReportProgress;
+	public boolean reportProgress;
 	// The callback to fire when the request is complete, will include
 	// the {@link TextureRequestState} and the <see cref="AssetTexture"/>
 	// object containing the result data
@@ -27,6 +27,6 @@ public class ImageDownload extends Transfer {
 	}
 
 	public boolean gotInfo() {
-		return Size > 0;
+		return size > 0;
 	}
 }

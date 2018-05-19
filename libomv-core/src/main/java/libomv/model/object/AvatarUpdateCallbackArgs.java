@@ -65,31 +65,10 @@ import libomv.utils.CallbackArgs;
  * </code> </example> {@link ObjectManager.OnObjectUpdate} {@link PrimEventArgs}
  */
 public class AvatarUpdateCallbackArgs implements CallbackArgs {
-	private final Simulator m_Simulator;
-	private final Avatar m_Avatar;
-	private final short m_TimeDilation;
-	private final boolean m_IsNew;
-
-	// Get the simulator the object originated from
-	public final Simulator getSimulator() {
-		return m_Simulator;
-	}
-
-	// Get the <see cref="Avatar"/> data
-	public final Avatar getAvatar() {
-		return m_Avatar;
-	}
-
-	// Get the simulator time dilation
-	public final short getTimeDilation() {
-		return m_TimeDilation;
-	}
-
-	// true if the <see cref="Avatar"/> did not exist in the dictionary
-	// before this update (always true if avatar tracking has been disabled)
-	public final boolean getIsNew() {
-		return m_IsNew;
-	}
+	private final Simulator simulator;
+	private final Avatar avatar;
+	private final short timeDilation;
+	private final boolean isNew;
 
 	/**
 	 * Construct a new instance of the AvatarUpdateEventArgs class
@@ -104,9 +83,31 @@ public class AvatarUpdateCallbackArgs implements CallbackArgs {
 	 *            The avatar was not in the dictionary before this update
 	 */
 	public AvatarUpdateCallbackArgs(Simulator simulator, Avatar avatar, short timeDilation, boolean isNew) {
-		this.m_Simulator = simulator;
-		this.m_Avatar = avatar;
-		this.m_TimeDilation = timeDilation;
-		this.m_IsNew = isNew;
+		this.simulator = simulator;
+		this.avatar = avatar;
+		this.timeDilation = timeDilation;
+		this.isNew = isNew;
 	}
+
+	// Get the simulator the object originated from
+	public final Simulator getSimulator() {
+		return simulator;
+	}
+
+	// Get the <see cref="Avatar"/> data
+	public final Avatar getAvatar() {
+		return avatar;
+	}
+
+	// Get the simulator time dilation
+	public final short getTimeDilation() {
+		return timeDilation;
+	}
+
+	// true if the <see cref="Avatar"/> did not exist in the dictionary
+	// before this update (always true if avatar tracking has been disabled)
+	public final boolean getIsNew() {
+		return isNew;
+	}
+
 }

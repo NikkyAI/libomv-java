@@ -33,18 +33,8 @@ import libomv.utils.CallbackArgs;
  * </code> </example>
  */
 public class ObjectPropertiesCallbackArgs implements CallbackArgs {
-	protected final Simulator m_Simulator;
-	protected final ObjectProperties m_Properties;
-
-	// Get the simulator the object is located
-	public final Simulator getSimulator() {
-		return m_Simulator;
-	}
-
-	// Get the primitive properties
-	public final ObjectProperties getProperties() {
-		return m_Properties;
-	}
+	protected final Simulator simulator;
+	protected final ObjectProperties properties;
 
 	/**
 	 * Construct a new instance of the ObjectPropertiesEventArgs class
@@ -55,7 +45,18 @@ public class ObjectPropertiesCallbackArgs implements CallbackArgs {
 	 *            The primitive Properties
 	 */
 	public ObjectPropertiesCallbackArgs(Simulator simulator, ObjectProperties props) {
-		this.m_Simulator = simulator;
-		this.m_Properties = props;
+		this.simulator = simulator;
+		this.properties = props;
 	}
+
+	// Get the simulator the object is located
+	public final Simulator getSimulator() {
+		return simulator;
+	}
+
+	// Get the primitive properties
+	public final ObjectProperties getProperties() {
+		return properties;
+	}
+
 }

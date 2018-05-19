@@ -88,7 +88,7 @@ public class TerrainCompressor {
 		bitpack.packBits(header.type.getValue(), 8);
 
 		for (int j = 0; j < patches.length; j++)
-			createPatch(bitpack, patches[j].Data, patches[j].X, patches[j].Y);
+			createPatch(bitpack, patches[j].data, patches[j].x, patches[j].y);
 
 		bitpack.packBits(END_OF_PATCHES, 8);
 
@@ -162,9 +162,9 @@ public class TerrainCompressor {
 			throw new IllegalArgumentException("Patch data must be a 16x16 array");
 
 		TerrainHeader header = prescanPatch(patchData);
-		header.QuantWBits = 136;
-		header.PatchIDs = (y & 0x1F);
-		header.PatchIDs += (x << 5);
+		header.quantWBits = 136;
+		header.patchIDs = (y & 0x1F);
+		header.patchIDs += (x << 5);
 
 		// NOTE: No idea what prequant and postquant should be or what they do
 		int[] patch = compressPatch(patchData, header, 10);
@@ -192,9 +192,9 @@ public class TerrainCompressor {
 			throw new IllegalArgumentException("X and Y patch offsets must be from 0 to 15");
 
 		TerrainHeader header = prescanPatch(heightmap, x, y);
-		header.QuantWBits = 136;
-		header.PatchIDs = (y & 0x1F);
-		header.PatchIDs += (x << 5);
+		header.quantWBits = 136;
+		header.patchIDs = (y & 0x1F);
+		header.patchIDs += (x << 5);
 
 		// NOTE: No idea what prequant and postquant should be or what they do
 		int[] patch = compressPatch(heightmap, x, y, header, 10);
@@ -217,8 +217,8 @@ public class TerrainCompressor {
 			}
 		}
 
-		header.DCOffset = zmin;
-		header.Range = (int) ((zmax - zmin) + 1.0f);
+		header.dcOffset = zmin;
+		header.range = (int) ((zmax - zmin) + 1.0f);
 
 		return header;
 	}
@@ -238,8 +238,8 @@ public class TerrainCompressor {
 			}
 		}
 
-		header.DCOffset = zmin;
-		header.Range = (int) ((zmax - zmin) + 1.0f);
+		header.dcOffset = zmin;
+		header.range = (int) ((zmax - zmin) + 1.0f);
 
 		return header;
 	}
@@ -248,28 +248,28 @@ public class TerrainCompressor {
 		TerrainHeader header = new TerrainHeader();
 
 		// Quantized word bits
-		header.QuantWBits = bitpack.unpackBits(8);
-		if (header.QuantWBits == END_OF_PATCHES)
+		header.quantWBits = bitpack.unpackBits(8);
+		if (header.quantWBits == END_OF_PATCHES)
 			return header;
 
 		// DC offset
-		header.DCOffset = bitpack.unpackFloat();
+		header.dcOffset = bitpack.unpackFloat();
 
 		// Range
-		header.Range = bitpack.unpackBits(16);
+		header.range = bitpack.unpackBits(16);
 
 		// Patch IDs (10 bits)
-		header.PatchIDs = bitpack.unpackBits(10);
+		header.patchIDs = bitpack.unpackBits(10);
 
 		// Word bits
-		header.WordBits = ((header.QuantWBits & 0x0f) + 2);
+		header.wordBits = ((header.quantWBits & 0x0f) + 2);
 
 		return header;
 	}
 
 	private static int encodePatchHeader(BitPack bitpack, TerrainHeader header, int[] patch) {
 		int temp;
-		int wbits = (header.QuantWBits & 0x0f) + 2;
+		int wbits = (header.quantWBits & 0x0f) + 2;
 		long maxWbits = wbits + 5;
 		long minWbits = wbits >> 1;
 
@@ -295,18 +295,18 @@ public class TerrainCompressor {
 
 		wbits += 1;
 
-		header.QuantWBits &= 0xf0;
+		header.quantWBits &= 0xf0;
 
 		if (wbits > 17 || wbits < 2) {
 			logger.error("Bits needed per word in EncodePatchHeader() are outside the allowed range");
 		}
 
-		header.QuantWBits |= (wbits - 2);
+		header.quantWBits |= (wbits - 2);
 
-		bitpack.packBits(header.QuantWBits, 8);
-		bitpack.packFloat(header.DCOffset);
-		bitpack.packBits(header.Range, 16);
-		bitpack.packBits(header.PatchIDs, 10);
+		bitpack.packBits(header.quantWBits, 8);
+		bitpack.packFloat(header.dcOffset);
+		bitpack.packBits(header.range, 16);
+		bitpack.packBits(header.patchIDs, 10);
 
 		return wbits;
 	}
@@ -398,11 +398,11 @@ public class TerrainCompressor {
 					temp = bitpack.unpackBits(1);
 					if (temp != 0) {
 						// Negative
-						temp = bitpack.unpackBits(header.WordBits);
+						temp = bitpack.unpackBits(header.wordBits);
 						patches[n] = temp * -1;
 					} else {
 						// Positive
-						temp = bitpack.unpackBits(header.WordBits);
+						temp = bitpack.unpackBits(header.wordBits);
 						patches[n] = temp;
 					}
 				} else {
@@ -473,11 +473,11 @@ public class TerrainCompressor {
 	public static float[] decompressPatch(int[] patches, TerrainHeader header, GroupHeader group) {
 		float[] block = new float[group.patchSize * group.patchSize];
 		float[] output = new float[group.patchSize * group.patchSize];
-		int prequant = (header.QuantWBits >> 4) + 2;
+		int prequant = (header.quantWBits >> 4) + 2;
 		int quantize = 1 << prequant;
 		float ooq = 1.0f / quantize;
-		float mult = ooq * header.Range;
-		float addval = mult * (1 << (prequant - 1)) + header.DCOffset;
+		float mult = ooq * header.range;
+		float addval = mult * (1 << (prequant - 1)) + header.dcOffset;
 
 		if (group.patchSize == 16) {
 			for (int n = 0; n < 16 * 16; n++) {
@@ -508,13 +508,13 @@ public class TerrainCompressor {
 	private static int[] compressPatch(float[] patchData, TerrainHeader header, int prequant) {
 		float[] block = new float[16 * 16];
 		int wordsize = prequant;
-		float oozrange = 1.0f / header.Range;
+		float oozrange = 1.0f / header.range;
 		float range = (1 << prequant);
 		float premult = oozrange * range;
-		float sub = (1 << (prequant - 1)) + header.DCOffset * premult;
+		float sub = (1 << (prequant - 1)) + header.dcOffset * premult;
 
-		header.QuantWBits = wordsize - 2;
-		header.QuantWBits |= (prequant - 2) << 4;
+		header.quantWBits = wordsize - 2;
+		header.quantWBits |= (prequant - 2) << 4;
 
 		int k = 0;
 		for (int j = 0; j < 16; j++) {
@@ -536,13 +536,13 @@ public class TerrainCompressor {
 	private static int[] compressPatch(float[] heightmap, int patchX, int patchY, TerrainHeader header, int prequant) {
 		float[] block = new float[16 * 16];
 		int wordsize = prequant;
-		float oozrange = 1.0f / header.Range;
+		float oozrange = 1.0f / header.range;
 		float range = (1 << prequant);
 		float premult = oozrange * range;
-		float sub = (1 << (prequant - 1)) + header.DCOffset * premult;
+		float sub = (1 << (prequant - 1)) + header.dcOffset * premult;
 
-		header.QuantWBits = wordsize - 2;
-		header.QuantWBits |= (prequant - 2) << 4;
+		header.quantWBits = wordsize - 2;
+		header.quantWBits |= (prequant - 2) << 4;
 
 		int k = 0;
 		for (int j = patchY * 16; j < (patchY + 1) * 16; j++) {

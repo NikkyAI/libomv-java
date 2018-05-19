@@ -5,25 +5,26 @@ import libomv.types.UUID;
 // Role manager for a group
 public final class GroupRole {
 	// Key of the group
-	public UUID GroupID;
+	public UUID groupID;
 	// Key of Role
-	public UUID ID;
+	public UUID id;
 	// Name of Role
-	public String Name;
+	public String name;
 	// Group Title associated with Role
-	public String Title;
+	public String title;
 	// Description of Role
-	public String Description;
+	public String description;
 	// Abilities Associated with Role
-	public long Powers;
+	public long powers;
+
+	public GroupRole(UUID roleID) {
+		id = roleID;
+	}
 
 	// Returns the role's title
 	@Override
 	public String toString() {
-		return Name;
+		return name;
 	}
 
-	public GroupRole(UUID roleID) {
-		ID = roleID;
-	}
 }

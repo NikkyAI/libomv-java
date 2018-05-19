@@ -13,10 +13,17 @@ import libomv.utils.CallbackArgs;
  * @param assetID
  */
 public class ItemCreatedFromAssetCallbackArgs implements CallbackArgs {
-	boolean success;
-	String status;
-	UUID itemID;
-	UUID assetID;
+	private final boolean success;
+	private final String status;
+	private final UUID itemID;
+	private final UUID assetID;
+
+	public ItemCreatedFromAssetCallbackArgs(boolean success, String status, UUID itemID, UUID assetID) {
+		this.success = success;
+		this.status = status;
+		this.itemID = itemID;
+		this.assetID = assetID;
+	}
 
 	public boolean getSuccess() {
 		return success;
@@ -34,10 +41,4 @@ public class ItemCreatedFromAssetCallbackArgs implements CallbackArgs {
 		return assetID;
 	}
 
-	public ItemCreatedFromAssetCallbackArgs(boolean success, String status, UUID itemID, UUID assetID) {
-		this.success = success;
-		this.status = status;
-		this.itemID = itemID;
-		this.assetID = assetID;
-	}
 }

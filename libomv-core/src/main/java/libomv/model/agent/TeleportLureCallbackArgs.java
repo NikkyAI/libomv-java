@@ -10,6 +10,14 @@ public class TeleportLureCallbackArgs implements CallbackArgs {
 	private final String message;
 	private final LureLocation location; // if null, it's a godlike lure request
 
+	public TeleportLureCallbackArgs(UUID fromID, String fromName, UUID lureID, String message, LureLocation location) {
+		this.fromID = fromID;
+		this.fromName = fromName;
+		this.lureID = lureID;
+		this.location = location;
+		this.message = message;
+	}
+
 	public UUID getFromID() {
 		return fromID;
 	}
@@ -30,12 +38,4 @@ public class TeleportLureCallbackArgs implements CallbackArgs {
 		return location;
 	}
 
-	public TeleportLureCallbackArgs(UUID fromID, String fromName, UUID lureID, String message,
-			LureLocation location) {
-		this.fromID = fromID;
-		this.fromName = fromName;
-		this.lureID = lureID;
-		this.location = location;
-		this.message = message;
-	}
 }

@@ -5,19 +5,19 @@ import libomv.types.UUID;
 // Avatar group management
 public final class GroupMember {
 	// Key of Group Member
-	public UUID ID;
+	public UUID id;
 	// Total land contribution
-	public int Contribution;
+	public int contribution;
 	// Online status information
-	public String OnlineStatus;
+	public String onlineStatus;
 	// Abilities that the Group Member has
-	public long Powers;
+	public long powers;
 	// Current group title
-	public String Title;
+	public String title;
 	// Is a group owner
-	public boolean IsOwner;
+	public boolean isOwner;
 
 	public GroupMember(UUID agentID) {
-		ID = agentID;
+		this.id = agentID;
 	}
 }

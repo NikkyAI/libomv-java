@@ -7,8 +7,8 @@ import libomv.types.UUID;
  * class to the Simulator object and implement it there too
  */
 public class GroundTextureSettings {
-	public UUID Low;
-	public UUID MidLow;
-	public UUID MidHigh;
-	public UUID High;
+	public UUID low;
+	public UUID midLow;
+	public UUID midHigh;
+	public UUID high;
 }

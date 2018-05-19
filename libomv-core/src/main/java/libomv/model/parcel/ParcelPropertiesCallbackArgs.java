@@ -7,45 +7,12 @@ import libomv.utils.CallbackArgs;
 // Contains basic parcel information data returned from the simulator in
 // response to an <see cref="RequestParcelInfo"/> request
 public class ParcelPropertiesCallbackArgs implements CallbackArgs {
-	private final Simulator m_Simulator;
-	private Parcel m_Parcel;
-	private final ParcelResult m_Result;
-	private final int m_SelectedPrims;
-	private final int m_SequenceID;
-	private final boolean m_SnapSelection;
-
-	// Get the simulator the parcel is located in
-	public final Simulator getSimulator() {
-		return m_Simulator;
-	}
-
-	// Get the <see cref="Parcel"/> object containing the details. If Result
-	// is NoData, this object will not contain valid data
-	public final Parcel getParcel() {
-		return m_Parcel;
-	}
-
-	// Get the result of the request
-	public final ParcelResult getResult() {
-		return m_Result;
-	}
-
-	// Get the number of primitieves your agent is currently selecting and
-	// or sitting on in this parcel
-	public final int getSelectedPrims() {
-		return m_SelectedPrims;
-	}
-
-	// Get the user assigned ID used to correlate a request with these
-	// results
-	public final int getSequenceID() {
-		return m_SequenceID;
-	}
-
-	// TODO:
-	public final boolean getSnapSelection() {
-		return m_SnapSelection;
-	}
+	private final Simulator simulator;
+	private Parcel parcel;
+	private final ParcelResult result;
+	private final int selectedPrims;
+	private final int sequenceID;
+	private final boolean snapSelection;
 
 	/**
 	 * Construct a new instance of the ParcelPropertiesCallbackArgs class
@@ -67,11 +34,45 @@ public class ParcelPropertiesCallbackArgs implements CallbackArgs {
 	 */
 	public ParcelPropertiesCallbackArgs(Simulator simulator, Parcel parcel, ParcelResult result, int selectedPrims,
 			int sequenceID, boolean snapSelection) {
-		this.m_Simulator = simulator;
-		this.m_Parcel = parcel;
-		this.m_Result = result;
-		this.m_SelectedPrims = selectedPrims;
-		this.m_SequenceID = sequenceID;
-		this.m_SnapSelection = snapSelection;
+		this.simulator = simulator;
+		this.parcel = parcel;
+		this.result = result;
+		this.selectedPrims = selectedPrims;
+		this.sequenceID = sequenceID;
+		this.snapSelection = snapSelection;
 	}
+
+	// Get the simulator the parcel is located in
+	public final Simulator getSimulator() {
+		return simulator;
+	}
+
+	// Get the <see cref="Parcel"/> object containing the details. If Result
+	// is NoData, this object will not contain valid data
+	public final Parcel getParcel() {
+		return parcel;
+	}
+
+	// Get the result of the request
+	public final ParcelResult getResult() {
+		return result;
+	}
+
+	// Get the number of primitieves your agent is currently selecting and
+	// or sitting on in this parcel
+	public final int getSelectedPrims() {
+		return selectedPrims;
+	}
+
+	// Get the user assigned ID used to correlate a request with these
+	// results
+	public final int getSequenceID() {
+		return sequenceID;
+	}
+
+	// TODO:
+	public final boolean getSnapSelection() {
+		return snapSelection;
+	}
+
 }

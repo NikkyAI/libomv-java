@@ -6,7 +6,7 @@ import libomv.utils.CallbackHandler;
 // TODO:FIXME
 // Changing several fields to public, they need getters instead!
 public class MeshDownload extends Transfer {
-	public UUID ItemID;
+	public UUID itemID;
 	public CallbackHandler<MeshDownload> callbacks; // private
 
 	public MeshDownload() {

@@ -7,6 +7,12 @@ public class TeleportCallbackArgs implements CallbackArgs {
 	private final TeleportStatus status;
 	private final int flags;
 
+	public TeleportCallbackArgs(String message, TeleportStatus status, int flags) {
+		this.message = message;
+		this.status = status;
+		this.flags = flags;
+	}
+
 	public String getMessage() {
 		return message;
 	}
@@ -19,9 +25,4 @@ public class TeleportCallbackArgs implements CallbackArgs {
 		return flags;
 	}
 
-	public TeleportCallbackArgs(String message, TeleportStatus status, int flags) {
-		this.message = message;
-		this.status = status;
-		this.flags = flags;
-	}
 }

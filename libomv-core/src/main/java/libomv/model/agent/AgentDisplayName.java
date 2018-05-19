@@ -28,17 +28,13 @@ public class AgentDisplayName {
 	// Last updated timestamp
 	public Date updated;
 
-	public String getLegacyFullName() {
-		return String.format("%s %s", legacyFirstName, legacyLastName);
-	}
-
 	/**
 	 * Creates AgentDisplayName object from OSD
 	 *
 	 * @param data
 	 *            Incoming OSD data AgentDisplayName object
 	 */
-	public AgentDisplayName FromOSD(OSD data) {
+	public AgentDisplayName fromOSD(OSD data) {
 		AgentDisplayName ret = new AgentDisplayName();
 
 		OSDMap map = (OSDMap) data;
@@ -53,12 +49,16 @@ public class AgentDisplayName {
 		return ret;
 	}
 
+	public String getLegacyFullName() {
+		return String.format("%s %s", legacyFirstName, legacyLastName);
+	}
+
 	/**
 	 * Return object as OSD map
 	 *
 	 * @returns OSD containing agent's display name data
 	 */
-	public OSD GetOSD() {
+	public OSD toOSD() {
 		OSDMap map = new OSDMap();
 
 		map.put("id", OSD.FromUUID(id));

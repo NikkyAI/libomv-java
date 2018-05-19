@@ -1,15 +1,17 @@
 package libomv.model.avatar;
 
+import libomv.primitives.Avatar;
 import libomv.utils.CallbackArgs;
 
 public class AvatarInterestsReplyCallbackArgs implements CallbackArgs {
-	private libomv.primitives.Avatar avatar;
+	private Avatar avatar;
 
-	public libomv.primitives.Avatar getAvatar() {
+	public AvatarInterestsReplyCallbackArgs(Avatar avatar) {
+		this.avatar = avatar;
+	}
+
+	public Avatar getAvatar() {
 		return avatar;
 	}
 
-	public AvatarInterestsReplyCallbackArgs(libomv.primitives.Avatar avatar) {
-		this.avatar = avatar;
-	}
 }

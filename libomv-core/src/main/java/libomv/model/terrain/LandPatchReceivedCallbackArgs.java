@@ -5,42 +5,43 @@ import libomv.utils.CallbackArgs;
 
 // Provides data for LandPatchReceived
 public class LandPatchReceivedCallbackArgs implements CallbackArgs {
-	private Simulator m_Simulator;
-	private int m_X;
-	private int m_Y;
-	private int m_PatchSize;
-	private float[] m_HeightMap;
+	private Simulator simulator;
+	private int x;
+	private int y;
+	private int patchSize;
+	private float[] heightMap;
+
+	public LandPatchReceivedCallbackArgs(Simulator simulator, int x, int y, int patchSize, float[] heightMap) {
+		this.simulator = simulator;
+		this.x = x;
+		this.y = y;
+		this.patchSize = patchSize;
+		this.heightMap = heightMap;
+	}
 
 	// Simulator from that sent the data
 	public Simulator getSimulator() {
-		return m_Simulator;
+		return simulator;
 	}
 
 	// Sim coordinate of the patch
 	public int getX() {
-		return m_X;
+		return x;
 	}
 
 	// Sim coordinate of the patch
 	public int getY() {
-		return m_Y;
+		return y;
 	}
 
 	// Size of tha patch</summary>
 	public int getPatchSize() {
-		return m_PatchSize;
+		return patchSize;
 	}
 
 	/// <summary>Heightmap for the patch</summary>
 	public float[] getHeightMap() {
-		return m_HeightMap;
+		return heightMap;
 	}
 
-	public LandPatchReceivedCallbackArgs(Simulator simulator, int x, int y, int patchSize, float[] heightMap) {
-		this.m_Simulator = simulator;
-		this.m_X = x;
-		this.m_Y = y;
-		this.m_PatchSize = patchSize;
-		this.m_HeightMap = heightMap;
-	}
 }

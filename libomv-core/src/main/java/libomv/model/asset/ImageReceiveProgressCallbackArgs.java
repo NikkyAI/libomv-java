@@ -5,28 +5,29 @@ import libomv.utils.CallbackArgs;
 
 // Provides data for ImageReceiveProgress event
 public class ImageReceiveProgressCallbackArgs implements CallbackArgs {
-	private final UUID m_ImageID;
-	private final long m_Received;
-	private final long m_Total;
+	private final UUID imageID;
+	private final long received;
+	private final long total;
+
+	public ImageReceiveProgressCallbackArgs(UUID imageID, long received, long total) {
+		this.imageID = imageID;
+		this.received = received;
+		this.total = total;
+	}
 
 	// UUID of the image that is in progress
 	public final UUID getImageID() {
-		return m_ImageID;
+		return imageID;
 	}
 
 	// Number of bytes received so far
 	public final long getReceived() {
-		return m_Received;
+		return received;
 	}
 
 	// Image size in bytes
 	public final long getTotal() {
-		return m_Total;
+		return total;
 	}
 
-	public ImageReceiveProgressCallbackArgs(UUID imageID, long received, long total) {
-		this.m_ImageID = imageID;
-		this.m_Received = received;
-		this.m_Total = total;
-	}
 }

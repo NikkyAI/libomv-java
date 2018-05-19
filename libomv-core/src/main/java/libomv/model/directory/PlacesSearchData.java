@@ -18,33 +18,33 @@ import libomv.utils.Helpers;
  */
 public final class PlacesSearchData {
 	/** The ID of the Agent of Group that owns the parcel */
-	public UUID OwnerID;
+	public UUID ownerID;
 	/** The name */
-	public String Name;
+	public String name;
 	/** The description */
-	public String Desc;
+	public String desc;
 	/** The Size of the parcel */
-	public int ActualArea;
+	public int actualArea;
 	/**
 	 * The billable Size of the parcel, for mainland parcels this will match the
 	 * ActualArea field. For Group owned land this will be 10 percent smaller than
 	 * the ActualArea. For Estate land this will always be 0
 	 */
-	public int BillableArea;
+	public int billableArea;
 	/** Indicates the ForSale status of the parcel */
-	public PlacesFlags Flags;
+	public PlacesFlags flags;
 	/** The Gridwide X position */
-	public float GlobalX;
+	public float globalX;
 	/** The Gridwide Y position */
-	public float GlobalY;
+	public float globalY;
 	/** The Z position of the parcel, or 0 if no landing point set */
-	public float GlobalZ;
+	public float globalZ;
 	/** The name of the Region the parcel is located in */
-	public String SimName;
+	public String simName;
 	/** The Asset ID of the parcels Snapshot texture */
-	public UUID SnapshotID;
+	public UUID snapshotID;
 	/** The calculated visitor traffic */
-	public float Dwell;
+	public float dwell;
 	/**
 	 * The billing product SKU
 	 *
@@ -57,7 +57,7 @@ public final class PlacesSearchData {
 	 */
 	public String SKU;
 	/** No longer used, will always be 0 */
-	public int Price;
+	public int price;
 
 	/**
 	 * Get a SL URL for the parcel
@@ -66,8 +66,8 @@ public final class PlacesSearchData {
 	 */
 	public String toSLurl() {
 		float[] values = new float[2];
-		Helpers.GlobalPosToRegionHandle(this.GlobalX, this.GlobalY, values);
-		return "secondlife://" + this.SimName + "/" + values[0] + "/" + values[1] + "/" + this.GlobalZ;
+		Helpers.GlobalPosToRegionHandle(this.globalX, this.globalY, values);
+		return "secondlife://" + this.simName + "/" + values[0] + "/" + values[1] + "/" + this.globalZ;
 	}
 
 	/**

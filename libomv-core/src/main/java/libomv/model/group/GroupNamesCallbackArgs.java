@@ -8,12 +8,7 @@ import libomv.utils.CallbackArgs;
 // A Dictionary of group names, where the Key is the groups ID and the value
 // is the groups name
 public class GroupNamesCallbackArgs implements CallbackArgs {
-	private final HashMap<UUID, String> m_GroupNames;
-
-	// Get the Group Names dictionary
-	public final HashMap<UUID, String> getGroupNames() {
-		return m_GroupNames;
-	}
+	private final HashMap<UUID, String> groupNames;
 
 	/**
 	 * Construct a new instance of the GroupNamesCallbackArgs class
@@ -22,6 +17,12 @@ public class GroupNamesCallbackArgs implements CallbackArgs {
 	 *            The Group names dictionary
 	 */
 	public GroupNamesCallbackArgs(HashMap<UUID, String> groupNames) {
-		this.m_GroupNames = groupNames;
+		this.groupNames = groupNames;
 	}
+
+	// Get the Group Names dictionary
+	public final HashMap<UUID, String> getGroupNames() {
+		return groupNames;
+	}
+
 }

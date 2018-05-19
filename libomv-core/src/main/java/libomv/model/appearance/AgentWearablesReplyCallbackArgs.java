@@ -6,7 +6,9 @@ import libomv.utils.CallbackArgs;
 // our avatar is currently wearing
 // <see cref="RequestAgentWearables"/> request.
 public class AgentWearablesReplyCallbackArgs implements CallbackArgs {
+
 	// Construct a new instance of the AgentWearablesReplyEventArgs class
 	public AgentWearablesReplyCallbackArgs() {
 	}
+
 }

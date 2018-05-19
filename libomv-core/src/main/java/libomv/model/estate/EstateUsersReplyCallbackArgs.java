@@ -9,24 +9,9 @@ import libomv.utils.CallbackArgs;
  * Returned, along with other info, upon a successful .RequestInfo()
  */
 public class EstateUsersReplyCallbackArgs implements CallbackArgs {
-	private final int m_estateID;
-	private final int m_count;
-	private final ArrayList<UUID> m_allowedUsers;
-
-	// The identifier of the estate
-	public int getEstateID() {
-		return m_estateID;
-	}
-
-	// The number of returned items
-	public int getCount() {
-		return m_count;
-	}
-
-	// List of UUIDs of Allowed Users
-	public ArrayList<UUID> getAllowedUsers() {
-		return m_allowedUsers;
-	}
+	private final int estateID;
+	private final int count;
+	private final ArrayList<UUID> allowedUsers;
 
 	/**
 	 * Construct a new instance of the EstateUsersReplyEventArgs class
@@ -39,8 +24,24 @@ public class EstateUsersReplyCallbackArgs implements CallbackArgs {
 	 *            Allowed users UUIDs
 	 */
 	public EstateUsersReplyCallbackArgs(int estateID, int count, ArrayList<UUID> allowedUsers) {
-		this.m_estateID = estateID;
-		this.m_count = count;
-		this.m_allowedUsers = allowedUsers;
+		this.estateID = estateID;
+		this.count = count;
+		this.allowedUsers = allowedUsers;
 	}
+
+	// The identifier of the estate
+	public int getEstateID() {
+		return estateID;
+	}
+
+	// The number of returned items
+	public int getCount() {
+		return count;
+	}
+
+	// List of UUIDs of Allowed Users
+	public ArrayList<UUID> getAllowedUsers() {
+		return allowedUsers;
+	}
+
 }

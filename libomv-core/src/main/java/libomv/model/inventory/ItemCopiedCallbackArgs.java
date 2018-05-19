@@ -10,13 +10,14 @@ import libomv.utils.CallbackArgs;
  *            InventoryItem being copied
  */
 public class ItemCopiedCallbackArgs implements CallbackArgs {
-	InventoryItem item;
+	private final InventoryItem item;
+
+	public ItemCopiedCallbackArgs(InventoryItem item) {
+		this.item = item;
+	}
 
 	public InventoryItem getInventoryItem() {
 		return item;
 	}
 
-	public ItemCopiedCallbackArgs(InventoryItem item) {
-		this.item = item;
-	}
 }

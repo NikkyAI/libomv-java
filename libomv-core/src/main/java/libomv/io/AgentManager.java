@@ -647,20 +647,20 @@ public class AgentManager implements PacketCallback, CapsCallback {
 				_Movement.ResetTimer();
 
 				LoginResponseData reply = e.getReply();
-				agentID = reply.AgentID;
-				sessionID = reply.SessionID;
-				secureSessionID = reply.SecureSessionID;
-				firstName = reply.FirstName;
-				lastName = reply.LastName;
-				startLocation = reply.StartLocation;
-				agentAccess = reply.AgentAccessMax;
-				_Movement.Camera.LookDirection(reply.LookAt);
-				homeRegion = reply.HomeRegion;
-				homePosition = reply.HomePosition;
-				homeLookAt = reply.HomeLookAt;
-				lookAt = reply.LookAt;
+				agentID = reply.agentID;
+				sessionID = reply.sessionID;
+				secureSessionID = reply.secureSessionID;
+				firstName = reply.firstName;
+				lastName = reply.lastName;
+				startLocation = reply.startLocation;
+				agentAccess = reply.agentAccessMax;
+				_Movement.Camera.LookDirection(reply.lookAt);
+				homeRegion = reply.homeRegion;
+				homePosition = reply.homePosition;
+				homeLookAt = reply.homeLookAt;
+				lookAt = reply.lookAt;
 
-				for (Entry<UUID, UUID> gesture : reply.Gestures.entrySet()) {
+				for (Entry<UUID, UUID> gesture : reply.gestures.entrySet()) {
 					ActiveGestures.put(gesture.getKey(), gesture.getValue());
 				}
 			} else if (e.getStatus() == LoginStatus.Success) {
@@ -2078,8 +2078,8 @@ public class AgentManager implements PacketCallback, CapsCallback {
 					class AssetDownloadCallback implements Callback<AssetDownload> {
 						@Override
 						public boolean callback(AssetDownload transfer) {
-							if (transfer.Success) {
-								gotAsset.set(new AssetGesture(transfer.ItemID, transfer.AssetData));
+							if (transfer.success) {
+								gotAsset.set(new AssetGesture(transfer.itemID, transfer.assetData));
 							} else {
 								gotAsset.set(null);
 							}
@@ -2550,7 +2550,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 			// Teleporting to a foreign sim
 			GridRegion region = _Client.Grid.GetGridRegion(simName, GridLayerType.Objects);
 			if (region != null) {
-				return Teleport(region.RegionHandle, position, lookAt, timeout);
+				return Teleport(region.regionHandle, position, lookAt, timeout);
 			}
 
 			TeleportStatus teleportStat = TeleportStatus.Failed;
@@ -2685,12 +2685,12 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		_Client.Network.sendPacket(p);
 
 		MuteEntry me = new MuteEntry();
-		me.Type = type;
-		me.ID = id;
-		me.Name = name;
-		me.Flags = flags;
+		me.type = type;
+		me.id = id;
+		me.name = name;
+		me.flags = flags;
 		synchronized (MuteList) {
-			MuteList.put(String.format("%s|%s", me.ID, me.Name), me);
+			MuteList.put(String.format("%s|%s", me.id, me.name), me);
 		}
 		OnMuteListUpdated.dispatch(null);
 
@@ -3364,20 +3364,20 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		}
 
 		InstantMessage mess = new InstantMessage();
-		mess.Dialog = dialog;
-		mess.Offline = InstantMessageOnline.setValue(im.MessageBlock.Offline);
-		mess.FromAgentID = im.AgentData.AgentID;
-		mess.FromAgentName = fromName;
-		mess.ToAgentID = im.MessageBlock.ToAgentID;
-		mess.ParentEstateID = im.MessageBlock.ParentEstateID;
-		mess.RegionID = im.MessageBlock.RegionID;
-		mess.Position = im.MessageBlock.Position;
-		mess.GroupIM = im.MessageBlock.FromGroup;
-		mess.IMSessionID = im.MessageBlock.ID;
-		mess.Timestamp = im.MessageBlock.Timestamp == 0 ? new Date()
+		mess.dialog = dialog;
+		mess.offline = InstantMessageOnline.setValue(im.MessageBlock.Offline);
+		mess.fromAgentID = im.AgentData.AgentID;
+		mess.fromAgentName = fromName;
+		mess.toAgentID = im.MessageBlock.ToAgentID;
+		mess.parentEstateID = im.MessageBlock.ParentEstateID;
+		mess.regionID = im.MessageBlock.RegionID;
+		mess.position = im.MessageBlock.Position;
+		mess.groupIM = im.MessageBlock.FromGroup;
+		mess.imSessionID = im.MessageBlock.ID;
+		mess.timestamp = im.MessageBlock.Timestamp == 0 ? new Date()
 				: new Date(im.MessageBlock.Timestamp & 0xFFFFFFFFL);
-		mess.Message = message;
-		mess.BinaryBucket = im.MessageBlock.getBinaryBucket();
+		mess.message = message;
+		mess.binaryBucket = im.MessageBlock.getBinaryBucket();
 		OnInstantMessage.dispatch(new InstantMessageCallbackArgs(mess, simulator));
 	}
 
@@ -3609,13 +3609,13 @@ public class AgentManager implements PacketCallback, CapsCallback {
 			if (OnMoneyBalanceReply.count() > 0 && reply.TransactionInfo != null
 					&& reply.TransactionInfo.TransactionType != 0) {
 				TransactionInfo transactionInfo = new TransactionInfo();
-				transactionInfo.TransactionType = reply.TransactionInfo.TransactionType;
-				transactionInfo.SourceID = reply.TransactionInfo.SourceID;
-				transactionInfo.IsSourceGroup = reply.TransactionInfo.IsSourceGroup;
-				transactionInfo.DestID = reply.TransactionInfo.DestID;
-				transactionInfo.IsDestGroup = reply.TransactionInfo.IsDestGroup;
-				transactionInfo.Amount = reply.TransactionInfo.Amount;
-				transactionInfo.ItemDescription = Helpers.BytesToString(reply.TransactionInfo.getItemDescription());
+				transactionInfo.transactionType = reply.TransactionInfo.TransactionType;
+				transactionInfo.sourceID = reply.TransactionInfo.SourceID;
+				transactionInfo.isSourceGroup = reply.TransactionInfo.IsSourceGroup;
+				transactionInfo.destID = reply.TransactionInfo.DestID;
+				transactionInfo.isDestGroup = reply.TransactionInfo.IsDestGroup;
+				transactionInfo.amount = reply.TransactionInfo.Amount;
+				transactionInfo.itemDescription = Helpers.BytesToString(reply.TransactionInfo.getItemDescription());
 
 				OnMoneyBalanceReply.dispatch(new MoneyBalanceReplyCallbackArgs(reply.MoneyData.TransactionID,
 						reply.MoneyData.TransactionSuccess, reply.MoneyData.MoneyBalance,
@@ -3809,7 +3809,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 			ChatSessionMember fndMbr = null;
 			synchronized (GroupChatSessions) {
 				for (ChatSessionMember member : GroupChatSessions.get(msg.sessionID)) {
-					if (member.AvatarKey.equals(msg.updates[i].agentID)) {
+					if (member.avatarKey.equals(msg.updates[i].agentID)) {
 						fndMbr = member;
 						break;
 					}
@@ -3818,9 +3818,9 @@ public class AgentManager implements PacketCallback, CapsCallback {
 
 			if (msg.updates[i].transition != null) {
 				if (msg.updates[i].transition.equals("ENTER")) {
-					if (fndMbr == null || fndMbr.AvatarKey.equals(UUID.Zero)) {
+					if (fndMbr == null || fndMbr.avatarKey.equals(UUID.Zero)) {
 						fndMbr = new ChatSessionMember();
-						fndMbr.AvatarKey = msg.updates[i].agentID;
+						fndMbr.avatarKey = msg.updates[i].agentID;
 
 						synchronized (GroupChatSessions) {
 							GroupChatSessions.get(msg.sessionID).add(fndMbr);
@@ -3829,7 +3829,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 								new ChatSessionMemberCallbackArgs(msg.sessionID, msg.updates[i].agentID, true));
 					}
 				} else if (msg.updates[i].transition.equals("LEAVE")) {
-					if (fndMbr != null && !fndMbr.AvatarKey.equals(UUID.Zero)) {
+					if (fndMbr != null && !fndMbr.avatarKey.equals(UUID.Zero)) {
 						synchronized (GroupChatSessions) {
 							GroupChatSessions.get(msg.sessionID).remove(fndMbr);
 						}
@@ -3843,11 +3843,11 @@ public class AgentManager implements PacketCallback, CapsCallback {
 			if (fndMbr != null) {
 				// update existing member record
 				synchronized (GroupChatSessions) {
-					fndMbr.MuteText = msg.updates[i].muteText;
-					fndMbr.MuteVoice = msg.updates[i].muteVoice;
+					fndMbr.muteText = msg.updates[i].muteText;
+					fndMbr.muteVoice = msg.updates[i].muteVoice;
 
-					fndMbr.CanVoiceChat = msg.updates[i].canVoiceChat;
-					fndMbr.IsModerator = msg.updates[i].isModerator;
+					fndMbr.canVoiceChat = msg.updates[i].canVoiceChat;
+					fndMbr.isModerator = msg.updates[i].isModerator;
 				}
 			}
 		}
@@ -3873,19 +3873,19 @@ public class AgentManager implements PacketCallback, CapsCallback {
 
 			InstantMessage im = new InstantMessage();
 
-			im.FromAgentID = msg.fromAgentID;
-			im.FromAgentName = msg.fromAgentName;
-			im.ToAgentID = msg.toAgentID;
-			im.ParentEstateID = msg.parentEstateID;
-			im.RegionID = msg.regionID;
-			im.Position = msg.position;
-			im.Dialog = msg.dialog;
-			im.GroupIM = msg.groupIM;
-			im.IMSessionID = msg.imSessionID;
-			im.Timestamp = msg.timestamp;
-			im.Message = msg.message;
-			im.Offline = msg.offline;
-			im.BinaryBucket = msg.binaryBucket;
+			im.fromAgentID = msg.fromAgentID;
+			im.fromAgentName = msg.fromAgentName;
+			im.toAgentID = msg.toAgentID;
+			im.parentEstateID = msg.parentEstateID;
+			im.regionID = msg.regionID;
+			im.position = msg.position;
+			im.dialog = msg.dialog;
+			im.groupIM = msg.groupIM;
+			im.imSessionID = msg.imSessionID;
+			im.timestamp = msg.timestamp;
+			im.message = msg.message;
+			im.offline = msg.offline;
+			im.binaryBucket = msg.binaryBucket;
 			try {
 				ChatterBoxAcceptInvite(msg.imSessionID);
 			} catch (Exception ex) {
@@ -4013,8 +4013,8 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		Callback<XferDownload> xferCallback = new Callback<XferDownload>() {
 			@Override
 			public boolean callback(XferDownload download) {
-				if (download.XferID == xferID.get()) {
-					gotMuteList.set(download.AssetData);
+				if (download.xferID == xferID.get()) {
+					gotMuteList.set(download.assetData);
 				}
 				return false;
 			}
@@ -4039,11 +4039,11 @@ public class AgentManager implements PacketCallback, CapsCallback {
 								.compile("(?<MyteType>\\d+)\\s+(?<Key>[a-zA-Z0-9-]+)\\s+(?<Name>[^|]+)|(?<Flags>.+)")
 								.matcher(line)).matches()) {
 							MuteEntry me = new MuteEntry();
-							me.Type = MuteType.setValue(Integer.valueOf(m.group(1)));
-							me.ID = new UUID(m.group(2));
-							me.Name = m.group(3);
-							me.Flags = MuteFlags.setValue(Helpers.TryParseInt(m.group(4)));
-							MuteList.put(String.format("%s|%s", me.ID, me.Name), me);
+							me.type = MuteType.setValue(Integer.valueOf(m.group(1)));
+							me.id = new UUID(m.group(2));
+							me.name = m.group(3);
+							me.flags = MuteFlags.setValue(Helpers.TryParseInt(m.group(4)));
+							MuteList.put(String.format("%s|%s", me.id, me.name), me);
 						} else {
 							throw new IllegalArgumentException("Invalid mutelist entry line");
 						}

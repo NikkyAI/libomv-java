@@ -5,17 +5,17 @@ import libomv.types.UUID;
 // Transaction detail sent with MoneyBalanceReply message
 public class TransactionInfo {
 	// Type of the transaction
-	public int TransactionType; // FIXME: this should be an enum
+	public int transactionType; // FIXME: this should be an enum
 	// UUID of the transaction source
-	public UUID SourceID;
+	public UUID sourceID;
 	// Is the transaction source a group
-	public boolean IsSourceGroup;
+	public boolean isSourceGroup;
 	// UUID of the transaction destination
-	public UUID DestID;
+	public UUID destID;
 	// Is transaction destination a group
-	public boolean IsDestGroup;
+	public boolean isDestGroup;
 	// Transaction amount
-	public int Amount;
+	public int amount;
 	// Transaction description
-	public String ItemDescription;
+	public String itemDescription;
 }

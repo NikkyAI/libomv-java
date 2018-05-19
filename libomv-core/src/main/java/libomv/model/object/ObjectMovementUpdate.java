@@ -10,14 +10,14 @@ import libomv.types.Vector4;
  * track position and movement of prims and avatars
  */
 public final class ObjectMovementUpdate {
-	public boolean Avatar;
-	public Vector4 CollisionPlane;
-	public byte State;
-	public int LocalID; // uint
-	public Vector3 Position;
-	public Vector3 Velocity;
-	public Vector3 Acceleration;
-	public Quaternion Rotation;
-	public Vector3 AngularVelocity;
-	public TextureEntry Textures;
+	public boolean avatar;
+	public Vector4 collisionPlane;
+	public byte state;
+	public int localID; // uint
+	public Vector3 position;
+	public Vector3 velocity;
+	public Vector3 acceleration;
+	public Quaternion rotation;
+	public Vector3 angularVelocity;
+	public TextureEntry textures;
 }

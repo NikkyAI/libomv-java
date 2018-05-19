@@ -37,6 +37,9 @@ import libomv.types.UUID;
 
 // Static pre-defined animations available to all agents
 public class Animations {
+	private Animations() {
+	}
+
 	// Agent with afraid expression on face
 	public final static UUID AFRAID = new UUID("6b61c8e8-4747-0d75-12d7-e49ff207a4ca");
 	// Agent aiming a bazooka (right handed)
@@ -310,7 +313,7 @@ public class Animations {
 
 	/**
 	 * A dictionary containing all pre-defined animations
-	 * 
+	 *
 	 * @returns A dictionary containing the pre-defined animations, where the key is
 	 *          the animations ID, and the value is a string containing a name to
 	 *          identify the purpose of the animation

@@ -283,18 +283,18 @@ public class StateController implements ActionListener {
 				_Progress.updateProgress(10, "Logging in...", Helpers.EmptyString);
 			} else if (e.getStatus() == LoginStatus.Redirecting) {
 				// Server requested redirection
-				_Progress.updateProgress(20, "Server requested redirection...", e.getReply().NextUrl);
+				_Progress.updateProgress(20, "Server requested redirection...", e.getReply().nextUrl);
 			} else if (e.getStatus() == LoginStatus.ReadingResponse) {
 				_Progress.updateProgress(30, "Reading response...", null);
 			} else if (e.getStatus() == LoginStatus.ConnectingToSim) {
-				_Progress.updateProgress(40, e.getMessage(), e.getReply().Message);
+				_Progress.updateProgress(40, e.getMessage(), e.getReply().message);
 			} else if (e.getStatus() == LoginStatus.Failed) {
 				_Progress.updateProgress(90, "Login failed...", e.getReason());
 				actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, MainControl.cmdCancel));
 				return true;
 			} else if (e.getStatus() == LoginStatus.Success) {
 				// Login was successful
-				_Progress.updateProgress(50, "Authentification succeed...", e.getReply().Message);
+				_Progress.updateProgress(50, "Authentification succeed...", e.getReply().message);
 
 				// Create the CommWindow as hidden window as it is also our communication
 				// manager
@@ -315,7 +315,7 @@ public class StateController implements ActionListener {
 				_Main.setControlPane(new OnlinePane(_Main));
 				_Main.getJFrame().validate();
 
-				_Progress.updateProgress(100, "Finished", e.getReply().Message);
+				_Progress.updateProgress(100, "Finished", e.getReply().message);
 				return true;
 			}
 			return false;

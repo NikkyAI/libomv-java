@@ -9,6 +9,11 @@ public class SimDisconnectedCallbackArgs implements CallbackArgs {
 	private final Simulator simulator;
 	private final DisconnectType type;
 
+	public SimDisconnectedCallbackArgs(Simulator simulator, DisconnectType type) {
+		this.simulator = simulator;
+		this.type = type;
+	}
+
 	public Simulator getSimulator() {
 		return simulator;
 	}
@@ -17,8 +22,4 @@ public class SimDisconnectedCallbackArgs implements CallbackArgs {
 		return type;
 	}
 
-	public SimDisconnectedCallbackArgs(Simulator simulator, DisconnectType type) {
-		this.simulator = simulator;
-		this.type = type;
-	}
 }

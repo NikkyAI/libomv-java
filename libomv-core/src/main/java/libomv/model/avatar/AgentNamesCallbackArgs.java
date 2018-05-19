@@ -8,11 +8,12 @@ import libomv.utils.CallbackArgs;
 public class AgentNamesCallbackArgs implements CallbackArgs {
 	private HashMap<UUID, String> names;
 
+	public AgentNamesCallbackArgs(HashMap<UUID, String> names) {
+		this.names = names;
+	}
+
 	public HashMap<UUID, String> getNames() {
 		return names;
 	}
 
-	public AgentNamesCallbackArgs(HashMap<UUID, String> names) {
-		this.names = names;
-	}
 }

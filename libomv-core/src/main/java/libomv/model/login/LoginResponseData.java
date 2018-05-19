@@ -29,62 +29,62 @@ public final class LoginResponseData {
 	/**
 	 * true, false, indeterminate [XmlRpcMember("login")]
 	 */
-	public String Login;
-	public boolean Success;
-	public String Reason;
+	public String login;
+	public boolean success;
+	public String reason;
 	/** Login message of the day */
-	public String Message;
-	public UUID AgentID;
-	public UUID SessionID;
-	public UUID SecureSessionID;
-	public String FirstName;
-	public String LastName;
-	public String StartLocation;
+	public String message;
+	public UUID agentID;
+	public UUID sessionID;
+	public UUID secureSessionID;
+	public String firstName;
+	public String lastName;
+	public String startLocation;
 	/** M or PG, also agent_region_access and agent_access_max */
-	public String AgentAccessMax;
-	public String AgentAccessPref;
-	public Vector3 LookAt;
-	public long HomeRegion;
-	public Vector3 HomePosition;
-	public Vector3 HomeLookAt;
-	public int CircuitCode;
-	public long Region;
-	public Vector2 RegionSize;
-	public short SimPort;
-	public InetAddress SimIP;
-	public String SeedCapability;
-	public BuddyListEntry[] BuddyList;
-	public int SecondsSinceEpoch;
-	public String UDPBlacklist;
+	public String agentAccessMax;
+	public String agentAccessPref;
+	public Vector3 lookAt;
+	public long homeRegion;
+	public Vector3 homePosition;
+	public Vector3 homeLookAt;
+	public int circuitCode;
+	public long region;
+	public Vector2 regionSize;
+	public short simPort;
+	public InetAddress simIP;
+	public String seedCapability;
+	public BuddyListEntry[] buddyList;
+	public int secondsSinceEpoch;
+	public String udpBlacklist;
 
 	// #region Inventory
-	public UUID InventoryRoot;
-	public UUID LibraryRoot;
-	public InventoryFolder[] InventorySkeleton;
-	public InventoryFolder[] LibrarySkeleton;
-	public UUID LibraryOwner;
+	public UUID inventoryRoot;
+	public UUID libraryRoot;
+	public InventoryFolder[] inventorySkeleton;
+	public InventoryFolder[] librarySkeleton;
+	public UUID libraryOwner;
 	// #endregion
 
-	public GridInfo Grid;
+	public GridInfo grid;
 
 	// #region Redirection
-	public String NextMethod;
-	public String NextUrl;
-	public String[] NextOptions;
-	public int NextDuration;
+	public String nextMethod;
+	public String nextUrl;
+	public String[] nextOptions;
+	public int nextDuration;
 	// #endregion
 
 	// These aren't currently being utilized by the library
-	public boolean AOTransition;
-	public String InventoryHost;
-	public int MaxAgentGroups;
-	public String MapServerUrl;
-	public String OpenIDUrl;
-	public String AgentAppearanceServiceURL;
-	public int COFVersion;
-	public String InitialOutfit;
-	public boolean FirstLogin;
-	public Map<UUID, UUID> Gestures;
+	public boolean aoTransition;
+	public String inventoryHost;
+	public int maxAgentGroups;
+	public String mapServerUrl;
+	public String openIDUrl;
+	public String agentAppearanceServiceURL;
+	public int cofVersion;
+	public String initialOutfit;
+	public boolean firstLogin;
+	public Map<UUID, UUID> gestures;
 
 	// Unhandled:
 	// reply.gestures
@@ -104,70 +104,70 @@ public final class LoginResponseData {
 	 *            the struct properly using attributes
 	 * @return this object pointer
 	 */
-	public LoginResponseData ParseLoginReply(OSDMap reply) {
+	public LoginResponseData parseLoginReply(OSDMap reply) {
 		if (reply.containsKey("login")) {
-			Login = reply.get("login").AsString();
+			login = reply.get("login").AsString();
 		}
-		Success = reply.get("login").AsBoolean();
-		Message = reply.get("message").AsString();
-		if (!Success) {
-			if (Login != null && Login.equals("indeterminate")) {
+		success = reply.get("login").AsBoolean();
+		message = reply.get("message").AsString();
+		if (!success) {
+			if (login != null && login.equals("indeterminate")) {
 				// Parse redirect options
 				if (reply.containsKey("next_url"))
-					NextUrl = reply.get("next_url").AsString();
+					nextUrl = reply.get("next_url").AsString();
 				if (reply.containsKey("next_method"))
-					NextMethod = reply.get("next_method").AsString();
+					nextMethod = reply.get("next_method").AsString();
 				if (reply.containsKey("next_duration"))
-					NextDuration = reply.get("next_duration").AsUInteger();
+					nextDuration = reply.get("next_duration").AsUInteger();
 				if (reply.containsKey("next_options")) {
 					OSD osd = reply.get("next_options");
 					if (osd.getType().equals(OSDType.Array))
-						NextOptions = ((OSDArray) osd).toArray(NextOptions);
+						nextOptions = ((OSDArray) osd).toArray(nextOptions);
 				}
 			} else {
 				// login failed
 				// Reason can be: tos, critical, key, update, optional, presence
-				Reason = reply.get("reason").AsString();
+				reason = reply.get("reason").AsString();
 			}
 			return this;
 		}
 
 		// UDP Blacklist
 		if (reply.containsKey("udp_blacklist")) {
-			UDPBlacklist = reply.get("udp_blacklist").AsString();
+			udpBlacklist = reply.get("udp_blacklist").AsString();
 		}
-		AgentID = reply.get("agent_id").AsUUID();
-		SessionID = reply.get("session_id").AsUUID();
-		SecureSessionID = reply.get("secure_session_id").AsUUID();
-		FirstName = reply.get("first_name").AsString();
-		LastName = reply.get("last_name").AsString();
+		agentID = reply.get("agent_id").AsUUID();
+		sessionID = reply.get("session_id").AsUUID();
+		secureSessionID = reply.get("secure_session_id").AsUUID();
+		firstName = reply.get("first_name").AsString();
+		lastName = reply.get("last_name").AsString();
 
-		AgentAccessMax = reply.get("agent_access_max").AsString();
-		if (AgentAccessMax.isEmpty()) {
+		agentAccessMax = reply.get("agent_access_max").AsString();
+		if (agentAccessMax.isEmpty()) {
 			// we're on an older sim version (probably an opensim)
-			AgentAccessMax = reply.get("agent_access").AsString();
+			agentAccessMax = reply.get("agent_access").AsString();
 		}
-		AgentAccessPref = reply.get("agent_region_access").AsString();
-		AOTransition = reply.get("ao_transition").AsInteger() == 1;
-		StartLocation = reply.get("start_location").AsString();
+		agentAccessPref = reply.get("agent_region_access").AsString();
+		aoTransition = reply.get("ao_transition").AsInteger() == 1;
+		startLocation = reply.get("start_location").AsString();
 
-		CircuitCode = reply.get("circuit_code").AsUInteger();
-		Region = Helpers.UIntsToLong(reply.get("region_x").AsUInteger(), reply.get("region_y").AsUInteger());
-		SimPort = (short) reply.get("sim_port").AsUInteger();
-		SimIP = reply.get("sim_ip").AsInetAddress();
+		circuitCode = reply.get("circuit_code").AsUInteger();
+		region = Helpers.UIntsToLong(reply.get("region_x").AsUInteger(), reply.get("region_y").AsUInteger());
+		simPort = (short) reply.get("sim_port").AsUInteger();
+		simIP = reply.get("sim_ip").AsInetAddress();
 
-		SeedCapability = reply.get("seed_capability").AsString();
-		SecondsSinceEpoch = reply.get("seconds_since_epoch").AsUInteger();
+		seedCapability = reply.get("seed_capability").AsString();
+		secondsSinceEpoch = reply.get("seconds_since_epoch").AsUInteger();
 
 		// Home
-		HomeRegion = 0;
-		HomePosition = Vector3.Zero;
-		HomeLookAt = Vector3.Zero;
+		homeRegion = 0;
+		homePosition = Vector3.Zero;
+		homeLookAt = Vector3.Zero;
 		try {
 			if (reply.containsKey("home")) {
-				ParseHome(reply.get("home").AsString());
+				parseHome(reply.get("home").AsString());
 			}
-			LookAt = ParseVector3("look_at", reply);
+			lookAt = parseVector3("look_at", reply);
 		} catch (Exception ex) {
 			// TODO:FIXME
 			// This contains a log statement, but shouldn't this throw the exception?
@@ -182,56 +182,56 @@ public final class LoginResponseData {
 		OSD buddyLLSD = reply.get("buddy-list");
 		if (buddyLLSD != null && buddyLLSD.getType().equals(OSDType.Array)) {
 			OSDArray buddyArray = (OSDArray) buddyLLSD;
-			BuddyList = new BuddyListEntry[buddyArray.size()];
+			buddyList = new BuddyListEntry[buddyArray.size()];
 			for (int i = 0; i < buddyArray.size(); i++) {
 				if (buddyArray.get(i).getType().equals(OSDType.Map)) {
 					BuddyListEntry bud = new BuddyListEntry();
 					OSDMap buddy = (OSDMap) buddyArray.get(i);
 
-					bud.buddy_id = buddy.get("buddy_id").AsString();
-					bud.buddy_rights_given = buddy.get("buddy_rights_given").AsUInteger();
-					bud.buddy_rights_has = buddy.get("buddy_rights_has").AsUInteger();
+					bud.buddyID = buddy.get("buddy_id").AsString();
+					bud.buddyRightsGiven = buddy.get("buddy_rights_given").AsUInteger();
+					bud.buddyRightsHas = buddy.get("buddy_rights_has").AsUInteger();
 
-					BuddyList[i] = bud;
+					buddyList[i] = bud;
 				}
 			}
 		}
 
-		InventoryRoot = ParseMappedUUID("inventory-root", "folder_id", reply);
-		InventorySkeleton = ParseInventorySkeleton("inventory-skeleton", reply);
+		inventoryRoot = parseMappedUUID("inventory-root", "folder_id", reply);
+		inventorySkeleton = parseInventorySkeleton("inventory-skeleton", reply);
 
-		LibraryOwner = ParseMappedUUID("inventory-lib-owner", "agent_id", reply);
-		LibraryRoot = ParseMappedUUID("inventory-lib-root", "folder_id", reply);
-		LibrarySkeleton = ParseInventorySkeleton("inventory-skel-lib", reply);
+		libraryOwner = parseMappedUUID("inventory-lib-owner", "agent_id", reply);
+		libraryRoot = parseMappedUUID("inventory-lib-root", "folder_id", reply);
+		librarySkeleton = parseInventorySkeleton("inventory-skel-lib", reply);
 
-		Grid = ParseGridInfo(reply);
+		grid = parseGridInfo(reply);
 
 		if (reply.containsKey("max-agent-groups")) {
-			MaxAgentGroups = reply.get("max-agent-groups").AsUInteger();
+			maxAgentGroups = reply.get("max-agent-groups").AsUInteger();
 		} else {
 			// OpenSIM
 			if (reply.containsKey("max_groups"))
-				MaxAgentGroups = reply.get("max_groups").AsUInteger();
+				maxAgentGroups = reply.get("max_groups").AsUInteger();
 			else
-				MaxAgentGroups = -1;
+				maxAgentGroups = -1;
 		}
 
-		MapServerUrl = reply.get("map_server_url").AsString();
+		mapServerUrl = reply.get("map_server_url").AsString();
 
 		if (reply.containsKey("openid_url")) {
-			OpenIDUrl = reply.get("openid_url").AsString();
+			openIDUrl = reply.get("openid_url").AsString();
 		}
 
 		if (reply.containsKey("agent_appearance_service")) {
-			AgentAppearanceServiceURL = reply.get("agent_appearance_service").AsString();
+			agentAppearanceServiceURL = reply.get("agent_appearance_service").AsString();
 		}
 
-		COFVersion = 0;
+		cofVersion = 0;
 		if (reply.containsKey("cof_version")) {
-			COFVersion = reply.get("cof_version").AsUInteger();
+			cofVersion = reply.get("cof_version").AsUInteger();
 		}
 
-		InitialOutfit = Helpers.EmptyString;
+		initialOutfit = Helpers.EmptyString;
 		OSD osd = reply.get("initial-outfit");
 		if (osd != null && osd.getType() == OSDType.Array) {
 			OSDArray array = (OSDArray) osd;
@@ -239,12 +239,12 @@ public final class LoginResponseData {
 				osd = array.get(i);
 				if (osd.getType() == OSDType.Map) {
 					OSDMap map = (OSDMap) osd;
-					InitialOutfit = map.get("folder_name").AsString();
+					initialOutfit = map.get("folder_name").AsString();
 				}
 			}
 		}
 
-		Gestures = new HashMap<UUID, UUID>();
+		gestures = new HashMap<UUID, UUID>();
 		osd = reply.get("gestures");
 		if (osd != null && osd.getType() == OSDType.Array) {
 			OSDArray array = (OSDArray) osd;
@@ -268,12 +268,12 @@ public final class LoginResponseData {
 						continue;
 					}
 
-					Gestures.put(itemId, assetId);
+					gestures.put(itemId, assetId);
 				}
 			}
 		}
 
-		FirstLogin = false;
+		firstLogin = false;
 		osd = reply.get("login-flags");
 		if (osd != null && osd.getType() == OSDType.Array) {
 			OSDArray array = (OSDArray) osd;
@@ -281,30 +281,30 @@ public final class LoginResponseData {
 				osd = array.get(i);
 				if (osd.getType() == OSDType.Map) {
 					OSDMap map = (OSDMap) osd;
-					FirstLogin = map.get("ever_logged_in").AsString().equalsIgnoreCase("N");
+					firstLogin = map.get("ever_logged_in").AsString().equalsIgnoreCase("N");
 				}
 			}
 		}
 		return this;
 	}
 
-	private void ParseHome(String value) throws ParseException, IOException {
+	private void parseHome(String value) throws ParseException, IOException {
 		OSD osdHome = OSDParser.deserialize(value, OSDFormat.Notation);
 		if (osdHome != null && osdHome.getType().equals(OSDType.Map)) {
 			OSDMap home = (OSDMap) osdHome;
-			OSD homeRegion = home.get("region_handle");
-			if (homeRegion != null && homeRegion.getType().equals(OSDType.Array)) {
-				OSDArray homeArray = (OSDArray) homeRegion;
+			OSD homeRegionOSD = home.get("region_handle");
+			if (homeRegionOSD != null && homeRegionOSD.getType().equals(OSDType.Array)) {
+				OSDArray homeArray = (OSDArray) homeRegionOSD;
 				if (homeArray.size() == 2) {
-					HomeRegion = Helpers.UIntsToLong(homeArray.get(0).AsInteger(), homeArray.get(1).AsInteger());
+					homeRegion = Helpers.UIntsToLong(homeArray.get(0).AsInteger(), homeArray.get(1).AsInteger());
 				}
 			}
-			HomePosition = ParseVector3("position", home);
-			HomeLookAt = ParseVector3("look_at", home);
+			homePosition = parseVector3("position", home);
+			homeLookAt = parseVector3("look_at", home);
 		}
 	}
 
-	private GridInfo ParseGridInfo(OSDMap reply) {
+	private GridInfo parseGridInfo(OSDMap reply) {
 		GridInfo grid = new GridInfo();
 		boolean update = false;
 		if (reply.containsKey("gridname")) {
@@ -380,12 +380,12 @@ public final class LoginResponseData {
 		return null;
 	}
 
-	private InventoryFolder[] ParseInventorySkeleton(String key, OSDMap reply) {
+	private InventoryFolder[] parseInventorySkeleton(String key, OSDMap reply) {
 		UUID ownerID;
 		if (key.equals("inventory-skel-lib")) {
-			ownerID = LibraryOwner;
+			ownerID = libraryOwner;
 		} else {
-			ownerID = AgentID;
+			ownerID = agentID;
 		}
 
 		OSD skeleton = reply.get(key);
@@ -407,14 +407,14 @@ public final class LoginResponseData {
 		return null;
 	}
 
-	private Vector3 ParseVector3(String key, OSDMap reply) throws ParseException, IOException {
+	private Vector3 parseVector3(String key, OSDMap reply) throws ParseException, IOException {
 		if (reply.containsKey(key)) {
 			return reply.get(key).AsVector3();
 		}
 		return Vector3.Zero;
 	}
 
-	private UUID ParseMappedUUID(String key, String key2, OSDMap reply) {
+	private UUID parseMappedUUID(String key, String key2, OSDMap reply) {
 		OSD folderOSD = reply.get(key);
 		if (folderOSD != null && folderOSD.getType().equals(OSDType.Array)) {
 			OSDArray array = (OSDArray) folderOSD;
@@ -429,4 +429,3 @@ public final class LoginResponseData {
 		return UUID.Zero;
 	}
 }
-// #endregion Structs

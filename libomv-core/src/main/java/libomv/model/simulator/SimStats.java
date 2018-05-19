@@ -3,108 +3,108 @@ package libomv.model.simulator;
 /* Simulator Statistics */
 public final class SimStats {
 	/* Total number of packets sent by this simulator from this agent */
-	public long SentPackets;
+	public long sentPackets;
 	/* Total number of packets received by this simulator to this agent */
-	public long RecvPackets;
+	public long recvPackets;
 	/* Total number of bytes sent by this simulator to this agent */
-	public long SentBytes;
+	public long sentBytes;
 	/* Total number of bytes received by this simulator to this agent */
-	public long RecvBytes;
+	public long recvBytes;
 	/* Time in seconds agent has been connected to simulator */
-	public long ConnectTime;
+	public long connectTime;
 	/* Total number of packets that have been resent */
-	public long ResentPackets;
+	public long resentPackets;
 	/* Total number of resent packets received */
-	public long ReceivedResends;
+	public long receivedResends;
 	/* Total number of pings sent to this simulator by this agent */
-	public long SentPings;
+	public long sentPings;
 	/* Total number of ping replies sent to this agent by this simulator */
-	public long ReceivedPongs;
+	public long receivedPongs;
 	/*
 	 * Incoming bytes per second
 	 *
 	 * It would be nice to have this calculated on the fly, but this is far, far
 	 * easier
 	 */
-	public int IncomingBPS;
+	public int incomingBPS;
 	/*
 	 * Outgoing bytes per second
 	 *
 	 * It would be nice to have this claculated on the fly, but this is far, far
 	 * easier
 	 */
-	public int OutgoingBPS;
+	public int outgoingBPS;
 	/* Time last ping was sent */
-	public long LastPingSent;
+	public long lastPingSent;
 	/*  */
-	public long LastLag;
+	public long lastLag;
 	/* ID of last Ping sent */
-	public byte LastPingID;
+	public byte lastPingID;
 	/*  */
-	public long MissedPings;
+	public long missedPings;
 	/* Current time dilation of this simulator */
-	public float Dilation;
+	public float dilation;
 	/* Current Frames per second of simulator */
-	public int FPS;
+	public int fps;
 	/* Current Physics frames per second of simulator */
-	public float PhysicsFPS;
+	public float physicsFPS;
 	/*  */
-	public float AgentUpdates;
+	public float agentUpdates;
 	/*  */
-	public float FrameTime;
+	public float frameTime;
 	/*  */
-	public float NetTime;
+	public float netTime;
 	/*  */
-	public float PhysicsTime;
+	public float physicsTime;
 	/*  */
-	public float ImageTime;
+	public float imageTime;
 	/*  */
-	public float ScriptTime;
+	public float scriptTime;
 	/*  */
-	public float AgentTime;
+	public float agentTime;
 	/*  */
-	public float OtherTime;
+	public float otherTime;
 	/* Total number of objects Simulator is simulating */
-	public int Objects;
+	public int objects;
 	/* Total number of Active (Scripted) objects running */
-	public int ScriptedObjects;
+	public int scriptedObjects;
 	/* Number of agents currently in this simulator */
-	public int Agents;
+	public int agents;
 	/* Number of agents in neighbor simulators */
-	public int ChildAgents;
+	public int childAgents;
 	/* Number of Active scripts running in this simulator */
-	public int ActiveScripts;
+	public int activeScripts;
 	/*  */
-	public int LSLIPS;
+	public int lslIPS;
 	/*  */
-	public int INPPS;
+	public int inPPS;
 	/*  */
-	public int OUTPPS;
+	public int outPPS;
 	/* Number of downloads pending */
-	public int PendingDownloads;
+	public int pendingDownloads;
 	/* Number of uploads pending */
-	public int PendingUploads;
+	public int pendingUploads;
 	/*  */
-	public int VirtualSize;
+	public int virtualSize;
 	/*  */
-	public int ResidentSize;
+	public int residentSize;
 	/* Number of local uploads pending */
-	public int PendingLocalUploads;
+	public int pendingLocalUploads;
 	/* Unacknowledged bytes in queue */
-	public int UnackedBytes;
+	public int unackedBytes;
 
-	public int PhysicsPinnedTasks;
-	public int PhysicsLODTasks;
-	public int PhysicsStepMS;
-	public int PhysicsShapeMS;
-	public int PhysicsOtherMS;
-	public int PhysicsMemory;
-	public int ScriptEPS;
-	public int SimSpareTime;
-	public int SimSleepTime;
-	public int SimIOPumpTime;
-	public int SimPctScriptsRun;
-	public int SimAIStepMsec;
-	public int SimSkippedSilhouetteSteps;
-	public int SimPctSteppedCharacters;
+	public int physicsPinnedTasks;
+	public int physicsLODTasks;
+	public int physicsStepMS;
+	public int physicsShapeMS;
+	public int physicsOtherMS;
+	public int physicsMemory;
+	public int scriptEPS;
+	public int simSpareTime;
+	public int simSleepTime;
+	public int simIOPumpTime;
+	public int simPctScriptsRun;
+	public int simAIStepMsec;
+	public int simSkippedSilhouetteSteps;
+	public int simPctSteppedCharacters;
 }

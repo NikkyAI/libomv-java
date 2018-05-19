@@ -7,31 +7,31 @@ import libomv.utils.Helpers;
 /** The details of an "Event" */
 public final class EventInfo {
 	/** The events ID */
-	public int ID; /* TODO was uint */
+	public int id; /* TODO was uint */
 	/** The ID of the event creator */
-	public UUID Creator;
+	public UUID creator;
 	/** The name of the event */
-	public String Name;
+	public String name;
 	/** The category */
-	public EventCategories Category;
+	public EventCategories category;
 	/** The events description */
-	public String Desc;
+	public String desc;
 	/** The short date/time the event will begin */
-	public String Date;
+	public String date;
 	/** The event start time in Unixtime (seconds since epoch) UTC adjusted */
-	public int DateUTC; /* TODO was uint */
+	public int dateUTC; /* TODO was uint */
 	/** The length of the event in minutes */
-	public int Duration; /* TODO was uint */
+	public int duration; /* TODO was uint */
 	/** 0 if no cover charge applies */
-	public int Cover; /* TODO was uint */
+	public int cover; /* TODO was uint */
 	/** The cover charge amount in L$ if applicable */
-	public int Amount; /* TODO was uint */
+	public int amount; /* TODO was uint */
 	/** The name of the region where the event is being held */
-	public String SimName;
+	public String simName;
 	/** The gridwide location of the event */
-	public Vector3d GlobalPos;
+	public Vector3d globalPos;
 	/** The maturity rating */
-	public EventFlags Flags;
+	public EventFlags flags;
 
 	/**
 	 * Get a SL URL for the parcel where the event is hosted
@@ -40,8 +40,8 @@ public final class EventInfo {
 	 */
 	public String toSLurl() {
 		float[] values = new float[2];
-		Helpers.GlobalPosToRegionHandle((float) this.GlobalPos.X, (float) this.GlobalPos.Y, values);
-		return "secondlife://" + this.SimName + "/" + values[0] + "/" + values[1] + "/" + this.GlobalPos.Z;
+		Helpers.GlobalPosToRegionHandle((float) this.globalPos.X, (float) this.globalPos.Y, values);
+		return "secondlife://" + this.simName + "/" + values[0] + "/" + values[1] + "/" + this.globalPos.Z;
 	}
 
 	/**

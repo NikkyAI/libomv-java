@@ -3,13 +3,13 @@ package libomv.model.grid;
 import libomv.types.UUID;
 
 public final class GridLayer {
-	public int Bottom;
-	public int Left;
-	public int Top;
-	public int Right;
-	public UUID ImageID;
+	public int bottom;
+	public int left;
+	public int top;
+	public int right;
+	public UUID imageID;
 
-	public boolean ContainsRegion(int x, int y) {
-		return (x >= Left && x <= Right && y >= Bottom && y <= Top);
+	public boolean containsRegion(int x, int y) {
+		return (x >= left && x <= right && y >= bottom && y <= top);
 	}
 }

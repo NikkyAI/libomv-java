@@ -11,15 +11,32 @@ import libomv.types.UUID;
  */
 // TODO:FIXME Changing several fields to public, they need getters instead!
 public class FriendInfo {
-	private UUID ID;
+	private UUID id;
 	private String name;
 	private boolean isOnline;
 	public byte myRights; // private
 	public byte theirRights; // private
 
+	/**
+	 * Used internally when building the initial list of friends at login time
+	 *
+	 * @param id
+	 *            System ID of the avatar being prepesented
+	 * @param buddy_rights_given
+	 *            Rights the friend has to see you online and to modify your objects
+	 * @param buddy_rights_has
+	 *            Rights you have to see your friend online and to modify their
+	 *            objects
+	 */
+	public FriendInfo(UUID id, int buddy_rights_given, int buddy_rights_has) {
+		this.id = id;
+		this.theirRights = (byte) buddy_rights_given;
+		this.myRights = (byte) buddy_rights_has;
+	}
+
 	/* System ID of the avatar */
 	public final UUID getID() {
-		return ID;
+		return id;
 	}
 
 	/* full name of the avatar */
@@ -95,25 +112,8 @@ public class FriendInfo {
 		return (myRights & FriendRights.CanModifyObjects) != 0;
 	}
 
-	/**
-	 * Used internally when building the initial list of friends at login time
-	 *
-	 * @param id
-	 *            System ID of the avatar being prepesented
-	 * @param buddy_rights_given
-	 *            Rights the friend has to see you online and to modify your objects
-	 * @param buddy_rights_has
-	 *            Rights you have to see your friend online and to modify their
-	 *            objects
-	 */
-	public FriendInfo(UUID id, int buddy_rights_given, int buddy_rights_has) {
-		ID = id;
-		this.theirRights = (byte) buddy_rights_given;
-		this.myRights = (byte) buddy_rights_has;
-	}
-
 	public boolean equals(FriendInfo o) {
-		return ID.equals(o.getID());
+		return id.equals(o.getID());
 	}
 
 	@Override
@@ -123,7 +123,7 @@ public class FriendInfo {
 
 	@Override
 	public int hashCode() {
-		return ID.hashCode();
+		return id.hashCode();
 	}
 
 	/**
@@ -133,7 +133,7 @@ public class FriendInfo {
 	 */
 	@Override
 	public String toString() {
-		return String.format("%f (Their Rights: %1x, My Rights: %1x)", getName(),
-				FriendRights.toString(theirRights), FriendRights.toString(myRights));
+		return String.format("%f (Their Rights: %1x, My Rights: %1x)", getName(), FriendRights.toString(theirRights),
+				FriendRights.toString(myRights));
 	}
 }

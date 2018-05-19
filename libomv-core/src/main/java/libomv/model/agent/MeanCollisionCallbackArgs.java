@@ -7,36 +7,11 @@ import libomv.utils.CallbackArgs;
 
 // Data sent from a simulator indicating a collision with your agent
 public class MeanCollisionCallbackArgs implements CallbackArgs {
-	private final MeanCollisionType m_Type;
-	private final UUID m_Aggressor;
-	private final UUID m_Victim;
-	private final float m_Magnitude;
-	private final Date m_Time;
-
-	// Get the Type of collision
-	public MeanCollisionType getType() {
-		return m_Type;
-	}
-
-	// Get the ID of the agent or object that collided with your agent
-	public UUID getAggressor() {
-		return m_Aggressor;
-	}
-
-	// Get the ID of the agent that was attacked
-	public UUID getVictim() {
-		return m_Victim;
-	}
-
-	// A value indicating the strength of the collision
-	public float getMagnitude() {
-		return m_Magnitude;
-	}
-
-	// Get the time the collision occurred
-	public Date getTime() {
-		return m_Time;
-	}
+	private final MeanCollisionType type;
+	private final UUID aggressor;
+	private final UUID victim;
+	private final float magnitude;
+	private final Date time;
 
 	/**
 	 * Construct a new instance of the MeanCollisionEventArgs class
@@ -53,10 +28,36 @@ public class MeanCollisionCallbackArgs implements CallbackArgs {
 	 *            The Time the collision occurred
 	 */
 	public MeanCollisionCallbackArgs(MeanCollisionType type, UUID perp, UUID victim, float magnitude, Date time) {
-		this.m_Type = type;
-		this.m_Aggressor = perp;
-		this.m_Victim = victim;
-		this.m_Magnitude = magnitude;
-		this.m_Time = time;
+		this.type = type;
+		this.aggressor = perp;
+		this.victim = victim;
+		this.magnitude = magnitude;
+		this.time = time;
 	}
+
+	// Get the Type of collision
+	public MeanCollisionType getType() {
+		return type;
+	}
+
+	// Get the ID of the agent or object that collided with your agent
+	public UUID getAggressor() {
+		return aggressor;
+	}
+
+	// Get the ID of the agent that was attacked
+	public UUID getVictim() {
+		return victim;
+	}
+
+	// A value indicating the strength of the collision
+	public float getMagnitude() {
+		return magnitude;
+	}
+
+	// Get the time the collision occurred
+	public Date getTime() {
+		return time;
+	}
+
 }

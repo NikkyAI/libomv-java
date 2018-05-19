@@ -180,11 +180,11 @@ public class GridManager implements PacketCallback {
 						OSDMap thisLayerData = (OSDMap) layerData.get(i);
 
 						GridLayer layer = new GridLayer();
-						layer.Bottom = thisLayerData.get("Bottom").AsInteger();
-						layer.Left = thisLayerData.get("Left").AsInteger();
-						layer.Top = thisLayerData.get("Top").AsInteger();
-						layer.Right = thisLayerData.get("Right").AsInteger();
-						layer.ImageID = thisLayerData.get("ImageID").AsUUID();
+						layer.bottom = thisLayerData.get("Bottom").AsInteger();
+						layer.left = thisLayerData.get("Left").AsInteger();
+						layer.top = thisLayerData.get("Top").AsInteger();
+						layer.right = thisLayerData.get("Right").AsInteger();
+						layer.imageID = thisLayerData.get("ImageID").AsUUID();
 
 						OnGridLayer.dispatch(new GridLayerCallbackArgs(layer));
 					}
@@ -389,7 +389,7 @@ public class GridManager implements PacketCallback {
 
 			@Override
 			public boolean callback(GridRegionCallbackArgs args) {
-				if (args.getRegion().Name.equals(Name)) {
+				if (args.getRegion().name.equals(Name)) {
 					synchronized (Name) {
 						Name.notifyAll();
 					}
@@ -447,11 +447,11 @@ public class GridManager implements PacketCallback {
 			for (int i = 0; i < map.LayerData.length; i++) {
 				GridLayer layer = new GridLayer();
 				;
-				layer.Bottom = map.LayerData[i].Bottom;
-				layer.Left = map.LayerData[i].Left;
-				layer.Top = map.LayerData[i].Top;
-				layer.Right = map.LayerData[i].Right;
-				layer.ImageID = map.LayerData[i].ImageID;
+				layer.bottom = map.LayerData[i].Bottom;
+				layer.left = map.LayerData[i].Left;
+				layer.top = map.LayerData[i].Top;
+				layer.right = map.LayerData[i].Right;
+				layer.imageID = map.LayerData[i].ImageID;
 
 				OnGridLayer.dispatch(new GridLayerCallbackArgs(layer));
 			}
@@ -473,21 +473,21 @@ public class GridManager implements PacketCallback {
 			if (block.X != 0 || block.Y != 0) {
 				GridRegion region = new GridRegion(Helpers.BytesToString(block.getName()));
 
-				region.X = block.X;
-				region.Y = block.Y;
-				region.Name = Helpers.BytesToString(block.getName());
+				region.x = block.X;
+				region.y = block.Y;
+				region.name = Helpers.BytesToString(block.getName());
 				// RegionFlags seems to always be zero here?
-				region.RegionFlags = block.RegionFlags;
-				region.WaterHeight = block.WaterHeight;
-				region.Agents = block.Agents;
-				region.Access = block.Access;
-				region.MapImageID = block.MapImageID;
-				region.RegionHandle = Helpers.IntsToLong(region.X * 256, region.Y * 256);
+				region.regionFlags = block.RegionFlags;
+				region.waterHeight = block.WaterHeight;
+				region.agents = block.Agents;
+				region.access = block.Access;
+				region.mapImageID = block.MapImageID;
+				region.regionHandle = Helpers.IntsToLong(region.x * 256, region.y * 256);
 
 				synchronized (Regions) {
-					if (region.Name != null)
-						Regions.put(region.Name, region);
-					RegionsByHandle.put(region.RegionHandle, region);
+					if (region.name != null)
+						Regions.put(region.name, region);
+					RegionsByHandle.put(region.regionHandle, region);
 				}
 
 				if (OnGridRegion.count() > 0) {
@@ -523,19 +523,19 @@ public class GridManager implements PacketCallback {
 					items.add(item);
 					break;
 				case AgentLocations:
-					item.AvatarCount = reply.Data[i].Extra;
+					item.avatarCount = reply.Data[i].Extra;
 					items.add(item);
 					break;
 				case LandForSale:
 				case AdultLandForSale:
-					item.Size = reply.Data[i].Extra;
-					item.Price = reply.Data[i].Extra2;
+					item.size = reply.Data[i].Extra;
+					item.price = reply.Data[i].Extra2;
 					items.add(item);
 					break;
 				case PgEvent:
 				case MatureEvent:
 				case AdultEvent:
-					item.DateTime = Helpers.UnixTimeToDateTime(reply.Data[i].Extra);
+					item.dateTime = Helpers.UnixTimeToDateTime(reply.Data[i].Extra);
 					item.setEvelation(reply.Data[i].Extra2);
 					items.add(item);
 					break;

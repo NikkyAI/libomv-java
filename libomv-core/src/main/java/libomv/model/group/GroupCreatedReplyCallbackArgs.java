@@ -5,24 +5,9 @@ import libomv.utils.CallbackArgs;
 
 // A response to a group create request
 public class GroupCreatedReplyCallbackArgs implements CallbackArgs {
-	private final UUID m_GroupID;
-	private final boolean m_Success;
-	private final String m_Message;
-
-	// Get the ID of the group
-	public final UUID getGroupID() {
-		return m_GroupID;
-	}
-
-	// true of the group was created successfully
-	public final boolean getSuccess() {
-		return m_Success;
-	}
-
-	// A string containing the message
-	public final String getMessage() {
-		return m_Message;
-	}
+	private final UUID groupID;
+	private final boolean success;
+	private final String message;
 
 	/**
 	 * Construct a new instance of the GroupCreatedReplyCallbackArgs class
@@ -35,8 +20,24 @@ public class GroupCreatedReplyCallbackArgs implements CallbackArgs {
 	 *            A string containing additional information
 	 */
 	public GroupCreatedReplyCallbackArgs(UUID groupID, boolean success, String messsage) {
-		this.m_GroupID = groupID;
-		this.m_Success = success;
-		this.m_Message = messsage;
+		this.groupID = groupID;
+		this.success = success;
+		this.message = messsage;
 	}
+
+	// Get the ID of the group
+	public final UUID getGroupID() {
+		return groupID;
+	}
+
+	// true of the group was created successfully
+	public final boolean getSuccess() {
+		return success;
+	}
+
+	// A string containing the message
+	public final String getMessage() {
+		return message;
+	}
+
 }

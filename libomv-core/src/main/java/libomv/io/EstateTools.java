@@ -886,13 +886,13 @@ public class EstateTools implements PacketCallback, CapsCallback {
 
 			for (LandStatReplyPacket.ReportDataBlock rep : p.ReportData) {
 				EstateTask task = new EstateTask();
-				task.Position = new Vector3(rep.LocationX, rep.LocationY, rep.LocationZ);
-				task.Score = rep.Score;
-				task.TaskID = rep.TaskID;
-				task.TaskLocalID = rep.TaskLocalID;
-				task.TaskName = Helpers.BytesToString(rep.getTaskName());
-				task.OwnerName = Helpers.BytesToString(rep.getOwnerName());
-				Tasks.put(task.TaskID, task);
+				task.position = new Vector3(rep.LocationX, rep.LocationY, rep.LocationZ);
+				task.score = rep.Score;
+				task.taskID = rep.TaskID;
+				task.taskLocalID = rep.TaskLocalID;
+				task.taskName = Helpers.BytesToString(rep.getTaskName());
+				task.ownerName = Helpers.BytesToString(rep.getOwnerName());
+				Tasks.put(task.taskID, task);
 			}
 
 			LandStatReportType type = LandStatReportType.setValue(p.RequestData.ReportType);
@@ -917,14 +917,14 @@ public class EstateTools implements PacketCallback, CapsCallback {
 
 		for (LandStatReplyMessage.ReportDataBlock rep : m.reportDataBlocks) {
 			EstateTask task = new EstateTask();
-			task.Position = rep.location;
-			task.Score = rep.score;
-			task.MonoScore = rep.monoScore;
-			task.TaskID = rep.taskID;
-			task.TaskLocalID = rep.taskLocalID;
-			task.TaskName = rep.taskName;
-			task.OwnerName = rep.ownerName;
-			Tasks.put(task.TaskID, task);
+			task.position = rep.location;
+			task.score = rep.score;
+			task.monoScore = rep.monoScore;
+			task.taskID = rep.taskID;
+			task.taskLocalID = rep.taskLocalID;
+			task.taskName = rep.taskName;
+			task.ownerName = rep.ownerName;
+			Tasks.put(task.taskID, task);
 		}
 
 		LandStatReportType type = LandStatReportType.setValue(m.reportType);

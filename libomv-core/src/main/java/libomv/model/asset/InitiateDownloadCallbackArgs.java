@@ -4,21 +4,22 @@ import libomv.utils.CallbackArgs;
 
 // Provides data for InitiateDownloaded event
 public class InitiateDownloadCallbackArgs implements CallbackArgs {
-	private final String m_SimFileName;
-	private final String m_ViewerFileName;
+	private final String simFileName;
+	private final String viewerFileName;
+
+	public InitiateDownloadCallbackArgs(String simFilename, String viewerFilename) {
+		this.simFileName = simFilename;
+		this.viewerFileName = viewerFilename;
+	}
 
 	// Filename used on the simulator
 	public final String getSimFileName() {
-		return m_SimFileName;
+		return simFileName;
 	}
 
 	// Filename used by the client
 	public final String getViewerFileName() {
-		return m_ViewerFileName;
+		return viewerFileName;
 	}
 
-	public InitiateDownloadCallbackArgs(String simFilename, String viewerFilename) {
-		this.m_SimFileName = simFilename;
-		this.m_ViewerFileName = viewerFilename;
-	}
 }

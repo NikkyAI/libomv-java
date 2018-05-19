@@ -692,8 +692,8 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 				return false;
 			}
 			p = simulator.getParcels().get(localID);
-			x = (int) p.AABBMax.X - (int) p.AABBMin.X / 2;
-			y = (int) p.AABBMax.Y - (int) p.AABBMin.Y / 2;
+			x = (int) p.aabbMax.X - (int) p.aabbMin.X / 2;
+			y = (int) p.aabbMax.Y - (int) p.aabbMin.Y / 2;
 		}
 		RefObject<Float> ref = new RefObject<Float>(height);
 		if (Float.isNaN(simulator.TerrainHeightAtPoint(x, y))) {
@@ -959,7 +959,7 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 
 		synchronized (simulator.getParcels()) {
 			if (dwell.Data.Dwell != 0.0F && simulator.getParcels().containsKey(dwell.Data.LocalID)) {
-				simulator.getParcels().get(dwell.Data.LocalID).Dwell = dwell.Data.Dwell;
+				simulator.getParcels().get(dwell.Data.LocalID).dwell = dwell.Data.Dwell;
 			}
 		}
 		OnParcelDwellReply
@@ -972,67 +972,67 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 
 			Parcel parcel = new Parcel(msg.localID);
 
-			parcel.AABBMax = msg.aabbMax;
-			parcel.AABBMin = msg.aabbMin;
-			parcel.Area = msg.area;
-			parcel.AuctionID = msg.auctionID;
-			parcel.AuthBuyerID = msg.authBuyerID;
-			parcel.Bitmap = msg.bitmap;
-			parcel.Category = msg.category;
-			parcel.ClaimDate = msg.claimDate;
-			parcel.ClaimPrice = msg.claimPrice;
-			parcel.Desc = msg.desc;
-			parcel.Flags = msg.parcelFlags;
-			parcel.GroupID = msg.groupID;
-			parcel.GroupPrims = msg.groupPrims;
-			parcel.IsGroupOwned = msg.isGroupOwned;
-			parcel.Landing = msg.landingType;
-			parcel.MaxPrims = msg.maxPrims;
-			parcel.Media.mediaAutoScale = msg.mediaAutoScale;
-			parcel.Media.mediaID = msg.mediaID;
-			parcel.Media.mediaURL = msg.mediaURL;
-			parcel.MusicURL = msg.musicURL;
-			parcel.Name = msg.name;
-			parcel.OtherCleanTime = msg.otherCleanTime;
-			parcel.OtherCount = msg.otherCount;
-			parcel.OtherPrims = msg.otherPrims;
-			parcel.OwnerID = msg.ownerID;
-			parcel.OwnerPrims = msg.ownerPrims;
-			parcel.ParcelPrimBonus = msg.parcelPrimBonus;
-			parcel.PassHours = msg.passHours;
-			parcel.PassPrice = msg.passPrice;
-			parcel.PublicCount = msg.publicCount;
-			parcel.RegionDenyAgeUnverified = msg.regionDenyAgeUnverified;
-			parcel.RegionDenyAnonymous = msg.regionDenyAnonymous;
-			parcel.RegionPushOverride = msg.regionPushOverride;
-			parcel.RentPrice = msg.rentPrice;
+			parcel.aabbMax = msg.aabbMax;
+			parcel.aabbMin = msg.aabbMin;
+			parcel.area = msg.area;
+			parcel.auctionID = msg.auctionID;
+			parcel.authBuyerID = msg.authBuyerID;
+			parcel.bitmap = msg.bitmap;
+			parcel.category = msg.category;
+			parcel.claimDate = msg.claimDate;
+			parcel.claimPrice = msg.claimPrice;
+			parcel.desc = msg.desc;
+			parcel.flags = msg.parcelFlags;
+			parcel.groupID = msg.groupID;
+			parcel.groupPrims = msg.groupPrims;
+			parcel.isGroupOwned = msg.isGroupOwned;
+			parcel.landing = msg.landingType;
+			parcel.maxPrims = msg.maxPrims;
+			parcel.media.mediaAutoScale = msg.mediaAutoScale;
+			parcel.media.mediaID = msg.mediaID;
+			parcel.media.mediaURL = msg.mediaURL;
+			parcel.musicURL = msg.musicURL;
+			parcel.name = msg.name;
+			parcel.otherCleanTime = msg.otherCleanTime;
+			parcel.otherCount = msg.otherCount;
+			parcel.otherPrims = msg.otherPrims;
+			parcel.ownerID = msg.ownerID;
+			parcel.ownerPrims = msg.ownerPrims;
+			parcel.parcelPrimBonus = msg.parcelPrimBonus;
+			parcel.passHours = msg.passHours;
+			parcel.passPrice = msg.passPrice;
+			parcel.publicCount = msg.publicCount;
+			parcel.regionDenyAgeUnverified = msg.regionDenyAgeUnverified;
+			parcel.regionDenyAnonymous = msg.regionDenyAnonymous;
+			parcel.regionPushOverride = msg.regionPushOverride;
+			parcel.rentPrice = msg.rentPrice;
 			ParcelResult result = msg.requestResult;
-			parcel.SalePrice = msg.salePrice;
+			parcel.salePrice = msg.salePrice;
 			int selectedPrims = msg.selectedPrims;
-			parcel.SelfCount = msg.selfCount;
+			parcel.selfCount = msg.selfCount;
 			int sequenceID = msg.sequenceID;
-			parcel.SimWideMaxPrims = msg.simWideMaxPrims;
-			parcel.SimWideTotalPrims = msg.simWideTotalPrims;
+			parcel.simWideMaxPrims = msg.simWideMaxPrims;
+			parcel.simWideTotalPrims = msg.simWideTotalPrims;
 			boolean snapSelection = msg.snapSelection;
-			parcel.SnapshotID = msg.snapshotID;
-			parcel.Status = msg.status;
-			parcel.TotalPrims = msg.totalPrims;
-			parcel.UserLocation = msg.userLocation;
-			parcel.UserLookAt = msg.userLookAt;
-			parcel.Media.mediaDesc = msg.mediaDesc;
-			parcel.Media.mediaHeight = msg.mediaHeight;
-			parcel.Media.mediaWidth = msg.mediaWidth;
-			parcel.Media.mediaLoop = msg.mediaLoop;
-			parcel.Media.mediaType = msg.mediaType;
-			parcel.ObscureMedia = msg.obscureMedia;
-			parcel.ObscureMusic = msg.obscureMusic;
-			parcel.SeeAVs = msg.seeAVs;
-			parcel.AnyAVSounds = msg.anyAVSounds;
-			parcel.GroupAVSounds = msg.groupAVSounds;
+			parcel.snapshotID = msg.snapshotID;
+			parcel.status = msg.status;
+			parcel.totalPrims = msg.totalPrims;
+			parcel.userLocation = msg.userLocation;
+			parcel.userLookAt = msg.userLookAt;
+			parcel.media.mediaDesc = msg.mediaDesc;
+			parcel.media.mediaHeight = msg.mediaHeight;
+			parcel.media.mediaWidth = msg.mediaWidth;
+			parcel.media.mediaLoop = msg.mediaLoop;
+			parcel.media.mediaType = msg.mediaType;
+			parcel.obscureMedia = msg.obscureMedia;
+			parcel.obscureMusic = msg.obscureMusic;
+			parcel.seeAVs = msg.seeAVs;
+			parcel.anyAVSounds = msg.anyAVSounds;
+			parcel.groupAVSounds = msg.groupAVSounds;
 
 			if (_Client.Settings.PARCEL_TRACKING) {
 				synchronized (simulator.getParcels()) {
-					simulator.getParcels().put(parcel.LocalID, parcel);
+					simulator.getParcels().put(parcel.localID, parcel);
 				}
 
 				boolean set = false;
@@ -1043,8 +1043,8 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 						bit = index % 8;
 						index >>= 3;
 
-						if ((parcel.Bitmap[index] & (1 << bit)) != 0) {
-							simulator.setParcelMap(y, x, parcel.LocalID);
+						if ((parcel.bitmap[index] & (1 << bit)) != 0) {
+							simulator.setParcelMap(y, x, parcel.localID);
 							set = true;
 						}
 					}
@@ -1062,13 +1062,13 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 			// auto request acl, will be stored in parcel tracking dictionary if
 			// enabled
 			if (_Client.Settings.ALWAYS_REQUEST_PARCEL_ACL) {
-				RequestParcelAccessList(simulator, parcel.LocalID, AccessList.Both, sequenceID);
+				RequestParcelAccessList(simulator, parcel.localID, AccessList.Both, sequenceID);
 			}
 
 			// auto request dwell, will be stored in parcel tracking dictionary
 			// if enables
 			if (_Client.Settings.ALWAYS_REQUEST_PARCEL_DWELL) {
-				RequestDwell(simulator, parcel.LocalID);
+				RequestDwell(simulator, parcel.localID);
 			}
 
 			// Fire the callback for parcel properties being received
@@ -1091,21 +1091,21 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 
 		ParcelInfo parcelInfo = new ParcelInfo();
 
-		parcelInfo.ActualArea = info.Data.ActualArea;
-		parcelInfo.AuctionID = info.Data.AuctionID;
-		parcelInfo.BillableArea = info.Data.BillableArea;
-		parcelInfo.Description = Helpers.BytesToString(info.Data.getDesc());
-		parcelInfo.Dwell = info.Data.Dwell;
-		parcelInfo.GlobalX = info.Data.GlobalX;
-		parcelInfo.GlobalY = info.Data.GlobalY;
-		parcelInfo.GlobalZ = info.Data.GlobalZ;
-		parcelInfo.ID = info.Data.ParcelID;
-		parcelInfo.Mature = ((info.Data.Flags & 1) != 0) ? true : false;
-		parcelInfo.Name = Helpers.BytesToString(info.Data.getName());
-		parcelInfo.OwnerID = info.Data.OwnerID;
-		parcelInfo.SalePrice = info.Data.SalePrice;
-		parcelInfo.SimName = Helpers.BytesToString(info.Data.getSimName());
-		parcelInfo.SnapshotID = info.Data.SnapshotID;
+		parcelInfo.actualArea = info.Data.ActualArea;
+		parcelInfo.auctionID = info.Data.AuctionID;
+		parcelInfo.billableArea = info.Data.BillableArea;
+		parcelInfo.description = Helpers.BytesToString(info.Data.getDesc());
+		parcelInfo.dwell = info.Data.Dwell;
+		parcelInfo.globalX = info.Data.GlobalX;
+		parcelInfo.globalY = info.Data.GlobalY;
+		parcelInfo.globalZ = info.Data.GlobalZ;
+		parcelInfo.id = info.Data.ParcelID;
+		parcelInfo.mature = ((info.Data.Flags & 1) != 0) ? true : false;
+		parcelInfo.name = Helpers.BytesToString(info.Data.getName());
+		parcelInfo.ownerID = info.Data.OwnerID;
+		parcelInfo.salePrice = info.Data.SalePrice;
+		parcelInfo.simName = Helpers.BytesToString(info.Data.getSimName());
+		parcelInfo.snapshotID = info.Data.SnapshotID;
 
 		OnParcelInfoReply.dispatch(new ParcelInfoReplyCallbackArgs(parcelInfo));
 	}
@@ -1123,9 +1123,9 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 
 			for (int i = 0; i < reply.List.length; i++) {
 				ParcelAccessEntry pae = new ParcelAccessEntry();
-				pae.AgentID = reply.List[i].ID;
-				pae.Time = Helpers.UnixTimeToDateTime(reply.List[i].Time);
-				pae.Flags = AccessList.setValue(reply.List[i].Flags);
+				pae.agentID = reply.List[i].ID;
+				pae.time = Helpers.UnixTimeToDateTime(reply.List[i].Time);
+				pae.flags = AccessList.setValue(reply.List[i].Flags);
 
 				accessList.add(pae);
 			}
@@ -1134,9 +1134,9 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 				if (simulator.getParcels().containsKey(reply.Data.LocalID)) {
 					Parcel parcel = simulator.getParcels().get(reply.Data.LocalID);
 					if (reply.Data.Flags == AccessList.Ban) {
-						parcel.AccessBlackList = accessList;
+						parcel.accessBlackList = accessList;
 					} else {
-						parcel.AccessWhiteList = accessList;
+						parcel.accessWhiteList = accessList;
 					}
 
 					simulator.getParcels().put(reply.Data.LocalID, parcel);
@@ -1155,12 +1155,12 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 
 			for (int i = 0; i < msg.Data.length; i++) {
 				ParcelPrimOwners primOwner = new ParcelPrimOwners();
-				primOwner.OwnerID = msg.Data[i].OwnerID;
-				primOwner.Count = msg.Data[i].Count;
-				primOwner.IsGroupOwned = msg.Data[i].IsGroupOwned;
-				primOwner.OnlineStatus = msg.Data[i].OnlineStatus;
+				primOwner.ownerID = msg.Data[i].OwnerID;
+				primOwner.count = msg.Data[i].Count;
+				primOwner.isGroupOwned = msg.Data[i].IsGroupOwned;
+				primOwner.onlineStatus = msg.Data[i].OnlineStatus;
 				if (msg.TimeStamp != null && i < msg.TimeStamp.length)
-					primOwner.NewestPrim = new Date(msg.TimeStamp[i] & 0xFFFF);
+					primOwner.newestPrim = new Date(msg.TimeStamp[i] & 0xFFFF);
 
 				primOwners.add(primOwner);
 			}
@@ -1176,11 +1176,11 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 
 			for (int i = 0; i < msg.PrimOwnersBlock.length; i++) {
 				ParcelPrimOwners primOwner = new ParcelPrimOwners();
-				primOwner.OwnerID = msg.PrimOwnersBlock[i].ownerID;
-				primOwner.Count = msg.PrimOwnersBlock[i].count;
-				primOwner.IsGroupOwned = msg.PrimOwnersBlock[i].isGroupOwned;
-				primOwner.OnlineStatus = msg.PrimOwnersBlock[i].onlineStatus;
-				primOwner.NewestPrim = msg.PrimOwnersBlock[i].timeStamp;
+				primOwner.ownerID = msg.PrimOwnersBlock[i].ownerID;
+				primOwner.count = msg.PrimOwnersBlock[i].count;
+				primOwner.isGroupOwned = msg.PrimOwnersBlock[i].isGroupOwned;
+				primOwner.onlineStatus = msg.PrimOwnersBlock[i].onlineStatus;
+				primOwner.newestPrim = msg.PrimOwnersBlock[i].timeStamp;
 
 				primOwners.add(primOwner);
 			}

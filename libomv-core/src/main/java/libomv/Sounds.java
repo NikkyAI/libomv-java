@@ -1,4 +1,4 @@
-package libomv.model;
+package libomv;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

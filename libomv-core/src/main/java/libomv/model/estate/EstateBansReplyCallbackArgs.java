@@ -9,24 +9,9 @@ import libomv.utils.CallbackArgs;
  * Returned, along with other info, upon a successful .RequestInfo()
  */
 public class EstateBansReplyCallbackArgs implements CallbackArgs {
-	private final int m_estateID;
-	private final int m_count;
-	private final ArrayList<UUID> m_banned;
-
-	// The identifier of the estate
-	public int getEstateID() {
-		return m_estateID;
-	}
-
-	// The number of returned items
-	public int getCount() {
-		return m_count;
-	}
-
-	// List of UUIDs of Banned Users
-	public ArrayList<UUID> getBanned() {
-		return m_banned;
-	}
+	private final int estateID;
+	private final int count;
+	private final ArrayList<UUID> banned;
 
 	/**
 	 * Construct a new instance of the EstateBansReplyEventArgs class
@@ -39,8 +24,24 @@ public class EstateBansReplyCallbackArgs implements CallbackArgs {
 	 *            User UUIDs banned
 	 */
 	public EstateBansReplyCallbackArgs(int estateID, int count, ArrayList<UUID> banned) {
-		this.m_estateID = estateID;
-		this.m_count = count;
-		this.m_banned = banned;
+		this.estateID = estateID;
+		this.count = count;
+		this.banned = banned;
 	}
+
+	// The identifier of the estate
+	public int getEstateID() {
+		return estateID;
+	}
+
+	// The number of returned items
+	public int getCount() {
+		return count;
+	}
+
+	// List of UUIDs of Banned Users
+	public ArrayList<UUID> getBanned() {
+		return banned;
+	}
+
 }

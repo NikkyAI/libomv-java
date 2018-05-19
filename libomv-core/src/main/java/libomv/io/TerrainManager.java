@@ -98,7 +98,7 @@ public class TerrainManager implements PacketCallback {
 		while (true) {
 			TerrainHeader header = TerrainCompressor.decodePatchHeader(bitpack);
 
-			if (header.QuantWBits == TerrainCompressor.END_OF_PATCHES)
+			if (header.quantWBits == TerrainCompressor.END_OF_PATCHES)
 				break;
 
 			x = header.getX();
@@ -107,7 +107,7 @@ public class TerrainManager implements PacketCallback {
 			if (x >= TerrainCompressor.PATCHES_PER_EDGE || y >= TerrainCompressor.PATCHES_PER_EDGE) {
 				logger.warn(GridClient.Log(String.format(
 						"Invalid LayerData land packet, x=%d, y=%d, dc_offset=%f, range=%d, quant_wbits=%d, patchids=%d, count=%d",
-						x, y, header.DCOffset, header.Range, header.QuantWBits, header.PatchIDs, count), _Client));
+						x, y, header.dcOffset, header.range, header.quantWBits, header.patchIDs, count), _Client));
 				return;
 			}
 
@@ -128,9 +128,9 @@ public class TerrainManager implements PacketCallback {
 
 			if (storeLandPatches) {
 				TerrainPatch patch = new TerrainPatch();
-				patch.Data = heightmap;
-				patch.X = x;
-				patch.Y = y;
+				patch.data = heightmap;
+				patch.x = x;
+				patch.y = y;
 				simulator.Terrain[y * 16 + x] = patch;
 			}
 		}

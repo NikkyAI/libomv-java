@@ -13,8 +13,13 @@ import libomv.utils.CallbackArgs;
  *            null
  */
 public class ItemCreatedCallbackArgs implements CallbackArgs {
-	boolean success;
-	InventoryItem item;
+	private final boolean success;
+	private final InventoryItem item;
+
+	public ItemCreatedCallbackArgs(boolean success, InventoryItem item) {
+		this.success = success;
+		this.item = item;
+	}
 
 	public boolean getSuccess() {
 		return success;
@@ -24,8 +29,4 @@ public class ItemCreatedCallbackArgs implements CallbackArgs {
 		return item;
 	}
 
-	public ItemCreatedCallbackArgs(boolean success, InventoryItem item) {
-		this.success = success;
-		this.item = item;
-	}
 }

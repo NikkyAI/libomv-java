@@ -68,7 +68,6 @@ import libomv.io.SimulatorManager;
 import libomv.io.capabilities.CapsCallback;
 import libomv.io.capabilities.CapsClient;
 import libomv.model.Inventory;
-import libomv.model.LLObject.SaleType;
 import libomv.model.Simulator;
 import libomv.model.agent.InstantMessageCallbackArgs;
 import libomv.model.agent.InstantMessageDialog;
@@ -93,6 +92,7 @@ import libomv.model.inventory.TaskItemReceivedCallbackArgs;
 import libomv.model.login.LoginProgressCallbackArgs;
 import libomv.model.login.LoginResponseData;
 import libomv.model.login.LoginStatus;
+import libomv.model.object.SaleType;
 import libomv.packets.BulkUpdateInventoryPacket;
 import libomv.packets.CopyInventoryFromNotecardPacket;
 import libomv.packets.CopyInventoryItemPacket;
@@ -2447,9 +2447,9 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 				Callback<XferDownload> xferCallback = new Callback<XferDownload>() {
 					@Override
 					public boolean callback(XferDownload download) {
-						if (download.XferID == xferID) {
+						if (download.xferID == xferID) {
 							try {
-								taskDownloadEvent.set(Helpers.BytesToString(download.AssetData));
+								taskDownloadEvent.set(Helpers.BytesToString(download.assetData));
 							} catch (UnsupportedEncodingException e1) {
 								taskDownloadEvent.set(Helpers.EmptyString);
 							}
@@ -3013,24 +3013,24 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 			// TODO: MainAvatar.InstantMessageDialog.GroupNotice can also be an
 			// inventory offer, should we handle it here?
 
-			if (OnInventoryObjectOffered != null && (e.getIM().Dialog == InstantMessageDialog.InventoryOffered
-					|| e.getIM().Dialog == InstantMessageDialog.TaskInventoryOffered)) {
+			if (OnInventoryObjectOffered != null && (e.getIM().dialog == InstantMessageDialog.InventoryOffered
+					|| e.getIM().dialog == InstantMessageDialog.TaskInventoryOffered)) {
 				AssetType type = AssetType.Unknown;
 				UUID objectID = UUID.Zero;
 				boolean fromTask = false;
 
-				if (e.getIM().Dialog == InstantMessageDialog.InventoryOffered) {
-					if (e.getIM().BinaryBucket.length == 17) {
-						type = AssetType.setValue(e.getIM().BinaryBucket[0]);
-						objectID = new UUID(e.getIM().BinaryBucket, 1);
+				if (e.getIM().dialog == InstantMessageDialog.InventoryOffered) {
+					if (e.getIM().binaryBucket.length == 17) {
+						type = AssetType.setValue(e.getIM().binaryBucket[0]);
+						objectID = new UUID(e.getIM().binaryBucket, 1);
 						fromTask = false;
 					} else {
 						logger.warn(GridClient.Log("Malformed inventory offer from agent", _Client));
 						return false;
 					}
-				} else if (e.getIM().Dialog == InstantMessageDialog.TaskInventoryOffered) {
-					if (e.getIM().BinaryBucket.length == 1) {
-						type = AssetType.setValue(e.getIM().BinaryBucket[0]);
+				} else if (e.getIM().dialog == InstantMessageDialog.TaskInventoryOffered) {
+					if (e.getIM().binaryBucket.length == 1) {
+						type = AssetType.setValue(e.getIM().binaryBucket[0]);
 						fromTask = true;
 					} else {
 						logger.warn(GridClient.Log("Malformed inventory offer from object", _Client));
@@ -3046,9 +3046,9 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 					imp.AgentData.AgentID = _Client.Self.getAgentID();
 					imp.AgentData.SessionID = _Client.Self.getSessionID();
 					imp.MessageBlock.FromGroup = false;
-					imp.MessageBlock.ToAgentID = e.getIM().FromAgentID;
+					imp.MessageBlock.ToAgentID = e.getIM().fromAgentID;
 					imp.MessageBlock.Offline = 0;
-					imp.MessageBlock.ID = e.getIM().IMSessionID;
+					imp.MessageBlock.ID = e.getIM().imSessionID;
 					imp.MessageBlock.Timestamp = 0;
 					imp.MessageBlock.setFromAgentName(Helpers.StringToBytes(_Client.Self.getName()));
 					imp.MessageBlock.setMessage(Helpers.EmptyBytes);
@@ -3063,7 +3063,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 
 					if (args.getAccept()) {
 						// Accept the inventory offer
-						switch (e.getIM().Dialog) {
+						switch (e.getIM().dialog) {
 						case InventoryOffered:
 							imp.MessageBlock.Dialog = InstantMessageDialog.InventoryAccepted.getValue();
 							break;
@@ -3079,7 +3079,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 						imp.MessageBlock.setBinaryBucket(args.getFolderID().getBytes());
 					} else {
 						// Decline the inventory offer
-						switch (e.getIM().Dialog) {
+						switch (e.getIM().dialog) {
 						case InventoryOffered:
 							imp.MessageBlock.Dialog = InstantMessageDialog.InventoryDeclined.getValue();
 							break;
@@ -3194,16 +3194,16 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 
 				synchronized (_Store) {
 					logger.debug(
-							GridClient.Log("Setting InventoryRoot to " + replyData.InventoryRoot.toString(), _Client));
-					_Store.setInventoryFolder(replyData.InventoryRoot);
-					for (int i = 0; i < replyData.InventorySkeleton.length; i++) {
-						_Store.add(replyData.InventorySkeleton[i]);
+							GridClient.Log("Setting InventoryRoot to " + replyData.inventoryRoot.toString(), _Client));
+					_Store.setInventoryFolder(replyData.inventoryRoot);
+					for (int i = 0; i < replyData.inventorySkeleton.length; i++) {
+						_Store.add(replyData.inventorySkeleton[i]);
 					}
 
-					logger.debug(GridClient.Log("Setting LibraryRoot to " + replyData.LibraryRoot.toString(), _Client));
-					_Store.setLibraryFolder(replyData.LibraryRoot, replyData.LibraryOwner);
-					for (int i = 0; i < replyData.LibrarySkeleton.length; i++) {
-						_Store.add(replyData.LibrarySkeleton[i]);
+					logger.debug(GridClient.Log("Setting LibraryRoot to " + replyData.libraryRoot.toString(), _Client));
+					_Store.setLibraryFolder(replyData.libraryRoot, replyData.libraryOwner);
+					for (int i = 0; i < replyData.librarySkeleton.length; i++) {
+						_Store.add(replyData.librarySkeleton[i]);
 					}
 				}
 				_Store.printUnresolved();

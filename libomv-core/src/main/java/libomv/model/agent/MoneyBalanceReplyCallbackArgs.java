@@ -6,48 +6,13 @@ import libomv.utils.CallbackArgs;
 // Contains the transaction summary when an item is purchased, money is
 // given, or land is purchased
 public class MoneyBalanceReplyCallbackArgs implements CallbackArgs {
-	private final UUID m_TransactionID;
-	private final boolean m_Success;
-	private final int m_Balance;
-	private final int m_MetersCredit;
-	private final int m_MetersCommitted;
-	private final String m_Description;
-	private TransactionInfo m_TransactionInfo;
-
-	// Get the ID of the transaction
-	public UUID getTransactionID() {
-		return m_TransactionID;
-	}
-
-	// True of the transaction was successful
-	public boolean getSuccess() {
-		return m_Success;
-	}
-
-	// Get the remaining currency balance
-	public int getBalance() {
-		return m_Balance;
-	}
-
-	// Get the meters credited
-	public int getMetersCredit() {
-		return m_MetersCredit;
-	}
-
-	// Get the meters comitted
-	public int getMetersCommitted() {
-		return m_MetersCommitted;
-	}
-
-	// Get the description of the transaction
-	public String getDescription() {
-		return m_Description;
-	}
-
-	// Detailed transaction information
-	public TransactionInfo getTransactionInfo() {
-		return m_TransactionInfo;
-	}
+	private final UUID transactionID;
+	private final boolean success;
+	private final int balance;
+	private final int metersCredit;
+	private final int metersCommitted;
+	private final String description;
+	private TransactionInfo transactionInfo;
 
 	/**
 	 * Construct a new instance of the MoneyBalanceReplyEventArgs object
@@ -67,14 +32,50 @@ public class MoneyBalanceReplyCallbackArgs implements CallbackArgs {
 	 * @param transactionInfo
 	 *            Transaction info
 	 */
-	public MoneyBalanceReplyCallbackArgs(UUID transactionID, boolean transactionSuccess, int balance,
-			int metersCredit, int metersCommitted, String description, TransactionInfo transactionInfo) {
-		this.m_TransactionID = transactionID;
-		this.m_Success = transactionSuccess;
-		this.m_Balance = balance;
-		this.m_MetersCredit = metersCredit;
-		this.m_MetersCommitted = metersCommitted;
-		this.m_Description = description;
-		this.m_TransactionInfo = transactionInfo;
+	public MoneyBalanceReplyCallbackArgs(UUID transactionID, boolean transactionSuccess, int balance, int metersCredit,
+			int metersCommitted, String description, TransactionInfo transactionInfo) {
+		this.transactionID = transactionID;
+		this.success = transactionSuccess;
+		this.balance = balance;
+		this.metersCredit = metersCredit;
+		this.metersCommitted = metersCommitted;
+		this.description = description;
+		this.transactionInfo = transactionInfo;
 	}
+
+	// Get the ID of the transaction
+	public UUID getTransactionID() {
+		return transactionID;
+	}
+
+	// True of the transaction was successful
+	public boolean getSuccess() {
+		return success;
+	}
+
+	// Get the remaining currency balance
+	public int getBalance() {
+		return balance;
+	}
+
+	// Get the meters credited
+	public int getMetersCredit() {
+		return metersCredit;
+	}
+
+	// Get the meters comitted
+	public int getMetersCommitted() {
+		return metersCommitted;
+	}
+
+	// Get the description of the transaction
+	public String getDescription() {
+		return description;
+	}
+
+	// Detailed transaction information
+	public TransactionInfo getTransactionInfo() {
+		return transactionInfo;
+	}
+
 }

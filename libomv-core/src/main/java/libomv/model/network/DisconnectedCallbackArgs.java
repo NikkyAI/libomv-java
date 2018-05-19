@@ -8,6 +8,11 @@ public class DisconnectedCallbackArgs implements CallbackArgs {
 	private final DisconnectType type;
 	private final String message;
 
+	public DisconnectedCallbackArgs(DisconnectType type, String message) {
+		this.type = type;
+		this.message = message;
+	}
+
 	public DisconnectType getDisconnectType() {
 		return type;
 	}
@@ -16,8 +21,4 @@ public class DisconnectedCallbackArgs implements CallbackArgs {
 		return message;
 	}
 
-	public DisconnectedCallbackArgs(DisconnectType type, String message) {
-		this.type = type;
-		this.message = message;
-	}
 }

@@ -44,7 +44,6 @@ import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.ObjectPhysicsPropertiesMessage;
 import libomv.capabilities.IMessage;
 import libomv.io.capabilities.CapsCallback;
-import libomv.model.LLObject.SaleType;
 import libomv.model.login.LoginProgressCallbackArgs;
 import libomv.model.login.LoginStatus;
 import libomv.model.network.DisconnectedCallbackArgs;
@@ -62,6 +61,7 @@ import libomv.model.object.PayPriceReplyCallbackArgs;
 import libomv.model.object.PhysicsPropertiesCallbackArgs;
 import libomv.model.object.PrimCallbackArgs;
 import libomv.model.object.ReportType;
+import libomv.model.object.SaleType;
 import libomv.model.object.TerseObjectUpdateCallbackArgs;
 import libomv.model.object.UpdateType;
 import libomv.model.Simulator;
@@ -243,7 +243,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				synchronized (simulators) {
 					// Iterate through all of the simulators
 					for (SimulatorManager sim : simulators) {
-						float adjSeconds = seconds * sim.Statistics.Dilation;
+						float adjSeconds = seconds * sim.Statistics.dilation;
 
 						// Iterate through all of this sims avatars
 						synchronized (sim.getObjectsAvatars()) {
@@ -1724,7 +1724,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	}
 
 	protected final void UpdateDilation(SimulatorManager s, int dilation) {
-		s.Statistics.Dilation = dilation / 65535.0f;
+		s.Statistics.dilation = dilation / 65535.0f;
 	}
 
 	private static ConstructionData CreateConstructionData(Primitive enclosing, PCode pcode,
@@ -1822,57 +1822,57 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 			switch (bytes.length) {
 			case 76:
 				// Collision normal for avatar
-				objectupdate.CollisionPlane = new Vector4(bytes, pos, true);
+				objectupdate.collisionPlane = new Vector4(bytes, pos, true);
 				pos += 16;
 				// fall through
 			case 60:
 				// Position
-				objectupdate.Position = new Vector3(bytes, pos, true);
+				objectupdate.position = new Vector3(bytes, pos, true);
 				pos += 12;
 				// Velocity
-				objectupdate.Velocity = new Vector3(bytes, pos, true);
+				objectupdate.velocity = new Vector3(bytes, pos, true);
 				pos += 12;
 				// Acceleration
-				objectupdate.Acceleration = new Vector3(bytes, pos, true);
+				objectupdate.acceleration = new Vector3(bytes, pos, true);
 				pos += 12;
 				// Rotation (theta)
-				objectupdate.Rotation = new Quaternion(bytes, pos, true, true);
+				objectupdate.rotation = new Quaternion(bytes, pos, true, true);
 				pos += 12;
 				// Angular velocity (omega)
-				objectupdate.AngularVelocity = new Vector3(bytes, pos, true);
+				objectupdate.angularVelocity = new Vector3(bytes, pos, true);
 				pos += 12;
 				break;
 			case 48:
 				// Collision normal for avatar
-				objectupdate.CollisionPlane = new Vector4(bytes, pos, true);
+				objectupdate.collisionPlane = new Vector4(bytes, pos, true);
 				pos += 16;
 				// fall through
 			case 32:
 				// The bytes is an array of unsigned shorts
 
 				// Position
-				objectupdate.Position = new Vector3(Helpers.UInt16ToFloatL(bytes, pos, -0.5f * 256.0f, 1.5f * 256.0f),
+				objectupdate.position = new Vector3(Helpers.UInt16ToFloatL(bytes, pos, -0.5f * 256.0f, 1.5f * 256.0f),
 						Helpers.UInt16ToFloatL(bytes, pos + 2, -0.5f * 256.0f, 1.5f * 256.0f),
 						Helpers.UInt16ToFloatL(bytes, pos + 4, -256.0f, 3.0f * 256.0f));
 				pos += 6;
 				// Velocity
-				objectupdate.Velocity = new Vector3(Helpers.UInt16ToFloatL(bytes, pos, -256.0f, 256.0f),
+				objectupdate.velocity = new Vector3(Helpers.UInt16ToFloatL(bytes, pos, -256.0f, 256.0f),
 						Helpers.UInt16ToFloatL(bytes, pos + 2, -256.0f, 256.0f),
 						Helpers.UInt16ToFloatL(bytes, pos + 4, -256.0f, 256.0f));
 				pos += 6;
 				// Acceleration
-				objectupdate.Acceleration = new Vector3(Helpers.UInt16ToFloatL(bytes, pos, -256.0f, 256.0f),
+				objectupdate.acceleration = new Vector3(Helpers.UInt16ToFloatL(bytes, pos, -256.0f, 256.0f),
 						Helpers.UInt16ToFloatL(bytes, pos + 2, -256.0f, 256.0f),
 						Helpers.UInt16ToFloatL(bytes, pos + 4, -256.0f, 256.0f));
 				pos += 6;
 				// Rotation (theta)
-				objectupdate.Rotation = new Quaternion(Helpers.UInt16ToFloatL(bytes, pos, -1.0f, 1.0f),
+				objectupdate.rotation = new Quaternion(Helpers.UInt16ToFloatL(bytes, pos, -1.0f, 1.0f),
 						Helpers.UInt16ToFloatL(bytes, pos + 2, -1.0f, 1.0f),
 						Helpers.UInt16ToFloatL(bytes, pos + 4, -1.0f, 1.0f),
 						Helpers.UInt16ToFloatL(bytes, pos + 6, -1.0f, 1.0f));
 				pos += 8;
 				// Angular velocity (omega)
-				objectupdate.AngularVelocity = new Vector3(
+				objectupdate.angularVelocity = new Vector3(
 						Helpers.UInt16ToFloatL(block.getObjectData(), pos, -256.0f, 256.0f),
 						Helpers.UInt16ToFloatL(block.getObjectData(), pos + 2, -256.0f, 256.0f),
 						Helpers.UInt16ToFloatL(block.getObjectData(), pos + 4, -256.0f, 256.0f));
@@ -1882,29 +1882,29 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				// The bytes is an array of single bytes (8-bit numbers)
 
 				// Position
-				objectupdate.Position = new Vector3(Helpers.ByteToFloat(block.getObjectData(), pos, -256.0f, 256.0f),
+				objectupdate.position = new Vector3(Helpers.ByteToFloat(block.getObjectData(), pos, -256.0f, 256.0f),
 						Helpers.ByteToFloat(block.getObjectData(), pos + 1, -256.0f, 256.0f),
 						Helpers.ByteToFloat(block.getObjectData(), pos + 2, -256.0f, 256.0f));
 				pos += 3;
 				// Velocity
-				objectupdate.Velocity = new Vector3(Helpers.ByteToFloat(block.getObjectData(), pos, -256.0f, 256.0f),
+				objectupdate.velocity = new Vector3(Helpers.ByteToFloat(block.getObjectData(), pos, -256.0f, 256.0f),
 						Helpers.ByteToFloat(block.getObjectData(), pos + 1, -256.0f, 256.0f),
 						Helpers.ByteToFloat(block.getObjectData(), pos + 2, -256.0f, 256.0f));
 				pos += 3;
 				// Accleration
-				objectupdate.Acceleration = new Vector3(
+				objectupdate.acceleration = new Vector3(
 						Helpers.ByteToFloat(block.getObjectData(), pos, -256.0f, 256.0f),
 						Helpers.ByteToFloat(block.getObjectData(), pos + 1, -256.0f, 256.0f),
 						Helpers.ByteToFloat(block.getObjectData(), pos + 2, -256.0f, 256.0f));
 				pos += 3;
 				// Rotation
-				objectupdate.Rotation = new Quaternion(Helpers.ByteToFloat(block.getObjectData(), pos, -1.0f, 1.0f),
+				objectupdate.rotation = new Quaternion(Helpers.ByteToFloat(block.getObjectData(), pos, -1.0f, 1.0f),
 						Helpers.ByteToFloat(block.getObjectData(), pos + 1, -1.0f, 1.0f),
 						Helpers.ByteToFloat(block.getObjectData(), pos + 2, -1.0f, 1.0f),
 						Helpers.ByteToFloat(block.getObjectData(), pos + 3, -1.0f, 1.0f));
 				pos += 4;
 				// Angular Velocity
-				objectupdate.AngularVelocity = new Vector3(
+				objectupdate.angularVelocity = new Vector3(
 						Helpers.ByteToFloat(block.getObjectData(), pos, -256.0f, 256.0f),
 						Helpers.ByteToFloat(block.getObjectData(), pos + 1, -256.0f, 256.0f),
 						Helpers.ByteToFloat(block.getObjectData(), pos + 2, -256.0f, 256.0f));
@@ -1931,7 +1931,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				data = CreateConstructionData(prim, pcode, block);
 				// Textures
 				try {
-					objectupdate.Textures = new TextureEntry(block.getTextureEntry(), 0,
+					objectupdate.textures = new TextureEntry(block.getTextureEntry(), 0,
 							block.getTextureEntry().length);
 				} catch (Exception ex) {
 					logger.warn("Failed to create Texture for object update.", ex);
@@ -1987,7 +1987,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 				// Textures, texture animations, particle system, and extra
 				// params
-				prim.textures = objectupdate.Textures;
+				prim.textures = objectupdate.textures;
 
 				prim.textureAnim = prim.textures.new TextureAnimation(block.getTextureAnim(), 0);
 				prim.particleSys = new ParticleSystem(block.getPSBlock(), 0);
@@ -2017,12 +2017,12 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				prim.scratchPad = Helpers.EmptyBytes;
 
 				// Packed parameters
-				prim.collisionPlane = objectupdate.CollisionPlane;
-				prim.position = objectupdate.Position;
-				prim.velocity = objectupdate.Velocity;
-				prim.acceleration = objectupdate.Acceleration;
-				prim.rotation = objectupdate.Rotation;
-				prim.angularVelocity = objectupdate.AngularVelocity;
+				prim.collisionPlane = objectupdate.collisionPlane;
+				prim.position = objectupdate.position;
+				prim.velocity = objectupdate.velocity;
+				prim.acceleration = objectupdate.acceleration;
+				prim.rotation = objectupdate.rotation;
+				prim.angularVelocity = objectupdate.angularVelocity;
 				// #endregion
 
 				OnObjectUpdate.dispatch(
@@ -2047,12 +2047,12 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 					_Client.Self.setLocalID(block.ID);
 
 					// Packed parameters
-					_Client.Self.setCollisionPlane(objectupdate.CollisionPlane);
-					_Client.Self.setRelativePosition(objectupdate.Position);
-					_Client.Self.setVelocity(objectupdate.Velocity);
-					_Client.Self.setAcceleration(objectupdate.Acceleration);
-					_Client.Self.setRelativeRotation(objectupdate.Rotation);
-					_Client.Self.setAngularVelocity(objectupdate.AngularVelocity);
+					_Client.Self.setCollisionPlane(objectupdate.collisionPlane);
+					_Client.Self.setRelativePosition(objectupdate.position);
+					_Client.Self.setVelocity(objectupdate.velocity);
+					_Client.Self.setAcceleration(objectupdate.acceleration);
+					_Client.Self.setRelativeRotation(objectupdate.rotation);
+					_Client.Self.setAngularVelocity(objectupdate.angularVelocity);
 					// #endregion
 				}
 
@@ -2061,10 +2061,10 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				Avatar avatar = getAvatar(simulator, block.ID, block.FullID, isNewObject);
 				data = CreateConstructionData(avatar, pcode, block);
 
-				objectupdate.Avatar = true;
+				objectupdate.avatar = true;
 				// Textures
 				try {
-					objectupdate.Textures = new TextureEntry(block.getTextureEntry(), 0,
+					objectupdate.textures = new TextureEntry(block.getTextureEntry(), 0,
 							block.getTextureEntry().length);
 				} catch (Exception ex) {
 					logger.warn("Failed to create Texture for avatar update.", ex);
@@ -2076,12 +2076,12 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				int oldSeatID = avatar.parentID;
 
 				avatar.scale = block.Scale;
-				avatar.collisionPlane = objectupdate.CollisionPlane;
-				avatar.position = objectupdate.Position;
-				avatar.velocity = objectupdate.Velocity;
-				avatar.acceleration = objectupdate.Acceleration;
-				avatar.rotation = objectupdate.Rotation;
-				avatar.angularVelocity = objectupdate.AngularVelocity;
+				avatar.collisionPlane = objectupdate.collisionPlane;
+				avatar.position = objectupdate.position;
+				avatar.velocity = objectupdate.velocity;
+				avatar.acceleration = objectupdate.acceleration;
+				avatar.rotation = objectupdate.rotation;
+				avatar.angularVelocity = objectupdate.angularVelocity;
 				avatar.nameValues = nameValues;
 				avatar.primData = data;
 				if (block.getData().length > 0) {
@@ -2093,7 +2093,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				SetAvatarSittingOn(simulator, avatar, block.ParentID, oldSeatID);
 
 				// Textures
-				avatar.textures = objectupdate.Textures;
+				avatar.textures = objectupdate.textures;
 
 				// #endregion Create an Avatar from the decoded data
 
@@ -2140,37 +2140,37 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				ObjectMovementUpdate update = new ObjectMovementUpdate();
 
 				// LocalID
-				update.LocalID = localid;
+				update.localID = localid;
 				// State
-				update.State = data[pos++];
+				update.state = data[pos++];
 				// Avatar boolean
-				update.Avatar = (data[pos++] != 0);
+				update.avatar = (data[pos++] != 0);
 				// Collision normal for avatar
-				if (update.Avatar) {
-					update.CollisionPlane = new Vector4(data, pos, true);
+				if (update.avatar) {
+					update.collisionPlane = new Vector4(data, pos, true);
 					pos += 16;
 				}
 				// Position
-				update.Position = new Vector3(data, pos, true);
+				update.position = new Vector3(data, pos, true);
 				pos += 12;
 				// Velocity
-				update.Velocity = new Vector3(Helpers.UInt16ToFloatL(data, pos, -128.0f, 128.0f),
+				update.velocity = new Vector3(Helpers.UInt16ToFloatL(data, pos, -128.0f, 128.0f),
 						Helpers.UInt16ToFloatL(data, pos + 2, -128.0f, 128.0f),
 						Helpers.UInt16ToFloatL(data, pos + 4, -128.0f, 128.0f));
 				pos += 6;
 				// Acceleration
-				update.Acceleration = new Vector3(Helpers.UInt16ToFloatL(data, pos, -64.0f, 64.0f),
+				update.acceleration = new Vector3(Helpers.UInt16ToFloatL(data, pos, -64.0f, 64.0f),
 						Helpers.UInt16ToFloatL(data, pos + 2, -64.0f, 64.0f),
 						Helpers.UInt16ToFloatL(data, pos + 4, -64.0f, 64.0f));
 				pos += 6;
 				// Rotation (theta)
-				update.Rotation = new Quaternion(Helpers.UInt16ToFloatL(data, pos, -1.0f, 1.0f),
+				update.rotation = new Quaternion(Helpers.UInt16ToFloatL(data, pos, -1.0f, 1.0f),
 						Helpers.UInt16ToFloatL(data, pos + 2, -1.0f, 1.0f),
 						Helpers.UInt16ToFloatL(data, pos + 4, -1.0f, 1.0f),
 						Helpers.UInt16ToFloatL(data, pos + 6, -1.0f, 1.0f));
 				pos += 8;
 				// Angular velocity (omega)
-				update.AngularVelocity = new Vector3(Helpers.UInt16ToFloatL(data, pos, -64.0f, 64.0f),
+				update.angularVelocity = new Vector3(Helpers.UInt16ToFloatL(data, pos, -64.0f, 64.0f),
 						Helpers.UInt16ToFloatL(data, pos + 2, -64.0f, 64.0f),
 						Helpers.UInt16ToFloatL(data, pos + 4, -64.0f, 64.0f));
 				pos += 6;
@@ -2180,16 +2180,16 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				// Most likely because this is the number of bytes that the following
 				// TextureEntry block has
 				if (block.getTextureEntry().length > 4) {
-					update.Textures = new TextureEntry(block.getTextureEntry(), 4, block.getTextureEntry().length - 4);
+					update.textures = new TextureEntry(block.getTextureEntry(), 4, block.getTextureEntry().length - 4);
 				}
 				// #endregion Decode update data
 
 				Primitive obj = null;
 				if (objectTracking) {
-					if (update.Avatar) {
-						obj = getAvatar(simulator, update.LocalID, null, null);
+					if (update.avatar) {
+						obj = getAvatar(simulator, update.localID, null, null);
 					} else {
-						obj = getPrimitive(simulator, update.LocalID, null, null);
+						obj = getPrimitive(simulator, update.localID, null, null);
 					}
 				}
 
@@ -2198,28 +2198,28 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 						new TerseObjectUpdateCallbackArgs(simulator, obj, update, terse.RegionData.TimeDilation));
 
 				// #region Update _Client.Self
-				if (update.LocalID == _Client.Self.getLocalID()) {
-					_Client.Self.setCollisionPlane(update.CollisionPlane);
-					_Client.Self.setRelativePosition(update.Position);
-					_Client.Self.setVelocity(update.Velocity);
-					_Client.Self.setAcceleration(update.Acceleration);
-					_Client.Self.setRelativeRotation(update.Rotation);
-					_Client.Self.setAngularVelocity(update.AngularVelocity);
+				if (update.localID == _Client.Self.getLocalID()) {
+					_Client.Self.setCollisionPlane(update.collisionPlane);
+					_Client.Self.setRelativePosition(update.position);
+					_Client.Self.setVelocity(update.velocity);
+					_Client.Self.setAcceleration(update.acceleration);
+					_Client.Self.setRelativeRotation(update.rotation);
+					_Client.Self.setAngularVelocity(update.angularVelocity);
 				}
 				// #endregion Update _Client.Self
 
 				if (obj != null && objectTracking) {
-					obj.position = update.Position;
-					obj.rotation = update.Rotation;
-					obj.velocity = update.Velocity;
-					obj.collisionPlane = update.CollisionPlane;
-					obj.acceleration = update.Acceleration;
-					obj.angularVelocity = update.AngularVelocity;
+					obj.position = update.position;
+					obj.rotation = update.rotation;
+					obj.velocity = update.velocity;
+					obj.collisionPlane = update.collisionPlane;
+					obj.acceleration = update.acceleration;
+					obj.angularVelocity = update.angularVelocity;
 					if (obj.primData == null)
 						obj.primData = obj.new ConstructionData();
-					obj.primData.state = update.State;
-					if (update.Textures != null)
-						obj.textures = update.Textures;
+					obj.primData.state = update.state;
+					if (update.textures != null)
+						obj.textures = update.textures;
 				}
 			} catch (Throwable ex) {
 				logger.warn(GridClient.Log(ex.getMessage(), _Client), ex);

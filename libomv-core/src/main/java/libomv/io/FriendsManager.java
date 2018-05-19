@@ -558,12 +558,12 @@ public class FriendsManager implements PacketCallback {
 	private class Self_OnInstantMessage implements Callback<InstantMessageCallbackArgs> {
 		@Override
 		public boolean callback(InstantMessageCallbackArgs e) {
-			UUID friendID = e.getIM().FromAgentID;
-			String name = e.getIM().FromAgentName;
+			UUID friendID = e.getIM().fromAgentID;
+			String name = e.getIM().fromAgentName;
 
-			switch (e.getIM().Dialog) {
+			switch (e.getIM().dialog) {
 			case FriendshipOffered:
-				UUID sessionID = e.getIM().IMSessionID;
+				UUID sessionID = e.getIM().imSessionID;
 				synchronized (_FriendRequests) {
 					_FriendRequests.put(friendID, sessionID);
 				}
@@ -597,12 +597,12 @@ public class FriendsManager implements PacketCallback {
 		@Override
 		public boolean callback(LoginProgressCallbackArgs e) {
 			if (e.getStatus() == LoginStatus.Success) {
-				if (e.getReply().BuddyList != null) {
+				if (e.getReply().buddyList != null) {
 					synchronized (_FriendList) {
-						for (BuddyListEntry buddy : e.getReply().BuddyList) {
-							UUID bubid = UUID.parse(buddy.buddy_id);
+						for (BuddyListEntry buddy : e.getReply().buddyList) {
+							UUID bubid = UUID.parse(buddy.buddyID);
 							if (!_FriendList.containsKey(bubid)) {
-								addFriend(new FriendInfo(bubid, buddy.buddy_rights_given, buddy.buddy_rights_has));
+								addFriend(new FriendInfo(bubid, buddy.buddyRightsGiven, buddy.buddyRightsHas));
 							}
 						}
 					}

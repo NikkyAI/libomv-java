@@ -9,32 +9,32 @@ import libomv.utils.Helpers;
 /* Instant Message */
 public final class InstantMessage {
 	/* Key of sender */
-	public UUID FromAgentID;
+	public UUID fromAgentID;
 	/* Name of sender */
-	public String FromAgentName;
+	public String fromAgentName;
 	/* Key of destination avatar */
-	public UUID ToAgentID;
+	public UUID toAgentID;
 	/* ID of originating estate */
 
-	public int ParentEstateID;
+	public int parentEstateID;
 	/* Key of originating region */
-	public UUID RegionID;
+	public UUID regionID;
 	/* Coordinates in originating region */
-	public Vector3 Position;
+	public Vector3 position;
 	/* Instant message type */
-	public InstantMessageDialog Dialog;
+	public InstantMessageDialog dialog;
 	/* Group IM session toggle */
-	public boolean GroupIM;
+	public boolean groupIM;
 	/* Key of IM session, for Group Messages, the groups UUID */
-	public UUID IMSessionID;
+	public UUID imSessionID;
 	/* Timestamp of the instant message */
-	public Date Timestamp;
+	public Date timestamp;
 	/* Instant message text */
-	public String Message;
+	public String message;
 	/* Whether this message is held for offline avatars */
-	public InstantMessageOnline Offline;
+	public InstantMessageOnline offline;
 	/* Context specific packed data */
-	public byte[] BinaryBucket;
+	public byte[] binaryBucket;
 
 	/*
 	 * Print the struct data as a string

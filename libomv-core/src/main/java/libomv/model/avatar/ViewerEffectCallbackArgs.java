@@ -16,6 +16,18 @@ public class ViewerEffectCallbackArgs implements CallbackArgs {
 	private float duration;
 	private UUID dataID;
 
+	public ViewerEffectCallbackArgs(EffectType type, Simulator simulator, UUID sourceAvatar, UUID targetObject,
+			Vector3d targetPos, byte target, float duration, UUID dataID) {
+		this.type = type;
+		this.simulator = simulator;
+		this.sourceAvatar = sourceAvatar;
+		this.targetObject = targetObject;
+		this.targetPos = targetPos;
+		this.target = target;
+		this.duration = duration;
+		this.dataID = dataID;
+	}
+
 	public EffectType getType() {
 		return type;
 	}
@@ -48,15 +60,4 @@ public class ViewerEffectCallbackArgs implements CallbackArgs {
 		return dataID;
 	}
 
-	public ViewerEffectCallbackArgs(EffectType type, Simulator simulator, UUID sourceAvatar, UUID targetObject,
-			Vector3d targetPos, byte target, float duration, UUID dataID) {
-		this.type = type;
-		this.simulator = simulator;
-		this.sourceAvatar = sourceAvatar;
-		this.targetObject = targetObject;
-		this.targetPos = targetPos;
-		this.target = target;
-		this.duration = duration;
-		this.dataID = dataID;
-	}
 }

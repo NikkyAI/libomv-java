@@ -750,12 +750,12 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 			for (DirClassifiedReplyPacket.QueryRepliesBlock block : reply.QueryReplies) {
 				Classified classified = new Classified();
 
-				classified.CreationDate = Helpers.UnixTimeToDateTime(block.CreationDate);
-				classified.ExpirationDate = Helpers.UnixTimeToDateTime(block.ExpirationDate);
-				classified.Flags = ClassifiedFlags.setValue(block.ClassifiedFlags);
-				classified.ID = block.ClassifiedID;
-				classified.Name = Helpers.BytesToString(block.getName());
-				classified.Price = block.PriceForListing;
+				classified.creationDate = Helpers.UnixTimeToDateTime(block.CreationDate);
+				classified.expirationDate = Helpers.UnixTimeToDateTime(block.ExpirationDate);
+				classified.flags = ClassifiedFlags.setValue(block.ClassifiedFlags);
+				classified.id = block.ClassifiedID;
+				classified.name = Helpers.BytesToString(block.getName());
+				classified.price = block.PriceForListing;
 
 				classifieds.add(classified);
 			}
@@ -780,12 +780,12 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 			for (DirLandReplyPacket.QueryRepliesBlock block : reply.QueryReplies) {
 				DirectoryParcel dirParcel = new DirectoryParcel();
 
-				dirParcel.ActualArea = block.ActualArea;
-				dirParcel.ID = block.ParcelID;
-				dirParcel.Name = Helpers.BytesToString(block.getName());
-				dirParcel.SalePrice = block.SalePrice;
-				dirParcel.Auction = block.Auction;
-				dirParcel.ForSale = block.ForSale;
+				dirParcel.actualArea = block.ActualArea;
+				dirParcel.id = block.ParcelID;
+				dirParcel.name = Helpers.BytesToString(block.getName());
+				dirParcel.salePrice = block.SalePrice;
+				dirParcel.auction = block.Auction;
+				dirParcel.forSale = block.ForSale;
 
 				parcelsForSale.add(dirParcel);
 			}
@@ -809,12 +809,12 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 			for (DirLandReplyMessage.QueryReply block : reply.queryReplies) {
 				DirectoryParcel dirParcel = new DirectoryParcel();
 
-				dirParcel.ActualArea = block.actualArea;
-				dirParcel.ID = block.parcelID;
-				dirParcel.Name = block.name;
-				dirParcel.SalePrice = block.salePrice;
-				dirParcel.Auction = block.auction;
-				dirParcel.ForSale = block.forSale;
+				dirParcel.actualArea = block.actualArea;
+				dirParcel.id = block.parcelID;
+				dirParcel.name = block.name;
+				dirParcel.salePrice = block.salePrice;
+				dirParcel.auction = block.auction;
+				dirParcel.forSale = block.forSale;
 
 				parcelsForSale.add(dirParcel);
 			}
@@ -839,10 +839,10 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 
 			for (DirPeopleReplyPacket.QueryRepliesBlock reply : peopleReply.QueryReplies) {
 				AgentSearchData searchData = new AgentSearchData();
-				searchData.Online = reply.Online;
-				searchData.FirstName = Helpers.BytesToString(reply.getFirstName());
-				searchData.LastName = Helpers.BytesToString(reply.getLastName());
-				searchData.AgentID = reply.AgentID;
+				searchData.online = reply.Online;
+				searchData.firstName = Helpers.BytesToString(reply.getFirstName());
+				searchData.lastName = Helpers.BytesToString(reply.getLastName());
+				searchData.agentID = reply.AgentID;
 				matches.add(searchData);
 			}
 			OnDirPeople.dispatch(new DirPeopleReplyCallbackArgs(peopleReply.QueryID, matches));
@@ -864,9 +864,9 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 			ArrayList<GroupSearchData> matches = new ArrayList<GroupSearchData>(groupsReply.QueryReplies.length);
 			for (DirGroupsReplyPacket.QueryRepliesBlock reply : groupsReply.QueryReplies) {
 				GroupSearchData groupsData = new GroupSearchData();
-				groupsData.GroupID = reply.GroupID;
-				groupsData.GroupName = Helpers.BytesToString(reply.getGroupName());
-				groupsData.Members = reply.Members;
+				groupsData.groupID = reply.GroupID;
+				groupsData.groupName = Helpers.BytesToString(reply.getGroupName());
+				groupsData.members = reply.Members;
 				matches.add(groupsData);
 			}
 			OnDirGroups.dispatch(new DirGroupsReplyCallbackArgs(groupsReply.QueryID, matches));
@@ -888,19 +888,19 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 			PlacesReplyMessage replyMessage = (PlacesReplyMessage) message;
 			for (PlacesReplyMessage.QueryData block : replyMessage.queryDataBlocks) {
 				PlacesSearchData place = new PlacesSearchData();
-				place.ActualArea = block.actualArea;
-				place.BillableArea = block.billableArea;
-				place.Desc = block.description;
-				place.Dwell = block.dwell;
-				place.Flags = PlacesFlags.setValue(block.flags);
-				place.GlobalX = block.globalX;
-				place.GlobalY = block.globalY;
-				place.GlobalZ = block.globalZ;
-				place.Name = block.name;
-				place.OwnerID = block.ownerID;
-				place.Price = block.price;
-				place.SimName = block.simName;
-				place.SnapshotID = block.snapShotID;
+				place.actualArea = block.actualArea;
+				place.billableArea = block.billableArea;
+				place.desc = block.description;
+				place.dwell = block.dwell;
+				place.flags = PlacesFlags.setValue(block.flags);
+				place.globalX = block.globalX;
+				place.globalY = block.globalY;
+				place.globalZ = block.globalZ;
+				place.name = block.name;
+				place.ownerID = block.ownerID;
+				place.price = block.price;
+				place.simName = block.simName;
+				place.snapshotID = block.snapShotID;
 				place.SKU = block.productSku;
 				places.add(place);
 			}
@@ -924,19 +924,19 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 
 			for (PlacesReplyPacket.QueryDataBlock block : placesReply.QueryData) {
 				PlacesSearchData place = new PlacesSearchData();
-				place.OwnerID = block.OwnerID;
-				place.Name = Helpers.BytesToString(block.getName());
-				place.Desc = Helpers.BytesToString(block.getDesc());
-				place.ActualArea = block.ActualArea;
-				place.BillableArea = block.BillableArea;
-				place.Flags = PlacesFlags.setValue(block.Flags);
-				place.GlobalX = block.GlobalX;
-				place.GlobalY = block.GlobalY;
-				place.GlobalZ = block.GlobalZ;
-				place.SimName = Helpers.BytesToString(block.getSimName());
-				place.SnapshotID = block.SnapshotID;
-				place.Dwell = block.Dwell;
-				place.Price = block.Price;
+				place.ownerID = block.OwnerID;
+				place.name = Helpers.BytesToString(block.getName());
+				place.desc = Helpers.BytesToString(block.getDesc());
+				place.actualArea = block.ActualArea;
+				place.billableArea = block.BillableArea;
+				place.flags = PlacesFlags.setValue(block.Flags);
+				place.globalX = block.GlobalX;
+				place.globalY = block.GlobalY;
+				place.globalZ = block.GlobalZ;
+				place.simName = Helpers.BytesToString(block.getSimName());
+				place.snapshotID = block.SnapshotID;
+				place.dwell = block.Dwell;
+				place.price = block.Price;
 
 				places.add(place);
 			}
@@ -960,12 +960,12 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 
 			for (DirEventsReplyPacket.QueryRepliesBlock reply : eventsReply.QueryReplies) {
 				EventsSearchData eventsData = new EventsSearchData();
-				eventsData.Owner = reply.OwnerID;
-				eventsData.Name = Helpers.BytesToString(reply.getName());
-				eventsData.ID = reply.EventID;
-				eventsData.Date = Helpers.BytesToString(reply.getDate());
-				eventsData.Time = reply.UnixTime;
-				eventsData.Flags = EventFlags.setValue(reply.EventFlags);
+				eventsData.owner = reply.OwnerID;
+				eventsData.name = Helpers.BytesToString(reply.getName());
+				eventsData.id = reply.EventID;
+				eventsData.date = Helpers.BytesToString(reply.getDate());
+				eventsData.time = reply.UnixTime;
+				eventsData.flags = EventFlags.setValue(reply.EventFlags);
 				matches.add(eventsData);
 			}
 			OnDirEvents.dispatch(new DirEventsReplyCallbackArgs(eventsReply.QueryID, matches));
@@ -985,19 +985,19 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 		if (OnEventInfo.count() > 0) {
 			EventInfoReplyPacket eventReply = (EventInfoReplyPacket) packet;
 			EventInfo evinfo = new EventInfo();
-			evinfo.ID = eventReply.EventData.EventID;
-			evinfo.Name = Helpers.BytesToString(eventReply.EventData.getName());
-			evinfo.Desc = Helpers.BytesToString(eventReply.EventData.getDesc());
-			evinfo.Amount = eventReply.EventData.Amount;
-			evinfo.Category = EventCategories.valueOf(Helpers.BytesToString(eventReply.EventData.getCategory()));
-			evinfo.Cover = eventReply.EventData.Cover;
-			evinfo.Creator = new UUID(eventReply.EventData.getCreator());
-			evinfo.Date = Helpers.BytesToString(eventReply.EventData.getDate());
-			evinfo.DateUTC = eventReply.EventData.DateUTC;
-			evinfo.Duration = eventReply.EventData.Duration;
-			evinfo.Flags = EventFlags.setValue(eventReply.EventData.EventFlags);
-			evinfo.SimName = Helpers.BytesToString(eventReply.EventData.getSimName());
-			evinfo.GlobalPos = eventReply.EventData.GlobalPos;
+			evinfo.id = eventReply.EventData.EventID;
+			evinfo.name = Helpers.BytesToString(eventReply.EventData.getName());
+			evinfo.desc = Helpers.BytesToString(eventReply.EventData.getDesc());
+			evinfo.amount = eventReply.EventData.Amount;
+			evinfo.category = EventCategories.valueOf(Helpers.BytesToString(eventReply.EventData.getCategory()));
+			evinfo.cover = eventReply.EventData.Cover;
+			evinfo.creator = new UUID(eventReply.EventData.getCreator());
+			evinfo.date = Helpers.BytesToString(eventReply.EventData.getDate());
+			evinfo.dateUTC = eventReply.EventData.DateUTC;
+			evinfo.duration = eventReply.EventData.Duration;
+			evinfo.flags = EventFlags.setValue(eventReply.EventData.EventFlags);
+			evinfo.simName = Helpers.BytesToString(eventReply.EventData.getSimName());
+			evinfo.globalPos = eventReply.EventData.GlobalPos;
 
 			OnEventInfo.dispatch(new EventInfoReplyCallbackArgs(evinfo));
 		}
@@ -1019,11 +1019,11 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 			for (QueryRepliesBlock block : reply.QueryReplies) {
 				DirectoryParcel p = new DirectoryParcel();
 
-				p.ID = block.ParcelID;
-				p.Name = Helpers.BytesToString(block.getName());
-				p.Dwell = block.Dwell;
-				p.Auction = block.Auction;
-				p.ForSale = block.ForSale;
+				p.id = block.ParcelID;
+				p.name = Helpers.BytesToString(block.getName());
+				p.dwell = block.Dwell;
+				p.auction = block.Auction;
+				p.forSale = block.ForSale;
 
 				result.add(p);
 			}

@@ -20,12 +20,7 @@ import libomv.primitives.Primitive;
  * </p>
  */
 public class ObjectPropertiesUpdatedCallbackArgs extends ObjectPropertiesCallbackArgs {
-	private final Primitive m_Prim;
-
-	// Get the primitive details
-	public final Primitive getPrim() {
-		return m_Prim;
-	}
+	private final Primitive prim;
 
 	/**
 	 * Construct a new instance of the ObjectPropertiesUpdatedEvenrArgs class
@@ -39,6 +34,12 @@ public class ObjectPropertiesUpdatedCallbackArgs extends ObjectPropertiesCallbac
 	 */
 	public ObjectPropertiesUpdatedCallbackArgs(Simulator simulator, Primitive prim, ObjectProperties props) {
 		super(simulator, props);
-		this.m_Prim = prim;
+		this.prim = prim;
 	}
+
+	// Get the primitive details
+	public final Primitive getPrim() {
+		return prim;
+	}
+
 }

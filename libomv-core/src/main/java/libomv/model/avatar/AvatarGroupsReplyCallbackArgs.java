@@ -9,6 +9,11 @@ public class AvatarGroupsReplyCallbackArgs implements CallbackArgs {
 	private UUID avatarID;
 	private ArrayList<AvatarGroup> avatarGroups;
 
+	public AvatarGroupsReplyCallbackArgs(UUID avatarID, ArrayList<AvatarGroup> avatarGroups) {
+		this.avatarID = avatarID;
+		this.avatarGroups = avatarGroups;
+	}
+
 	public UUID getAvatarID() {
 		return avatarID;
 	}
@@ -17,8 +22,4 @@ public class AvatarGroupsReplyCallbackArgs implements CallbackArgs {
 		return avatarGroups;
 	}
 
-	public AvatarGroupsReplyCallbackArgs(UUID avatarID, ArrayList<AvatarGroup> avatarGroups) {
-		this.avatarID = avatarID;
-		this.avatarGroups = avatarGroups;
-	}
 }

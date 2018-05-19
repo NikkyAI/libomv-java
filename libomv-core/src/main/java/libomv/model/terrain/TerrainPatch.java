@@ -2,9 +2,9 @@ package libomv.model.terrain;
 
 public class TerrainPatch {
 	/* X position of this patch */
-	public int X;
+	public int x;
 	/* Y position of this patch */
-	public int Y;
+	public int y;
 	/* A 16x16 array of floats holding decompressed layer data */
-	public float[] Data;
+	public float[] data;
 }

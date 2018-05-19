@@ -569,16 +569,16 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 		// runs background thread to read from DatagramSocket
 		start();
 
-		Statistics.ConnectTime = System.currentTimeMillis();
+		Statistics.connectTime = System.currentTimeMillis();
 
 		logger.debug(GridClient.Log("Waiting for connection", _Client));
 		while (true) {
 			if (_Connected) {
 				logger.debug(GridClient.Log(
-						String.format("Connected! Waited %d ms", System.currentTimeMillis() - Statistics.ConnectTime),
+						String.format("Connected! Waited %d ms", System.currentTimeMillis() - Statistics.connectTime),
 						_Client));
 				break;
-			} else if (System.currentTimeMillis() - Statistics.ConnectTime > _Client.Settings.LOGIN_TIMEOUT) {
+			} else if (System.currentTimeMillis() - Statistics.connectTime > _Client.Settings.LOGIN_TIMEOUT) {
 				logger.error(
 						GridClient.Log("Giving up on waiting for RegionHandshake for " + this.toString(), _Client));
 
@@ -739,7 +739,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 
 			TerrainPatch patch = Terrain[patchY * 16 + patchX];
 			if (patch != null) {
-				return patch.Data[y * 16 + x];
+				return patch.data[y * 16 + x];
 			}
 		}
 		return Float.NaN;
@@ -759,11 +759,11 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 		// logger.debug("Sending ping with oldestUnacked=" + oldestUnacked);
 
 		StartPingCheckPacket ping = new StartPingCheckPacket();
-		ping.PingID.PingID = Statistics.LastPingID++;
+		ping.PingID.PingID = Statistics.lastPingID++;
 		ping.PingID.OldestUnacked = oldestUnacked;
 		ping.getHeader().setReliable(false);
 		sendPacket(ping);
-		Statistics.LastPingSent = System.currentTimeMillis();
+		Statistics.lastPingSent = System.currentTimeMillis();
 	}
 
 	public URI getCapabilityURI(String capability) {
@@ -857,11 +857,11 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 					continue;
 				}
 
-				Statistics.RecvBytes += numBytes;
-				Statistics.RecvPackets++;
+				Statistics.recvBytes += numBytes;
+				Statistics.recvPackets++;
 
 				if (packet.getHeader().getResent()) {
-					Statistics.ReceivedResends++;
+					Statistics.receivedResends++;
 				}
 
 				// Handle appended ACKs
@@ -1055,7 +1055,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 
 						// Stats tracking
 						outgoing.resendCount++;
-						Statistics.ResentPackets++;
+						Statistics.resentPackets++;
 
 						sendPacketFinal(outgoing);
 					} else {
@@ -1126,8 +1126,8 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 		}
 
 		// Stats tracking
-		Statistics.SentBytes += dataLength;
-		Statistics.SentPackets++;
+		Statistics.sentBytes += dataLength;
+		Statistics.sentPackets++;
 		_Client.Network.RaisePacketSentCallback(buffer.array(), dataLength, this);
 	}
 
@@ -1150,17 +1150,17 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 		@Override
 		public void run() {
 			boolean full = _InBytes.isFull();
-			long recv = Statistics.RecvBytes;
-			long sent = Statistics.SentBytes;
+			long recv = Statistics.recvBytes;
+			long sent = Statistics.sentBytes;
 			long old_in = _InBytes.offer(recv);
 			long old_out = _OutBytes.offer(sent);
 
 			if (full) {
-				Statistics.IncomingBPS = (int) (recv - old_in) / _InBytes.size();
-				Statistics.OutgoingBPS = (int) (sent - old_out) / _OutBytes.size();
-				logger.debug(GridClient.Log(getName() + ", Incoming: " + Statistics.IncomingBPS + " bps, Out: "
-						+ Statistics.OutgoingBPS + " bps, Lag: " + Statistics.LastLag + " ms, Pings: "
-						+ Statistics.ReceivedPongs + "/" + Statistics.SentPings, _Client));
+				Statistics.incomingBPS = (int) (recv - old_in) / _InBytes.size();
+				Statistics.outgoingBPS = (int) (sent - old_out) / _OutBytes.size();
+				logger.debug(GridClient.Log(getName() + ", Incoming: " + Statistics.incomingBPS + " bps, Out: "
+						+ Statistics.outgoingBPS + " bps, Lag: " + Statistics.lastLag + " ms, Pings: "
+						+ Statistics.receivedPongs + "/" + Statistics.sentPings, _Client));
 			}
 		}
 	}
@@ -1173,7 +1173,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-			Statistics.SentPings++;
+			Statistics.sentPings++;
 		}
 	}
 

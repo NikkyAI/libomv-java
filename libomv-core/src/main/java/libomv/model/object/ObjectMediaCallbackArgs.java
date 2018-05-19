@@ -4,40 +4,41 @@ import libomv.primitives.MediaEntry;
 import libomv.utils.CallbackArgs;
 
 public class ObjectMediaCallbackArgs implements CallbackArgs {
-	private boolean m_Success;
-	private String m_Version;
-	private MediaEntry[] m_FaceMedia;
+	private boolean success;
+	private String version;
+	private MediaEntry[] faceMedia;
+
+	public ObjectMediaCallbackArgs(boolean success, String version, MediaEntry[] faceMedia) {
+		this.success = success;
+		this.version = version;
+		this.faceMedia = faceMedia;
+	}
 
 	// Indicates if the operation was successful
 	public final boolean getSuccess() {
-		return m_Success;
+		return success;
 	}
 
 	public final void setSuccess(boolean value) {
-		m_Success = value;
+		success = value;
 	}
 
 	// Media version string
 	public final String getVersion() {
-		return m_Version;
+		return version;
 	}
 
 	public final void setVersion(String value) {
-		m_Version = value;
+		version = value;
 	}
 
 	// Array of media entries indexed by face number
 	public final MediaEntry[] getFaceMedia() {
-		return m_FaceMedia;
+		return faceMedia;
 	}
 
 	public final void setFaceMedia(MediaEntry[] value) {
-		m_FaceMedia = value;
+		faceMedia = value;
 	}
 
-	public ObjectMediaCallbackArgs(boolean success, String version, MediaEntry[] faceMedia) {
-		this.m_Success = success;
-		this.m_Version = version;
-		this.m_FaceMedia = faceMedia;
-	}
 }

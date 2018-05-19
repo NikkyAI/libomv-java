@@ -260,7 +260,7 @@ public class AppearanceManager implements PacketCallback {
 
 		for (int i = 0; i < _Textures.length; i++) {
 			_Textures[i] = new TextureData();
-			_Textures[i].TextureIndex = AvatarTextureIndex.setValue(i);
+			_Textures[i].textureIndex = AvatarTextureIndex.setValue(i);
 		}
 
 		if (_Client.Assets == null)
@@ -338,7 +338,7 @@ public class AppearanceManager implements PacketCallback {
 						// Set all of the baked textures to UUID.Zero to force rebaking
 						for (BakeType type : BakeType.values()) {
 							if (type != BakeType.Unknown)
-								_Textures[BakeTypeToAgentTextureIndex(type).getValue()].TextureID = UUID.Zero;
+								_Textures[BakeTypeToAgentTextureIndex(type).getValue()].textureID = UUID.Zero;
 						}
 					}
 
@@ -468,7 +468,7 @@ public class AppearanceManager implements PacketCallback {
 					if (type != WearableType.Invalid) {
 						if (_Wearables.containsKey(type)) {
 							for (WearableData data : _Wearables.get(type)) {
-								hash = UUID.XOr(hash, data.AssetID);
+								hash = UUID.XOr(hash, data.assetID);
 							}
 						}
 					}
@@ -514,7 +514,7 @@ public class AppearanceManager implements PacketCallback {
 	public UUID GetWearableAsset(WearableType type) {
 		synchronized (_Wearables) {
 			if (_Wearables.containsKey(type) && _Wearables.get(type).get(0) != null) {
-				return _Wearables.get(type).get(0).AssetID;
+				return _Wearables.get(type).get(0).assetID;
 			}
 		}
 		return UUID.Zero;
@@ -535,7 +535,7 @@ public class AppearanceManager implements PacketCallback {
 		synchronized (_Wearables) {
 			if (_Wearables.containsKey(type)) {
 				for (WearableData data : _Wearables.get(type))
-					list.add(data.AssetID);
+					list.add(data.assetID);
 			}
 		}
 		return list;
@@ -593,10 +593,10 @@ public class AppearanceManager implements PacketCallback {
 			// Add the given wearables to the wearables collection
 			for (InventoryWearable wearableItem : wearables) {
 				WearableData wd = new WearableData();
-				wd.AssetID = wearableItem.assetID;
-				wd.AssetType = wearableItem.assetType;
-				wd.ItemID = wearableItem.itemID;
-				wd.WearableType = wearableItem.getWearableType();
+				wd.assetID = wearableItem.assetID;
+				wd.assetType = wearableItem.assetType;
+				wd.itemID = wearableItem.itemID;
+				wd.wearableType = wearableItem.getWearableType();
 
 				if (replace) // Dump everything from the key
 					_Wearables.remove(wearableItem.getWearableType());
@@ -655,7 +655,7 @@ public class AppearanceManager implements PacketCallback {
 					Collection<WearableData> worn = _Wearables.get(wearableItem.getWearableType());
 					if (worn != null) {
 						for (WearableData wearable : worn) {
-							if (wearable.ItemID.equals(wearableItem.itemID)) {
+							if (wearable.itemID.equals(wearableItem.itemID)) {
 								_Wearables.remove(wearableItem.getWearableType(), wearable);
 								needSetAppearance = true;
 							}
@@ -759,7 +759,7 @@ public class AppearanceManager implements PacketCallback {
 		synchronized (_Wearables) {
 			for (Entry<WearableType, List<WearableData>> entry : _Wearables.entrySet()) {
 				for (WearableData data : entry.getValue()) {
-					if (data.ItemID.equals(item.itemID))
+					if (data.itemID.equals(item.itemID))
 						return entry.getKey();
 				}
 			}
@@ -1041,7 +1041,7 @@ public class AppearanceManager implements PacketCallback {
 
 					// This appears to be hacked on SL server side to support multi-layers
 					if (_Wearables.containsKey(type) && _Wearables.get(type).get(0) != null)
-						block.ItemID = _Wearables.get(type).get(0).ItemID;
+						block.ItemID = _Wearables.get(type).get(0).itemID;
 					else
 						block.ItemID = UUID.Zero;
 					wearing.WearableData[type.getValue()] = block;
@@ -1066,7 +1066,7 @@ public class AppearanceManager implements PacketCallback {
 			// but cannot be missing in the new set
 			for (Entry<WearableType, List<WearableData>> entry : _Wearables.entrySet()) {
 				for (WearableData data : entry.getValue()) {
-					if (data.AssetType == AssetType.Bodypart)
+					if (data.assetType == AssetType.Bodypart)
 						newWearables.put(entry.getKey(), data);
 				}
 			}
@@ -1074,12 +1074,12 @@ public class AppearanceManager implements PacketCallback {
 			// Add the given wearables to the new wearables collection
 			for (InventoryWearable wearableItem : wearableItems) {
 				WearableData data = new WearableData();
-				data.AssetID = wearableItem.assetID;
-				data.AssetType = wearableItem.assetType;
-				data.ItemID = wearableItem.itemID;
-				data.WearableType = wearableItem.getWearableType();
+				data.assetID = wearableItem.assetID;
+				data.assetType = wearableItem.assetType;
+				data.itemID = wearableItem.itemID;
+				data.wearableType = wearableItem.getWearableType();
 
-				newWearables.put(data.WearableType, data);
+				newWearables.put(data.wearableType, data);
 			}
 
 			// Replace the Wearables collection
@@ -1103,21 +1103,21 @@ public class AppearanceManager implements PacketCallback {
 		Iterator<ColorParamInfo> iter = param.iterator();
 		while (iter.hasNext()) {
 			ColorParamInfo p = iter.next();
-			int n = p.VisualColorParam.colors.length;
+			int n = p.visualColorParam.colors.length;
 
 			Color4 paramColor = new Color4(0, 0, 0, 0);
 
 			if (n == 1) {
 				// We got only one color in this param, use it for application
 				// to the final color
-				paramColor = p.VisualColorParam.colors[0];
+				paramColor = p.visualColorParam.colors[0];
 			} else if (n > 1) {
 				// We have an array of colors in this parameter
 				// First, we need to find out, based on param value
 				// between which two elements of the array our value lands
 
 				// Size of the step using which we iterate from Min to Max
-				float step = (p.VisualParam.maxValue - p.VisualParam.minValue) / ((float) n - 1);
+				float step = (p.visualParam.maxValue - p.visualParam.minValue) / ((float) n - 1);
 
 				// Our color should land inbetween colors in the array with index a and b
 				int indexa = 0;
@@ -1125,8 +1125,8 @@ public class AppearanceManager implements PacketCallback {
 
 				int i = 0;
 
-				for (float a = p.VisualParam.minValue; a <= p.VisualParam.maxValue; a += step) {
-					if (a <= p.Value) {
+				for (float a = p.visualParam.minValue; a <= p.visualParam.maxValue; a += step) {
+					if (a <= p.value) {
 						indexa = i;
 					} else {
 						break;
@@ -1143,20 +1143,20 @@ public class AppearanceManager implements PacketCallback {
 
 				// How far is our value from Index A on the
 				// line from Index A to Index B
-				float distance = p.Value - indexa * step;
+				float distance = p.value - indexa * step;
 
 				// We are at Index A (allowing for some floating point math fuzz),
 				// use the color on that index
 				if (distance < 0.00001f || indexa == indexb) {
-					paramColor = p.VisualColorParam.colors[indexa];
+					paramColor = p.visualColorParam.colors[indexa];
 				} else {
 					// Not so simple as being precisely on the index eh? No problem.
 					// We take the two colors that our param value places us between
 					// and then find the value for each ARGB element that is
 					// somewhere on the line between color1 and color2 at some
 					// distance from the first color
-					Color4 c1 = paramColor = p.VisualColorParam.colors[indexa];
-					Color4 c2 = paramColor = p.VisualColorParam.colors[indexb];
+					Color4 c1 = paramColor = p.visualColorParam.colors[indexa];
+					Color4 c2 = paramColor = p.visualColorParam.colors[indexb];
 
 					// Distance is some fraction of the step, use that fraction
 					// to find the value in the range from color1 to color2
@@ -1179,7 +1179,7 @@ public class AppearanceManager implements PacketCallback {
 
 			// Now that we have calculated color from the scale of colors
 			// that visual params provided, lets apply it to the result
-			switch (p.VisualColorParam.operation) {
+			switch (p.visualColorParam.operation) {
 			case Add:
 				res = Color4.add(res, paramColor);
 				break;
@@ -1187,7 +1187,7 @@ public class AppearanceManager implements PacketCallback {
 				res = Color4.multiply(res, paramColor);
 				break;
 			case Blend:
-				res = Color4.lerp(res, paramColor, p.Value);
+				res = Color4.lerp(res, paramColor, p.value);
 				break;
 			default:
 				break;
@@ -1264,30 +1264,30 @@ public class AppearanceManager implements PacketCallback {
 
 		// Populate collection of alpha masks from visual params
 		// also add color tinting information
-		for (Entry<Integer, Float> kvp : wearable.Asset.params.entrySet()) {
+		for (Entry<Integer, Float> kvp : wearable.asset.params.entrySet()) {
 			if (!VisualParams.params.containsKey(kvp.getKey()))
 				continue;
 
 			VisualParam p = VisualParams.params.get(kvp.getKey());
 
 			ColorParamInfo colorInfo = new ColorParamInfo();
-			colorInfo.VisualParam = p;
-			colorInfo.Value = kvp.getValue();
+			colorInfo.visualParam = p;
+			colorInfo.value = kvp.getValue();
 
 			// Color params
 			if (p.colorParams != null) {
-				colorInfo.VisualColorParam = p.colorParams;
+				colorInfo.visualColorParam = p.colorParams;
 				int key = kvp.getKey();
 
-				if (wearable.WearableType == WearableType.Tattoo) {
+				if (wearable.wearableType == WearableType.Tattoo) {
 					if (key == 1062 || key == 1063 || key == 1064) {
 						colorParams.add(colorInfo);
 					}
-				} else if (wearable.WearableType == WearableType.Jacket) {
+				} else if (wearable.wearableType == WearableType.Jacket) {
 					if (key == 809 || key == 810 || key == 811) {
 						colorParams.add(colorInfo);
 					}
-				} else if (wearable.WearableType == WearableType.Hair) {
+				} else if (wearable.wearableType == WearableType.Hair) {
 					// Param 112 - Rainbow
 					// Param 113 - Red
 					// Param 114 - Blonde
@@ -1295,7 +1295,7 @@ public class AppearanceManager implements PacketCallback {
 					if (key == 112 || key == 113 || key == 114 || key == 115) {
 						colorParams.add(colorInfo);
 					}
-				} else if (wearable.WearableType == WearableType.Skin) {
+				} else if (wearable.wearableType == WearableType.Skin) {
 					// For skin we skip makeup params for now and use only the 3
 					// that are used to determine base skin tone
 					// Param 108 - Rainbow Color
@@ -1332,29 +1332,29 @@ public class AppearanceManager implements PacketCallback {
 		Color4 wearableColor = Color4.White; // Never actually used
 		if (colorParams.size() > 0) {
 			wearableColor = GetColorFromParams(colorParams);
-			logger.debug("Setting tint " + wearableColor + " for " + wearable.WearableType);
+			logger.debug("Setting tint " + wearableColor + " for " + wearable.wearableType);
 		}
 
 		// Loop through all of the texture IDs in this decoded asset and put them in our
 		// cache of worn textures
-		for (Entry<AvatarTextureIndex, UUID> entry : wearable.Asset.textures.entrySet()) {
+		for (Entry<AvatarTextureIndex, UUID> entry : wearable.asset.textures.entrySet()) {
 			int i = AvatarTextureIndex.getValue(entry.getKey());
 
 			// Update information about color and alpha masks for this texture
-			textures[i].AlphaMasks = alphaMasks;
-			textures[i].Color = wearableColor;
+			textures[i].alphaMasks = alphaMasks;
+			textures[i].color = wearableColor;
 
 			// If this texture changed, update the TextureID and clear out the old cached
 			// texture asset
-			if (textures[i].TextureID == null || !textures[i].TextureID.equals(entry.getValue())) {
+			if (textures[i].textureID == null || !textures[i].textureID.equals(entry.getValue())) {
 				// Treat DEFAULT_AVATAR_TEXTURE as null
 				if (entry.getValue().equals(DEFAULT_AVATAR_TEXTURE))
-					textures[i].TextureID = UUID.Zero;
+					textures[i].textureID = UUID.Zero;
 				else
-					textures[i].TextureID = entry.getValue();
-				logger.debug(GridClient.Log("Set " + entry.getKey() + " to " + textures[i].TextureID, _Client));
+					textures[i].textureID = entry.getValue();
+				logger.debug(GridClient.Log("Set " + entry.getKey() + " to " + textures[i].textureID, _Client));
 
-				textures[i].Texture = null;
+				textures[i].texture = null;
 			}
 		}
 	}
@@ -1369,21 +1369,21 @@ public class AppearanceManager implements PacketCallback {
 		}
 
 		public boolean callback(AssetDownload transfer) {
-			if (transfer.Success) {
-				wearable.Asset = (AssetWearable) AssetManager.CreateAssetItem(transfer.AssetType, transfer.ItemID,
-						transfer.AssetData);
-				if (wearable.Asset != null) {
+			if (transfer.success) {
+				wearable.asset = (AssetWearable) AssetManager.CreateAssetItem(transfer.assetType, transfer.itemID,
+						transfer.assetData);
+				if (wearable.asset != null) {
 					DecodeWearableParams(wearable, _Textures);
-					logger.debug(GridClient.Log("Downloaded wearable asset " + wearable.WearableType + " with "
-							+ wearable.Asset.params.size() + " visual params and " + wearable.Asset.textures.size()
+					logger.debug(GridClient.Log("Downloaded wearable asset " + wearable.wearableType + " with "
+							+ wearable.asset.params.size() + " visual params and " + wearable.asset.textures.size()
 							+ " textures", _Client));
 
 				} else {
-					logger.error(GridClient.Log("Failed to decode wearable asset: " + transfer.ItemID, _Client));
+					logger.error(GridClient.Log("Failed to decode wearable asset: " + transfer.itemID, _Client));
 				}
 			} else {
-				logger.warn(GridClient.Log("Wearable " + wearable.WearableType + " {" + wearable.AssetID
-						+ "} failed to download, status:  " + transfer.Status, _Client));
+				logger.warn(GridClient.Log("Wearable " + wearable.wearableType + " {" + wearable.assetID
+						+ "} failed to download, status:  " + transfer.status, _Client));
 			}
 			latch.countDown();
 			return true;
@@ -1414,15 +1414,15 @@ public class AppearanceManager implements PacketCallback {
 				}
 			}
 			if (!isBake) {
-				_Textures[i].Texture = null;
-				_Textures[i].TextureID = null;
-				_Textures[i].Color = null;
+				_Textures[i].texture = null;
+				_Textures[i].textureID = null;
+				_Textures[i].color = null;
 			}
 		}
 
 		final CountDownLatch latch = new CountDownLatch(wearables.size());
 		for (WearableData wearable : wearables.values()) {
-			if (wearable.Asset != null) {
+			if (wearable.asset != null) {
 				DecodeWearableParams(wearable, _Textures);
 				latch.countDown();
 			}
@@ -1436,13 +1436,13 @@ public class AppearanceManager implements PacketCallback {
 
 		ExecutorService executor = Executors.newFixedThreadPool(Math.min(pendingWearables, MAX_CONCURRENT_DOWNLOADS));
 		for (final WearableData wearable : wearables.values()) {
-			if (wearable.Asset == null) {
+			if (wearable.asset == null) {
 				executor.submit(new Runnable() {
 					@Override
 					public void run() {
 						// Fetch this wearable asset
 						try {
-							_Client.Assets.RequestAsset(wearable.AssetID, wearable.AssetType, true,
+							_Client.Assets.RequestAsset(wearable.assetID, wearable.assetType, true,
 									new WearablesReceived(latch, wearable));
 						} catch (Exception ex) {
 						}
@@ -1491,9 +1491,9 @@ public class AppearanceManager implements PacketCallback {
 		// Add the textureID to the list if this layer has a valid textureID set, it has
 		// not already
 		// been downloaded, and it is not already in the download list
-		if (!UUID.isZeroOrNull(textureData.TextureID) && textureData.Texture == null
-				&& !textures.contains(textureData.TextureID))
-			textures.add(textureData.TextureID);
+		if (!UUID.isZeroOrNull(textureData.textureID) && textureData.texture == null
+				&& !textures.contains(textureData.textureID))
+			textures.add(textureData.textureID);
 	}
 
 	/**
@@ -1524,19 +1524,19 @@ public class AppearanceManager implements PacketCallback {
 			_Client.Assets.RequestImage(textureID, new Callback<ImageDownload>() {
 				@Override
 				public boolean callback(ImageDownload download) {
-					if (download.State == TextureRequestState.Finished && download.AssetData != null) {
+					if (download.state == TextureRequestState.Finished && download.assetData != null) {
 						AssetTexture texture = (AssetTexture) AssetManager.CreateAssetItem(AssetType.Texture,
-								download.ItemID, download.AssetData);
+								download.itemID, download.assetData);
 						if (texture == null) {
 							logger.error(GridClient.Log("Failed to decode texture: " + textureID, _Client));
 						}
 
 						for (int i = 0; i < _Textures.length; i++) {
-							if (_Textures[i].TextureID != null && _Textures[i].TextureID.equals(download.ItemID))
-								_Textures[i].Texture = texture;
+							if (_Textures[i].textureID != null && _Textures[i].textureID.equals(download.itemID))
+								_Textures[i].texture = texture;
 						}
 					} else {
-						logger.warn(GridClient.Log("Texture " + download.ItemID
+						logger.warn(GridClient.Log("Texture " + download.itemID
 								+ " failed to download, one or more bakes will be incomplete", _Client));
 					}
 					latch.countDown();
@@ -1563,7 +1563,7 @@ public class AppearanceManager implements PacketCallback {
 		// Check each bake layer in the Textures array for missing bakes
 		for (BakeType type : BakeType.values()) {
 			if (type != BakeType.Unknown) {
-				UUID uuid = _Textures[BakeTypeToAgentTextureIndex(type).getValue()].TextureID;
+				UUID uuid = _Textures[BakeTypeToAgentTextureIndex(type).getValue()].textureID;
 				if (UUID.isZeroOrNull(uuid)) {
 					// If this is the skirt layer and we're not wearing a skirt then skip it
 					if (type == BakeType.Skirt && !_Wearables.containsKey(WearableType.Skirt))
@@ -1597,7 +1597,7 @@ public class AppearanceManager implements PacketCallback {
 
 		// Free up all the textures we're holding on to
 		for (int i = 0; i < _Textures.length; i++) {
-			_Textures[i].Texture = null;
+			_Textures[i].texture = null;
 		}
 
 		// We just allocated and freed a ridiculous amount of memory while baking.
@@ -1646,7 +1646,7 @@ public class AppearanceManager implements PacketCallback {
 			--retries;
 		} while (UUID.isZeroOrNull(newAssetID) && retries > 0);
 
-		_Textures[BakeTypeToAgentTextureIndex(bakeType).getValue()].TextureID = newAssetID;
+		_Textures[BakeTypeToAgentTextureIndex(bakeType).getValue()].textureID = newAssetID;
 
 		if (UUID.isZeroOrNull(newAssetID)) {
 			logger.warn(GridClient.Log("Failed uploading bake " + bakeType, _Client));
@@ -1774,8 +1774,8 @@ public class AppearanceManager implements PacketCallback {
 				// Try and find this value in our collection of downloaded wearables
 				for (Entry<WearableType, List<WearableData>> entry : _Wearables.entrySet()) {
 					for (WearableData data : entry.getValue()) {
-						if (data.Asset != null && data.Asset.params.containsKey(vp.paramID)) {
-							paramValue = data.Asset.params.get(vp.paramID);
+						if (data.asset != null && data.asset.params.containsKey(vp.paramID)) {
+							paramValue = data.asset.params.get(vp.paramID);
 							found = true;
 							break;
 						}
@@ -1841,9 +1841,9 @@ public class AppearanceManager implements PacketCallback {
 					logger.debug(GridClient.Log(
 							"Sending client identification tag: " + _Client.Settings.CLIENT_IDENTIFICATION_TAG,
 							_Client));
-				} else if (_Textures[i].TextureID != UUID.Zero) {
-					face.setTextureID(_Textures[i].TextureID);
-					logger.debug(GridClient.Log("Sending texture entry for " + i + " to " + _Textures[i].TextureID,
+				} else if (_Textures[i].textureID != UUID.Zero) {
+					face.setTextureID(_Textures[i].textureID);
+					logger.debug(GridClient.Log("Sending texture entry for " + i + " to " + _Textures[i].textureID,
 							_Client));
 				}
 			}
@@ -1869,7 +1869,7 @@ public class AppearanceManager implements PacketCallback {
 
 					if (type != WearableType.Invalid && _Wearables.containsKey(type)) {
 						for (WearableData wearable : _Wearables.get(type)) {
-							hash = UUID.XOr(hash, wearable.AssetID);
+							hash = UUID.XOr(hash, wearable.assetID);
 						}
 					}
 				}
@@ -1991,8 +1991,8 @@ public class AppearanceManager implements PacketCallback {
 					if (_Wearables.containsKey(type)) {
 						boolean match = false;
 						for (WearableData wearable : _Wearables.get(type)) {
-							if (wearable != null && wearable.AssetID.equals(block.AssetID)
-									&& wearable.ItemID.equals(block.ItemID)) {
+							if (wearable != null && wearable.assetID.equals(block.AssetID)
+									&& wearable.itemID.equals(block.ItemID)) {
 								// Same wearable as before
 								match = true;
 								break;
@@ -2027,11 +2027,11 @@ public class AppearanceManager implements PacketCallback {
 						WearableType type = WearableType.setValue(block.WearableType);
 
 						WearableData data = new WearableData();
-						data.Asset = null;
-						data.AssetID = block.AssetID;
-						data.AssetType = WearableTypeToAssetType(type);
-						data.ItemID = block.ItemID;
-						data.WearableType = type;
+						data.asset = null;
+						data.assetID = block.AssetID;
+						data.assetType = WearableTypeToAssetType(type);
+						data.itemID = block.ItemID;
+						data.wearableType = type;
 
 						// Add this wearable to our collection
 						_Wearables.put(type, data);
@@ -2067,8 +2067,8 @@ public class AppearanceManager implements PacketCallback {
 			TextureData tex = _Textures[index.getValue()];
 			if (!block.TextureID.equals(UUID.Zero)) {
 				// A simulator has a cache of this bake layer
-				tex.TextureID = block.TextureID;
-				tex.Host = Helpers.BytesToString(block.getHostName());
+				tex.textureID = block.TextureID;
+				tex.host = Helpers.BytesToString(block.getHostName());
 			} else {
 				// TODO:FIXME The server does not have a cache of this bake layer, request
 				// upload

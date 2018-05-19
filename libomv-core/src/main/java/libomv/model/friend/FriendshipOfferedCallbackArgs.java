@@ -9,6 +9,12 @@ public class FriendshipOfferedCallbackArgs implements CallbackArgs {
 	private final String name;
 	private final UUID sessionID;
 
+	public FriendshipOfferedCallbackArgs(UUID friendID, String name, UUID sessionID) {
+		this.friendID = friendID;
+		this.name = name;
+		this.sessionID = sessionID;
+	}
+
 	public UUID getFriendID() {
 		return friendID;
 	}
@@ -21,9 +27,4 @@ public class FriendshipOfferedCallbackArgs implements CallbackArgs {
 		return sessionID;
 	}
 
-	public FriendshipOfferedCallbackArgs(UUID friendID, String name, UUID sessionID) {
-		this.friendID = friendID;
-		this.name = name;
-		this.sessionID = sessionID;
-	}
 }

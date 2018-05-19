@@ -4,25 +4,26 @@ import libomv.model.Simulator;
 import libomv.utils.CallbackArgs;
 
 public class PacketSentCallbackArgs implements CallbackArgs {
-	private final byte[] m_Data;
-	private final int m_SentBytes;
-	private final Simulator m_Simulator;
+	private final byte[] data;
+	private final int sentBytes;
+	private final Simulator simulator;
+
+	public PacketSentCallbackArgs(byte[] data, int bytesSent, Simulator simulator) {
+		this.data = data;
+		this.sentBytes = bytesSent;
+		this.simulator = simulator;
+	}
 
 	public final byte[] getData() {
-		return m_Data;
+		return data;
 	}
 
 	public final int getSentBytes() {
-		return m_SentBytes;
+		return sentBytes;
 	}
 
 	public final Simulator getSimulator() {
-		return m_Simulator;
+		return simulator;
 	}
 
-	public PacketSentCallbackArgs(byte[] data, int bytesSent, Simulator simulator) {
-		this.m_Data = data;
-		this.m_SentBytes = bytesSent;
-		this.m_Simulator = simulator;
-	}
 }

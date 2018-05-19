@@ -5,41 +5,41 @@ import libomv.types.UUID;
 /* Class for regions on the world map */
 public class GridRegion {
 	// Sim X position on World Map
-	public int X;
+	public int x;
 	// Sim Y position on World Map
-	public int Y;
+	public int y;
 	// Sim Name (NOTE: In lowercase!)
-	public String Name;
+	public String name;
 	//
-	public byte Access;
+	public byte access;
 	// Various flags for the region (presumably things like PG/Mature)
-	public int RegionFlags;
+	public int regionFlags;
 	// Sim's defined Water Height
-	public byte WaterHeight;
+	public byte waterHeight;
 	//
-	public byte Agents;
+	public byte agents;
 	// UUID of the World Map image
-	public UUID MapImageID;
+	public UUID mapImageID;
 	// Used for teleporting
-	public long RegionHandle;
+	public long regionHandle;
 
 	// Constructor
 	public GridRegion() {
 	}
 
 	public GridRegion(String name) {
-		Name = name;
+		this.name = name;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("%s (%d/%d), Handle: %d, MapImage: %s, Access: %d, Flags: 0x%8x", Name, X, Y,
-				RegionHandle, MapImageID.toString(), Access, RegionFlags);
+		return String.format("%s (%d/%d), Handle: %d, MapImage: %s, Access: %d, Flags: 0x%8x", name, x, y, regionHandle,
+				mapImageID.toString(), access, regionFlags);
 	}
 
 	@Override
 	public int hashCode() {
-		return ((Integer) X).hashCode() ^ ((Integer) Y).hashCode();
+		return ((Integer) x).hashCode() ^ ((Integer) y).hashCode();
 	}
 
 	@Override
@@ -51,6 +51,6 @@ public class GridRegion {
 	}
 
 	private boolean equals(GridRegion region) {
-		return (this.X == region.X && this.Y == region.Y);
+		return (this.x == region.x && this.y == region.y);
 	}
 }

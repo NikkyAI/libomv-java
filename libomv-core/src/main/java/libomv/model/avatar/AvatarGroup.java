@@ -7,17 +7,17 @@ import libomv.types.UUID;
  */
 public final class AvatarGroup {
 	/* true of Avatar accepts group notices */
-	public boolean AcceptNotices;
+	public boolean acceptNotices;
 	/* Groups Key */
-	public UUID GroupID;
+	public UUID groupID;
 	/* Texture Key for groups insignia */
-	public UUID GroupInsigniaID;
+	public UUID groupInsigniaID;
 	/* Name of the group */
-	public String GroupName;
+	public String groupName;
 	/* Powers avatar has in the group */
-	public long GroupPowers;
+	public long groupPowers;
 	/* Avatars Currently selected title */
-	public String GroupTitle;
+	public String groupTitle;
 	/* true of Avatar has chosen to list this in their profile */
-	public boolean ListInProfile;
+	public boolean listInProfile;
 }

@@ -5,18 +5,8 @@ import libomv.utils.CallbackArgs;
 
 // Represents a response to a request
 public class GroupOperationCallbackArgs implements CallbackArgs {
-	private final UUID m_GroupID;
-	private final boolean m_Success;
-
-	// Get the ID of the group
-	public final UUID getGroupID() {
-		return m_GroupID;
-	}
-
-	// true of the request was successful
-	public final boolean getSuccess() {
-		return m_Success;
-	}
+	private final UUID groupID;
+	private final boolean success;
 
 	/**
 	 * Construct a new instance of the GroupOperationCallbackArgs class
@@ -27,7 +17,18 @@ public class GroupOperationCallbackArgs implements CallbackArgs {
 	 *            true of the request was successful
 	 */
 	public GroupOperationCallbackArgs(UUID groupID, boolean success) {
-		this.m_GroupID = groupID;
-		this.m_Success = success;
+		this.groupID = groupID;
+		this.success = success;
 	}
+
+	// Get the ID of the group
+	public final UUID getGroupID() {
+		return groupID;
+	}
+
+	// true of the request was successful
+	public final boolean getSuccess() {
+		return success;
+	}
+
 }

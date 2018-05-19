@@ -6,17 +6,17 @@ import libomv.types.UUID;
 // Struct representing a group notice list entry
 public final class GroupNoticesListEntry {
 	// Notice ID
-	public UUID NoticeID;
+	public UUID noticeID;
 	// Creation timestamp of notice
 	// TODO: ORIGINAL LINE: public uint Timestamp;
-	public int Timestamp;
+	public int timestamp;
 	// Agent name who created notice
-	public String FromName;
+	public String fromName;
 	// Notice subject
-	public String Subject;
+	public String subject;
 	// Is there an attachment?
-	public boolean HasAttachment;
+	public boolean hasAttachment;
 	// Attachment Type
-	public AssetType AssetType;
+	public AssetType assetType;
 
 }

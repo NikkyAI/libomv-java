@@ -5,28 +5,29 @@ import libomv.utils.CallbackArgs;
 // Event arguments with the result of setting display name
 // operation
 public class SetDisplayNameReplyCallbackArgs implements CallbackArgs {
-	private final int m_Status;
-	private final String m_Reason;
-	private final AgentDisplayName m_DisplayName;
+	private final int status;
+	private final String reason;
+	private final AgentDisplayName displayName;
+
+	public SetDisplayNameReplyCallbackArgs(int status, String reason, AgentDisplayName displayName) {
+		this.status = status;
+		this.reason = reason;
+		this.displayName = displayName;
+	}
 
 	// Status code, 200 indicates setting display name was successful
 	public int getStatus() {
-		return m_Status;
+		return status;
 	}
 
 	// Textual description of the status
 	public String getReason() {
-		return m_Reason;
+		return reason;
 	}
 
 	// Details of the newly set display name
 	public AgentDisplayName getDisplayName() {
-		return m_DisplayName;
+		return displayName;
 	}
 
-	public SetDisplayNameReplyCallbackArgs(int status, String reason, AgentDisplayName displayName) {
-		m_Status = status;
-		m_Reason = reason;
-		m_DisplayName = displayName;
-	}
 }

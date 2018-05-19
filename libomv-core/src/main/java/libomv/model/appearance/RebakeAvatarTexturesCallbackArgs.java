@@ -6,12 +6,7 @@ import libomv.utils.CallbackArgs;
 // Triggered when the simulator requests the agent rebake its appearance.
 // <see cref="RebakeAvatarRequest"/>
 public class RebakeAvatarTexturesCallbackArgs implements CallbackArgs {
-	private final UUID m_textureID;
-
-	// The ID of the Texture Layer to bake
-	public UUID getTextureID() {
-		return m_textureID;
-	}
+	private final UUID textureID;
 
 	/**
 	 * Triggered when the simulator sends a request for this agent to rebake its
@@ -21,6 +16,12 @@ public class RebakeAvatarTexturesCallbackArgs implements CallbackArgs {
 	 *            The ID of the Texture Layer to bake
 	 */
 	public RebakeAvatarTexturesCallbackArgs(UUID textureID) {
-		this.m_textureID = textureID;
+		this.textureID = textureID;
 	}
+
+	// The ID of the Texture Layer to bake
+	public UUID getTextureID() {
+		return textureID;
+	}
+
 }

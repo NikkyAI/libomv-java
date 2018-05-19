@@ -9,18 +9,8 @@ import libomv.utils.CallbackArgs;
  * Raised on LandStatReply when the report type is for "top Scripts"
  */
 public class TopScriptsReplyCallbackArgs implements CallbackArgs {
-	private final int m_objectCount;
-	private final HashMap<UUID, EstateTask> m_Tasks;
-
-	// The number of scripts returned in LandStatReply
-	public int getObjectCount() {
-		return m_objectCount;
-	}
-
-	// A Dictionary of Object UUIDs to tasks returned in LandStatReply
-	public HashMap<UUID, EstateTask> getTasks() {
-		return m_Tasks;
-	}
+	private final int objectCount;
+	private final HashMap<UUID, EstateTask> tasks;
 
 	/**
 	 * Construct a new instance of the TopScriptsReplyEventArgs class
@@ -31,7 +21,18 @@ public class TopScriptsReplyCallbackArgs implements CallbackArgs {
 	 *            Dictionary of Object UUIDs to tasks returned in LandStatReply
 	 */
 	public TopScriptsReplyCallbackArgs(int objectCount, HashMap<UUID, EstateTask> tasks) {
-		this.m_objectCount = objectCount;
-		this.m_Tasks = tasks;
+		this.objectCount = objectCount;
+		this.tasks = tasks;
 	}
+
+	// The number of scripts returned in LandStatReply
+	public int getObjectCount() {
+		return objectCount;
+	}
+
+	// A Dictionary of Object UUIDs to tasks returned in LandStatReply
+	public HashMap<UUID, EstateTask> getTasks() {
+		return tasks;
+	}
+
 }

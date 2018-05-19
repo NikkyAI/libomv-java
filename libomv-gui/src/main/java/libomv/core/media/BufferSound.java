@@ -68,16 +68,16 @@ public class BufferSound extends MediaObject {
 	public class Assets_OnSoundReceived implements Callback<AssetDownload> {
 		@Override
 		public boolean callback(AssetDownload transfer) {
-			if (transfer.Success) {
+			if (transfer.success) {
 				// If this was a Prefetch, just stop here.
 				if (prefetchOnly)
 					return false;
 
-				logger.debug("Opening sound " + transfer.ItemID.toString());
+				logger.debug("Opening sound " + transfer.itemID.toString());
 
 				// Decode the Ogg Vorbis buffer.
-				AssetSound s = (AssetSound) AssetManager.CreateAssetItem(AssetType.Sound, transfer.ItemID,
-						transfer.AssetData);
+				AssetSound s = (AssetSound) AssetManager.CreateAssetItem(AssetType.Sound, transfer.itemID,
+						transfer.assetData);
 
 				try {
 					sound = SoundSystem.createSound(new ByteArrayInputStream(s.getAssetData()), null);
@@ -111,7 +111,7 @@ public class BufferSound extends MediaObject {
 					logger.error("Exception when trying to queue sound data", ex);
 				}
 			} else {
-				logger.error("Failed to download sound: " + transfer.Status.toString());
+				logger.error("Failed to download sound: " + transfer.status.toString());
 			}
 			return false;
 		}

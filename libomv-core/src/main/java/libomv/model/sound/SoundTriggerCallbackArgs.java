@@ -20,54 +20,14 @@ import libomv.utils.CallbackArgs;
  * </p>
  */
 public class SoundTriggerCallbackArgs implements CallbackArgs {
-	private final Simulator m_Simulator;
-	private final UUID m_SoundID;
-	private final UUID m_OwnerID;
-	private final UUID m_ObjectID;
-	private final UUID m_ParentID;
-	private final float m_Gain;
-	private final long m_RegionHandle;
-	private final Vector3 m_Position;
-
-	// Simulator where the event originated
-	public final Simulator getSimulator() {
-		return m_Simulator;
-	}
-
-	// Get the sound asset id
-	public final UUID getSoundID() {
-		return m_SoundID;
-	}
-
-	// Get the ID of the owner
-	public final UUID getOwnerID() {
-		return m_OwnerID;
-	}
-
-	// Get the ID of the Object
-	public final UUID getObjectID() {
-		return m_ObjectID;
-	}
-
-	// Get the ID of the objects parent
-	public final UUID getParentID() {
-		return m_ParentID;
-	}
-
-	// Get the volume level
-	public final float getGain() {
-		return m_Gain;
-	}
-
-	// Get the regionhandle
-	public final long getRegionHandle() {
-		return m_RegionHandle;
-	}
-
-	// Get the source position
-	public final Vector3 getPosition() {
-		return m_Position;
-	}
+	private final Simulator simulator;
+	private final UUID soundID;
+	private final UUID ownerID;
+	private final UUID objectID;
+	private final UUID parentID;
+	private final float gain;
+	private final long regionHandle;
+	private final Vector3 position;
 
 	/**
 	 * Construct a new instance of the SoundTriggerEventArgs class
@@ -89,15 +49,56 @@ public class SoundTriggerCallbackArgs implements CallbackArgs {
 	 * @param position
 	 *            The source position
 	 */
-	public SoundTriggerCallbackArgs(Simulator sim, UUID soundID, UUID ownerID, UUID objectID, UUID parentID,
-			float gain, long regionHandle, Vector3 position) {
-		this.m_Simulator = sim;
-		this.m_SoundID = soundID;
-		this.m_OwnerID = ownerID;
-		this.m_ObjectID = objectID;
-		this.m_ParentID = parentID;
-		this.m_Gain = gain;
-		this.m_RegionHandle = regionHandle;
-		this.m_Position = position;
+	public SoundTriggerCallbackArgs(Simulator sim, UUID soundID, UUID ownerID, UUID objectID, UUID parentID, float gain,
+			long regionHandle, Vector3 position) {
+		this.simulator = sim;
+		this.soundID = soundID;
+		this.ownerID = ownerID;
+		this.objectID = objectID;
+		this.parentID = parentID;
+		this.gain = gain;
+		this.regionHandle = regionHandle;
+		this.position = position;
 	}
+
+	// Simulator where the event originated
+	public final Simulator getSimulator() {
+		return simulator;
+	}
+
+	// Get the sound asset id
+	public final UUID getSoundID() {
+		return soundID;
+	}
+
+	// Get the ID of the owner
+	public final UUID getOwnerID() {
+		return ownerID;
+	}
+
+	// Get the ID of the Object
+	public final UUID getObjectID() {
+		return objectID;
+	}
+
+	// Get the ID of the objects parent
+	public final UUID getParentID() {
+		return parentID;
+	}
+
+	// Get the volume level
+	public final float getGain() {
+		return gain;
+	}
+
+	// Get the regionhandle
+	public final long getRegionHandle() {
+		return regionHandle;
+	}
+
+	// Get the source position
+	public final Vector3 getPosition() {
+		return position;
+	}
+
 }

@@ -5,9 +5,9 @@ import libomv.types.UUID;
 // A group Vote
 public final class Vote {
 	// Key of Avatar who created Vote
-	public UUID Candidate;
+	public UUID candidate;
 	// Text of the Vote proposal
-	public String VoteString;
+	public String voteString;
 	// Total number of votes
-	public int NumVotes;
+	public int numVotes;
 }

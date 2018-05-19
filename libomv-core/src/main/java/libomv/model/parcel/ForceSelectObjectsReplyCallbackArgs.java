@@ -6,25 +6,9 @@ import libomv.utils.CallbackArgs;
 // Contains the data returned when a <see cref="RequestForceSelectObjects"/>
 // request
 public class ForceSelectObjectsReplyCallbackArgs implements CallbackArgs {
-	private final Simulator m_Simulator;
-	private final int[] m_ObjectIDs;
-	private final boolean m_ResetList;
-
-	// Get the simulator the parcel data was retrieved from
-	public final Simulator getSimulator() {
-		return m_Simulator;
-	}
-
-	// Get the list of primitive IDs
-	public final int[] getObjectIDs() {
-		return m_ObjectIDs;
-	}
-
-	// true if the list is clean and contains the information only for a
-	// given request
-	public final boolean getResetList() {
-		return m_ResetList;
-	}
+	private final Simulator simulator;
+	private final int[] objectIDs;
+	private final boolean resetList;
 
 	/**
 	 * Construct a new instance of the ForceSelectObjectsReplyCallbackArgs class
@@ -38,8 +22,25 @@ public class ForceSelectObjectsReplyCallbackArgs implements CallbackArgs {
 	 *            given request
 	 */
 	public ForceSelectObjectsReplyCallbackArgs(Simulator simulator, int[] objectIDs, boolean resetList) {
-		this.m_Simulator = simulator;
-		this.m_ObjectIDs = objectIDs;
-		this.m_ResetList = resetList;
+		this.simulator = simulator;
+		this.objectIDs = objectIDs;
+		this.resetList = resetList;
 	}
+
+	// Get the simulator the parcel data was retrieved from
+	public final Simulator getSimulator() {
+		return simulator;
+	}
+
+	// Get the list of primitive IDs
+	public final int[] getObjectIDs() {
+		return objectIDs;
+	}
+
+	// true if the list is clean and contains the information only for a
+	// given request
+	public final boolean getResetList() {
+		return resetList;
+	}
+
 }

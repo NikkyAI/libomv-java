@@ -6,6 +6,11 @@ public class FriendListChangedCallbackArgs implements CallbackArgs {
 	private final FriendInfo info;
 	private final boolean added;
 
+	public FriendListChangedCallbackArgs(FriendInfo info, boolean added) {
+		this.info = info;
+		this.added = added;
+	}
+
 	public FriendInfo getFriendInfo() {
 		return info;
 	}
@@ -14,8 +19,4 @@ public class FriendListChangedCallbackArgs implements CallbackArgs {
 		return added;
 	}
 
-	public FriendListChangedCallbackArgs(FriendInfo info, boolean added) {
-		this.info = info;
-		this.added = added;
-	}
 }

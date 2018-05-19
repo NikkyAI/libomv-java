@@ -9,6 +9,11 @@ public class AvatarAnimationCallbackArgs implements CallbackArgs {
 	private UUID agentID;
 	private ArrayList<Animation> animations;
 
+	public AvatarAnimationCallbackArgs(UUID agentID, ArrayList<Animation> animations) {
+		this.agentID = agentID;
+		this.animations = animations;
+	}
+
 	public UUID getAgentID() {
 		return agentID;
 	}
@@ -17,8 +22,4 @@ public class AvatarAnimationCallbackArgs implements CallbackArgs {
 		return animations;
 	}
 
-	public AvatarAnimationCallbackArgs(UUID agentID, ArrayList<Animation> animations) {
-		this.agentID = agentID;
-		this.animations = animations;
-	}
 }

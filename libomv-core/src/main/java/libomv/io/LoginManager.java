@@ -602,15 +602,15 @@ public class LoginManager {
 			if (result != null && result.getType().equals(OSDType.Map)) {
 				UpdateLoginStatus(LoginStatus.ReadingResponse, "Parsing Reply data", "parsing", null);
 
-				LoginResponseData reply = new LoginResponseData().ParseLoginReply((OSDMap) result);
+				LoginResponseData reply = new LoginResponseData().parseLoginReply((OSDMap) result);
 
-				if (reply.Success) {
+				if (reply.success) {
 					// Remove the quotes around our first name.
-					if (reply.FirstName.charAt(0) == '"') {
-						reply.FirstName = reply.FirstName.substring(1);
+					if (reply.firstName.charAt(0) == '"') {
+						reply.firstName = reply.firstName.substring(1);
 					}
-					if (reply.FirstName.charAt(reply.FirstName.length() - 1) == '"') {
-						reply.FirstName = reply.FirstName.substring(0, reply.FirstName.length() - 1);
+					if (reply.firstName.charAt(reply.firstName.length() - 1) == '"') {
+						reply.firstName = reply.firstName.substring(0, reply.firstName.length() - 1);
 					}
 				}
 
@@ -640,17 +640,17 @@ public class LoginManager {
 	}
 
 	private void HandleLoginResponse(LoginResponseData reply, LoginParams loginParams) throws Exception {
-		if (reply.Login.equals("indeterminate")) {
+		if (reply.login.equals("indeterminate")) {
 			// Login redirected
 
 			// Make the next login URL jump
-			UpdateLoginStatus(LoginStatus.Redirecting, reply.Message, "redirecting", null);
-			loginParams.URI = reply.NextUrl;
-			loginParams.MethodName = reply.NextMethod;
-			loginParams.Options = reply.NextOptions;
+			UpdateLoginStatus(LoginStatus.Redirecting, reply.message, "redirecting", null);
+			loginParams.URI = reply.nextUrl;
+			loginParams.MethodName = reply.nextMethod;
+			loginParams.Options = reply.nextOptions;
 
 			// Sleep for some amount of time while the servers work
-			int seconds = reply.NextDuration;
+			int seconds = reply.nextDuration;
 			logger.info(GridClient.Log("Sleeping for " + seconds + " seconds during a login redirect", _Client));
 			try {
 				Thread.sleep(seconds * 1000);
@@ -658,25 +658,25 @@ public class LoginManager {
 			}
 
 			RequestLogin(loginParams, null);
-		} else if (reply.Success) {
+		} else if (reply.success) {
 			// Login succeeded
-			_Client.Network.setCircuitCode(reply.CircuitCode);
-			_Client.Network.setUDPBlacklist(reply.UDPBlacklist);
-			_Client.Network.setAgentAppearanceServiceURL(reply.AgentAppearanceServiceURL);
+			_Client.Network.setCircuitCode(reply.circuitCode);
+			_Client.Network.setUDPBlacklist(reply.udpBlacklist);
+			_Client.Network.setAgentAppearanceServiceURL(reply.agentAppearanceServiceURL);
 
 			UpdateLoginStatus(LoginStatus.ConnectingToSim, "Connecting to simulator...", "connecting", reply);
 
-			if (reply.SimIP != null && reply.SimPort != 0) {
+			if (reply.simIP != null && reply.simPort != 0) {
 				// Connect to the sim given in the login reply
-				if (_Client.Network.connect(reply.SimIP, reply.SimPort, reply.Region, true,
-						reply.SeedCapability) != null) {
-					_Client.setCurrentGrid(reply.Grid);
+				if (_Client.Network.connect(reply.simIP, reply.simPort, reply.region, true,
+						reply.seedCapability) != null) {
+					_Client.setCurrentGrid(reply.grid);
 
 					// Request the economy data right after login
 					_Client.Network.sendPacket(new EconomyDataRequestPacket());
 
 					// Update the login message with the MOTD returned from the server
-					UpdateLoginStatus(LoginStatus.Success, reply.Message, reply.Reason, reply);
+					UpdateLoginStatus(LoginStatus.Success, reply.message, reply.reason, reply);
 				} else {
 					UpdateLoginStatus(LoginStatus.Failed, "Unable to establish a UDP connection to the simulator",
 							"connection failed", null);
@@ -687,10 +687,10 @@ public class LoginManager {
 			}
 		} else {
 			// Login failed, make sure a usable error key is set
-			if (reply.Reason == null || reply.Reason.isEmpty()) {
-				reply.Reason = "unknown";
+			if (reply.reason == null || reply.reason.isEmpty()) {
+				reply.reason = "unknown";
 			}
-			UpdateLoginStatus(LoginStatus.Failed, reply.Message, reply.Reason, reply);
+			UpdateLoginStatus(LoginStatus.Failed, reply.message, reply.reason, reply);
 		}
 	}
 	// #endregion

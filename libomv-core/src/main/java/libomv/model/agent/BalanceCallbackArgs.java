@@ -6,6 +6,18 @@ public class BalanceCallbackArgs {
 	private final int delta;
 	private final boolean firstBalance;
 
+	/**
+	 * Construct a new instance of the BalanceCallbackArgs object
+	 *
+	 * @param balance
+	 *            the InstantMessage object
+	 */
+	public BalanceCallbackArgs(int balance, int delta, boolean firstBalance) {
+		this.balance = balance;
+		this.delta = delta;
+		this.firstBalance = firstBalance;
+	}
+
 	/* Get the balance value */
 	public final int getBalance() {
 		return balance;
@@ -21,15 +33,4 @@ public class BalanceCallbackArgs {
 		return firstBalance;
 	}
 
-	/**
-	 * Construct a new instance of the BalanceCallbackArgs object
-	 *
-	 * @param balance
-	 *            the InstantMessage object
-	 */
-	public BalanceCallbackArgs(int balance, int delta, boolean firstBalance) {
-		this.balance = balance;
-		this.delta = delta;
-		this.firstBalance = firstBalance;
-	}
 }

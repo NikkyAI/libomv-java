@@ -8,6 +8,11 @@ public class FriendNotificationCallbackArgs implements CallbackArgs {
 	private final UUID[] agentIDs;
 	private final boolean online;
 
+	public FriendNotificationCallbackArgs(UUID[] agentIDs, boolean online) {
+		this.agentIDs = agentIDs;
+		this.online = online;
+	}
+
 	public UUID[] getAgentID() {
 		return agentIDs;
 	}
@@ -16,8 +21,4 @@ public class FriendNotificationCallbackArgs implements CallbackArgs {
 		return online;
 	}
 
-	public FriendNotificationCallbackArgs(UUID[] agentIDs, boolean online) {
-		this.agentIDs = agentIDs;
-		this.online = online;
-	}
 }

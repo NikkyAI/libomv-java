@@ -4,19 +4,20 @@ import libomv.types.UUID;
 import libomv.utils.CallbackArgs;
 
 public class SaveAssetToInventoryCallbackArgs implements CallbackArgs {
-	private final UUID m_ItemID;
-	private final UUID m_NewAssetID;
+	private final UUID itemID;
+	private final UUID newAssetID;
+
+	public SaveAssetToInventoryCallbackArgs(UUID itemID, UUID newAssetID) {
+		this.itemID = itemID;
+		this.newAssetID = newAssetID;
+	}
 
 	public final UUID getItemID() {
-		return m_ItemID;
+		return itemID;
 	}
 
 	public final UUID getNewAssetID() {
-		return m_NewAssetID;
+		return newAssetID;
 	}
 
-	public SaveAssetToInventoryCallbackArgs(UUID itemID, UUID newAssetID) {
-		this.m_ItemID = itemID;
-		this.m_NewAssetID = newAssetID;
-	}
 }

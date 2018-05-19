@@ -13,23 +13,23 @@ public final class DirectoryParcel {
 	 * information from the entry by using the
 	 * <see cref="ParcelManager.InfoRequest"/> method
 	 */
-	public UUID ID;
+	public UUID id;
 	/** A string containing the name of the parcel */
-	public String Name;
+	public String name;
 	/**
 	 * The size of the parcel This field is not returned for Places searches
 	 */
-	public int ActualArea;
+	public int actualArea;
 	/**
 	 * The price of the parcel This field is not returned for Places searches
 	 */
-	public int SalePrice;
+	public int salePrice;
 	/** If True, this parcel is flagged to be auctioned */
-	public boolean Auction;
+	public boolean auction;
 	/** If true, this parcel is currently set for sale */
-	public boolean ForSale;
+	public boolean forSale;
 	/** Parcel traffic */
-	public float Dwell;
+	public float dwell;
 
 	/**
 	 * Print the struct data as a string

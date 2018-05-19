@@ -14,11 +14,12 @@ import libomv.utils.CallbackArgs;
 public class LoggedOutCallbackArgs implements CallbackArgs {
 	private final Vector<UUID> itemIDs;
 
+	public LoggedOutCallbackArgs(Vector<UUID> itemIDs) {
+		this.itemIDs = itemIDs;
+	}
+
 	public Vector<UUID> getItemIDs() {
 		return itemIDs;
 	}
 
-	public LoggedOutCallbackArgs(Vector<UUID> itemIDs) {
-		this.itemIDs = itemIDs;
-	}
 }

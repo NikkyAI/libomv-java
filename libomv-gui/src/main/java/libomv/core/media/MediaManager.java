@@ -33,13 +33,13 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 
+import libomv.Sounds;
 import libomv.Gui.AppSettings;
 import libomv.Gui.windows.MainControl;
 import libomv.io.AgentManager;
 import libomv.io.GridClient;
 import libomv.io.SimulatorManager;
 import libomv.model.Simulator;
-import libomv.model.Sounds;
 import libomv.model.agent.ChatCallbackArgs;
 import libomv.model.agent.ChatType;
 import libomv.model.asset.AssetDownload;

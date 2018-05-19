@@ -704,13 +704,13 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 			ArrayList<AvatarGroup> avatarGroups = new ArrayList<AvatarGroup>(msg.groupDataBlock.length);
 			for (int i = 0; i < msg.groupDataBlock.length; i++) {
 				AvatarGroup avatarGroup = new AvatarGroup();
-				avatarGroup.AcceptNotices = msg.groupDataBlock[i].acceptNotices;
-				avatarGroup.GroupID = msg.groupDataBlock[i].groupID;
-				avatarGroup.GroupInsigniaID = msg.groupDataBlock[i].groupInsigniaID;
-				avatarGroup.GroupName = msg.groupDataBlock[i].groupName;
-				avatarGroup.GroupTitle = msg.groupDataBlock[i].groupTitle;
-				avatarGroup.GroupPowers = msg.groupDataBlock[i].groupPowers;
-				avatarGroup.ListInProfile = msg.newGroupDataBlock[i].listInProfile;
+				avatarGroup.acceptNotices = msg.groupDataBlock[i].acceptNotices;
+				avatarGroup.groupID = msg.groupDataBlock[i].groupID;
+				avatarGroup.groupInsigniaID = msg.groupDataBlock[i].groupInsigniaID;
+				avatarGroup.groupName = msg.groupDataBlock[i].groupName;
+				avatarGroup.groupTitle = msg.groupDataBlock[i].groupTitle;
+				avatarGroup.groupPowers = msg.groupDataBlock[i].groupPowers;
+				avatarGroup.listInProfile = msg.newGroupDataBlock[i].listInProfile;
 
 				avatarGroups.add(avatarGroup);
 			}
@@ -727,13 +727,13 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 			for (int i = 0; i < groups.GroupData.length; i++) {
 				AvatarGroup avatarGroup = new AvatarGroup();
 
-				avatarGroup.AcceptNotices = groups.GroupData[i].AcceptNotices;
-				avatarGroup.GroupID = groups.GroupData[i].GroupID;
-				avatarGroup.GroupInsigniaID = groups.GroupData[i].GroupInsigniaID;
-				avatarGroup.GroupName = Helpers.BytesToString(groups.GroupData[i].getGroupName());
-				avatarGroup.GroupPowers = groups.GroupData[i].GroupPowers;
-				avatarGroup.GroupTitle = Helpers.BytesToString(groups.GroupData[i].getGroupTitle());
-				avatarGroup.ListInProfile = groups.ListInProfile;
+				avatarGroup.acceptNotices = groups.GroupData[i].AcceptNotices;
+				avatarGroup.groupID = groups.GroupData[i].GroupID;
+				avatarGroup.groupInsigniaID = groups.GroupData[i].GroupInsigniaID;
+				avatarGroup.groupName = Helpers.BytesToString(groups.GroupData[i].getGroupName());
+				avatarGroup.groupPowers = groups.GroupData[i].GroupPowers;
+				avatarGroup.groupTitle = Helpers.BytesToString(groups.GroupData[i].getGroupTitle());
+				avatarGroup.listInProfile = groups.ListInProfile;
 
 				avatarGroups.add(avatarGroup);
 			}

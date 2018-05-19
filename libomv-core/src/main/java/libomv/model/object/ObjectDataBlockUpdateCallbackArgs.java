@@ -7,49 +7,50 @@ import libomv.types.NameValue;
 import libomv.utils.CallbackArgs;
 
 public class ObjectDataBlockUpdateCallbackArgs implements CallbackArgs {
-	private final Simulator m_Simulator;
-	private final Primitive m_Prim;
-	private final Primitive.ConstructionData m_ConstructionData;
-	private final ObjectUpdatePacket.ObjectDataBlock m_Block;
-	private final ObjectMovementUpdate m_Update;
-	private final NameValue[] m_NameValues;
-
-	// Get the simulator the object is located
-	public final Simulator getSimulator() {
-		return m_Simulator;
-	}
-
-	// Get the primitive details
-	public final Primitive getPrim() {
-		return m_Prim;
-	}
-
-	//
-	public final Primitive.ConstructionData getConstructionData() {
-		return m_ConstructionData;
-	}
-
-	//
-	public final ObjectUpdatePacket.ObjectDataBlock getBlock() {
-		return m_Block;
-	}
-
-	public final ObjectMovementUpdate getUpdate() {
-		return m_Update;
-	}
-
-	public final NameValue[] getNameValues() {
-		return m_NameValues;
-	}
+	private final Simulator simulator;
+	private final Primitive prim;
+	private final Primitive.ConstructionData constructionData;
+	private final ObjectUpdatePacket.ObjectDataBlock block;
+	private final ObjectMovementUpdate update;
+	private final NameValue[] nameValues;
 
 	public ObjectDataBlockUpdateCallbackArgs(Simulator simulator, Primitive prim,
 			Primitive.ConstructionData constructionData, ObjectUpdatePacket.ObjectDataBlock block,
 			ObjectMovementUpdate objectupdate, NameValue[] nameValues) {
-		this.m_Simulator = simulator;
-		this.m_Prim = prim;
-		this.m_ConstructionData = constructionData;
-		this.m_Block = block;
-		this.m_Update = objectupdate;
-		this.m_NameValues = nameValues;
+		this.simulator = simulator;
+		this.prim = prim;
+		this.constructionData = constructionData;
+		this.block = block;
+		this.update = objectupdate;
+		this.nameValues = nameValues;
 	}
+
+	// Get the simulator the object is located
+	public final Simulator getSimulator() {
+		return simulator;
+	}
+
+	// Get the primitive details
+	public final Primitive getPrim() {
+		return prim;
+	}
+
+	//
+	public final Primitive.ConstructionData getConstructionData() {
+		return constructionData;
+	}
+
+	//
+	public final ObjectUpdatePacket.ObjectDataBlock getBlock() {
+		return block;
+	}
+
+	public final ObjectMovementUpdate getUpdate() {
+		return update;
+	}
+
+	public final NameValue[] getNameValues() {
+		return nameValues;
+	}
+
 }

@@ -7,22 +7,22 @@ import libomv.utils.CallbackArgs;
 // moves out of the avatars view for the
 // <see cref="ObjectManager.KillObject"/> event
 public class KillObjectsCallbackArgs implements CallbackArgs {
-	private final Simulator m_Simulator;
+	private final Simulator simulator;
+	private final int[] objectLocalIDs;
 
-	private final int[] m_ObjectLocalIDs;
+	public KillObjectsCallbackArgs(Simulator simulator, int[] objectIDs) {
+		this.simulator = simulator;
+		this.objectLocalIDs = objectIDs;
+	}
 
 	// Get the simulator the object is located
 	public final Simulator getSimulator() {
-		return m_Simulator;
+		return simulator;
 	}
 
 	// The LocalID of the object
 	public final int[] getObjectLocalIDs() {
-		return m_ObjectLocalIDs;
+		return objectLocalIDs;
 	}
 
-	public KillObjectsCallbackArgs(Simulator simulator, int[] objectIDs) {
-		this.m_Simulator = simulator;
-		this.m_ObjectLocalIDs = objectIDs;
-	}
 }

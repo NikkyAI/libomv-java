@@ -43,31 +43,10 @@ import libomv.utils.CallbackArgs;
  * {@link ObjectManager.OnAvatarUpdate} {@link AvatarUpdateCallbackArgs}
  */
 public class PrimCallbackArgs implements CallbackArgs {
-	private final Simulator m_Simulator;
-	private final boolean m_IsNew;
-	private final Primitive m_Prim;
-	private final short m_TimeDilation;
-
-	// Get the simulator the <see cref="Primitive"/> originated from
-	public final Simulator getSimulator() {
-		return m_Simulator;
-	}
-
-	// Get the <see cref="Primitive"/> details
-	public final Primitive getPrim() {
-		return m_Prim;
-	}
-
-	// true if the <see cref="Primitive"/> did not exist in the dictionary
-	// before this update (always true if object tracking has been disabled)
-	public final boolean getIsNew() {
-		return m_IsNew;
-	}
-
-	// Get the simulator Time Dilation
-	public final short getTimeDilation() {
-		return m_TimeDilation;
-	}
+	private final Simulator simulator;
+	private final boolean isNew;
+	private final Primitive prim;
+	private final short timeDilation;
 
 	/**
 	 * Construct a new instance of the PrimEventArgs class
@@ -82,9 +61,31 @@ public class PrimCallbackArgs implements CallbackArgs {
 	 *            The prim was not in the dictionary before this update
 	 */
 	public PrimCallbackArgs(Simulator simulator, Primitive prim, short timeDilation, boolean isNew) {
-		this.m_Simulator = simulator;
-		this.m_IsNew = isNew;
-		this.m_Prim = prim;
-		this.m_TimeDilation = timeDilation;
+		this.simulator = simulator;
+		this.isNew = isNew;
+		this.prim = prim;
+		this.timeDilation = timeDilation;
 	}
+
+	// Get the simulator the <see cref="Primitive"/> originated from
+	public final Simulator getSimulator() {
+		return simulator;
+	}
+
+	// Get the <see cref="Primitive"/> details
+	public final Primitive getPrim() {
+		return prim;
+	}
+
+	// true if the <see cref="Primitive"/> did not exist in the dictionary
+	// before this update (always true if object tracking has been disabled)
+	public final boolean getIsNew() {
+		return isNew;
+	}
+
+	// Get the simulator Time Dilation
+	public final short getTimeDilation() {
+		return timeDilation;
+	}
+
 }

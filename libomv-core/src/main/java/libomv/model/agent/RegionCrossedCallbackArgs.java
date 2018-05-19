@@ -4,7 +4,13 @@ import libomv.model.Simulator;
 import libomv.utils.CallbackArgs;
 
 public class RegionCrossedCallbackArgs implements CallbackArgs {
-	private final Simulator oldSim, newSim;
+	private final Simulator oldSim;
+	private final Simulator newSim;
+
+	public RegionCrossedCallbackArgs(Simulator oldSim, Simulator newSim) {
+		this.oldSim = oldSim;
+		this.newSim = newSim;
+	}
 
 	public Simulator getOldSim() {
 		return oldSim;
@@ -14,8 +20,4 @@ public class RegionCrossedCallbackArgs implements CallbackArgs {
 		return newSim;
 	}
 
-	public RegionCrossedCallbackArgs(Simulator oldSim, Simulator newSim) {
-		this.oldSim = oldSim;
-		this.newSim = newSim;
-	}
 }

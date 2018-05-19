@@ -52,6 +52,7 @@ import libomv.StructuredData.OSDMap;
 import libomv.inventory.InventoryItem;
 import libomv.inventory.InventoryNode.InventoryType;
 import libomv.model.asset.AssetType;
+import libomv.model.object.SaleType;
 import libomv.primitives.ObjectProperties;
 import libomv.primitives.ParticleSystem;
 import libomv.primitives.ParticleSystem.SourcePattern;
@@ -1415,7 +1416,7 @@ public class AssetPrim extends AssetItem {
 				prim.flags |= PrimFlags.ReturnAtEdge;
 			prim.rotation = this.rotation;
 			prim.properties.salePrice = this.salePrice;
-			prim.properties.saleType = libomv.model.LLObject.SaleType.setValue(this.saleType);
+			prim.properties.saleType = libomv.model.object.SaleType.setValue(this.saleType);
 			if (this.sandbox)
 				prim.flags |= PrimFlags.Sandbox;
 			prim.scale = this.scale;

@@ -4,44 +4,45 @@ import libomv.types.UUID;
 import libomv.utils.CallbackArgs;
 
 public class AgentDataReplyCallbackArgs implements CallbackArgs {
-	private final String m_FirstName;
-	private final String m_LastName;
-	private final UUID m_ActiveGroup;
-	private final String m_GroupName;
-	private final String m_GroupTitle;
-	private final long m_ActiveGroupPowers;
-
-	public String getFristName() {
-		return m_FirstName;
-	}
-
-	public String getLastName() {
-		return m_LastName;
-	}
-
-	public UUID getActiveGroup() {
-		return m_ActiveGroup;
-	}
-
-	public String getGroupName() {
-		return m_GroupName;
-	}
-
-	public String getGroupTitle() {
-		return m_GroupTitle;
-	}
-
-	public long getActiveGroupPowers() {
-		return m_ActiveGroupPowers;
-	}
+	private final String firstName;
+	private final String lastName;
+	private final UUID activeGroup;
+	private final String groupName;
+	private final String groupTitle;
+	private final long activeGroupPowers;
 
 	public AgentDataReplyCallbackArgs(String firstName, String lastName, UUID activeGroup, String groupTitle,
 			long activeGroupPowers, String groupName) {
-		this.m_FirstName = firstName;
-		this.m_LastName = lastName;
-		this.m_ActiveGroup = activeGroup;
-		this.m_GroupName = groupName;
-		this.m_GroupTitle = groupTitle;
-		this.m_ActiveGroupPowers = activeGroupPowers;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.activeGroup = activeGroup;
+		this.groupName = groupName;
+		this.groupTitle = groupTitle;
+		this.activeGroupPowers = activeGroupPowers;
 	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public UUID getActiveGroup() {
+		return activeGroup;
+	}
+
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public String getGroupTitle() {
+		return groupTitle;
+	}
+
+	public long getActiveGroupPowers() {
+		return activeGroupPowers;
+	}
+
 }

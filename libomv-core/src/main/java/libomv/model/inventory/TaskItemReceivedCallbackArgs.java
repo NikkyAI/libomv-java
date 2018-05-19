@@ -10,38 +10,38 @@ import libomv.utils.CallbackArgs;
  * ObjectOfferedCallback it is null when received from a task.
  */
 public class TaskItemReceivedCallbackArgs implements CallbackArgs {
-	private final UUID m_ItemID;
-	private final UUID m_FolderID;
-	private final UUID m_CreatorID;
-	private final UUID m_AssetID;
-	private final InventoryType m_Type;
+	private final UUID itemID;
+	private final UUID folderID;
+	private final UUID creatorID;
+	private final UUID assetID;
+	private final InventoryType type;
+
+	public TaskItemReceivedCallbackArgs(UUID itemID, UUID folderID, UUID creatorID, UUID assetID, InventoryType type) {
+		this.itemID = itemID;
+		this.folderID = folderID;
+		this.creatorID = creatorID;
+		this.assetID = assetID;
+		this.type = type;
+	}
 
 	public final UUID getItemID() {
-		return m_ItemID;
+		return itemID;
 	}
 
 	public final UUID getFolderID() {
-		return m_FolderID;
+		return folderID;
 	}
 
 	public final UUID getCreatorID() {
-		return m_CreatorID;
+		return creatorID;
 	}
 
 	public final UUID getAssetID() {
-		return m_AssetID;
+		return assetID;
 	}
 
 	public final InventoryType getType() {
-		return m_Type;
+		return type;
 	}
 
-	public TaskItemReceivedCallbackArgs(UUID itemID, UUID folderID, UUID creatorID, UUID assetID,
-			InventoryType type) {
-		this.m_ItemID = itemID;
-		this.m_FolderID = folderID;
-		this.m_CreatorID = creatorID;
-		this.m_AssetID = assetID;
-		this.m_Type = type;
-	}
 }

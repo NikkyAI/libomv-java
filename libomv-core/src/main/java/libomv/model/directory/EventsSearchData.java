@@ -6,17 +6,17 @@ import libomv.utils.Helpers;
 /** An "Event" Listing summary */
 public final class EventsSearchData {
 	/** The ID of the event creator */
-	public UUID Owner;
+	public UUID owner;
 	/** The name of the event */
-	public String Name;
+	public String name;
 	/** The events ID */
-	public int ID; /* TODO was uint */
+	public int id; /* TODO was uint */
 	/** A string containing the short date/time the event will begin */
-	public String Date;
+	public String date;
 	/** The event start time in Unixtime (seconds since epoch) */
-	public int Time;
+	public int time;
 	/** The events maturity rating */
-	public EventFlags Flags;
+	public EventFlags flags;
 
 	/**
 	 * Print the struct data as a string

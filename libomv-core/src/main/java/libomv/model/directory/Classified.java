@@ -10,17 +10,17 @@ public final class Classified {
 	/**
 	 * UUID for this ad, useful for looking up detailed information about it
 	 */
-	public UUID ID;
+	public UUID id;
 	/** The title of this classified ad */
-	public String Name;
+	public String name;
 	/** Flags that show certain options applied to the classified */
-	public byte Flags;
+	public byte flags;
 	/** Creation date of the ad */
-	public Date CreationDate;
+	public Date creationDate;
 	/** Expiration date of the ad */
-	public Date ExpirationDate;
+	public Date expirationDate;
 	/** Price that was paid for this ad */
-	public int Price;
+	public int price;
 
 	/**
 	 * Print the struct data as a string

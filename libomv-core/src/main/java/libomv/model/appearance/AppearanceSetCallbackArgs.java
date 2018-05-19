@@ -6,12 +6,7 @@ import libomv.utils.CallbackArgs;
 // appearance thread is finished.
 // <see cref="RequestAgentSetAppearance"/> request.
 public class AppearanceSetCallbackArgs implements CallbackArgs {
-	private final boolean m_success;
-
-	// Indicates whether appearance setting was successful
-	public boolean getSuccess() {
-		return m_success;
-	}
+	private final boolean success;
 
 	/**
 	 * Triggered when appearance data is sent to the sim and the main appearance
@@ -21,6 +16,12 @@ public class AppearanceSetCallbackArgs implements CallbackArgs {
 	 *            Indicates whether appearance setting was successful
 	 */
 	public AppearanceSetCallbackArgs(boolean success) {
-		this.m_success = success;
+		this.success = success;
 	}
+
+	// Indicates whether appearance setting was successful
+	public boolean getSuccess() {
+		return success;
+	}
+
 }

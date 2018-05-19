@@ -7,25 +7,9 @@ import libomv.utils.CallbackArgs;
 
 // Represents the roles associated with a group
 public class GroupRolesDataReplyCallbackArgs implements CallbackArgs {
-	private final UUID m_RequestID;
-	private final UUID m_GroupID;
-	private final HashMap<UUID, GroupRole> m_Roles;
-
-	// Get the ID as returned by the request to correlate this result set
-	// and the request
-	public final UUID getRequestID() {
-		return m_RequestID;
-	}
-
-	// Get the ID of the group
-	public final UUID getGroupID() {
-		return m_GroupID;
-	}
-
-	// Get the dictionary containing the roles
-	public final java.util.HashMap<UUID, GroupRole> getRoles() {
-		return m_Roles;
-	}
+	private final UUID requestID;
+	private final UUID groupID;
+	private final HashMap<UUID, GroupRole> roles;
 
 	/**
 	 * Construct a new instance of the GroupRolesDataReplyCallbackArgs class
@@ -39,8 +23,25 @@ public class GroupRolesDataReplyCallbackArgs implements CallbackArgs {
 	 *            The dictionary containing the roles
 	 */
 	public GroupRolesDataReplyCallbackArgs(UUID requestID, UUID groupID, java.util.HashMap<UUID, GroupRole> roles) {
-		this.m_RequestID = requestID;
-		this.m_GroupID = groupID;
-		this.m_Roles = roles;
+		this.requestID = requestID;
+		this.groupID = groupID;
+		this.roles = roles;
 	}
+
+	// Get the ID as returned by the request to correlate this result set
+	// and the request
+	public final UUID getRequestID() {
+		return requestID;
+	}
+
+	// Get the ID of the group
+	public final UUID getGroupID() {
+		return groupID;
+	}
+
+	// Get the dictionary containing the roles
+	public final java.util.HashMap<UUID, GroupRole> getRoles() {
+		return roles;
+	}
+
 }

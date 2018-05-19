@@ -9,6 +9,12 @@ public class FriendshipResponseCallbackArgs implements CallbackArgs {
 	private final String name;
 	private final boolean accepted;
 
+	public FriendshipResponseCallbackArgs(UUID agentID, String name, boolean accepted) {
+		this.agentID = agentID;
+		this.name = name;
+		this.accepted = accepted;
+	}
+
 	public UUID getAgentID() {
 		return agentID;
 	}
@@ -21,9 +27,4 @@ public class FriendshipResponseCallbackArgs implements CallbackArgs {
 		return accepted;
 	}
 
-	public FriendshipResponseCallbackArgs(UUID agentID, String name, boolean accepted) {
-		this.agentID = agentID;
-		this.name = name;
-		this.accepted = accepted;
-	}
 }

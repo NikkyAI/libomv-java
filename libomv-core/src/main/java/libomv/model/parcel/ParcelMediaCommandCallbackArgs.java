@@ -5,33 +5,11 @@ import libomv.utils.CallbackArgs;
 
 // Contains the media command for a parcel the agent is currently on
 public class ParcelMediaCommandCallbackArgs implements CallbackArgs {
-	private final Simulator m_Simulator;
-	private final int m_Sequence;
-	private final int m_ParcelFlags;
-	private final ParcelMediaCommand m_MediaCommand;
-	private final float m_Time;
-
-	// Get the simulator the parcel media command was issued in
-	public final Simulator getSimulator() {
-		return m_Simulator;
-	}
-
-	public final int getSequence() {
-		return m_Sequence;
-	}
-
-	public final int getParcelFlags() {
-		return m_ParcelFlags;
-	}
-
-	// Get the media command that was sent
-	public final ParcelMediaCommand getMediaCommand() {
-		return m_MediaCommand;
-	}
-
-	public final float getTime() {
-		return m_Time;
-	}
+	private final Simulator simulator;
+	private final int sequence;
+	private final int parcelFlags;
+	private final ParcelMediaCommand mediaCommand;
+	private final float time;
 
 	/**
 	 * Construct a new instance of the ParcelMediaCommandCallbackArgs class
@@ -46,10 +24,33 @@ public class ParcelMediaCommandCallbackArgs implements CallbackArgs {
 	 */
 	public ParcelMediaCommandCallbackArgs(Simulator simulator, int sequence, int flags, ParcelMediaCommand command,
 			float time) {
-		this.m_Simulator = simulator;
-		this.m_Sequence = sequence;
-		this.m_ParcelFlags = flags;
-		this.m_MediaCommand = command;
-		this.m_Time = time;
+		this.simulator = simulator;
+		this.sequence = sequence;
+		this.parcelFlags = flags;
+		this.mediaCommand = command;
+		this.time = time;
 	}
+
+	// Get the simulator the parcel media command was issued in
+	public final Simulator getSimulator() {
+		return simulator;
+	}
+
+	public final int getSequence() {
+		return sequence;
+	}
+
+	public final int getParcelFlags() {
+		return parcelFlags;
+	}
+
+	// Get the media command that was sent
+	public final ParcelMediaCommand getMediaCommand() {
+		return mediaCommand;
+	}
+
+	public final float getTime() {
+		return time;
+	}
+
 }

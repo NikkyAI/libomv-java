@@ -2,18 +2,18 @@ package libomv.model.group;
 
 public class GroupAccountTransactions {
 	public class TransactionEntry {
-		public String Time;
-		public String Item;
-		public String User;
-		public int Type;
-		public int Amount;
+		public String time;
+		public String item;
+		public String user;
+		public int type;
+		public int amount;
 	}
 
-	public int IntervalDays;
+	public int intervalDays;
 
-	public int CurrentInterval;
+	public int currentInterval;
 
-	public String StartDate;
+	public String startDate;
 
-	public TransactionEntry[] Transactions;
+	public TransactionEntry[] transactions;
 }

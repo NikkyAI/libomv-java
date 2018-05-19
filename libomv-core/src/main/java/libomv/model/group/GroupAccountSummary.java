@@ -2,41 +2,41 @@ package libomv.model.group;
 
 public final class GroupAccountSummary {
 	//
-	public int IntervalDays;
+	public int intervalDays;
 	//
-	public int CurrentInterval;
+	public int currentInterval;
 	//
-	public String StartDate;
+	public String startDate;
 	//
-	public int Balance;
+	public int balance;
 	//
-	public int TotalCredits;
+	public int totalCredits;
 	//
-	public int TotalDebits;
+	public int totalDebits;
 	//
-	public int ObjectTaxCurrent;
+	public int objectTaxCurrent;
 	//
-	public int LightTaxCurrent;
+	public int lightTaxCurrent;
 	//
-	public int LandTaxCurrent;
+	public int landTaxCurrent;
 	//
-	public int GroupTaxCurrent;
+	public int groupTaxCurrent;
 	//
-	public int ParcelDirFeeCurrent;
+	public int parcelDirFeeCurrent;
 	//
-	public int ObjectTaxEstimate;
+	public int objectTaxEstimate;
 	//
-	public int LightTaxEstimate;
+	public int lightTaxEstimate;
 	//
-	public int LandTaxEstimate;
+	public int landTaxEstimate;
 	//
-	public int GroupTaxEstimate;
+	public int groupTaxEstimate;
 	//
-	public int ParcelDirFeeEstimate;
+	public int parcelDirFeeEstimate;
 	//
-	public int NonExemptMembers;
+	public int nonExemptMembers;
 	//
-	public String LastTaxDate;
+	public String lastTaxDate;
 	//
-	public String TaxDate;
+	public String taxDate;
 }

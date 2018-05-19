@@ -11,30 +11,10 @@ import libomv.utils.CallbackArgs;
  * sound changes its volume level
  */
 public class PreloadSoundCallbackArgs implements CallbackArgs {
-	private final Simulator m_Simulator;
-	private final UUID m_SoundID;
-	private final UUID m_OwnerID;
-	private final UUID m_ObjectID;
-
-	// Simulator where the event originated
-	public final Simulator getSimulator() {
-		return m_Simulator;
-	}
-
-	// Get the sound asset id
-	public final UUID getSoundID() {
-		return m_SoundID;
-	}
-
-	// Get the ID of the owner
-	public final UUID getOwnerID() {
-		return m_OwnerID;
-	}
-
-	// Get the ID of the Object
-	public final UUID getObjectID() {
-		return m_ObjectID;
-	}
+	private final Simulator simulator;
+	private final UUID soundID;
+	private final UUID ownerID;
+	private final UUID objectID;
 
 	/**
 	 * Construct a new instance of the PreloadSoundEventArgs class
@@ -49,9 +29,30 @@ public class PreloadSoundCallbackArgs implements CallbackArgs {
 	 *            The ID of the object
 	 */
 	public PreloadSoundCallbackArgs(Simulator sim, UUID soundID, UUID ownerID, UUID objectID) {
-		this.m_Simulator = sim;
-		this.m_SoundID = soundID;
-		this.m_OwnerID = ownerID;
-		this.m_ObjectID = objectID;
+		this.simulator = sim;
+		this.soundID = soundID;
+		this.ownerID = ownerID;
+		this.objectID = objectID;
 	}
+
+	// Simulator where the event originated
+	public final Simulator getSimulator() {
+		return simulator;
+	}
+
+	// Get the sound asset id
+	public final UUID getSoundID() {
+		return soundID;
+	}
+
+	// Get the ID of the owner
+	public final UUID getOwnerID() {
+		return ownerID;
+	}
+
+	// Get the ID of the Object
+	public final UUID getObjectID() {
+		return objectID;
+	}
+
 }

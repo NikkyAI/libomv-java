@@ -9,6 +9,10 @@ public class SimConnectingCallbackArgs implements CallbackArgs {
 	private InetSocketAddress endPoint;
 	private boolean cancel = false;
 
+	public SimConnectingCallbackArgs(InetSocketAddress endPoint) {
+		this.endPoint = endPoint;
+	}
+
 	public InetSocketAddress getEndPoint() {
 		return endPoint;
 	}
@@ -21,7 +25,4 @@ public class SimConnectingCallbackArgs implements CallbackArgs {
 		return cancel;
 	}
 
-	public SimConnectingCallbackArgs(InetSocketAddress endPoint) {
-		this.endPoint = endPoint;
-	}
 }

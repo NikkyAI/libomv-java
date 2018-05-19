@@ -320,7 +320,7 @@ public class CommWindow extends JFrame {
 				// Check if the sender agent is muted
 				muted = _Client.Self.findMuteEntry(new Predicate<MuteEntry>() {
 					public boolean evaluate(MuteEntry me) {
-						return (me.Type == MuteType.Resident && me.ID.equals(params.getSourceID()));
+						return (me.type == MuteType.Resident && me.id.equals(params.getSourceID()));
 					}
 				});
 				break;
@@ -328,9 +328,9 @@ public class CommWindow extends JFrame {
 				// Check if sender object is muted
 				muted = _Client.Self.findMuteEntry(new Predicate<MuteEntry>() {
 					public boolean evaluate(MuteEntry me) {
-						return ((me.Type == MuteType.Resident && me.ID.equals(params.getOwnerID())) || // Owner muted
-						(me.Type == MuteType.Object && me.ID.equals(params.getSourceID())) || // Object muted by ID
-						(me.Type == MuteType.ByName && me.Name.equals(params.getFromName()))); // Object muted by name
+						return ((me.type == MuteType.Resident && me.id.equals(params.getOwnerID())) || // Owner muted
+						(me.type == MuteType.Object && me.id.equals(params.getSourceID())) || // Object muted by ID
+						(me.type == MuteType.ByName && me.name.equals(params.getFromName()))); // Object muted by name
 					}
 				});
 				break;
@@ -437,7 +437,7 @@ public class CommWindow extends JFrame {
 			// Message from someone we muted?
 			if (_Client.Self.findMuteEntry(new Predicate<MuteEntry>() {
 				public boolean evaluate(MuteEntry me) {
-					return (me.Type == MuteType.Resident && me.ID.equals(message.FromAgentID));
+					return (me.type == MuteType.Resident && me.id.equals(message.fromAgentID));
 				}
 			})) {
 				return false;
@@ -447,20 +447,20 @@ public class CommWindow extends JFrame {
 				@Override
 				public void run() {
 					try {
-						switch (message.Dialog) {
+						switch (message.dialog) {
 						case SessionSend:
-							if (_Client.Groups.GroupList.containsKey(message.IMSessionID)) {
+							if (_Client.Groups.GroupList.containsKey(message.imSessionID)) {
 								handleIM(message, true);
 							} else {
 								handleConferenceIM(message);
 							}
 							break;
 						case MessageFromAgent:
-							if (message.FromAgentName.equals("Second Life")) {
+							if (message.fromAgentName.equals("Second Life")) {
 								handleIMFromObject(message);
-							} else if (message.GroupIM || _Client.Groups.GroupList.containsKey(message.IMSessionID)) {
+							} else if (message.groupIM || _Client.Groups.GroupList.containsKey(message.imSessionID)) {
 								handleIM(message, true);
-							} else if (message.BinaryBucket.length > 1) { // conference
+							} else if (message.binaryBucket.length > 1) { // conference
 								handleConferenceIM(message);
 							} else {
 								handleIM(message, false);
@@ -471,17 +471,17 @@ public class CommWindow extends JFrame {
 							break;
 						case StartTyping:
 						case StopTyping:
-							handleTypingStatus(message, message.Dialog == InstantMessageDialog.StartTyping);
+							handleTypingStatus(message, message.dialog == InstantMessageDialog.StartTyping);
 							break;
 						case MessageBox:
 							// addNotification(new GenericNotification(this, message.Message));
 							logger.warn(GridClient.Log("Generic notice. Dialog not yet implemented", _Client));
 							break;
 						case RequestTeleport:
-							if (_Main.getStateControl().RLV.autoAcceptTP(message.FromAgentID)) {
-								displayInLocalChat("", "Auto accepting teleport from " + message.FromAgentName,
+							if (_Main.getStateControl().RLV.autoAcceptTP(message.fromAgentID)) {
+								displayInLocalChat("", "Auto accepting teleport from " + message.fromAgentName,
 										AbstractChannel.STYLE_REGULAR, true);
-								_Client.Self.TeleportLureRespond(message.FromAgentID, message.IMSessionID, true);
+								_Client.Self.TeleportLureRespond(message.fromAgentID, message.imSessionID, true);
 							} else {
 								answerTeleportLure(message);
 							}
@@ -490,25 +490,25 @@ public class CommWindow extends JFrame {
 							answerGroupInvitation(message);
 							break;
 						case FriendshipOffered:
-							if (message.FromAgentName.equals("Second Life")) {
+							if (message.fromAgentName.equals("Second Life")) {
 								handleIMFromObject(message);
 							} else {
 								answerFriendshipPrompt(message);
 							}
 							break;
 						case InventoryAccepted:
-							displayInLocalChat(message.FromAgentName, " accepted your inventory offer.",
+							displayInLocalChat(message.fromAgentName, " accepted your inventory offer.",
 									AbstractChannel.STYLE_REGULAR, true);
 							break;
 						case InventoryDeclined:
-							displayInLocalChat(message.FromAgentName, " declined your inventory offer.",
+							displayInLocalChat(message.fromAgentName, " declined your inventory offer.",
 									AbstractChannel.STYLE_REGULAR, true);
 							break;
 						case GroupNotice:
 							// Is this group muted?
 							if (!_Client.Self.findMuteEntry(new Predicate<MuteEntry>() {
 								public boolean evaluate(MuteEntry me) {
-									return (me.Type == MuteType.Group && me.ID.equals(message.FromAgentID));
+									return (me.type == MuteType.Group && me.id.equals(message.fromAgentID));
 								}
 							})) {
 								// addNotification(new GroupNoticeNotification(this, message));
@@ -523,7 +523,7 @@ public class CommWindow extends JFrame {
 							// Is the object muted by name?
 							if (!_Client.Self.findMuteEntry(new Predicate<MuteEntry>() {
 								public boolean evaluate(MuteEntry me) {
-									return (me.Type == MuteType.ByName && me.Name.equals(message.FromAgentName));
+									return (me.type == MuteType.ByName && me.name.equals(message.fromAgentName));
 								}
 							})) {
 								// addNotification(new InventoryOfferNotification(this, message));
@@ -544,7 +544,7 @@ public class CommWindow extends JFrame {
 
 	private void handleTypingStatus(InstantMessage message, boolean typing) throws BadLocationException {
 		AbstractChannel channel = getChannel(null);
-		channel.receiveStatus(message.FromAgentID, typing ? message.FromAgentName + " is typing" : null,
+		channel.receiveStatus(message.fromAgentID, typing ? message.fromAgentName + " is typing" : null,
 				AbstractChannel.STYLE_SYSTEM);
 	}
 
@@ -552,12 +552,12 @@ public class CommWindow extends JFrame {
 		// Is the object or the owner muted?
 		if (!_Client.Self.findMuteEntry(new Predicate<MuteEntry>() {
 			public boolean evaluate(MuteEntry me) {
-				return ((me.Type == MuteType.Object && me.ID.equals(message.IMSessionID)) || // muted object by id
-				(me.Type == MuteType.ByName && me.Name.equals(message.FromAgentName)) || // object muted by name
-				(me.Type == MuteType.Resident && me.ID.equals(message.FromAgentID))); // object's owner muted
+				return ((me.type == MuteType.Object && me.id.equals(message.imSessionID)) || // muted object by id
+				(me.type == MuteType.ByName && me.name.equals(message.fromAgentName)) || // object muted by name
+				(me.type == MuteType.Resident && me.id.equals(message.fromAgentID))); // object's owner muted
 			}
 		})) {
-			displayInLocalChat(message.FromAgentName, message.Message, AbstractChannel.STYLE_OBJECT, true);
+			displayInLocalChat(message.fromAgentName, message.message, AbstractChannel.STYLE_OBJECT, true);
 		}
 	}
 
@@ -566,63 +566,63 @@ public class CommWindow extends JFrame {
 			// Ignore group IM from a muted group
 			if (_Client.Self.findMuteEntry(new Predicate<MuteEntry>() {
 				public boolean evaluate(MuteEntry me) {
-					return (me.Type == MuteType.Group
-							&& (me.ID.equals(message.IMSessionID) || me.ID.equals(message.FromAgentID)));
+					return (me.type == MuteType.Group
+							&& (me.id.equals(message.imSessionID) || me.id.equals(message.fromAgentID)));
 				}
 			})) {
 				return;
 			}
 		}
 
-		AbstractChannel channel = getChannel(message.FromAgentID);
+		AbstractChannel channel = getChannel(message.fromAgentID);
 		if (channel == null) {
-			if (message.Message == null || message.Message.isEmpty()) {
+			if (message.message == null || message.message.isEmpty()) {
 				// if the channel doesn't exist yet and we don't have a real message to report,
 				// return now
 				return;
 			}
 
 			if (group) {
-				channel = new GroupChannel(_Main, message.FromAgentName, message.FromAgentID, message.IMSessionID);
+				channel = new GroupChannel(_Main, message.fromAgentName, message.fromAgentID, message.imSessionID);
 			} else {
-				channel = new PrivateChannel(_Main, message.FromAgentName, message.FromAgentID, message.IMSessionID);
+				channel = new PrivateChannel(_Main, message.fromAgentName, message.fromAgentID, message.imSessionID);
 			}
 			addChannel(channel);
 		}
 
 		String style = AbstractChannel.STYLE_REGULAR;
 		String localMessage = null;
-		if (message.Offline == InstantMessageOnline.Offline)
+		if (message.offline == InstantMessageOnline.Offline)
 			style = AbstractChannel.STYLE_OFFLINE;
 
-		if (_Main.getStateControl().RLV.restrictionActive("recvchat", message.FromAgentID)) {
+		if (_Main.getStateControl().RLV.restrictionActive("recvchat", message.fromAgentID)) {
 			localMessage = "*** IM blocked by your viewer";
-			_Client.Self.InstantMessage(_Client.Self.getName(), message.FromAgentID,
+			_Client.Self.InstantMessage(_Client.Self.getName(), message.fromAgentID,
 					"***  The Resident you messaged is prevented from reading your instant messages at the moment, please try again later.",
-					message.IMSessionID, InstantMessageDialog.BusyAutoResponse, InstantMessageOnline.Offline);
+					message.imSessionID, InstantMessageDialog.BusyAutoResponse, InstantMessageOnline.Offline);
 
 		}
 
 		// _Main.MediaManager.PlayUISound(UISounds.IM);
 
-		if (message.Message.toLowerCase().startsWith("/me ")) {
-			localMessage = message.Message.substring(3);
+		if (message.message.toLowerCase().startsWith("/me ")) {
+			localMessage = message.message.substring(3);
 		} else {
-			localMessage = ": " + message.Message;
+			localMessage = ": " + message.message;
 		}
-		channel.receiveMessage(message.Timestamp, message.FromAgentID, message.FromAgentName, localMessage, style);
+		channel.receiveMessage(message.timestamp, message.fromAgentID, message.fromAgentName, localMessage, style);
 		highlightChannel(channel, true);
 	}
 
 	private void handleConferenceIM(InstantMessage message) throws BadLocationException {
-		AbstractChannel channel = getChannel(message.IMSessionID);
+		AbstractChannel channel = getChannel(message.imSessionID);
 		if (channel == null) {
-			if (message.Message == null || message.Message.isEmpty()) {
+			if (message.message == null || message.message.isEmpty()) {
 				// if the channel doesn't exist yet and we don't have a real message to report,
 				// return now
 				return;
 			}
-			channel = new PrivateChannel(_Main, message.FromAgentName, message.FromAgentID, message.IMSessionID);
+			channel = new PrivateChannel(_Main, message.fromAgentName, message.fromAgentID, message.imSessionID);
 			addChannel(channel);
 		}
 
@@ -631,23 +631,23 @@ public class CommWindow extends JFrame {
 
 		// _Main.MediaManager.PlayUISound(UISounds.IM);
 
-		if (message.Message.toLowerCase().startsWith("/me ")) {
-			localMessage = message.Message.substring(3);
+		if (message.message.toLowerCase().startsWith("/me ")) {
+			localMessage = message.message.substring(3);
 		} else {
-			localMessage = ": " + message.Message;
+			localMessage = ": " + message.message;
 		}
-		channel.receiveMessage(message.Timestamp, message.FromAgentID, message.FromAgentName, localMessage, style);
+		channel.receiveMessage(message.timestamp, message.fromAgentID, message.fromAgentName, localMessage, style);
 		highlightChannel(channel, true);
 	}
 
 	private void answerTeleportLure(InstantMessage message) {
 		int result = JOptionPane.showConfirmDialog(
-				_Main.getJFrame(), message.FromAgentName + " has offered you a teleport with the following message: '"
-						+ message.Message + "'. Do you wish to accept?",
+				_Main.getJFrame(), message.fromAgentName + " has offered you a teleport with the following message: '"
+						+ message.message + "'. Do you wish to accept?",
 				"Teleportation Offer", JOptionPane.YES_NO_OPTION);
 		// Accept or decline the request
 		try {
-			_Client.Self.TeleportLureRespond(message.FromAgentID, message.IMSessionID, result == JOptionPane.OK_OPTION);
+			_Client.Self.TeleportLureRespond(message.fromAgentID, message.imSessionID, result == JOptionPane.OK_OPTION);
 		} catch (Exception ex) {
 			logger.error(GridClient.Log("Response to teleportation invite failed", _Client), ex);
 		}
@@ -656,13 +656,13 @@ public class CommWindow extends JFrame {
 	private void answerFriendshipPrompt(InstantMessage message) {
 		/* Prompt user for acceptance of friendship offer */
 		int result = JOptionPane.showConfirmDialog(_Main.getJFrame(),
-				message.FromAgentName + " wants to be your friend. Do you accept this request?", "Friendship Request",
+				message.fromAgentName + " wants to be your friend. Do you accept this request?", "Friendship Request",
 				JOptionPane.YES_NO_OPTION);
 		try {
 			if (result == JOptionPane.OK_OPTION) {
-				_Client.Friends.AcceptFriendship(message.FromAgentID, message.IMSessionID);
+				_Client.Friends.AcceptFriendship(message.fromAgentID, message.imSessionID);
 			} else {
-				_Client.Friends.DeclineFriendship(message.FromAgentID, message.IMSessionID);
+				_Client.Friends.DeclineFriendship(message.fromAgentID, message.imSessionID);
 			}
 		} catch (Exception ex) {
 			logger.error(GridClient.Log("Failed to answer to friendship offer", _Client), ex);
@@ -671,11 +671,11 @@ public class CommWindow extends JFrame {
 
 	private void answerGroupInvitation(InstantMessage message) {
 		int result = JOptionPane.showConfirmDialog(
-				_Main.getJFrame(), message.FromAgentName + " has invited you to join a group with following message '"
-						+ message.Message + "'. Do you accept this offer?",
+				_Main.getJFrame(), message.fromAgentName + " has invited you to join a group with following message '"
+						+ message.message + "'. Do you accept this offer?",
 				"Group Invitation", JOptionPane.YES_NO_OPTION);
 		try {
-			_Client.Self.GroupInviteRespond(message.FromAgentID, message.IMSessionID, result == JOptionPane.OK_OPTION);
+			_Client.Self.GroupInviteRespond(message.fromAgentID, message.imSessionID, result == JOptionPane.OK_OPTION);
 		} catch (Exception ex) {
 			logger.error(GridClient.Log("Exception when trying to respond to group invitation", _Client), ex);
 		}

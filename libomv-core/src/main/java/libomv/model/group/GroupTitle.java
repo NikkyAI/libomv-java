@@ -5,20 +5,17 @@ import libomv.types.UUID;
 // Class to represent Group Title
 public final class GroupTitle {
 	// Key of the group
-	public UUID GroupID;
+	public UUID groupID;
 	// ID of the role title belongs to
-	public UUID RoleID;
+	public UUID roleID;
 	// Group Title
-	public String Title;
+	public String title;
 	// Whether title is Active
-	public boolean Selected;
+	public boolean selected;
 
 	// Returns group title
 	@Override
 	public String toString() {
-		return Title;
-	}
-
-	public GroupTitle() {
+		return title;
 	}
 }

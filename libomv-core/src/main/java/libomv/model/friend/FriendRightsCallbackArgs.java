@@ -6,11 +6,12 @@ import libomv.utils.CallbackArgs;
 public class FriendRightsCallbackArgs implements CallbackArgs {
 	private final FriendInfo friendInfo;
 
+	public FriendRightsCallbackArgs(FriendInfo friendInfo) {
+		this.friendInfo = friendInfo;
+	}
+
 	public FriendInfo getFriendInfo() {
 		return friendInfo;
 	}
 
-	public FriendRightsCallbackArgs(FriendInfo friendInfo) {
-		this.friendInfo = friendInfo;
-	}
 }

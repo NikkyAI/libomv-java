@@ -7,18 +7,8 @@ import libomv.utils.CallbackArgs;
 
 // Represents a list of active group notices
 public class GroupNoticesListReplyCallbackArgs implements CallbackArgs {
-	private final UUID m_GroupID;
-	private final ArrayList<GroupNoticesListEntry> m_Notices;
-
-	// Get the ID of the group
-	public final UUID getGroupID() {
-		return m_GroupID;
-	}
-
-	// Get the notices list
-	public final ArrayList<GroupNoticesListEntry> getNotices() {
-		return m_Notices;
-	}
+	private final UUID groupID;
+	private final ArrayList<GroupNoticesListEntry> notices;
 
 	/**
 	 * Construct a new instance of the GroupNoticesListReplyCallbackArgs class
@@ -29,7 +19,18 @@ public class GroupNoticesListReplyCallbackArgs implements CallbackArgs {
 	 *            The list containing active notices
 	 */
 	public GroupNoticesListReplyCallbackArgs(UUID groupID, ArrayList<GroupNoticesListEntry> notices) {
-		m_GroupID = groupID;
-		m_Notices = notices;
+		this.groupID = groupID;
+		this.notices = notices;
 	}
+
+	// Get the ID of the group
+	public final UUID getGroupID() {
+		return groupID;
+	}
+
+	// Get the notices list
+	public final ArrayList<GroupNoticesListEntry> getNotices() {
+		return notices;
+	}
+
 }

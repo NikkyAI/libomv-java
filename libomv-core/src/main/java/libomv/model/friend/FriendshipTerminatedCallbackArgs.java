@@ -8,6 +8,11 @@ public class FriendshipTerminatedCallbackArgs implements CallbackArgs {
 	private final UUID otherID;
 	private final String name;
 
+	public FriendshipTerminatedCallbackArgs(UUID otherID, String name) {
+		this.otherID = otherID;
+		this.name = name;
+	}
+
 	public UUID getOtherID() {
 		return otherID;
 	}
@@ -16,8 +21,4 @@ public class FriendshipTerminatedCallbackArgs implements CallbackArgs {
 		return name;
 	}
 
-	public FriendshipTerminatedCallbackArgs(UUID otherID, String name) {
-		this.otherID = otherID;
-		this.name = name;
-	}
 }

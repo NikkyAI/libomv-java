@@ -9,6 +9,12 @@ public class AgentCachedBakesReplyCallbackArgs implements CallbackArgs {
 	private final int serialNum;
 	private final int numBakes;
 
+	// Construct a new instance of the AgentCachedBakesReplyEventArgs class
+	public AgentCachedBakesReplyCallbackArgs(int serialNum, int numBakes) {
+		this.serialNum = serialNum;
+		this.numBakes = numBakes;
+	}
+
 	public int getSerialNum() {
 		return serialNum;
 	}
@@ -17,9 +23,4 @@ public class AgentCachedBakesReplyCallbackArgs implements CallbackArgs {
 		return numBakes;
 	}
 
-	// Construct a new instance of the AgentCachedBakesReplyEventArgs class
-	public AgentCachedBakesReplyCallbackArgs(int serialNum, int numBakes) {
-		this.serialNum = serialNum;
-		this.numBakes = numBakes;
-	}
 }

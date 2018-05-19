@@ -13,21 +13,21 @@ import libomv.types.UUID;
 // Used to keep track of currently worn textures and baking data
 public class TextureData {
 	// A texture AssetID
-	public UUID TextureID;
+	public UUID textureID;
 	// Asset data for the texture
-	public AssetTexture Texture;
+	public AssetTexture texture;
 	// Collection of alpha masks that needs applying
-	public HashMap<libomv.VisualParams.VisualAlphaParam, Float> AlphaMasks;
+	public HashMap<VisualAlphaParam, Float> alphaMasks;
 	// Tint that should be applied to the texture
-	public Color4 Color;
+	public Color4 color;
 	// The avatar texture index this texture is for
-	public AvatarTextureIndex TextureIndex;
+	public AvatarTextureIndex textureIndex;
 	// Host address for this texture
-	public String Host;
+	public String host;
 
 	@Override
 	public String toString() {
-		return String.format("TextureID: %s, Texture: %s", TextureID,
-				Texture != null ? Texture.getAssetData().length + " bytes" : "(null)");
+		return String.format("TextureID: %s, Texture: %s", textureID,
+				texture != null ? texture.getAssetData().length + " bytes" : "(null)");
 	}
 }

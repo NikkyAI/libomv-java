@@ -12,27 +12,9 @@ import libomv.utils.CallbackArgs;
  * attached sound changes its volume level
  */
 public class AttachedSoundGainChangeCallbackArgs implements CallbackArgs {
-	private final Simulator m_Simulator;
-	private final UUID m_ObjectID;
-	private final float m_Gain;
-
-	// Simulator where the event originated
-	// Tangible_doc_comment_end
-	public final Simulator getSimulator() {
-		return m_Simulator;
-	}
-
-	// Get the ID of the Object
-	// Tangible_doc_comment_end
-	public final UUID getObjectID() {
-		return m_ObjectID;
-	}
-
-	// Get the volume level
-	// Tangible_doc_comment_end
-	public final float getGain() {
-		return m_Gain;
-	}
+	private final Simulator simulator;
+	private final UUID objectID;
+	private final float gain;
 
 	/**
 	 * Construct a new instance of the AttachedSoundGainChangedEventArgs class
@@ -45,8 +27,27 @@ public class AttachedSoundGainChangeCallbackArgs implements CallbackArgs {
 	 *            The new volume level
 	 */
 	public AttachedSoundGainChangeCallbackArgs(Simulator sim, UUID objectID, float gain) {
-		this.m_Simulator = sim;
-		this.m_ObjectID = objectID;
-		this.m_Gain = gain;
+		this.simulator = sim;
+		this.objectID = objectID;
+		this.gain = gain;
 	}
+
+	// Simulator where the event originated
+	// Tangible_doc_comment_end
+	public final Simulator getSimulator() {
+		return simulator;
+	}
+
+	// Get the ID of the Object
+	// Tangible_doc_comment_end
+	public final UUID getObjectID() {
+		return objectID;
+	}
+
+	// Get the volume level
+	// Tangible_doc_comment_end
+	public final float getGain() {
+		return gain;
+	}
+
 }

@@ -6,11 +6,12 @@ import libomv.utils.CallbackArgs;
 public class SimChangedCallbackArgs implements CallbackArgs {
 	private final Simulator simulator;
 
+	public SimChangedCallbackArgs(Simulator simulator) {
+		this.simulator = simulator;
+	}
+
 	public Simulator getSimulator() {
 		return simulator;
 	}
 
-	public SimChangedCallbackArgs(Simulator simulator) {
-		this.simulator = simulator;
-	}
 }

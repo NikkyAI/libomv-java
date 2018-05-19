@@ -6,22 +6,32 @@ import libomv.types.UUID;
 import libomv.utils.CallbackArgs;
 
 public class InventoryObjectOfferedCallbackArgs implements CallbackArgs {
-	private final InstantMessage m_Offer;
-	private final AssetType m_AssetType;
-	private final UUID m_ObjectID;
-	private final boolean m_FromTask;
-	private boolean m_Accept;
-	private UUID m_FolderID;
+	private final InstantMessage offer;
+	private final AssetType assetType;
+	private final UUID objectID;
+	private final boolean fromTask;
+	private boolean accept;
+	private UUID folderID;
+
+	public InventoryObjectOfferedCallbackArgs(InstantMessage offerDetails, AssetType type, UUID objectID,
+			boolean fromTask, UUID folderID) {
+		this.accept = false;
+		this.folderID = folderID;
+		this.offer = offerDetails;
+		this.assetType = type;
+		this.objectID = objectID;
+		this.fromTask = fromTask;
+	}
 
 	/*
 	 * Set to true to accept offer, false to decline it
 	 */
 	public final boolean getAccept() {
-		return m_Accept;
+		return accept;
 	}
 
 	public final void setAccept(boolean value) {
-		m_Accept = value;
+		accept = value;
 	}
 
 	/*
@@ -29,36 +39,27 @@ public class InventoryObjectOfferedCallbackArgs implements CallbackArgs {
 	 * cref="AssetType"/> will be used
 	 */
 	public final UUID getFolderID() {
-		return m_FolderID;
+		return folderID;
 	}
 
 	public final void setFolderID(UUID value) {
-		m_FolderID = value;
+		folderID = value;
 	}
 
 	public final InstantMessage getOffer() {
-		return m_Offer;
+		return offer;
 	}
 
 	public final AssetType getAssetType() {
-		return m_AssetType;
+		return assetType;
 	}
 
 	public final UUID getObjectID() {
-		return m_ObjectID;
+		return objectID;
 	}
 
 	public final boolean getFromTask() {
-		return m_FromTask;
+		return fromTask;
 	}
 
-	public InventoryObjectOfferedCallbackArgs(InstantMessage offerDetails, AssetType type, UUID objectID,
-			boolean fromTask, UUID folderID) {
-		this.m_Accept = false;
-		this.m_FolderID = folderID;
-		this.m_Offer = offerDetails;
-		this.m_AssetType = type;
-		this.m_ObjectID = objectID;
-		this.m_FromTask = fromTask;
-	}
 }

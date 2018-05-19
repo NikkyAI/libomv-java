@@ -6,11 +6,11 @@ import libomv.utils.Helpers;
 /** Response to a "Groups" Search */
 public final class GroupSearchData {
 	/** The Group ID */
-	public UUID GroupID;
+	public UUID groupID;
 	/** The name of the group */
-	public String GroupName;
+	public String groupName;
 	/** The current number of members */
-	public int Members;
+	public int members;
 
 	/**
 	 * Print the struct data as a string

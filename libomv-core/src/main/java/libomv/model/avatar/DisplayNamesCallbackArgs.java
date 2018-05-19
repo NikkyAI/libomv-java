@@ -8,6 +8,12 @@ public class DisplayNamesCallbackArgs {
 	private AgentDisplayName[] names;
 	private UUID[] badIDs;
 
+	public DisplayNamesCallbackArgs(boolean success, AgentDisplayName[] names, UUID[] badIDs) {
+		this.success = success;
+		this.names = names;
+		this.badIDs = badIDs;
+	}
+
 	public boolean getSuccess() {
 		return success;
 	}
@@ -20,9 +26,4 @@ public class DisplayNamesCallbackArgs {
 		return badIDs;
 	}
 
-	public DisplayNamesCallbackArgs(boolean success, AgentDisplayName[] names, UUID[] badIDs) {
-		this.success = success;
-		this.names = names;
-		this.badIDs = badIDs;
-	}
 }

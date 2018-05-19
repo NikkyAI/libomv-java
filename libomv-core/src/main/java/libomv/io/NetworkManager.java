@@ -1162,14 +1162,14 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 		long timeMilli = System.currentTimeMillis();
 
 		SimulatorManager simulator = (SimulatorManager) sim;
-		simulator.Statistics.LastLag = timeMilli - simulator.Statistics.LastPingSent;
-		simulator.Statistics.ReceivedPongs++;
+		simulator.Statistics.lastLag = timeMilli - simulator.Statistics.lastPingSent;
+		simulator.Statistics.receivedPongs++;
 
 		if (LibSettings.OUTPUT_TIMING_STATS) {
-			String retval = "Pong2: " + simulator.getName() + " lag : " + simulator.Statistics.LastLag + "ms";
+			String retval = "Pong2: " + simulator.getName() + " lag : " + simulator.Statistics.lastLag + "ms";
 
-			if ((pong.PingID - simulator.Statistics.LastPingID + 1) != 0) {
-				retval += " (gap of " + (pong.PingID - simulator.Statistics.LastPingID + 1) + ")";
+			if ((pong.PingID - simulator.Statistics.lastPingID + 1) != 0) {
+				retval += " (gap of " + (pong.PingID - simulator.Statistics.lastPingID + 1) + ")";
 			}
 
 			logger.debug(GridClient.Log(retval, _Client));
@@ -1193,121 +1193,121 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 
 				switch (SimStatType.setValue(s.StatID)) {
 				case TimeDilation:
-					simulator.Statistics.Dilation = s.StatValue;
+					simulator.Statistics.dilation = s.StatValue;
 					break;
 				case SimFPS:
-					simulator.Statistics.FPS = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+					simulator.Statistics.fps = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
 					break;
 				case PhysicsFPS:
-					simulator.Statistics.PhysicsFPS = s.StatValue;
+					simulator.Statistics.physicsFPS = s.StatValue;
 					break;
 				case AgentUpdates:
-					simulator.Statistics.AgentUpdates = s.StatValue;
+					simulator.Statistics.agentUpdates = s.StatValue;
 					break;
 				case FrameMS:
-					simulator.Statistics.FrameTime = s.StatValue;
+					simulator.Statistics.frameTime = s.StatValue;
 					break;
 				case NetMS:
-					simulator.Statistics.NetTime = s.StatValue;
+					simulator.Statistics.netTime = s.StatValue;
 					break;
 				case OtherMS:
-					simulator.Statistics.OtherTime = s.StatValue;
+					simulator.Statistics.otherTime = s.StatValue;
 					break;
 				case PhysicsMS:
-					simulator.Statistics.PhysicsTime = s.StatValue;
+					simulator.Statistics.physicsTime = s.StatValue;
 					break;
 				case AgentMS:
-					simulator.Statistics.AgentTime = s.StatValue;
+					simulator.Statistics.agentTime = s.StatValue;
 					break;
 				case ImageMS:
-					simulator.Statistics.ImageTime = s.StatValue;
+					simulator.Statistics.imageTime = s.StatValue;
 					break;
 				case ScriptMS:
-					simulator.Statistics.ScriptTime = s.StatValue;
+					simulator.Statistics.scriptTime = s.StatValue;
 					break;
 				case TotalPrim:
-					simulator.Statistics.Objects = (int) s.StatValue;
+					simulator.Statistics.objects = (int) s.StatValue;
 					break;
 				case ActivePrim:
-					simulator.Statistics.ScriptedObjects = (int) s.StatValue;
+					simulator.Statistics.scriptedObjects = (int) s.StatValue;
 					break;
 				case Agents:
-					simulator.Statistics.Agents = (int) s.StatValue;
+					simulator.Statistics.agents = (int) s.StatValue;
 					break;
 				case ChildAgents:
-					simulator.Statistics.ChildAgents = (int) s.StatValue;
+					simulator.Statistics.childAgents = (int) s.StatValue;
 					break;
 				case ActiveScripts:
-					simulator.Statistics.ActiveScripts = (int) s.StatValue;
+					simulator.Statistics.activeScripts = (int) s.StatValue;
 					break;
 				case ScriptInstructionsPerSecond:
-					simulator.Statistics.LSLIPS = (int) s.StatValue;
+					simulator.Statistics.lslIPS = (int) s.StatValue;
 					break;
 				case InPacketsPerSecond:
-					simulator.Statistics.INPPS = (int) s.StatValue;
+					simulator.Statistics.inPPS = (int) s.StatValue;
 					break;
 				case OutPacketsPerSecond:
-					simulator.Statistics.OUTPPS = (int) s.StatValue;
+					simulator.Statistics.outPPS = (int) s.StatValue;
 					break;
 				case PendingDownloads:
-					simulator.Statistics.PendingDownloads = (int) s.StatValue;
+					simulator.Statistics.pendingDownloads = (int) s.StatValue;
 					break;
 				case PendingUploads:
-					simulator.Statistics.PendingUploads = (int) s.StatValue;
+					simulator.Statistics.pendingUploads = (int) s.StatValue;
 					break;
 				case VirtualSizeKB:
-					simulator.Statistics.VirtualSize = (int) s.StatValue;
+					simulator.Statistics.virtualSize = (int) s.StatValue;
 					break;
 				case ResidentSizeKB:
-					simulator.Statistics.ResidentSize = (int) s.StatValue;
+					simulator.Statistics.residentSize = (int) s.StatValue;
 					break;
 				case PendingLocalUploads:
-					simulator.Statistics.PendingLocalUploads = (int) s.StatValue;
+					simulator.Statistics.pendingLocalUploads = (int) s.StatValue;
 					break;
 				case UnAckedBytes:
-					simulator.Statistics.UnackedBytes = (int) s.StatValue;
+					simulator.Statistics.unackedBytes = (int) s.StatValue;
 					break;
 				case PhysicsPinnedTasks:
-					simulator.Statistics.PhysicsPinnedTasks = (int) s.StatValue;
+					simulator.Statistics.physicsPinnedTasks = (int) s.StatValue;
 					break;
 				case PhysicsLODTasks:
-					simulator.Statistics.PhysicsLODTasks = (int) s.StatValue;
+					simulator.Statistics.physicsLODTasks = (int) s.StatValue;
 					break;
 				case PhysicsStepMS:
-					simulator.Statistics.PhysicsStepMS = (int) s.StatValue;
+					simulator.Statistics.physicsStepMS = (int) s.StatValue;
 					break;
 				case PhysicsShapeMS:
-					simulator.Statistics.PhysicsShapeMS = (int) s.StatValue;
+					simulator.Statistics.physicsShapeMS = (int) s.StatValue;
 					break;
 				case PhysicsOtherMS:
-					simulator.Statistics.PhysicsOtherMS = (int) s.StatValue;
+					simulator.Statistics.physicsOtherMS = (int) s.StatValue;
 					break;
 				case PhysicsMemory:
-					simulator.Statistics.PhysicsMemory = (int) s.StatValue;
+					simulator.Statistics.physicsMemory = (int) s.StatValue;
 					break;
 				case ScriptEPS:
-					simulator.Statistics.ScriptEPS = (int) s.StatValue;
+					simulator.Statistics.scriptEPS = (int) s.StatValue;
 					break;
 				case SimSpareTime:
-					simulator.Statistics.SimSpareTime = (int) s.StatValue;
+					simulator.Statistics.simSpareTime = (int) s.StatValue;
 					break;
 				case SimSleepTime:
-					simulator.Statistics.SimSleepTime = (int) s.StatValue;
+					simulator.Statistics.simSleepTime = (int) s.StatValue;
 					break;
 				case SimIOPumpTime:
-					simulator.Statistics.SimIOPumpTime = (int) s.StatValue;
+					simulator.Statistics.simIOPumpTime = (int) s.StatValue;
 					break;
 				case SimPctScriptsRun:
-					simulator.Statistics.SimPctScriptsRun = (int) s.StatValue;
+					simulator.Statistics.simPctScriptsRun = (int) s.StatValue;
 					break;
 				case SimAIStepMsec:
-					simulator.Statistics.SimAIStepMsec = (int) s.StatValue;
+					simulator.Statistics.simAIStepMsec = (int) s.StatValue;
 					break;
 				case SimSkippedSilhouetteSteps:
-					simulator.Statistics.SimSkippedSilhouetteSteps = (int) s.StatValue;
+					simulator.Statistics.simSkippedSilhouetteSteps = (int) s.StatValue;
 					break;
 				case SimPctSteppedCharacters:
-					simulator.Statistics.SimPctSteppedCharacters = (int) s.StatValue;
+					simulator.Statistics.simPctSteppedCharacters = (int) s.StatValue;
 					break;
 				default:
 					logger.debug(GridClient.Log("Unknown stat id: " + s.StatID, _Client));

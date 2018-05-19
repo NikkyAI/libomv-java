@@ -148,28 +148,28 @@ public class Baker {
 		if (bakeType == BakeType.Eyes) {
 			InitBakedLayerColor(Color4.White);
 		} else if (textures.size() > 0) {
-			InitBakedLayerColor(textures.get(0).Color);
+			InitBakedLayerColor(textures.get(0).color);
 		}
 
 		// Sort out the special layers we need for head baking and alpha
 		for (TextureData tex : textures) {
-			if (tex.Texture == null)
+			if (tex.texture == null)
 				continue;
 
-			if (tex.TextureIndex.compareTo(AvatarTextureIndex.HeadBodypaint) == 0
-					|| tex.TextureIndex.compareTo(AvatarTextureIndex.UpperBodypaint) == 0
-					|| tex.TextureIndex.compareTo(AvatarTextureIndex.LowerBodypaint) == 0)
+			if (tex.textureIndex.compareTo(AvatarTextureIndex.HeadBodypaint) == 0
+					|| tex.textureIndex.compareTo(AvatarTextureIndex.UpperBodypaint) == 0
+					|| tex.textureIndex.compareTo(AvatarTextureIndex.LowerBodypaint) == 0)
 				skinTexture = tex;
 
-			if (tex.TextureIndex.compareTo(AvatarTextureIndex.HeadTattoo) == 0
-					|| tex.TextureIndex.compareTo(AvatarTextureIndex.UpperTattoo) == 0
-					|| tex.TextureIndex.compareTo(AvatarTextureIndex.LowerTattoo) == 0)
+			if (tex.textureIndex.compareTo(AvatarTextureIndex.HeadTattoo) == 0
+					|| tex.textureIndex.compareTo(AvatarTextureIndex.UpperTattoo) == 0
+					|| tex.textureIndex.compareTo(AvatarTextureIndex.LowerTattoo) == 0)
 				tattooTextures.add(tex);
 
-			if (tex.TextureIndex.compareTo(AvatarTextureIndex.LowerAlpha) >= 0
-					&& tex.TextureIndex.compareTo(AvatarTextureIndex.HairAlpha) <= 0) {
-				if (tex.Texture.getImage().getAlpha() != null)
-					alphaWearableTextures.add(tex.Texture.getImage().clone());
+			if (tex.textureIndex.compareTo(AvatarTextureIndex.LowerAlpha) >= 0
+					&& tex.textureIndex.compareTo(AvatarTextureIndex.HairAlpha) <= 0) {
+				if (tex.texture.getImage().getAlpha() != null)
+					alphaWearableTextures.add(tex.texture.getImage().clone());
 			}
 		}
 
@@ -179,7 +179,7 @@ public class Baker {
 			MultiplyLayerFromAlpha(bakedTexture, LoadResourceLayer("head_skingrain.tga"));
 		}
 
-		if (skinTexture.Texture == null) {
+		if (skinTexture.texture == null) {
 			if (bakeType == BakeType.UpperBody)
 				DrawLayer(LoadResourceLayer("upperbody_color.tga"), false);
 
@@ -191,22 +191,22 @@ public class Baker {
 		for (int i = 0; i < textures.size(); i++) {
 			TextureData tex = textures.get(i);
 			// Skip if we have no texture on this layer
-			if (tex.Texture == null)
+			if (tex.texture == null)
 				continue;
 
 			// Is this Alpha wearable and does it have an alpha channel?
-			if (tex.TextureIndex.compareTo(AvatarTextureIndex.LowerAlpha) >= 0
-					&& tex.TextureIndex.compareTo(AvatarTextureIndex.HairAlpha) <= 0)
+			if (tex.textureIndex.compareTo(AvatarTextureIndex.LowerAlpha) >= 0
+					&& tex.textureIndex.compareTo(AvatarTextureIndex.HairAlpha) <= 0)
 				continue;
 
 			// Don't draw skin and tattoo on head bake first
 			// For head bake the skin and texture are drawn last, go figure
 			if (bakeType == BakeType.Head
-					&& textures.get(i).TextureIndex.compareTo(AvatarTextureIndex.HeadBodypaint) == 0
-					|| textures.get(i).TextureIndex.compareTo(AvatarTextureIndex.HeadTattoo) == 0)
+					&& textures.get(i).textureIndex.compareTo(AvatarTextureIndex.HeadBodypaint) == 0
+					|| textures.get(i).textureIndex.compareTo(AvatarTextureIndex.HeadTattoo) == 0)
 				continue;
 
-			ManagedImage texture = tex.Texture.getImage().clone();
+			ManagedImage texture = tex.texture.getImage().clone();
 			// File.WriteAllBytes(bakeType + "-texture-layer-" +
 			// textures.get(i).TextureIndex + i + ".tga", texture.ExportTGA());
 
@@ -223,8 +223,8 @@ public class Baker {
 			// Special case for hair layer for the head bake
 			// If we don't have skin texture, we discard hair alpha
 			// and apply hair(i == 2) pattern over the texture
-			if (skinTexture.Texture == null && bakeType == BakeType.Head
-					&& textures.get(i).TextureIndex.compareTo(AvatarTextureIndex.Hair) == 0) {
+			if (skinTexture.texture == null && bakeType == BakeType.Head
+					&& textures.get(i).textureIndex.compareTo(AvatarTextureIndex.Hair) == 0) {
 				if (texture.getAlpha() != null) {
 					for (int j = 0; j < texture.getAlpha().length; j++)
 						texture.setAlpha(j, (byte) 0xFF);
@@ -234,10 +234,10 @@ public class Baker {
 
 			// Apply tint and alpha masks except for skin that has a texture
 			// on layer 0 which always overrides other skin settings
-			if (!(textures.get(i).TextureIndex.compareTo(AvatarTextureIndex.HeadBodypaint) == 0
-					|| textures.get(i).TextureIndex.compareTo(AvatarTextureIndex.UpperBodypaint) == 0
-					|| textures.get(i).TextureIndex.compareTo(AvatarTextureIndex.LowerBodypaint) == 0)) {
-				ApplyTint(texture, tex.Color);
+			if (!(textures.get(i).textureIndex.compareTo(AvatarTextureIndex.HeadBodypaint) == 0
+					|| textures.get(i).textureIndex.compareTo(AvatarTextureIndex.UpperBodypaint) == 0
+					|| textures.get(i).textureIndex.compareTo(AvatarTextureIndex.LowerBodypaint) == 0)) {
+				ApplyTint(texture, tex.color);
 
 				// For hair bake, we skip all alpha masks
 				// and use one from the texture, for both
@@ -250,7 +250,7 @@ public class Baker {
 					}
 				}
 				// Apply parameterized alpha masks
-				else if (tex.AlphaMasks != null && tex.AlphaMasks.size() > 0) {
+				else if (tex.alphaMasks != null && tex.alphaMasks.size() > 0) {
 					// Combined mask for the layer, fully transparent to begin with
 					ManagedImage combinedMask = new ManagedImage(bakeWidth, bakeHeight,
 							ManagedImage.ImageChannels.Alpha);
@@ -258,7 +258,7 @@ public class Baker {
 					int addedMasks = 0;
 
 					// First add mask in normal blend mode
-					for (Entry<VisualAlphaParam, Float> kvp : tex.AlphaMasks.entrySet()) {
+					for (Entry<VisualAlphaParam, Float> kvp : tex.alphaMasks.entrySet()) {
 						if (!MaskBelongsToBake(kvp.getKey().tgaFile))
 							continue;
 
@@ -276,7 +276,7 @@ public class Baker {
 							combinedMask.setAlpha(l, (byte) 255);
 
 					// Add masks in multiply blend mode
-					for (Entry<VisualAlphaParam, Float> kvp : tex.AlphaMasks.entrySet()) {
+					for (Entry<VisualAlphaParam, Float> kvp : tex.alphaMasks.entrySet()) {
 						if (!MaskBelongsToBake(kvp.getKey().tgaFile))
 							continue;
 
@@ -293,7 +293,7 @@ public class Baker {
 
 					// Is this layer used for morph mask? If it is, use its
 					// alpha as the morph for the whole bake
-					if (tex.TextureIndex == AppearanceManager.MorphLayerForBakeType(bakeType)) {
+					if (tex.textureIndex == AppearanceManager.MorphLayerForBakeType(bakeType)) {
 						bakedTexture.setBump(combinedMask.getAlpha());
 					}
 				}
@@ -307,8 +307,8 @@ public class Baker {
 		if (bakeType == BakeType.Head) {
 			ManagedImage texture;
 
-			if (skinTexture.Texture != null) {
-				texture = skinTexture.Texture.getImage().clone();
+			if (skinTexture.texture != null) {
+				texture = skinTexture.texture.getImage().clone();
 				if (texture.getWidth() != bakeWidth || texture.getHeight() != bakeHeight) {
 					try {
 						texture.resizeNearestNeighbor(bakeWidth, bakeHeight);
@@ -320,8 +320,8 @@ public class Baker {
 
 			for (TextureData tex : tattooTextures) {
 				// Add head tattoo here (if available, order dependent)
-				if (tex.Texture != null) {
-					texture = tex.Texture.getImage().clone();
+				if (tex.texture != null) {
+					texture = tex.texture.getImage().clone();
 					if (texture.getWidth() != bakeWidth || texture.getHeight() != bakeHeight) {
 						try {
 							texture.resizeNearestNeighbor(bakeWidth, bakeHeight);

@@ -5,12 +5,7 @@ import libomv.utils.CallbackArgs;
 
 // Represents your agent leaving a group
 public class GroupDroppedCallbackArgs implements CallbackArgs {
-	private final UUID m_GroupID;
-
-	// Get the ID of the group
-	public final UUID getGroupID() {
-		return m_GroupID;
-	}
+	private final UUID groupID;
 
 	/**
 	 * Construct a new instance of the GroupDroppedCallbackArgs class
@@ -19,6 +14,12 @@ public class GroupDroppedCallbackArgs implements CallbackArgs {
 	 *            The ID of the group
 	 */
 	public GroupDroppedCallbackArgs(UUID groupID) {
-		m_GroupID = groupID;
+		this.groupID = groupID;
 	}
+
+	// Get the ID of the group
+	public final UUID getGroupID() {
+		return groupID;
+	}
+
 }

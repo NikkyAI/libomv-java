@@ -7,29 +7,10 @@ import libomv.utils.CallbackArgs;
  * Returned, along with other info, upon a successful .RequestInfo()
  */
 public class EstateUpdateInfoReplyCallbackArgs implements CallbackArgs {
-	private final int m_estateID;
-	private final boolean m_denyNoPaymentInfo;
-	private final String m_estateName;
-	private final UUID m_estateOwner;
-
-	// The estate's name
-	public String getEstateName() {
-		return m_estateName;
-	}
-
-	// The Estate Owner's ID (can be a GroupID)
-	public UUID getEstateOwner() {
-		return m_estateOwner;
-	}
-
-	// The identifier of the estate on the grid
-	public int getEstateID() {
-		return m_estateID;
-	}
-
-	public boolean getDenyNoPaymentInfo() {
-		return m_denyNoPaymentInfo;
-	}
+	private final int estateID;
+	private final boolean denyNoPaymentInfo;
+	private final String estateName;
+	private final UUID estateOwner;
 
 	/**
 	 * Construct a new instance of the EstateUpdateInfoReplyEventArgs class
@@ -44,10 +25,30 @@ public class EstateUpdateInfoReplyCallbackArgs implements CallbackArgs {
 	 */
 	public EstateUpdateInfoReplyCallbackArgs(String estateName, UUID estateOwner, int estateID,
 			boolean denyNoPaymentInfo) {
-		this.m_estateName = estateName;
-		this.m_estateOwner = estateOwner;
-		this.m_estateID = estateID;
-		this.m_denyNoPaymentInfo = denyNoPaymentInfo;
+		this.estateName = estateName;
+		this.estateOwner = estateOwner;
+		this.estateID = estateID;
+		this.denyNoPaymentInfo = denyNoPaymentInfo;
 
 	}
+
+	// The estate's name
+	public String getEstateName() {
+		return estateName;
+	}
+
+	// The Estate Owner's ID (can be a GroupID)
+	public UUID getEstateOwner() {
+		return estateOwner;
+	}
+
+	// The identifier of the estate on the grid
+	public int getEstateID() {
+		return estateID;
+	}
+
+	public boolean getDenyNoPaymentInfo() {
+		return denyNoPaymentInfo;
+	}
+
 }

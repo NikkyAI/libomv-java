@@ -6,9 +6,9 @@ import libomv.types.UUID;
 
 public final class ParcelAccessEntry {
 	// Agents {@link T:OpenMetaverse.UUID}
-	public UUID AgentID;
+	public UUID agentID;
 	//
-	public Date Time;
+	public Date time;
 	// Flags for specific entry in white/black lists
-	public byte Flags;
+	public byte flags;
 }

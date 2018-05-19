@@ -11,50 +11,50 @@ import libomv.utils.CallbackArgs;
  * sends the sound data which emits from an agents attachment
  */
 public class AttachedSoundCallbackArgs implements CallbackArgs {
-	private final Simulator m_Simulator;
-	private final UUID m_SoundID;
-	private final UUID m_OwnerID;
-	private final UUID m_ObjectID;
-	private final float m_Gain;
-	private final byte m_Flags;
+	private final Simulator simulator;
+	private final UUID soundID;
+	private final UUID ownerID;
+	private final UUID objectID;
+	private final float gain;
+	private final byte flags;
+
+	public AttachedSoundCallbackArgs(Simulator sim, UUID soundID, UUID ownerID, UUID objectID, float gain, byte flags) {
+		this.simulator = sim;
+		this.soundID = soundID;
+		this.ownerID = ownerID;
+		this.objectID = objectID;
+		this.gain = gain;
+		this.flags = flags;
+	}
 
 	// Simulator where the event originated
 	public final Simulator getSimulator() {
-		return m_Simulator;
+		return simulator;
 	}
 
 	// Get the sound asset id
 	public final UUID getSoundID() {
-		return m_SoundID;
+		return soundID;
 	}
 
 	// Get the ID of the owner
 	public final UUID getOwnerID() {
-		return m_OwnerID;
+		return ownerID;
 	}
 
 	// Get the ID of the Object
 	public final UUID getObjectID() {
-		return m_ObjectID;
+		return objectID;
 	}
 
 	// Get the volume level
 	public final float getGain() {
-		return m_Gain;
+		return gain;
 	}
 
 	// Get the <see cref="SoundFlags"/>
 	public final byte getFlags() {
-		return m_Flags;
+		return flags;
 	}
 
-	public AttachedSoundCallbackArgs(Simulator sim, UUID soundID, UUID ownerID, UUID objectID, float gain,
-			byte flags) {
-		this.m_Simulator = sim;
-		this.m_SoundID = soundID;
-		this.m_OwnerID = ownerID;
-		this.m_ObjectID = objectID;
-		this.m_Gain = gain;
-		this.m_Flags = flags;
-	}
 }

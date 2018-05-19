@@ -5,19 +5,20 @@ import java.util.List;
 import libomv.utils.CallbackArgs;
 
 public class GridItemsCallbackArgs implements CallbackArgs {
-	private final GridItemType m_Type;
-	private final List<MapItem> m_Items;
+	private final GridItemType type;
+	private final List<MapItem> items;
+
+	public GridItemsCallbackArgs(GridItemType type, List<MapItem> items) {
+		this.type = type;
+		this.items = items;
+	}
 
 	public final GridItemType getType() {
-		return m_Type;
+		return type;
 	}
 
 	public final List<MapItem> getItems() {
-		return m_Items;
+		return items;
 	}
 
-	public GridItemsCallbackArgs(GridItemType type, List<MapItem> items) {
-		this.m_Type = type;
-		this.m_Items = items;
-	}
 }

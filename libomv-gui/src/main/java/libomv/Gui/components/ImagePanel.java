@@ -146,9 +146,9 @@ public class ImagePanel extends JComponent {
 	private class ImageDownloadCallback implements Callback<ImageDownload> {
 		@Override
 		public boolean callback(ImageDownload texture) {
-			if (texture.State == TextureRequestState.Finished) {
+			if (texture.state == TextureRequestState.Finished) {
 				try {
-					ManagedImage tex = ManagedImage.decode(new ByteArrayInputStream(texture.AssetData), texture.Codec);
+					ManagedImage tex = ManagedImage.decode(new ByteArrayInputStream(texture.assetData), texture.codec);
 					Image image = ImageUtil.convert(tex);
 					setImage(image, true);
 				} catch (Exception ex) {

@@ -10,6 +10,12 @@ public class FriendFoundReplyCallbackArgs implements CallbackArgs {
 	private final long regionHandle;
 	private final Vector3 location;
 
+	public FriendFoundReplyCallbackArgs(UUID agentID, long regionHandle, Vector3 location) {
+		this.agentID = agentID;
+		this.regionHandle = regionHandle;
+		this.location = location;
+	}
+
 	public UUID getAgentID() {
 		return agentID;
 	}
@@ -22,9 +28,4 @@ public class FriendFoundReplyCallbackArgs implements CallbackArgs {
 		return location;
 	}
 
-	public FriendFoundReplyCallbackArgs(UUID agentID, long regionHandle, Vector3 location) {
-		this.agentID = agentID;
-		this.regionHandle = regionHandle;
-		this.location = location;
-	}
 }

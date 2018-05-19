@@ -6,35 +6,35 @@ import libomv.types.UUID;
 // search
 public final class ParcelInfo {
 	// Global Key of record
-	public UUID ID;
+	public UUID id;
 	// Parcel Owners {@link UUID}
-	public UUID OwnerID;
+	public UUID ownerID;
 	// Name field of parcel, limited to 128 characters
-	public String Name;
+	public String name;
 	// Description field of parcel, limited to 256 characters
-	public String Description;
+	public String description;
 	// Total Square meters of parcel
-	public int ActualArea;
+	public int actualArea;
 	// Total area billable as Tier, for group owned land this will be 10%
 	// less than ActualArea
-	public int BillableArea;
+	public int billableArea;
 	// True of parcel is in Mature simulator
-	public boolean Mature;
+	public boolean mature;
 	// Grid global X position of parcel
-	public float GlobalX;
+	public float globalX;
 	// Grid global Y position of parcel
-	public float GlobalY;
+	public float globalY;
 	// Grid global Z position of parcel (not used)
-	public float GlobalZ;
+	public float globalZ;
 	// Name of simulator parcel is located in
-	public String SimName;
+	public String simName;
 	// Texture {@link T:OpenMetaverse.UUID} of parcels display picture
-	public UUID SnapshotID;
+	public UUID snapshotID;
 	// Float representing calculated traffic based on time spent on parcel
 	// by avatars
-	public float Dwell;
+	public float dwell;
 	// Sale price of parcel (not used)
-	public int SalePrice;
+	public int salePrice;
 	// Auction ID of parcel
-	public int AuctionID;
+	public int auctionID;
 }

@@ -4,19 +4,20 @@ import libomv.types.UUID;
 import libomv.utils.CallbackArgs;
 
 public class FolderUpdatedCallbackArgs implements CallbackArgs {
-	private final UUID m_FolderID;
+	private final UUID folderID;
 	private final boolean success;
 
+	public FolderUpdatedCallbackArgs(UUID folderID, boolean success) {
+		this.folderID = folderID;
+		this.success = success;
+	}
+
 	public final UUID getFolderID() {
-		return m_FolderID;
+		return folderID;
 	}
 
 	public final boolean getSuccess() {
 		return success;
 	}
 
-	public FolderUpdatedCallbackArgs(UUID folderID, boolean success) {
-		this.m_FolderID = folderID;
-		this.success = success;
-	}
 }

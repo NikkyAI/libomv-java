@@ -20,15 +20,15 @@ import libomv.primitives.ObjectProperties;
  *
  */
 public class ObjectPropertiesFamilyCallbackArgs extends ObjectPropertiesCallbackArgs {
-	private final ReportType m_Type;
-
-	//
-	public final ReportType getType() {
-		return m_Type;
-	}
+	private final ReportType type;
 
 	public ObjectPropertiesFamilyCallbackArgs(Simulator simulator, ObjectProperties props, ReportType type) {
 		super(simulator, props);
-		this.m_Type = type;
+		this.type = type;
 	}
+
+	public final ReportType getType() {
+		return type;
+	}
+
 }

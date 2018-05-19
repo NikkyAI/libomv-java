@@ -5,12 +5,7 @@ import libomv.utils.CallbackArgs;
 
 // Represents the profile of a group
 public class GroupProfileCallbackArgs implements CallbackArgs {
-	private final Group m_Group;
-
-	// Get the group profile
-	public final Group getGroup() {
-		return m_Group;
-	}
+	private final Group group;
 
 	/**
 	 * Construct a new instance of the GroupProfileCallbackArgs class
@@ -19,6 +14,12 @@ public class GroupProfileCallbackArgs implements CallbackArgs {
 	 *            The group profile
 	 */
 	public GroupProfileCallbackArgs(Group group) {
-		this.m_Group = group;
+		this.group = group;
 	}
+
+	// Get the group profile
+	public final Group getGroup() {
+		return group;
+	}
+
 }

@@ -34,7 +34,7 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
-import libomv.model.LLObject.SaleType;
+import libomv.model.object.SaleType;
 import libomv.types.Permissions;
 import libomv.types.UUID;
 import libomv.utils.Helpers;

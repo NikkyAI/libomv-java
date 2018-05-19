@@ -48,12 +48,12 @@ import libomv.StructuredData.OSDMap;
 import libomv.inventory.InventoryFolder.FolderType;
 import libomv.inventory.InventoryItem;
 import libomv.inventory.InventoryNode.InventoryType;
-import libomv.model.LLObject.SaleType;
 import libomv.model.agent.AgentDisplayName;
 import libomv.model.agent.InstantMessageDialog;
 import libomv.model.agent.InstantMessageOnline;
 import libomv.model.agent.TeleportFlags;
 import libomv.model.asset.AssetType;
+import libomv.model.object.SaleType;
 import libomv.model.parcel.LandingTypeEnum;
 import libomv.model.parcel.ParcelCategory;
 import libomv.model.parcel.ParcelFlags;
@@ -5647,7 +5647,7 @@ public class CapsMessage implements IMessage {
 
 			if (agents != null && agents.length > 0) {
 				for (int i = 0; i < agents.length; i++) {
-					agentsOSD.add(agents[i].GetOSD());
+					agentsOSD.add(agents[i].toOSD());
 				}
 			}
 
@@ -5673,7 +5673,7 @@ public class CapsMessage implements IMessage {
 					agents = new AgentDisplayName[agentsOSD.size()];
 
 					for (int i = 0; i < agentsOSD.size(); i++) {
-						agents[i].FromOSD(agentsOSD.get(i));
+						agents[i].fromOSD(agentsOSD.get(i));
 					}
 				}
 			}
@@ -5752,7 +5752,7 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap ret = new OSDMap(3);
-			ret.put("content", displayName.GetOSD());
+			ret.put("content", displayName.toOSD());
 			ret.put("reason", OSD.FromString(reason));
 			ret.put("status", OSD.FromInteger(status));
 			return ret;
@@ -5760,7 +5760,7 @@ public class CapsMessage implements IMessage {
 
 		@Override
 		public void deserialize(OSDMap map) {
-			displayName.FromOSD(map.get("content"));
+			displayName.fromOSD(map.get("content"));
 			reason = map.get("reason").AsString();
 			status = map.get("status").AsInteger();
 		}
@@ -5786,7 +5786,7 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public OSDMap serialize() {
-			OSDMap agent = (OSDMap) displayName.GetOSD();
+			OSDMap agent = (OSDMap) displayName.toOSD();
 			agent.put("old_display_name", OSD.FromString(oldDisplayName));
 			OSDMap ret = new OSDMap();
 			ret.put("agent", agent);
@@ -5796,7 +5796,7 @@ public class CapsMessage implements IMessage {
 		@Override
 		public void deserialize(OSDMap map) {
 			OSDMap agent = (OSDMap) map.get("agent");
-			displayName.FromOSD(agent);
+			displayName.fromOSD(agent);
 			oldDisplayName = agent.get("old_display_name").AsString();
 		}
 	}

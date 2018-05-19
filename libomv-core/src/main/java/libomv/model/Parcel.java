@@ -23,128 +23,146 @@ import libomv.utils.Helpers;
 public class Parcel {
 	// The total number of contiguous 4x4 meter blocks your agent owns
 	// within this parcel
-	public int SelfCount;
+	public int selfCount;
 	// The total number of contiguous 4x4 meter blocks contained in this
 	// parcel owned by a group or agent other than your own
-	public int OtherCount;
+	public int otherCount;
 	// Deprecated, Value appears to always be 0
-	public int PublicCount;
+	public int publicCount;
 	// Simulator-local ID of this parcel
-	public int LocalID;
+	public int localID;
 	// UUID of the owner of this parcel
-	public UUID OwnerID;
+	public UUID ownerID;
 	// Whether the land is deeded to a group or not
-	public boolean IsGroupOwned;
+	public boolean isGroupOwned;
 	//
-	public int AuctionID;
+	public int auctionID;
 	// Date land was claimed
-	public Date ClaimDate;
+	public Date claimDate;
 	// Appears to always be zero
-	public int ClaimPrice;
+	public int claimPrice;
 	// This field is no longer used
-	public int RentPrice;
+	public int rentPrice;
 	// Minimum corner of the axis-aligned bounding box for this
 	// Tangible_doc_comment_body parcel
-	public Vector3 AABBMin;
+	public Vector3 aabbMin;
 	// Maximum corner of the axis-aligned bounding box for this
 	// Tangible_doc_comment_body parcel
-	public Vector3 AABBMax;
+	public Vector3 aabbMax;
 	// Bitmap describing land layout in 4x4m squares across the
 	// Tangible_doc_comment_body entire region
-	public byte[] Bitmap;
+	public byte[] bitmap;
 	// Total parcel land area
-	public int Area;
+	public int area;
 	//
-	public ParcelStatus Status;
+	public ParcelStatus status;
 	// Maximum primitives across the entire simulator owned by the same
 	// agent or group that owns this parcel that can be used
-	public int SimWideMaxPrims;
+	public int simWideMaxPrims;
 	// Total primitives across the entire simulator calculated by combining
 	// the allowed prim counts for each parcel
 	// Tangible_doc_comment_body owned by the agent or group that owns this
 	// parcel
-	public int SimWideTotalPrims;
+	public int simWideTotalPrims;
 	// Maximum number of primitives this parcel supports
-	public int MaxPrims;
+	public int maxPrims;
 	// Total number of primitives on this parcel
-	public int TotalPrims;
+	public int totalPrims;
 	// For group-owned parcels this indicates the total number of prims
 	// deeded to the group,
 	// for parcels owned by an individual this inicates the number of prims
 	// owned by the individual
-	public int OwnerPrims;
+	public int ownerPrims;
 	// Total number of primitives owned by the parcel group on this parcel,
 	// or for parcels owned by an individual with a group set the total
 	// number of prims set to that group.
-	public int GroupPrims;
+	public int groupPrims;
 	// Total number of prims owned by other avatars that are not set to
 	// group, or not the parcel owner
-	public int OtherPrims;
+	public int otherPrims;
 	// A bonus multiplier which allows parcel prim counts to go over times
 	// this amount, this does not affect
 	// the max prims per simulator. e.g: 117 prim parcel limit x 1.5 bonus =
 	// 175 allowed
-	public float ParcelPrimBonus;
+	public float parcelPrimBonus;
 	// Autoreturn value in minutes for others' objects
-	public int OtherCleanTime;
+	public int otherCleanTime;
 	//
-	public int Flags;
+	public int flags;
 	// Sale price of the parcel, only useful if ForSale is set
 	// The SalePrice will remain the same after an ownership transfer
 	// (sale), so it can be used to
 	// see the purchase price after a sale if the new owner has not changed
 	// it
-	public int SalePrice;
+	public int salePrice;
 	// Parcel Name
-	public String Name;
+	public String name;
 	// Parcel Description
-	public String Desc;
+	public String desc;
 	// URL For Music Stream
-	public String MusicURL;
+	public String musicURL;
 	//
-	public UUID GroupID;
+	public UUID groupID;
 	// Price for a temporary pass
-	public int PassPrice;
+	public int passPrice;
 	// How long is pass valid for
-	public float PassHours;
+	public float passHours;
 	//
-	public ParcelCategory Category;
+	public ParcelCategory category;
 	// Key of authorized buyer
-	public UUID AuthBuyerID;
+	public UUID authBuyerID;
 	// Key of parcel snapshot
-	public UUID SnapshotID;
+	public UUID snapshotID;
 	// The landing point location
-	public Vector3 UserLocation;
+	public Vector3 userLocation;
 	// The landing point LookAt
-	public Vector3 UserLookAt;
+	public Vector3 userLookAt;
 	// The type of landing enforced from the <see cref="LandingType"/> enum
-	public LandingTypeEnum Landing;
+	public LandingTypeEnum landing;
 	//
-	public float Dwell;
+	public float dwell;
 	//
-	public boolean RegionDenyAnonymous;
+	public boolean regionDenyAnonymous;
 	//
-	public boolean RegionPushOverride;
+	public boolean regionPushOverride;
 	// Access list of who is whitelisted on this
 	// Tangible_doc_comment_body parcel
-	public ArrayList<ParcelAccessEntry> AccessWhiteList;
+	public ArrayList<ParcelAccessEntry> accessWhiteList;
 	// Access list of who is blacklisted on this
 	// Tangible_doc_comment_body parcel
-	public ArrayList<ParcelAccessEntry> AccessBlackList;
+	public ArrayList<ParcelAccessEntry> accessBlackList;
 	// TRUE of region denies access to age unverified users
-	public boolean RegionDenyAgeUnverified;
+	public boolean regionDenyAgeUnverified;
 	// true to obscure (hide) media url
-	public boolean ObscureMedia;
+	public boolean obscureMedia;
 	// true to obscure (hide) music url
-	public boolean ObscureMusic;
+	public boolean obscureMusic;
 	// A struct containing media details
-	public ParcelMedia Media;
+	public ParcelMedia media;
 	// true if avatars in this parcel should be invisible to people outside
-	public boolean SeeAVs;
+	public boolean seeAVs;
 	// true if avatars outside can hear any sounds avatars inside play
-	public boolean AnyAVSounds;
+	public boolean anyAVSounds;
 	// true if group members outside can hear any sounds avatars inside play
-	public boolean GroupAVSounds;
+	public boolean groupAVSounds;
+
+	/**
+	 * Default constructor
+	 *
+	 * @param localID
+	 *            Local ID of this parcel
+	 */
+	public Parcel(int localID) {
+		this.localID = localID;
+		this.claimDate = Helpers.Epoch;
+		this.bitmap = Helpers.EmptyBytes;
+		this.name = Helpers.EmptyString;
+		this.desc = Helpers.EmptyString;
+		this.musicURL = Helpers.EmptyString;
+		this.accessWhiteList = new ArrayList<ParcelAccessEntry>(0);
+		this.accessBlackList = new ArrayList<ParcelAccessEntry>(0);
+		this.media = new ParcelMedia();
+	}
 
 	/**
 	 * Displays a parcel object in string format
@@ -166,24 +184,6 @@ public class Parcel {
 	}
 
 	/**
-	 * Default constructor
-	 *
-	 * @param localID
-	 *            Local ID of this parcel
-	 */
-	public Parcel(int localID) {
-		LocalID = localID;
-		ClaimDate = Helpers.Epoch;
-		Bitmap = Helpers.EmptyBytes;
-		Name = Helpers.EmptyString;
-		Desc = Helpers.EmptyString;
-		MusicURL = Helpers.EmptyString;
-		AccessWhiteList = new ArrayList<ParcelAccessEntry>(0);
-		AccessBlackList = new ArrayList<ParcelAccessEntry>(0);
-		Media = new ParcelMedia();
-	}
-
-	/**
 	 * Update the simulator with any local changes to this Parcel object
 	 *
 	 * @param simulator
@@ -193,38 +193,38 @@ public class Parcel {
 	 *            packet or not
 	 * @throws Exception
 	 */
-	public final void Update(SimulatorManager simulator, boolean wantReply) throws Exception {
+	public final void update(SimulatorManager simulator, boolean wantReply) throws Exception {
 		URI url = simulator.getClient().Network.getCapabilityURI("ParcelPropertiesUpdate");
 		if (url != null) {
 			ParcelPropertiesUpdateMessage req = simulator.getClient().Messages.new ParcelPropertiesUpdateMessage();
-			req.authBuyerID = this.AuthBuyerID;
-			req.category = this.Category;
-			req.desc = this.Desc;
-			req.groupID = this.GroupID;
-			req.landingType = this.Landing;
-			req.localID = this.LocalID;
-			req.mediaAutoScale = this.Media.mediaAutoScale;
-			req.mediaDesc = this.Media.mediaDesc;
-			req.mediaHeight = this.Media.mediaHeight;
-			req.mediaID = this.Media.mediaID;
-			req.mediaLoop = this.Media.mediaLoop;
-			req.mediaType = this.Media.mediaType;
-			req.mediaURL = this.Media.mediaURL;
-			req.mediaWidth = this.Media.mediaWidth;
-			req.musicURL = this.MusicURL;
-			req.name = this.Name;
-			req.obscureMedia = this.ObscureMedia;
-			req.obscureMusic = this.ObscureMusic;
-			req.parcelFlags = this.Flags;
-			req.passHours = this.PassHours;
-			req.passPrice = this.PassPrice;
-			req.salePrice = this.SalePrice;
-			req.snapshotID = this.SnapshotID;
-			req.userLocation = this.UserLocation;
-			req.userLookAt = this.UserLookAt;
-			req.seeAVs = this.SeeAVs;
-			req.anyAVSounds = this.AnyAVSounds;
-			req.groupAVSounds = this.GroupAVSounds;
+			req.authBuyerID = this.authBuyerID;
+			req.category = this.category;
+			req.desc = this.desc;
+			req.groupID = this.groupID;
+			req.landingType = this.landing;
+			req.localID = this.localID;
+			req.mediaAutoScale = this.media.mediaAutoScale;
+			req.mediaDesc = this.media.mediaDesc;
+			req.mediaHeight = this.media.mediaHeight;
+			req.mediaID = this.media.mediaID;
+			req.mediaLoop = this.media.mediaLoop;
+			req.mediaType = this.media.mediaType;
+			req.mediaURL = this.media.mediaURL;
+			req.mediaWidth = this.media.mediaWidth;
+			req.musicURL = this.musicURL;
+			req.name = this.name;
+			req.obscureMedia = this.obscureMedia;
+			req.obscureMusic = this.obscureMusic;
+			req.parcelFlags = this.flags;
+			req.passHours = this.passHours;
+			req.passPrice = this.passPrice;
+			req.salePrice = this.salePrice;
+			req.snapshotID = this.snapshotID;
+			req.userLocation = this.userLocation;
+			req.userLookAt = this.userLookAt;
+			req.seeAVs = this.seeAVs;
+			req.anyAVSounds = this.anyAVSounds;
+			req.groupAVSounds = this.groupAVSounds;
 
 			new CapsClient(simulator.getClient(), "UpdateParcel").executeHttpPost(url, req, null,
 					simulator.getClient().Settings.CAPS_TIMEOUT);
@@ -234,32 +234,32 @@ public class Parcel {
 			request.AgentData.AgentID = simulator.getClient().Self.getAgentID();
 			request.AgentData.SessionID = simulator.getClient().Self.getSessionID();
 
-			request.ParcelData.LocalID = this.LocalID;
+			request.ParcelData.LocalID = this.localID;
 
-			request.ParcelData.AuthBuyerID = this.AuthBuyerID;
-			request.ParcelData.Category = this.Category.getValue();
-			request.ParcelData.setDesc(Helpers.StringToBytes(this.Desc));
-			request.ParcelData.GroupID = this.GroupID;
-			request.ParcelData.LandingType = this.Landing.getValue();
-			request.ParcelData.MediaAutoScale = (this.Media.mediaAutoScale) ? (byte) 0x1 : (byte) 0x0;
-			request.ParcelData.MediaID = this.Media.mediaID;
-			request.ParcelData.setMediaURL(Helpers.StringToBytes(this.Media.mediaURL.toString()));
-			request.ParcelData.setMusicURL(Helpers.StringToBytes(this.MusicURL.toString()));
-			request.ParcelData.setName(Helpers.StringToBytes(this.Name));
+			request.ParcelData.AuthBuyerID = this.authBuyerID;
+			request.ParcelData.Category = this.category.getValue();
+			request.ParcelData.setDesc(Helpers.StringToBytes(this.desc));
+			request.ParcelData.GroupID = this.groupID;
+			request.ParcelData.LandingType = this.landing.getValue();
+			request.ParcelData.MediaAutoScale = (this.media.mediaAutoScale) ? (byte) 0x1 : (byte) 0x0;
+			request.ParcelData.MediaID = this.media.mediaID;
+			request.ParcelData.setMediaURL(Helpers.StringToBytes(this.media.mediaURL.toString()));
+			request.ParcelData.setMusicURL(Helpers.StringToBytes(this.musicURL.toString()));
+			request.ParcelData.setName(Helpers.StringToBytes(this.name));
 			if (wantReply) {
 				request.ParcelData.Flags = 1;
 			}
-			request.ParcelData.ParcelFlags = this.Flags;
-			request.ParcelData.PassHours = this.PassHours;
-			request.ParcelData.PassPrice = this.PassPrice;
-			request.ParcelData.SalePrice = this.SalePrice;
-			request.ParcelData.SnapshotID = this.SnapshotID;
-			request.ParcelData.UserLocation = this.UserLocation;
-			request.ParcelData.UserLookAt = this.UserLookAt;
+			request.ParcelData.ParcelFlags = this.flags;
+			request.ParcelData.PassHours = this.passHours;
+			request.ParcelData.PassPrice = this.passPrice;
+			request.ParcelData.SalePrice = this.salePrice;
+			request.ParcelData.SnapshotID = this.snapshotID;
+			request.ParcelData.UserLocation = this.userLocation;
+			request.ParcelData.UserLookAt = this.userLookAt;
 
 			simulator.sendPacket(request);
 		}
-		UpdateOtherCleanTime(simulator);
+		updateOtherCleanTime(simulator);
 	}
 
 	/**
@@ -269,12 +269,12 @@ public class Parcel {
 	 *            Simulator to send the update to
 	 * @throws Exception
 	 */
-	public final void UpdateOtherCleanTime(SimulatorManager simulator) throws Exception {
+	public final void updateOtherCleanTime(SimulatorManager simulator) throws Exception {
 		ParcelSetOtherCleanTimePacket request = new ParcelSetOtherCleanTimePacket();
 		request.AgentData.AgentID = simulator.getClient().Self.getAgentID();
 		request.AgentData.SessionID = simulator.getClient().Self.getSessionID();
-		request.ParcelData.LocalID = this.LocalID;
-		request.ParcelData.OtherCleanTime = this.OtherCleanTime;
+		request.ParcelData.LocalID = this.localID;
+		request.ParcelData.OtherCleanTime = this.otherCleanTime;
 
 		simulator.sendPacket(request);
 	}

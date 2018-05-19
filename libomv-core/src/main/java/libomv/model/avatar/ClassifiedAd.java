@@ -4,14 +4,14 @@ import libomv.types.UUID;
 import libomv.types.Vector3d;
 
 public class ClassifiedAd {
-	public UUID ClassifiedID;
-	public int Catagory;
-	public UUID ParcelID;
-	public int ParentEstate;
-	public UUID SnapShotID;
-	public Vector3d Position;
-	public byte ClassifiedFlags;
-	public int Price;
-	public String Name;
-	public String Desc;
+	public UUID classifiedID;
+	public int catagory;
+	public UUID parcelID;
+	public int parentEstate;
+	public UUID snapShotID;
+	public Vector3d position;
+	public byte classifiedFlags;
+	public int price;
+	public String name;
+	public String desc;
 }

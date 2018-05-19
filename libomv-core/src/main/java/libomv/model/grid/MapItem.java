@@ -8,57 +8,57 @@ import libomv.utils.Helpers;
 
 /** Map Items */
 public class MapItem {
-	private UUID ID;
-	private String Name;
-	private Vector3 GlobalPos;
+	private UUID id;
+	private String name;
+	private Vector3 globalPos;
 
 	/* Represents an agent or group of agents location */
-	public int AvatarCount;
+	public int avatarCount;
 
 	/* For adult and normal land for sale */
-	public int Size;
-	public int Price;
+	public int size;
+	public int price;
 
 	public boolean isInfoHub;
 
 	/* For evnts */
-	public Date DateTime;
+	public Date dateTime;
+
+	public MapItem(float x, float y, UUID id, String name) {
+		globalPos = new Vector3(x, y, 40);
+		this.id = id;
+		this.name = name;
+	}
 
 	public final UUID getUUID() {
-		return ID;
+		return id;
 	}
 
 	public final String getName() {
-		return Name;
+		return name;
 	}
 
 	/* Get the Local X position of the item */
 	public final float getLocalX() {
-		return GlobalPos.X % 256;
+		return globalPos.X % 256;
 	}
 
 	/* Get the Local Y position of the item */
 	public final float getLocalY() {
-		return GlobalPos.Y % 256;
+		return globalPos.Y % 256;
 	}
 
 	public final Vector3 getGlobalPosition() {
-		return GlobalPos;
+		return globalPos;
 	}
 
 	public final void setEvelation(float z) {
-		GlobalPos.Z = z;
+		globalPos.Z = z;
 	}
 
 	/* Get the Handle of the region */
 	public final long getRegionHandle() {
-		return Helpers.IntsToLong((int) (GlobalPos.X - (GlobalPos.X % 256)),
-				(int) (GlobalPos.Y - (GlobalPos.Y % 256)));
+		return Helpers.IntsToLong((int) (globalPos.X - (globalPos.X % 256)), (int) (globalPos.Y - (globalPos.Y % 256)));
 	}
 
-	public MapItem(float x, float y, UUID id, String name) {
-		GlobalPos = new Vector3(x, y, 40);
-		ID = id;
-		Name = name;
-	}
 }

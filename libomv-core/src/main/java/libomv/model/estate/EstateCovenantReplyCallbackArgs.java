@@ -7,30 +7,10 @@ import libomv.utils.CallbackArgs;
  * Returned, along with other info, upon a successful .RequestInfo()</summary>
  */
 public class EstateCovenantReplyCallbackArgs implements CallbackArgs {
-	private final UUID m_covenantID;
-	private final long m_timestamp;
-	private final String m_estateName;
-	private final UUID m_estateOwnerID;
-
-	// The Covenant
-	public UUID getCovenantID() {
-		return m_covenantID;
-	}
-
-	// The timestamp
-	public long getTimestamp() {
-		return m_timestamp;
-	}
-
-	// The Estate name
-	public String getEstateName() {
-		return m_estateName;
-	}
-
-	// The Estate Owner's ID (can be a GroupID)
-	public UUID getEstateOwnerID() {
-		return m_estateOwnerID;
-	}
+	private final UUID covenantID;
+	private final long timestamp;
+	private final String estateName;
+	private final UUID estateOwnerID;
 
 	/**
 	 * Construct a new instance of the EstateCovenantReplyEventArgs class
@@ -45,9 +25,30 @@ public class EstateCovenantReplyCallbackArgs implements CallbackArgs {
 	 *            The Estate Owner's ID (can be a GroupID)
 	 */
 	public EstateCovenantReplyCallbackArgs(UUID covenantID, long timestamp, String estateName, UUID estateOwnerID) {
-		this.m_covenantID = covenantID;
-		this.m_timestamp = timestamp;
-		this.m_estateName = estateName;
-		this.m_estateOwnerID = estateOwnerID;
+		this.covenantID = covenantID;
+		this.timestamp = timestamp;
+		this.estateName = estateName;
+		this.estateOwnerID = estateOwnerID;
 	}
+
+	// The Covenant
+	public UUID getCovenantID() {
+		return covenantID;
+	}
+
+	// The timestamp
+	public long getTimestamp() {
+		return timestamp;
+	}
+
+	// The Estate name
+	public String getEstateName() {
+		return estateName;
+	}
+
+	// The Estate Owner's ID (can be a GroupID)
+	public UUID getEstateOwnerID() {
+		return estateOwnerID;
+	}
+
 }

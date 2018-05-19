@@ -417,54 +417,54 @@ public class OarFile {
 		writer.startDocument(Helpers.UTF8_ENCODING, null);
 		writer.startTag(null, "LandData");
 
-		writeInt(writer, "Area", parcel.Area);
-		writeInt(writer, "AuctionID", parcel.AuctionID);
-		parcel.AuthBuyerID.serializeXml(writer, null, "AuthBuyerID");
-		writeInt(writer, "Category", parcel.Category.getValue());
-		writeLong(writer, "ClaimDate", (long) Helpers.DateTimeToUnixTime(parcel.ClaimDate));
-		writeInt(writer, "ClaimPrice", parcel.ClaimPrice);
+		writeInt(writer, "Area", parcel.area);
+		writeInt(writer, "AuctionID", parcel.auctionID);
+		parcel.authBuyerID.serializeXml(writer, null, "AuthBuyerID");
+		writeInt(writer, "Category", parcel.category.getValue());
+		writeLong(writer, "ClaimDate", (long) Helpers.DateTimeToUnixTime(parcel.claimDate));
+		writeInt(writer, "ClaimPrice", parcel.claimPrice);
 		globalID.serializeXml(writer, null, "GlobalID");
-		parcel.GroupID.serializeXml(writer, null, "GroupID");
-		writeBoolean(writer, "IsGroupOwned", parcel.IsGroupOwned);
+		parcel.groupID.serializeXml(writer, null, "GroupID");
+		writeBoolean(writer, "IsGroupOwned", parcel.isGroupOwned);
 		writeString(writer, "Bitmap",
-				Base64.encodeBase64String(parcel.Bitmap != null ? parcel.Bitmap : Helpers.EmptyBytes));
-		writeString(writer, "Description", parcel.Desc);
-		writeInt(writer, "Flags", parcel.Flags);
-		writeInt(writer, "LandingType", parcel.Landing.getValue());
-		writeString(writer, "Name", parcel.Name);
-		writeInt(writer, "Status", parcel.Status.getValue());
-		writeInt(writer, "LocalID", parcel.LocalID);
-		writeInt(writer, "MediaAutoScale", parcel.Media.mediaAutoScale ? 1 : 0);
-		parcel.Media.mediaID.serializeXml(writer, null, "MediaID");
-		writeString(writer, "MediaURL", parcel.Media.mediaURL);
-		writeString(writer, "MusicURL", parcel.MusicURL);
-		parcel.OwnerID.serializeXml(writer, null, "OwnerID");
+				Base64.encodeBase64String(parcel.bitmap != null ? parcel.bitmap : Helpers.EmptyBytes));
+		writeString(writer, "Description", parcel.desc);
+		writeInt(writer, "Flags", parcel.flags);
+		writeInt(writer, "LandingType", parcel.landing.getValue());
+		writeString(writer, "Name", parcel.name);
+		writeInt(writer, "Status", parcel.status.getValue());
+		writeInt(writer, "LocalID", parcel.localID);
+		writeInt(writer, "MediaAutoScale", parcel.media.mediaAutoScale ? 1 : 0);
+		parcel.media.mediaID.serializeXml(writer, null, "MediaID");
+		writeString(writer, "MediaURL", parcel.media.mediaURL);
+		writeString(writer, "MusicURL", parcel.musicURL);
+		parcel.ownerID.serializeXml(writer, null, "OwnerID");
 
 		writer.startTag(null, "ParcelAccessList");
-		for (ParcelAccessEntry pal : parcel.AccessBlackList) {
+		for (ParcelAccessEntry pal : parcel.accessBlackList) {
 			writer.startTag(null, "ParcelAccessEntry");
-			pal.AgentID.serializeXml(writer, null, "AgentID");
-			writeString(writer, "Time", String.format("%1$tY-%1$tm-%1$tdT%1$tH:%1$tM:%1$tS", pal.Time)); // 2008-06-15T21:15:07
-			writeInt(writer, "AccessList", pal.Flags);
+			pal.agentID.serializeXml(writer, null, "AgentID");
+			writeString(writer, "Time", String.format("%1$tY-%1$tm-%1$tdT%1$tH:%1$tM:%1$tS", pal.time)); // 2008-06-15T21:15:07
+			writeInt(writer, "AccessList", pal.flags);
 			writer.endTag(null, "ParcelAccessEntry");
 		}
-		for (ParcelAccessEntry pal : parcel.AccessWhiteList) {
+		for (ParcelAccessEntry pal : parcel.accessWhiteList) {
 			writer.startTag(null, "ParcelAccessEntry");
-			pal.AgentID.serializeXml(writer, null, "AgentID");
-			writeString(writer, "Time", String.format("%1$tY-%1$tm-%1$tdT%1$tH:%1$tM:%1$tS", pal.Time)); // 2008-06-15T21:15:07
-			writeInt(writer, "AccessList", pal.Flags);
+			pal.agentID.serializeXml(writer, null, "AgentID");
+			writeString(writer, "Time", String.format("%1$tY-%1$tm-%1$tdT%1$tH:%1$tM:%1$tS", pal.time)); // 2008-06-15T21:15:07
+			writeInt(writer, "AccessList", pal.flags);
 			writer.endTag(null, "ParcelAccessEntry");
 		}
 		writer.endTag(null, "ParcelAccessList");
 
-		writeFloat(writer, "PassHours", parcel.PassHours);
-		writeInt(writer, "PassPrice", parcel.PassPrice);
-		writeInt(writer, "SalePrice", parcel.SalePrice);
-		parcel.SnapshotID.serializeXml(writer, null, "SnapshotID");
-		parcel.UserLocation.serializeXml(writer, null, "UserLocation");
-		parcel.UserLookAt.serializeXml(writer, null, "UserLookAt");
+		writeFloat(writer, "PassHours", parcel.passHours);
+		writeInt(writer, "PassPrice", parcel.passPrice);
+		writeInt(writer, "SalePrice", parcel.salePrice);
+		parcel.snapshotID.serializeXml(writer, null, "SnapshotID");
+		parcel.userLocation.serializeXml(writer, null, "UserLocation");
+		parcel.userLookAt.serializeXml(writer, null, "UserLookAt");
 		writeString(writer, "Dwell", "0");
-		writeInt(writer, "OtherCleanTime", parcel.OtherCleanTime);
+		writeInt(writer, "OtherCleanTime", parcel.otherCleanTime);
 
 		writer.endTag(null, "LandData");
 
@@ -596,13 +596,13 @@ public class OarFile {
 					assetManager.RequestImage(texture, new Callback<ImageDownload>() {
 						@Override
 						public boolean callback(ImageDownload transfer) {
-							if (transfer.Success) {
-								if (transfer.AssetData != null) {
+							if (transfer.success) {
+								if (transfer.assetData != null) {
 									String extension = ArchiveConstants.getExtensionForType(assetType);
 									try {
 										OutputStream stream = new FileOutputStream(
 												new File(assetsPath, texture.toString() + extension));
-										stream.write(transfer.AssetData);
+										stream.write(transfer.assetData);
 										stream.close();
 										remainingTextures.remove(texture);
 										if (remainingTextures.size() == 0)
@@ -621,13 +621,13 @@ public class OarFile {
 						assetManager.RequestAsset(texture, assetType, false, new Callback<AssetDownload>() {
 							@Override
 							public boolean callback(AssetDownload transfer) {
-								if (transfer.Success) {
-									if (transfer.AssetData != null) {
+								if (transfer.success) {
+									if (transfer.assetData != null) {
 										String extension = ArchiveConstants.getExtensionForType(assetType);
 										try {
 											OutputStream stream = new FileOutputStream(
 													new File(assetsPath, texture.toString() + extension));
-											stream.write(transfer.AssetData);
+											stream.write(transfer.assetData);
 											stream.close();
 											remainingTextures.remove(texture);
 											if (remainingTextures.size() == 0)
@@ -667,13 +667,13 @@ public class OarFile {
 				UUID.GenerateUUID(), new Callback<AssetDownload>() {
 					@Override
 					public boolean callback(AssetDownload transfer) {
-						if (transfer.Success) {
-							if (transfer.AssetData != null) {
+						if (transfer.success) {
+							if (transfer.assetData != null) {
 								String extension = ArchiveConstants.getExtensionForType(assetType);
 								try {
 									OutputStream stream = new FileOutputStream(
 											new File(assetsPath, assetID.toString() + extension));
-									stream.write(transfer.AssetData);
+									stream.write(transfer.assetData);
 									stream.close();
 									allReceived.set(1);
 								} catch (Exception ex) {

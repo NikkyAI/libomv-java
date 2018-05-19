@@ -202,8 +202,8 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	private class InstantMessageCallback implements Callback<InstantMessageCallbackArgs> {
 		@Override
 		public boolean callback(InstantMessageCallbackArgs e) {
-			if (OnGroupInvitation.count() > 0 && e.getIM().Dialog == InstantMessageDialog.GroupInvitation) {
-				byte[] bucket = e.getIM().BinaryBucket;
+			if (OnGroupInvitation.count() > 0 && e.getIM().dialog == InstantMessageDialog.GroupInvitation) {
+				byte[] bucket = e.getIM().binaryBucket;
 				int fee = -1;
 				UUID roleID = null;
 				if (bucket.length == 20) {
@@ -212,8 +212,8 @@ public class GroupManager implements PacketCallback, CapsCallback {
 				}
 
 				GroupInvitationCallbackArgs args = new GroupInvitationCallbackArgs(e.getSimulator(),
-						e.getIM().IMSessionID, e.getIM().FromAgentID, roleID, e.getIM().FromAgentName,
-						e.getIM().Message, fee);
+						e.getIM().imSessionID, e.getIM().fromAgentID, roleID, e.getIM().fromAgentName,
+						e.getIM().message, fee);
 				OnGroupInvitation.dispatch(args);
 			}
 			return false;
@@ -455,15 +455,15 @@ public class GroupManager implements PacketCallback, CapsCallback {
 					OSDMap member = (OSDMap) membersOSD.get(memberID);
 
 					GroupMember groupMember = new GroupMember(UUID.parse(memberID));
-					groupMember.Contribution = member.get("donated_square_meters").AsInteger();
-					groupMember.IsOwner = "Y" == member.get("owner").AsString();
-					groupMember.OnlineStatus = member.get("last_login").AsString();
-					groupMember.Powers = defaultPowers;
+					groupMember.contribution = member.get("donated_square_meters").AsInteger();
+					groupMember.isOwner = "Y" == member.get("owner").AsString();
+					groupMember.onlineStatus = member.get("last_login").AsString();
+					groupMember.powers = defaultPowers;
 					if (member.containsKey("powers")) {
-						groupMember.Powers = member.get("powers").AsULong();
+						groupMember.powers = member.get("powers").AsULong();
 					}
-					groupMember.Title = titles[member.get("title").AsInteger()];
-					groupMembers.put(groupMember.ID, groupMember);
+					groupMember.title = titles[member.get("title").AsInteger()];
+					groupMembers.put(groupMember.id, groupMember);
 				}
 				OnGroupMembersReply.dispatch(new GroupMembersReplyCallbackArgs(requestID, groupID, groupMembers));
 			} catch (Exception ex) {
@@ -781,14 +781,14 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		cgrp.AgentData.SessionID = _Client.Self.getSessionID();
 
 		cgrp.GroupData = cgrp.new GroupDataBlock();
-		cgrp.GroupData.AllowPublish = group.AllowPublish;
-		cgrp.GroupData.setCharter(Helpers.StringToBytes(group.Charter));
-		cgrp.GroupData.InsigniaID = group.InsigniaID;
-		cgrp.GroupData.MaturePublish = group.MaturePublish;
-		cgrp.GroupData.MembershipFee = group.MembershipFee;
+		cgrp.GroupData.AllowPublish = group.allowPublish;
+		cgrp.GroupData.setCharter(Helpers.StringToBytes(group.charter));
+		cgrp.GroupData.InsigniaID = group.insigniaID;
+		cgrp.GroupData.MaturePublish = group.maturePublish;
+		cgrp.GroupData.MembershipFee = group.membershipFee;
 		cgrp.GroupData.setName(Helpers.StringToBytes(group.getName()));
-		cgrp.GroupData.OpenEnrollment = group.OpenEnrollment;
-		cgrp.GroupData.ShowInList = group.ShowInList;
+		cgrp.GroupData.OpenEnrollment = group.openEnrollment;
+		cgrp.GroupData.ShowInList = group.showInList;
 
 		_Client.Network.sendPacket(cgrp);
 	}
@@ -811,13 +811,13 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 		cgrp.GroupData = cgrp.new GroupDataBlock();
 		cgrp.GroupData.GroupID = id;
-		cgrp.GroupData.AllowPublish = group.AllowPublish;
-		cgrp.GroupData.setCharter(Helpers.StringToBytes(group.Charter));
-		cgrp.GroupData.InsigniaID = group.InsigniaID;
-		cgrp.GroupData.MaturePublish = group.MaturePublish;
-		cgrp.GroupData.MembershipFee = group.MembershipFee;
-		cgrp.GroupData.OpenEnrollment = group.OpenEnrollment;
-		cgrp.GroupData.ShowInList = group.ShowInList;
+		cgrp.GroupData.AllowPublish = group.allowPublish;
+		cgrp.GroupData.setCharter(Helpers.StringToBytes(group.charter));
+		cgrp.GroupData.InsigniaID = group.insigniaID;
+		cgrp.GroupData.MaturePublish = group.maturePublish;
+		cgrp.GroupData.MembershipFee = group.membershipFee;
+		cgrp.GroupData.OpenEnrollment = group.openEnrollment;
+		cgrp.GroupData.ShowInList = group.showInList;
 
 		_Client.Network.sendPacket(cgrp);
 	}
@@ -856,14 +856,14 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		GroupRoleUpdatePacket gru = new GroupRoleUpdatePacket();
 		gru.AgentData.AgentID = _Client.Self.getAgentID();
 		gru.AgentData.SessionID = _Client.Self.getSessionID();
-		gru.AgentData.GroupID = role.GroupID;
+		gru.AgentData.GroupID = role.groupID;
 		gru.RoleData = new GroupRoleUpdatePacket.RoleDataBlock[1];
 		gru.RoleData[0] = gru.new RoleDataBlock();
-		gru.RoleData[0].setName(Helpers.StringToBytes(role.Name));
-		gru.RoleData[0].setDescription(Helpers.StringToBytes(role.Description));
-		gru.RoleData[0].Powers = role.Powers;
-		gru.RoleData[0].RoleID = role.ID;
-		gru.RoleData[0].setTitle(Helpers.StringToBytes(role.Title));
+		gru.RoleData[0].setName(Helpers.StringToBytes(role.name));
+		gru.RoleData[0].setDescription(Helpers.StringToBytes(role.description));
+		gru.RoleData[0].Powers = role.powers;
+		gru.RoleData[0].RoleID = role.id;
+		gru.RoleData[0].setTitle(Helpers.StringToBytes(role.title));
 		gru.RoleData[0].UpdateType = GroupRoleUpdate.UpdateAll.getValue();
 		_Client.Network.sendPacket(gru);
 	}
@@ -885,10 +885,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		gru.RoleData = new GroupRoleUpdatePacket.RoleDataBlock[1];
 		gru.RoleData[0] = gru.new RoleDataBlock();
 		gru.RoleData[0].RoleID = new UUID();
-		gru.RoleData[0].setName(Helpers.StringToBytes(role.Name));
-		gru.RoleData[0].setDescription(Helpers.StringToBytes(role.Description));
-		gru.RoleData[0].Powers = role.Powers;
-		gru.RoleData[0].setTitle(Helpers.StringToBytes(role.Title));
+		gru.RoleData[0].setName(Helpers.StringToBytes(role.name));
+		gru.RoleData[0].setDescription(Helpers.StringToBytes(role.description));
+		gru.RoleData[0].Powers = role.powers;
+		gru.RoleData[0].setTitle(Helpers.StringToBytes(role.title));
 		gru.RoleData[0].UpdateType = GroupRoleUpdate.Create.getValue();
 		_Client.Network.sendPacket(gru);
 	}
@@ -1010,9 +1010,9 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	 * @throws Exception
 	 */
 	public final void SendGroupNotice(UUID group, GroupNotice notice) throws Exception {
-		_Client.Self.InstantMessage(_Client.Self.getName(), group, notice.Subject + "|" + notice.Message, UUID.Zero,
+		_Client.Self.InstantMessage(_Client.Self.getName(), group, notice.subject + "|" + notice.message, UUID.Zero,
 				InstantMessageDialog.GroupNotice, InstantMessageOnline.Online, Vector3.Zero, UUID.Zero, 0,
-				notice.SerializeAttachment());
+				notice.serializeAttachment());
 	}
 
 	/**
@@ -1029,10 +1029,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		p.AgentData.AgentID = _Client.Self.getAgentID();
 		p.AgentData.SessionID = _Client.Self.getSessionID();
 		p.ProposalData.GroupID = group;
-		p.ProposalData.setProposalText(Helpers.StringToBytes(prop.ProposalText));
-		p.ProposalData.Quorum = prop.Quorum;
-		p.ProposalData.Majority = prop.Majority;
-		p.ProposalData.Duration = prop.Duration;
+		p.ProposalData.setProposalText(Helpers.StringToBytes(prop.proposalText));
+		p.ProposalData.Quorum = prop.quorum;
+		p.ProposalData.Majority = prop.majority;
+		p.ProposalData.Duration = prop.duration;
 		_Client.Network.sendPacket(p);
 	}
 
@@ -1238,12 +1238,12 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 		for (int i = 0; i < msg.groupDataBlock.length; i++) {
 			Group group = new Group(msg.groupDataBlock[i].groupID);
-			group.InsigniaID = msg.groupDataBlock[i].groupInsigniaID;
-			group.Name = msg.groupDataBlock[i].groupName;
-			group.Contribution = msg.groupDataBlock[i].contribution;
-			group.AcceptNotices = msg.groupDataBlock[i].acceptNotices;
-			group.Powers = msg.groupDataBlock[i].groupPowers;
-			group.ListInProfile = msg.newGroupDataBlock[i].listInProfile;
+			group.insigniaID = msg.groupDataBlock[i].groupInsigniaID;
+			group.name = msg.groupDataBlock[i].groupName;
+			group.contribution = msg.groupDataBlock[i].contribution;
+			group.acceptNotices = msg.groupDataBlock[i].acceptNotices;
+			group.powers = msg.groupDataBlock[i].groupPowers;
+			group.listInProfile = msg.newGroupDataBlock[i].listInProfile;
 
 			if (currentGroups != null)
 				currentGroups.put(group.getID(), group);
@@ -1252,7 +1252,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 				GroupList.put(group.getID(), group);
 			}
 			synchronized (GroupNames) {
-				GroupNames.put(group.getID(), group.Name);
+				GroupNames.put(group.getID(), group.name);
 			}
 		}
 
@@ -1267,11 +1267,11 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		for (AgentGroupDataUpdatePacket.GroupDataBlock block : update.GroupData) {
 			Group group = new Group(block.GroupID);
 
-			group.InsigniaID = block.GroupInsigniaID;
-			group.Name = Helpers.BytesToString(block.getGroupName());
-			group.Powers = block.GroupPowers;
-			group.Contribution = block.Contribution;
-			group.AcceptNotices = block.AcceptNotices;
+			group.insigniaID = block.GroupInsigniaID;
+			group.name = Helpers.BytesToString(block.getGroupName());
+			group.powers = block.GroupPowers;
+			group.contribution = block.Contribution;
+			group.acceptNotices = block.AcceptNotices;
 
 			if (currentGroups != null)
 				currentGroups.put(block.GroupID, group);
@@ -1280,7 +1280,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 				GroupList.put(group.getID(), group);
 			}
 			synchronized (GroupNames) {
-				GroupNames.put(group.getID(), group.Name);
+				GroupNames.put(group.getID(), group.name);
 			}
 		}
 
@@ -1323,21 +1323,21 @@ public class GroupManager implements PacketCallback, CapsCallback {
 			GroupProfileReplyPacket profile = (GroupProfileReplyPacket) packet;
 			Group group = new Group(profile.GroupData.GroupID);
 
-			group.AllowPublish = profile.GroupData.AllowPublish;
-			group.Charter = Helpers.BytesToString(profile.GroupData.getCharter());
-			group.FounderID = profile.GroupData.FounderID;
-			group.GroupMembershipCount = profile.GroupData.GroupMembershipCount;
-			group.GroupRolesCount = profile.GroupData.GroupRolesCount;
-			group.InsigniaID = profile.GroupData.InsigniaID;
-			group.MaturePublish = profile.GroupData.MaturePublish;
-			group.MembershipFee = profile.GroupData.MembershipFee;
-			group.MemberTitle = Helpers.BytesToString(profile.GroupData.getMemberTitle());
-			group.Money = profile.GroupData.Money;
-			group.Name = Helpers.BytesToString(profile.GroupData.getName());
-			group.OpenEnrollment = profile.GroupData.OpenEnrollment;
-			group.OwnerRole = profile.GroupData.OwnerRole;
-			group.Powers = profile.GroupData.PowersMask;
-			group.ShowInList = profile.GroupData.ShowInList;
+			group.allowPublish = profile.GroupData.AllowPublish;
+			group.charter = Helpers.BytesToString(profile.GroupData.getCharter());
+			group.founderID = profile.GroupData.FounderID;
+			group.groupMembershipCount = profile.GroupData.GroupMembershipCount;
+			group.groupRolesCount = profile.GroupData.GroupRolesCount;
+			group.insigniaID = profile.GroupData.InsigniaID;
+			group.maturePublish = profile.GroupData.MaturePublish;
+			group.membershipFee = profile.GroupData.MembershipFee;
+			group.memberTitle = Helpers.BytesToString(profile.GroupData.getMemberTitle());
+			group.money = profile.GroupData.Money;
+			group.name = Helpers.BytesToString(profile.GroupData.getName());
+			group.openEnrollment = profile.GroupData.OpenEnrollment;
+			group.ownerRole = profile.GroupData.OwnerRole;
+			group.powers = profile.GroupData.PowersMask;
+			group.showInList = profile.GroupData.ShowInList;
 
 			OnGroupProfile.dispatch(new GroupProfileCallbackArgs(group));
 		}
@@ -1361,12 +1361,12 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 			for (GroupNoticesListReplyPacket.DataBlock entry : reply.Data) {
 				GroupNoticesListEntry notice = new GroupNoticesListEntry();
-				notice.FromName = Helpers.BytesToString(entry.getFromName());
-				notice.Subject = Helpers.BytesToString(entry.getSubject());
-				notice.NoticeID = entry.NoticeID;
-				notice.Timestamp = entry.Timestamp;
-				notice.HasAttachment = entry.HasAttachment;
-				notice.AssetType = AssetType.setValue(entry.AssetType);
+				notice.fromName = Helpers.BytesToString(entry.getFromName());
+				notice.subject = Helpers.BytesToString(entry.getSubject());
+				notice.noticeID = entry.NoticeID;
+				notice.timestamp = entry.Timestamp;
+				notice.hasAttachment = entry.HasAttachment;
+				notice.assetType = AssetType.setValue(entry.AssetType);
 
 				notices.add(notice);
 			}
@@ -1391,10 +1391,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 			for (GroupTitlesReplyPacket.GroupDataBlock block : titles.GroupData) {
 				GroupTitle groupTitle = new GroupTitle();
 
-				groupTitle.GroupID = titles.AgentData.GroupID;
-				groupTitle.RoleID = block.RoleID;
-				groupTitle.Title = Helpers.BytesToString(block.getTitle());
-				groupTitle.Selected = block.Selected;
+				groupTitle.groupID = titles.AgentData.GroupID;
+				groupTitle.roleID = block.RoleID;
+				groupTitle.title = Helpers.BytesToString(block.getTitle());
+				groupTitle.selected = block.Selected;
 
 				groupTitleCache.put(block.RoleID, groupTitle);
 			}
@@ -1430,11 +1430,11 @@ public class GroupManager implements PacketCallback, CapsCallback {
 					for (GroupMembersReplyPacket.MemberDataBlock block : members.MemberData) {
 						GroupMember groupMember = new GroupMember(block.AgentID);
 
-						groupMember.Contribution = block.Contribution;
-						groupMember.IsOwner = block.IsOwner;
-						groupMember.OnlineStatus = Helpers.BytesToString(block.getOnlineStatus());
-						groupMember.Powers = block.AgentPowers;
-						groupMember.Title = Helpers.BytesToString(block.getTitle());
+						groupMember.contribution = block.Contribution;
+						groupMember.isOwner = block.IsOwner;
+						groupMember.onlineStatus = Helpers.BytesToString(block.getOnlineStatus());
+						groupMember.powers = block.AgentPowers;
+						groupMember.title = Helpers.BytesToString(block.getTitle());
 
 						groupMemberCache.put(block.AgentID, groupMember);
 					}
@@ -1481,11 +1481,11 @@ public class GroupManager implements PacketCallback, CapsCallback {
 					for (GroupRoleDataReplyPacket.RoleDataBlock block : roles.RoleData) {
 						GroupRole groupRole = new GroupRole(roles.GroupData.GroupID);
 
-						groupRole.ID = block.RoleID;
-						groupRole.Description = Helpers.BytesToString(block.getDescription());
-						groupRole.Name = Helpers.BytesToString(block.getName());
-						groupRole.Powers = block.Powers;
-						groupRole.Title = Helpers.BytesToString(block.getTitle());
+						groupRole.id = block.RoleID;
+						groupRole.description = Helpers.BytesToString(block.getDescription());
+						groupRole.name = Helpers.BytesToString(block.getName());
+						groupRole.powers = block.Powers;
+						groupRole.title = Helpers.BytesToString(block.getTitle());
 
 						groupRoleCache.put(block.RoleID, groupRole);
 					}
@@ -1567,16 +1567,16 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		for (GroupActiveProposalItemReplyPacket.ProposalDataBlock block : proposal.ProposalData) {
 			GroupProposalItem p = new GroupProposalItem();
 
-			p.VoteID = block.VoteID;
-			p.VoteInitiator = block.VoteInitiator;
-			p.TerseDateID = Helpers.BytesToString(block.getTerseDateID());
-			p.StartDateTime = Helpers.StringToDate(Helpers.BytesToString(block.getStartDateTime()));
-			p.EndDateTime = Helpers.StringToDate(Helpers.BytesToString(block.getEndDateTime()));
-			p.AlreadyVoted = block.AlreadyVoted;
-			p.VoteCast = Helpers.BytesToString(block.getVoteCast());
-			p.Majority = block.Majority;
-			p.Quorum = block.Quorum;
-			p.ProposalText = Helpers.BytesToString(block.getProposalText());
+			p.voteID = block.VoteID;
+			p.voteInitiator = block.VoteInitiator;
+			p.terseDateID = Helpers.BytesToString(block.getTerseDateID());
+			p.startDateTime = Helpers.StringToDate(Helpers.BytesToString(block.getStartDateTime()));
+			p.endDateTime = Helpers.StringToDate(Helpers.BytesToString(block.getEndDateTime()));
+			p.alreadyVoted = block.AlreadyVoted;
+			p.voteCast = Helpers.BytesToString(block.getVoteCast());
+			p.majority = block.Majority;
+			p.quorum = block.Quorum;
+			p.proposalText = Helpers.BytesToString(block.getProposalText());
 
 			array.add(p);
 		}
@@ -1625,25 +1625,25 @@ public class GroupManager implements PacketCallback, CapsCallback {
 			GroupAccountSummaryReplyPacket summary = (GroupAccountSummaryReplyPacket) packet;
 			GroupAccountSummary account = new GroupAccountSummary();
 
-			account.Balance = summary.MoneyData.Balance;
-			account.CurrentInterval = summary.MoneyData.CurrentInterval;
-			account.GroupTaxCurrent = summary.MoneyData.GroupTaxCurrent;
-			account.GroupTaxEstimate = summary.MoneyData.GroupTaxEstimate;
-			account.IntervalDays = summary.MoneyData.IntervalDays;
-			account.LandTaxCurrent = summary.MoneyData.LandTaxCurrent;
-			account.LandTaxEstimate = summary.MoneyData.LandTaxEstimate;
-			account.LastTaxDate = Helpers.BytesToString(summary.MoneyData.getLastTaxDate());
-			account.LightTaxCurrent = summary.MoneyData.LightTaxCurrent;
-			account.LightTaxEstimate = summary.MoneyData.LightTaxEstimate;
-			account.NonExemptMembers = summary.MoneyData.NonExemptMembers;
-			account.ObjectTaxCurrent = summary.MoneyData.ObjectTaxCurrent;
-			account.ObjectTaxEstimate = summary.MoneyData.ObjectTaxEstimate;
-			account.ParcelDirFeeCurrent = summary.MoneyData.ParcelDirFeeCurrent;
-			account.ParcelDirFeeEstimate = summary.MoneyData.ParcelDirFeeEstimate;
-			account.StartDate = Helpers.BytesToString(summary.MoneyData.getStartDate());
-			account.TaxDate = Helpers.BytesToString(summary.MoneyData.getTaxDate());
-			account.TotalCredits = summary.MoneyData.TotalCredits;
-			account.TotalDebits = summary.MoneyData.TotalDebits;
+			account.balance = summary.MoneyData.Balance;
+			account.currentInterval = summary.MoneyData.CurrentInterval;
+			account.groupTaxCurrent = summary.MoneyData.GroupTaxCurrent;
+			account.groupTaxEstimate = summary.MoneyData.GroupTaxEstimate;
+			account.intervalDays = summary.MoneyData.IntervalDays;
+			account.landTaxCurrent = summary.MoneyData.LandTaxCurrent;
+			account.landTaxEstimate = summary.MoneyData.LandTaxEstimate;
+			account.lastTaxDate = Helpers.BytesToString(summary.MoneyData.getLastTaxDate());
+			account.lightTaxCurrent = summary.MoneyData.LightTaxCurrent;
+			account.lightTaxEstimate = summary.MoneyData.LightTaxEstimate;
+			account.nonExemptMembers = summary.MoneyData.NonExemptMembers;
+			account.objectTaxCurrent = summary.MoneyData.ObjectTaxCurrent;
+			account.objectTaxEstimate = summary.MoneyData.ObjectTaxEstimate;
+			account.parcelDirFeeCurrent = summary.MoneyData.ParcelDirFeeCurrent;
+			account.parcelDirFeeEstimate = summary.MoneyData.ParcelDirFeeEstimate;
+			account.startDate = Helpers.BytesToString(summary.MoneyData.getStartDate());
+			account.taxDate = Helpers.BytesToString(summary.MoneyData.getTaxDate());
+			account.totalCredits = summary.MoneyData.TotalCredits;
+			account.totalDebits = summary.MoneyData.TotalDebits;
 
 			OnGroupAccountSummaryReply
 					.dispatch(new GroupAccountSummaryReplyCallbackArgs(summary.AgentData.GroupID, account));
@@ -1719,7 +1719,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 			synchronized (GroupList) {
 				Group group = (Group) GroupList.get(block.ID);
 				if (group != null) {
-					group.Name = name;
+					group.name = name;
 				}
 			}
 		}
@@ -1750,15 +1750,15 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		if (OnGroupAccountDetailsCallbacks.containsKey(details.AgentData.GroupID)) {
 			GroupAccountDetails account = new GroupAccountDetails();
 
-			account.CurrentInterval = details.MoneyData.CurrentInterval;
-			account.IntervalDays = details.MoneyData.IntervalDays;
-			account.StartDate = Helpers.BytesToString(details.MoneyData.getStartDate());
+			account.currentInterval = details.MoneyData.CurrentInterval;
+			account.intervalDays = details.MoneyData.IntervalDays;
+			account.startDate = Helpers.BytesToString(details.MoneyData.getStartDate());
 
-			account.HistoryItems = new HashMapInt<String>();
+			account.historyItems = new HashMapInt<String>();
 
 			for (int i = 0; i < details.HistoryData.length; i++) {
 				GroupAccountDetailsReplyPacket.HistoryDataBlock block = details.HistoryData[i];
-				account.HistoryItems.put(Helpers.BytesToString(block.getDescription()), block.Amount);
+				account.historyItems.put(Helpers.BytesToString(block.getDescription()), block.Amount);
 			}
 			OnGroupAccountDetailsCallbacks.get(details.AgentData.GroupID).callback(account);
 		}
@@ -1770,21 +1770,21 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		if (OnGroupAccountTransactionsCallbacks.containsKey(transactions.AgentData.GroupID)) {
 			GroupAccountTransactions account = new GroupAccountTransactions();
 
-			account.CurrentInterval = transactions.MoneyData.CurrentInterval;
-			account.IntervalDays = transactions.MoneyData.IntervalDays;
-			account.StartDate = Helpers.BytesToString(transactions.MoneyData.getStartDate());
+			account.currentInterval = transactions.MoneyData.CurrentInterval;
+			account.intervalDays = transactions.MoneyData.IntervalDays;
+			account.startDate = Helpers.BytesToString(transactions.MoneyData.getStartDate());
 
-			account.Transactions = new TransactionEntry[transactions.HistoryData.length];
+			account.transactions = new TransactionEntry[transactions.HistoryData.length];
 			for (int i = 0; i < transactions.HistoryData.length; i++) {
 				TransactionEntry entry = account.new TransactionEntry();
 				GroupAccountTransactionsReplyPacket.HistoryDataBlock block = transactions.HistoryData[i];
 
-				entry.Type = block.Type;
-				entry.Amount = block.Amount;
-				entry.Item = Helpers.BytesToString(block.getItem());
-				entry.User = Helpers.BytesToString(block.getUser());
-				entry.Time = Helpers.BytesToString(block.getTime());
-				account.Transactions[i] = entry;
+				entry.type = block.Type;
+				entry.amount = block.Amount;
+				entry.item = Helpers.BytesToString(block.getItem());
+				entry.user = Helpers.BytesToString(block.getUser());
+				entry.time = Helpers.BytesToString(block.getTime());
+				account.transactions[i] = entry;
 			}
 			OnGroupAccountTransactionsCallbacks.get(transactions.AgentData.GroupID).callback(account);
 		}

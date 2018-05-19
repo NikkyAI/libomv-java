@@ -8,19 +8,19 @@ import libomv.types.UUID;
 // Contains information about a wearable inventory item
 public class WearableData {
 	// Inventory ItemID of the wearable</summary>
-	public UUID ItemID;
+	public UUID itemID;
 	// AssetID of the wearable asset</summary>
-	public UUID AssetID;
+	public UUID assetID;
 	// WearableType of the wearable</summary>
-	public WearableType WearableType;
+	public WearableType wearableType;
 	// AssetType of the wearable</summary>
-	public AssetType AssetType;
+	public AssetType assetType;
 	// Asset data for the wearable</summary>
-	public AssetWearable Asset;
+	public AssetWearable asset;
 
 	@Override
 	public String toString() {
-		return String.format("ItemID: %s, AssetID: %s, WearableType: %s, AssetType: %s, Asset: %s", ItemID, AssetID,
-				WearableType, AssetType, Asset != null ? Asset.name : "(null)");
+		return String.format("ItemID: %s, AssetID: %s, WearableType: %s, AssetType: %s, Asset: %s", itemID, assetID,
+				wearableType, assetType, asset != null ? asset.name : "(null)");
 	}
 }
