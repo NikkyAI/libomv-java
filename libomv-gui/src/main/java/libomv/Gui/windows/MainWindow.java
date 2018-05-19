@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -38,11 +38,11 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.AbstractButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.apache.log4j.Logger;
@@ -57,7 +57,7 @@ public class MainWindow extends JFrame implements MainControl {
 	private static final Logger logger = Logger.getLogger(MainWindow.class);
 	private static final long serialVersionUID = 1L;
 
-	private JPanel jPSouth;
+	private JComponent jPSouth;
 	private Component jPContent;
 	private JMenuBar jMenuBar;
 
@@ -164,7 +164,7 @@ public class MainWindow extends JFrame implements MainControl {
 		jPContent = component;
 	}
 
-	public void setControlPane(JPanel panel) {
+	public void setControlPane(JComponent panel) {
 		if (jPSouth != null) {
 			getContentPane().remove(jPSouth);
 		}

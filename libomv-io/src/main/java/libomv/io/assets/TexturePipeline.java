@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -42,15 +42,16 @@ import org.apache.log4j.Logger;
 import libomv.imaging.ManagedImage.ImageCodec;
 import libomv.io.GridClient;
 import libomv.io.LibSettings;
-import libomv.io.LoginManager.LoginProgressCallbackArgs;
-import libomv.io.LoginManager.LoginStatus;
-import libomv.io.NetworkManager.DisconnectedCallbackArgs;
 import libomv.io.SimulatorManager;
-import libomv.io.assets.AssetManager.DelayedTransfer;
-import libomv.io.assets.AssetManager.ImageDownload;
-import libomv.io.assets.AssetManager.ImageType;
-import libomv.io.assets.AssetManager.StatusCode;
+import libomv.model.Asset.DelayedTransfer;
+import libomv.model.Asset.ImageDownload;
+import libomv.model.Asset.ImageType;
+import libomv.model.Asset.StatusCode;
+import libomv.model.Login.LoginProgressCallbackArgs;
+import libomv.model.Login.LoginStatus;
+import libomv.model.Network.DisconnectedCallbackArgs;
 import libomv.model.Simulator;
+import libomv.model.Texture.TextureRequestState;
 import libomv.packets.ImageDataPacket;
 import libomv.packets.ImageNotInDatabasePacket;
 import libomv.packets.ImagePacketPacket;
@@ -65,36 +66,11 @@ import libomv.utils.TimeoutEvent;
 public class TexturePipeline implements PacketCallback {
 	private static final Logger logger = Logger.getLogger(TexturePipeline.class);
 
-	// The current status of a texture request as it moves through the pipeline
-	// or final result of a texture request.
-	public enum TextureRequestState {
-		// The initial state given to a request. Requests in this state are
-		// waiting for an available slot in the pipeline
-		Pending,
-		// A request that has been added to the pipeline and the request packet
-		// has been sent to the simulator
-		Started,
-		// A request that has received one or more packets back from the
-		// simulator
-		Progress,
-		// A request that has received all packets back from the simulator
-		Finished,
-		// A request that has taken longer than {@link
-		// Settings.PIPELINE_REQUEST_TIMEOUT} to download OR the initial
-		// packet containing the packet information was never received
-		Timeout,
-		// The texture request was aborted by request of the agent
-		Aborted,
-		// The simulator replied to the request that it was not able to find the
-		// requested texture
-		NotFound
-	}
-
 	/**
 	 * Texture request download handler, allows a configurable number of download
 	 * slots which manage multiple concurrent texture downloads from the
 	 * {@link SimulatorManager}
-	 * 
+	 *
 	 * This class makes full use of the internal {@link TextureCache} system for
 	 * full texture downloads.
 	 */
@@ -158,7 +134,7 @@ public class TexturePipeline implements PacketCallback {
 
 	/**
 	 * Default constructor, Instantiates a new copy of the TexturePipeline class
-	 * 
+	 *
 	 * @param client
 	 *            Reference to the instantiated <see cref="GridClient"/> object
 	 */
@@ -215,7 +191,7 @@ public class TexturePipeline implements PacketCallback {
 
 	/**
 	 * Initialize callbacks required for the TexturePipeline to operate
-	 * 
+	 *
 	 */
 	public final void startup() {
 		if (_Running) {
@@ -323,7 +299,7 @@ public class TexturePipeline implements PacketCallback {
 	 * Request a texture asset from the simulator using the
 	 * <see cref="TexturePipeline"/> system to manage the requests and re-assemble
 	 * the image from the packets received from the simulator
-	 * 
+	 *
 	 * @param textureID
 	 *            The <see cref="UUID"/> of the texture asset to download
 	 * @param imageType
@@ -370,7 +346,7 @@ public class TexturePipeline implements PacketCallback {
 
 	/**
 	 * Sends the actual request packet to the simulator
-	 * 
+	 *
 	 * @Note Sending a priority of 0 and a discardlevel of -1 aborts download
 	 *
 	 * @param imageID
@@ -433,7 +409,7 @@ public class TexturePipeline implements PacketCallback {
 
 	/**
 	 * Cancel a pending or in process texture request
-	 * 
+	 *
 	 * @param textureID
 	 *            The texture assets unique ID
 	 * @throws Exception
@@ -534,7 +510,7 @@ public class TexturePipeline implements PacketCallback {
 
 	/**
 	 * The worker thread that sends the request and handles timeouts
-	 * 
+	 *
 	 * @param threadContext
 	 *            A <see cref="TaskInfo"/> object containing the request details
 	 */
@@ -630,7 +606,7 @@ public class TexturePipeline implements PacketCallback {
 	 * Handle responses from the simulator that tell us a texture we have requested
 	 * is unable to be located or no longer exists. This will remove the request
 	 * from the pipeline and free up a slot if one is in use
-	 * 
+	 *
 	 * @param sender
 	 *            The sender
 	 * @param e
@@ -700,7 +676,7 @@ public class TexturePipeline implements PacketCallback {
 
 	/**
 	 * Handle the initial ImageDataPacket sent from the simulator
-	 * 
+	 *
 	 * @param sender
 	 *            The sender
 	 * @param e
@@ -725,15 +701,14 @@ public class TexturePipeline implements PacketCallback {
 			task.Request.Size = data.ImageID.Size;
 			task.Request.AssetData = new byte[task.Request.Size];
 
-			processDelayedData(task.Request,
-					_Client.Assets.new DelayedTransfer(StatusCode.OK, data.ImageData.getData()));
+			processDelayedData(task.Request, new DelayedTransfer(StatusCode.OK, data.ImageData.getData()));
 		}
 	}
 
 	/**
 	 * Handles the remaining Image data that did not fit in the initial ImageData
 	 * packet
-	 * 
+	 *
 	 * @param sender
 	 *            The sender
 	 * @param e
@@ -745,7 +720,7 @@ public class TexturePipeline implements PacketCallback {
 		TaskInfo task = GetTransferValue(image.ImageID.ID);
 		if (task != null) {
 			StatusCode status = StatusCode.OK;
-			DelayedTransfer info = _Client.Assets.new DelayedTransfer(status, image.ImageData.getData());
+			DelayedTransfer info = new DelayedTransfer(status, image.ImageData.getData());
 
 			if (!task.Request.gotInfo() || image.ImageID.Packet != task.Request.PacketNum) {
 				/*

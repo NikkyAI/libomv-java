@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 
 import libomv.Gui.AppSettings;
 import libomv.Gui.windows.MainControl;
-import libomv.io.AgentManager.ChatCallbackArgs;
+import libomv.model.Agent.ChatCallbackArgs;
 import libomv.types.UUID;
 import libomv.utils.Callback;
 import libomv.utils.Settings.SettingsUpdateCallbackArgs;
@@ -60,7 +60,7 @@ public class RLVManager {
 	Pattern pattern = Pattern.compile("");
 	/*
 	 * syntax:
-	 * 
+	 *
 	 * <behaviour>[:<option>]=<param>
 	 */
 	private Pattern rlv_regex = Pattern.compile("([^:=]+)(:([^=]+))?=(\\w+)");
@@ -82,12 +82,12 @@ public class RLVManager {
 	public RLVManager(MainControl main) {
 		_Main = main;
 
-		_Main.getAppSettings().OnSettingsUpdate.add(settingsUpdate);
+		_Main.getAppSettings().onSettingsUpdate.add(settingsUpdate);
 		enabled = _Main.getAppSettings().get(AppSettings.ENABLE_RLV_MANAGER, false);
 	}
 
 	protected void finalized() throws Throwable {
-		_Main.getAppSettings().OnSettingsUpdate.remove(settingsUpdate);
+		_Main.getAppSettings().onSettingsUpdate.remove(settingsUpdate);
 		super.finalize();
 	}
 

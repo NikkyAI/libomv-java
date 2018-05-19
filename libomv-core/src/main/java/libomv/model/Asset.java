@@ -1,5 +1,11 @@
 package libomv.model;
 
+import java.util.HashMap;
+
+import libomv.imaging.ManagedImage.ImageCodec;
+import libomv.model.Texture.TextureRequestState;
+import libomv.types.UUID;
+import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 
 public interface Asset {
@@ -109,7 +115,7 @@ public interface Asset {
 
 		/**
 		 * Translate a string name of an AssetType into the proper Type
-		 * 
+		 *
 		 * @param type
 		 *            A string containing the AssetType name
 		 * @return The AssetType which matches the string name, or AssetType.Unknown if
@@ -159,6 +165,319 @@ public interface Asset {
 			this._value = (byte) value;
 		}
 	}
+
+	// #region Enums
+	public enum EstateAssetType {
+		None, Covenant;
+
+		public static EstateAssetType setValue(int value) {
+			return values()[value + 1];
+		}
+
+		public static byte getValue(EstateAssetType value) {
+			return (byte) (value.ordinal() - 1);
+		}
+
+		public byte getValue() {
+			return (byte) (ordinal() - 1);
+		}
+	}
+
+	public enum StatusCode {
+		OK(0),
+		// Transfer completed
+		Done(1), Skip(2), Abort(3),
+		// Unknown error occurred
+		Error(-1),
+		// Equivalent to a 404 error
+		UnknownSource(-2),
+		// Client does not have permission for that resource
+		InsufficientPermissions(-3),
+		// Unknown status
+		Unknown(-4);
+
+		public static StatusCode setValue(int value) {
+			for (StatusCode e : values()) {
+				if (e._value == value)
+					return e;
+			}
+			return Unknown;
+		}
+
+		public static byte getValue(StatusCode value) {
+			for (StatusCode e : values()) {
+				if (e == value)
+					return e._value;
+			}
+			return Unknown._value;
+		}
+
+		public byte getValue() {
+			return _value;
+		}
+
+		private final byte _value;
+
+		private StatusCode(int value) {
+			_value = (byte) value;
+		}
+	}
+
+	public enum ChannelType {
+		Unknown,
+		// Unknown
+		Misc,
+		// Virtually all asset transfers use this channel
+		Asset;
+
+		public static ChannelType setValue(int value) {
+			return values()[value];
+		}
+
+		public static byte getValue(ChannelType value) {
+			return (byte) value.ordinal();
+		}
+
+		public byte getValue() {
+			return (byte) ordinal();
+		}
+	}
+
+	public enum SourceType {
+		//
+		Unknown,
+		//
+		Unused,
+		// Asset from the asset server
+		Asset,
+		// Inventory item
+		SimInventoryItem,
+		// Estate asset, such as an estate covenant
+		SimEstate;
+
+		public static SourceType setValue(int value) {
+			return values()[value];
+		}
+
+		public static byte getValue(SourceType value) {
+			return (byte) value.ordinal();
+		}
+
+		public byte getValue() {
+			return (byte) ordinal();
+		}
+	}
+
+	public enum TargetType {
+		Unknown, File, VFile;
+
+		public static TargetType setValue(int value) {
+			return values()[value];
+		}
+
+		public static byte getValue(TargetType value) {
+			return (byte) value.ordinal();
+		}
+
+		public byte getValue() {
+			return (byte) ordinal();
+		}
+	}
+
+	// When requesting image download, type of the image requested
+	public enum ImageType {
+		// Normal in-world object texture
+		Normal,
+		// Local baked avatar texture
+		Baked,
+		// Server baked avatar texture
+		ServerBaked;
+
+		public static ImageType setValue(int value) {
+			return values()[value];
+		}
+
+		public static byte getValue(ImageType value) {
+			return (byte) value.ordinal();
+		}
+
+		public byte getValue() {
+			return (byte) ordinal();
+		}
+	}
+
+	public enum TransferError {
+		None(0), Failed(-1), AssetNotFound(-3), AssetNotFoundInDatabase(-4), InsufficientPermissions(-5), EOF(
+				-39), CannotOpenFile(-42), FileNotFound(-43), FileIsEmpty(-44), TCPTimeout(-23016), CircuitGone(-23017);
+
+		public static TransferError setValue(int value) {
+			for (TransferError e : values()) {
+				if (e._value == value)
+					return e;
+			}
+			return Failed;
+		}
+
+		public static byte getValue(TransferError value) {
+			for (TransferError e : values()) {
+				if (e == value)
+					return e._value;
+			}
+			return Failed._value;
+		}
+
+		public byte getValue() {
+			return _value;
+		}
+
+		private final byte _value;
+
+		private TransferError(int value) {
+			_value = (byte) value;
+		}
+	}
+
+	// #region Transfer Classes
+	public class DelayedTransfer {
+		public StatusCode Status;
+		public byte[] Data;
+
+		public DelayedTransfer(StatusCode status, byte[] data) {
+			this.Status = status;
+			this.Data = data;
+		}
+	}
+
+	// TODO:FIXME Changing several fields to public, they need getters instead!
+	public class Transfer {
+		public UUID ItemID;
+		public int Size;
+		public AssetType AssetType;
+		public byte[] AssetData;
+
+		public UUID TransactionID; // protected
+		public int Transferred; // protected
+		public int PacketNum; // protected
+		public boolean Success;
+		public long TimeSinceLastPacket; // protected
+		public HashMap<Integer, DelayedTransfer> delayed; // protected
+		public String suffix;
+
+		public Transfer() {
+			AssetData = Helpers.EmptyBytes;
+			delayed = new HashMap<Integer, DelayedTransfer>();
+		}
+	}
+
+	public class XferDownload extends Transfer {
+		public long XferID;
+		public String Filename = Helpers.EmptyString;
+		public TransferError Error = TransferError.None;
+
+		public XferDownload() {
+			super();
+		}
+	}
+
+	// TODO:FIXME
+	// Changing several fields to public, they need getters instead!
+	public class AssetDownload extends Transfer {
+		public ChannelType Channel;
+		public SourceType Source;
+		public TargetType Target;
+		public StatusCode Status;
+		public float Priority;
+		public Simulator Simulator; // private
+		public CallbackHandler<AssetDownload> callbacks; // private
+
+		public AssetDownload() {
+			super();
+		}
+
+		public boolean gotInfo() {
+			return Size > 0;
+		}
+	}
+
+	public class ImageDownload extends Transfer {
+		public ImageType ImageType;
+		public ImageCodec Codec;
+		public int DiscardLevel;
+		public float Priority;
+		// The current {@link TextureRequestState} which identifies the current
+		// status of the request
+		public TextureRequestState State;
+		// If true, indicates the callback will be fired whenever new data is
+		// returned from the simulator.
+		// This is used to progressively render textures as portions of the
+		// texture are received.
+		public boolean ReportProgress;
+		// The callback to fire when the request is complete, will include
+		// the {@link TextureRequestState} and the <see cref="AssetTexture"/>
+		// object containing the result data
+		public CallbackHandler<ImageDownload> callbacks;
+
+		public ImageDownload() {
+			super();
+		}
+
+		public boolean gotInfo() {
+			return Size > 0;
+		}
+	}
+
+	// TODO:FIXME
+	// Changing several fields to public, they need getters instead!
+	public class MeshDownload extends Transfer {
+		public UUID ItemID;
+		public CallbackHandler<MeshDownload> callbacks; // private
+
+		public MeshDownload() {
+			super();
+		}
+	}
+
+	public class AssetUpload extends Transfer {
+		public UUID AssetID;
+		public long XferID;
+
+		public AssetUpload() {
+			super();
+		}
+	}
+
+	public class ImageRequest {
+		public UUID ImageID;
+		public ImageType Type;
+		public float Priority;
+		public int DiscardLevel;
+
+		public ImageRequest(UUID imageid, ImageType type, float priority, int discardLevel) {
+			ImageID = imageid;
+			Type = type;
+			Priority = priority;
+			DiscardLevel = discardLevel;
+		}
+
+	}
+
+	// #endregion Transfer Classes
+
+	// #region Callbacks
+
+	/**
+	 * Callback used upon completion of baked texture upload
+	 *
+	 * @param newAssetID
+	 *            Asset UUID of the newly uploaded baked texture
+	 */
+	public abstract class BakedTextureUploadedCallback {
+		abstract public void callback(UUID newAssetID);
+	}
+
+	// #endregion Callback
+
+	// #region Callback
 
 	/** The "type" of asset, Notecard, Animation, etc */
 	public AssetType getAssetType();

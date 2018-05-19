@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -57,8 +57,8 @@ import javax.swing.text.StyledDocument;
 import org.apache.log4j.Logger;
 
 import libomv.Gui.windows.MainControl;
-import libomv.io.AgentManager.ChatType;
 import libomv.io.GridClient;
+import libomv.model.Agent.ChatType;
 import libomv.types.UUID;
 import libomv.utils.TimeoutEvent;
 
@@ -270,7 +270,7 @@ public abstract class AbstractChannel extends JPanel {
 
 	/**
 	 * Call to trigger that typing has begun.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	protected void triggerTyping() throws Exception {

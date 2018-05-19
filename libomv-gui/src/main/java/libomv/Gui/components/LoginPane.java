@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -60,8 +60,8 @@ import libomv.Gui.dialogs.GridEditor;
 import libomv.Gui.windows.MainControl;
 import libomv.Gui.windows.MainWindow;
 import libomv.io.GridClient;
-import libomv.io.GridClient.GridInfo;
-import libomv.io.GridClient.GridListUpdateCallbackArgs;
+import libomv.model.Grid.GridInfo;
+import libomv.model.Grid.GridListUpdateCallbackArgs;
 import libomv.utils.Callback;
 
 public class LoginPane extends JPanel implements ActionListener {
@@ -282,7 +282,7 @@ public class LoginPane extends JPanel implements ActionListener {
 
 	/**
 	 * This method initializes textFirstName
-	 * 
+	 *
 	 * @return JTextField
 	 */
 	private JTextField getJTxtUserName() {
@@ -292,7 +292,7 @@ public class LoginPane extends JPanel implements ActionListener {
 			jTxtUserName.addCaretListener(new CaretListener() {
 				/**
 				 * Called when the caret is updated
-				 * 
+				 *
 				 * @param e
 				 *            The CaretEvent
 				 */
@@ -307,7 +307,7 @@ public class LoginPane extends JPanel implements ActionListener {
 			jTxtUserName.addFocusListener(new FocusAdapter() {
 				/**
 				 * Called when focus is gained
-				 * 
+				 *
 				 * @param e
 				 *            The FocusEvent
 				 */
@@ -322,7 +322,7 @@ public class LoginPane extends JPanel implements ActionListener {
 			jTxtUserName.addKeyListener(new KeyAdapter() {
 				/**
 				 * Called when a key is pressed
-				 * 
+				 *
 				 * @param e
 				 *            The KeyEvent
 				 */
@@ -339,7 +339,7 @@ public class LoginPane extends JPanel implements ActionListener {
 
 	/**
 	 * This method initializes textPassword
-	 * 
+	 *
 	 * @return java.awt.TextField
 	 */
 	private JPasswordField getJPwdPassword() {
@@ -349,7 +349,7 @@ public class LoginPane extends JPanel implements ActionListener {
 			jPwdPassword.addCaretListener(new CaretListener() {
 				/**
 				 * Called when the caret is updated
-				 * 
+				 *
 				 * @param e
 				 *            The CaretEvent
 				 */
@@ -364,7 +364,7 @@ public class LoginPane extends JPanel implements ActionListener {
 			jPwdPassword.addFocusListener(new FocusAdapter() {
 				/**
 				 * Called when focus is gained
-				 * 
+				 *
 				 * @param e
 				 *            The FocusEvent
 				 */
@@ -379,7 +379,7 @@ public class LoginPane extends JPanel implements ActionListener {
 			jPwdPassword.addKeyListener(new KeyAdapter() {
 				/**
 				 * Called when a key is pressed
-				 * 
+				 *
 				 * @param e
 				 *            The KeyEvent
 				 */
@@ -400,7 +400,7 @@ public class LoginPane extends JPanel implements ActionListener {
 
 	/**
 	 * This method initializes our Login button
-	 * 
+	 *
 	 * @return Login JButton
 	 */
 	private JButton getJBtnLogin() {
@@ -443,7 +443,7 @@ public class LoginPane extends JPanel implements ActionListener {
 
 	/**
 	 * This method initializes our Grid button
-	 * 
+	 *
 	 * @return Grid JButton
 	 */
 	private JButton getBtnGrids() {
@@ -512,7 +512,7 @@ public class LoginPane extends JPanel implements ActionListener {
 
 	/**
 	 * Validate a text component
-	 * 
+	 *
 	 * @param component
 	 *            The component to validate
 	 * @param associatedLabel

@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -31,9 +31,9 @@ package libomv.Gui.windows;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
-import javax.swing.JPanel;
 
 import libomv.Gui.StateController;
 import libomv.io.GridClient;
@@ -62,5 +62,5 @@ public interface MainControl extends ActionListener {
 
 	public void setContentPane(Component pane);
 
-	public void setControlPane(JPanel panel);
+	public void setControlPane(JComponent panel);
 }

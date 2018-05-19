@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -39,7 +39,7 @@ public class PreferenceWindow extends JDialog {
 	private JPanel jContentPane = null;
 
 	/**
-	 * 
+	 *
 	 */
 	public PreferenceWindow(MainControl main) {
 		super(main.getJFrame());
@@ -50,7 +50,7 @@ public class PreferenceWindow extends JDialog {
 
 	/**
 	 * This method initializes jContentPane
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {

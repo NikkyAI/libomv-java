@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -36,20 +36,20 @@ import org.apache.log4j.Logger;
 import libomv.Gui.AppSettings;
 import libomv.Gui.windows.MainControl;
 import libomv.io.AgentManager;
-import libomv.io.AgentManager.ChatCallbackArgs;
-import libomv.io.AgentManager.ChatType;
 import libomv.io.GridClient;
-import libomv.io.NetworkManager.SimChangedCallbackArgs;
 import libomv.io.ObjectManager.KillObjectsCallbackArgs;
 import libomv.io.ObjectManager.PrimCallbackArgs;
 import libomv.io.SimulatorManager;
-import libomv.io.SoundManager;
-import libomv.io.SoundManager.AttachedSoundCallbackArgs;
-import libomv.io.SoundManager.PreloadSoundCallbackArgs;
-import libomv.io.SoundManager.SoundTriggerCallbackArgs;
-import libomv.io.assets.AssetManager.AssetDownload;
+import libomv.model.Agent.ChatCallbackArgs;
+import libomv.model.Agent.ChatType;
+import libomv.model.Asset.AssetDownload;
 import libomv.model.Asset.AssetType;
+import libomv.model.Network.SimChangedCallbackArgs;
 import libomv.model.Simulator;
+import libomv.model.Sound;
+import libomv.model.Sound.AttachedSoundCallbackArgs;
+import libomv.model.Sound.PreloadSoundCallbackArgs;
+import libomv.model.Sound.SoundTriggerCallbackArgs;
 import libomv.primitives.Primitive;
 import libomv.primitives.Primitive.SoundFlags;
 import libomv.types.UUID;
@@ -273,7 +273,7 @@ public class MediaManager extends MediaObject {
 			Primitive prim = null;
 			synchronized (simulator.getObjectsPrimitives()) {
 				for (Primitive p : simulator.getObjectsPrimitives().values()) {
-					if (p.ID.equals(args.getObjectID())) {
+					if (p.id.equals(args.getObjectID())) {
 						prim = p;
 						break;
 					}
@@ -283,7 +283,7 @@ public class MediaManager extends MediaObject {
 				return false;
 
 			// Only one attached sound per prim, so we kill any previous
-			BufferSound.kill(prim.ID);
+			BufferSound.kill(prim.id);
 
 			// If this is stop sound, we're done since we've already killed sound for this
 			// object
@@ -295,15 +295,15 @@ public class MediaManager extends MediaObject {
 				return false;
 
 			// If this is a child prim, its position is relative to the root.
-			Vector3 fullPosition = prim.Position;
+			Vector3 fullPosition = prim.position;
 
-			while (prim != null && prim.ParentID != 0) {
-				if (simulator.getObjectsAvatars().containsKey(prim.ParentID)) {
-					prim = simulator.getObjectsAvatars().get(prim.ParentID);
-					fullPosition.add(prim.Position);
+			while (prim != null && prim.parentID != 0) {
+				if (simulator.getObjectsAvatars().containsKey(prim.parentID)) {
+					prim = simulator.getObjectsAvatars().get(prim.parentID);
+					fullPosition.add(prim.position);
 				} else {
-					if (simulator.getObjectsPrimitives().containsKey(prim.ParentID)) {
-						fullPosition.add(prim.Position);
+					if (simulator.getObjectsPrimitives().containsKey(prim.parentID)) {
+						fullPosition.add(prim.position);
 					}
 				}
 			}
@@ -343,34 +343,34 @@ public class MediaManager extends MediaObject {
 	private void HandleObjectSound(Primitive prim, Simulator sim) {
 		SimulatorManager simulator = (SimulatorManager) sim;
 		// Objects without sounds are not interesting.
-		if (prim.SoundID == null || prim.SoundID.equals(UUID.Zero))
+		if (prim.soundID == null || prim.soundID.equals(UUID.Zero))
 			return;
 
-		if ((prim.SoundFlags & SoundFlags.Stop) == SoundFlags.Stop) {
-			BufferSound.kill(prim.SoundID);
+		if ((prim.soundFlags & SoundFlags.Stop) == SoundFlags.Stop) {
+			BufferSound.kill(prim.soundID);
 			return;
 		}
 
 		// If this is a child prim, its position is relative to the root prim.
-		Vector3 fullPosition = prim.Position;
-		if (prim.ParentID != 0) {
+		Vector3 fullPosition = prim.position;
+		if (prim.parentID != 0) {
 			synchronized (simulator.getObjectsPrimitives()) {
-				if (!simulator.getObjectsPrimitives().containsKey(prim.ParentID))
+				if (!simulator.getObjectsPrimitives().containsKey(prim.parentID))
 					return;
-				fullPosition.add(simulator.getObjectsPrimitives().get(prim.ParentID).Position);
+				fullPosition.add(simulator.getObjectsPrimitives().get(prim.parentID).position);
 			}
 		}
 
 		// See if this is an update to something we already know about.
-		if (allBuffers.containsKey(prim.SoundID)) {
+		if (allBuffers.containsKey(prim.soundID)) {
 			// Exists already, so modify existing sound.
-			BufferSound snd = allBuffers.get(prim.SoundID);
-			snd.volume = prim.SoundGain * getObjectVolume();
+			BufferSound snd = allBuffers.get(prim.soundID);
+			snd.volume = prim.soundGain * getObjectVolume();
 			snd.position = fullPosition;
 		} else {
 			// Does not exist, so create a new one.
-			new BufferSound(prim.ID, prim.SoundID, (prim.SoundFlags & SoundFlags.Loop) == SoundFlags.Loop, true,
-					fullPosition, prim.SoundGain * getObjectVolume());
+			new BufferSound(prim.id, prim.soundID, (prim.soundFlags & SoundFlags.Loop) == SoundFlags.Loop, true,
+					fullPosition, prim.soundGain * getObjectVolume());
 		}
 	}
 
@@ -397,8 +397,8 @@ public class MediaManager extends MediaObject {
 				for (int obj : args.getObjectLocalIDs()) {
 					Primitive p = prims.get(obj);
 					// Objects without sounds are not interesting.
-					if (p != null && !UUID.isZeroOrNull(p.SoundID))
-						BufferSound.kill(p.ID);
+					if (p != null && !UUID.isZeroOrNull(p.soundID))
+						BufferSound.kill(p.id);
 				}
 			}
 			return false;
@@ -422,7 +422,7 @@ public class MediaManager extends MediaObject {
 	private class Self_ChatFromSimulator implements Callback<ChatCallbackArgs> {
 		public boolean callback(ChatCallbackArgs args) {
 			if (args.getType() == ChatType.StartTyping) {
-				new BufferSound(new UUID(), SoundManager.Sounds.KEYBOARD_LOOP, false, true, args.getPosition(),
+				new BufferSound(new UUID(), Sound.KEYBOARD_LOOP, false, true, args.getPosition(),
 						getObjectVolume() / 2f);
 			}
 			return false;
@@ -457,7 +457,7 @@ public class MediaManager extends MediaObject {
 
 	/**
 	 * Plays a sound
-	 * 
+	 *
 	 * @param sound
 	 *            The UUID of the sound to play
 	 */

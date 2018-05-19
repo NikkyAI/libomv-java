@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -55,21 +55,21 @@ import libomv.Gui.channels.PrivateChannel;
 import libomv.Gui.components.ButtonTabPane;
 import libomv.Gui.components.list.FriendList;
 import libomv.Gui.components.list.GroupList;
-import libomv.io.AgentManager.AlertMessageCallbackArgs;
-import libomv.io.AgentManager.ChatCallbackArgs;
-import libomv.io.AgentManager.ChatSourceType;
-import libomv.io.AgentManager.ChatType;
-import libomv.io.AgentManager.InstantMessage;
-import libomv.io.AgentManager.InstantMessageCallbackArgs;
-import libomv.io.AgentManager.MuteEntry;
-import libomv.io.AgentManager.MuteType;
-import libomv.io.FriendsManager.FriendInfo;
-import libomv.io.FriendsManager.FriendNotificationCallbackArgs;
-import libomv.io.FriendsManager.FriendshipResponseCallbackArgs;
-import libomv.io.FriendsManager.FriendshipTerminatedCallbackArgs;
 import libomv.io.GridClient;
+import libomv.model.Agent.AlertMessageCallbackArgs;
+import libomv.model.Agent.ChatCallbackArgs;
+import libomv.model.Agent.ChatSourceType;
+import libomv.model.Agent.ChatType;
+import libomv.model.Agent.InstantMessage;
+import libomv.model.Agent.InstantMessageCallbackArgs;
 import libomv.model.Agent.InstantMessageDialog;
 import libomv.model.Agent.InstantMessageOnline;
+import libomv.model.Agent.MuteEntry;
+import libomv.model.Agent.MuteType;
+import libomv.model.Friend.FriendInfo;
+import libomv.model.Friend.FriendNotificationCallbackArgs;
+import libomv.model.Friend.FriendshipResponseCallbackArgs;
+import libomv.model.Friend.FriendshipTerminatedCallbackArgs;
 import libomv.types.Predicate;
 import libomv.types.UUID;
 import libomv.utils.Callback;
@@ -143,7 +143,7 @@ public class CommWindow extends JFrame {
 
 	/**
 	 * Return the chat channel component for the uuid
-	 * 
+	 *
 	 * @param uuid
 	 *            The uuid identifying the channel (avatar uuid or group uuid, null
 	 *            returns the local chat channel)
@@ -161,7 +161,7 @@ public class CommWindow extends JFrame {
 
 	/**
 	 * Make the correct tab active
-	 * 
+	 *
 	 * @param focus
 	 *            The main tab to activate. Possible values: null or empty :
 	 *            communication channels OnlinePanel.cmdFriends : friend list
@@ -261,7 +261,7 @@ public class CommWindow extends JFrame {
 
 	/**
 	 * Displays notification in the local chat tab
-	 * 
+	 *
 	 * @param fromName
 	 *            Name from whom the message is
 	 * @param msg

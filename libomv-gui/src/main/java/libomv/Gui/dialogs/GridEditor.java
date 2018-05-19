@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -66,7 +66,7 @@ import org.apache.log4j.Logger;
 
 import libomv.Gui.windows.MainControl;
 import libomv.io.GridClient;
-import libomv.io.GridClient.GridInfo;
+import libomv.model.Grid.GridInfo;
 import libomv.utils.Helpers;
 
 public class GridEditor extends JDialog {
@@ -369,8 +369,7 @@ public class GridEditor extends JDialog {
 			jBtnAdd.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					getJLsModel().add(getJLsGridNames().getSelectedIndex(),
-							updateGridProperties(_Client.new GridInfo(), true));
+					getJLsModel().add(getJLsGridNames().getSelectedIndex(), updateGridProperties(new GridInfo(), true));
 				}
 			});
 		}
@@ -465,7 +464,7 @@ public class GridEditor extends JDialog {
 			jTxtName.addFocusListener(new FocusAdapter() {
 				/**
 				 * Called when focus is gained
-				 * 
+				 *
 				 * @param e
 				 *            The FocusEvent
 				 */
@@ -480,7 +479,7 @@ public class GridEditor extends JDialog {
 			jTxtName.addKeyListener(new KeyAdapter() {
 				/**
 				 * Called when a key is pressed
-				 * 
+				 *
 				 * @param e
 				 *            The KeyEvent
 				 */
@@ -503,7 +502,7 @@ public class GridEditor extends JDialog {
 			jTxtNick.addFocusListener(new FocusAdapter() {
 				/**
 				 * Called when focus is gained
-				 * 
+				 *
 				 * @param e
 				 *            The FocusEvent
 				 */
@@ -518,7 +517,7 @@ public class GridEditor extends JDialog {
 			jTxtNick.addKeyListener(new KeyAdapter() {
 				/**
 				 * Called when a key is pressed
-				 * 
+				 *
 				 * @param e
 				 *            The KeyEvent
 				 */
@@ -541,7 +540,7 @@ public class GridEditor extends JDialog {
 			jTxtStartUrl.addFocusListener(new FocusAdapter() {
 				/**
 				 * Called when focus is gained
-				 * 
+				 *
 				 * @param e
 				 *            The FocusEvent
 				 */
@@ -556,7 +555,7 @@ public class GridEditor extends JDialog {
 			jTxtStartUrl.addKeyListener(new KeyAdapter() {
 				/**
 				 * Called when a key is pressed
-				 * 
+				 *
 				 * @param e
 				 *            The KeyEvent
 				 */
@@ -579,7 +578,7 @@ public class GridEditor extends JDialog {
 			jTxtLoginUrl.addFocusListener(new FocusAdapter() {
 				/**
 				 * Called when focus is gained
-				 * 
+				 *
 				 * @param e
 				 *            The FocusEvent
 				 */
@@ -594,7 +593,7 @@ public class GridEditor extends JDialog {
 			jTxtLoginUrl.addKeyListener(new KeyAdapter() {
 				/**
 				 * Called when a key is pressed
-				 * 
+				 *
 				 * @param e
 				 *            The KeyEvent
 				 */
@@ -617,7 +616,7 @@ public class GridEditor extends JDialog {
 			jTxtHelperUrl.addFocusListener(new FocusAdapter() {
 				/**
 				 * Called when focus is gained
-				 * 
+				 *
 				 * @param e
 				 *            The FocusEvent
 				 */
@@ -632,7 +631,7 @@ public class GridEditor extends JDialog {
 			jTxtHelperUrl.addKeyListener(new KeyAdapter() {
 				/**
 				 * Called when a key is pressed
-				 * 
+				 *
 				 * @param e
 				 *            The KeyEvent
 				 */
@@ -655,7 +654,7 @@ public class GridEditor extends JDialog {
 			jTxtWebsiteUrl.addFocusListener(new FocusAdapter() {
 				/**
 				 * Called when focus is gained
-				 * 
+				 *
 				 * @param e
 				 *            The FocusEvent
 				 */
@@ -670,7 +669,7 @@ public class GridEditor extends JDialog {
 			jTxtWebsiteUrl.addKeyListener(new KeyAdapter() {
 				/**
 				 * Called when a key is pressed
-				 * 
+				 *
 				 * @param e
 				 *            The KeyEvent
 				 */
@@ -693,7 +692,7 @@ public class GridEditor extends JDialog {
 			jTxtSupportUrl.addFocusListener(new FocusAdapter() {
 				/**
 				 * Called when focus is gained
-				 * 
+				 *
 				 * @param e
 				 *            The FocusEvent
 				 */
@@ -708,7 +707,7 @@ public class GridEditor extends JDialog {
 			jTxtSupportUrl.addKeyListener(new KeyAdapter() {
 				/**
 				 * Called when a key is pressed
-				 * 
+				 *
 				 * @param e
 				 *            The KeyEvent
 				 */
@@ -731,7 +730,7 @@ public class GridEditor extends JDialog {
 			jTxtRegisterUrl.addFocusListener(new FocusAdapter() {
 				/**
 				 * Called when focus is gained
-				 * 
+				 *
 				 * @param e
 				 *            The FocusEvent
 				 */
@@ -746,7 +745,7 @@ public class GridEditor extends JDialog {
 			jTxtRegisterUrl.addKeyListener(new KeyAdapter() {
 				/**
 				 * Called when a key is pressed
-				 * 
+				 *
 				 * @param e
 				 *            The KeyEvent
 				 */

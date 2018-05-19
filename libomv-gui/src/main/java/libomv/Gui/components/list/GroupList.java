@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -58,8 +58,9 @@ import libomv.Gui.windows.MainControl;
 import libomv.Gui.windows.MainWindow;
 import libomv.io.GridClient;
 import libomv.io.GroupManager.CurrentGroupsCallbackArgs;
-import libomv.io.GroupManager.Group;
 import libomv.io.GroupManager.GroupOperationCallbackArgs;
+import libomv.io.impl.GroupImpl;
+import libomv.model.Group;
 import libomv.types.UUID;
 import libomv.utils.Callback;
 
@@ -85,7 +86,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 
 	/**
 	 * Constructs a list to display
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public GroupList(MainControl main, CommWindow comm) {
@@ -153,7 +154,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 
 	/**
 	 * Find the entry based on the groups UUID
-	 * 
+	 *
 	 * @param id
 	 *            The UUID of the group
 	 * @return returns the group info if found, null otherwise
@@ -176,7 +177,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 
 	/**
 	 * Add a group to the list
-	 * 
+	 *
 	 * @param info
 	 *            The group info to add to the list
 	 * @return true if the group was added, false if it was replaced
@@ -194,7 +195,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 
 	/**
 	 * Remove a group from the list
-	 * 
+	 *
 	 * @param info
 	 *            The group info to remove from the list
 	 * @return true if the group info was successfully removed, false if the group
@@ -212,7 +213,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 
 	/**
 	 * Change group info in the list
-	 * 
+	 *
 	 * @param info
 	 *            The group info to change
 	 * @return true if the group info was successfully changed, false otherwise
@@ -282,7 +283,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param client
 		 *            The client to use to communicate with the grid
 		 * @param info
@@ -311,7 +312,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 
 		/**
 		 * Get the send message menu item
-		 * 
+		 *
 		 * @return The "send message" menu item
 		 */
 		private JMenuItem getJmiSendMessage() {
@@ -323,7 +324,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 
 		/**
 		 * Get the activate group menu item
-		 * 
+		 *
 		 * @return The "activate group" menu item
 		 */
 		private JMenuItem getJmiActivate(boolean disable) {
@@ -336,7 +337,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 
 		/**
 		 * Get the group invite menu item
-		 * 
+		 *
 		 * @return The "group invite" menu item
 		 */
 		private JMenuItem getJmiInvite() {
@@ -348,7 +349,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 
 		/**
 		 * Get the group info menu item
-		 * 
+		 *
 		 * @return The "group info" menu item
 		 */
 		private JMenuItem getJmiGroupInfo() {
@@ -360,7 +361,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 
 		/**
 		 * Get the create group menu item
-		 * 
+		 *
 		 * @return The "create group" menu item
 		 */
 		private JMenuItem getJmiCreateGroup() {
@@ -372,7 +373,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 
 		/**
 		 * Get the search group menu item
-		 * 
+		 *
 		 * @return The "search group" menu item
 		 */
 		private JMenuItem getJmiSearchGroup() {
@@ -384,7 +385,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 
 		/**
 		 * Get the remove as friend menu item
-		 * 
+		 *
 		 * @return The remove as friend menu item
 		 */
 		private JMenuItem getJmiLeaveGroup() {
@@ -435,7 +436,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		final Group info = getSelectedGroupRow();
+		final GroupImpl info = (GroupImpl) getSelectedGroupRow();
 		if (e.getActionCommand().equals(cmdPayTo)) {
 			// TODO: open a money transfer dialog
 		} else if (e.getActionCommand().equals(cmdProfile)) {

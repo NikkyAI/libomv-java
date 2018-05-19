@@ -42,9 +42,9 @@ import org.apache.log4j.Logger;
 
 import libomv.io.GridClient;
 import libomv.io.LibSettings;
-import libomv.io.LoginManager.LoginProgressCallbackArgs;
-import libomv.io.LoginManager.LoginStatus;
-import libomv.io.NetworkManager.DisconnectedCallbackArgs;
+import libomv.model.Login.LoginProgressCallbackArgs;
+import libomv.model.Login.LoginStatus;
+import libomv.model.Network.DisconnectedCallbackArgs;
 import libomv.types.UUID;
 import libomv.utils.Callback;
 import libomv.utils.Settings.SettingsUpdateCallbackArgs;

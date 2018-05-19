@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -39,13 +39,13 @@ import org.apache.log4j.Logger;
 import libomv.Gui.Resources;
 import libomv.imaging.ManagedImage;
 import libomv.io.GridClient;
-import libomv.io.assets.AssetManager.ImageDownload;
-import libomv.io.assets.TexturePipeline.TextureRequestState;
+import libomv.model.Asset.ImageDownload;
+import libomv.model.Texture.TextureRequestState;
 import libomv.types.UUID;
 import libomv.utils.Callback;
 import libomv.utils.ImageUtil;
 
-// Component to display an image loaded from a resource or other buffered image 
+// Component to display an image loaded from a resource or other buffered image
 public class ImagePanel extends JComponent {
 	private static final Logger logger = Logger.getLogger(ImagePanel.class);
 	private static final long serialVersionUID = 1L;
@@ -64,7 +64,7 @@ public class ImagePanel extends JComponent {
 
 	/**
 	 * Constructor to intialize the contained image from a resource
-	 * 
+	 *
 	 * @param name
 	 *            Resource name to load the image from
 	 */
@@ -75,7 +75,7 @@ public class ImagePanel extends JComponent {
 
 	/**
 	 * Constructor to intialize the contained image from an image
-	 * 
+	 *
 	 * @param image
 	 *            to use when drawing this object
 	 */
@@ -86,7 +86,7 @@ public class ImagePanel extends JComponent {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param client
 	 *            The grid client to download the image through
 	 * @param textureID
@@ -100,7 +100,7 @@ public class ImagePanel extends JComponent {
 
 	/**
 	 * Get the image (used if just the raw image is required).
-	 * 
+	 *
 	 * @return The image contained within this control.
 	 */
 	public Image getImage() {
@@ -119,7 +119,7 @@ public class ImagePanel extends JComponent {
 
 	/**
 	 * Determine whether the image has been resolved
-	 * 
+	 *
 	 * @return True if resolved, otherwise false
 	 */
 	public boolean isResolved() {
@@ -128,7 +128,7 @@ public class ImagePanel extends JComponent {
 
 	/**
 	 * Request the image from the server
-	 * 
+	 *
 	 * @return if request was possible
 	 */
 	public boolean request() {
@@ -141,7 +141,7 @@ public class ImagePanel extends JComponent {
 
 	/**
 	 * Callback receiving the texture download result
-	 * 
+	 *
 	 */
 	private class ImageDownloadCallback implements Callback<ImageDownload> {
 		@Override
@@ -162,7 +162,7 @@ public class ImagePanel extends JComponent {
 
 	/**
 	 * Called to update the component
-	 * 
+	 *
 	 * @param g
 	 *            The graphics to update
 	 */

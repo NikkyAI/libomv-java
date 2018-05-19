@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -49,14 +49,14 @@ import libomv.Gui.windows.CommWindow;
 import libomv.Gui.windows.MainControl;
 import libomv.Gui.windows.MainWindow;
 import libomv.core.RLVManager;
-import libomv.io.AgentManager.BalanceCallbackArgs;
 import libomv.io.GridClient;
-import libomv.io.LoginManager.LoginProgressCallbackArgs;
-import libomv.io.LoginManager.LoginStatus;
+import libomv.model.Agent.BalanceCallbackArgs;
+import libomv.model.Login.LoginProgressCallbackArgs;
+import libomv.model.Login.LoginStatus;
 import libomv.utils.Callback;
 import libomv.utils.Helpers;
 
-/* 
+/*
  * This is a UI less intermediate controller that implements an ActionListener to serve as central
  * message dispatcher during a particular state. Currently offline and online state are distinguished
  */
@@ -257,26 +257,16 @@ public class StateController implements ActionListener {
 		if (_Browser == null) {
 			String os = System.getProperty("os.name").toLowerCase();
 			String ar = System.getProperty("os.arch").toLowerCase();
-			// BrowserType type = BrowserType.getDefault();
 			BrowserType type = BrowserType.getCrossPlatformBrowser();
 
-			// if (os.startsWith("windows") /* && ar.contains("amd64") */)
-			// {
-			type = BrowserType.IE;
-			// }
+			if (os.startsWith("windows") && ar.contains("amd64")) {
+				type = BrowserType.IE;
+			}
 			_Browser = BrowserFactory.createBrowser(type);
-			// _Browser = new Browser(type);
 		}
 		return _Browser;
 	}
 
-	// private BrowserView getBrowserView() {
-	// if (_BrowserView == null) {
-	// _BrowserView = new BrowserView(getBrowser());
-	// }
-	// return _BrowserView;
-	// }
-	//
 	private JLabel getJAmount() {
 		if (jMiAmount == null) {
 			_Main.getGridClient().Self.getBalance();

@@ -52,13 +52,13 @@ import libomv.StructuredData.OSD;
 import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.CapsMessage.EnableSimulatorMessage;
 import libomv.capabilities.IMessage;
-import libomv.io.SimulatorManager.RegionFlags;
-import libomv.io.SimulatorManager.RegionProtocols;
-import libomv.io.SimulatorManager.SimStatType;
 import libomv.io.capabilities.AsyncHTTPClient;
 import libomv.io.capabilities.CapsCallback;
 import libomv.model.Simulator;
+import libomv.model.Simulator.RegionFlags;
+import libomv.model.Simulator.RegionProtocols;
 import libomv.model.Simulator.SimAccess;
+import libomv.model.Simulator.SimStatType;
 import libomv.packets.CompletePingCheckPacket;
 import libomv.packets.EnableSimulatorPacket;
 import libomv.packets.KickUserPacket;
@@ -73,7 +73,6 @@ import libomv.packets.StartPingCheckPacket;
 import libomv.types.PacketCallback;
 import libomv.types.UUID;
 import libomv.utils.Callback;
-import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 import libomv.utils.Settings.SettingsUpdateCallbackArgs;
@@ -87,41 +86,7 @@ import libomv.utils.TimeoutEvent;
 public class NetworkManager implements PacketCallback, CapsCallback, libomv.model.Network {
 	private static final Logger logger = Logger.getLogger(NetworkManager.class);
 
-	/** Callback arguments classes */
-	public class SimConnectingCallbackArgs implements CallbackArgs {
-		private InetSocketAddress endPoint;
-		private boolean cancel = false;
-
-		public InetSocketAddress getEndPoint() {
-			return endPoint;
-		}
-
-		public void setCancel(boolean cancel) {
-			this.cancel = cancel;
-		}
-
-		public boolean getCancel() {
-			return cancel;
-		}
-
-		public SimConnectingCallbackArgs(InetSocketAddress endPoint) {
-			this.endPoint = endPoint;
-		}
-	}
-
 	public CallbackHandler<SimConnectingCallbackArgs> OnSimConnecting = new CallbackHandler<SimConnectingCallbackArgs>();
-
-	public class SimConnectedCallbackArgs implements CallbackArgs {
-		private final Simulator simulator;
-
-		public Simulator getSimulator() {
-			return simulator;
-		}
-
-		public SimConnectedCallbackArgs(Simulator simulator) {
-			this.simulator = simulator;
-		}
-	}
 
 	public CallbackHandler<SimConnectedCallbackArgs> OnSimConnected = new CallbackHandler<SimConnectedCallbackArgs>();
 
@@ -137,73 +102,9 @@ public class NetworkManager implements PacketCallback, CapsCallback, libomv.mode
 
 	public CallbackHandler<SimChangedCallbackArgs> OnSimChanged = new CallbackHandler<SimChangedCallbackArgs>();
 
-	// An event for the connection to a simulator other than the currently
-	// occupied one disconnecting
-	public class SimDisconnectedCallbackArgs implements CallbackArgs {
-		private final Simulator simulator;
-		private final DisconnectType type;
-
-		public Simulator getSimulator() {
-			return simulator;
-		}
-
-		public DisconnectType getDisconnectType() {
-			return type;
-		}
-
-		public SimDisconnectedCallbackArgs(Simulator simulator, DisconnectType type) {
-			this.simulator = simulator;
-			this.type = type;
-		}
-	}
-
 	public CallbackHandler<SimDisconnectedCallbackArgs> OnSimDisconnected = new CallbackHandler<SimDisconnectedCallbackArgs>();
 
-	// An event for being logged out either through client request, server
-	// forced, or network error
-	public class DisconnectedCallbackArgs implements CallbackArgs {
-		private final DisconnectType type;
-		private final String message;
-
-		public DisconnectType getDisconnectType() {
-			return type;
-		}
-
-		public String getMessage() {
-			return message;
-		}
-
-		public DisconnectedCallbackArgs(DisconnectType type, String message) {
-			this.type = type;
-			this.message = message;
-		}
-	}
-
 	public CallbackHandler<DisconnectedCallbackArgs> OnDisconnected = new CallbackHandler<DisconnectedCallbackArgs>();
-
-	public class PacketSentCallbackArgs implements CallbackArgs {
-		private final byte[] m_Data;
-		private final int m_SentBytes;
-		private final Simulator m_Simulator;
-
-		public final byte[] getData() {
-			return m_Data;
-		}
-
-		public final int getSentBytes() {
-			return m_SentBytes;
-		}
-
-		public final Simulator getSimulator() {
-			return m_Simulator;
-		}
-
-		public PacketSentCallbackArgs(byte[] data, int bytesSent, Simulator simulator) {
-			this.m_Data = data;
-			this.m_SentBytes = bytesSent;
-			this.m_Simulator = simulator;
-		}
-	}
 
 	public CallbackHandler<PacketSentCallbackArgs> OnPacketSent = new CallbackHandler<PacketSentCallbackArgs>();
 
@@ -211,52 +112,10 @@ public class NetworkManager implements PacketCallback, CapsCallback, libomv.mode
 		_Client.Network.OnPacketSent.dispatch(new NetworkManager.PacketSentCallbackArgs(data, bytes, sim));
 	}
 
-	public class EventQueueRunningCallbackArgs implements CallbackArgs {
-		private final SimulatorManager m_Simulator;
-
-		public final SimulatorManager getSimulator() {
-			return m_Simulator;
-		}
-
-		public EventQueueRunningCallbackArgs(SimulatorManager simulator) {
-			this.m_Simulator = simulator;
-		}
-	}
-
 	public CallbackHandler<EventQueueRunningCallbackArgs> OnEventQueueRunning = new CallbackHandler<EventQueueRunningCallbackArgs>();
 
 	public final void raiseConnectedEvent(SimulatorManager simulator) {
 		OnEventQueueRunning.dispatch(new EventQueueRunningCallbackArgs(simulator));
-	}
-
-	/**
-	 * An event triggered when the logout is confirmed
-	 *
-	 * An empty itemIDs list indicates a abortion of the logout procedure after the
-	 * logout timout has expired without receiving any confirmation from the server
-	 */
-	public class LoggedOutCallbackArgs implements CallbackArgs {
-		private final Vector<UUID> itemIDs;
-
-		public Vector<UUID> getItemIDs() {
-			return itemIDs;
-		}
-
-		public LoggedOutCallbackArgs(Vector<UUID> itemIDs) {
-			this.itemIDs = itemIDs;
-		}
-	}
-
-	public class SimChangedCallbackArgs implements CallbackArgs {
-		private final Simulator simulator;
-
-		public Simulator getSimulator() {
-			return simulator;
-		}
-
-		public SimChangedCallbackArgs(Simulator simulator) {
-			this.simulator = simulator;
-		}
 	}
 
 	public CallbackHandler<LoggedOutCallbackArgs> OnLoggedOut = new CallbackHandler<LoggedOutCallbackArgs>();

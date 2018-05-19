@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -35,7 +35,7 @@ import org.apache.log4j.Logger;
 
 import libomv.assets.AssetSound;
 import libomv.io.assets.AssetManager;
-import libomv.io.assets.AssetManager.AssetDownload;
+import libomv.model.Asset.AssetDownload;
 import libomv.model.Asset.AssetType;
 import libomv.types.UUID;
 import libomv.types.Vector3;

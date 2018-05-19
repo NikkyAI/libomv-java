@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -273,9 +273,9 @@ public class AvatarPanel extends JFrame implements ActionListener, MouseListener
 
 					// TODO: Texturing
 
-					gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, mesh.TexCoords);
-					gl.glVertexPointer(3, GL.GL_FLOAT, 0, mesh.Vertices);
-					gl.glDrawElements(GL.GL_TRIANGLES, mesh.Indices.capacity(), GL.GL_UNSIGNED_SHORT, mesh.Indices);
+					gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, mesh.texCoords);
+					gl.glVertexPointer(3, GL.GL_FLOAT, 0, mesh.vertices);
+					gl.glDrawElements(GL.GL_TRIANGLES, mesh.indices.capacity(), GL.GL_UNSIGNED_SHORT, mesh.indices);
 				}
 			}
 

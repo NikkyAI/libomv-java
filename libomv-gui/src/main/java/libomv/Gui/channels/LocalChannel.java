@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -44,7 +44,7 @@ import javax.swing.SwingConstants;
 import javax.swing.text.BadLocationException;
 
 import libomv.Gui.windows.MainControl;
-import libomv.io.AgentManager.ChatType;
+import libomv.model.Agent.ChatType;
 import libomv.types.UUID;
 
 public class LocalChannel extends AbstractChannel {
@@ -87,7 +87,7 @@ public class LocalChannel extends AbstractChannel {
 
 	/**
 	 * Receive a message.
-	 * 
+	 *
 	 * @param message
 	 *            The message received.
 	 * @throws BadLocationException

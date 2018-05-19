@@ -6,7 +6,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -64,7 +64,6 @@ import libomv.types.PacketCallback;
 import libomv.types.UUID;
 import libomv.types.Vector3;
 import libomv.utils.Callback;
-import libomv.utils.CallbackArgs;
 import libomv.utils.CallbackHandler;
 import libomv.utils.Helpers;
 import libomv.utils.TimeoutEvent;
@@ -72,152 +71,6 @@ import libomv.utils.TimeoutEvent;
 // Manages grid-wide tasks such as the world map
 public class GridManager implements PacketCallback, libomv.model.Grid {
 	private static final Logger logger = Logger.getLogger(GridManager.class);
-
-	/* Map layer request type */
-	public enum GridLayerType {
-		/* Objects and terrain are shown */
-		Objects,
-		/* Only the terrain is shown, no objects */
-		Terrain,
-		/* Overlay showing land for sale and for auction */
-		LandForSale
-	}
-
-	/* Type of grid item, such as telehub, event, populator location, etc. */
-	public enum GridItemType {
-		Nothing, Telehub, PgEvent, MatureEvent, Popular, Unused1, AgentLocations, LandForSale, Classified, AdultEvent, AdultLandForSale;
-
-		public static GridItemType convert(int value) {
-			GridItemType values[] = GridItemType.values();
-
-			for (int i = 0; i < values.length; i++)
-				if (values[i].ordinal() == value)
-					return values[i];
-			return null;
-		}
-	}
-
-	public final class GridLayer {
-		public int Bottom;
-		public int Left;
-		public int Top;
-		public int Right;
-		public UUID ImageID;
-
-		public boolean ContainsRegion(int x, int y) {
-			return (x >= Left && x <= Right && y >= Bottom && y <= Top);
-		}
-	}
-
-	/* Class for regions on the world map */
-	public class GridRegion {
-		// Sim X position on World Map
-		public int X;
-		// Sim Y position on World Map
-		public int Y;
-		// Sim Name (NOTE: In lowercase!)
-		public String Name;
-		//
-		public byte Access;
-		// Various flags for the region (presumably things like PG/Mature)
-		public int RegionFlags;
-		// Sim's defined Water Height
-		public byte WaterHeight;
-		//
-		public byte Agents;
-		// UUID of the World Map image
-		public UUID MapImageID;
-		// Used for teleporting
-		public long RegionHandle;
-
-		// Constructor
-		public GridRegion() {
-		}
-
-		public GridRegion(String name) {
-			Name = name;
-		}
-
-		@Override
-		public String toString() {
-			return String.format("%s (%d/%d), Handle: %d, MapImage: %s, Access: %d, Flags: 0x%8x", Name, X, Y,
-					RegionHandle, MapImageID.toString(), Access, RegionFlags);
-		}
-
-		@Override
-		public int hashCode() {
-			return ((Integer) X).hashCode() ^ ((Integer) Y).hashCode();
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (obj instanceof GridRegion) {
-				return equals((GridRegion) obj);
-			}
-			return false;
-		}
-
-		private boolean equals(GridRegion region) {
-			return (this.X == region.X && this.Y == region.Y);
-		}
-	}
-
-	/** Map Items */
-	public class MapItem {
-		private UUID ID;
-		private String Name;
-		private Vector3 GlobalPos;
-
-		/* Represents an agent or group of agents location */
-		public int AvatarCount;
-
-		/* For adult and normal land for sale */
-		public int Size;
-		public int Price;
-
-		public boolean isInfoHub;
-
-		/* For evnts */
-		public Date DateTime;
-
-		public final UUID getUUID() {
-			return ID;
-		}
-
-		public final String getName() {
-			return Name;
-		}
-
-		/* Get the Local X position of the item */
-		public final float getLocalX() {
-			return GlobalPos.X % 256;
-		}
-
-		/* Get the Local Y position of the item */
-		public final float getLocalY() {
-			return GlobalPos.Y % 256;
-		}
-
-		public final Vector3 getGlobalPosition() {
-			return GlobalPos;
-		}
-
-		public final void setEvelation(float z) {
-			GlobalPos.Z = z;
-		}
-
-		/* Get the Handle of the region */
-		public final long getRegionHandle() {
-			return Helpers.IntsToLong((int) (GlobalPos.X - (GlobalPos.X % 256)),
-					(int) (GlobalPos.Y - (GlobalPos.Y % 256)));
-		}
-
-		public MapItem(float x, float y, UUID id, String name) {
-			GlobalPos = new Vector3(x, y, 40);
-			ID = id;
-			Name = name;
-		}
-	}
 
 	/* Unknown */
 	public final float getSunPhase() {
@@ -360,7 +213,7 @@ public class GridManager implements PacketCallback, libomv.model.Grid {
 	/**
 	 * If the client does not have data on this region already, request the region
 	 * data for it
-	 * 
+	 *
 	 * @param regionName
 	 *            The name of the region
 	 * @param layer
@@ -382,7 +235,7 @@ public class GridManager implements PacketCallback, libomv.model.Grid {
 
 	/**
 	 * Request a map block
-	 * 
+	 *
 	 * @param layer
 	 * @param minX
 	 * @param minY
@@ -424,7 +277,7 @@ public class GridManager implements PacketCallback, libomv.model.Grid {
 	}
 
 	/**
-	 * 
+	 *
 	 *
 	 * @param regionHandle
 	 * @param item
@@ -458,7 +311,7 @@ public class GridManager implements PacketCallback, libomv.model.Grid {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param regionHandle
 	 * @param regionHandle
 	 * @param item
@@ -486,7 +339,7 @@ public class GridManager implements PacketCallback, libomv.model.Grid {
 
 	/**
 	 * Request the region handle for the specified region UUID
-	 * 
+	 *
 	 * @param regionID
 	 *            UUID of the region to look up
 	 * @throws Exception
@@ -501,7 +354,7 @@ public class GridManager implements PacketCallback, libomv.model.Grid {
 	 * Get grid region information using the region name, this function will block
 	 * until it can find the region or gives up Example: regiondata =
 	 * GetGridRegion("Ahern");
-	 * 
+	 *
 	 * @param name
 	 *            Name of sim you're looking for
 	 * @param layer
@@ -571,7 +424,7 @@ public class GridManager implements PacketCallback, libomv.model.Grid {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param simulator
 	 *            The simulator from which this was received
 	 * @param packet
@@ -597,7 +450,7 @@ public class GridManager implements PacketCallback, libomv.model.Grid {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param simulator
 	 *            The simulator from which this was received
 	 * @param packet
@@ -636,7 +489,7 @@ public class GridManager implements PacketCallback, libomv.model.Grid {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param simulator
 	 *            The simulator from which this was received
 	 * @param packet
@@ -695,7 +548,7 @@ public class GridManager implements PacketCallback, libomv.model.Grid {
 
 	/**
 	 * Get sim time from the appropriate packet
-	 * 
+	 *
 	 * @param packet
 	 * @param simulator
 	 */
@@ -715,7 +568,7 @@ public class GridManager implements PacketCallback, libomv.model.Grid {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param simulator
 	 *            The simulator from which this was received
 	 * @param packet
@@ -772,7 +625,7 @@ public class GridManager implements PacketCallback, libomv.model.Grid {
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
-	 * 
+	 *
 	 * @param simulator
 	 *            The simulator from which this was received
 	 * @param packet
@@ -786,94 +639,4 @@ public class GridManager implements PacketCallback, libomv.model.Grid {
 		}
 	}
 
-	// /#region EventArgs classes
-
-	public class CoarseLocationUpdateCallbackArgs implements CallbackArgs {
-		private final SimulatorManager m_Simulator;
-		private final ArrayList<UUID> m_NewEntries;
-		private final ArrayList<UUID> m_RemovedEntries;
-
-		public final SimulatorManager getSimulator() {
-			return m_Simulator;
-		}
-
-		public final ArrayList<UUID> getNewEntries() {
-			return m_NewEntries;
-		}
-
-		public final ArrayList<UUID> getRemovedEntries() {
-			return m_RemovedEntries;
-		}
-
-		public CoarseLocationUpdateCallbackArgs(SimulatorManager simulator, ArrayList<UUID> newEntries,
-				ArrayList<UUID> removedEntries) {
-			this.m_Simulator = simulator;
-			this.m_NewEntries = newEntries;
-			this.m_RemovedEntries = removedEntries;
-		}
-	}
-
-	public class GridRegionCallbackArgs implements CallbackArgs {
-		private final GridRegion m_Region;
-
-		public final GridRegion getRegion() {
-			return m_Region;
-		}
-
-		public GridRegionCallbackArgs(GridRegion region) {
-			this.m_Region = region;
-		}
-	}
-
-	public class GridLayerCallbackArgs implements CallbackArgs {
-		private final GridLayer m_Layer;
-
-		public final GridLayer getLayer() {
-			return m_Layer;
-		}
-
-		public GridLayerCallbackArgs(GridLayer layer) {
-			this.m_Layer = layer;
-		}
-	}
-
-	public class GridItemsCallbackArgs implements CallbackArgs {
-		private final GridItemType m_Type;
-		private final List<MapItem> m_Items;
-
-		public final GridItemType getType() {
-			return m_Type;
-		}
-
-		public final List<MapItem> getItems() {
-			return m_Items;
-		}
-
-		public GridItemsCallbackArgs(GridItemType type, List<MapItem> items) {
-			this.m_Type = type;
-			this.m_Items = items;
-		}
-	}
-
-	public class RegionHandleReplyCallbackArgs implements CallbackArgs {
-		private final UUID m_RegionID;
-		// TODO was: private readonly ulong m_RegionHandle;
-		private final long m_RegionHandle;
-
-		public final UUID getRegionID() {
-			return m_RegionID;
-		}
-
-		// TODO was: public ulong getRegionHandle()
-		public final long getRegionHandle() {
-			return m_RegionHandle;
-		}
-
-		// TODO was: public RegionHandleReplyEventArgs(UUID regionID, ulong
-		// regionHandle)
-		public RegionHandleReplyCallbackArgs(UUID regionID, long regionHandle) {
-			this.m_RegionID = regionID;
-			this.m_RegionHandle = regionHandle;
-		}
-	}
 }

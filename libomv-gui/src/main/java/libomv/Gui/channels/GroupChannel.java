@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -48,7 +48,7 @@ import org.apache.log4j.Logger;
 
 import libomv.Gui.windows.MainControl;
 import libomv.io.GridClient;
-import libomv.io.AgentManager.ChatType;
+import libomv.model.Agent.ChatType;
 import libomv.types.UUID;
 
 public class GroupChannel extends AbstractChannel {
@@ -97,7 +97,7 @@ public class GroupChannel extends AbstractChannel {
 
 	/**
 	 * Receive a message.
-	 * 
+	 *
 	 * @param message
 	 *            The message received.
 	 * @throws BadLocationException

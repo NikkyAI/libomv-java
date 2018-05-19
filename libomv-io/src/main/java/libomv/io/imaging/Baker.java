@@ -46,7 +46,7 @@ import libomv.io.AppearanceManager;
 import libomv.io.GridClient;
 import libomv.io.LibSettings;
 import libomv.model.Appearance.BakeType;
-import libomv.io.AppearanceManager.TextureData;
+import libomv.model.Appearance.TextureData;
 import libomv.types.Color4;
 import libomv.utils.Helpers;
 
@@ -140,7 +140,7 @@ public class Baker {
 				(byte) (ImageChannels.Color | ImageChannels.Alpha | ImageChannels.Bump));
 
 		// These are for head baking, they get special treatment
-		AppearanceManager.TextureData skinTexture = _client.Appearance.new TextureData();
+		AppearanceManager.TextureData skinTexture = new TextureData();
 		List<AppearanceManager.TextureData> tattooTextures = new ArrayList<AppearanceManager.TextureData>();
 		List<ManagedImage> alphaWearableTextures = new ArrayList<ManagedImage>();
 

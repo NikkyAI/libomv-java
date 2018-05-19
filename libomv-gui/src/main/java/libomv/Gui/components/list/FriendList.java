@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -70,11 +70,11 @@ import libomv.Gui.windows.CommWindow;
 import libomv.Gui.windows.MainControl;
 import libomv.Gui.windows.MainWindow;
 import libomv.io.FriendsManager;
-import libomv.io.FriendsManager.FriendInfo;
-import libomv.io.FriendsManager.FriendListChangedCallbackArgs;
-import libomv.io.FriendsManager.FriendNotificationCallbackArgs;
-import libomv.io.FriendsManager.FriendRightsCallbackArgs;
 import libomv.io.GridClient;
+import libomv.model.Friend.FriendInfo;
+import libomv.model.Friend.FriendListChangedCallbackArgs;
+import libomv.model.Friend.FriendNotificationCallbackArgs;
+import libomv.model.Friend.FriendRightsCallbackArgs;
 import libomv.types.UUID;
 import libomv.types.Vector3;
 import libomv.utils.Callback;
@@ -619,7 +619,7 @@ public class FriendList extends JPanel implements ActionListener {
 
 		/**
 		 * Get the send message menu item
-		 * 
+		 *
 		 * @return The "send message" menu item
 		 */
 		private JMenuItem getJmiSendMessage(FriendInfo info) {
@@ -633,7 +633,7 @@ public class FriendList extends JPanel implements ActionListener {
 
 		/**
 		 * Get the profile menu item
-		 * 
+		 *
 		 * @return The "profile" menu item
 		 */
 		private JMenuItem getJmiProfile() {
@@ -645,7 +645,7 @@ public class FriendList extends JPanel implements ActionListener {
 
 		/**
 		 * Get the money transfer menu item
-		 * 
+		 *
 		 * @return The "pay" menu item
 		 */
 		private JMenuItem getJmiMoneyTransfer() {
@@ -657,7 +657,7 @@ public class FriendList extends JPanel implements ActionListener {
 
 		/**
 		 * Get the teleport offer menu item
-		 * 
+		 *
 		 * @return The teleport offer menu item.
 		 */
 		private JMenuItem getJmiOfferTeleport() {
@@ -669,7 +669,7 @@ public class FriendList extends JPanel implements ActionListener {
 
 		/**
 		 * Get the remove as friend menu item
-		 * 
+		 *
 		 * @return The remove as friend menu item
 		 */
 		private JMenuItem getJmiRemoveAsFriend() {
@@ -681,7 +681,7 @@ public class FriendList extends JPanel implements ActionListener {
 
 		/**
 		 * Get the teleport to menu item
-		 * 
+		 *
 		 * @return The teleport to menu item
 		 */
 		private JMenuItem getJmiTeleportTo() {
@@ -694,7 +694,7 @@ public class FriendList extends JPanel implements ActionListener {
 		/**
 		 * Get the autopilot to menu item. If it has not been initialised, it is
 		 * initialised upon first call.
-		 * 
+		 *
 		 * @return The autopilot to menu item.
 		 */
 		private JMenuItem getJmiAutopilotTo() {

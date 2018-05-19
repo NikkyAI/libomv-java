@@ -3,7 +3,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -43,8 +43,8 @@ import libomv.Gui.components.ProgressPane;
 import libomv.Gui.windows.MainControl;
 import libomv.Gui.windows.MainWindow;
 import libomv.io.GridClient;
-import libomv.io.LoginManager.LoginProgressCallbackArgs;
-import libomv.io.LoginManager.LoginStatus;
+import libomv.model.Login.LoginProgressCallbackArgs;
+import libomv.model.Login.LoginStatus;
 import libomv.utils.Callback;
 
 public class OfflineController implements StateController {
