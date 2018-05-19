@@ -14,7 +14,7 @@
 	<artifactId>libomv-core</artifactId>
 
 	<name>libomv-core</name>
-	<description>https://sourceforge.net/p/libomv-java/code/HEAD/tree/libomv-core/ rev:1211</description>
+	<description>https://sourceforge.net/p/libomv-java/code/HEAD/tree/libomv-core/ rev:1214</description>
 	<url>https://github.com/djBo/libomv-core</url>
 
 	<packaging>jar</packaging>
