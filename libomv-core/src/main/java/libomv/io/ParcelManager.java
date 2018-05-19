@@ -51,7 +51,7 @@ import libomv.capabilities.CapsMessage.RemoteParcelRequestRequest;
 import libomv.capabilities.IMessage;
 import libomv.io.capabilities.CapsCallback;
 import libomv.io.capabilities.CapsClient;
-import libomv.io.impl.ParcelImpl;
+import libomv.model.Parcel;
 import libomv.model.Simulator;
 import libomv.model.parcel.AccessList;
 import libomv.model.parcel.ForceSelectObjectsReplyCallbackArgs;
@@ -107,7 +107,7 @@ import libomv.utils.Helpers;
 import libomv.utils.RefObject;
 import libomv.utils.TimeoutEvent;
 
-public class ParcelManager implements PacketCallback, CapsCallback, libomv.model.Parcel {
+public class ParcelManager implements PacketCallback, CapsCallback {
 	private static final Logger logger = Logger.getLogger(ParcelManager.class);
 
 	public CallbackHandler<ParcelDwellReplyCallbackArgs> OnParcelDwellReply = new CallbackHandler<ParcelDwellReplyCallbackArgs>();
@@ -685,13 +685,13 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 			x = (int) east - (int) west / 2;
 			y = (int) north - (int) south / 2;
 		} else {
-			ParcelImpl p;
+			Parcel p;
 			if (!simulator.Parcels.containsKey(localID)) {
 				logger.warn(GridClient.Log(String.format("Can't find parcel %d in simulator %s", localID, simulator),
 						_Client));
 				return false;
 			}
-			p = (ParcelImpl) simulator.getParcels().get(localID);
+			p = simulator.getParcels().get(localID);
 			x = (int) p.AABBMax.X - (int) p.AABBMin.X / 2;
 			y = (int) p.AABBMax.Y - (int) p.AABBMin.Y / 2;
 		}
@@ -959,7 +959,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 		synchronized (simulator.getParcels()) {
 			if (dwell.Data.Dwell != 0.0F && simulator.getParcels().containsKey(dwell.Data.LocalID)) {
-				((ParcelImpl) simulator.getParcels().get(dwell.Data.LocalID)).Dwell = dwell.Data.Dwell;
+				simulator.getParcels().get(dwell.Data.LocalID).Dwell = dwell.Data.Dwell;
 			}
 		}
 		OnParcelDwellReply
@@ -970,7 +970,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 		if (OnParcelProperties.count() > 0 || _Client.Settings.PARCEL_TRACKING == true) {
 			ParcelPropertiesMessage msg = (ParcelPropertiesMessage) message;
 
-			ParcelImpl parcel = new ParcelImpl(msg.localID);
+			Parcel parcel = new Parcel(msg.localID);
 
 			parcel.AABBMax = msg.aabbMax;
 			parcel.AABBMin = msg.aabbMin;
@@ -1132,7 +1132,7 @@ public class ParcelManager implements PacketCallback, CapsCallback, libomv.model
 
 			synchronized (simulator.getParcels()) {
 				if (simulator.getParcels().containsKey(reply.Data.LocalID)) {
-					ParcelImpl parcel = (ParcelImpl) simulator.getParcels().get(reply.Data.LocalID);
+					Parcel parcel = simulator.getParcels().get(reply.Data.LocalID);
 					if (reply.Data.Flags == AccessList.Ban) {
 						parcel.AccessBlackList = accessList;
 					} else {

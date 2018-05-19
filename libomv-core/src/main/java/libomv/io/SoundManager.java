@@ -45,7 +45,7 @@ import libomv.types.UUID;
 import libomv.types.Vector3;
 import libomv.utils.CallbackHandler;
 
-public class SoundManager implements PacketCallback, libomv.model.Sound {
+public class SoundManager implements PacketCallback {
 
 	// #region Private Members
 	private final GridClient _Client;

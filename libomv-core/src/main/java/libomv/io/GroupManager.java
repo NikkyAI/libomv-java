@@ -52,7 +52,7 @@ import libomv.capabilities.CapsMessage.CapsEventType;
 import libomv.capabilities.IMessage;
 import libomv.io.capabilities.CapsCallback;
 import libomv.io.capabilities.CapsClient;
-import libomv.io.impl.GroupImpl;
+import libomv.model.Group;
 import libomv.model.Simulator;
 import libomv.model.agent.InstantMessageCallbackArgs;
 import libomv.model.agent.InstantMessageDialog;
@@ -145,7 +145,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	// Dictionary keeping GroupRole information while request is in progress
 	private HashMap<UUID, HashMap<UUID, GroupRole>> TempGroupRoles;
 	// Caches groups this avatar is member of
-	public HashList<UUID, GroupImpl> GroupList;
+	public HashList<UUID, Group> GroupList;
 	// Caches group names of all groups known to us
 	public HashMap<UUID, String> GroupNames;
 
@@ -215,7 +215,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		GroupRolesRequests = new ArrayList<UUID>();
 		TempGroupRolesMembers = new HashMap<UUID, ArrayList<Entry<UUID, UUID>>>();
 		GroupRolesMembersRequests = new ArrayList<UUID>();
-		GroupList = new HashList<UUID, GroupImpl>();
+		GroupList = new HashList<UUID, Group>();
 		GroupNames = new HashMap<UUID, String>();
 
 		_Client.Self.OnInstantMessage.add(new InstantMessageCallback());
@@ -760,7 +760,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	 *            Group struct containing the new group info
 	 * @throws Exception
 	 */
-	public final void RequestCreateGroup(GroupImpl group) throws Exception {
+	public final void RequestCreateGroup(Group group) throws Exception {
 		CreateGroupRequestPacket cgrp = new CreateGroupRequestPacket();
 		cgrp.AgentData = cgrp.new AgentDataBlock();
 		cgrp.AgentData.AgentID = _Client.Self.getAgentID();
@@ -789,7 +789,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	 * @throws Exception
 	 * @throws UnsupportedEncodingException
 	 */
-	public final void UpdateGroup(UUID id, GroupImpl group) throws Exception {
+	public final void UpdateGroup(UUID id, Group group) throws Exception {
 		UpdateGroupInfoPacket cgrp = new UpdateGroupInfoPacket();
 		cgrp.AgentData = cgrp.new AgentDataBlock();
 		cgrp.AgentData.AgentID = _Client.Self.getAgentID();
@@ -1219,11 +1219,11 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	// #region Packet Handlers
 	private final void HandleAgentGroupDataUpdate(IMessage message, Simulator simulator) {
-		HashMap<UUID, GroupImpl> currentGroups = OnCurrentGroups.count() > 0 ? new HashMap<UUID, GroupImpl>() : null;
+		HashMap<UUID, Group> currentGroups = OnCurrentGroups.count() > 0 ? new HashMap<UUID, Group>() : null;
 		AgentGroupDataUpdateMessage msg = (AgentGroupDataUpdateMessage) message;
 
 		for (int i = 0; i < msg.groupDataBlock.length; i++) {
-			GroupImpl group = new GroupImpl(msg.groupDataBlock[i].groupID);
+			Group group = new Group(msg.groupDataBlock[i].groupID);
 			group.InsigniaID = msg.groupDataBlock[i].groupInsigniaID;
 			group.Name = msg.groupDataBlock[i].groupName;
 			group.Contribution = msg.groupDataBlock[i].contribution;
@@ -1247,11 +1247,11 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	}
 
 	private final void HandleAgentGroupDataUpdate(Packet packet, Simulator simulator) throws Exception {
-		HashMap<UUID, GroupImpl> currentGroups = OnCurrentGroups.count() > 0 ? new HashMap<UUID, GroupImpl>() : null;
+		HashMap<UUID, Group> currentGroups = OnCurrentGroups.count() > 0 ? new HashMap<UUID, Group>() : null;
 		AgentGroupDataUpdatePacket update = (AgentGroupDataUpdatePacket) packet;
 
 		for (AgentGroupDataUpdatePacket.GroupDataBlock block : update.GroupData) {
-			GroupImpl group = new GroupImpl(block.GroupID);
+			Group group = new Group(block.GroupID);
 
 			group.InsigniaID = block.GroupInsigniaID;
 			group.Name = Helpers.BytesToString(block.getGroupName());
@@ -1307,7 +1307,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	private final void HandleGroupProfileReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
 		if (OnGroupProfile.count() > 0) {
 			GroupProfileReplyPacket profile = (GroupProfileReplyPacket) packet;
-			GroupImpl group = new GroupImpl(profile.GroupData.GroupID);
+			Group group = new Group(profile.GroupData.GroupID);
 
 			group.AllowPublish = profile.GroupData.AllowPublish;
 			group.Charter = Helpers.BytesToString(profile.GroupData.getCharter());
@@ -1703,7 +1703,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 				GroupNames.put(block.ID, name);
 			}
 			synchronized (GroupList) {
-				GroupImpl group = (GroupImpl) GroupList.get(block.ID);
+				Group group = (Group) GroupList.get(block.ID);
 				if (group != null) {
 					group.Name = name;
 				}
@@ -1780,10 +1780,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	// Contains the current groups your agent is a member of
 	public class CurrentGroupsCallbackArgs implements CallbackArgs {
-		private final java.util.HashMap<UUID, GroupImpl> m_Groups;
+		private final java.util.HashMap<UUID, Group> m_Groups;
 
 		// Get the current groups your agent is a member of
-		public final java.util.HashMap<UUID, GroupImpl> getGroups() {
+		public final java.util.HashMap<UUID, Group> getGroups() {
 			return m_Groups;
 		}
 
@@ -1793,7 +1793,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		 * @param groups
 		 *            The current groups your agent is a member of
 		 */
-		public CurrentGroupsCallbackArgs(java.util.HashMap<UUID, GroupImpl> groups) {
+		public CurrentGroupsCallbackArgs(java.util.HashMap<UUID, Group> groups) {
 			this.m_Groups = groups;
 		}
 	}
@@ -2126,10 +2126,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 	// Represents the profile of a group
 	public class GroupProfileCallbackArgs implements CallbackArgs {
-		private final GroupImpl m_Group;
+		private final Group m_Group;
 
 		// Get the group profile
-		public final GroupImpl getGroup() {
+		public final Group getGroup() {
 			return m_Group;
 		}
 
@@ -2139,7 +2139,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		 * @param group
 		 *            The group profile
 		 */
-		public GroupProfileCallbackArgs(GroupImpl group) {
+		public GroupProfileCallbackArgs(Group group) {
 			this.m_Group = group;
 		}
 	}

@@ -1,6 +1,8 @@
 package libomv.model;
 
-public interface LLObject {
+public class LLObject {
+	private LLObject() {
+	}
 
 	/** Item Sale Status */
 	public enum SaleType {
@@ -17,7 +19,7 @@ public interface LLObject {
 
 		/**
 		 * Translate a string name of an SaleType into the proper Type
-		 * 
+		 *
 		 * @param type
 		 *            A string containing the SaleType name
 		 * @return The SaleType which matches the string name, or SaleType.Unknown if no

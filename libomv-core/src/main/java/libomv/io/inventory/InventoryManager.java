@@ -69,6 +69,7 @@ import libomv.io.capabilities.CapsCallback;
 import libomv.io.capabilities.CapsClient;
 import libomv.model.Inventory;
 import libomv.model.LLObject.SaleType;
+import libomv.model.Simulator;
 import libomv.model.agent.InstantMessageCallbackArgs;
 import libomv.model.agent.InstantMessageDialog;
 import libomv.model.agent.InstantMessageOnline;
@@ -90,7 +91,6 @@ import libomv.model.inventory.TaskItemReceivedCallbackArgs;
 import libomv.model.login.LoginProgressCallbackArgs;
 import libomv.model.login.LoginResponseData;
 import libomv.model.login.LoginStatus;
-import libomv.model.Simulator;
 import libomv.packets.BulkUpdateInventoryPacket;
 import libomv.packets.CopyInventoryFromNotecardPacket;
 import libomv.packets.CopyInventoryItemPacket;
@@ -138,7 +138,7 @@ import libomv.utils.RefObject;
 import libomv.utils.TimeoutEvent;
 
 /* Tools for dealing with agents inventory */
-public class InventoryManager implements PacketCallback, CapsCallback, libomv.model.Inventory {
+public class InventoryManager implements PacketCallback, CapsCallback {
 	private static final Logger logger = Logger.getLogger(InventoryManager.class);
 
 	protected final class InventorySearch {
@@ -598,8 +598,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	 *            true to return {@link InventoryManager.InventoryItem}'s contained
 	 *            in folder
 	 * @param order
-	 *            the sort order to return items in
-	 *            {@link InventorySortOrder}
+	 *            the sort order to return items in {@link InventorySortOrder}
 	 * @return True if the request could be sent off
 	 * @throws Exception
 	 */
@@ -654,8 +653,7 @@ public class InventoryManager implements PacketCallback, CapsCallback, libomv.mo
 	 *            true to return {@link InventoryManager.InventoryItem}'s contained
 	 *            in folder
 	 * @param order
-	 *            the sort order to return items in
-	 *            {@link InventorySortOrder}
+	 *            the sort order to return items in {@link InventorySortOrder}
 	 * @return True if the request could be sent off
 	 *         {@link InventoryManager.FolderContents}
 	 */

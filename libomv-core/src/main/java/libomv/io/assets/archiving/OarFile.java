@@ -66,7 +66,6 @@ import libomv.assets.archiving.TarArchiveReader;
 import libomv.assets.archiving.TarArchiveWriter;
 import libomv.io.SimulatorManager;
 import libomv.io.assets.AssetManager;
-import libomv.io.impl.ParcelImpl;
 import libomv.model.Parcel;
 import libomv.model.asset.AssetDownload;
 import libomv.model.asset.AssetType;
@@ -408,9 +407,8 @@ public class OarFile {
 		}
 	}
 
-	private static void SerializeParcel(Parcel p, UUID globalID, File fileName)
+	private static void SerializeParcel(Parcel parcel, UUID globalID, File fileName)
 			throws IllegalArgumentException, IllegalStateException, IOException, XmlPullParserException {
-		ParcelImpl parcel = (ParcelImpl) p;
 
 		Writer fileWriter = new FileWriter(fileName);
 		XmlSerializer writer = XmlPullParserFactory.newInstance().newSerializer();

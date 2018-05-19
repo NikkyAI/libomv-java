@@ -8,7 +8,9 @@ import libomv.types.UUID;
 
 // pre-defined built in sounds
 // From http://wiki.secondlife.com/wiki/Client_sounds
-public interface Sound {
+public class Sounds {
+	private Sounds() {
+	}
 
 	public final static UUID BELL_TING = new UUID("ed124764-705d-d497-167a-182cd9fa2e6c");
 
@@ -103,7 +105,7 @@ public interface Sound {
 	 */
 	public static HashMap<UUID, String> toDictionary() {
 		HashMap<UUID, String> dict = new HashMap<UUID, String>();
-		for (Field field : Sound.class.getDeclaredFields()) {
+		for (Field field : Sounds.class.getDeclaredFields()) {
 			if ((field.getModifiers() & (Modifier.STATIC | Modifier.PUBLIC)) == (Modifier.STATIC | Modifier.PUBLIC)) {
 				try {
 					dict.put((UUID) field.get(null), field.getName());

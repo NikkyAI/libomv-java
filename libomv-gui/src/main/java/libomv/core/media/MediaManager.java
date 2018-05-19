@@ -41,7 +41,7 @@ import libomv.io.ObjectManager.KillObjectsCallbackArgs;
 import libomv.io.ObjectManager.PrimCallbackArgs;
 import libomv.io.SimulatorManager;
 import libomv.model.Simulator;
-import libomv.model.Sound;
+import libomv.model.Sounds;
 import libomv.model.agent.ChatCallbackArgs;
 import libomv.model.agent.ChatType;
 import libomv.model.asset.AssetDownload;
@@ -422,7 +422,7 @@ public class MediaManager extends MediaObject {
 	private class Self_ChatFromSimulator implements Callback<ChatCallbackArgs> {
 		public boolean callback(ChatCallbackArgs args) {
 			if (args.getType() == ChatType.StartTyping) {
-				new BufferSound(new UUID(), Sound.KEYBOARD_LOOP, false, true, args.getPosition(),
+				new BufferSound(new UUID(), Sounds.KEYBOARD_LOOP, false, true, args.getPosition(),
 						getObjectVolume() / 2f);
 			}
 			return false;

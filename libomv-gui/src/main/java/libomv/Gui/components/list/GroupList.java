@@ -59,7 +59,7 @@ import libomv.Gui.windows.MainWindow;
 import libomv.io.GridClient;
 import libomv.io.GroupManager.CurrentGroupsCallbackArgs;
 import libomv.io.GroupManager.GroupOperationCallbackArgs;
-import libomv.io.impl.GroupImpl;
+import libomv.model.Group;
 import libomv.types.UUID;
 import libomv.utils.Callback;
 
@@ -81,7 +81,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 	private GridClient _Client;
 	private CommWindow _Comm;
 
-	private JList<GroupImpl> jLGroupsList;
+	private JList<Group> jLGroupsList;
 
 	/**
 	 * Constructs a list to display
@@ -114,10 +114,10 @@ public class GroupList extends JScrollPane implements ActionListener {
 		setViewportView(getJGroupsList());
 	}
 
-	private final JList<GroupImpl> getJGroupsList() {
+	private final JList<Group> getJGroupsList() {
 		if (jLGroupsList == null) {
-			jLGroupsList = new JList<GroupImpl>(
-					new SortedListModel(new DefaultListModel<GroupImpl>(), SortOrder.ASCENDING));
+			jLGroupsList = new JList<Group>(
+					new SortedListModel(new DefaultListModel<Group>(), SortOrder.ASCENDING));
 			// install a mouse handler
 			jLGroupsList.addMouseListener(new MouseAdapter() {
 				@Override
@@ -159,11 +159,11 @@ public class GroupList extends JScrollPane implements ActionListener {
 	 *            The UUID of the group
 	 * @return returns the group info if found, null otherwise
 	 */
-	public GroupImpl findGroup(UUID id) {
-		DefaultListModel<GroupImpl> model = (DefaultListModel<GroupImpl>) ((SortedListModel) getJGroupsList()
+	public Group findGroup(UUID id) {
+		DefaultListModel<Group> model = (DefaultListModel<Group>) ((SortedListModel) getJGroupsList()
 				.getModel()).getUnsortedModel();
 		for (Enumeration<?> e = model.elements(); e.hasMoreElements();) {
-			GroupImpl info = (GroupImpl) e.nextElement();
+			Group info = (Group) e.nextElement();
 			if (info.getID().equals(id)) {
 				return info;
 			}
@@ -171,7 +171,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 		return null;
 	}
 
-	private GroupImpl getSelectedGroupRow() {
+	private Group getSelectedGroupRow() {
 		return getJGroupsList().getSelectedValue();
 	}
 
@@ -182,8 +182,8 @@ public class GroupList extends JScrollPane implements ActionListener {
 	 *            The group info to add to the list
 	 * @return true if the group was added, false if it was replaced
 	 */
-	public boolean addGroup(GroupImpl info) {
-		DefaultListModel<GroupImpl> model = (DefaultListModel<GroupImpl>) ((SortedListModel) getJGroupsList()
+	public boolean addGroup(Group info) {
+		DefaultListModel<Group> model = (DefaultListModel<Group>) ((SortedListModel) getJGroupsList()
 				.getModel()).getUnsortedModel();
 		int idx = model.indexOf(info);
 		if (idx < 0)
@@ -201,8 +201,8 @@ public class GroupList extends JScrollPane implements ActionListener {
 	 * @return true if the group info was successfully removed, false if the group
 	 *         could not be found,
 	 */
-	public boolean removeGroup(GroupImpl info) {
-		DefaultListModel<GroupImpl> model = (DefaultListModel<GroupImpl>) ((SortedListModel) getJGroupsList()
+	public boolean removeGroup(Group info) {
+		DefaultListModel<Group> model = (DefaultListModel<Group>) ((SortedListModel) getJGroupsList()
 				.getModel()).getUnsortedModel();
 		int idx = model.indexOf(info);
 		if (idx < 0)
@@ -218,8 +218,8 @@ public class GroupList extends JScrollPane implements ActionListener {
 	 *            The group info to change
 	 * @return true if the group info was successfully changed, false otherwise
 	 */
-	public boolean changeGroup(GroupImpl info) {
-		DefaultListModel<GroupImpl> model = (DefaultListModel<GroupImpl>) ((SortedListModel) getJGroupsList()
+	public boolean changeGroup(Group info) {
+		DefaultListModel<Group> model = (DefaultListModel<Group>) ((SortedListModel) getJGroupsList()
 				.getModel()).getUnsortedModel();
 		int idx = model.indexOf(info);
 		if (idx >= 0)
@@ -249,7 +249,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 
 			Font font = jlblName.getFont();
 			int style = font.getStyle();
-			GroupImpl group = (GroupImpl) value;
+			Group group = (Group) value;
 
 			if (_Client.Self.getActiveGroup().equals(group.getID())) {
 				style |= Font.BOLD;
@@ -264,7 +264,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 	private class GroupPopupMenu extends JPopupMenu {
 		private static final long serialVersionUID = 1L;
 		// The friend associated with the menu
-		private GroupImpl _Info;
+		private Group _Info;
 
 		// The menu item used to send the group a message
 		private JMenuItem jmiSendMessage;
@@ -289,7 +289,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 		 * @param info
 		 *            The friend to generate the menu for.
 		 */
-		public GroupPopupMenu(GroupImpl info) {
+		public GroupPopupMenu(Group info) {
 			super();
 			this._Info = info;
 
@@ -402,7 +402,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 			EventQueue.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					DefaultListModel<GroupImpl> model = (DefaultListModel<GroupImpl>) ((SortedListModel) getJGroupsList()
+					DefaultListModel<Group> model = (DefaultListModel<Group>) ((SortedListModel) getJGroupsList()
 							.getModel()).getUnsortedModel();
 					model.clear();
 					model.copyInto(params.getGroups().values().toArray());
@@ -436,7 +436,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		final GroupImpl info = (GroupImpl) getSelectedGroupRow();
+		final Group info = (Group) getSelectedGroupRow();
 		if (e.getActionCommand().equals(cmdPayTo)) {
 			// TODO: open a money transfer dialog
 		} else if (e.getActionCommand().equals(cmdProfile)) {

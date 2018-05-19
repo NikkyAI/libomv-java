@@ -2,8 +2,6 @@ package libomv.model.appearance;
 
 import org.apache.log4j.Logger;
 
-import libomv.model.Appearance;
-
 // Appearance Flags, introdued with server side baking, currently unused
 // [Flags]
 public enum AppearanceFlags {
