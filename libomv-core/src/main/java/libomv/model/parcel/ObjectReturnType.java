@@ -16,6 +16,11 @@ public class ObjectReturnType {
 	// Return objects that are marked for-sale
 	public static final byte Sell = 1 << 5;
 
+	private static final byte _mask = 0x1F;
+
+	private ObjectReturnType() {
+	}
+
 	public static byte setValue(int value) {
 		return (byte) (value & _mask);
 	}
@@ -24,5 +29,4 @@ public class ObjectReturnType {
 		return value & _mask;
 	}
 
-	private static final byte _mask = 0x1F;
 }

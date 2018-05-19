@@ -12,6 +12,11 @@ public class TerraformBrushSize {
 	// Large
 	public static final byte Large = 1 << 2;
 
+	private static final byte _mask = 0x7;
+
+	private TerraformBrushSize() {
+	}
+
 	public static byte getIndex(float value) {
 		for (byte i = 2; i >= 0; i--) {
 			if (value > LAND_BRUSH_SIZE[i]) {
@@ -29,5 +34,4 @@ public class TerraformBrushSize {
 		return value & _mask;
 	}
 
-	private static final byte _mask = 0x7;
 }

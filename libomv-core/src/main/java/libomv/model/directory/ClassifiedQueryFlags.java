@@ -11,6 +11,11 @@ public class ClassifiedQueryFlags {
 	// Include all ads in results
 	public static final byte All = PG | Mature | Adult;
 
+	private static final byte _mask = 0x4C;
+
+	private ClassifiedQueryFlags() {
+	}
+
 	public static byte setValue(int value) {
 		return (byte) (value & _mask);
 	}
@@ -19,5 +24,4 @@ public class ClassifiedQueryFlags {
 		return (byte) (value & _mask);
 	}
 
-	private static final byte _mask = 0x4C;
 }

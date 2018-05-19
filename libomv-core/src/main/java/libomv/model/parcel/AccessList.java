@@ -13,6 +13,11 @@ public class AccessList {
 	// Request both White and Black lists
 	public static final byte Both = 0x3;
 
+	private static final byte _mask = 0x3;
+
+	private AccessList() {
+	}
+
 	public static byte setValue(int value) {
 		return (byte) (value & _mask);
 	}
@@ -21,5 +26,4 @@ public class AccessList {
 		return value & _mask;
 	}
 
-	private static final byte _mask = 0x3;
 }

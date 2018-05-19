@@ -13,6 +13,11 @@ public class InventorySortOrder {
 	/* Place system folders at the top */
 	public static final byte SystemFoldersToTop = 4;
 
+	private static final byte _mask = 0x7;
+
+	private InventorySortOrder() {
+	}
+
 	public static byte setValue(int value) {
 		return (byte) (value & _mask);
 	}
@@ -21,5 +26,4 @@ public class InventorySortOrder {
 		return value & _mask;
 	}
 
-	private static final byte _mask = 0x7;
 }

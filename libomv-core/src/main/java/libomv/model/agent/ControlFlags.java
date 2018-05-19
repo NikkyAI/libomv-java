@@ -2,9 +2,6 @@ package libomv.model.agent;
 
 /* Used to specify movement actions for your agent */
 public class ControlFlags {
-	private ControlFlags() {
-	}
-
 	private static final int CONTROL_AT_POS_INDEX = 0;
 	private static final int CONTROL_AT_NEG_INDEX = 1;
 	private static final int CONTROL_LEFT_POS_INDEX = 2;
@@ -112,6 +109,9 @@ public class ControlFlags {
 	public static final int AGENT_CONTROL_ML_LBUTTON_DOWN = 0x1 << CONTROL_ML_LBUTTON_DOWN_INDEX;
 	//
 	public static final int AGENT_CONTROL_ML_LBUTTON_UP = 0x1 << CONTROL_ML_LBUTTON_UP_INDEX;
+
+	private ControlFlags() {
+	}
 
 	public static int setValue(int value) {
 		return value;

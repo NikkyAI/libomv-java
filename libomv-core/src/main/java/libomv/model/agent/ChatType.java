@@ -30,6 +30,12 @@ public enum ChatType {
 	/* Special value to support llRegionSay(), never sent to the client */
 	RegionSay(255);
 
+	private int val;
+
+	private ChatType(int value) {
+		val = value;
+	}
+
 	public static ChatType setValue(byte value) {
 		for (ChatType e : values()) {
 			if (e.val == value)
@@ -42,9 +48,4 @@ public enum ChatType {
 		return val;
 	}
 
-	private int val;
-
-	private ChatType(int value) {
-		val = value;
-	}
 }

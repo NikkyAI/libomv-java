@@ -96,6 +96,11 @@ public class RegionFlags {
 	/* Deny agents who have not been age verified from entering the region. */
 	public static final long DenyAgeUnverified = 1 << 30;
 
+	private static final long _mask = 0xFFFFFFFFFL;
+
+	private RegionFlags() {
+	}
+
 	public static long setValue(long value) {
 		return value & _mask;
 	}
@@ -104,5 +109,4 @@ public class RegionFlags {
 		return value;
 	}
 
-	private static final long _mask = 0xFFFFFFFFFL;
 }

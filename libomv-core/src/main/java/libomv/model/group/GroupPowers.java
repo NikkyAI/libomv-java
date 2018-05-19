@@ -139,6 +139,11 @@ public class GroupPowers {
 	// Allows access to ban / un-ban agents from a group
 	public static final long GroupBanAccess = 1L << 51;
 
+	private static final long _mask = 0x3FFFFFFFFFFFL;
+
+	private GroupPowers() {
+	}
+
 	public static long setValue(long value) {
 		return value & _mask;
 	}
@@ -147,5 +152,4 @@ public class GroupPowers {
 		return value & _mask;
 	}
 
-	private static final long _mask = 0x3FFFFFFFFFFFL;
 }

@@ -11,6 +11,11 @@ public class ScriptSensorTypeFlags {
 	/* */
 	public static final byte Scripted = 8;
 
+	private static final byte _mask = 0xF;
+
+	private ScriptSensorTypeFlags() {
+	}
+
 	public static byte setValue(int value) {
 		return (byte) (value & _mask);
 	}
@@ -19,5 +24,4 @@ public class ScriptSensorTypeFlags {
 		return (byte) (value & _mask);
 	}
 
-	private static final byte _mask = 0xF;
 }

@@ -9,6 +9,11 @@ public class AgentState {
 	/* */
 	public static final byte Editing = 0x10;
 
+	private static final byte _mask = 0x14;
+
+	private AgentState() {
+	}
+
 	public static byte setValue(int value) {
 		return (byte) (value & _mask);
 	}
@@ -17,5 +22,4 @@ public class AgentState {
 		return (byte) (value & _mask);
 	}
 
-	private static final byte _mask = 0x14;
 }

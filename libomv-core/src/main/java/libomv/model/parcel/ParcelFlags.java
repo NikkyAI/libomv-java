@@ -76,6 +76,11 @@ public class ParcelFlags {
 	// Deny Age Unverified Users
 	public static final int DenyAgeUnverified = 1 << 31;
 
+	private static final int _mask = 0xFFFFFFFF;
+
+	private ParcelFlags() {
+	}
+
 	public static int setValue(int value) {
 		return value & _mask;
 	}
@@ -84,5 +89,4 @@ public class ParcelFlags {
 		return value & _mask;
 	}
 
-	private static final int _mask = 0xFFFFFFFF;
 }

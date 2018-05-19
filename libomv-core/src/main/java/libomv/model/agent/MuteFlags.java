@@ -18,6 +18,11 @@ public class MuteFlags {
 	// Don't mute
 	public static final byte All = 0xf;
 
+	private static final byte _mask = 0xf;
+
+	private MuteFlags() {
+	}
+
 	public static byte setValue(int value) {
 		return (byte) (value & _mask);
 	}
@@ -26,5 +31,4 @@ public class MuteFlags {
 		return value & _mask;
 	}
 
-	private static final byte _mask = 0xf;
 }

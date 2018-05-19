@@ -15,6 +15,11 @@ public class TransactionFlags {
 	/* */
 	public static final byte ContributionRemoval = 0x10;
 
+	private static final byte _mask = 0x1F;
+
+	private TransactionFlags() {
+	}
+
 	public static byte setValue(int value) {
 		return (byte) (value & _mask);
 	}
@@ -23,5 +28,4 @@ public class TransactionFlags {
 		return (byte) (value & _mask);
 	}
 
-	private static final byte _mask = 0x1F;
 }

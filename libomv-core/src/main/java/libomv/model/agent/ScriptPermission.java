@@ -2,9 +2,6 @@ package libomv.model.agent;
 
 /** Permission request flags, asked when a script wants to control an Avatar */
 public class ScriptPermission {
-	private ScriptPermission() {
-	}
-
 	/* Placeholder for empty values, shouldn't ever see this */
 	public static final int None = 0;
 	/* Script wants ability to take money from you */
@@ -45,6 +42,11 @@ public class ScriptPermission {
 	// Script wants the ability to teleport you
 	public static final int Teleport = 1 << 12;
 
+	private static final int _mask = 0xFFF;
+
+	private ScriptPermission() {
+	}
+
 	public static int setValue(int value) {
 		return (value & _mask);
 	}
@@ -53,5 +55,4 @@ public class ScriptPermission {
 		return (value & _mask);
 	}
 
-	private static final int _mask = 0xFFF;
 }

@@ -20,6 +20,6 @@ public class AgentAccessCallbackArgs implements CallbackArgs {
 
 	public boolean getSuccess() {
 		return success;
-	};
+	}
 
 }

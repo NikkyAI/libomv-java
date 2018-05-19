@@ -11,6 +11,10 @@ public class FriendRights {
 	public static final byte CanModifyObjects = 4;
 
 	private static final String[] _names = new String[] { "None", "SeeOnline", "SeeOnMap", "ModifyObjects" };
+	private static final byte _mask = 0x7;
+
+	private FriendRights() {
+	}
 
 	public static String toString(byte value) {
 		if ((value & _mask) == 0)
@@ -33,5 +37,4 @@ public class FriendRights {
 		return value;
 	}
 
-	private static final byte _mask = 0x7;
 }

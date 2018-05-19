@@ -10,6 +10,11 @@ public class RegionProtocols {
 	// Viewer supports Server side Appearance
 	public static final long SelfAppearanceSupport = 1 << 2;
 
+	private static final long _mask = 0x7FFFFFFFL;
+
+	private RegionProtocols() {
+	}
+
 	public static long setValue(long value) {
 		return value & _mask;
 	}
@@ -18,5 +23,4 @@ public class RegionProtocols {
 		return value;
 	}
 
-	private static final long _mask = 0x7FFFFFFFL;
 }

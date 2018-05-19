@@ -9,6 +9,12 @@ public enum ChatAudibleLevel {
 	/*  */
 	Fully(1);
 
+	private int val;
+
+	private ChatAudibleLevel(int value) {
+		val = value;
+	}
+
 	public static ChatAudibleLevel setValue(byte value) {
 		for (ChatAudibleLevel e : values()) {
 			if (e.val == value)
@@ -21,9 +27,4 @@ public enum ChatAudibleLevel {
 		return val;
 	}
 
-	private int val;
-
-	private ChatAudibleLevel(int value) {
-		val = value;
-	}
 }

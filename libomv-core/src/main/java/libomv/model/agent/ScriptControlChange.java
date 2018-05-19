@@ -30,6 +30,11 @@ public class ScriptControlChange {
 	/* Left Mouse button in MouseLook */
 	public static final int MouseLookLeftButton = 0x40000000;
 
+	private static final int _mask = 0x5000033F;
+
+	private ScriptControlChange() {
+	}
+
 	public static int setValue(int value) {
 		return value & _mask;
 	}
@@ -38,5 +43,4 @@ public class ScriptControlChange {
 		return value & _mask;
 	}
 
-	private static final int _mask = 0x5000033F;
 }

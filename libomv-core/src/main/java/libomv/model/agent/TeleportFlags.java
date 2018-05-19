@@ -2,9 +2,6 @@ package libomv.model.agent;
 
 /* */
 public class TeleportFlags {
-	private TeleportFlags() {
-	}
-
 	/* No flags set, or teleport failed */
 	public static final int Default = 0;
 	/* Set when newbie leaves help island for first time */
@@ -46,6 +43,11 @@ public class TeleportFlags {
 	/* Finished, Same Sim */
 	public static final int FinishedViaSameSim = 1 << 29;
 
+	private static final int _mask = 0x3400FFFF;
+
+	private TeleportFlags() {
+	}
+
 	public static int setValue(int value) {
 		return (value & _mask);
 	}
@@ -54,5 +56,4 @@ public class TeleportFlags {
 		return (value & _mask);
 	}
 
-	private static final int _mask = 0x3400FFFF;
 }

@@ -25,6 +25,11 @@ public class CompressedFlags {
 	// Whether the object has a Media URL set
 	public static final short MediaURL = 0x200;
 
+	private static final short _mask = 0x3FF;
+
+	private CompressedFlags() {
+	}
+
 	public static short setValue(short value) {
 		return (short) (value & _mask);
 	}
@@ -33,5 +38,4 @@ public class CompressedFlags {
 		return (short) (value & _mask);
 	}
 
-	private static final short _mask = 0x3FF;
 }

@@ -8,10 +8,23 @@ public class ChatCallbackArgs implements CallbackArgs {
 	private ChatAudibleLevel audible;
 	private ChatType type;
 	private ChatSourceType sourcetype;
-	private String message, fromName;
+	private String message;
+	private String fromName;
 	private UUID sourceId;
 	private UUID ownerId;
 	private Vector3 position;
+
+	public ChatCallbackArgs(ChatAudibleLevel audible, ChatType type, ChatSourceType sourcetype, String fromName,
+			String message, UUID sourceId, UUID ownerId, Vector3 position) {
+		this.message = message;
+		this.fromName = fromName;
+		this.audible = audible;
+		this.type = type;
+		this.sourcetype = sourcetype;
+		this.sourceId = sourceId;
+		this.ownerId = ownerId;
+		this.position = position;
+	}
 
 	public String getMessage() {
 		return message;
@@ -45,15 +58,4 @@ public class ChatCallbackArgs implements CallbackArgs {
 		return position;
 	}
 
-	public ChatCallbackArgs(ChatAudibleLevel audible, ChatType type, ChatSourceType sourcetype, String fromName,
-			String message, UUID sourceId, UUID ownerId, Vector3 position) {
-		this.message = message;
-		this.fromName = fromName;
-		this.audible = audible;
-		this.type = type;
-		this.sourcetype = sourcetype;
-		this.sourceId = sourceId;
-		this.ownerId = ownerId;
-		this.position = position;
-	}
 }

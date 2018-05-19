@@ -20,6 +20,11 @@ public class ClassifiedFlags {
 	//
 	public static final byte AutoRenew = 1 << 5;
 
+	private static final byte _mask = 0x37;
+
+	private ClassifiedFlags() {
+	}
+
 	public static byte setValue(int value) {
 		return (byte) (value & _mask);
 	}
@@ -28,5 +33,4 @@ public class ClassifiedFlags {
 		return (byte) (value & _mask);
 	}
 
-	private static final byte _mask = 0x37;
 }

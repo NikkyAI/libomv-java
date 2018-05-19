@@ -16,6 +16,11 @@ public class UpdateType {
 	// viewer. Used in conjunction with Scale
 	public static final byte Uniform = 0x10;
 
+	private static final short _mask = 0x1F;
+
+	private UpdateType() {
+	}
+
 	public static short setValue(byte value) {
 		return (short) (value & _mask);
 	}
@@ -24,5 +29,4 @@ public class UpdateType {
 		return (byte) (value & _mask);
 	}
 
-	private static final short _mask = 0x1F;
 }

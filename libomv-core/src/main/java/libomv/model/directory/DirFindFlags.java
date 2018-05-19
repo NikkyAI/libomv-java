@@ -85,6 +85,11 @@ public class DirFindFlags {
 	//
 	public static final int AdultOnly = 1 << 27;
 
+	private static final int _mask = 0x0FFFFFDB;
+
+	private DirFindFlags() {
+	}
+
 	public static final int setValue(int value) {
 		return (value & _mask);
 	}
@@ -93,5 +98,4 @@ public class DirFindFlags {
 		return (value & _mask);
 	}
 
-	private static final int _mask = 0x0FFFFFDB;
 }
