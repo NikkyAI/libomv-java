@@ -16,7 +16,6 @@
 
 	<properties>
 		<libomv-core.version>1.0.0-SNAPSHOT</libomv-core.version>
-		<libomv-io.version>1.0.0-SNAPSHOT</libomv-io.version>
 		<swt.version>4.6.1</swt.version>
 	</properties>
 
@@ -25,11 +24,6 @@
 			<groupId>libomv</groupId>
 			<artifactId>libomv-core</artifactId>
 			<version>${libomv-core.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>libomv</groupId>
-			<artifactId>libomv-io</artifactId>
-			<version>${libomv-io.version}</version>
 		</dependency>
 
 		<dependency>
