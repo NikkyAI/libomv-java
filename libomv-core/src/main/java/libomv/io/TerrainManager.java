@@ -51,46 +51,44 @@ import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 public class TerrainManager implements PacketCallback {
 	private static final Logger logger = Logger.getLogger(TerrainManager.class);
 
-	public CallbackHandler<LandPatchReceivedCallbackArgs> OnLandPatchReceived;
-
-	// #endregion
+	public CallbackHandler<LandPatchReceivedCallbackArgs> onLandPatchReceived;
 
 	private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs> {
 		@Override
 		public boolean callback(SettingsUpdateCallbackArgs params) {
 			String key = params.getName();
 			if (key == null) {
-				storeLandPatches = _Client.Settings.getBool(LibSettings.STORE_LAND_PATCHES);
+				storeLandPatches = client.settings.getBool(LibSettings.STORE_LAND_PATCHES);
 			} else if (key.equals(LibSettings.STORE_LAND_PATCHES)) {
-				storeLandPatches = params.getValue().AsBoolean();
+				storeLandPatches = params.getValue().asBoolean();
 			}
 			return false;
 		}
 	}
 
-	private GridClient _Client;
+	private GridClient client;
 	private boolean storeLandPatches;
 
 	public TerrainManager(GridClient client) {
-		_Client = client;
+		this.client = client;
 
-		storeLandPatches = _Client.Settings.getBool(LibSettings.STORE_LAND_PATCHES);
-		_Client.Settings.onSettingsUpdate.add(new SettingsUpdate());
+		this.storeLandPatches = client.settings.getBool(LibSettings.STORE_LAND_PATCHES);
+		this.client.settings.onSettingsUpdate.add(new SettingsUpdate());
 
-		_Client.Network.RegisterCallback(PacketType.LayerData, this);
+		this.client.network.registerCallback(PacketType.LayerData, this);
 	}
 
 	@Override
 	public void packetCallback(Packet packet, Simulator simulator) throws Exception {
 		switch (packet.getType()) {
 		case LayerData:
-			LayerDataHandler(packet, simulator);
+			layerDataHandler(packet, simulator);
 		default:
 			break;
 		}
 	}
 
-	private void DecompressLand(SimulatorManager simulator, BitPack bitpack, GroupHeader group) {
+	private void decompressLand(SimulatorManager simulator, BitPack bitpack, GroupHeader group) {
 		int x, y;
 		int[] patches = new int[32 * 32];
 		int count = 0;
@@ -107,7 +105,7 @@ public class TerrainManager implements PacketCallback {
 			if (x >= TerrainCompressor.PATCHES_PER_EDGE || y >= TerrainCompressor.PATCHES_PER_EDGE) {
 				logger.warn(GridClient.Log(String.format(
 						"Invalid LayerData land packet, x=%d, y=%d, dc_offset=%f, range=%d, quant_wbits=%d, patchids=%d, count=%d",
-						x, y, header.dcOffset, header.range, header.quantWBits, header.patchIDs, count), _Client));
+						x, y, header.dcOffset, header.range, header.quantWBits, header.patchIDs, count), client));
 				return;
 			}
 
@@ -120,10 +118,10 @@ public class TerrainManager implements PacketCallback {
 			count++;
 
 			try {
-				OnLandPatchReceived
+				onLandPatchReceived
 						.dispatch(new LandPatchReceivedCallbackArgs(simulator, x, y, group.patchSize, heightmap));
 			} catch (Exception e) {
-				logger.error(GridClient.Log(e.getMessage(), _Client), e);
+				logger.error(GridClient.Log(e.getMessage(), client), e);
 			}
 
 			if (storeLandPatches) {
@@ -131,12 +129,12 @@ public class TerrainManager implements PacketCallback {
 				patch.data = heightmap;
 				patch.x = x;
 				patch.y = y;
-				simulator.Terrain[y * 16 + x] = patch;
+				simulator.terrain[y * 16 + x] = patch;
 			}
 		}
 	}
 
-	private void DecompressWind(SimulatorManager simulator, BitPack bitpack, GroupHeader group) {
+	private void decompressWind(SimulatorManager simulator, BitPack bitpack, GroupHeader group) {
 		int[] patches = new int[32 * 32];
 
 		// Ignore the simulator stride value
@@ -162,15 +160,15 @@ public class TerrainManager implements PacketCallback {
 
 		if (storeLandPatches) {
 			for (int i = 0; i < 256; i++)
-				simulator.WindSpeeds[i] = new Vector2(xvalues[i], yvalues[i]);
+				simulator.windSpeeds[i] = new Vector2(xvalues[i], yvalues[i]);
 		}
 	}
 
-	private void DecompressCloud(Simulator simulator, BitPack bitpack, GroupHeader group) {
+	private void decompressCloud(Simulator simulator, BitPack bitpack, GroupHeader group) {
 		// FIXME:
 	}
 
-	private void LayerDataHandler(Packet packet, Simulator sim) {
+	private void layerDataHandler(Packet packet, Simulator sim) {
 		SimulatorManager simulator = (SimulatorManager) sim;
 		LayerDataPacket layer = (LayerDataPacket) packet;
 		BitPack bitpack = new BitPack(layer.LayerData.getData());
@@ -186,20 +184,20 @@ public class TerrainManager implements PacketCallback {
 
 		switch (type) {
 		case Land:
-			if (OnLandPatchReceived.count() > 0 || storeLandPatches)
-				DecompressLand(simulator, bitpack, header);
+			if (onLandPatchReceived.count() > 0 || storeLandPatches)
+				decompressLand(simulator, bitpack, header);
 			break;
 		case Water:
-			logger.error(GridClient.Log("Got a Water LayerData packet, implement me!", _Client));
+			logger.error(GridClient.Log("Got a Water LayerData packet, implement me!", client));
 			break;
 		case Wind:
-			DecompressWind(simulator, bitpack, header);
+			decompressWind(simulator, bitpack, header);
 			break;
 		case Cloud:
-			DecompressCloud(simulator, bitpack, header);
+			decompressCloud(simulator, bitpack, header);
 			break;
 		default:
-			logger.warn(GridClient.Log("Unrecognized LayerData type " + type.toString(), _Client));
+			logger.warn(GridClient.Log("Unrecognized LayerData type " + type.toString(), client));
 			break;
 		}
 	}

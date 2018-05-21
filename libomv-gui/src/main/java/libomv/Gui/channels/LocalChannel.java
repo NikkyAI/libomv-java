@@ -95,7 +95,7 @@ public class LocalChannel extends AbstractChannel {
 	@Override
 	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style)
 			throws BadLocationException {
-		boolean self = fromId != null && fromId.equals(_Client.Self.getAgentID());
+		boolean self = fromId != null && fromId.equals(_Client.agent.getAgentID());
 		// Did we already print that message?
 		if (!(self && printLocalMessage)) {
 			String localStyle = style, localMessage = message, chatStyle = STYLE_CHATREMOTE;
@@ -103,7 +103,7 @@ public class LocalChannel extends AbstractChannel {
 				chatStyle = STYLE_CHATLOCAL;
 			}
 			// Determine if this is a friend...
-			else if (_Client.Friends.getFriendList().containsKey(fromId)) {
+			else if (_Client.friends.getFriendList().containsKey(fromId)) {
 				chatStyle = STYLE_CHATREMOTEFRIEND;
 			}
 
@@ -128,7 +128,7 @@ public class LocalChannel extends AbstractChannel {
 		super.transmitMessage(message, chatType);
 
 		int channel = 0;
-		String shortMessage, localMessage = message, style = STYLE_REGULAR, self = _Client.Self.getName();
+		String shortMessage, localMessage = message, style = STYLE_REGULAR, self = _Client.agent.getName();
 		ChatType localType = chatType;
 
 		if (message.length() >= 1000) {
@@ -196,11 +196,11 @@ public class LocalChannel extends AbstractChannel {
 		}
 
 		// Send the message.
-		_Client.Self.Chat(localMessage, channel, localType);
+		_Client.agent.chat(localMessage, channel, localType);
 	}
 
 	protected void triggerTyping(boolean start) throws Exception {
-		_Client.Self.Chat("typing", 0, start ? ChatType.StartTyping : ChatType.StopTyping);
+		_Client.agent.chat("typing", 0, start ? ChatType.StartTyping : ChatType.StopTyping);
 	}
 
 	private JScrollPane getJScrpAttendents() {

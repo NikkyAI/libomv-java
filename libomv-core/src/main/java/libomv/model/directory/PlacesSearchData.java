@@ -66,7 +66,7 @@ public final class PlacesSearchData {
 	 */
 	public String toSLurl() {
 		float[] values = new float[2];
-		Helpers.GlobalPosToRegionHandle(this.globalX, this.globalY, values);
+		Helpers.globalPosToRegionHandle(this.globalX, this.globalY, values);
 		return "secondlife://" + this.simName + "/" + values[0] + "/" + values[1] + "/" + this.globalZ;
 	}
 
@@ -77,6 +77,6 @@ public final class PlacesSearchData {
 	 */
 	@Override
 	public String toString() {
-		return Helpers.StructToString(this);
+		return Helpers.structToString(this);
 	}
 }

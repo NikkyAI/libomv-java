@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.http.concurrent.FutureCallback;
@@ -82,6 +83,41 @@ import libomv.utils.TimeoutEvent;
 public class GridManager implements PacketCallback {
 	private static final Logger logger = Logger.getLogger(GridManager.class);
 
+	// A dictionary of all the regions, indexed by region name
+	public Map<String, GridRegion> regions;
+	// A dictionary of all the regions, indexed by region handle
+	private Map<Long, GridRegion> regionsByHandle = new HashMap<>();
+
+	// Current direction of the sun
+	private float sunPhase;
+	private Vector3 sunDirection;
+	private Vector3 sunAngVelocity;
+	private long timeOfDay;
+
+	private GridClient client;
+
+	public CallbackHandler<GridLayerCallbackArgs> onGridLayer = new CallbackHandler<>();
+	public CallbackHandler<GridItemsCallbackArgs> onGridItems = new CallbackHandler<>();
+	public CallbackHandler<GridRegionCallbackArgs> onGridRegion = new CallbackHandler<>();
+	public CallbackHandler<RegionHandleReplyCallbackArgs> onRegionHandleReply = new CallbackHandler<>();
+	public CallbackHandler<CoarseLocationUpdateCallbackArgs> onCoarseLocationUpdate = new CallbackHandler<>();
+
+	// Constructor
+	// <param name="client">Instance of ClientManager to associate with this
+	// GridManager instance</param>
+	public GridManager(GridClient client) {
+		this.client = client;
+		this.regions = new HashMap<>();
+		this.sunDirection = new Vector3(0.0f);
+
+		this.client.network.registerCallback(PacketType.MapLayerReply, this);
+		this.client.network.registerCallback(PacketType.MapBlockReply, this);
+		this.client.network.registerCallback(PacketType.MapItemReply, this);
+		this.client.network.registerCallback(PacketType.SimulatorViewerTimeMessage, this);
+		this.client.network.registerCallback(PacketType.CoarseLocationUpdate, this);
+		this.client.network.registerCallback(PacketType.RegionIDAndHandleReply, this);
+	}
+
 	/* Unknown */
 	public final float getSunPhase() {
 		return sunPhase;
@@ -107,86 +143,51 @@ public class GridManager implements PacketCallback {
 		return timeOfDay;
 	}
 
-	// A dictionary of all the regions, indexed by region name
-	public HashMap<String, GridRegion> Regions;
-	// A dictionary of all the regions, indexed by region handle
-	private HashMap<Long, GridRegion> RegionsByHandle = new HashMap<Long, GridRegion>();
-
-	// Current direction of the sun
-	private float sunPhase;
-	private Vector3 sunDirection;
-	private Vector3 sunAngVelocity;
-	private long timeOfDay;
-
-	private GridClient _Client;
-
-	public CallbackHandler<GridLayerCallbackArgs> OnGridLayer = new CallbackHandler<GridLayerCallbackArgs>();
-	public CallbackHandler<GridItemsCallbackArgs> OnGridItems = new CallbackHandler<GridItemsCallbackArgs>();
-	public CallbackHandler<GridRegionCallbackArgs> OnGridRegion = new CallbackHandler<GridRegionCallbackArgs>();
-	public CallbackHandler<RegionHandleReplyCallbackArgs> OnRegionHandleReply = new CallbackHandler<RegionHandleReplyCallbackArgs>();
-	public CallbackHandler<CoarseLocationUpdateCallbackArgs> OnCoarseLocationUpdate = new CallbackHandler<CoarseLocationUpdateCallbackArgs>();
-
-	// Constructor
-	// <param name="client">Instance of ClientManager to associate with this
-	// GridManager instance</param>
-	public GridManager(GridClient client) {
-		_Client = client;
-		Regions = new HashMap<String, GridRegion>();
-		sunDirection = new Vector3(0.0f);
-
-		_Client.Network.RegisterCallback(PacketType.MapLayerReply, this);
-		_Client.Network.RegisterCallback(PacketType.MapBlockReply, this);
-		_Client.Network.RegisterCallback(PacketType.MapItemReply, this);
-		_Client.Network.RegisterCallback(PacketType.SimulatorViewerTimeMessage, this);
-		_Client.Network.RegisterCallback(PacketType.CoarseLocationUpdate, this);
-		_Client.Network.RegisterCallback(PacketType.RegionIDAndHandleReply, this);
-	}
-
 	@Override
 	public void packetCallback(Packet packet, Simulator simulator) throws Exception {
 		switch (packet.getType()) {
 		case MapLayerReply:
-			HandleMapLayerReply(packet, simulator);
+			handleMapLayerReply(packet, simulator);
 			break;
 		case MapBlockReply:
-			HandleMapBlockReply(packet, simulator);
+			handleMapBlockReply(packet, simulator);
 			break;
 		case MapItemReply:
-			HandleMapItemReply(packet, simulator);
+			handleMapItemReply(packet, simulator);
 			break;
 		case SimulatorViewerTimeMessage:
-			HandleSimulatorViewerTimeMessage(packet, simulator);
+			handleSimulatorViewerTimeMessage(packet, simulator);
 			break;
 		case CoarseLocationUpdate:
-			HandleCoarseLocation(packet, simulator);
+			handleCoarseLocation(packet, simulator);
 			break;
 		case RegionIDAndHandleReply:
-			HandleRegionHandleReply(packet, simulator);
+			handleRegionHandleReply(packet, simulator);
 			break;
 		default:
 			break;
 		}
 	}
 
-	public final void RequestMapLayer(GridLayerType layer) {
+	public final void requestMapLayer(GridLayerType layer) {
 		final class MapLayerCallback implements FutureCallback<OSD> {
 			@Override
 			public void completed(OSD result) {
 				OSDMap body = (OSDMap) result;
 				OSDArray layerData = (OSDArray) body.get("LayerData");
 
-				if (OnGridLayer.count() > 0) {
+				if (onGridLayer.count() > 0) {
 					for (int i = 0; i < layerData.size(); i++) {
 						OSDMap thisLayerData = (OSDMap) layerData.get(i);
 
 						GridLayer layer = new GridLayer();
-						layer.bottom = thisLayerData.get("Bottom").AsInteger();
-						layer.left = thisLayerData.get("Left").AsInteger();
-						layer.top = thisLayerData.get("Top").AsInteger();
-						layer.right = thisLayerData.get("Right").AsInteger();
-						layer.imageID = thisLayerData.get("ImageID").AsUUID();
+						layer.bottom = thisLayerData.get("Bottom").asInteger();
+						layer.left = thisLayerData.get("Left").asInteger();
+						layer.top = thisLayerData.get("Top").asInteger();
+						layer.right = thisLayerData.get("Right").asInteger();
+						layer.imageID = thisLayerData.get("ImageID").asUUID();
 
-						OnGridLayer.dispatch(new GridLayerCallbackArgs(layer));
+						onGridLayer.dispatch(new GridLayerCallbackArgs(layer));
 					}
 				}
 				if (body.containsKey("MapBlocks")) {
@@ -198,7 +199,7 @@ public class GridManager implements PacketCallback {
 			@Override
 			public void failed(Exception ex) {
 				logger.error(GridClient
-						.Log("MapLayerReplyHandler error: " + ex.getMessage() + ": " + ex.getStackTrace(), _Client));
+						.Log("MapLayerReplyHandler error: " + ex.getMessage() + ": " + ex.getStackTrace(), client));
 			}
 
 			@Override
@@ -206,15 +207,14 @@ public class GridManager implements PacketCallback {
 			}
 		}
 
-		URI url = _Client.Network.getCapabilityURI(CapsEventType.MapLayer.toString());
+		URI url = client.network.getCapabilityURI(CapsEventType.MapLayer.toString());
 		if (url != null) {
 			OSDMap body = new OSDMap();
-			body.put("Flags", OSD.FromInteger(layer.ordinal()));
+			body.put("Flags", OSD.fromInteger(layer.ordinal()));
 
 			try {
-				CapsClient request = new CapsClient(_Client, CapsEventType.MapLayer.toString());
-				request.executeHttpPost(url, body, OSDFormat.Xml, new MapLayerCallback(),
-						_Client.Settings.CAPS_TIMEOUT);
+				CapsClient request = new CapsClient(client, CapsEventType.MapLayer.toString());
+				request.executeHttpPost(url, body, OSDFormat.Xml, new MapLayerCallback(), client.settings.CAPS_TIMEOUT);
 			} catch (Exception e) {
 			}
 		}
@@ -230,17 +230,17 @@ public class GridManager implements PacketCallback {
 	 *            The type of layer
 	 * @throws Exception
 	 */
-	public final void RequestMapRegion(String regionName, GridLayerType layer) throws Exception {
+	public final void requestMapRegion(String regionName, GridLayerType layer) throws Exception {
 		MapNameRequestPacket request = new MapNameRequestPacket();
 
-		request.AgentData.AgentID = _Client.Self.getAgentID();
-		request.AgentData.SessionID = _Client.Self.getSessionID();
+		request.AgentData.AgentID = client.agent.getAgentID();
+		request.AgentData.SessionID = client.agent.getSessionID();
 		request.AgentData.Flags = (layer != null) ? layer.ordinal() : 0;
 		request.AgentData.EstateID = 0; // Filled in on the sim
 		request.AgentData.Godlike = false; // Filled in on the sim
-		request.NameData.setName(Helpers.StringToBytes(regionName));
+		request.NameData.setName(Helpers.stringToBytes(regionName));
 
-		_Client.Network.sendPacket(request);
+		client.network.sendPacket(request);
 	}
 
 	/**
@@ -254,12 +254,12 @@ public class GridManager implements PacketCallback {
 	 * @param returnNonExistent
 	 * @throws Exception
 	 */
-	public final void RequestMapBlocks(GridLayerType layer, int minX, int minY, int maxX, int maxY,
+	public final void requestMapBlocks(GridLayerType layer, int minX, int minY, int maxX, int maxY,
 			boolean returnNonExistent) throws Exception {
 		MapBlockRequestPacket request = new MapBlockRequestPacket();
 
-		request.AgentData.AgentID = _Client.Self.getAgentID();
-		request.AgentData.SessionID = _Client.Self.getSessionID();
+		request.AgentData.AgentID = client.agent.getAgentID();
+		request.AgentData.SessionID = client.agent.getSessionID();
 		request.AgentData.Flags = layer.ordinal();
 		request.AgentData.Flags |= returnNonExistent ? 0x10000 : 0;
 		request.AgentData.EstateID = 0; // Filled in at the simulator
@@ -270,20 +270,20 @@ public class GridManager implements PacketCallback {
 		request.PositionData.MaxX = (short) (maxX & 0xFFFF);
 		request.PositionData.MaxY = (short) (maxY & 0xFFFF);
 
-		_Client.Network.sendPacket(request);
+		client.network.sendPacket(request);
 	}
 
 	// Fire off packet for Estate/Island sim data request.
-	public void RequestMapLayerOld() throws Exception {
+	public void requestMapLayerOld() throws Exception {
 		MapLayerRequestPacket request = new MapLayerRequestPacket();
 
-		request.AgentData.AgentID = _Client.Self.getAgentID();
-		request.AgentData.SessionID = _Client.Self.getSessionID();
+		request.AgentData.AgentID = client.agent.getAgentID();
+		request.AgentData.SessionID = client.agent.getSessionID();
 		request.AgentData.Flags = 0;
 		request.AgentData.EstateID = 0;
 		request.AgentData.Godlike = false;
 
-		_Client.Network.sendPacket(request);
+		client.network.sendPacket(request);
 	}
 
 	/**
@@ -296,9 +296,9 @@ public class GridManager implements PacketCallback {
 	 * @throws Exception
 	 * @returns
 	 */
-	public List<MapItem> MapItems(long regionHandle, GridItemType item, GridLayerType layer, int timeoutMS)
+	public List<MapItem> mapItems(long regionHandle, GridItemType item, GridLayerType layer, int timeoutMS)
 			throws Exception {
-		final TimeoutEvent<List<MapItem>> itemsEvent = new TimeoutEvent<List<MapItem>>();
+		final TimeoutEvent<List<MapItem>> itemsEvent = new TimeoutEvent<>();
 
 		class GridItemsCallback implements Callback<GridItemsCallbackArgs> {
 			public boolean callback(GridItemsCallbackArgs args) {
@@ -310,12 +310,12 @@ public class GridManager implements PacketCallback {
 		}
 
 		Callback<GridItemsCallbackArgs> callback = new GridItemsCallback();
-		OnGridItems.add(callback);
+		onGridItems.add(callback);
 
-		RequestMapItems(regionHandle, item, layer);
+		requestMapItems(regionHandle, item, layer);
 		List<MapItem> itemList = itemsEvent.waitOne(timeoutMS);
 
-		OnGridItems.remove(callback);
+		onGridItems.remove(callback);
 
 		return itemList;
 	}
@@ -328,10 +328,10 @@ public class GridManager implements PacketCallback {
 	 * @param layer
 	 * @throws Exception
 	 */
-	public final void RequestMapItems(long regionHandle, GridItemType item, GridLayerType layer) throws Exception {
+	public final void requestMapItems(long regionHandle, GridItemType item, GridLayerType layer) throws Exception {
 		MapItemRequestPacket request = new MapItemRequestPacket();
-		request.AgentData.AgentID = _Client.Self.getAgentID();
-		request.AgentData.SessionID = _Client.Self.getSessionID();
+		request.AgentData.AgentID = client.agent.getAgentID();
+		request.AgentData.SessionID = client.agent.getSessionID();
 		request.AgentData.Flags = layer.ordinal();
 		request.AgentData.Godlike = false; // Filled in on the sim
 		request.AgentData.EstateID = 0; // Filled in on the sim
@@ -339,12 +339,12 @@ public class GridManager implements PacketCallback {
 		request.RequestData.ItemType = item.ordinal();
 		request.RequestData.RegionHandle = regionHandle;
 
-		_Client.Network.sendPacket(request);
+		client.network.sendPacket(request);
 	}
 
 	/* Request data for all mainland (Linden managed) simulators */
-	public final void RequestMainlandSims(GridLayerType layer) throws Exception {
-		RequestMapBlocks(layer, 0, 0, 65535, 65535, false);
+	public final void requestMainlandSims(GridLayerType layer) throws Exception {
+		requestMapBlocks(layer, 0, 0, 65535, 65535, false);
 	}
 
 	/**
@@ -354,10 +354,10 @@ public class GridManager implements PacketCallback {
 	 *            UUID of the region to look up
 	 * @throws Exception
 	 */
-	public final void RequestRegionHandle(UUID regionID) throws Exception {
+	public final void requestRegionHandle(UUID regionID) throws Exception {
 		RegionHandleRequestPacket request = new RegionHandleRequestPacket();
 		request.RegionID = regionID;
-		_Client.Network.sendPacket(request);
+		client.network.sendPacket(request);
 	}
 
 	/**
@@ -373,13 +373,13 @@ public class GridManager implements PacketCallback {
 	 *         null
 	 * @throws Exception
 	 */
-	public final GridRegion GetGridRegion(String name, GridLayerType type) throws Exception {
+	public final GridRegion getGridRegion(String name, GridLayerType type) throws Exception {
 		if (name == null || name.isEmpty()) {
 			logger.error("GetGridRegion called with a null or empty region name");
 			return null;
 		}
 
-		GridRegion region = Regions.get(name);
+		GridRegion region = regions.get(name);
 		if (region != null) {
 			return region;
 		}
@@ -403,33 +403,33 @@ public class GridManager implements PacketCallback {
 		}
 
 		Callback<GridRegionCallbackArgs> callback = new OnGridRegionCallback(name);
-		OnGridRegion.add(callback);
-		RequestMapRegion(name, type);
+		onGridRegion.add(callback);
+		requestMapRegion(name, type);
 		synchronized (name) {
-			name.wait(_Client.Settings.MAP_REQUEST_TIMEOUT);
+			name.wait(client.settings.MAP_REQUEST_TIMEOUT);
 		}
-		OnGridRegion.remove(callback);
+		onGridRegion.remove(callback);
 
-		region = Regions.get(name);
+		region = regions.get(name);
 		if (region == null) {
 			logger.warn("Couldn't find region " + name);
 		}
 		return region;
 	}
 
-	public void BeginGetGridRegion(String name, GridLayerType type, Callback<GridRegionCallbackArgs> grc)
+	public void beginGetGridRegion(String name, GridLayerType type, Callback<GridRegionCallbackArgs> grc)
 			throws Exception {
-		GridRegion region = Regions.get(name);
+		GridRegion region = regions.get(name);
 		if (region != null) {
 			grc.callback(new GridRegionCallbackArgs(region));
 		} else {
-			OnGridRegion.add(grc);
-			RequestMapRegion(name, type);
+			onGridRegion.add(grc);
+			requestMapRegion(name, type);
 		}
 	}
 
-	public void RemoveGridRegionCallback(Callback<GridRegionCallbackArgs> grc) {
-		OnGridRegion.remove(grc);
+	public void removeGridRegionCallback(Callback<GridRegionCallbackArgs> grc) {
+		onGridRegion.remove(grc);
 	}
 
 	/**
@@ -440,10 +440,10 @@ public class GridManager implements PacketCallback {
 	 * @param packet
 	 *            The packet data
 	 */
-	private void HandleMapLayerReply(Packet packet, Simulator simulator) throws Exception {
+	private void handleMapLayerReply(Packet packet, Simulator simulator) throws Exception {
 		MapLayerReplyPacket map = (MapLayerReplyPacket) packet;
 
-		if (OnGridLayer.count() > 0) {
+		if (onGridLayer.count() > 0) {
 			for (int i = 0; i < map.LayerData.length; i++) {
 				GridLayer layer = new GridLayer();
 				;
@@ -453,7 +453,7 @@ public class GridManager implements PacketCallback {
 				layer.right = map.LayerData[i].Right;
 				layer.imageID = map.LayerData[i].ImageID;
 
-				OnGridLayer.dispatch(new GridLayerCallbackArgs(layer));
+				onGridLayer.dispatch(new GridLayerCallbackArgs(layer));
 			}
 		}
 	}
@@ -466,7 +466,7 @@ public class GridManager implements PacketCallback {
 	 * @param packet
 	 *            The packet data
 	 */
-	private void HandleMapBlockReply(Packet packet, Simulator simulator) throws Exception {
+	private void handleMapBlockReply(Packet packet, Simulator simulator) throws Exception {
 		MapBlockReplyPacket map = (MapBlockReplyPacket) packet;
 
 		for (MapBlockReplyPacket.DataBlock block : map.Data) {
@@ -484,14 +484,14 @@ public class GridManager implements PacketCallback {
 				region.mapImageID = block.MapImageID;
 				region.regionHandle = Helpers.IntsToLong(region.x * 256, region.y * 256);
 
-				synchronized (Regions) {
+				synchronized (regions) {
 					if (region.name != null)
-						Regions.put(region.name, region);
-					RegionsByHandle.put(region.regionHandle, region);
+						regions.put(region.name, region);
+					regionsByHandle.put(region.regionHandle, region);
 				}
 
-				if (OnGridRegion.count() > 0) {
-					OnGridRegion.dispatch(new GridRegionCallbackArgs(region));
+				if (onGridRegion.count() > 0) {
+					onGridRegion.dispatch(new GridRegionCallbackArgs(region));
 				}
 			}
 		}
@@ -506,8 +506,8 @@ public class GridManager implements PacketCallback {
 	 *            The packet data
 	 * @throws Exception
 	 */
-	private void HandleMapItemReply(Packet packet, Simulator simulator) throws Exception {
-		if (OnGridItems.count() > 0) {
+	private void handleMapItemReply(Packet packet, Simulator simulator) throws Exception {
+		if (onGridItems.count() > 0) {
 			MapItemReplyPacket reply = (MapItemReplyPacket) packet;
 			GridItemType type = GridItemType.convert(reply.ItemType);
 			ArrayList<MapItem> items = new ArrayList<MapItem>();
@@ -541,18 +541,18 @@ public class GridManager implements PacketCallback {
 					break;
 				case Classified:
 					// DEPRECATED: not used anymore
-					logger.error(GridClient.Log("FIXME: Classified MapItem", _Client));
+					logger.error(GridClient.Log("FIXME: Classified MapItem", client));
 					break;
 				case Popular:
 					// FIXME:
-					logger.error(GridClient.Log("FIXME: Popular MapItem", _Client));
+					logger.error(GridClient.Log("FIXME: Popular MapItem", client));
 					break;
 				default:
-					logger.warn(GridClient.Log("Unknown map item type " + type, _Client));
+					logger.warn(GridClient.Log("Unknown map item type " + type, client));
 					break;
 				}
 			}
-			OnGridItems.dispatch(new GridItemsCallbackArgs(type, items));
+			onGridItems.dispatch(new GridItemsCallbackArgs(type, items));
 		}
 	}
 
@@ -562,7 +562,7 @@ public class GridManager implements PacketCallback {
 	 * @param packet
 	 * @param simulator
 	 */
-	private final void HandleSimulatorViewerTimeMessage(Packet packet, Simulator simulator) {
+	private final void handleSimulatorViewerTimeMessage(Packet packet, Simulator simulator) {
 		SimulatorViewerTimeMessagePacket time = (SimulatorViewerTimeMessagePacket) packet;
 
 		sunPhase = time.TimeInfo.SunPhase;
@@ -584,7 +584,7 @@ public class GridManager implements PacketCallback {
 	 * @param packet
 	 *            The packet data
 	 */
-	private final void HandleCoarseLocation(Packet packet, Simulator sim) {
+	private final void handleCoarseLocation(Packet packet, Simulator sim) {
 		CoarseLocationUpdatePacket coarse = (CoarseLocationUpdatePacket) packet;
 		SimulatorManager simulator = (SimulatorManager) sim;
 
@@ -602,9 +602,9 @@ public class GridManager implements PacketCallback {
 			}
 		}
 
-		HashMap<UUID, Vector3> positions;
-		ArrayList<UUID> removedEntries = new ArrayList<UUID>();
-		ArrayList<UUID> newEntries = new ArrayList<UUID>();
+		Map<UUID, Vector3> positions;
+		List<UUID> removedEntries = new ArrayList<>();
+		List<UUID> newEntries = new ArrayList<>();
 
 		synchronized (positions = simulator.getAvatarPositions()) {
 			// find stale entries (people who left the sim)
@@ -627,8 +627,8 @@ public class GridManager implements PacketCallback {
 			}
 		}
 
-		if (OnCoarseLocationUpdate != null) {
-			OnCoarseLocationUpdate
+		if (onCoarseLocationUpdate != null) {
+			onCoarseLocationUpdate
 					.dispatch(new CoarseLocationUpdateCallbackArgs(simulator, newEntries, removedEntries));
 		}
 	}
@@ -641,10 +641,10 @@ public class GridManager implements PacketCallback {
 	 * @param packet
 	 *            The packet data
 	 */
-	private final void HandleRegionHandleReply(Packet packet, Simulator simulator) {
-		if (OnRegionHandleReply != null) {
+	private final void handleRegionHandleReply(Packet packet, Simulator simulator) {
+		if (onRegionHandleReply != null) {
 			RegionIDAndHandleReplyPacket reply = (RegionIDAndHandleReplyPacket) packet;
-			OnRegionHandleReply.dispatch(
+			onRegionHandleReply.dispatch(
 					new RegionHandleReplyCallbackArgs(reply.ReplyBlock.RegionID, reply.ReplyBlock.RegionHandle));
 		}
 	}

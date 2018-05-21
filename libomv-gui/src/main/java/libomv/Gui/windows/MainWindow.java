@@ -184,13 +184,13 @@ public class MainWindow extends JFrame implements MainControl {
 			PreferenceWindow pref = new PreferenceWindow(this);
 			pref.setVisible(true);
 		} else if (action.equals(MainControl.cmdQuit)) {
-			if (_Client.Network.getConnected()) {
+			if (_Client.network.getConnected()) {
 				int confirm = JOptionPane.showOptionDialog(MainWindow.this,
 						"Are You sure you want to Logout from the network and close this Application?",
 						"Quit Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
 				if (confirm == JOptionPane.YES_OPTION) {
 					try {
-						_Client.Network.Logout();
+						_Client.network.logout();
 					} catch (Exception ex) {
 						logger.error(GridClient.Log("Response to teleportation invite failed", _Client), ex);
 					}

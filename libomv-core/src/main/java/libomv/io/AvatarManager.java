@@ -36,6 +36,8 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.nio.reactor.IOReactorException;
@@ -95,90 +97,90 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 
 	static final int MAX_UUIDS_PER_PACKET = 100;
 
-	private GridClient _Client;
+	private GridClient client;
 
 	/* HashMap containing all known avatars to this client */
-	private HashMap<UUID, Avatar> _Avatars;
+	private Map<UUID, Avatar> avatars;
 
-	public CallbackHandler<AgentNamesCallbackArgs> OnAgentNames = new CallbackHandler<AgentNamesCallbackArgs>();
+	public CallbackHandler<AgentNamesCallbackArgs> onAgentNames = new CallbackHandler<>();
 
-	public CallbackHandler<DisplayNameUpdateCallbackArgs> OnDisplayNameUpdate = new CallbackHandler<DisplayNameUpdateCallbackArgs>();
+	public CallbackHandler<DisplayNameUpdateCallbackArgs> onDisplayNameUpdate = new CallbackHandler<>();
 
-	public CallbackHandler<AvatarAnimationCallbackArgs> OnAvatarAnimation = new CallbackHandler<AvatarAnimationCallbackArgs>();
+	public CallbackHandler<AvatarAnimationCallbackArgs> onAvatarAnimation = new CallbackHandler<>();
 
-	public CallbackHandler<AvatarAppearanceCallbackArgs> OnAvatarAppearance = new CallbackHandler<AvatarAppearanceCallbackArgs>();
+	public CallbackHandler<AvatarAppearanceCallbackArgs> onAvatarAppearance = new CallbackHandler<>();
 
-	public CallbackHandler<AvatarInterestsReplyCallbackArgs> OnAvatarInterestsReply = new CallbackHandler<AvatarInterestsReplyCallbackArgs>();
+	public CallbackHandler<AvatarInterestsReplyCallbackArgs> onAvatarInterestsReply = new CallbackHandler<>();
 
-	public CallbackHandler<AvatarPropertiesReplyCallbackArgs> OnAvatarPropertiesReply = new CallbackHandler<AvatarPropertiesReplyCallbackArgs>();
+	public CallbackHandler<AvatarPropertiesReplyCallbackArgs> onAvatarPropertiesReply = new CallbackHandler<>();
 
-	public CallbackHandler<AvatarGroupsReplyCallbackArgs> OnAvatarGroupsReply = new CallbackHandler<AvatarGroupsReplyCallbackArgs>();
+	public CallbackHandler<AvatarGroupsReplyCallbackArgs> onAvatarGroupsReply = new CallbackHandler<>();
 
-	public CallbackHandler<AvatarPickerReplyCallbackArgs> OnAvatarPickerReply = new CallbackHandler<AvatarPickerReplyCallbackArgs>();
+	public CallbackHandler<AvatarPickerReplyCallbackArgs> onAvatarPickerReply = new CallbackHandler<>();
 
-	public CallbackHandler<ViewerEffectCallbackArgs> OnViewerEffect = new CallbackHandler<ViewerEffectCallbackArgs>();
+	public CallbackHandler<ViewerEffectCallbackArgs> onViewerEffect = new CallbackHandler<>();
 
 	public AvatarManager(GridClient client) {
-		_Client = client;
-		_Avatars = new HashMap<UUID, Avatar>();
+		this.client = client;
+		this.avatars = new HashMap<>();
 
 		// Avatar appearance callback
-		_Client.Network.RegisterCallback(PacketType.AvatarAppearance, this);
+		this.client.network.registerCallback(PacketType.AvatarAppearance, this);
 
 		// Avatar profile callbacks
-		_Client.Network.RegisterCallback(PacketType.AvatarPropertiesReply, this);
+		this.client.network.registerCallback(PacketType.AvatarPropertiesReply, this);
 		// Client.Network.RegisterCallback(PacketType.AvatarStatisticsReply, this);
-		_Client.Network.RegisterCallback(PacketType.AvatarInterestsReply, this);
+		this.client.network.registerCallback(PacketType.AvatarInterestsReply, this);
 
 		// Avatar group callback
-		_Client.Network.RegisterCallback(PacketType.AvatarGroupsReply, this);
-		_Client.Network.RegisterCallback(CapsEventType.AgentGroupDataUpdate, this);
-		_Client.Network.RegisterCallback(CapsEventType.AvatarGroupsReply, this);
+		this.client.network.registerCallback(PacketType.AvatarGroupsReply, this);
+		this.client.network.registerCallback(CapsEventType.AgentGroupDataUpdate, this);
+		this.client.network.registerCallback(CapsEventType.AvatarGroupsReply, this);
 
 		// Viewer effect callback
-		_Client.Network.RegisterCallback(PacketType.ViewerEffect, this);
+		this.client.network.registerCallback(PacketType.ViewerEffect, this);
 
 		// Other callbacks
-		_Client.Network.RegisterCallback(PacketType.UUIDNameReply, this);
-		_Client.Network.RegisterCallback(PacketType.AvatarPickerReply, this);
-		_Client.Network.RegisterCallback(PacketType.AvatarAnimation, this);
-		_Client.Network.RegisterCallback(CapsEventType.DisplayNameUpdate, this);
+		this.client.network.registerCallback(PacketType.UUIDNameReply, this);
+		this.client.network.registerCallback(PacketType.AvatarPickerReply, this);
+		this.client.network.registerCallback(PacketType.AvatarAnimation, this);
+		this.client.network.registerCallback(CapsEventType.DisplayNameUpdate, this);
 
 		// Picks callbacks
-		_Client.Network.RegisterCallback(PacketType.AvatarPicksReply, this);
-		_Client.Network.RegisterCallback(PacketType.PickInfoReply, this);
+		this.client.network.registerCallback(PacketType.AvatarPicksReply, this);
+		this.client.network.registerCallback(PacketType.PickInfoReply, this);
 
 		// Classifieds callbacks
-		_Client.Network.RegisterCallback(PacketType.AvatarClassifiedReply, this);
-		_Client.Network.RegisterCallback(PacketType.ClassifiedInfoReply, this);
+		this.client.network.registerCallback(PacketType.AvatarClassifiedReply, this);
+		this.client.network.registerCallback(PacketType.ClassifiedInfoReply, this);
 	}
 
 	@Override
 	public void packetCallback(Packet packet, Simulator simulator) throws Exception {
 		switch (packet.getType()) {
 		case AvatarAppearance:
-			HandleAvatarAppearance(packet, simulator);
+			handleAvatarAppearance(packet, simulator);
 			break;
 		case AvatarPropertiesReply:
-			HandleAvatarProperties(packet, simulator);
+			handleAvatarProperties(packet, simulator);
 			break;
 		case AvatarInterestsReply:
-			HandleAvatarInterests(packet, simulator);
+			handleAvatarInterests(packet, simulator);
 			break;
 		case AvatarGroupsReply:
-			HandleAvatarGroupsReply(packet, simulator);
+			handleAvatarGroupsReply(packet, simulator);
 			break;
 		case ViewerEffect:
-			HandleViewerEffect(packet, simulator);
+			handleViewerEffect(packet, simulator);
 			break;
 		case UUIDNameReply:
-			HandleUUIDNameReply(packet, simulator);
+			handleUUIDNameReply(packet, simulator);
 			break;
 		case AvatarPickerReply:
-			HandleAvatarPickerReply(packet, simulator);
+			handleAvatarPickerReply(packet, simulator);
 			break;
 		case AvatarAnimation:
-			HandleAvatarAnimation(packet, simulator);
+			handleAvatarAnimation(packet, simulator);
 			break;
 		// case AvatarPicksReply:
 		// // HandleAvatarPicksReply(packet, simulator);
@@ -193,7 +195,7 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 		// // HandleClassifiedInfoReply(packet, simulator);
 		// break;
 		default:
-			logger.warn(GridClient.Log("AvatarManager: Unhandled packet" + packet.getType().toString(), _Client));
+			logger.warn(GridClient.Log("AvatarManager: Unhandled packet" + packet.getType().toString(), client));
 		}
 	}
 
@@ -201,14 +203,14 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 	public void capsCallback(IMessage message, SimulatorManager simulator) {
 		switch (message.getType()) {
 		case DisplayNameUpdate:
-			HandleDisplayNameUpdate(message, simulator);
+			handleDisplayNameUpdate(message, simulator);
 			break;
 		case AgentGroupDataUpdate:
 		case AvatarGroupsReply:
-			HandleAvatarGroupsReply(message, simulator);
+			handleAvatarGroupsReply(message, simulator);
 			break;
 		default:
-			logger.warn(GridClient.Log("AvatarManager: Unhandled message " + message.getType().toString(), _Client));
+			logger.warn(GridClient.Log("AvatarManager: Unhandled message " + message.getType().toString(), client));
 		}
 	}
 
@@ -219,14 +221,14 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 	 *            Filled-out Avatar class to insert
 	 */
 	public void add(Avatar avatar) {
-		synchronized (_Avatars) {
-			_Avatars.put(avatar.id, avatar);
+		synchronized (avatars) {
+			avatars.put(avatar.id, avatar);
 		}
 	}
 
 	public boolean contains(UUID id) {
-		synchronized (_Avatars) {
-			return _Avatars.containsKey(id);
+		synchronized (avatars) {
+			return avatars.containsKey(id);
 		}
 	}
 
@@ -238,9 +240,9 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 	 *            The uuid of the avatar to get the name for
 	 * @return The avatar name, or an empty String if it's not found
 	 */
-	public String LocalAvatarNameLookup(UUID id) {
-		synchronized (_Avatars) {
-			Avatar avatar = _Avatars.get(id);
+	public String localAvatarNameLookup(UUID id) {
+		synchronized (avatars) {
+			Avatar avatar = avatars.get(id);
 			if (avatar != null)
 				return avatar.getName();
 		}
@@ -257,9 +259,9 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 	 * @throws IOReactorException
 	 * @throws URISyntaxException
 	 */
-	public void GetDisplayNames(ArrayList<UUID> ids, final Callback<DisplayNamesCallbackArgs> callback)
+	public void getDisplayNames(List<UUID> ids, final Callback<DisplayNamesCallbackArgs> callback)
 			throws IOReactorException, URISyntaxException {
-		URI uri = _Client.Network.getCapabilityURI(CapsEventType.GetDisplayNames.toString());
+		URI uri = client.network.getCapabilityURI(CapsEventType.GetDisplayNames.toString());
 		if (uri == null || ids.size() == 0) {
 			callback.callback(new DisplayNamesCallbackArgs(false, null, null));
 		}
@@ -275,7 +277,7 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 		class DisplayCapsCallback implements FutureCallback<OSD> {
 			@Override
 			public void completed(OSD result) {
-				GetDisplayNamesMessage msg = _Client.Messages.new GetDisplayNamesMessage();
+				GetDisplayNamesMessage msg = client.messages.new GetDisplayNamesMessage();
 				msg.deserialize((OSDMap) result);
 				callback.callback(new DisplayNamesCallbackArgs(true, msg.agents, msg.badIDs));
 			}
@@ -290,9 +292,9 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 				callback.callback(new DisplayNamesCallbackArgs(false, null, null));
 			}
 		}
-		CapsClient cap = new CapsClient(_Client, CapsEventType.GetDisplayNames.toString());
+		CapsClient cap = new CapsClient(client, CapsEventType.GetDisplayNames.toString());
 		cap.executeHttpGet(new URI(uri.toString() + "/?" + query), null, new DisplayCapsCallback(),
-				_Client.Settings.CAPS_TIMEOUT);
+				client.settings.CAPS_TIMEOUT);
 	}
 
 	/**
@@ -302,12 +304,12 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 	 *            Avatar ID to track
 	 * @throws Exception
 	 */
-	public void RequestTrackAgent(UUID preyID) throws Exception {
+	public void requestTrackAgent(UUID preyID) throws Exception {
 		TrackAgentPacket p = new TrackAgentPacket();
-		p.AgentData.AgentID = _Client.Self.getAgentID();
-		p.AgentData.SessionID = _Client.Self.getSessionID();
+		p.AgentData.AgentID = client.agent.getAgentID();
+		p.AgentData.SessionID = client.agent.getSessionID();
 		p.PreyID = preyID;
-		_Client.Network.sendPacket(p);
+		client.network.sendPacket(p);
 	}
 
 	/**
@@ -316,14 +318,14 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 	 * @param avatarid
 	 * @throws Exception
 	 */
-	public void RequestAvatarProperties(UUID avatarid) throws Exception {
+	public void requestAvatarProperties(UUID avatarid) throws Exception {
 		AvatarPropertiesRequestPacket aprp = new AvatarPropertiesRequestPacket();
 
-		aprp.AgentData.AgentID = _Client.Self.getAgentID();
-		aprp.AgentData.SessionID = _Client.Self.getSessionID();
+		aprp.AgentData.AgentID = client.agent.getAgentID();
+		aprp.AgentData.SessionID = client.agent.getSessionID();
 		aprp.AgentData.AvatarID = avatarid;
 
-		_Client.Network.sendPacket(aprp);
+		client.network.sendPacket(aprp);
 	}
 
 	/**
@@ -335,15 +337,15 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 	 *            An ID to associate with this query
 	 * @throws Exception
 	 */
-	public void RequestAvatarNameSearch(String name, UUID queryID) throws Exception {
+	public void requestAvatarNameSearch(String name, UUID queryID) throws Exception {
 		AvatarPickerRequestPacket aprp = new AvatarPickerRequestPacket();
 
-		aprp.AgentData.AgentID = _Client.Self.getAgentID();
-		aprp.AgentData.SessionID = _Client.Self.getSessionID();
+		aprp.AgentData.AgentID = client.agent.getAgentID();
+		aprp.AgentData.SessionID = client.agent.getSessionID();
 		aprp.AgentData.QueryID = queryID;
-		aprp.Data.setName(Helpers.StringToBytes(name));
+		aprp.Data.setName(Helpers.stringToBytes(name));
 
-		_Client.Network.sendPacket(aprp);
+		client.network.sendPacket(aprp);
 	}
 
 	/**
@@ -353,20 +355,20 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 	 *            UUID of the avatar
 	 * @throws Exception
 	 */
-	public void RequestAvatarPicks(UUID avatarid) throws Exception {
+	public void requestAvatarPicks(UUID avatarid) throws Exception {
 		GenericMessagePacket gmp = new GenericMessagePacket();
 
-		gmp.AgentData.AgentID = _Client.Self.getAgentID();
-		gmp.AgentData.SessionID = _Client.Self.getSessionID();
+		gmp.AgentData.AgentID = client.agent.getAgentID();
+		gmp.AgentData.SessionID = client.agent.getSessionID();
 		gmp.AgentData.TransactionID = UUID.Zero;
 
-		gmp.MethodData.setMethod(Helpers.StringToBytes("avatarpicksrequest"));
+		gmp.MethodData.setMethod(Helpers.stringToBytes("avatarpicksrequest"));
 		gmp.MethodData.Invoice = UUID.Zero;
 		gmp.ParamList = new GenericMessagePacket.ParamListBlock[1];
 		gmp.ParamList[0] = gmp.new ParamListBlock();
-		gmp.ParamList[0].setParameter(Helpers.StringToBytes(avatarid.toString()));
+		gmp.ParamList[0].setParameter(Helpers.stringToBytes(avatarid.toString()));
 
-		_Client.Network.sendPacket(gmp);
+		client.network.sendPacket(gmp);
 	}
 
 	/**
@@ -376,20 +378,20 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 	 *            UUID of the avatar
 	 * @throws Exception
 	 */
-	public void RequestAvatarClassified(UUID avatarid) throws Exception {
+	public void requestAvatarClassified(UUID avatarid) throws Exception {
 		GenericMessagePacket gmp = new GenericMessagePacket();
 
-		gmp.AgentData.AgentID = _Client.Self.getAgentID();
-		gmp.AgentData.SessionID = _Client.Self.getSessionID();
+		gmp.AgentData.AgentID = client.agent.getAgentID();
+		gmp.AgentData.SessionID = client.agent.getSessionID();
 		gmp.AgentData.TransactionID = UUID.Zero;
 
-		gmp.MethodData.setMethod(Helpers.StringToBytes("avatarclassifiedsrequest"));
+		gmp.MethodData.setMethod(Helpers.stringToBytes("avatarclassifiedsrequest"));
 		gmp.MethodData.Invoice = UUID.Zero;
 		gmp.ParamList = new GenericMessagePacket.ParamListBlock[1];
 		gmp.ParamList[0] = gmp.new ParamListBlock();
-		gmp.ParamList[0].setParameter(Helpers.StringToBytes(avatarid.toString()));
+		gmp.ParamList[0].setParameter(Helpers.stringToBytes(avatarid.toString()));
 
-		_Client.Network.sendPacket(gmp);
+		client.network.sendPacket(gmp);
 	}
 
 	/**
@@ -401,22 +403,22 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 	 *            UUID of the profile pick
 	 * @throws Exception
 	 */
-	public void RequestPickInfo(UUID avatarid, UUID pickid) throws Exception {
+	public void requestPickInfo(UUID avatarid, UUID pickid) throws Exception {
 		GenericMessagePacket gmp = new GenericMessagePacket();
 
-		gmp.AgentData.AgentID = _Client.Self.getAgentID();
-		gmp.AgentData.SessionID = _Client.Self.getSessionID();
+		gmp.AgentData.AgentID = client.agent.getAgentID();
+		gmp.AgentData.SessionID = client.agent.getSessionID();
 		gmp.AgentData.TransactionID = UUID.Zero;
 
-		gmp.MethodData.setMethod(Helpers.StringToBytes("pickinforequest"));
+		gmp.MethodData.setMethod(Helpers.stringToBytes("pickinforequest"));
 		gmp.MethodData.Invoice = UUID.Zero;
 		gmp.ParamList = new GenericMessagePacket.ParamListBlock[2];
 		gmp.ParamList[0] = gmp.new ParamListBlock();
-		gmp.ParamList[0].setParameter(Helpers.StringToBytes(avatarid.toString()));
+		gmp.ParamList[0].setParameter(Helpers.stringToBytes(avatarid.toString()));
 		gmp.ParamList[1] = gmp.new ParamListBlock();
-		gmp.ParamList[1].setParameter(Helpers.StringToBytes(pickid.toString()));
+		gmp.ParamList[1].setParameter(Helpers.stringToBytes(pickid.toString()));
 
-		_Client.Network.sendPacket(gmp);
+		client.network.sendPacket(gmp);
 	}
 
 	/**
@@ -428,22 +430,22 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 	 *            of the profile classified
 	 * @throws Exception
 	 */
-	public void RequestClassifiedInfo(UUID avatarid, UUID classifiedid) throws Exception {
+	public void requestClassifiedInfo(UUID avatarid, UUID classifiedid) throws Exception {
 		GenericMessagePacket gmp = new GenericMessagePacket();
 
-		gmp.AgentData.AgentID = _Client.Self.getAgentID();
-		gmp.AgentData.SessionID = _Client.Self.getSessionID();
+		gmp.AgentData.AgentID = client.agent.getAgentID();
+		gmp.AgentData.SessionID = client.agent.getSessionID();
 		gmp.AgentData.TransactionID = UUID.Zero;
 
-		gmp.MethodData.setMethod(Helpers.StringToBytes("classifiedinforequest"));
+		gmp.MethodData.setMethod(Helpers.stringToBytes("classifiedinforequest"));
 		gmp.MethodData.Invoice = UUID.Zero;
 		gmp.ParamList = new GenericMessagePacket.ParamListBlock[2];
 		gmp.ParamList[0] = gmp.new ParamListBlock();
-		gmp.ParamList[0].setParameter(Helpers.StringToBytes(avatarid.toString()));
+		gmp.ParamList[0].setParameter(Helpers.stringToBytes(avatarid.toString()));
 		gmp.ParamList[1] = gmp.new ParamListBlock();
-		gmp.ParamList[1].setParameter(Helpers.StringToBytes(classifiedid.toString()));
+		gmp.ParamList[1].setParameter(Helpers.stringToBytes(classifiedid.toString()));
 
-		_Client.Network.sendPacket(gmp);
+		client.network.sendPacket(gmp);
 	}
 
 	/**
@@ -455,25 +457,25 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 	 *            A callback being called when a name request is answered
 	 * @throws Exception
 	 */
-	public void RequestAvatarName(UUID id, Callback<AgentNamesCallbackArgs> anc) throws Exception {
-		synchronized (_Avatars) {
+	public void requestAvatarName(UUID id, Callback<AgentNamesCallbackArgs> anc) throws Exception {
+		synchronized (avatars) {
 			// Fire callbacks for the ones we already have cached
-			if (_Avatars.containsKey(id)) {
+			if (avatars.containsKey(id)) {
 				HashMap<UUID, String> map = new HashMap<UUID, String>(1);
-				map.put(id, _Avatars.get(id).getName());
+				map.put(id, avatars.get(id).getName());
 				anc.callback(new AgentNamesCallbackArgs(map));
 				return;
 			}
 		}
 
 		if (anc != null) {
-			OnAgentNames.add(anc, true);
+			onAgentNames.add(anc, true);
 		}
 
 		UUIDNameRequestPacket request = new UUIDNameRequestPacket();
 		request.ID = new UUID[1];
 		request.ID[0] = id;
-		_Client.Network.sendPacket(request);
+		client.network.sendPacket(request);
 	}
 
 	/**
@@ -485,16 +487,16 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 	 *            A callback being called when a name request is answered
 	 * @throws Exception
 	 */
-	public void RequestAvatarNames(ArrayList<UUID> ids, Callback<AgentNamesCallbackArgs> anc) throws Exception {
-		HashMap<UUID, String> havenames = new HashMap<UUID, String>();
-		ArrayList<UUID> neednames = new ArrayList<UUID>();
+	public void requestAvatarNames(List<UUID> ids, Callback<AgentNamesCallbackArgs> anc) throws Exception {
+		Map<UUID, String> havenames = new HashMap<>();
+		List<UUID> neednames = new ArrayList<>();
 
-		synchronized (_Avatars) {
+		synchronized (avatars) {
 			Iterator<UUID> iter = ids.listIterator();
 			while (iter.hasNext()) {
 				UUID id = iter.next();
-				if (_Avatars.containsKey(id)) {
-					havenames.put(id, _Avatars.get(id).getName());
+				if (avatars.containsKey(id)) {
+					havenames.put(id, avatars.get(id).getName());
 				} else {
 					neednames.add(id);
 				}
@@ -506,13 +508,13 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 			if (anc != null) {
 				anc.callback(new AgentNamesCallbackArgs(havenames));
 			} else {
-				OnAgentNames.dispatch(new AgentNamesCallbackArgs(havenames));
+				onAgentNames.dispatch(new AgentNamesCallbackArgs(havenames));
 			}
 		}
 
 		if (neednames.size() > 0) {
 			if (anc != null) {
-				OnAgentNames.add(anc, true);
+				onAgentNames.add(anc, true);
 			}
 
 			int m = MAX_UUIDS_PER_PACKET;
@@ -525,7 +527,7 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 				for (; i < neednames.size(); i++) {
 					request.ID[i % m] = neednames.get(i);
 				}
-				_Client.Network.sendPacket(request);
+				client.network.sendPacket(request);
 			}
 
 			// Get any remaining names after left after the full requests
@@ -534,20 +536,20 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 				for (; i < neednames.size(); i++) {
 					request.ID[i % m] = neednames.get(i);
 				}
-				_Client.Network.sendPacket(request);
+				client.network.sendPacket(request);
 			}
 		}
 	}
 
 	private Avatar findAvatar(Simulator simulator, UUID uuid) {
 		Avatar av = simulator.findAvatar(uuid);
-		synchronized (_Avatars) {
+		synchronized (avatars) {
 			if (av == null) {
-				av = _Avatars.get(uuid);
+				av = avatars.get(uuid);
 			}
 			if (av == null) {
 				av = new Avatar(uuid);
-				_Avatars.put(uuid, av);
+				avatars.put(uuid, av);
 			}
 		}
 		return av;
@@ -562,25 +564,25 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 	 *            Unused
 	 * @throws Exception
 	 */
-	private void HandleUUIDNameReply(Packet packet, Simulator simulator) throws Exception {
+	private void handleUUIDNameReply(Packet packet, Simulator simulator) throws Exception {
 		HashMap<UUID, String> names = new HashMap<UUID, String>();
 		UUIDNameReplyPacket reply = (UUIDNameReplyPacket) packet;
 
-		synchronized (_Avatars) {
+		synchronized (avatars) {
 			for (UUIDNameReplyPacket.UUIDNameBlockBlock block : reply.UUIDNameBlock) {
-				if (!_Avatars.containsKey(block.ID)) {
-					_Avatars.put(block.ID, new Avatar(block.ID));
+				if (!avatars.containsKey(block.ID)) {
+					avatars.put(block.ID, new Avatar(block.ID));
 				}
 
-				_Avatars.get(block.ID).setNames(Helpers.BytesToString(block.getFirstName()),
+				avatars.get(block.ID).setNames(Helpers.BytesToString(block.getFirstName()),
 						Helpers.BytesToString(block.getLastName()));
-				names.put(block.ID, _Avatars.get(block.ID).getName());
+				names.put(block.ID, avatars.get(block.ID).getName());
 			}
 		}
-		OnAgentNames.dispatch(new AgentNamesCallbackArgs(names));
+		onAgentNames.dispatch(new AgentNamesCallbackArgs(names));
 	}
 
-	private void HandleAvatarAnimation(Packet packet, Simulator simulator) throws Exception {
+	private void handleAvatarAnimation(Packet packet, Simulator simulator) throws Exception {
 		AvatarAnimationPacket data = (AvatarAnimationPacket) packet;
 		ArrayList<Animation> signaledAnimations = new ArrayList<Animation>(data.AnimationList.length);
 
@@ -599,11 +601,11 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 			avatar.animations = signaledAnimations;
 		}
 
-		OnAvatarAnimation.dispatch(new AvatarAnimationCallbackArgs(data.ID, signaledAnimations));
+		onAvatarAnimation.dispatch(new AvatarAnimationCallbackArgs(data.ID, signaledAnimations));
 	}
 
-	private void HandleAvatarAppearance(Packet packet, Simulator simulator) throws Exception {
-		if (OnAvatarAppearance.count() > 0 || _Client.Settings.getBool(LibSettings.AVATAR_TRACKING)) {
+	private void handleAvatarAppearance(Packet packet, Simulator simulator) throws Exception {
+		if (onAvatarAppearance.count() > 0 || client.settings.getBool(LibSettings.AVATAR_TRACKING)) {
 			AvatarAppearancePacket appearance = (AvatarAppearancePacket) packet;
 
 			TextureEntry textureEntry = new TextureEntry(appearance.ObjectData.getTextureEntry());
@@ -632,14 +634,14 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 				av.appearanceFlags = appearanceFlags;
 			}
 
-			OnAvatarAppearance.dispatch(new AvatarAppearanceCallbackArgs(simulator, appearance.Sender.ID,
+			onAvatarAppearance.dispatch(new AvatarAppearanceCallbackArgs(simulator, appearance.Sender.ID,
 					appearance.Sender.IsTrial, defaultTexture, faceTextures, appearance.ParamValue, appearanceVersion,
 					COFVersion, appearanceFlags));
 		}
 	}
 
-	private void HandleAvatarProperties(Packet packet, Simulator simulator) throws Exception {
-		if (OnAvatarPropertiesReply.count() > 0) {
+	private void handleAvatarProperties(Packet packet, Simulator simulator) throws Exception {
+		if (onAvatarPropertiesReply.count() > 0) {
 			AvatarPropertiesReplyPacket reply = (AvatarPropertiesReplyPacket) packet;
 			Avatar av = findAvatar(simulator, reply.AgentData.AvatarID);
 			av.profileProperties = av.new AvatarProperties();
@@ -663,12 +665,12 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 			av.profileProperties.flags = ProfileFlags.setValue(reply.PropertiesData.Flags);
 			av.profileProperties.profileURL = Helpers.BytesToString(reply.PropertiesData.getProfileURL());
 
-			OnAvatarPropertiesReply.dispatch(new AvatarPropertiesReplyCallbackArgs(av));
+			onAvatarPropertiesReply.dispatch(new AvatarPropertiesReplyCallbackArgs(av));
 		}
 	}
 
-	private void HandleAvatarInterests(Packet packet, Simulator simulator) throws Exception {
-		if (OnAvatarInterestsReply.count() > 0) {
+	private void handleAvatarInterests(Packet packet, Simulator simulator) throws Exception {
+		if (onAvatarInterestsReply.count() > 0) {
 			AvatarInterestsReplyPacket airp = (AvatarInterestsReplyPacket) packet;
 			Avatar av = findAvatar(simulator, airp.AgentData.AvatarID);
 			av.profileInterests = av.new Interests();
@@ -679,27 +681,27 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 			av.profileInterests.skillsText = Helpers.BytesToString(airp.PropertiesData.getSkillsText());
 			av.profileInterests.languagesText = Helpers.BytesToString(airp.PropertiesData.getLanguagesText());
 
-			OnAvatarInterestsReply.dispatch(new AvatarInterestsReplyCallbackArgs(av));
+			onAvatarInterestsReply.dispatch(new AvatarInterestsReplyCallbackArgs(av));
 		}
 	}
 
 	/**
 	 * EQ Message fired when someone nearby changes their display name
 	 */
-	private void HandleDisplayNameUpdate(IMessage message, SimulatorManager simulator) {
+	private void handleDisplayNameUpdate(IMessage message, SimulatorManager simulator) {
 		DisplayNameUpdateMessage msg = (DisplayNameUpdateMessage) message;
-		synchronized (_Avatars) {
+		synchronized (avatars) {
 			UUID id = msg.displayName.id;
-			if (!_Avatars.containsKey(id)) {
-				_Avatars.put(id, new Avatar(id));
+			if (!avatars.containsKey(id)) {
+				avatars.put(id, new Avatar(id));
 			}
-			_Avatars.get(id).setDisplayName(msg.displayName.displayName);
+			avatars.get(id).setDisplayName(msg.displayName.displayName);
 		}
-		OnDisplayNameUpdate.dispatch(new DisplayNameUpdateCallbackArgs(msg.oldDisplayName, msg.displayName));
+		onDisplayNameUpdate.dispatch(new DisplayNameUpdateCallbackArgs(msg.oldDisplayName, msg.displayName));
 	}
 
-	private void HandleAvatarGroupsReply(IMessage message, SimulatorManager simulator) {
-		if (OnAvatarGroupsReply.count() > 0) {
+	private void handleAvatarGroupsReply(IMessage message, SimulatorManager simulator) {
+		if (onAvatarGroupsReply.count() > 0) {
 			AgentGroupDataUpdateMessage msg = (AgentGroupDataUpdateMessage) message;
 			ArrayList<AvatarGroup> avatarGroups = new ArrayList<AvatarGroup>(msg.groupDataBlock.length);
 			for (int i = 0; i < msg.groupDataBlock.length; i++) {
@@ -715,12 +717,12 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 				avatarGroups.add(avatarGroup);
 			}
 
-			OnAvatarGroupsReply.dispatch(new AvatarGroupsReplyCallbackArgs(msg.agentID, avatarGroups));
+			onAvatarGroupsReply.dispatch(new AvatarGroupsReplyCallbackArgs(msg.agentID, avatarGroups));
 		}
 	}
 
-	private void HandleAvatarGroupsReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
-		if (OnAvatarGroupsReply.count() > 0) {
+	private void handleAvatarGroupsReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
+		if (onAvatarGroupsReply.count() > 0) {
 			AvatarGroupsReplyPacket groups = (AvatarGroupsReplyPacket) packet;
 			ArrayList<AvatarGroup> avatarGroups = new ArrayList<AvatarGroup>(groups.GroupData.length);
 
@@ -737,12 +739,12 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 
 				avatarGroups.add(avatarGroup);
 			}
-			OnAvatarGroupsReply.dispatch(new AvatarGroupsReplyCallbackArgs(groups.AgentData.AvatarID, avatarGroups));
+			onAvatarGroupsReply.dispatch(new AvatarGroupsReplyCallbackArgs(groups.AgentData.AvatarID, avatarGroups));
 		}
 	}
 
-	private void HandleAvatarPickerReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
-		if (OnAvatarPickerReply.count() > 0) {
+	private void handleAvatarPickerReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
+		if (onAvatarPickerReply.count() > 0) {
 			AvatarPickerReplyPacket reply = (AvatarPickerReplyPacket) packet;
 			HashMap<UUID, String> avatars = new HashMap<UUID, String>();
 
@@ -750,14 +752,14 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 				avatars.put(block.AvatarID,
 						Helpers.BytesToString(block.getFirstName()) + " " + Helpers.BytesToString(block.getLastName()));
 			}
-			OnAvatarPickerReply.dispatch(new AvatarPickerReplyCallbackArgs(reply.AgentData.QueryID, avatars));
+			onAvatarPickerReply.dispatch(new AvatarPickerReplyCallbackArgs(reply.AgentData.QueryID, avatars));
 		}
 	}
 
 	/**
 	 * Process an incoming packet and raise the appropriate events</summary>
 	 */
-	private void HandleViewerEffect(Packet packet, Simulator simulator) {
+	private void handleViewerEffect(Packet packet, Simulator simulator) {
 		ViewerEffectPacket effect = (ViewerEffectPacket) packet;
 
 		for (ViewerEffectPacket.EffectBlock block : effect.Effect) {
@@ -776,12 +778,12 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 					UUID sourceAvatar = new UUID(block.getTypeData(), 0);
 					UUID targetObject = new UUID(block.getTypeData(), 16);
 					Vector3d targetPos = new Vector3d(block.getTypeData(), 32);
-					OnViewerEffect.dispatch(new ViewerEffectCallbackArgs(type, simulator, sourceAvatar, targetObject,
+					onViewerEffect.dispatch(new ViewerEffectCallbackArgs(type, simulator, sourceAvatar, targetObject,
 							targetPos, (byte) 0, block.Duration, block.ID));
 				} else {
 					logger.warn(GridClient
 							.Log("Received a " + type.toString() + " ViewerEffect with an incorrect TypeData size of "
-									+ block.getTypeData().length + " bytes", _Client));
+									+ block.getTypeData().length + " bytes", client));
 				}
 				break;
 			case LookAt:
@@ -791,13 +793,13 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 					UUID targetObject = new UUID(block.getTypeData(), 16);
 					Vector3d targetPos = new Vector3d(block.getTypeData(), 32);
 
-					OnViewerEffect.dispatch(new ViewerEffectCallbackArgs(type, simulator, sourceAvatar, targetObject,
+					onViewerEffect.dispatch(new ViewerEffectCallbackArgs(type, simulator, sourceAvatar, targetObject,
 							targetPos, block.getTypeData()[56], block.Duration, block.ID));
 				} else {
 					logger.warn(GridClient.Log(
 							"Received a LookAt " + type.toString() + " ViewerEffect with an incorrect TypeData size of "
 									+ block.getTypeData().length + " bytes",
-							_Client));
+							client));
 				}
 				break;
 			case Text:
@@ -810,7 +812,7 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 			case Glow:
 			default:
 				logger.warn(GridClient.Log("Received a ViewerEffect with an unknown type " + type.toString()
-						+ " and length " + block.getTypeData().length + " bytes", _Client));
+						+ " and length " + block.getTypeData().length + " bytes", client));
 				break;
 			}
 		}

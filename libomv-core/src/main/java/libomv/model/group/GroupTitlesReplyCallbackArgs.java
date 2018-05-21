@@ -1,6 +1,6 @@
 package libomv.model.group;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import libomv.types.UUID;
 import libomv.utils.CallbackArgs;
@@ -9,7 +9,7 @@ import libomv.utils.CallbackArgs;
 public class GroupTitlesReplyCallbackArgs implements CallbackArgs {
 	private final UUID requestID;
 	private final UUID groupID;
-	private final HashMap<UUID, GroupTitle> titles;
+	private final Map<UUID, GroupTitle> titles;
 
 	/**
 	 * Construct a new instance of the GroupTitlesReplyCallbackArgs class
@@ -22,7 +22,7 @@ public class GroupTitlesReplyCallbackArgs implements CallbackArgs {
 	 * @param titles
 	 *            The titles
 	 */
-	public GroupTitlesReplyCallbackArgs(UUID requestID, UUID groupID, HashMap<UUID, GroupTitle> titles) {
+	public GroupTitlesReplyCallbackArgs(UUID requestID, UUID groupID, Map<UUID, GroupTitle> titles) {
 		this.requestID = requestID;
 		this.groupID = groupID;
 		this.titles = titles;
@@ -40,7 +40,7 @@ public class GroupTitlesReplyCallbackArgs implements CallbackArgs {
 	}
 
 	// Get the titles
-	public final HashMap<UUID, GroupTitle> getTitles() {
+	public final Map<UUID, GroupTitle> getTitles() {
 		return titles;
 	}
 

@@ -103,18 +103,18 @@ public class StateController implements ActionListener {
 		/* Handle local events */
 		String action = e.getActionCommand();
 		if (action.equals(MainControl.cmdLogin)) {
-			_Client.Self.OnBalanceUpdated.add(balanceUpdateCallback);
+			_Client.agent.onBalanceUpdated.add(balanceUpdateCallback);
 			_Progress = new ProgressPane(_Main);
 			_Main.setControlPane(_Progress);
 			_Main.getJFrame().validate();
 			_Progress.updateProgress(0, "Preparing to login...", "");
 			try {
-				_Client.Login.RequestLogin(_Client.Login.new LoginParams(_Client), new LoginProgressHandler());
+				_Client.login.requestLogin(_Client.login.new LoginParams(_Client), new LoginProgressHandler());
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		} else if (e.getActionCommand().equals(MainControl.cmdCancel)) {
-			_Client.Login.AbortLogin();
+			_Client.login.abortLogin();
 			// Browser and offline menu should still be assigned
 			_Main.setControlPane(new LoginPane(_Main, getBrowser()));
 			_Main.getJFrame().validate();
@@ -142,7 +142,7 @@ public class StateController implements ActionListener {
 		RLV = null;
 
 		/* Make sure to unregister any callbacks */
-		_Client.Self.OnBalanceUpdated.remove(balanceUpdateCallback);
+		_Client.agent.onBalanceUpdated.remove(balanceUpdateCallback);
 
 		/* Dispose of Browser instance if it exists to avoid crash in native code */
 		if (_Browser != null) {
@@ -269,9 +269,9 @@ public class StateController implements ActionListener {
 
 	private JLabel getJAmount() {
 		if (jMiAmount == null) {
-			_Main.getGridClient().Self.getBalance();
+			_Main.getGridClient().agent.getBalance();
 			jMiAmount = new JLabel(String.format("%s %s", _Main.getGridClient().getGrid(null).currencySym,
-					_Main.getGridClient().Self.getBalance()));
+					_Main.getGridClient().agent.getBalance()));
 		}
 		return jMiAmount;
 	}
@@ -303,8 +303,8 @@ public class StateController implements ActionListener {
 				RLV = new RLVManager(_Main);
 
 				try {
-					_Client.Self.RequestMuteList();
-					_Client.Self.RetrieveInstantMessages();
+					_Client.agent.requestMuteList();
+					_Client.agent.retrieveInstantMessages();
 					// _Client.Appearance.RequestSetAppearance();
 				} catch (Exception ex) {
 

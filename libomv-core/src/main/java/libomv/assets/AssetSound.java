@@ -34,11 +34,6 @@ import libomv.types.UUID;
 
 // Represents a Sound Asset
 public class AssetSound extends AssetItem {
-	// Override the base classes AssetType
-	@Override
-	public AssetType getAssetType() {
-		return AssetType.Sound;
-	}
 
 	/**
 	 * Initializes a new instance of an AssetSound object with parameters
@@ -50,6 +45,12 @@ public class AssetSound extends AssetItem {
 	 */
 	public AssetSound(UUID assetID, byte[] assetData) {
 		super(assetID, assetData);
+	}
+
+	// Override the base classes AssetType
+	@Override
+	public AssetType getAssetType() {
+		return AssetType.Sound;
 	}
 
 	/**

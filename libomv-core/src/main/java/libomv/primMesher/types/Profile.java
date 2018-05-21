@@ -34,6 +34,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import libomv.types.Quaternion;
 import libomv.types.Vector2;
@@ -45,18 +46,18 @@ public class Profile {
 
 	public String errorMessage = null;
 
-	public ArrayList<Vector3> coords;
-	public ArrayList<Face> faces;
-	public ArrayList<Vector3> vertexNormals;
-	public ArrayList<Float> us;
-	public ArrayList<Vector2> faceUVs;
-	public ArrayList<Integer> faceNumbers;
+	public List<Vector3> coords;
+	public List<Face> faces;
+	public List<Vector3> vertexNormals;
+	public List<Float> us;
+	public List<Vector2> faceUVs;
+	public List<Integer> faceNumbers;
 
 	// use these for making individual meshes for each prim face
-	public ArrayList<Integer> outerCoordIndices = null;
-	public ArrayList<Integer> hollowCoordIndices = null;
-	public ArrayList<Integer> cut1CoordIndices = null;
-	public ArrayList<Integer> cut2CoordIndices = null;
+	public List<Integer> outerCoordIndices = null;
+	public List<Integer> hollowCoordIndices = null;
+	public List<Integer> cut1CoordIndices = null;
+	public List<Integer> cut2CoordIndices = null;
 
 	public Vector3 faceNormal = new Vector3(0.0f, 0.0f, 1.0f);
 	public Vector3 cutNormal1 = new Vector3(0f);
@@ -73,35 +74,35 @@ public class Profile {
 	public int numPrimFaces = 0;
 
 	public Profile() {
-		this.coords = new ArrayList<Vector3>();
-		this.faces = new ArrayList<Face>();
-		this.vertexNormals = new ArrayList<Vector3>();
-		this.us = new ArrayList<Float>();
-		this.faceUVs = new ArrayList<Vector2>();
-		this.faceNumbers = new ArrayList<Integer>();
+		this.coords = new ArrayList<>();
+		this.faces = new ArrayList<>();
+		this.vertexNormals = new ArrayList<>();
+		this.us = new ArrayList<>();
+		this.faceUVs = new ArrayList<>();
+		this.faceNumbers = new ArrayList<>();
 	}
 
 	public Profile(int sides, float profileStart, float profileEnd, float hollow, int hollowSides, boolean createFaces,
 			boolean calcVertexNormals) {
 		this.calcVertexNormals = calcVertexNormals;
-		this.coords = new ArrayList<Vector3>();
-		this.faces = new ArrayList<Face>();
-		this.vertexNormals = new ArrayList<Vector3>();
-		this.us = new ArrayList<Float>();
-		this.faceUVs = new ArrayList<Vector2>();
-		this.faceNumbers = new ArrayList<Integer>();
+		this.coords = new ArrayList<>();
+		this.faces = new ArrayList<>();
+		this.vertexNormals = new ArrayList<>();
+		this.us = new ArrayList<>();
+		this.faceUVs = new ArrayList<>();
+		this.faceNumbers = new ArrayList<>();
 
 		Vector3 center = new Vector3(0.0f, 0.0f, 0.0f);
 
-		ArrayList<Vector3> hollowCoords = new ArrayList<Vector3>();
-		ArrayList<Vector3> hollowNormals = new ArrayList<Vector3>();
-		ArrayList<Float> hollowUs = new ArrayList<Float>();
+		List<Vector3> hollowCoords = new ArrayList<>();
+		List<Vector3> hollowNormals = new ArrayList<>();
+		List<Float> hollowUs = new ArrayList<>();
 
 		if (calcVertexNormals) {
-			this.outerCoordIndices = new ArrayList<Integer>();
-			this.hollowCoordIndices = new ArrayList<Integer>();
-			this.cut1CoordIndices = new ArrayList<Integer>();
-			this.cut2CoordIndices = new ArrayList<Integer>();
+			this.outerCoordIndices = new ArrayList<>();
+			this.hollowCoordIndices = new ArrayList<>();
+			this.cut1CoordIndices = new ArrayList<>();
+			this.cut2CoordIndices = new ArrayList<>();
 		}
 
 		boolean hasHollow = (hollow > 0.0f);

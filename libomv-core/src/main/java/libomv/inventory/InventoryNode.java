@@ -190,16 +190,16 @@ public abstract class InventoryNode implements Serializable {
 
 	protected OSDMap toOSD() {
 		OSDMap map = new OSDMap();
-		map.put("name", OSD.FromString(name));
-		map.put("parent_id", OSD.FromUUID(parentID));
-		map.put("agent_id", OSD.FromUUID(ownerID));
+		map.put("name", OSD.fromString(name));
+		map.put("parent_id", OSD.fromUUID(parentID));
+		map.put("agent_id", OSD.fromUUID(ownerID));
 		return map;
 	}
 
 	protected void fromOSD(OSDMap map) {
-		name = map.get("name").AsString();
-		parentID = map.get("parent_id").AsUUID();
-		ownerID = map.get("agent_id").AsUUID();
+		name = map.get("name").asString();
+		parentID = map.get("parent_id").asUUID();
+		ownerID = map.get("agent_id").asUUID();
 	}
 
 	public static InventoryNode fromOSD(OSD osd) {

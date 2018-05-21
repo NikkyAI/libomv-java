@@ -19,6 +19,6 @@ public final class GroupSearchData {
 	 */
 	@Override
 	public String toString() {
-		return Helpers.StructToString(this);
+		return Helpers.structToString(this);
 	}
 }

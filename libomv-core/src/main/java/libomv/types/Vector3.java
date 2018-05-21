@@ -196,13 +196,13 @@ public class Vector3 {
 	 */
 	public void write(OutputStream stream, boolean le) throws IOException {
 		if (le) {
-			stream.write(Helpers.FloatToBytesL(X));
-			stream.write(Helpers.FloatToBytesL(Y));
-			stream.write(Helpers.FloatToBytesL(Z));
+			stream.write(Helpers.floatToBytesL(X));
+			stream.write(Helpers.floatToBytesL(Y));
+			stream.write(Helpers.floatToBytesL(Z));
 		} else {
-			stream.write(Helpers.FloatToBytesB(X));
-			stream.write(Helpers.FloatToBytesB(Y));
-			stream.write(Helpers.FloatToBytesB(Z));
+			stream.write(Helpers.floatToBytesB(X));
+			stream.write(Helpers.floatToBytesB(Y));
+			stream.write(Helpers.floatToBytesB(Z));
 		}
 	}
 
@@ -314,13 +314,13 @@ public class Vector3 {
 
 	public void toBytes(byte[] dest, int pos, boolean le) {
 		if (le) {
-			Helpers.FloatToBytesL(X, dest, pos + 0);
-			Helpers.FloatToBytesL(Y, dest, pos + 4);
-			Helpers.FloatToBytesL(Z, dest, pos + 8);
+			Helpers.floatToBytesL(X, dest, pos + 0);
+			Helpers.floatToBytesL(Y, dest, pos + 4);
+			Helpers.floatToBytesL(Z, dest, pos + 8);
 		} else {
-			Helpers.FloatToBytesB(X, dest, pos + 0);
-			Helpers.FloatToBytesB(Y, dest, pos + 4);
-			Helpers.FloatToBytesB(Z, dest, pos + 8);
+			Helpers.floatToBytesB(X, dest, pos + 0);
+			Helpers.floatToBytesB(Y, dest, pos + 4);
+			Helpers.floatToBytesB(Z, dest, pos + 8);
 		}
 	}
 
@@ -366,7 +366,7 @@ public class Vector3 {
 
 	/** Test if this vector is composed of all finite numbers */
 	public boolean isFinite() {
-		return (Helpers.IsFinite(X) && Helpers.IsFinite(Y) && Helpers.IsFinite(Z));
+		return (Helpers.isFinite(X) && Helpers.isFinite(Y) && Helpers.isFinite(Z));
 	}
 
 	public boolean isZero() {
@@ -386,16 +386,16 @@ public class Vector3 {
 	}
 
 	public Vector3 clamp(Vector3 min, Vector3 max) {
-		X = Helpers.Clamp(X, min.X, max.X);
-		Y = Helpers.Clamp(Y, min.Y, max.Y);
-		Z = Helpers.Clamp(Z, min.Z, max.Z);
+		X = Helpers.clamp(X, min.X, max.X);
+		Y = Helpers.clamp(Y, min.Y, max.Y);
+		Z = Helpers.clamp(Z, min.Z, max.Z);
 		return this;
 	}
 
 	public Vector3 clamp(float min, float max) {
-		X = Helpers.Clamp(X, min, max);
-		Y = Helpers.Clamp(Y, min, max);
-		Z = Helpers.Clamp(Z, min, max);
+		X = Helpers.clamp(X, min, max);
+		Y = Helpers.clamp(Y, min, max);
+		Z = Helpers.clamp(Z, min, max);
 		return this;
 	}
 
@@ -422,8 +422,8 @@ public class Vector3 {
 
 	public static Vector3 lerp(Vector3 value1, Vector3 value2, float amount) {
 
-		return new Vector3(Helpers.Lerp(value1.X, value2.X, amount), Helpers.Lerp(value1.Y, value2.Y, amount),
-				Helpers.Lerp(value1.Z, value2.Z, amount));
+		return new Vector3(Helpers.lerp(value1.X, value2.X, amount), Helpers.lerp(value1.Y, value2.Y, amount),
+				Helpers.lerp(value1.Z, value2.Z, amount));
 	}
 
 	public static float mag(Vector3 value) {
@@ -471,8 +471,8 @@ public class Vector3 {
 
 	/** Interpolates between two vectors using a cubic equation */
 	public static Vector3 smoothStep(Vector3 value1, Vector3 value2, float amount) {
-		return new Vector3(Helpers.SmoothStep(value1.X, value2.X, amount),
-				Helpers.SmoothStep(value1.Y, value2.Y, amount), Helpers.SmoothStep(value1.Z, value2.Z, amount));
+		return new Vector3(Helpers.smoothStep(value1.X, value2.X, amount),
+				Helpers.smoothStep(value1.Y, value2.Y, amount), Helpers.smoothStep(value1.Z, value2.Z, amount));
 	}
 
 	public static Vector3 transform(Vector3 position, Matrix4 matrix) {

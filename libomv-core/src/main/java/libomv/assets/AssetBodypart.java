@@ -37,11 +37,6 @@ import libomv.types.UUID;
  * Etc.
  */
 public class AssetBodypart extends AssetWearable {
-	// Override the base classes AssetType
-	@Override
-	public AssetType getAssetType() {
-		return AssetType.Bodypart;
-	}
 
 	/**
 	 * Initializes a new instance of an AssetBodyPart object with parameters
@@ -54,4 +49,11 @@ public class AssetBodypart extends AssetWearable {
 	public AssetBodypart(UUID assetID, byte[] assetData) {
 		super(assetID, assetData);
 	}
+
+	// Override the base classes AssetType
+	@Override
+	public AssetType getAssetType() {
+		return AssetType.Bodypart;
+	}
+
 }

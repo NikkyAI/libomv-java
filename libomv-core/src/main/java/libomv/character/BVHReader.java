@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import libomv.types.Matrix4;
 import libomv.types.Quaternion;
@@ -54,11 +55,11 @@ public class BVHReader extends KeyFrameMotion {
 
 	private int mode;
 	private BVH bvh;
-	private List<BVHNode> nodes = new ArrayList<BVHNode>();
-	private List<Constraint> constraints = new ArrayList<Constraint>();
+	private List<BVHNode> nodes = new ArrayList<>();
+	private List<Constraint> constraintList = new ArrayList<>();
 
 	// Translation values
-	HashMap<String, BVHTranslation> translations = new HashMap<String, BVHTranslation>();
+	Map<String, BVHTranslation> translations = new HashMap<>();
 
 	public BVHReader(BufferedReader reader) throws InvalidLineException, IOException {
 		super();
@@ -67,12 +68,12 @@ public class BVHReader extends KeyFrameMotion {
 		loadBVHFile(reader);
 		optimize();
 		translate();
-		constraints.clear();
+		constraintList.clear();
 	}
 
 	private void loadTranslationTable(String filename) throws InvalidLineException, IOException {
 		translations.clear();
-		constraints.clear();
+		constraintList.clear();
 		InputStream st = getClass().getResourceAsStream("/res/" + filename);
 		BufferedReader br = new BufferedReader(new InputStreamReader(st));
 		try {
@@ -109,56 +110,56 @@ public class BVHReader extends KeyFrameMotion {
 
 				if (loadingGlobals) {
 					if (token.compareToIgnoreCase("emote") == 0) {
-						ExpressionName = line;
+						expressionName = line;
 					} else if (token.compareToIgnoreCase("priority") == 0) {
-						Priority = Integer.parseInt(line);
+						priority = Integer.parseInt(line);
 					} else if (token.compareToIgnoreCase("loop") == 0) {
 						vals = line.split(" ");
 						float loop_in = 0.f;
 						float loop_out = 1.f;
 						if (vals.length >= 2) {
-							Loop = true;
+							loop = true;
 							loop_in = Float.parseFloat(vals[0]);
 							loop_out = Float.parseFloat(vals[1]);
 						} else if (vals.length == 1) {
-							Loop = vals[0].compareToIgnoreCase("true") == 0;
+							loop = vals[0].compareToIgnoreCase("true") == 0;
 						}
-						InPoint = loop_in * Length;
-						OutPoint = loop_out * Length;
+						inPoint = loop_in * length;
+						outPoint = loop_out * length;
 					} else if (token.compareToIgnoreCase("easein") == 0) {
-						EaseInTime = Float.parseFloat(line);
+						easeInTime = Float.parseFloat(line);
 					} else if (token.compareToIgnoreCase("easeout") == 0) {
-						EaseOutTime = Float.parseFloat(line);
+						easeOutTime = Float.parseFloat(line);
 					} else if (token.compareToIgnoreCase("hand") == 0) {
-						HandPose = Integer.parseInt(line);
+						handPose = Integer.parseInt(line);
 					} else if (token.compareToIgnoreCase("constraint") == 0
 							|| token.compareToIgnoreCase("planar_constraint") == 0) {
 						Constraint constraint = new Constraint();
 						vals = line.split(" ");
 						if (vals.length >= 13) {
-							constraint.ChainLength = Integer.parseInt(vals[0]);
-							constraint.EaseInStart = Float.parseFloat(vals[1]);
-							constraint.EaseInStop = Float.parseFloat(vals[2]);
-							constraint.EaseOutStart = Float.parseFloat(vals[3]);
-							constraint.EaseOutStop = Float.parseFloat(vals[4]);
-							constraint.SourceJointName = vals[5];
-							constraint.SourceOffset = new Vector3(Float.parseFloat(vals[6]), Float.parseFloat(vals[7]),
+							constraint.chainLength = Integer.parseInt(vals[0]);
+							constraint.easeInStart = Float.parseFloat(vals[1]);
+							constraint.easeInStop = Float.parseFloat(vals[2]);
+							constraint.easeOutStart = Float.parseFloat(vals[3]);
+							constraint.easeOutStop = Float.parseFloat(vals[4]);
+							constraint.sourceJointName = vals[5];
+							constraint.sourceOffset = new Vector3(Float.parseFloat(vals[6]), Float.parseFloat(vals[7]),
 									Float.parseFloat(vals[8]));
-							constraint.TargetJointName = vals[9];
-							constraint.TargetOffset = new Vector3(Float.parseFloat(vals[10]),
+							constraint.targetJointName = vals[9];
+							constraint.targetOffset = new Vector3(Float.parseFloat(vals[10]),
 									Float.parseFloat(vals[11]), Float.parseFloat(vals[12]));
 							if (vals.length >= 16) {
-								constraint.TargetDir = new Vector3(Float.parseFloat(vals[13]),
+								constraint.targetDir = new Vector3(Float.parseFloat(vals[13]),
 										Float.parseFloat(vals[14]), Float.parseFloat(vals[15])).normalize();
 							}
 						} else {
 							throw new InvalidLineException(i, line, "Invalid constraint entry");
 						}
 						if (token.compareToIgnoreCase("constraint") == 0)
-							constraint.ConstraintType = EConstraintType.CONSTRAINT_TYPE_POINT;
+							constraint.constraintType = EConstraintType.CONSTRAINT_TYPE_POINT;
 						else
-							constraint.ConstraintType = EConstraintType.CONSTRAINT_TYPE_PLANE;
-						constraints.add(constraint);
+							constraint.constraintType = EConstraintType.CONSTRAINT_TYPE_PLANE;
+						constraintList.add(constraint);
 					}
 				} else if (trans == null) {
 					throw new InvalidLineException(i, line, "Invalid Translation file format");
@@ -429,10 +430,10 @@ public class BVHReader extends KeyFrameMotion {
 	}
 
 	private void optimize() throws IOException {
-		if (!Loop && EaseInTime + EaseOutTime > Length && Length != 0.f) {
-			float factor = Length / (EaseInTime + EaseOutTime);
-			EaseInTime *= factor;
-			EaseOutTime *= factor;
+		if (!loop && easeInTime + easeOutTime > length && length != 0.f) {
+			float factor = length / (easeInTime + easeOutTime);
+			easeInTime *= factor;
+			easeOutTime *= factor;
 		}
 
 		if (bvh.getMotion().size() == 0) {
@@ -453,8 +454,8 @@ public class BVHReader extends KeyFrameMotion {
 				Quaternion.Order order = Quaternion.StringToOrderRev(node.getChannels().getOrder());
 				Quaternion first_frame_rot = Quaternion.mayaQ(first_frame, rotOffset, order);
 
-				node.mIgnorePos = new boolean[bvh.getMotion().size()];
-				node.mIgnoreRot = new boolean[bvh.getMotion().size()];
+				node.ignorePos = new boolean[bvh.getMotion().size()];
+				node.ignoreRot = new boolean[bvh.getMotion().size()];
 
 				if (size == 1) {
 					// FIXME: use single frame to move pelvis
@@ -475,7 +476,7 @@ public class BVHReader extends KeyFrameMotion {
 
 				for (; ki < size; ki++) {
 					if (ki_prev == ki_last_good_pos) {
-						node.mNumPosKeys++;
+						node.numPosKeys++;
 						if (Vector3.distance(new Vector3(bvh.getMotion().getFrameAt(ki_prev), rotOffset),
 								first_frame_pos) > POSITION_MOTION_THRESHOLD) {
 							pos_changed = true;
@@ -492,12 +493,12 @@ public class BVHReader extends KeyFrameMotion {
 						}
 
 						if (Vector3.distance(interp_pos, test_pos) < POSITION_KEYFRAME_THRESHOLD) {
-							node.mIgnorePos[ki] = true;
+							node.ignorePos[ki] = true;
 							numPosFramesConsidered++;
 						} else {
 							numPosFramesConsidered = 2;
 							ki_last_good_pos = ki_prev;
-							node.mNumPosKeys++;
+							node.numPosKeys++;
 						}
 					}
 
@@ -509,7 +510,7 @@ public class BVHReader extends KeyFrameMotion {
 					float rot_test = x_delta + y_delta;
 
 					if (ki_prev == ki_last_good_rot) {
-						node.mNumRotKeys++;
+						node.numRotKeys++;
 
 						if (rot_test > ROTATION_MOTION_THRESHOLD) {
 							rot_changed = true;
@@ -544,7 +545,7 @@ public class BVHReader extends KeyFrameMotion {
 							// ki_prev).
 							numRotFramesConsidered = 2;
 							ki_last_good_rot = ki_prev;
-							node.mNumRotKeys++;
+							node.numRotKeys++;
 
 							// Add another keyframe between the last good keyframe and current, at whatever
 							// point was
@@ -556,15 +557,15 @@ public class BVHReader extends KeyFrameMotion {
 							// other method
 							// because it's significantly faster.
 							if (diff_max > 0) {
-								if (node.mIgnoreRot[ki] == true) {
-									node.mIgnoreRot[ki] = false;
-									node.mNumRotKeys++;
+								if (node.ignoreRot[ki] == true) {
+									node.ignoreRot[ki] = false;
+									node.numRotKeys++;
 								}
 								diff_max = 0;
 							}
 						} else {
 							// This keyframe isn't significant enough, throw it away.
-							node.mIgnoreRot[ki] = true;
+							node.ignoreRot[ki] = true;
 							numRotFramesConsidered++;
 							// Store away the keyframe that has the largest deviation from the interpolated
 							// line, for insertion later.
@@ -594,7 +595,7 @@ public class BVHReader extends KeyFrameMotion {
 		}
 
 		// fill in header
-		Joints = new Joint[numJoints];
+		joints = new Joint[numJoints];
 
 		Quaternion first_frame_rot = new Quaternion();
 
@@ -602,10 +603,10 @@ public class BVHReader extends KeyFrameMotion {
 			if (node.getTranslation().mIgnore)
 				continue;
 
-			Joint joint = Joints[j] = new Joint();
+			Joint joint = joints[j] = new Joint();
 
-			joint.Name = node.getTranslation().mOutName;
-			joint.Priority = node.getTranslation().mPriorityModifier;
+			joint.name = node.getTranslation().mOutName;
+			joint.priority = node.getTranslation().mPriorityModifier;
 
 			// compute coordinate frame rotation
 			Quaternion frameRot = new Quaternion(node.getTranslation().mFrameMatrix);
@@ -628,7 +629,7 @@ public class BVHReader extends KeyFrameMotion {
 				}
 			}
 
-			joint.rotationkeys = new KeyFrameMotion.JointKey[node.mNumRotKeys];
+			joint.rotationkeys = new KeyFrameMotion.JointKey[node.numRotKeys];
 
 			Quaternion.Order order = Quaternion.StringToOrderRev(node.getChannels().getOrder());
 			int frame = 0, rotOffset = node.getChannels().getRotOffset();
@@ -637,7 +638,7 @@ public class BVHReader extends KeyFrameMotion {
 					first_frame_rot = Quaternion.mayaQ(keyFrame, rotOffset, order);
 				}
 
-				if (node.mIgnoreRot[frame]) {
+				if (node.ignoreRot[frame]) {
 					frame++;
 					continue;
 				}
@@ -677,7 +678,7 @@ public class BVHReader extends KeyFrameMotion {
 
 			// output position keys (only for 1st joint)
 			if (j == 0 && !node.getTranslation().mIgnorePositions) {
-				joint.positionkeys = new KeyFrameMotion.JointKey[node.mNumPosKeys];
+				joint.positionkeys = new KeyFrameMotion.JointKey[node.numPosKeys];
 
 				Vector3 relPos = node.getTranslation().mRelativePosition;
 				Vector3 relKey = Vector3.Zero;
@@ -688,7 +689,7 @@ public class BVHReader extends KeyFrameMotion {
 						relKey = new Vector3(keyFrame, 0);
 					}
 
-					if (node.mIgnorePos[frame]) {
+					if (node.ignorePos[frame]) {
 						frame++;
 						continue;
 					}
@@ -710,7 +711,7 @@ public class BVHReader extends KeyFrameMotion {
 				;
 			}
 		}
-		Constraints = constraints.toArray(Constraints);
+		constraints = constraintList.toArray(constraints);
 	}
 
 	public boolean validate() {

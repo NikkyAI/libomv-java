@@ -45,14 +45,38 @@ import libomv.types.UUID;
 public class AssetTexture extends AssetItem {
 	private static final Logger logger = Logger.getLogger(AssetTexture.class);
 
+	// A {@link Image} object containing image data
+	private ManagedImage image;
+	private J2KLayerInfo[] layerInfo;
+
+	/**
+	 * Initializes a new instance of an AssetTexture object
+	 *
+	 * @param assetID
+	 *            A unique <see cref="UUID"/> specific to this asset
+	 * @param assetData
+	 *            A byte array containing the raw asset data
+	 */
+	public AssetTexture(UUID assetID, byte[] assetData) {
+		super(assetID, assetData);
+	}
+
+	/**
+	 * Initializes a new instance of an AssetTexture object
+	 *
+	 * @param image
+	 *            A {@link ManagedImage} object containing texture data
+	 */
+	public AssetTexture(ManagedImage image) {
+		super(null, null);
+		this.image = image;
+	}
+
 	// Override the base classes AssetType
 	@Override
 	public AssetType getAssetType() {
 		return AssetType.Texture;
 	}
-
-	// A {@link Image} object containing image data
-	private ManagedImage image;
 
 	public ManagedImage getImage() {
 		return image;
@@ -62,8 +86,6 @@ public class AssetTexture extends AssetItem {
 		invalidateAssetData();
 		this.image = image;
 	}
-
-	private J2KLayerInfo[] layerInfo;
 
 	public J2KLayerInfo[] getLayerInfo() {
 		return layerInfo;
@@ -89,29 +111,6 @@ public class AssetTexture extends AssetItem {
 	}
 
 	/**
-	 * Initializes a new instance of an AssetTexture object
-	 *
-	 * @param assetID
-	 *            A unique <see cref="UUID"/> specific to this asset
-	 * @param assetData
-	 *            A byte array containing the raw asset data
-	 */
-	public AssetTexture(UUID assetID, byte[] assetData) {
-		super(assetID, assetData);
-	}
-
-	/**
-	 * Initializes a new instance of an AssetTexture object
-	 *
-	 * @param image
-	 *            A {@link ManagedImage} object containing texture data
-	 */
-	public AssetTexture(ManagedImage image) {
-		super(null, null);
-		this.image = image;
-	}
-
-	/**
 	 * Populates the {@link AssetData} byte array with a JPEG2000 encoded image
 	 * created from the data in {@link Image}
 	 */
@@ -127,6 +126,7 @@ public class AssetTexture extends AssetItem {
 			try {
 				bos.close();
 			} catch (IOException e) {
+				// Unable to do anything at this point.
 			}
 		}
 	}
@@ -155,6 +155,7 @@ public class AssetTexture extends AssetItem {
 			try {
 				is.close();
 			} catch (IOException e) {
+				// Unable to do anything at this point.
 			}
 		}
 		return false;
@@ -170,7 +171,7 @@ public class AssetTexture extends AssetItem {
 			encode();
 
 		layerInfo = J2KImage.decodeLayerBoundaries(assetData);
-		return (layerInfo.length > 0);
+		return layerInfo.length > 0;
 	}
 
 }

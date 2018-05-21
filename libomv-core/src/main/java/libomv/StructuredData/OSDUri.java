@@ -36,28 +36,28 @@ import libomv.utils.Helpers;
 public class OSDUri extends OSD {
 	private URI value;
 
-	@Override
-	public OSDType getType() {
-		return OSDType.URI;
-	}
-
 	public OSDUri(URI value) {
 		this.value = value;
 	}
 
 	@Override
-	public String AsString() {
+	public OSDType getType() {
+		return OSDType.URI;
+	}
+
+	@Override
+	public String asString() {
 		return value != null ? value.toString() : Helpers.EmptyString;
 	}
 
 	@Override
-	public URI AsUri() {
+	public URI asUri() {
 		return value;
 	}
 
 	@Override
-	public byte[] AsBinary() {
-		return AsString().getBytes();
+	public byte[] asBinary() {
+		return asString().getBytes();
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public class OSDUri extends OSD {
 	}
 
 	public boolean equals(OSD osd) {
-		return osd != null && osd.AsUri().equals(value);
+		return osd != null && osd.asUri().equals(value);
 	}
 
 	@Override
@@ -83,6 +83,6 @@ public class OSDUri extends OSD {
 
 	@Override
 	public String toString() {
-		return AsString();
+		return asString();
 	}
 }

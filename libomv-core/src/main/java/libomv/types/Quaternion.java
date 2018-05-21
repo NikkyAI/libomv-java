@@ -258,15 +258,15 @@ public class Quaternion {
 	 */
 	public void write(OutputStream stream, boolean le) throws IOException {
 		if (le) {
-			stream.write(Helpers.FloatToBytesL(X));
-			stream.write(Helpers.FloatToBytesL(Y));
-			stream.write(Helpers.FloatToBytesL(Z));
-			stream.write(Helpers.FloatToBytesL(W));
+			stream.write(Helpers.floatToBytesL(X));
+			stream.write(Helpers.floatToBytesL(Y));
+			stream.write(Helpers.floatToBytesL(Z));
+			stream.write(Helpers.floatToBytesL(W));
 		} else {
-			stream.write(Helpers.FloatToBytesB(X));
-			stream.write(Helpers.FloatToBytesB(Y));
-			stream.write(Helpers.FloatToBytesB(Z));
-			stream.write(Helpers.FloatToBytesB(W));
+			stream.write(Helpers.floatToBytesB(X));
+			stream.write(Helpers.floatToBytesB(Y));
+			stream.write(Helpers.floatToBytesB(Z));
+			stream.write(Helpers.floatToBytesB(W));
 		}
 	}
 
@@ -375,13 +375,13 @@ public class Quaternion {
 			}
 
 			if (le) {
-				Helpers.FloatToBytesL(norm * x, dest, pos + 0);
-				Helpers.FloatToBytesL(norm * y, dest, pos + 4);
-				Helpers.FloatToBytesL(norm * z, dest, pos + 8);
+				Helpers.floatToBytesL(norm * x, dest, pos + 0);
+				Helpers.floatToBytesL(norm * y, dest, pos + 4);
+				Helpers.floatToBytesL(norm * z, dest, pos + 8);
 			} else {
-				Helpers.FloatToBytesB(norm * x, dest, pos + 0);
-				Helpers.FloatToBytesB(norm * y, dest, pos + 4);
-				Helpers.FloatToBytesB(norm * z, dest, pos + 8);
+				Helpers.floatToBytesB(norm * x, dest, pos + 0);
+				Helpers.floatToBytesB(norm * y, dest, pos + 4);
+				Helpers.floatToBytesB(norm * z, dest, pos + 8);
 			}
 		} else {
 			throw new Exception(String.format("Quaternion %s normalized to zero", toString()));

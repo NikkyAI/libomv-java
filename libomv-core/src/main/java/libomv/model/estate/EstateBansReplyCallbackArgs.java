@@ -1,6 +1,6 @@
 package libomv.model.estate;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import libomv.types.UUID;
 import libomv.utils.CallbackArgs;
@@ -11,7 +11,7 @@ import libomv.utils.CallbackArgs;
 public class EstateBansReplyCallbackArgs implements CallbackArgs {
 	private final int estateID;
 	private final int count;
-	private final ArrayList<UUID> banned;
+	private final List<UUID> banned;
 
 	/**
 	 * Construct a new instance of the EstateBansReplyEventArgs class
@@ -23,7 +23,7 @@ public class EstateBansReplyCallbackArgs implements CallbackArgs {
 	 * @param banned
 	 *            User UUIDs banned
 	 */
-	public EstateBansReplyCallbackArgs(int estateID, int count, ArrayList<UUID> banned) {
+	public EstateBansReplyCallbackArgs(int estateID, int count, List<UUID> banned) {
 		this.estateID = estateID;
 		this.count = count;
 		this.banned = banned;
@@ -40,7 +40,7 @@ public class EstateBansReplyCallbackArgs implements CallbackArgs {
 	}
 
 	// List of UUIDs of Banned Users
-	public ArrayList<UUID> getBanned() {
+	public List<UUID> getBanned() {
 		return banned;
 	}
 

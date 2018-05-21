@@ -172,39 +172,39 @@ public class CapsToPacket {
 
 				if (fieldType == long.class) {
 					// ulongs come in as a byte array, convert it manually here
-					byte[] bytes = blockData.get(field.getName()).AsBinary();
+					byte[] bytes = blockData.get(field.getName()).asBinary();
 					long value = Helpers.BytesToUInt64B(bytes);
 					field.set(block, value);
 				} else if (fieldType == int.class) {
 					// uints come in as a byte array, convert it manually here
-					byte[] bytes = blockData.get(field.getName()).AsBinary();
+					byte[] bytes = blockData.get(field.getName()).asBinary();
 					long value = Helpers.BytesToUInt32B(bytes);
 					field.set(block, (int) value);
 				} else if (fieldType == short.class) {
-					field.set(block, (short) blockData.get(field.getName()).AsInteger());
+					field.set(block, (short) blockData.get(field.getName()).asInteger());
 				} else if (fieldType == byte.class) {
-					field.set(block, (byte) blockData.get(field.getName()).AsInteger());
+					field.set(block, (byte) blockData.get(field.getName()).asInteger());
 				} else if (fieldType == String.class) {
-					field.set(block, blockData.get(field.getName()).AsString());
+					field.set(block, blockData.get(field.getName()).asString());
 				} else if (fieldType == boolean.class) {
-					field.set(block, blockData.get(field.getName()).AsBoolean());
+					field.set(block, blockData.get(field.getName()).asBoolean());
 				} else if (fieldType == float.class) {
-					field.set(block, (float) blockData.get(field.getName()).AsReal());
+					field.set(block, (float) blockData.get(field.getName()).asReal());
 				} else if (fieldType == double.class) {
-					field.set(block, blockData.get(field.getName()).AsReal());
+					field.set(block, blockData.get(field.getName()).asReal());
 				} else if (fieldType == UUID.class) {
-					field.set(block, blockData.get(field.getName()).AsUUID());
+					field.set(block, blockData.get(field.getName()).asUUID());
 				} else if (fieldType == Vector3.class) {
-					Vector3 vec = ((OSDArray) blockData.get(field.getName())).AsVector3();
+					Vector3 vec = ((OSDArray) blockData.get(field.getName())).asVector3();
 					field.set(block, vec);
 				} else if (fieldType == Vector4.class) {
-					Vector4 vec = ((OSDArray) blockData.get(field.getName())).AsVector4();
+					Vector4 vec = ((OSDArray) blockData.get(field.getName())).asVector4();
 					field.set(block, vec);
 				} else if (fieldType == Quaternion.class) {
-					Quaternion quat = ((OSDArray) blockData.get(field.getName())).AsQuaternion();
+					Quaternion quat = ((OSDArray) blockData.get(field.getName())).asQuaternion();
 					field.set(block, quat);
 				} else if (fieldType == byte[].class && blockData.get(field.getName()).getType() == OSDType.String) {
-					field.set(block, Helpers.StringToBytes(blockData.get(field.getName()).AsString()));
+					field.set(block, Helpers.stringToBytes(blockData.get(field.getName()).asString()));
 				}
 			}
 		}
@@ -217,7 +217,7 @@ public class CapsToPacket {
 
 		for (Field field : blockType.getFields()) {
 			if (Modifier.isPublic(field.getModifiers())) {
-				map.put(field.getName(), OSD.FromObject(field.get(block)));
+				map.put(field.getName(), OSD.fromObject(field.get(block)));
 			}
 		}
 		return map;

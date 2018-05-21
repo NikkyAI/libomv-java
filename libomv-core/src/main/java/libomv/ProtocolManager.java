@@ -42,6 +42,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -147,7 +149,7 @@ public class ProtocolManager {
 
 		public short count;
 
-		public ArrayList<MapField> fields;
+		public List<MapField> fields;
 
 		@Override
 		public Object clone() {
@@ -179,20 +181,20 @@ public class ProtocolManager {
 
 		public boolean deprecated;
 
-		public ArrayList<MapBlock> blocks;
+		public List<MapBlock> blocks;
 	}
 
 	public class MapPacketMap {
-		public ArrayList<MapPacket> mapPackets;
+		public List<MapPacket> mapPackets;
 
-		public HashMap<Integer, MapPacket> commandMapPacket;
+		public Map<Integer, MapPacket> commandMapPacket;
 
-		public Hashtable<String, MapPacket> nameMapPacket;
+		public Map<String, MapPacket> nameMapPacket;
 
 		public MapPacketMap(int size) {
-			mapPackets = new ArrayList<MapPacket>(size);
-			commandMapPacket = new HashMap<Integer, MapPacket>(size);
-			nameMapPacket = new Hashtable<String, MapPacket>(size);
+			mapPackets = new ArrayList<>(size);
+			commandMapPacket = new HashMap<>(size);
+			nameMapPacket = new Hashtable<>(size);
 		}
 
 		public MapPacket getMapPacketByName(String name) {
@@ -210,9 +212,6 @@ public class ProtocolManager {
 		}
 	}
 
-	private ArrayList<String> keywordList;
-	private HashMapInt<String> keywordPositions;
-
 	public MapPacketMap lowMaps;
 
 	public MapPacketMap mediumMaps;
@@ -220,6 +219,8 @@ public class ProtocolManager {
 	public MapPacketMap highMaps;
 
 	private boolean sort;
+	private List<String> keywordList;
+	private HashMapInt<String> keywordPositions;
 
 	public ProtocolManager(String mapFile, boolean sort) throws Exception {
 		this.sort = sort;
@@ -229,8 +230,8 @@ public class ProtocolManager {
 		mediumMaps = new MapPacketMap(256);
 		highMaps = new MapPacketMap(256);
 
-		keywordPositions = new HashMapInt<String>();
-		keywordList = new ArrayList<String>();
+		keywordPositions = new HashMapInt<>();
+		keywordList = new ArrayList<>();
 		loadMapFile(mapFile);
 	}
 
@@ -434,7 +435,7 @@ public class ProtocolManager {
 									currentPacket.encoded = tokens[4].equals("Zerocoded");
 									currentPacket.deprecated = tokens.length > 5 ? tokens[5].contains("Deprecated")
 											: false;
-									currentPacket.blocks = new ArrayList<MapBlock>();
+									currentPacket.blocks = new ArrayList<>();
 									lowMaps.addPacket(fixedID, currentPacket);
 								} else if (tokens[1].equals("Low")) {
 									currentPacket = new MapPacket();
@@ -445,7 +446,7 @@ public class ProtocolManager {
 									currentPacket.encoded = tokens[3].equals("Zerocoded");
 									currentPacket.deprecated = tokens.length > 4 ? tokens[4].contains("Deprecated")
 											: false;
-									currentPacket.blocks = new ArrayList<MapBlock>();
+									currentPacket.blocks = new ArrayList<>();
 									lowMaps.addPacket(low, currentPacket);
 									low++;
 								} else if (tokens[1].equals("Medium")) {
@@ -457,7 +458,7 @@ public class ProtocolManager {
 									currentPacket.encoded = tokens[3].equals("Zerocoded");
 									currentPacket.deprecated = tokens.length > 4 ? tokens[4].contains("Deprecated")
 											: false;
-									currentPacket.blocks = new ArrayList<MapBlock>();
+									currentPacket.blocks = new ArrayList<>();
 									mediumMaps.addPacket(medium, currentPacket);
 
 									medium++;
@@ -470,7 +471,7 @@ public class ProtocolManager {
 									currentPacket.encoded = tokens[3].equals("Zerocoded");
 									currentPacket.deprecated = tokens.length > 4 ? tokens[4].contains("Deprecated")
 											: false;
-									currentPacket.blocks = new ArrayList<MapBlock>();
+									currentPacket.blocks = new ArrayList<>();
 									highMaps.addPacket(high, currentPacket);
 
 									high++;
@@ -523,7 +524,7 @@ public class ProtocolManager {
 							String[] tokens = trimmedline.split("\\s+");
 
 							currentBlock.keywordIndex = keywordPosition(tokens[0]);
-							currentBlock.fields = new ArrayList<MapField>();
+							currentBlock.fields = new ArrayList<>();
 							currentPacket.blocks.add(currentBlock);
 
 							if (tokens[1].equals("Single")) {
@@ -550,7 +551,7 @@ public class ProtocolManager {
 		}
 	}
 
-	private short getBlockSize(ArrayList<MapField> fields, byte[] message, short offset) throws Exception {
+	private short getBlockSize(List<MapField> fields, byte[] message, short offset) throws Exception {
 		short start = offset;
 		for (MapField field : fields) {
 			offset += getFieldSize(field, message, offset);

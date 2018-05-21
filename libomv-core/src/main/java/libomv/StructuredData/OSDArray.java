@@ -44,23 +44,23 @@ import libomv.types.Vector3d;
 import libomv.types.Vector4;
 
 public class OSDArray extends OSD implements List<OSD> {
-	private ArrayList<OSD> value;
+	private List<OSD> value;
+
+	public OSDArray() {
+		this.value = new ArrayList<>();
+	}
+
+	public OSDArray(int capacity) {
+		this.value = new ArrayList<>(capacity);
+	}
+
+	public OSDArray(List<OSD> value) {
+		this.value = new ArrayList<>(value);
+	}
 
 	@Override
 	public OSDType getType() {
 		return OSDType.Array;
-	}
-
-	public OSDArray() {
-		value = new ArrayList<OSD>();
-	}
-
-	public OSDArray(int capacity) {
-		value = new ArrayList<OSD>(capacity);
-	}
-
-	public OSDArray(ArrayList<OSD> value) {
-		this.value = new ArrayList<OSD>(value);
 	}
 
 	@Override
@@ -95,7 +95,7 @@ public class OSDArray extends OSD implements List<OSD> {
 
 	public final boolean contains(String element) {
 		for (int i = 0; i < value.size(); i++) {
-			if (value.get(i).getType() == OSDType.String && value.get(i).AsString() == element) {
+			if (value.get(i).getType() == OSDType.String && value.get(i).asString() == element) {
 				return true;
 			}
 		}
@@ -193,112 +193,112 @@ public class OSDArray extends OSD implements List<OSD> {
 	}
 
 	@Override
-	public byte[] AsBinary() {
+	public byte[] asBinary() {
 		byte[] binary = new byte[value.size()];
 
 		for (int i = 0; i < value.size(); i++) {
-			binary[i] = (byte) value.get(i).AsInteger();
+			binary[i] = (byte) value.get(i).asInteger();
 		}
 		return binary;
 	}
 
 	@Override
-	public long AsLong() {
-		OSDBinary binary = new OSDBinary(AsBinary());
-		return binary.AsLong();
+	public long asLong() {
+		OSDBinary binary = new OSDBinary(asBinary());
+		return binary.asLong();
 	}
 
 	@Override
-	public long AsULong() {
-		OSDBinary binary = new OSDBinary(AsBinary());
-		return binary.AsULong();
+	public long asULong() {
+		OSDBinary binary = new OSDBinary(asBinary());
+		return binary.asULong();
 	}
 
 	@Override
-	public int AsUInteger() {
-		OSDBinary binary = new OSDBinary(AsBinary());
-		return binary.AsUInteger();
+	public int asUInteger() {
+		OSDBinary binary = new OSDBinary(asBinary());
+		return binary.asUInteger();
 	}
 
 	@Override
-	public Vector2 AsVector2() {
+	public Vector2 asVector2() {
 		Vector2 vector = new Vector2(Vector2.Zero);
 
 		if (this.size() == 2) {
-			vector.X = (float) this.get(0).AsReal();
-			vector.Y = (float) this.get(1).AsReal();
+			vector.X = (float) this.get(0).asReal();
+			vector.Y = (float) this.get(1).asReal();
 		}
 
 		return vector;
 	}
 
 	@Override
-	public Vector3 AsVector3() {
+	public Vector3 asVector3() {
 		Vector3 vector = new Vector3(Vector3.Zero);
 
 		if (this.size() == 3) {
-			vector.X = (float) this.get(0).AsReal();
-			vector.Y = (float) this.get(1).AsReal();
-			vector.Z = (float) this.get(2).AsReal();
+			vector.X = (float) this.get(0).asReal();
+			vector.Y = (float) this.get(1).asReal();
+			vector.Z = (float) this.get(2).asReal();
 		}
 
 		return vector;
 	}
 
 	@Override
-	public Vector3d AsVector3d() {
+	public Vector3d asVector3d() {
 		Vector3d vector = new Vector3d(Vector3d.Zero);
 
 		if (this.size() == 3) {
-			vector.X = this.get(0).AsReal();
-			vector.Y = this.get(1).AsReal();
-			vector.Z = this.get(2).AsReal();
+			vector.X = this.get(0).asReal();
+			vector.Y = this.get(1).asReal();
+			vector.Z = this.get(2).asReal();
 		}
 
 		return vector;
 	}
 
 	@Override
-	public Vector4 AsVector4() {
+	public Vector4 asVector4() {
 		Vector4 vector = new Vector4(Vector4.Zero);
 
 		if (this.size() == 4) {
-			vector.X = (float) this.get(0).AsReal();
-			vector.Y = (float) this.get(1).AsReal();
-			vector.Z = (float) this.get(2).AsReal();
-			vector.S = (float) this.get(3).AsReal();
+			vector.X = (float) this.get(0).asReal();
+			vector.Y = (float) this.get(1).asReal();
+			vector.Z = (float) this.get(2).asReal();
+			vector.S = (float) this.get(3).asReal();
 		}
 		return vector;
 	}
 
 	@Override
-	public Quaternion AsQuaternion() {
+	public Quaternion asQuaternion() {
 		Quaternion quaternion = new Quaternion(Quaternion.Identity);
 
 		if (this.size() == 4) {
-			quaternion.X = (float) this.get(0).AsReal();
-			quaternion.Y = (float) this.get(1).AsReal();
-			quaternion.Z = (float) this.get(2).AsReal();
-			quaternion.W = (float) this.get(3).AsReal();
+			quaternion.X = (float) this.get(0).asReal();
+			quaternion.Y = (float) this.get(1).asReal();
+			quaternion.Z = (float) this.get(2).asReal();
+			quaternion.W = (float) this.get(3).asReal();
 		}
 		return quaternion;
 	}
 
 	@Override
-	public Color4 AsColor4() {
+	public Color4 asColor4() {
 		Color4 color = new Color4(Color4.Black);
 
 		if (this.size() == 4) {
-			color.R = (float) this.get(0).AsReal();
-			color.G = (float) this.get(1).AsReal();
-			color.B = (float) this.get(2).AsReal();
-			color.A = (float) this.get(3).AsReal();
+			color.R = (float) this.get(0).asReal();
+			color.G = (float) this.get(1).asReal();
+			color.B = (float) this.get(2).asReal();
+			color.A = (float) this.get(3).asReal();
 		}
 		return color;
 	}
 
 	@Override
-	public boolean AsBoolean() {
+	public boolean asBoolean() {
 		return value.size() > 0;
 	}
 
@@ -318,7 +318,7 @@ public class OSDArray extends OSD implements List<OSD> {
 
 	public OSD clone() {
 		OSDArray osd = (OSDArray) super.clone();
-		osd.value = new ArrayList<OSD>(this.value);
+		osd.value = new ArrayList<>(this.value);
 		return osd;
 	}
 

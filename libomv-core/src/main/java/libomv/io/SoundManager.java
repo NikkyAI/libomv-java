@@ -47,19 +47,12 @@ import libomv.utils.CallbackHandler;
 
 public class SoundManager implements PacketCallback {
 
-	// #region Private Members
-	private final GridClient _Client;
-	// #endregion
+	public CallbackHandler<AttachedSoundCallbackArgs> onAttachedSound = new CallbackHandler<>();
+	public CallbackHandler<SoundTriggerCallbackArgs> onSoundTrigger = new CallbackHandler<>();
+	public CallbackHandler<AttachedSoundGainChangeCallbackArgs> onAttachedSoundGainChange = new CallbackHandler<>();
+	public CallbackHandler<PreloadSoundCallbackArgs> onPreloadSound = new CallbackHandler<>();
 
-	public CallbackHandler<AttachedSoundCallbackArgs> OnAttachedSound = new CallbackHandler<AttachedSoundCallbackArgs>();
-
-	public CallbackHandler<SoundTriggerCallbackArgs> OnSoundTrigger = new CallbackHandler<SoundTriggerCallbackArgs>();
-
-	public CallbackHandler<AttachedSoundGainChangeCallbackArgs> OnAttachedSoundGainChange = new CallbackHandler<AttachedSoundGainChangeCallbackArgs>();
-
-	public CallbackHandler<PreloadSoundCallbackArgs> OnPreloadSound = new CallbackHandler<PreloadSoundCallbackArgs>();
-
-	// #endregion
+	private final GridClient client;
 
 	/**
 	 * Construct a new instance of the SoundManager class, used for playing and
@@ -69,28 +62,28 @@ public class SoundManager implements PacketCallback {
 	 *            A reference to the current GridClient instance
 	 */
 	public SoundManager(GridClient client) {
-		_Client = client;
+		this.client = client;
 
-		_Client.Network.RegisterCallback(PacketType.AttachedSound, this);
-		_Client.Network.RegisterCallback(PacketType.AttachedSoundGainChange, this);
-		_Client.Network.RegisterCallback(PacketType.PreloadSound, this);
-		_Client.Network.RegisterCallback(PacketType.SoundTrigger, this);
+		this.client.network.registerCallback(PacketType.AttachedSound, this);
+		this.client.network.registerCallback(PacketType.AttachedSoundGainChange, this);
+		this.client.network.registerCallback(PacketType.PreloadSound, this);
+		this.client.network.registerCallback(PacketType.SoundTrigger, this);
 	}
 
 	@Override
 	public void packetCallback(Packet packet, Simulator simulator) throws Exception {
 		switch (packet.getType()) {
 		case AttachedSound:
-			HandleAttachedSound(packet, simulator);
+			handleAttachedSound(packet, simulator);
 			break;
 		case AttachedSoundGainChange:
-			HandleAttachedSoundGainChange(packet, simulator);
+			handleAttachedSoundGainChange(packet, simulator);
 			break;
 		case PreloadSound:
-			HandlePreloadSound(packet, simulator);
+			handlePreloadSound(packet, simulator);
 			break;
 		case SoundTrigger:
-			HandleSoundTrigger(packet, simulator);
+			handleSoundTrigger(packet, simulator);
 			break;
 		default:
 			break;
@@ -108,8 +101,8 @@ public class SoundManager implements PacketCallback {
 	 *            position for the sound to be played at. Normally the avatar
 	 * @throws Exception
 	 */
-	public final void PlaySound(UUID soundID) throws Exception {
-		SendSoundTrigger(soundID, _Client.getCurrentRegionHandle(), _Client.Self.getAgentPosition(), 1.0f);
+	public final void playSound(UUID soundID) throws Exception {
+		sendSoundTrigger(soundID, client.getCurrentRegionHandle(), client.agent.getAgentPosition(), 1.0f);
 	}
 
 	/**
@@ -121,8 +114,8 @@ public class SoundManager implements PacketCallback {
 	 *            position for the sound to be played at. Normally the avatar
 	 * @throws Exception
 	 */
-	public final void SendSoundTrigger(UUID soundID, Vector3 position) throws Exception {
-		SendSoundTrigger(soundID, _Client.getCurrentRegionHandle(), position, 1.0f);
+	public final void sendSoundTrigger(UUID soundID, Vector3 position) throws Exception {
+		sendSoundTrigger(soundID, client.getCurrentRegionHandle(), position, 1.0f);
 	}
 
 	/**
@@ -136,8 +129,8 @@ public class SoundManager implements PacketCallback {
 	 *            volume of the sound, from 0.0 to 1.0
 	 * @throws Exception
 	 */
-	public final void SendSoundTrigger(UUID soundID, Vector3 position, float gain) throws Exception {
-		SendSoundTrigger(soundID, _Client.getCurrentRegionHandle(), position, gain);
+	public final void sendSoundTrigger(UUID soundID, Vector3 position, float gain) throws Exception {
+		sendSoundTrigger(soundID, client.getCurrentRegionHandle(), position, gain);
 	}
 
 	/**
@@ -153,8 +146,8 @@ public class SoundManager implements PacketCallback {
 	 *            volume of the sound, from 0.0 to 1.0
 	 * @throws Exception
 	 */
-	public final void SendSoundTrigger(UUID soundID, Simulator sim, Vector3 position, float gain) throws Exception {
-		SendSoundTrigger(soundID, sim.getHandle(), position, gain);
+	public final void sendSoundTrigger(UUID soundID, Simulator sim, Vector3 position, float gain) throws Exception {
+		sendSoundTrigger(soundID, sim.getHandle(), position, gain);
 	}
 
 	/**
@@ -170,7 +163,7 @@ public class SoundManager implements PacketCallback {
 	 *            volume of the sound, from 0.0 to 1.0
 	 * @throws Exception
 	 */
-	public final void SendSoundTrigger(UUID soundID, long handle, Vector3 position, float gain) throws Exception {
+	public final void sendSoundTrigger(UUID soundID, long handle, Vector3 position, float gain) throws Exception {
 		SoundTriggerPacket soundtrigger = new SoundTriggerPacket();
 		soundtrigger.SoundData = soundtrigger.new SoundDataBlock();
 		soundtrigger.SoundData.SoundID = soundID;
@@ -181,7 +174,7 @@ public class SoundManager implements PacketCallback {
 		soundtrigger.SoundData.Position = position;
 		soundtrigger.SoundData.Gain = gain;
 
-		_Client.Network.sendPacket(soundtrigger);
+		client.network.sendPacket(soundtrigger);
 	}
 	// #endregion
 
@@ -189,30 +182,30 @@ public class SoundManager implements PacketCallback {
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	private final void HandleAttachedSound(Packet packet, Simulator simulator) {
+	private final void handleAttachedSound(Packet packet, Simulator simulator) {
 		AttachedSoundPacket sound = (AttachedSoundPacket) packet;
 
-		OnAttachedSound.dispatch(new AttachedSoundCallbackArgs(simulator, sound.DataBlock.SoundID,
+		onAttachedSound.dispatch(new AttachedSoundCallbackArgs(simulator, sound.DataBlock.SoundID,
 				sound.DataBlock.OwnerID, sound.DataBlock.ObjectID, sound.DataBlock.Gain, sound.DataBlock.Flags));
 	}
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	private final void HandleAttachedSoundGainChange(Packet packet, Simulator simulator) {
+	private final void handleAttachedSoundGainChange(Packet packet, Simulator simulator) {
 		AttachedSoundGainChangePacket change = (AttachedSoundGainChangePacket) packet;
-		OnAttachedSoundGainChange.dispatch(
+		onAttachedSoundGainChange.dispatch(
 				new AttachedSoundGainChangeCallbackArgs(simulator, change.DataBlock.ObjectID, change.DataBlock.Gain));
 	}
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	private final void HandlePreloadSound(Packet packet, Simulator simulator) {
+	private final void handlePreloadSound(Packet packet, Simulator simulator) {
 		PreloadSoundPacket preload = (PreloadSoundPacket) packet;
 
 		for (PreloadSoundPacket.DataBlockBlock data : preload.DataBlock) {
-			OnPreloadSound.dispatch(new PreloadSoundCallbackArgs(simulator, data.SoundID, data.OwnerID, data.ObjectID));
+			onPreloadSound.dispatch(new PreloadSoundCallbackArgs(simulator, data.SoundID, data.OwnerID, data.ObjectID));
 		}
 	}
 
@@ -224,9 +217,9 @@ public class SoundManager implements PacketCallback {
 	 * @param simulator
 	 *            The simulator the packet originated from
 	 */
-	private final void HandleSoundTrigger(Packet packet, Simulator simulator) {
+	private final void handleSoundTrigger(Packet packet, Simulator simulator) {
 		SoundTriggerPacket trigger = (SoundTriggerPacket) packet;
-		OnSoundTrigger.dispatch(new SoundTriggerCallbackArgs(simulator, trigger.SoundData.SoundID,
+		onSoundTrigger.dispatch(new SoundTriggerCallbackArgs(simulator, trigger.SoundData.SoundID,
 				trigger.SoundData.OwnerID, trigger.SoundData.ObjectID, trigger.SoundData.ParentID,
 				trigger.SoundData.Gain, trigger.SoundData.Handle, trigger.SoundData.Position));
 	}

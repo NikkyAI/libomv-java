@@ -31,8 +31,8 @@ public class ArchiveConstants {
 	public static final char ASSET_EXTENSION_SEPARATOR = '_';
 
 	/// Extensions used for asset types in the archive
-	private static final Map<AssetType, String> ASSET_TYPE_TO_EXTENSION = new HashMap<AssetType, String>();
-	private static final Map<String, AssetType> EXTENSION_TO_ASSET_TYPE = new HashMap<String, AssetType>();
+	private static final Map<AssetType, String> ASSET_TYPE_TO_EXTENSION = new HashMap<>();
+	private static final Map<String, AssetType> EXTENSION_TO_ASSET_TYPE = new HashMap<>();
 
 	static {
 		ASSET_TYPE_TO_EXTENSION.put(AssetType.Animation, "animation.bvh");

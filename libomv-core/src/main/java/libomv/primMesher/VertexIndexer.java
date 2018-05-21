@@ -30,14 +30,15 @@
 package libomv.primMesher;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import libomv.primMesher.types.ViewerFace;
 import libomv.primMesher.types.ViewerPolygon;
 import libomv.primMesher.types.ViewerVertex;
 
 public class VertexIndexer {
-	public ArrayList<ArrayList<ViewerVertex>> viewerVertices;
-	public ArrayList<ArrayList<ViewerPolygon>> viewerPolygons;
+	public List<List<ViewerVertex>> viewerVertices;
+	public List<List<ViewerPolygon>> viewerPolygons;
 	public int numPrimFaces;
 	private int[][] viewerVertIndices;
 
@@ -64,8 +65,8 @@ public class VertexIndexer {
 		for (ViewerFace vf : primMesh.viewerFaces)
 			numVertsPerPrimFace[vf.primFaceNumber] += 3;
 
-		this.viewerVertices = new ArrayList<ArrayList<ViewerVertex>>(numPrimFaces);
-		this.viewerPolygons = new ArrayList<ArrayList<ViewerPolygon>>(numPrimFaces);
+		this.viewerVertices = new ArrayList<>(numPrimFaces);
+		this.viewerPolygons = new ArrayList<>(numPrimFaces);
 		this.viewerVertIndices = new int[numPrimFaces][];
 
 		// create index lists
@@ -76,8 +77,8 @@ public class VertexIndexer {
 				vertIndices[i] = -1;
 			viewerVertIndices[primFaceNumber] = vertIndices;
 
-			viewerVertices.add(new ArrayList<ViewerVertex>(numVertsPerPrimFace[primFaceNumber]));
-			viewerPolygons.add(new ArrayList<ViewerPolygon>());
+			viewerVertices.add(new ArrayList<>(numVertsPerPrimFace[primFaceNumber]));
+			viewerPolygons.add(new ArrayList<>());
 		}
 
 		// populate the index lists
@@ -85,7 +86,7 @@ public class VertexIndexer {
 			int v1, v2, v3;
 
 			int[] vertIndices = viewerVertIndices[vf.primFaceNumber];
-			ArrayList<ViewerVertex> viewerVerts = viewerVertices.get(vf.primFaceNumber);
+			List<ViewerVertex> viewerVerts = viewerVertices.get(vf.primFaceNumber);
 
 			// add the vertices
 			if (vertIndices[vf.coordIndex1] < 0) {

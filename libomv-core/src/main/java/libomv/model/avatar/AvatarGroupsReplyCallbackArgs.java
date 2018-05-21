@@ -1,15 +1,15 @@
 package libomv.model.avatar;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import libomv.types.UUID;
 import libomv.utils.CallbackArgs;
 
 public class AvatarGroupsReplyCallbackArgs implements CallbackArgs {
 	private UUID avatarID;
-	private ArrayList<AvatarGroup> avatarGroups;
+	private List<AvatarGroup> avatarGroups;
 
-	public AvatarGroupsReplyCallbackArgs(UUID avatarID, ArrayList<AvatarGroup> avatarGroups) {
+	public AvatarGroupsReplyCallbackArgs(UUID avatarID, List<AvatarGroup> avatarGroups) {
 		this.avatarID = avatarID;
 		this.avatarGroups = avatarGroups;
 	}
@@ -18,7 +18,7 @@ public class AvatarGroupsReplyCallbackArgs implements CallbackArgs {
 		return avatarID;
 	}
 
-	public ArrayList<AvatarGroup> getAvatarGroups() {
+	public List<AvatarGroup> getAvatarGroups() {
 		return avatarGroups;
 	}
 

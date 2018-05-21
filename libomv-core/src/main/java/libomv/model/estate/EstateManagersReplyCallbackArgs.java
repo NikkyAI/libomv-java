@@ -1,6 +1,6 @@
 package libomv.model.estate;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import libomv.types.UUID;
 import libomv.utils.CallbackArgs;
@@ -11,7 +11,7 @@ import libomv.utils.CallbackArgs;
 public class EstateManagersReplyCallbackArgs implements CallbackArgs {
 	private final int estateID;
 	private final int count;
-	private final ArrayList<UUID> managers;
+	private final List<UUID> managers;
 
 	/**
 	 * Construct a new instance of the EstateManagersReplyEventArgs class
@@ -23,7 +23,7 @@ public class EstateManagersReplyCallbackArgs implements CallbackArgs {
 	 * @param managers
 	 *            Managers UUIDs
 	 */
-	public EstateManagersReplyCallbackArgs(int estateID, int count, ArrayList<UUID> managers) {
+	public EstateManagersReplyCallbackArgs(int estateID, int count, List<UUID> managers) {
 		this.estateID = estateID;
 		this.count = count;
 		this.managers = managers;
@@ -40,7 +40,7 @@ public class EstateManagersReplyCallbackArgs implements CallbackArgs {
 	}
 
 	// List of UUIDs of the Estate's Managers
-	public ArrayList<UUID> getManagers() {
+	public List<UUID> getManagers() {
 		return managers;
 	}
 

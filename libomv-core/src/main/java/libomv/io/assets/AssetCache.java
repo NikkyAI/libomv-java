@@ -124,18 +124,18 @@ public class AssetCache {
 		public boolean callback(SettingsUpdateCallbackArgs params) {
 			String key = params.getName();
 			if (key == null) {
-				useAssetCache = _Client.Settings.getBool(LibSettings.USE_ASSET_CACHE);
-				cacheAssetMaxSize = _Client.Settings.getLong(LibSettings.ASSET_CACHE_MAX_SIZE);
-				setResourcePath(_Client.Settings.getString(LibSettings.RESOURCE_DIR));
-				setAssetPath(_Client.Settings.getString(LibSettings.ASSET_CACHE_DIR));
+				useAssetCache = _Client.settings.getBool(LibSettings.USE_ASSET_CACHE);
+				cacheAssetMaxSize = _Client.settings.getLong(LibSettings.ASSET_CACHE_MAX_SIZE);
+				setResourcePath(_Client.settings.getString(LibSettings.RESOURCE_DIR));
+				setAssetPath(_Client.settings.getString(LibSettings.ASSET_CACHE_DIR));
 			} else if (key.equals(LibSettings.USE_ASSET_CACHE)) {
-				useAssetCache = params.getValue().AsBoolean();
+				useAssetCache = params.getValue().asBoolean();
 			} else if (key.equals(LibSettings.USE_ASSET_CACHE)) {
-				cacheAssetMaxSize = params.getValue().AsLong();
+				cacheAssetMaxSize = params.getValue().asLong();
 			} else if (key.equals(LibSettings.ASSET_CACHE_DIR)) {
-				setAssetPath(params.getValue().AsString());
+				setAssetPath(params.getValue().asString());
 			} else if (key.equals(LibSettings.RESOURCE_DIR)) {
-				setResourcePath(params.getValue().AsString());
+				setResourcePath(params.getValue().asString());
 				setAssetPath(null);
 			}
 			return false;
@@ -153,14 +153,14 @@ public class AssetCache {
 	public AssetCache(GridClient client) {
 		_Client = client;
 
-		_Client.Settings.onSettingsUpdate.add(new SettingsUpdate());
-		useAssetCache = _Client.Settings.getBool(LibSettings.USE_ASSET_CACHE);
-		cacheAssetMaxSize = _Client.Settings.getLong(LibSettings.ASSET_CACHE_MAX_SIZE);
-		setResourcePath(_Client.Settings.getString(LibSettings.RESOURCE_DIR));
-		setAssetPath(_Client.Settings.getString(LibSettings.ASSET_CACHE_DIR));
+		_Client.settings.onSettingsUpdate.add(new SettingsUpdate());
+		useAssetCache = _Client.settings.getBool(LibSettings.USE_ASSET_CACHE);
+		cacheAssetMaxSize = _Client.settings.getLong(LibSettings.ASSET_CACHE_MAX_SIZE);
+		setResourcePath(_Client.settings.getString(LibSettings.RESOURCE_DIR));
+		setAssetPath(_Client.settings.getString(LibSettings.ASSET_CACHE_DIR));
 
-		_Client.Login.OnLoginProgress.add(new Network_LoginProgress(), false);
-		_Client.Network.OnDisconnected.add(new Network_Disconnected(), true);
+		_Client.login.onLoginProgress.add(new Network_LoginProgress(), false);
+		_Client.network.onDisconnected.add(new Network_Disconnected(), true);
 	}
 
 	private class Network_LoginProgress implements Callback<LoginProgressCallbackArgs> {
@@ -191,7 +191,7 @@ public class AssetCache {
 
 	// Only create timer when needed
 	private void SetupTimer() {
-		if (useAssetCache && autoPruneEnabled && _Client.Network.getConnected()) {
+		if (useAssetCache && autoPruneEnabled && _Client.network.getConnected()) {
 			cleanerTimer = new Timer("AssetCleaner");
 			cleanerTimer.schedule(new TimerTask() {
 				@Override

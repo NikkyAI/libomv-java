@@ -34,11 +34,6 @@ import libomv.types.UUID;
 
 /** Represents an Animation */
 public class AssetAnimation extends AssetItem {
-	// Override the base classes AssetType
-	@Override
-	public AssetType getAssetType() {
-		return AssetType.Animation;
-	}
 
 	/**
 	 * Construct an Asset object of type Animation
@@ -50,6 +45,12 @@ public class AssetAnimation extends AssetItem {
 	 */
 	public AssetAnimation(UUID assetID, byte[] assetData) {
 		super(assetID, assetData);
+	}
+
+	// Override the base classes AssetType
+	@Override
+	public AssetType getAssetType() {
+		return AssetType.Animation;
 	}
 
 	@Override

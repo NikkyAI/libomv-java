@@ -448,13 +448,13 @@ public class ParticleSystem {
 			pos += packLegacyData(bytes, pos);
 
 			if (HasGlow()) {
-				bytes[pos++] = Helpers.FloatToByte(partStartGlow, 0.0f, 1.0f);
-				bytes[pos++] = Helpers.FloatToByte(partEndGlow, 0.0f, 1.0f);
+				bytes[pos++] = Helpers.floatToByte(partStartGlow, 0.0f, 1.0f);
+				bytes[pos++] = Helpers.floatToByte(partEndGlow, 0.0f, 1.0f);
 			}
 
 			if (HasBlendFunc()) {
-				bytes[pos++] = Helpers.FloatToByte(blendFuncSource, 0.0f, 1.0f);
-				bytes[pos++] = Helpers.FloatToByte(blendFuncDest, 0.0f, 1.0f);
+				bytes[pos++] = Helpers.floatToByte(blendFuncSource, 0.0f, 1.0f);
+				bytes[pos++] = Helpers.floatToByte(blendFuncDest, 0.0f, 1.0f);
 			}
 		}
 		return bytes;
@@ -464,21 +464,21 @@ public class ParticleSystem {
 		pos += Helpers.UInt32ToBytesL(crc, bytes, pos);
 		pos += Helpers.UInt32ToBytesL(partFlags, bytes, pos);
 		bytes[pos++] = pattern;
-		pos += Helpers.FixedToBytesL(bytes, pos, maxAge, false, 8, 8);
-		pos += Helpers.FixedToBytesL(bytes, pos, startAge, false, 8, 8);
-		pos += Helpers.FixedToBytesL(bytes, pos, innerAngle, false, 3, 5);
-		pos += Helpers.FixedToBytesL(bytes, pos, outerAngle, false, 3, 5);
-		pos += Helpers.FixedToBytesL(bytes, pos, burstRate, false, 8, 8);
-		pos += Helpers.FixedToBytesL(bytes, pos, burstRadius, false, 8, 8);
-		pos += Helpers.FixedToBytesL(bytes, pos, burstSpeedMin, false, 8, 8);
-		pos += Helpers.FixedToBytesL(bytes, pos, burstSpeedMax, false, 8, 8);
+		pos += Helpers.fixedToBytesL(bytes, pos, maxAge, false, 8, 8);
+		pos += Helpers.fixedToBytesL(bytes, pos, startAge, false, 8, 8);
+		pos += Helpers.fixedToBytesL(bytes, pos, innerAngle, false, 3, 5);
+		pos += Helpers.fixedToBytesL(bytes, pos, outerAngle, false, 3, 5);
+		pos += Helpers.fixedToBytesL(bytes, pos, burstRate, false, 8, 8);
+		pos += Helpers.fixedToBytesL(bytes, pos, burstRadius, false, 8, 8);
+		pos += Helpers.fixedToBytesL(bytes, pos, burstSpeedMin, false, 8, 8);
+		pos += Helpers.fixedToBytesL(bytes, pos, burstSpeedMax, false, 8, 8);
 		bytes[pos++] = burstPartCount;
-		pos += Helpers.FixedToBytesL(bytes, pos, angularVelocity.X, true, 8, 7);
-		pos += Helpers.FixedToBytesL(bytes, pos, angularVelocity.Y, true, 8, 7);
-		pos += Helpers.FixedToBytesL(bytes, pos, angularVelocity.Z, true, 8, 7);
-		pos += Helpers.FixedToBytesL(bytes, pos, partAcceleration.X, true, 8, 7);
-		pos += Helpers.FixedToBytesL(bytes, pos, partAcceleration.Y, true, 8, 7);
-		pos += Helpers.FixedToBytesL(bytes, pos, partAcceleration.Z, true, 8, 7);
+		pos += Helpers.fixedToBytesL(bytes, pos, angularVelocity.X, true, 8, 7);
+		pos += Helpers.fixedToBytesL(bytes, pos, angularVelocity.Y, true, 8, 7);
+		pos += Helpers.fixedToBytesL(bytes, pos, angularVelocity.Z, true, 8, 7);
+		pos += Helpers.fixedToBytesL(bytes, pos, partAcceleration.X, true, 8, 7);
+		pos += Helpers.fixedToBytesL(bytes, pos, partAcceleration.Y, true, 8, 7);
+		pos += Helpers.fixedToBytesL(bytes, pos, partAcceleration.Z, true, 8, 7);
 		pos += texture.toBytes(bytes, pos);
 		pos += target.toBytes(bytes, pos);
 		return pos;
@@ -486,51 +486,51 @@ public class ParticleSystem {
 
 	private int packLegacyData(byte[] bytes, int pos) {
 		pos += Helpers.UInt32ToBytesL(partDataFlags, bytes, pos);
-		pos += Helpers.FixedToBytesL(bytes, pos, partMaxAge, false, 8, 8);
+		pos += Helpers.fixedToBytesL(bytes, pos, partMaxAge, false, 8, 8);
 		pos += partStartColor.toBytes(bytes, pos);
 		pos += partEndColor.toBytes(bytes, pos);
-		pos += Helpers.FixedToBytesL(bytes, pos, partStartScaleX, false, 3, 5);
-		pos += Helpers.FixedToBytesL(bytes, pos, partStartScaleY, false, 3, 5);
-		pos += Helpers.FixedToBytesL(bytes, pos, partEndScaleX, false, 3, 5);
-		pos += Helpers.FixedToBytesL(bytes, pos, partEndScaleY, false, 3, 5);
+		pos += Helpers.fixedToBytesL(bytes, pos, partStartScaleX, false, 3, 5);
+		pos += Helpers.fixedToBytesL(bytes, pos, partStartScaleY, false, 3, 5);
+		pos += Helpers.fixedToBytesL(bytes, pos, partEndScaleX, false, 3, 5);
+		pos += Helpers.fixedToBytesL(bytes, pos, partEndScaleY, false, 3, 5);
 		return pos;
 	}
 
 	public OSD serialize() {
 		OSDMap map = new OSDMap();
 
-		map.put("crc", OSD.FromInteger(crc));
-		map.put("part_flags", OSD.FromInteger(partFlags));
-		map.put("pattern", OSD.FromInteger(pattern));
-		map.put("max_age", OSD.FromReal(maxAge));
-		map.put("start_age", OSD.FromReal(startAge));
-		map.put("inner_angle", OSD.FromReal(innerAngle));
-		map.put("outer_angle", OSD.FromReal(outerAngle));
-		map.put("burst_rate", OSD.FromReal(burstRate));
-		map.put("burst_radius", OSD.FromReal(burstRadius));
-		map.put("burst_speed_min", OSD.FromReal(burstSpeedMin));
-		map.put("burst_speed_max", OSD.FromReal(burstSpeedMax));
-		map.put("burst_part_count", OSD.FromInteger(burstPartCount));
-		map.put("ang_velocity", OSD.FromVector3(angularVelocity));
-		map.put("part_acceleration", OSD.FromVector3(partAcceleration));
-		map.put("texture", OSD.FromUUID(texture));
-		map.put("target", OSD.FromUUID(target));
+		map.put("crc", OSD.fromInteger(crc));
+		map.put("part_flags", OSD.fromInteger(partFlags));
+		map.put("pattern", OSD.fromInteger(pattern));
+		map.put("max_age", OSD.fromReal(maxAge));
+		map.put("start_age", OSD.fromReal(startAge));
+		map.put("inner_angle", OSD.fromReal(innerAngle));
+		map.put("outer_angle", OSD.fromReal(outerAngle));
+		map.put("burst_rate", OSD.fromReal(burstRate));
+		map.put("burst_radius", OSD.fromReal(burstRadius));
+		map.put("burst_speed_min", OSD.fromReal(burstSpeedMin));
+		map.put("burst_speed_max", OSD.fromReal(burstSpeedMax));
+		map.put("burst_part_count", OSD.fromInteger(burstPartCount));
+		map.put("ang_velocity", OSD.fromVector3(angularVelocity));
+		map.put("part_acceleration", OSD.fromVector3(partAcceleration));
+		map.put("texture", OSD.fromUUID(texture));
+		map.put("target", OSD.fromUUID(target));
 
-		map.put("part_data_flags", OSD.FromInteger(partDataFlags));
-		map.put("part_max_age", OSD.FromReal(partMaxAge));
-		map.put("part_start_color", OSD.FromColor4(partStartColor));
-		map.put("part_end_color", OSD.FromColor4(partEndColor));
-		map.put("part_start_scale", OSD.FromVector3(new Vector3(partStartScaleX, partStartScaleY, 0f)));
-		map.put("part_end_scale", OSD.FromVector3(new Vector3(partEndScaleX, partEndScaleY, 0f)));
+		map.put("part_data_flags", OSD.fromInteger(partDataFlags));
+		map.put("part_max_age", OSD.fromReal(partMaxAge));
+		map.put("part_start_color", OSD.fromColor4(partStartColor));
+		map.put("part_end_color", OSD.fromColor4(partEndColor));
+		map.put("part_start_scale", OSD.fromVector3(new Vector3(partStartScaleX, partStartScaleY, 0f)));
+		map.put("part_end_scale", OSD.fromVector3(new Vector3(partEndScaleX, partEndScaleY, 0f)));
 
 		if (HasGlow()) {
-			map.put("part_start_glow", OSD.FromReal(partStartGlow));
-			map.put("part_end_glow", OSD.FromReal(partEndGlow));
+			map.put("part_start_glow", OSD.fromReal(partStartGlow));
+			map.put("part_end_glow", OSD.fromReal(partEndGlow));
 		}
 
 		if (HasBlendFunc()) {
-			map.put("blendfunc_source", OSD.FromInteger(blendFuncSource));
-			map.put("blendfunc_dest", OSD.FromInteger(blendFuncDest));
+			map.put("blendfunc_source", OSD.fromInteger(blendFuncSource));
+			map.put("blendfunc_dest", OSD.fromInteger(blendFuncDest));
 		}
 		return map;
 	}
@@ -539,44 +539,44 @@ public class ParticleSystem {
 		if (osd instanceof OSDMap) {
 			OSDMap map = (OSDMap) osd;
 
-			crc = map.get("crc").AsUInteger();
-			partFlags = map.get("part_flags").AsUInteger();
-			pattern = SourcePattern.setValue(map.get("pattern").AsInteger());
-			maxAge = (float) map.get("max_age").AsReal();
-			startAge = (float) map.get("start_age").AsReal();
-			innerAngle = (float) map.get("inner_angle").AsReal();
-			outerAngle = (float) map.get("outer_angle").AsReal();
-			burstRate = (float) map.get("burst_rate").AsReal();
-			burstRadius = (float) map.get("burst_radius").AsReal();
-			burstSpeedMin = (float) map.get("burst_speed_min").AsReal();
-			burstSpeedMax = (float) map.get("burst_speed_max").AsReal();
-			burstPartCount = (byte) map.get("burst_part_count").AsInteger();
-			angularVelocity = map.get("ang_velocity").AsVector3();
-			partAcceleration = map.get("part_acceleration").AsVector3();
-			texture = map.get("texture").AsUUID();
-			target = map.get("target").AsUUID();
+			crc = map.get("crc").asUInteger();
+			partFlags = map.get("part_flags").asUInteger();
+			pattern = SourcePattern.setValue(map.get("pattern").asInteger());
+			maxAge = (float) map.get("max_age").asReal();
+			startAge = (float) map.get("start_age").asReal();
+			innerAngle = (float) map.get("inner_angle").asReal();
+			outerAngle = (float) map.get("outer_angle").asReal();
+			burstRate = (float) map.get("burst_rate").asReal();
+			burstRadius = (float) map.get("burst_radius").asReal();
+			burstSpeedMin = (float) map.get("burst_speed_min").asReal();
+			burstSpeedMax = (float) map.get("burst_speed_max").asReal();
+			burstPartCount = (byte) map.get("burst_part_count").asInteger();
+			angularVelocity = map.get("ang_velocity").asVector3();
+			partAcceleration = map.get("part_acceleration").asVector3();
+			texture = map.get("texture").asUUID();
+			target = map.get("target").asUUID();
 
-			partDataFlags = ParticleDataFlags.setValue(map.get("part_data_flags").AsUInteger());
-			partMaxAge = (float) map.get("part_max_age").AsReal();
-			partStartColor = map.get("part_start_color").AsColor4();
-			partEndColor = map.get("part_end_color").AsColor4();
+			partDataFlags = ParticleDataFlags.setValue(map.get("part_data_flags").asUInteger());
+			partMaxAge = (float) map.get("part_max_age").asReal();
+			partStartColor = map.get("part_start_color").asColor4();
+			partEndColor = map.get("part_end_color").asColor4();
 
-			Vector3 ss = map.get("part_start_scale").AsVector3();
+			Vector3 ss = map.get("part_start_scale").asVector3();
 			partStartScaleX = ss.X;
 			partStartScaleY = ss.Y;
 
-			Vector3 es = map.get("part_end_scale").AsVector3();
+			Vector3 es = map.get("part_end_scale").asVector3();
 			partEndScaleX = es.X;
 			partEndScaleY = es.Y;
 
 			if (map.containsKey("part_start_glow")) {
-				partStartGlow = (float) map.get("part_start_glow").AsReal();
-				partEndGlow = (float) map.get("part_end_glow").AsReal();
+				partStartGlow = (float) map.get("part_start_glow").asReal();
+				partEndGlow = (float) map.get("part_end_glow").asReal();
 			}
 
 			if (map.containsKey("blendfunc_source")) {
-				blendFuncSource = (byte) map.get("blendfunc_source").AsUInteger();
-				blendFuncDest = (byte) map.get("blendfunc_dest").AsUInteger();
+				blendFuncSource = (byte) map.get("blendfunc_source").asUInteger();
+				blendFuncDest = (byte) map.get("blendfunc_dest").asUInteger();
 			}
 		} else {
 			init();

@@ -70,156 +70,156 @@ public class JsonLLSDTest extends TestCase {
 		String t = "true";
 		OSD llsdT = OSDParser.deserialize(t, OSDFormat.Json);
 		assertEquals(OSDType.Boolean, llsdT.getType());
-		assertEquals(true, llsdT.AsBoolean());
+		assertEquals(true, llsdT.asBoolean());
 
 		String f = "false";
 		OSD llsdF = OSDParser.deserialize(f, OSDFormat.Json);
 		assertEquals(OSDType.Boolean, llsdF.getType());
-		assertEquals(false, llsdF.AsBoolean());
+		assertEquals(false, llsdF.asBoolean());
 	}
 
 	public void testSerializeBoolean() throws IOException, ParseException {
-		OSD llsdTrue = OSD.FromBoolean(true);
+		OSD llsdTrue = OSD.fromBoolean(true);
 		String sTrue = OSDParser.serializeToString(llsdTrue, OSDFormat.Json, false);
 		OSD llsdTrueDS = OSDParser.deserialize(sTrue);
 		assertEquals(OSDType.Boolean, llsdTrueDS.getType());
-		assertEquals(true, llsdTrueDS.AsBoolean());
+		assertEquals(true, llsdTrueDS.asBoolean());
 
-		OSD llsdFalse = OSD.FromBoolean(false);
+		OSD llsdFalse = OSD.fromBoolean(false);
 		String sFalse = OSDParser.serializeToString(llsdFalse, OSDFormat.Json, false);
 		OSD llsdFalseDS = OSDParser.deserialize(sFalse);
 		assertEquals(OSDType.Boolean, llsdFalseDS.getType());
-		assertEquals(false, llsdFalseDS.AsBoolean());
+		assertEquals(false, llsdFalseDS.asBoolean());
 	}
 
 	public void testDeserializeInteger() throws IOException, ParseException {
 		String integerOne = "12319423";
 		OSD llsdOne = OSDParser.deserialize(integerOne, OSDFormat.Json);
 		assertEquals(OSDType.Integer, llsdOne.getType());
-		assertEquals(12319423, llsdOne.AsInteger());
+		assertEquals(12319423, llsdOne.asInteger());
 
 		String integerTwo = "-489234";
 		OSD llsdTwo = OSDParser.deserialize(integerTwo, OSDFormat.Json);
 		assertEquals(OSDType.Integer, llsdTwo.getType());
-		assertEquals(-489234, llsdTwo.AsInteger());
+		assertEquals(-489234, llsdTwo.asInteger());
 	}
 
 	public void testSerializeInteger() throws IOException, ParseException {
-		OSD llsdOne = OSD.FromInteger(12319423);
+		OSD llsdOne = OSD.fromInteger(12319423);
 		String sOne = OSDParser.serializeToString(llsdOne, OSDFormat.Json);
 		OSD llsdOneDS = OSDParser.deserialize(sOne);
 		assertEquals(OSDType.Integer, llsdOneDS.getType());
-		assertEquals(12319423, llsdOne.AsInteger());
+		assertEquals(12319423, llsdOne.asInteger());
 
-		OSD llsdTwo = OSD.FromInteger(-71892034);
+		OSD llsdTwo = OSD.fromInteger(-71892034);
 		String sTwo = OSDParser.serializeToString(llsdTwo, OSDFormat.Json);
 		OSD llsdTwoDS = OSDParser.deserialize(sTwo);
 		assertEquals(OSDType.Integer, llsdTwoDS.getType());
-		assertEquals(-71892034, llsdTwoDS.AsInteger());
+		assertEquals(-71892034, llsdTwoDS.asInteger());
 	}
 
 	public void testDeserializeReal() throws IOException, ParseException {
 		String realOne = "1123412345.465711";
 		OSD llsdOne = OSDParser.deserialize(realOne, OSDFormat.Json);
 		assertEquals(OSDType.Real, llsdOne.getType());
-		assertEquals(1123412345.465711d, llsdOne.AsReal());
+		assertEquals(1123412345.465711d, llsdOne.asReal());
 
 		String realTwo = "-11234684.923411";
 		OSD llsdTwo = OSDParser.deserialize(realTwo, OSDFormat.Json);
 		assertEquals(OSDType.Real, llsdTwo.getType());
-		assertEquals(-11234684.923411d, llsdTwo.AsReal());
+		assertEquals(-11234684.923411d, llsdTwo.asReal());
 
 		String realThree = "1";
 		OSD llsdThree = OSDParser.deserialize(realThree, OSDFormat.Json);
 		// assertEquals(OSDType.Real, llsdThree.getType());
-		assertEquals(1d, llsdThree.AsReal());
+		assertEquals(1d, llsdThree.asReal());
 
 		String realFour = "2.0193899999999998204e-06";
 		OSD llsdFour = OSDParser.deserialize(realFour, OSDFormat.Json);
 		assertEquals(OSDType.Real, llsdFour.getType());
-		assertEquals(2.0193899999999998204e-06d, llsdFour.AsReal());
+		assertEquals(2.0193899999999998204e-06d, llsdFour.asReal());
 
 		String realFive = "0";
 		OSD llsdFive = OSDParser.deserialize(realFive, OSDFormat.Json);
 		// assertEquals(OSDType.Real, llsdFive.getType());
-		assertEquals(0d, llsdFive.AsReal());
+		assertEquals(0d, llsdFive.asReal());
 	}
 
 	public void testSerializeReal() throws IOException, ParseException {
-		OSD llsdOne = OSD.FromReal(12987234.723847d);
+		OSD llsdOne = OSD.fromReal(12987234.723847d);
 		String sOne = OSDParser.serializeToString(llsdOne, OSDFormat.Json);
 		OSD llsdOneDS = OSDParser.deserialize(sOne);
 		assertEquals(OSDType.Real, llsdOneDS.getType());
-		assertEquals(12987234.723847d, llsdOneDS.AsReal());
+		assertEquals(12987234.723847d, llsdOneDS.asReal());
 
-		OSD llsdTwo = OSD.FromReal(-32347892.234234d);
+		OSD llsdTwo = OSD.fromReal(-32347892.234234d);
 		String sTwo = OSDParser.serializeToString(llsdTwo, OSDFormat.Json);
 		OSD llsdTwoDS = OSDParser.deserialize(sTwo);
 		assertEquals(OSDType.Real, llsdTwoDS.getType());
-		assertEquals(-32347892.234234d, llsdTwoDS.AsReal());
+		assertEquals(-32347892.234234d, llsdTwoDS.asReal());
 
-		OSD llsdThree = OSD.FromReal(Double.MAX_VALUE);
+		OSD llsdThree = OSD.fromReal(Double.MAX_VALUE);
 		String sThree = OSDParser.serializeToString(llsdThree, OSDFormat.Json);
 		OSD llsdThreeDS = OSDParser.deserialize(sThree);
 		assertEquals(OSDType.Real, llsdThreeDS.getType());
-		assertEquals(Double.MAX_VALUE, llsdThreeDS.AsReal());
+		assertEquals(Double.MAX_VALUE, llsdThreeDS.asReal());
 
-		OSD llsdFour = OSD.FromReal(Double.MIN_VALUE);
+		OSD llsdFour = OSD.fromReal(Double.MIN_VALUE);
 		String sFour = OSDParser.serializeToString(llsdFour, OSDFormat.Json);
 		OSD llsdFourDS = OSDParser.deserialize(sFour);
 		assertEquals(OSDType.Real, llsdFourDS.getType());
-		assertEquals(Double.MIN_VALUE, llsdFourDS.AsReal());
+		assertEquals(Double.MIN_VALUE, llsdFourDS.asReal());
 
-		OSD llsdFive = OSD.FromReal(-1.1123123E+50d);
+		OSD llsdFive = OSD.fromReal(-1.1123123E+50d);
 		String sFive = OSDParser.serializeToString(llsdFive, OSDFormat.Json);
 		OSD llsdFiveDS = OSDParser.deserialize(sFive);
 		assertEquals(OSDType.Real, llsdFiveDS.getType());
-		assertEquals(-1.1123123E+50d, llsdFiveDS.AsReal());
+		assertEquals(-1.1123123E+50d, llsdFiveDS.asReal());
 
-		OSD llsdSix = OSD.FromReal(2.0193899999999998204e-06);
+		OSD llsdSix = OSD.fromReal(2.0193899999999998204e-06);
 		String sSix = OSDParser.serializeToString(llsdSix, OSDFormat.Json);
 		OSD llsdSixDS = OSDParser.deserialize(sSix);
 		assertEquals(OSDType.Real, llsdSixDS.getType());
-		assertEquals(2.0193899999999998204e-06, llsdSixDS.AsReal());
+		assertEquals(2.0193899999999998204e-06, llsdSixDS.asReal());
 	}
 
 	public void testDeserializeUUID() throws IOException, ParseException {
 		String uuidOne = "\"97f4aeca-88a1-42a1-b385-b97b18abb255\"";
 		OSD llsdOne = OSDParser.deserialize(uuidOne, OSDFormat.Json);
 		assertEquals(OSDType.UUID, llsdOne.getType());
-		assertEquals("97f4aeca-88a1-42a1-b385-b97b18abb255", llsdOne.AsString());
+		assertEquals("97f4aeca-88a1-42a1-b385-b97b18abb255", llsdOne.asString());
 
 		String uuidTwo = "\"00000000-0000-0000-0000-000000000000\"";
 		OSD llsdTwo = OSDParser.deserialize(uuidTwo, OSDFormat.Json);
 		assertEquals(OSDType.UUID, llsdTwo.getType());
-		assertEquals("00000000-0000-0000-0000-000000000000", llsdTwo.AsString());
+		assertEquals("00000000-0000-0000-0000-000000000000", llsdTwo.asString());
 	}
 
 	public void testSerializeUUID() throws IOException, ParseException {
-		OSD llsdOne = OSD.FromUUID(new UUID("97f4aeca-88a1-42a1-b385-b97b18abb255"));
+		OSD llsdOne = OSD.fromUUID(new UUID("97f4aeca-88a1-42a1-b385-b97b18abb255"));
 		String sOne = OSDParser.serializeToString(llsdOne, OSDFormat.Json);
 		OSD llsdOneDS = OSDParser.deserialize(sOne);
 		assertEquals(OSDType.UUID, llsdOneDS.getType());
-		assertEquals("97f4aeca-88a1-42a1-b385-b97b18abb255", llsdOneDS.AsString());
+		assertEquals("97f4aeca-88a1-42a1-b385-b97b18abb255", llsdOneDS.asString());
 
-		OSD llsdTwo = OSD.FromUUID(new UUID("00000000-0000-0000-0000-000000000000"));
+		OSD llsdTwo = OSD.fromUUID(new UUID("00000000-0000-0000-0000-000000000000"));
 		String sTwo = OSDParser.serializeToString(llsdTwo, OSDFormat.Json);
 		OSD llsdTwoDS = OSDParser.deserialize(sTwo);
 		assertEquals(OSDType.UUID, llsdTwoDS.getType());
-		assertEquals("00000000-0000-0000-0000-000000000000", llsdTwoDS.AsString());
+		assertEquals("00000000-0000-0000-0000-000000000000", llsdTwoDS.asString());
 	}
 
 	public void testDeserializeString() throws IOException, ParseException {
 		String sOne = "\"\"";
 		OSD llsdOne = OSDParser.deserialize(sOne, OSDFormat.Json);
 		assertEquals(OSDType.String, llsdOne.getType());
-		assertEquals("", llsdOne.AsString());
+		assertEquals("", llsdOne.asString());
 
 		// This is double escaping. Once for the encoding, and once for Java.
 		String sTwo = "\"test\\\\'\\\"test\"";
 		OSD llsdTwo = OSDParser.deserialize(sTwo, OSDFormat.Json);
 		assertEquals(OSDType.String, llsdTwo.getType());
-		assertEquals("test\\'\"test", llsdTwo.AsString());
+		assertEquals("test\\'\"test", llsdTwo.asString());
 
 		// "test \lest"
 		char[] cThree = { (char) 0x22, (char) 0x74, (char) 0x65, (char) 0x73, (char) 0x74, (char) 0x20, (char) 0x5c,
@@ -228,41 +228,41 @@ public class JsonLLSDTest extends TestCase {
 
 		OSD llsdThree = OSDParser.deserialize(sThree, OSDFormat.Json);
 		assertEquals(OSDType.String, llsdThree.getType());
-		assertEquals("test \\lest", llsdThree.AsString());
+		assertEquals("test \\lest", llsdThree.asString());
 
 		String sFour = "\"aa\t la\"";
 		OSD llsdFour = OSDParser.deserialize(sFour, OSDFormat.Json);
 		assertEquals(OSDType.String, llsdFour.getType());
-		assertEquals("aa\t la", llsdFour.AsString());
+		assertEquals("aa\t la", llsdFour.asString());
 
 		char[] cFive = { (char) 0x22, (char) 0x5c, (char) 0x5c, (char) 0x22 };
 		String sFive = new String(cFive);
 		OSD llsdFive = OSDParser.deserialize(sFive, OSDFormat.Json);
 		assertEquals(OSDType.String, llsdFive.getType());
-		assertEquals("\\", llsdFive.AsString());
+		assertEquals("\\", llsdFive.asString());
 
 		String sSix = "\"1234567890\"";
 		OSD llsdSix = OSDParser.deserialize(sSix, OSDFormat.Json);
 		assertEquals(OSDType.String, llsdSix.getType());
-		assertEquals("1234567890", llsdSix.AsString());
+		assertEquals("1234567890", llsdSix.asString());
 
 		String sSeven = "\"\\\\ \\\\ \\\\\"";
 		OSD llsdSeven = OSDParser.deserialize(sSeven, OSDFormat.Json);
 		assertEquals(OSDType.String, llsdSeven.getType());
-		assertEquals("\\ \\ \\", llsdSeven.AsString());
+		assertEquals("\\ \\ \\", llsdSeven.asString());
 
 		String sEight = "\"aouAOUhsdjklfghskldjfghqeiurtzwieortzaslxfjkgh\"";
 		OSD llsdEight = OSDParser.deserialize(sEight, OSDFormat.Json);
 		assertEquals(OSDType.String, llsdEight.getType());
-		assertEquals("aouAOUhsdjklfghskldjfghqeiurtzwieortzaslxfjkgh", llsdEight.AsString());
+		assertEquals("aouAOUhsdjklfghskldjfghqeiurtzwieortzaslxfjkgh", llsdEight.asString());
 	}
 
 	static private void DoSomeStringSerializingActionsAndAsserts(String s) throws IOException, ParseException {
-		OSD llsdOne = OSD.FromString(s);
+		OSD llsdOne = OSD.fromString(s);
 		String sOne = OSDParser.serializeToString(llsdOne, OSDFormat.Json);
 		OSD llsdOneDS = OSDParser.deserialize(sOne);
 		assertEquals(OSDType.String, llsdOne.getType());
-		assertEquals(s, llsdOneDS.AsString());
+		assertEquals(s, llsdOneDS.asString());
 	}
 
 	public void testSerializeString() throws IOException, ParseException, XmlPullParserException {
@@ -300,30 +300,30 @@ public class JsonLLSDTest extends TestCase {
 		String sUriTwo = "\"test/test/test?test=1&toast=2#data\"";
 		OSD llsdTwo = OSDParser.deserialize(sUriTwo, OSDFormat.Json);
 		// assertEquals(OSDType.URI, llsdTwo.getType());
-		assertEquals("test/test/test?test=1&toast=2#data", llsdTwo.AsString());
+		assertEquals("test/test/test?test=1&toast=2#data", llsdTwo.asString());
 
 		String sUriOne = "\"http://username:password@example.com:8042/over/there/index.dtb\"";
 		OSD llsdOne = OSDParser.deserialize(sUriOne, OSDFormat.Json);
 		// assertEquals(OSDType.URI, llsdOne.getType());
-		assertEquals("http://username:password@example.com:8042/over/there/index.dtb", llsdOne.AsString());
+		assertEquals("http://username:password@example.com:8042/over/there/index.dtb", llsdOne.asString());
 	}
 
 	public void testSerializeURI() throws IOException, ParseException, URISyntaxException {
 		URI uriTwo = new URI("test/test/near/the/end?test=1&toast=2#data");
-		OSD llsdTwo = OSD.FromUri(uriTwo);
+		OSD llsdTwo = OSD.fromUri(uriTwo);
 		String sUriTwo = OSDParser.serializeToString(llsdTwo, OSDFormat.Json);
 		OSD llsdTwoDS = OSDParser.deserialize(sUriTwo);
 		// Json does serialize uri data to a string
 		assertEquals(OSDType.String, llsdTwoDS.getType());
-		assertEquals(uriTwo, llsdTwoDS.AsUri());
+		assertEquals(uriTwo, llsdTwoDS.asUri());
 
 		URI uriOne = new URI("http://username:password@example.com:8042/over/there/index.dtb");
-		OSD llsdOne = OSD.FromUri(uriOne);
+		OSD llsdOne = OSD.fromUri(uriOne);
 		String sUriOne = OSDParser.serializeToString(llsdOne, OSDFormat.Json);
 		OSD llsdOneDS = OSDParser.deserialize(sUriOne);
 		// Json does serialize uri data to a string
 		assertEquals(OSDType.String, llsdOneDS.getType());
-		assertEquals(uriOne, llsdOneDS.AsUri());
+		assertEquals(uriOne, llsdOneDS.asUri());
 	}
 
 	public void testDeserializeDate() throws IOException, ParseException {
@@ -335,7 +335,7 @@ public class JsonLLSDTest extends TestCase {
 		OSD llsdOne = OSDParser.deserialize(sDateOne, OSDFormat.Json);
 		assertEquals(OSDType.Date, llsdOne.getType());
 
-		Date dtDS = llsdOne.AsDate();
+		Date dtDS = llsdOne.asDate();
 		assertEquals(dt.getTime(), dtDS);
 	}
 
@@ -343,33 +343,33 @@ public class JsonLLSDTest extends TestCase {
 		Calendar dtOne = Calendar.getInstance();
 		dtOne.clear();
 		dtOne.set(2005, 8 - 1, 10, 11, 23, 4);
-		OSD llsdOne = OSD.FromDate(dtOne.getTime());
+		OSD llsdOne = OSD.fromDate(dtOne.getTime());
 		String sDtOne = OSDParser.serializeToString(llsdOne, OSDFormat.Json);
 		OSD llsdOneDS = OSDParser.deserialize(sDtOne);
 		assertEquals(OSDType.Date, llsdOneDS.getType());
-		Date dtOneDS = llsdOneDS.AsDate();
+		Date dtOneDS = llsdOneDS.asDate();
 		assertEquals(dtOne.getTime(), dtOneDS);
 
 		Calendar dtTwo = Calendar.getInstance();
 		dtTwo.clear();
 		dtTwo.set(2010, 10 - 1, 11, 23, 0, 10);
 		dtTwo.set(Calendar.MILLISECOND, 100);
-		OSD llsdTwo = OSD.FromDate(dtTwo.getTime());
+		OSD llsdTwo = OSD.fromDate(dtTwo.getTime());
 		String sDtTwo = OSDParser.serializeToString(llsdTwo, OSDFormat.Json);
 		OSD llsdTwoDS = OSDParser.deserialize(sDtTwo);
 		assertEquals(OSDType.Date, llsdTwoDS.getType());
-		Date dtTwoDS = llsdTwoDS.AsDate();
+		Date dtTwoDS = llsdTwoDS.asDate();
 		assertEquals(dtTwo.getTime(), dtTwoDS);
 
 		// check if a *local* time can be serialized and deserialized
 		Calendar dtThree = Calendar.getInstance();
 		dtThree.clear();
 		dtThree.set(2009, 12 - 1, 30, 8, 25, 10);
-		OSD llsdDateThree = OSD.FromDate(dtThree.getTime());
+		OSD llsdDateThree = OSD.fromDate(dtThree.getTime());
 		String sDateThreeSerialized = OSDParser.serializeToString(llsdDateThree, OSDFormat.Json);
 		OSD llsdDateThreeDS = OSDParser.deserialize(sDateThreeSerialized);
 		assertEquals(OSDType.Date, llsdDateThreeDS.getType());
-		assertEquals(dtThree.getTime(), llsdDateThreeDS.AsDate());
+		assertEquals(dtThree.getTime(), llsdDateThreeDS.asDate());
 	}
 
 	byte[] binary = { 0x0, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f };
@@ -379,16 +379,16 @@ public class JsonLLSDTest extends TestCase {
 		OSD llsdBinaryDS = OSDParser.deserialize(sBinarySerialized, OSDFormat.Json);
 		// Json does serialize binary data to an array of numerics
 		assertEquals(OSDType.Array, llsdBinaryDS.getType());
-		assertTrue(Arrays.equals(binary, llsdBinaryDS.AsBinary()));
+		assertTrue(Arrays.equals(binary, llsdBinaryDS.asBinary()));
 	}
 
 	public void testSerializeBinary() throws IOException, ParseException {
-		OSD llsdBinary = OSD.FromBinary(binary);
+		OSD llsdBinary = OSD.fromBinary(binary);
 		String sBinarySerialized = OSDParser.serializeToString(llsdBinary, OSDFormat.Json);
 		OSD llsdBinaryDS = OSDParser.deserialize(sBinarySerialized);
 		// Json does serialize binary data to an array of numerics
 		assertEquals(OSDType.Array, llsdBinaryDS.getType());
-		assertTrue(Arrays.equals(binary, llsdBinaryDS.AsBinary()));
+		assertTrue(Arrays.equals(binary, llsdBinaryDS.asBinary()));
 	}
 
 	public void testDeserializeArray() throws IOException, ParseException {
@@ -403,7 +403,7 @@ public class JsonLLSDTest extends TestCase {
 		assertEquals(1, llsdArrayTwo.size());
 		OSDInteger llsdIntOne = (OSDInteger) llsdArrayTwo.get(0);
 		assertEquals(OSDType.Integer, llsdIntOne.getType());
-		assertEquals(0, llsdIntOne.AsInteger());
+		assertEquals(0, llsdIntOne.asInteger());
 
 		String sArrayThree = "[ 0, 1 ]";
 		OSDArray llsdArrayThree = (OSDArray) OSDParser.deserialize(sArrayThree, OSDFormat.Json);
@@ -411,24 +411,24 @@ public class JsonLLSDTest extends TestCase {
 		assertEquals(2, llsdArrayThree.size());
 		OSDInteger llsdIntTwo = (OSDInteger) llsdArrayThree.get(0);
 		assertEquals(OSDType.Integer, llsdIntTwo.getType());
-		assertEquals(0, llsdIntTwo.AsInteger());
+		assertEquals(0, llsdIntTwo.asInteger());
 		OSDInteger llsdIntThree = (OSDInteger) llsdArrayThree.get(1);
 		assertEquals(OSDType.Integer, llsdIntThree.getType());
-		assertEquals(1, llsdIntThree.AsInteger());
+		assertEquals(1, llsdIntThree.asInteger());
 
 		String sArrayFour = " [ \"testtest\", \"aha\",true,false,1, 1.2, [ 1] ] ";
 		OSDArray llsdArrayFour = (OSDArray) OSDParser.deserialize(sArrayFour, OSDFormat.Json);
 		assertEquals(OSDType.Array, llsdArrayFour.getType());
 		assertEquals(7, llsdArrayFour.size());
-		assertEquals("testtest", llsdArrayFour.get(0).AsString());
-		assertEquals("aha", llsdArrayFour.get(1).AsString());
-		assertEquals(true, llsdArrayFour.get(2).AsBoolean());
-		assertEquals(false, llsdArrayFour.get(3).AsBoolean());
-		assertEquals(1, llsdArrayFour.get(4).AsInteger());
-		assertEquals(1.2d, llsdArrayFour.get(5).AsReal());
+		assertEquals("testtest", llsdArrayFour.get(0).asString());
+		assertEquals("aha", llsdArrayFour.get(1).asString());
+		assertEquals(true, llsdArrayFour.get(2).asBoolean());
+		assertEquals(false, llsdArrayFour.get(3).asBoolean());
+		assertEquals(1, llsdArrayFour.get(4).asInteger());
+		assertEquals(1.2d, llsdArrayFour.get(5).asReal());
 		assertEquals(OSDType.Array, llsdArrayFour.get(6).getType());
 		OSDArray llsdArrayFive = (OSDArray) llsdArrayFour.get(6);
-		assertEquals(1, llsdArrayFive.get(0).AsInteger());
+		assertEquals(1, llsdArrayFive.get(0).asInteger());
 	}
 
 	public void testSerializeArray() throws IOException, ParseException {
@@ -438,8 +438,8 @@ public class JsonLLSDTest extends TestCase {
 		assertEquals(OSDType.Array, llsdOneDS.getType());
 		assertEquals(0, llsdOneDS.size());
 
-		OSD llsdTwo = OSD.FromInteger(123234);
-		OSD llsdThree = OSD.FromString("asedkfjhaqweiurohzasdf");
+		OSD llsdTwo = OSD.fromInteger(123234);
+		OSD llsdThree = OSD.fromString("asedkfjhaqweiurohzasdf");
 		OSDArray llsdFour = new OSDArray();
 		llsdFour.add(llsdTwo);
 		llsdFour.add(llsdThree);
@@ -453,17 +453,17 @@ public class JsonLLSDTest extends TestCase {
 		assertEquals(OSDType.Array, llsdFive.getType());
 		assertEquals(3, llsdFive.size());
 		assertEquals(OSDType.Integer, llsdFive.get(0).getType());
-		assertEquals(123234, llsdFive.get(0).AsInteger());
+		assertEquals(123234, llsdFive.get(0).asInteger());
 		assertEquals(OSDType.String, llsdFive.get(1).getType());
-		assertEquals("asedkfjhaqweiurohzasdf", llsdFive.get(1).AsString());
+		assertEquals("asedkfjhaqweiurohzasdf", llsdFive.get(1).asString());
 
 		OSDArray llsdSix = (OSDArray) llsdFive.get(2);
 		assertEquals(OSDType.Array, llsdSix.getType());
 		assertEquals(2, llsdSix.size());
 		assertEquals(OSDType.Integer, llsdSix.get(0).getType());
-		assertEquals(123234, llsdSix.get(0).AsInteger());
+		assertEquals(123234, llsdSix.get(0).asInteger());
 		assertEquals(OSDType.String, llsdSix.get(1).getType());
-		assertEquals("asedkfjhaqweiurohzasdf", llsdSix.get(1).AsString());
+		assertEquals("asedkfjhaqweiurohzasdf", llsdSix.get(1).asString());
 	}
 
 	public void testDeserializeMap() throws IOException, ParseException {
@@ -477,31 +477,31 @@ public class JsonLLSDTest extends TestCase {
 		assertEquals(OSDType.Map, llsdMapTwo.getType());
 		assertEquals(1, llsdMapTwo.size());
 		assertEquals(OSDType.Integer, llsdMapTwo.get("test").getType());
-		assertEquals(2, llsdMapTwo.get("test").AsInteger());
+		assertEquals(2, llsdMapTwo.get("test").asInteger());
 
 		String sMapThree = " { \"test\":\"testtesttest\", \"aha\" :\"muahahaha\" , \"anywhere\": null } ";
 		OSDMap llsdMapThree = (OSDMap) OSDParser.deserialize(sMapThree, OSDFormat.Json);
 		assertEquals(OSDType.Map, llsdMapThree.getType());
 		assertEquals(3, llsdMapThree.size());
 		assertEquals(OSDType.String, llsdMapThree.get("test").getType());
-		assertEquals("testtesttest", llsdMapThree.get("test").AsString());
+		assertEquals("testtesttest", llsdMapThree.get("test").asString());
 		assertEquals(OSDType.String, llsdMapThree.get("test").getType());
-		assertEquals("muahahaha", llsdMapThree.get("aha").AsString());
+		assertEquals("muahahaha", llsdMapThree.get("aha").asString());
 		assertEquals(OSDType.Unknown, llsdMapThree.get("self").getType());
 
 		String sMapFour = " { \"test\" : { \"test\" : 1, \"t0st\" : 2.5 }, \"tist\" : \"hello world!\", \"tast\" : \"last\" } ";
 		OSDMap llsdMapFour = (OSDMap) OSDParser.deserialize(sMapFour, OSDFormat.Json);
 		assertEquals(OSDType.Map, llsdMapFour.getType());
 		assertEquals(3, llsdMapFour.size());
-		assertEquals("hello world!", llsdMapFour.get("tist").AsString());
-		assertEquals("last", llsdMapFour.get("tast").AsString());
+		assertEquals("hello world!", llsdMapFour.get("tist").asString());
+		assertEquals("last", llsdMapFour.get("tast").asString());
 		OSDMap llsdMapFive = (OSDMap) llsdMapFour.get("test");
 		assertEquals(OSDType.Map, llsdMapFive.getType());
 		assertEquals(2, llsdMapFive.size());
 		assertEquals(OSDType.Integer, llsdMapFive.get("test").getType());
-		assertEquals(1, llsdMapFive.get("test").AsInteger());
+		assertEquals(1, llsdMapFive.get("test").asInteger());
 		assertEquals(OSDType.Real, llsdMapFive.get("t0st").getType());
-		assertEquals(2.5d, llsdMapFive.get("t0st").AsReal());
+		assertEquals(2.5d, llsdMapFive.get("t0st").asReal());
 	}
 
 	public void testSerializeMap() throws IOException, ParseException, XmlPullParserException {
@@ -511,8 +511,8 @@ public class JsonLLSDTest extends TestCase {
 		assertEquals(OSDType.Map, llsdOneDS.getType());
 		assertEquals(0, llsdOneDS.size());
 
-		OSD llsdTwo = OSD.FromInteger(123234);
-		OSD llsdThree = OSD.FromString("asedkfjhaqweiurohzasdf");
+		OSD llsdTwo = OSD.fromInteger(123234);
+		OSD llsdThree = OSD.fromString("asedkfjhaqweiurohzasdf");
 		OSDMap llsdFour = new OSDMap();
 		llsdFour.put("test0", llsdTwo);
 		llsdFour.put("test1", llsdThree);
@@ -526,17 +526,17 @@ public class JsonLLSDTest extends TestCase {
 		assertEquals(OSDType.Map, llsdFive.getType());
 		assertEquals(3, llsdFive.size());
 		assertEquals(OSDType.Integer, llsdFive.get("test0").getType());
-		assertEquals(123234, llsdFive.get("test0").AsInteger());
+		assertEquals(123234, llsdFive.get("test0").asInteger());
 		assertEquals(OSDType.String, llsdFive.get("test1").getType());
-		assertEquals("asedkfjhaqweiurohzasdf", llsdFive.get("test1").AsString());
+		assertEquals("asedkfjhaqweiurohzasdf", llsdFive.get("test1").asString());
 
 		OSDMap llsdSix = (OSDMap) llsdFive.get("test2");
 		assertEquals(OSDType.Map, llsdSix.getType());
 		assertEquals(2, llsdSix.size());
 		assertEquals(OSDType.Integer, llsdSix.get("test0").getType());
-		assertEquals(123234, llsdSix.get("test0").AsInteger());
+		assertEquals(123234, llsdSix.get("test0").asInteger());
 		assertEquals(OSDType.String, llsdSix.get("test1").getType());
-		assertEquals("asedkfjhaqweiurohzasdf", llsdSix.get("test1").AsString());
+		assertEquals("asedkfjhaqweiurohzasdf", llsdSix.get("test1").asString());
 
 		// We test here also for 4byte characters as map keys
 		String xml = "<x>&#x10137;</x>";
@@ -548,12 +548,12 @@ public class JsonLLSDTest extends TestCase {
 		String content = parser.nextText();
 
 		OSDMap llsdSeven = new OSDMap();
-		llsdSeven.put(content, OSD.FromString(content));
+		llsdSeven.put(content, OSD.fromString(content));
 		String sSeven = OSDParser.serializeToString(llsdSeven, OSDFormat.Json);
 		OSDMap llsdSevenDS = (OSDMap) OSDParser.deserialize(sSeven);
 		assertEquals(OSDType.Map, llsdSevenDS.getType());
 		assertEquals(1, llsdSevenDS.size());
-		assertEquals(content, llsdSevenDS.get(content).AsString());
+		assertEquals(content, llsdSevenDS.get(content).asString());
 	}
 
 	public void testDeserializeRealWorldExamples() throws IOException, ParseException {
@@ -575,17 +575,17 @@ public class JsonLLSDTest extends TestCase {
 
 		OSDMap llsdMapOne = (OSDMap) llsdArray.get(0);
 		assertEquals(OSDType.Map, llsdMapOne.getType());
-		assertEquals("http://secondlife.com", llsdMapOne.get("destination").AsString());
+		assertEquals("http://secondlife.com", llsdMapOne.get("destination").asString());
 
 		OSDMap llsdMapTwo = (OSDMap) llsdArray.get(1);
 		assertEquals(OSDType.Map, llsdMapTwo.getType());
 		assertEquals(OSDType.Integer, llsdMapTwo.get("version").getType());
-		assertEquals(1, llsdMapTwo.get("version").AsInteger());
+		assertEquals(1, llsdMapTwo.get("version").asInteger());
 
 		OSDMap llsdMapThree = (OSDMap) llsdArray.get(2);
 		assertEquals(OSDType.UUID, llsdMapThree.get("session_id").getType());
-		assertEquals("2c585cec-038c-40b0-b42e-a25ebab4d132", llsdMapThree.get("session_id").AsString());
+		assertEquals("2c585cec-038c-40b0-b42e-a25ebab4d132", llsdMapThree.get("session_id").asString());
 		assertEquals(OSDType.UUID, llsdMapThree.get("agent_id").getType());
-		assertEquals("3c115e51-04f4-523c-9fa6-98aff1034730", llsdMapThree.get("agent_id").AsString());
+		assertEquals("3c115e51-04f4-523c-9fa6-98aff1034730", llsdMapThree.get("agent_id").asString());
 	}
 }

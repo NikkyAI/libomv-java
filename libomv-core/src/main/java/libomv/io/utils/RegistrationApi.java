@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -155,10 +155,10 @@ public class RegistrationApi {
 			// parse
 			_caps = new RegistrationCaps();
 
-			_caps.CreateUser = respTable.get("create_user").AsUri();
-			_caps.CheckName = respTable.get("check_name").AsUri();
-			_caps.GetLastNames = respTable.get("get_last_names").AsUri();
-			_caps.GetErrorCodes = respTable.get("get_error_codes").AsUri();
+			_caps.CreateUser = respTable.get("create_user").asUri();
+			_caps.CheckName = respTable.get("check_name").asUri();
+			_caps.GetLastNames = respTable.get("get_last_names").asUri();
+			_caps.GetErrorCodes = respTable.get("get_error_codes").asUri();
 
 			// finalize
 			_initializing++;
@@ -178,7 +178,7 @@ public class RegistrationApi {
 	 */
 	private Map<Integer, ErrorCode> getErrorCodes(URI capability)
 			throws IOReactorException, InterruptedException, ExecutionException, TimeoutException {
-		final Map<Integer, ErrorCode> errorCodes = new HashMap<Integer, ErrorCode>();
+		final Map<Integer, ErrorCode> errorCodes = new HashMap<>();
 
 		Future<OSD> future = new CapsClient(null, "getErrorCodes").executeHttpGet(capability);
 		OSD response = future.get(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
@@ -188,8 +188,8 @@ public class RegistrationApi {
 			for (Iterator<OSD> iter = respTable.iterator(); iter.hasNext();) {
 				OSDArray errors = (OSDArray) iter.next();
 
-				errorCodes.put(errors.get(0).AsInteger(),
-						new ErrorCode(errors.get(0).AsInteger(), errors.get(1).AsString(), errors.get(2).AsString()));
+				errorCodes.put(errors.get(0).asInteger(),
+						new ErrorCode(errors.get(0).asInteger(), errors.get(1).asString(), errors.get(2).asString()));
 			}
 
 			// finalize
@@ -207,7 +207,7 @@ public class RegistrationApi {
 	 */
 	private Map<String, Integer> getLastNames(URI capability)
 			throws IOReactorException, InterruptedException, ExecutionException, TimeoutException {
-		final SortedMap<String, Integer> lastNames = new TreeMap<String, Integer>();
+		final SortedMap<String, Integer> lastNames = new TreeMap<>();
 
 		Future<OSD> future = new CapsClient(null, "getLastNames").executeHttpGet(capability);
 		OSD response = future.get(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
@@ -215,7 +215,7 @@ public class RegistrationApi {
 			OSDMap respTable = (OSDMap) response;
 
 			for (Entry<String, OSD> entry : respTable.entrySet()) {
-				lastNames.put(entry.getValue().AsString(), Integer.valueOf(entry.getKey()));
+				lastNames.put(entry.getValue().asString(), Integer.valueOf(entry.getKey()));
 			}
 		}
 		return lastNames;
@@ -262,15 +262,15 @@ public class RegistrationApi {
 
 		// Create the POST data
 		OSDMap query = new OSDMap();
-		query.put("username", OSD.FromString(firstName));
-		query.put("last_name_id", OSD.FromInteger(lastNameID));
+		query.put("username", OSD.fromString(firstName));
+		query.put("last_name_id", OSD.fromInteger(lastNameID));
 
 		Future<OSD> future = new CapsClient(null, "checkName").executeHttpPost(_caps.GetLastNames, query,
 				OSDFormat.Xml);
 		OSD response = future.get(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
 		if (response.getType() != OSDType.Boolean)
 			throw new Exception("check_name did not return a boolean as the only element inside the <llsd> tag.");
-		return response.AsBoolean();
+		return response.asBoolean();
 	}
 
 	/**
@@ -292,28 +292,28 @@ public class RegistrationApi {
 
 		// Create the POST data
 		OSDMap query = new OSDMap();
-		query.put("username", OSD.FromString(user.FirstName));
-		query.put("last_name_id", OSD.FromInteger(user.LastNameID));
-		query.put("email", OSD.FromString(user.Email));
-		query.put("password", OSD.FromString(user.Password));
-		query.put("dob", OSD.FromString(new SimpleDateFormat("yyyy-MM-dd").format(user.Birthdate)));
+		query.put("username", OSD.fromString(user.FirstName));
+		query.put("last_name_id", OSD.fromInteger(user.LastNameID));
+		query.put("email", OSD.fromString(user.Email));
+		query.put("password", OSD.fromString(user.Password));
+		query.put("dob", OSD.fromString(new SimpleDateFormat("yyyy-MM-dd").format(user.Birthdate)));
 
 		if (user.LimitedToEstate != null)
-			query.put("limited_to_estate", OSD.FromInteger(user.LimitedToEstate));
+			query.put("limited_to_estate", OSD.fromInteger(user.LimitedToEstate));
 
 		if (user.StartRegionName != null && !user.StartRegionName.isEmpty())
-			query.put("start_region_name", OSD.FromString(user.StartRegionName));
+			query.put("start_region_name", OSD.fromString(user.StartRegionName));
 
 		if (user.StartLocation != null) {
-			query.put("start_local_x", OSD.FromReal(user.StartLocation.X));
-			query.put("start_local_y", OSD.FromReal(user.StartLocation.Y));
-			query.put("start_local_z", OSD.FromReal(user.StartLocation.Z));
+			query.put("start_local_x", OSD.fromReal(user.StartLocation.X));
+			query.put("start_local_y", OSD.fromReal(user.StartLocation.Y));
+			query.put("start_local_z", OSD.fromReal(user.StartLocation.Z));
 		}
 
 		if (user.StartLookAt != null) {
-			query.put("start_look_at_x", OSD.FromReal(user.StartLookAt.X));
-			query.put("start_look_at_y", OSD.FromReal(user.StartLookAt.Y));
-			query.put("start_look_at_z", OSD.FromReal(user.StartLookAt.Z));
+			query.put("start_look_at_x", OSD.fromReal(user.StartLookAt.X));
+			query.put("start_look_at_y", OSD.fromReal(user.StartLookAt.Y));
+			query.put("start_look_at_z", OSD.fromReal(user.StartLookAt.Z));
 		}
 
 		// Make the request
@@ -321,7 +321,7 @@ public class RegistrationApi {
 		OSD response = future.get(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
 		if (response instanceof OSDMap) {
 			OSDMap map = (OSDMap) response;
-			return map.get("agent_id").AsUUID();
+			return map.get("agent_id").asUUID();
 		}
 
 		// an error happened
@@ -333,7 +333,7 @@ public class RegistrationApi {
 			if (sb.length() > 0)
 				sb.append("; ");
 
-			sb.append(_errors.get(ec.AsInteger()));
+			sb.append(_errors.get(ec.asInteger()));
 		}
 		throw new Exception("failed to create user: " + sb.toString());
 	}

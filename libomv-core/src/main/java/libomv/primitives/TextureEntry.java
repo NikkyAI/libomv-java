@@ -417,26 +417,26 @@ public class TextureEntry {
 		public OSD serialize(int faceNumber) {
 			OSDMap tex = new OSDMap(10);
 			if (faceNumber >= 0)
-				tex.put("face_number", OSD.FromInteger(faceNumber));
-			tex.put("colors", OSD.FromColor4(getRGBA()));
-			tex.put("scales", OSD.FromReal(getRepeatU()));
-			tex.put("scalet", OSD.FromReal(getRepeatV()));
-			tex.put("offsets", OSD.FromReal(getOffsetU()));
-			tex.put("offsett", OSD.FromReal(getOffsetV()));
-			tex.put("imagerot", OSD.FromReal(getRotation()));
-			tex.put("bump", OSD.FromInteger(getBump().getValue()));
+				tex.put("face_number", OSD.fromInteger(faceNumber));
+			tex.put("colors", OSD.fromColor4(getRGBA()));
+			tex.put("scales", OSD.fromReal(getRepeatU()));
+			tex.put("scalet", OSD.fromReal(getRepeatV()));
+			tex.put("offsets", OSD.fromReal(getOffsetU()));
+			tex.put("offsett", OSD.fromReal(getOffsetV()));
+			tex.put("imagerot", OSD.fromReal(getRotation()));
+			tex.put("bump", OSD.fromInteger(getBump().getValue()));
 			// tex.put("shiny", OSD.FromInteger(getShiny().getValue()));
-			tex.put("fullbright", OSD.FromBoolean(getFullbright()));
-			tex.put("media_flags", OSD.FromInteger(getMediaFlags() ? 1 : 0));
+			tex.put("fullbright", OSD.fromBoolean(getFullbright()));
+			tex.put("media_flags", OSD.fromInteger(getMediaFlags() ? 1 : 0));
 			// tex.put("mapping", OSD.FromInteger(getTexMapType().getValue()));
-			tex.put("glow", OSD.FromReal(getGlow()));
+			tex.put("glow", OSD.fromReal(getGlow()));
 
 			if (getTextureID().equals(TextureEntry.WHITE_TEXTURE))
-				tex.put("imageid", OSD.FromUUID(UUID.Zero));
+				tex.put("imageid", OSD.fromUUID(UUID.Zero));
 			else
-				tex.put("imageid", OSD.FromUUID(getTextureID()));
+				tex.put("imageid", OSD.fromUUID(getTextureID()));
 
-			tex.put("materialid", OSD.FromUUID(getMaterialID()));
+			tex.put("materialid", OSD.fromUUID(getMaterialID()));
 
 			return tex;
 		}
@@ -445,21 +445,21 @@ public class TextureEntry {
 			if (osd instanceof OSDMap) {
 				OSDMap map = (OSDMap) osd;
 
-				faceNumber.argvalue = map.containsKey("face_number") ? map.get("face_number").AsInteger() : -1;
-				setRGBA(map.get("colors").AsColor4());
-				setRepeatU((float) map.get("scales").AsReal());
-				setRepeatV((float) map.get("scalet").AsReal());
-				setOffsetU((float) map.get("offsets").AsReal());
-				setOffsetV((float) map.get("offsett").AsReal());
-				setRotation((float) map.get("imagerot").AsReal());
-				setBump(Bumpiness.setValue(map.get("bump").AsInteger()));
+				faceNumber.argvalue = map.containsKey("face_number") ? map.get("face_number").asInteger() : -1;
+				setRGBA(map.get("colors").asColor4());
+				setRepeatU((float) map.get("scales").asReal());
+				setRepeatV((float) map.get("scalet").asReal());
+				setOffsetU((float) map.get("offsets").asReal());
+				setOffsetV((float) map.get("offsett").asReal());
+				setRotation((float) map.get("imagerot").asReal());
+				setBump(Bumpiness.setValue(map.get("bump").asInteger()));
 				// setShiny(Shininess.setValue(map.get("shiny").AsInteger()));
-				setFullbright(map.get("fullbright").AsBoolean());
-				setMediaFlags(map.get("media_flags").AsBoolean());
+				setFullbright(map.get("fullbright").asBoolean());
+				setMediaFlags(map.get("media_flags").asBoolean());
 				// setTexMapType(MappingType.setValue(map.get("mapping").AsInteger()));
-				setGlow((float) map.get("glow").AsReal());
-				setTextureID(map.get("imageid").AsUUID());
-				setMaterialID(map.get("materialid").AsUUID());
+				setGlow((float) map.get("glow").asReal());
+				setTextureID(map.get("imageid").asUUID());
+				setMaterialID(map.get("materialid").asUUID());
 			}
 		}
 
@@ -593,9 +593,9 @@ public class TextureEntry {
 			data[pos++] = (byte) sizeX;
 			data[pos++] = (byte) sizeY;
 
-			Helpers.FloatToBytesL(start, data, pos);
-			Helpers.FloatToBytesL(length, data, pos + 4);
-			Helpers.FloatToBytesL(rate, data, pos + 8);
+			Helpers.floatToBytesL(start, data, pos);
+			Helpers.floatToBytesL(length, data, pos + 4);
+			Helpers.floatToBytesL(rate, data, pos + 8);
 
 			return data;
 		}
@@ -603,13 +603,13 @@ public class TextureEntry {
 		public OSD serialize() {
 			OSDMap map = new OSDMap();
 
-			map.put("face", OSD.FromInteger(face));
-			map.put("flags", OSD.FromInteger(flags));
-			map.put("length", OSD.FromReal(length));
-			map.put("rate", OSD.FromReal(rate));
-			map.put("size_x", OSD.FromInteger(sizeX));
-			map.put("size_y", OSD.FromInteger(sizeY));
-			map.put("start", OSD.FromReal(start));
+			map.put("face", OSD.fromInteger(face));
+			map.put("flags", OSD.fromInteger(flags));
+			map.put("length", OSD.fromReal(length));
+			map.put("rate", OSD.fromReal(rate));
+			map.put("size_x", OSD.fromInteger(sizeX));
+			map.put("size_y", OSD.fromInteger(sizeY));
+			map.put("start", OSD.fromReal(start));
 
 			return map;
 		}
@@ -618,13 +618,13 @@ public class TextureEntry {
 			if (osd instanceof OSDMap) {
 				OSDMap map = (OSDMap) osd;
 
-				face = map.get("face").AsUInteger();
-				flags = TextureAnimMode.setValue(map.get("flags").AsUInteger());
-				length = (float) map.get("length").AsReal();
-				rate = (float) map.get("rate").AsReal();
-				sizeX = map.get("size_x").AsUInteger();
-				sizeY = map.get("size_y").AsUInteger();
-				start = (float) map.get("start").AsReal();
+				face = map.get("face").asUInteger();
+				flags = TextureAnimMode.setValue(map.get("flags").asUInteger());
+				length = (float) map.get("length").asReal();
+				rate = (float) map.get("rate").asReal();
+				sizeX = map.get("size_x").asUInteger();
+				sizeY = map.get("size_y").asUInteger();
+				start = (float) map.get("start").asReal();
 			} else {
 				init();
 			}
@@ -793,7 +793,7 @@ public class TextureEntry {
 			OSDArray array = (OSDArray) osd;
 
 			if (array.size() > 0) {
-				RefObject<Integer> faceNumber = new RefObject<Integer>(0);
+				RefObject<Integer> faceNumber = new RefObject<>(0);
 				OSDMap faceSD = (OSDMap) array.get(0);
 				defaultTexture = new TextureEntryFace(faceSD, null, faceNumber);
 
@@ -1046,7 +1046,7 @@ public class TextureEntry {
 
 		// #region RepeatU
 		float tempFloat, defFloat = defaultTexture.getRepeatU();
-		memStream.write(Helpers.FloatToBytesL(defFloat));
+		memStream.write(Helpers.floatToBytesL(defFloat));
 		for (i = 0; i < numTextures; i++) {
 			if (faceTextures[i] != null) {
 				tempFloat = faceTextures[i].getRepeatU();
@@ -1065,7 +1065,7 @@ public class TextureEntry {
 							j++;
 						}
 						writeFaceBitfieldBytes(memStream, bitfield);
-						memStream.write(Helpers.FloatToBytesL(tempFloat));
+						memStream.write(Helpers.floatToBytesL(tempFloat));
 					}
 				}
 			}
@@ -1075,7 +1075,7 @@ public class TextureEntry {
 
 		// #region RepeatV
 		defFloat = defaultTexture.getRepeatV();
-		memStream.write(Helpers.FloatToBytesL(defFloat));
+		memStream.write(Helpers.floatToBytesL(defFloat));
 		for (i = 0; i < numTextures; i++) {
 			if (faceTextures[i] != null) {
 				tempFloat = faceTextures[i].getRepeatV();
@@ -1094,7 +1094,7 @@ public class TextureEntry {
 							j++;
 						}
 						writeFaceBitfieldBytes(memStream, bitfield);
-						memStream.write(Helpers.FloatToBytesL(tempFloat));
+						memStream.write(Helpers.floatToBytesL(tempFloat));
 					}
 				}
 			}

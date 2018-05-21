@@ -35,6 +35,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.prefs.Preferences;
 
@@ -74,14 +75,10 @@ import libomv.utils.Helpers;
  * classes needed for sending and receiving data are accessible throug this class.
  */
 public class GridClient {
-	public CallbackHandler<GridListUpdateCallbackArgs> OnGridListUpdate = new CallbackHandler<GridListUpdateCallbackArgs>();
 
 	private static final String listUri = "http://www.coolview.nl/grid/default_grids.xml";
-	private static HashMap<String, GridInfo> gridlist = new HashMap<String, GridInfo>();
+	private static Map<String, GridInfo> gridlist = new HashMap<>();
 	private static int listversion = 0;
-
-	private String defaultGrid = null;
-	private transient String currentGrid = null;
 
 	private static final String NUMGRIDS = "numgrids";
 	private static final String GRIDINFO = "gridinfo";
@@ -91,50 +88,54 @@ public class GridClient {
 	private static final String GRID_INFO_PROTOCOL = "get_grid_info";
 	private static final String DEFAULT_GRIDS_VERSION = "default_grids_version";
 	private static final String DEFAULT_GRIDS_LIST = "/res/default_grids.xml";
-	// #endregion
+
+	public CallbackHandler<GridListUpdateCallbackArgs> onGridListUpdate = new CallbackHandler<>();
+
+	private String defaultGrid = null;
+	private transient String currentGrid = null;
 
 	// Networking Subsystem
-	public NetworkManager Network;
+	public NetworkManager network;
 	// Login Subsystem of Network handler
-	public LoginManager Login;
+	public LoginManager login;
 	// Protocol Manager
-	public ProtocolManager Protocol;
+	public ProtocolManager protocol;
 	// Caps Messages
-	public CapsMessage Messages;
+	public CapsMessage messages;
 	// AgentThrottle
-	public AgentThrottle Throttle;
+	public AgentThrottle throttle;
 	// Settings class including constant values and changeable parameters for
 	// everything
-	public LibSettings Settings;
+	public LibSettings settings;
 	// 'Client's Avatar' Subsystem
-	public AgentManager Self;
+	public AgentManager agent;
 	// Other Avatars Subsystem
-	public AvatarManager Avatars;
+	public AvatarManager avatars;
 	// Friend Avatars Subsystem
-	public FriendsManager Friends;
+	public FriendsManager friends;
 	// Group Subsystem
-	public GroupManager Groups;
+	public GroupManager groups;
 	// Grid (aka simulator group) Subsystem
-	public GridManager Grid;
+	public GridManager grid;
 	/* Asset subsystem */
-	public AssetManager Assets;
+	public AssetManager assets;
 	/* Inventory subsystem */
-	public InventoryManager Inventory;
+	public InventoryManager inventory;
 	/* Handles sound-related networking */
-	public SoundManager Sound;
+	public SoundManager sound;
 	/* Appearance subsystem */
-	public AppearanceManager Appearance;
+	public AppearanceManager appearance;
 	/* Parcel (subdivided simulator lots) Subsystem */
-	public ParcelManager Parcels;
+	public ParcelManager parcels;
 	/* Object Subsystem */
-	public ObjectManager Objects;
+	public ObjectManager objects;
 	/* Directory searches including classifieds, people, land sales, etc */
-	public DirectoryManager Directory;
+	public DirectoryManager directory;
 	/* Handles land, wind, and cloud heightmaps */
-	public TerrainManager Terrain;
+	public TerrainManager terrain;
 
 	// Packet Statistics
-	public Statistics Stats;
+	public Statistics stats;
 
 	//
 	// Constructor.
@@ -146,15 +147,15 @@ public class GridClient {
 	public GridClient(LibSettings settings) throws Exception {
 		initializeGridList();
 
-		Settings = settings.initialize();
-		Login = new LoginManager(this);
-		Network = new NetworkManager(this);
-		Messages = new CapsMessage();
+		this.settings = settings.initialize();
+		this.login = new LoginManager(this);
+		this.network = new NetworkManager(this);
+		this.messages = new CapsMessage();
 
-		Self = new AgentManager(this);
-		Friends = new FriendsManager(this);
-		Groups = new GroupManager(this);
-		Grid = new GridManager(this);
+		this.agent = new AgentManager(this);
+		this.friends = new FriendsManager(this);
+		this.groups = new GroupManager(this);
+		this.grid = new GridManager(this);
 
 		/*
 		 * This needs to come after the creation of the Network manager as it registers
@@ -162,41 +163,41 @@ public class GridClient {
 		 */
 		settings.startup(this);
 
-		if (Settings.getBool(LibSettings.ENABLE_ASSET_MANAGER))
-			Assets = new AssetManager(this);
+		if (this.settings.getBool(LibSettings.ENABLE_ASSET_MANAGER))
+			this.assets = new AssetManager(this);
 
-		if (Settings.getBool(LibSettings.ENABLE_APPEARANCE_MANAGER))
-			Appearance = new AppearanceManager(this);
+		if (this.settings.getBool(LibSettings.ENABLE_APPEARANCE_MANAGER))
+			this.appearance = new AppearanceManager(this);
 
-		if (Settings.getBool(LibSettings.SEND_AGENT_THROTTLE))
-			Throttle = new AgentThrottle(this);
+		if (this.settings.getBool(LibSettings.SEND_AGENT_THROTTLE))
+			this.throttle = new AgentThrottle(this);
 
-		if (Settings.getBool(LibSettings.ENABLE_AVATAR_MANAGER))
-			Avatars = new AvatarManager(this);
+		if (this.settings.getBool(LibSettings.ENABLE_AVATAR_MANAGER))
+			this.avatars = new AvatarManager(this);
 
-		if (Settings.getBool(LibSettings.ENABLE_INVENTORY_MANAGER))
-			Inventory = new InventoryManager(this);
+		if (this.settings.getBool(LibSettings.ENABLE_INVENTORY_MANAGER))
+			this.inventory = new InventoryManager(this);
 
-		if (Settings.getBool(LibSettings.ENABLE_SOUND_MANAGER))
-			Sound = new SoundManager(this);
+		if (this.settings.getBool(LibSettings.ENABLE_SOUND_MANAGER))
+			this.sound = new SoundManager(this);
 
-		if (Settings.getBool(LibSettings.ENABLE_PARCEL_MANAGER))
-			Parcels = new ParcelManager(this);
+		if (this.settings.getBool(LibSettings.ENABLE_PARCEL_MANAGER))
+			this.parcels = new ParcelManager(this);
 
-		if (Settings.getBool(LibSettings.ENABLE_OBJECT_MANAGER))
-			Objects = new ObjectManager(this);
+		if (this.settings.getBool(LibSettings.ENABLE_OBJECT_MANAGER))
+			this.objects = new ObjectManager(this);
 
-		if (Settings.getBool(LibSettings.ENABLE_DIRECTORY_MANAGER))
-			Directory = new DirectoryManager(this);
+		if (this.settings.getBool(LibSettings.ENABLE_DIRECTORY_MANAGER))
+			this.directory = new DirectoryManager(this);
 
-		if (Settings.getBool(LibSettings.ENABLE_TERRAIN_MANAGER))
-			Terrain = new TerrainManager(this);
+		if (this.settings.getBool(LibSettings.ENABLE_TERRAIN_MANAGER))
+			this.terrain = new TerrainManager(this);
 
-		Stats = new Statistics();
+		this.stats = new Statistics();
 	}
 
 	public long getCurrentRegionHandle() {
-		return Network.getCurrentSim().getHandle();
+		return network.getCurrentSim().getHandle();
 	}
 
 	public GridInfo[] getGridInfos() {
@@ -288,7 +289,7 @@ public class GridClient {
 		synchronized (gridlist) {
 			GridInfo old = gridlist.put(info.gridnick, info);
 			if (sendEvent)
-				OnGridListUpdate.dispatch(new GridListUpdateCallbackArgs(GridListUpdate.Add, info));
+				onGridListUpdate.dispatch(new GridListUpdateCallbackArgs(GridListUpdate.Add, info));
 			return old;
 		}
 	}
@@ -298,7 +299,7 @@ public class GridClient {
 			GridInfo info = gridlist.remove(grid);
 			if (info != null) {
 				if (sendEvent)
-					OnGridListUpdate.dispatch(new GridListUpdateCallbackArgs(GridListUpdate.Remove, info));
+					onGridListUpdate.dispatch(new GridListUpdateCallbackArgs(GridListUpdate.Remove, info));
 				if (grid.equals(defaultGrid)) {
 					// sets first grid if map is not empty
 					setDefaultGrid((String) null);
@@ -313,7 +314,7 @@ public class GridClient {
 			gridlist.clear();
 		}
 		if (sendEvent)
-			OnGridListUpdate.dispatch(new GridListUpdateCallbackArgs(GridListUpdate.Remove, null));
+			onGridListUpdate.dispatch(new GridListUpdateCallbackArgs(GridListUpdate.Remove, null));
 	}
 
 	/**
@@ -451,7 +452,7 @@ public class GridClient {
 		for (int i = 0; i < array.size(); i++) {
 			OSDMap map = (OSDMap) array.get(i);
 			if (map.containsKey(DEFAULT_GRIDS_VERSION)) {
-				version = map.get(DEFAULT_GRIDS_VERSION).AsInteger();
+				version = map.get(DEFAULT_GRIDS_VERSION).asInteger();
 				if (version <= listversion) {
 					return false;
 				}
@@ -487,17 +488,17 @@ public class GridClient {
 				// This doesn't save the transient fields
 				OSDMap members = OSD.serializeMembers(info);
 				if (info.saveSettings) {
-					members.put("username", OSDString.FromString(info.username));
-					members.put("startLocation", OSDString.FromString(info.startLocation));
+					members.put("username", OSDString.fromString(info.username));
+					members.put("startLocation", OSDString.fromString(info.startLocation));
 					if (info.savePassword) {
-						members.put("userpassword", OSDString.FromString(info.password));
+						members.put("userpassword", OSDString.fromString(info.password));
 					}
 				}
 				prefs.put(GRIDINFO + Integer.toString(++i), OSDParser.serializeToString(members, OSDFormat.Xml));
 			}
 		}
 		if (sendEvent)
-			OnGridListUpdate.dispatch(new GridListUpdateCallbackArgs(GridListUpdate.Add, null));
+			onGridListUpdate.dispatch(new GridListUpdateCallbackArgs(GridListUpdate.Add, null));
 	}
 
 	private OSD loadDefaults() throws IOException {
@@ -583,22 +584,22 @@ public class GridClient {
 	// <returns>Client Avatar's Full Name</returns>
 	@Override
 	public String toString() {
-		return Self.getName();
+		return agent.getName();
 	}
 
 	// A simple sleep function that will allow pending threads to run
-	public void Tick(long millis) throws Exception {
+	public void tick(long millis) throws Exception {
 		Thread.sleep(millis);
 	}
 
 	// A simple sleep function that will allow pending threads to run
-	public void Tick() throws Exception {
+	public void tick() throws Exception {
 		Thread.sleep(0);
 	}
 
 	public static String Log(String message, GridClient client) {
-		if (client != null && client.Settings.LOG_NAMES) {
-			return String.format("<%s>: {%s}", client.Self.getName(), message);
+		if (client != null && client.settings.LOG_NAMES) {
+			return String.format("<%s>: {%s}", client.agent.getName(), message);
 		}
 		return message;
 	}

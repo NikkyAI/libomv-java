@@ -135,7 +135,7 @@ public class ImagePanel extends JComponent {
 		if (_Client == null || _TextureID == null)
 			return false;
 
-		_Client.Assets.RequestImage(_TextureID, new ImageDownloadCallback());
+		_Client.assets.requestImage(_TextureID, new ImageDownloadCallback());
 		return true;
 	}
 

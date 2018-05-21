@@ -191,7 +191,7 @@ public class LoginPane extends JPanel implements ActionListener {
 		gridBagConstraints.gridy = 2;
 		add(getJcbStartLocation(), gridBagConstraints);
 
-		_Client.OnGridListUpdate.add(gridListCallback);
+		_Client.onGridListUpdate.add(gridListCallback);
 
 		initializePanel((GridInfo) getJcbGridSelector().getSelectedItem());
 	}
@@ -204,7 +204,7 @@ public class LoginPane extends JPanel implements ActionListener {
 	}
 
 	protected void finalize() throws Throwable {
-		_Client.OnGridListUpdate.remove(gridListCallback);
+		_Client.onGridListUpdate.remove(gridListCallback);
 		super.finalize();
 	}
 

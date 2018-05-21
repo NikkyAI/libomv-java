@@ -31,6 +31,7 @@
 package libomv.primitives;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import libomv.StructuredData.OSD;
 import libomv.StructuredData.OSDArray;
@@ -94,26 +95,26 @@ public class Avatar extends Primitive {
 		public Statistics(OSD osd) {
 			OSDMap tex = (OSDMap) osd;
 
-			behaviorPositive = tex.get("behavior_positive").AsInteger();
-			buildingNegative = tex.get("behavior_negative").AsInteger();
-			appearancePositive = tex.get("appearance_positive").AsInteger();
-			appearanceNegative = tex.get("appearance_negative").AsInteger();
-			buildingPositive = tex.get("buildings_positive").AsInteger();
-			buildingNegative = tex.get("buildings_negative").AsInteger();
-			givenPositive = tex.get("given_positive").AsInteger();
-			givenNegative = tex.get("given_negative").AsInteger();
+			behaviorPositive = tex.get("behavior_positive").asInteger();
+			buildingNegative = tex.get("behavior_negative").asInteger();
+			appearancePositive = tex.get("appearance_positive").asInteger();
+			appearanceNegative = tex.get("appearance_negative").asInteger();
+			buildingPositive = tex.get("buildings_positive").asInteger();
+			buildingNegative = tex.get("buildings_negative").asInteger();
+			givenPositive = tex.get("given_positive").asInteger();
+			givenNegative = tex.get("given_negative").asInteger();
 		}
 
 		public OSD serialize() {
 			OSDMap tex = new OSDMap(8);
-			tex.put("behavior_positive", OSD.FromInteger(behaviorPositive));
-			tex.put("behavior_negative", OSD.FromInteger(behaviorNegative));
-			tex.put("appearance_positive", OSD.FromInteger(appearancePositive));
-			tex.put("appearance_negative", OSD.FromInteger(appearanceNegative));
-			tex.put("buildings_positive", OSD.FromInteger(buildingPositive));
-			tex.put("buildings_negative", OSD.FromInteger(buildingNegative));
-			tex.put("given_positive", OSD.FromInteger(givenPositive));
-			tex.put("given_negative", OSD.FromInteger(givenNegative));
+			tex.put("behavior_positive", OSD.fromInteger(behaviorPositive));
+			tex.put("behavior_negative", OSD.fromInteger(behaviorNegative));
+			tex.put("appearance_positive", OSD.fromInteger(appearancePositive));
+			tex.put("appearance_negative", OSD.fromInteger(appearanceNegative));
+			tex.put("buildings_positive", OSD.fromInteger(buildingPositive));
+			tex.put("buildings_negative", OSD.fromInteger(buildingNegative));
+			tex.put("given_positive", OSD.fromInteger(givenPositive));
+			tex.put("given_negative", OSD.fromInteger(givenNegative));
 			return tex;
 		}
 
@@ -228,30 +229,30 @@ public class Avatar extends Primitive {
 
 		public OSD serialize() {
 			OSDMap tex = new OSDMap(9);
-			tex.put("first_life_text", OSD.FromString(firstLifeText));
-			tex.put("first_life_image", OSD.FromUUID(firstLifeImage));
-			tex.put("partner", OSD.FromUUID(partner));
-			tex.put("about_text", OSD.FromString(aboutText));
-			tex.put("born_on", OSD.FromString(bornOn));
-			tex.put("charter_member", OSD.FromString(charterMember));
-			tex.put("profile_image", OSD.FromUUID(profileImage));
-			tex.put("flags", OSD.FromInteger(ProfileFlags.getValue(flags)));
-			tex.put("profile_url", OSD.FromString(profileURL));
+			tex.put("first_life_text", OSD.fromString(firstLifeText));
+			tex.put("first_life_image", OSD.fromUUID(firstLifeImage));
+			tex.put("partner", OSD.fromUUID(partner));
+			tex.put("about_text", OSD.fromString(aboutText));
+			tex.put("born_on", OSD.fromString(bornOn));
+			tex.put("charter_member", OSD.fromString(charterMember));
+			tex.put("profile_image", OSD.fromUUID(profileImage));
+			tex.put("flags", OSD.fromInteger(ProfileFlags.getValue(flags)));
+			tex.put("profile_url", OSD.fromString(profileURL));
 			return tex;
 		}
 
 		public AvatarProperties(OSD osd) {
 			OSDMap tex = (OSDMap) osd;
 
-			firstLifeText = tex.get("first_life_text").AsString();
-			firstLifeImage = tex.get("first_life_image").AsUUID();
-			partner = tex.get("partner").AsUUID();
-			aboutText = tex.get("about_text").AsString();
-			bornOn = tex.get("born_on").AsString();
-			charterMember = tex.get("chart_member").AsString();
-			profileImage = tex.get("profile_image").AsUUID();
-			flags = ProfileFlags.setValue(tex.get("flags").AsInteger());
-			profileURL = tex.get("profile_url").AsString();
+			firstLifeText = tex.get("first_life_text").asString();
+			firstLifeImage = tex.get("first_life_image").asUUID();
+			partner = tex.get("partner").asUUID();
+			aboutText = tex.get("about_text").asString();
+			bornOn = tex.get("born_on").asString();
+			charterMember = tex.get("chart_member").asString();
+			profileImage = tex.get("profile_image").asUUID();
+			flags = ProfileFlags.setValue(tex.get("flags").asInteger());
+			profileURL = tex.get("profile_url").asString();
 		}
 	}
 
@@ -274,22 +275,22 @@ public class Avatar extends Primitive {
 
 		public OSD serialize() {
 			OSDMap InterestsOSD = new OSDMap(5);
-			InterestsOSD.put("languages_text", OSD.FromString(languagesText));
-			InterestsOSD.put("skills_mask", OSD.FromUInteger(skillsMask));
-			InterestsOSD.put("skills_text", OSD.FromString(skillsText));
-			InterestsOSD.put("want_to_mask", OSD.FromUInteger(wantToMask));
-			InterestsOSD.put("want_to_text", OSD.FromString(wantToText));
+			InterestsOSD.put("languages_text", OSD.fromString(languagesText));
+			InterestsOSD.put("skills_mask", OSD.fromUInteger(skillsMask));
+			InterestsOSD.put("skills_text", OSD.fromString(skillsText));
+			InterestsOSD.put("want_to_mask", OSD.fromUInteger(wantToMask));
+			InterestsOSD.put("want_to_text", OSD.fromString(wantToText));
 			return InterestsOSD;
 		}
 
 		public Interests(OSD osd) {
 			OSDMap tex = (OSDMap) osd;
 
-			languagesText = tex.get("languages_text").AsString();
-			skillsMask = tex.get("skills_mask").AsUInteger();
-			skillsText = tex.get("skills_text").AsString();
-			wantToMask = tex.get("want_to_mask").AsUInteger();
-			wantToText = tex.get("want_to_text").AsString();
+			languagesText = tex.get("languages_text").asString();
+			skillsMask = tex.get("skills_mask").asUInteger();
+			skillsText = tex.get("skills_text").asString();
+			wantToMask = tex.get("want_to_mask").asUInteger();
+			wantToText = tex.get("want_to_text").asString();
 		}
 	}
 
@@ -298,7 +299,7 @@ public class Avatar extends Primitive {
 	// #region Public Members
 
 	// Groups that this avatar is a member of
-	public ArrayList<UUID> groups = new ArrayList<UUID>();
+	public List<UUID> groups = new ArrayList<>();
 	// Positive and negative ratings
 	public Statistics profileStatistics;
 	// Avatar properties including about text, profile URL, image IDs and
@@ -324,7 +325,7 @@ public class Avatar extends Primitive {
 	public AppearanceFlags appearanceFlags = AppearanceFlags.None;
 
 	// List of current avatar animations
-	public ArrayList<Animation> animations;
+	public List<Animation> animations;
 
 	// #endregion Public Members
 
@@ -435,24 +436,24 @@ public class Avatar extends Primitive {
 		OSDArray grp = new OSDArray();
 
 		for (int i = 0; i < groups.size(); i++) {
-			grp.add(OSD.FromUUID(groups.get(i)));
+			grp.add(OSD.fromUUID(groups.get(i)));
 		}
 
 		OSDArray vp = new OSDArray();
 
 		for (int i = 0; i < visualParameters.length; i++) {
-			vp.add(OSD.FromInteger(visualParameters[i]));
+			vp.add(OSD.fromInteger(visualParameters[i]));
 		}
 
 		Avi.put("groups", grp);
 		Avi.put("profile_statistics", profileStatistics.serialize());
 		Avi.put("profile_properties", profileProperties.serialize());
 		Avi.put("profile_interest", profileInterests.serialize());
-		Avi.put("control_flags", OSD.FromInteger(ControlFlags.getValue(controlFlags)));
+		Avi.put("control_flags", OSD.fromInteger(ControlFlags.getValue(controlFlags)));
 		Avi.put("visual_parameters", vp);
-		Avi.put("first_name", OSD.FromString(getFirstName()));
-		Avi.put("last_name", OSD.FromString(getLastName()));
-		Avi.put("group_name", OSD.FromString(getGroupName()));
+		Avi.put("first_name", OSD.fromString(getFirstName()));
+		Avi.put("last_name", OSD.fromString(getLastName()));
+		Avi.put("group_name", OSD.fromString(getGroupName()));
 
 		return Avi;
 
@@ -477,37 +478,37 @@ public class Avatar extends Primitive {
 
 		OSDMap tex = (OSDMap) osd;
 
-		groups = new ArrayList<UUID>();
+		groups = new ArrayList<>();
 
 		for (OSD U : (OSDArray) tex.get("groups")) {
-			groups.add(U.AsUUID());
+			groups.add(U.asUUID());
 		}
 
 		profileStatistics = new Statistics(tex.get("profile_statistics"));
 		profileProperties = new AvatarProperties(tex.get("profile_properties"));
 		profileInterests = new Interests(tex.get("profile_interest"));
-		controlFlags = ControlFlags.setValue(tex.get("control_flags").AsInteger());
+		controlFlags = ControlFlags.setValue(tex.get("control_flags").asInteger());
 
 		OSDArray vp = (OSDArray) tex.get("visual_parameters");
 		visualParameters = new byte[vp.size()];
 
 		for (int i = 0; i < vp.size(); i++) {
-			visualParameters[i] = (byte) vp.get(i).AsInteger();
+			visualParameters[i] = (byte) vp.get(i).asInteger();
 		}
 
 		nameValues = new NameValue[3];
 
 		NameValue First = new NameValue("FirstName");
 		First.Type = NameValue.ValueType.String;
-		First.Value = tex.get("first_name").AsString();
+		First.Value = tex.get("first_name").asString();
 
 		NameValue Last = new NameValue("LastName");
 		Last.Type = NameValue.ValueType.String;
-		Last.Value = tex.get("last_name").AsString();
+		Last.Value = tex.get("last_name").asString();
 
 		NameValue Group = new NameValue("Title");
 		Group.Type = NameValue.ValueType.String;
-		Group.Value = tex.get("group_name").AsString();
+		Group.Value = tex.get("group_name").asString();
 
 		nameValues[0] = First;
 		nameValues[1] = Last;

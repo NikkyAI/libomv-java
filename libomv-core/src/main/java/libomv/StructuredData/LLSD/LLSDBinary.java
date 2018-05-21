@@ -202,37 +202,37 @@ public final class LLSDBinary extends OSDParser {
 			stream.write(undefBinaryValue);
 			break;
 		case Boolean:
-			stream.write(osd.AsBinary(), 0, 1);
+			stream.write(osd.asBinary(), 0, 1);
 			break;
 		case Integer:
 			stream.write(integerBinaryMarker);
-			stream.write(osd.AsBinary(), 0, int32Length);
+			stream.write(osd.asBinary(), 0, int32Length);
 			break;
 		case Real:
 			stream.write(realBinaryMarker);
-			stream.write(osd.AsBinary(), 0, doubleLength);
+			stream.write(osd.asBinary(), 0, doubleLength);
 			break;
 		case UUID:
 			stream.write(uuidBinaryMarker);
-			stream.write(osd.AsBinary(), 0, 16);
+			stream.write(osd.asBinary(), 0, 16);
 			break;
 		case String:
 			stream.write(stringBinaryMarker);
-			serializeString(stream, osd.AsString(), encoding);
+			serializeString(stream, osd.asString(), encoding);
 			break;
 		case Binary:
 			stream.write(binaryBinaryMarker);
-			byte[] bytes = osd.AsBinary();
+			byte[] bytes = osd.asBinary();
 			stream.write(Helpers.Int32ToBytesB(bytes.length));
 			stream.write(bytes, 0, bytes.length);
 			break;
 		case Date:
 			stream.write(dateBinaryMarker);
-			stream.write(osd.AsBinary(), 0, doubleLength);
+			stream.write(osd.asBinary(), 0, doubleLength);
 			break;
 		case URI:
 			stream.write(uriBinaryMarker);
-			serializeString(stream, osd.AsString(), encoding);
+			serializeString(stream, osd.asString(), encoding);
 			break;
 		case Array:
 			serializeArray(stream, (OSDArray) osd, encoding);
@@ -285,25 +285,25 @@ public final class LLSDBinary extends OSDParser {
 			osd = new OSD();
 			break;
 		case trueBinaryValue:
-			osd = OSD.FromBoolean(true);
+			osd = OSD.fromBoolean(true);
 			break;
 		case falseBinaryValue:
-			osd = OSD.FromBoolean(false);
+			osd = OSD.fromBoolean(false);
 			break;
 		case integerBinaryMarker:
 			int integer = Helpers.BytesToInt32B(consumeBytes(stream, int32Length));
-			osd = OSD.FromInteger(integer);
+			osd = OSD.fromInteger(integer);
 			break;
 		case realBinaryMarker:
 			double dbl = Helpers.BytesToDoubleB(consumeBytes(stream, doubleLength), 0);
-			osd = OSD.FromReal(dbl);
+			osd = OSD.fromReal(dbl);
 			break;
 		case uuidBinaryMarker:
-			osd = OSD.FromUUID(new UUID(consumeBytes(stream, 16)));
+			osd = OSD.fromUUID(new UUID(consumeBytes(stream, 16)));
 			break;
 		case binaryBinaryMarker:
 			int binaryLength = Helpers.BytesToInt32B(consumeBytes(stream, int32Length));
-			osd = OSD.FromBinary(consumeBytes(stream, binaryLength));
+			osd = OSD.fromBinary(consumeBytes(stream, binaryLength));
 			break;
 		case doubleQuotesNotationMarker:
 		case singleQuotesNotationMarker:
@@ -311,7 +311,7 @@ public final class LLSDBinary extends OSDParser {
 					(int) stream.getBytePosition());
 		case stringBinaryMarker:
 			int stringLength = Helpers.BytesToInt32B(consumeBytes(stream, int32Length));
-			osd = OSD.FromString(new String(consumeBytes(stream, stringLength), encoding));
+			osd = OSD.fromString(new String(consumeBytes(stream, stringLength), encoding));
 			break;
 		case uriBinaryMarker:
 			int uriLength = Helpers.BytesToInt32B(consumeBytes(stream, int32Length));
@@ -322,7 +322,7 @@ public final class LLSDBinary extends OSDParser {
 				throw new ParseException("Binary LLSD parsing: Invalid Uri format detected: " + ex.getMessage(),
 						(int) stream.getBytePosition());
 			}
-			osd = OSD.FromUri(uri);
+			osd = OSD.fromUri(uri);
 			break;
 		case dateBinaryMarker:
 			/*
@@ -331,7 +331,7 @@ public final class LLSDBinary extends OSDParser {
 			 * llsdserialize.cpp clearly do not do any byteswapping.
 			 */
 			double timestamp = Helpers.BytesToDoubleL(consumeBytes(stream, doubleLength), 0);
-			osd = OSD.FromDate(Helpers.UnixTimeToDateTime(timestamp));
+			osd = OSD.fromDate(Helpers.UnixTimeToDateTime(timestamp));
 			break;
 		case arrayBeginBinaryMarker:
 			osd = parseArray(stream, encoding);

@@ -80,12 +80,12 @@ public class PhysicsProperties {
 	public PhysicsProperties(OSD osd) {
 		if (osd instanceof OSDMap) {
 			OSDMap map = (OSDMap) osd;
-			localID = map.get("LocalID").AsUInteger();
-			density = (float) map.get("Density").AsReal();
-			friction = (float) map.get("Friction").AsReal();
-			gravityMultiplier = (float) map.get("GravityMultiplier").AsReal();
-			restitution = (float) map.get("Restitution").AsReal();
-			shapeType = PhysicsShapeType.setValue(map.get("PhysicsShapeType").AsInteger());
+			localID = map.get("LocalID").asUInteger();
+			density = (float) map.get("Density").asReal();
+			friction = (float) map.get("Friction").asReal();
+			gravityMultiplier = (float) map.get("GravityMultiplier").asReal();
+			restitution = (float) map.get("Restitution").asReal();
+			shapeType = PhysicsShapeType.setValue(map.get("PhysicsShapeType").asInteger());
 		}
 	}
 
@@ -96,12 +96,12 @@ public class PhysicsProperties {
 	 */
 	public OSDMap getOSD() {
 		OSDMap map = new OSDMap(6);
-		map.put("LocalID", OSD.FromUInteger(localID));
-		map.put("Density", OSD.FromReal(density));
-		map.put("Friction", OSD.FromReal(friction));
-		map.put("GravityMultiplier", OSD.FromReal(gravityMultiplier));
-		map.put("Restitution", OSD.FromReal(restitution));
-		map.put("PhysicsShapeType", OSD.FromInteger(shapeType.getValue()));
+		map.put("LocalID", OSD.fromUInteger(localID));
+		map.put("Density", OSD.fromReal(density));
+		map.put("Friction", OSD.fromReal(friction));
+		map.put("GravityMultiplier", OSD.fromReal(gravityMultiplier));
+		map.put("Restitution", OSD.fromReal(restitution));
+		map.put("PhysicsShapeType", OSD.fromInteger(shapeType.getValue()));
 		return map;
 	}
 }

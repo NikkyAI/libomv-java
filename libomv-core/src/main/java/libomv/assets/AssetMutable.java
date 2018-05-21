@@ -36,11 +36,6 @@ import libomv.types.UUID;
 public class AssetMutable extends AssetItem {
 	private AssetType type;
 
-	@Override
-	public AssetType getAssetType() {
-		return type;
-	}
-
 	/**
 	 * Construct an Asset object of a mutable type
 	 *
@@ -54,6 +49,11 @@ public class AssetMutable extends AssetItem {
 	public AssetMutable(AssetType type, UUID assetID, byte[] assetData) {
 		super(assetID, assetData);
 		this.type = type;
+	}
+
+	@Override
+	public AssetType getAssetType() {
+		return type;
 	}
 
 	@Override

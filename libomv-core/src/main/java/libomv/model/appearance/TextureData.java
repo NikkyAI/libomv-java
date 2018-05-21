@@ -1,6 +1,6 @@
 package libomv.model.appearance;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import libomv.VisualParams.VisualAlphaParam;
 import libomv.assets.AssetTexture;
@@ -17,7 +17,7 @@ public class TextureData {
 	// Asset data for the texture
 	public AssetTexture texture;
 	// Collection of alpha masks that needs applying
-	public HashMap<VisualAlphaParam, Float> alphaMasks;
+	public Map<VisualAlphaParam, Float> alphaMasks;
 	// Tint that should be applied to the texture
 	public Color4 color;
 	// The avatar texture index this texture is for

@@ -58,12 +58,12 @@ public class ModelPrim {
 
 	public void createAsset(UUID creator) throws IOException {
 		OSDMap header = new OSDMap();
-		header.put("version", OSD.FromInteger(1));
-		header.put("creator", OSD.FromUUID(creator));
-		header.put("date", OSD.FromDate(new Date()));
+		header.put("version", OSD.fromInteger(1));
+		header.put("creator", OSD.fromUUID(creator));
+		header.put("date", OSD.fromDate(new Date()));
 
-		header.put("rez_position", OSD.FromVector3(position));
-		header.put("rez_scale", OSD.FromVector3(scale));
+		header.put("rez_position", OSD.fromVector3(position));
+		header.put("rez_scale", OSD.fromVector3(scale));
 
 		OSDArray facesOSD = new OSDArray();
 		for (ModelFace face : faces) {
@@ -84,13 +84,13 @@ public class ModelPrim {
 					uvMax.Y = v.texCoord.Y;
 			}
 			OSDMap uvDomain = new OSDMap();
-			uvDomain.put("Min", OSD.FromVector2(uvMin));
-			uvDomain.put("Max", OSD.FromVector2(uvMax));
+			uvDomain.put("Min", OSD.fromVector2(uvMin));
+			uvDomain.put("Max", OSD.fromVector2(uvMax));
 			faceMap.put("TexCoord0Domain", uvDomain);
 
 			OSDMap positionDomain = new OSDMap();
-			positionDomain.put("Min", OSD.FromVector3(new Vector3(-0.5f, -0.5f, -0.5f)));
-			positionDomain.put("Max", OSD.FromVector3(new Vector3(0.5f, 0.5f, 0.5f)));
+			positionDomain.put("Min", OSD.fromVector3(new Vector3(-0.5f, -0.5f, -0.5f)));
+			positionDomain.put("Max", OSD.fromVector3(new Vector3(0.5f, 0.5f, 0.5f)));
 			faceMap.put("PositionDomain", positionDomain);
 
 			byte[] posBytes = new byte[face.vertices.size() * 2 * 3];
@@ -99,29 +99,29 @@ public class ModelPrim {
 
 			int offp = 0, offn = 0, offu = 0;
 			for (Vertex v : face.vertices) {
-				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.position.X, -0.5f, 0.5f), posBytes, offp);
+				Helpers.UInt16ToBytesL(Helpers.floatToUInt16(v.position.X, -0.5f, 0.5f), posBytes, offp);
 				offp += 2;
-				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.position.Y, -0.5f, 0.5f), posBytes, offp);
+				Helpers.UInt16ToBytesL(Helpers.floatToUInt16(v.position.Y, -0.5f, 0.5f), posBytes, offp);
 				offp += 2;
-				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.position.Z, -0.5f, 0.5f), posBytes, offp);
+				Helpers.UInt16ToBytesL(Helpers.floatToUInt16(v.position.Z, -0.5f, 0.5f), posBytes, offp);
 				offp += 2;
 
-				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.normal.X, -1f, 1f), norBytes, offn);
+				Helpers.UInt16ToBytesL(Helpers.floatToUInt16(v.normal.X, -1f, 1f), norBytes, offn);
 				offn += 2;
-				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.normal.Y, -1f, 1f), norBytes, offn);
+				Helpers.UInt16ToBytesL(Helpers.floatToUInt16(v.normal.Y, -1f, 1f), norBytes, offn);
 				offn += 2;
-				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.normal.Z, -1f, 1f), norBytes, offn);
+				Helpers.UInt16ToBytesL(Helpers.floatToUInt16(v.normal.Z, -1f, 1f), norBytes, offn);
 				offn += 2;
 
-				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.texCoord.X, uvMin.X, uvMax.X), uvBytes, offu);
+				Helpers.UInt16ToBytesL(Helpers.floatToUInt16(v.texCoord.X, uvMin.X, uvMax.X), uvBytes, offu);
 				offu += 2;
-				Helpers.UInt16ToBytesL(Helpers.FloatToUInt16(v.texCoord.Y, uvMin.Y, uvMax.Y), uvBytes, offu);
+				Helpers.UInt16ToBytesL(Helpers.floatToUInt16(v.texCoord.Y, uvMin.Y, uvMax.Y), uvBytes, offu);
 				offu += 2;
 			}
 
-			faceMap.put("Position", OSD.FromBinary(posBytes));
-			faceMap.put("Normal", OSD.FromBinary(norBytes));
-			faceMap.put("TexCoord0", OSD.FromBinary(uvBytes));
+			faceMap.put("Position", OSD.fromBinary(posBytes));
+			faceMap.put("Normal", OSD.fromBinary(norBytes));
+			faceMap.put("TexCoord0", OSD.fromBinary(uvBytes));
 
 			int offi = 0;
 			byte[] indexBytes = new byte[face.indices.size() * 2];
@@ -129,7 +129,7 @@ public class ModelPrim {
 				Helpers.UInt16ToBytesL(t, indexBytes, offi);
 				offi += 2;
 			}
-			faceMap.put("TriangleList", OSD.FromBinary(indexBytes));
+			faceMap.put("TriangleList", OSD.fromBinary(indexBytes));
 
 			facesOSD.add(faceMap);
 		}
@@ -140,14 +140,14 @@ public class ModelPrim {
 		int n = 0;
 
 		OSDMap lodParms = new OSDMap();
-		lodParms.put("offset", OSD.FromInteger(n));
-		lodParms.put("size", OSD.FromInteger(meshBytes.length));
+		lodParms.put("offset", OSD.fromInteger(n));
+		lodParms.put("size", OSD.fromInteger(meshBytes.length));
 		header.put("high_lod", lodParms);
 		n += meshBytes.length;
 
 		lodParms = new OSDMap();
-		lodParms.put("offset", OSD.FromInteger(n));
-		lodParms.put("size", OSD.FromInteger(physicStubBytes.length));
+		lodParms.put("offset", OSD.fromInteger(n));
+		lodParms.put("size", OSD.fromInteger(physicStubBytes.length));
 		header.put("physics_convex", lodParms);
 		n += physicStubBytes.length;
 

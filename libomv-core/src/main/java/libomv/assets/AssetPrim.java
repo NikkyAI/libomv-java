@@ -52,7 +52,6 @@ import libomv.StructuredData.OSDMap;
 import libomv.inventory.InventoryItem;
 import libomv.inventory.InventoryNode.InventoryType;
 import libomv.model.asset.AssetType;
-import libomv.model.object.SaleType;
 import libomv.primitives.ObjectProperties;
 import libomv.primitives.ParticleSystem;
 import libomv.primitives.ParticleSystem.SourcePattern;
@@ -76,32 +75,7 @@ public class AssetPrim extends AssetItem {
 	private static final Logger logger = Logger.getLogger(AssetPrim.class);
 
 	private PrimObject parent;
-
-	public PrimObject getParent() {
-		return parent;
-	}
-
-	public void setParent(PrimObject parent) {
-		invalidateAssetData();
-		this.parent = parent;
-	}
-
 	private List<PrimObject> children;
-
-	public List<PrimObject> getChildren() {
-		return children;
-	}
-
-	public void setChildren(List<PrimObject> children) {
-		invalidateAssetData();
-		this.children = children;
-	}
-
-	// Override the base classes AssetType
-	@Override
-	public AssetType getAssetType() {
-		return AssetType.Object;
-	}
 
 	/// Initializes a new instance of an AssetPrim object
 	/// <param name="assetID">A unique <see cref="UUID"/> specific to this
@@ -121,13 +95,37 @@ public class AssetPrim extends AssetItem {
 		decodeXml(xmlParser);
 	}
 
-	public AssetPrim(PrimObject parent, ArrayList<PrimObject> children) {
+	public AssetPrim(PrimObject parent, List<PrimObject> children) {
 		super(null, null);
 		this.parent = parent;
 		if (children != null)
 			this.children = children;
 		else
-			this.children = new ArrayList<PrimObject>(0);
+			this.children = new ArrayList<>(0);
+	}
+
+	public PrimObject getParent() {
+		return parent;
+	}
+
+	public void setParent(PrimObject parent) {
+		invalidateAssetData();
+		this.parent = parent;
+	}
+
+	public List<PrimObject> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<PrimObject> children) {
+		invalidateAssetData();
+		this.children = children;
+	}
+
+	// Override the base classes AssetType
+	@Override
+	public AssetType getAssetType() {
+		return AssetType.Object;
 	}
 
 	@Override
@@ -185,8 +183,7 @@ public class AssetPrim extends AssetItem {
 		}
 	}
 
-	public void writeXml(Writer writer, int indentation)
-			throws XmlPullParserException, IllegalArgumentException, IllegalStateException, IOException {
+	public void writeXml(Writer writer, int indentation) throws XmlPullParserException, IOException {
 		XmlSerializer xmlWriter = XmlPullParserFactory.newInstance().newSerializer();
 
 		if (indentation > 0) {
@@ -199,7 +196,7 @@ public class AssetPrim extends AssetItem {
 		xmlWriter.flush();
 	}
 
-	private void encodeXml(XmlSerializer writer) throws IllegalArgumentException, IllegalStateException, IOException {
+	private void encodeXml(XmlSerializer writer) throws IOException {
 		writer.startTag(null, "SceneObjectGroup");
 		writePrim(writer, parent, null);
 
@@ -211,8 +208,7 @@ public class AssetPrim extends AssetItem {
 		writer.endDocument();
 	}
 
-	private void writePrim(XmlSerializer writer, PrimObject prim, PrimObject parent)
-			throws IllegalArgumentException, IllegalStateException, IOException {
+	private void writePrim(XmlSerializer writer, PrimObject prim, PrimObject parent) throws IOException {
 		writer.startTag(null, "SceneObjectPart");
 		writer.attribute(null, "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
 		writer.attribute(null, "xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
@@ -229,7 +225,7 @@ public class AssetPrim extends AssetItem {
 
 				item.assetID.serializeXml(writer, null, "AssetID");
 				writeInt(writer, "BasePermissions", item.permsBase);
-				writeLong(writer, "CreationDate", (long) Helpers.DateTimeToUnixTime(item.creationDate));
+				writeLong(writer, "CreationDate", (long) Helpers.dateTimeToUnixTime(item.creationDate));
 				item.creatorID.serializeXml(writer, null, "CreatorID");
 				writeText(writer, "Description", item.description);
 				writeInt(writer, "EveryonePermissions", item.permsEveryone);
@@ -348,7 +344,7 @@ public class AssetPrim extends AssetItem {
 		prim.sitOffset.serializeXml(writer, null, "SitTargetPositionLL");
 		prim.sitRotation.serializeXml(writer, null, "SitTargetOrientationLL");
 		writeInt(writer, "ParentID", prim.parentID);
-		writeLong(writer, "CreationDate", (long) Helpers.DateTimeToUnixTime(prim.creationDate));
+		writeLong(writer, "CreationDate", (long) Helpers.dateTimeToUnixTime(prim.creationDate));
 		writeInt(writer, "Category", 0);
 		writeInt(writer, "SalePrice", prim.salePrice);
 		writeInt(writer, "ObjectSaleType", prim.saleType);
@@ -368,23 +364,19 @@ public class AssetPrim extends AssetItem {
 		writer.endTag(null, "SceneObjectPart");
 	}
 
-	private static void writeText(XmlSerializer writer, String name, String text)
-			throws IllegalArgumentException, IllegalStateException, IOException {
+	private static void writeText(XmlSerializer writer, String name, String text) throws IOException {
 		writer.startTag(null, name).text(text).endTag(null, name);
 	}
 
-	private static void writeInt(XmlSerializer writer, String name, int number)
-			throws IllegalArgumentException, IllegalStateException, IOException {
+	private static void writeInt(XmlSerializer writer, String name, int number) throws IOException {
 		writer.startTag(null, name).text(Integer.toString(number)).endTag(null, name);
 	}
 
-	private static void writeLong(XmlSerializer writer, String name, long number)
-			throws IllegalArgumentException, IllegalStateException, IOException {
+	private static void writeLong(XmlSerializer writer, String name, long number) throws IOException {
 		writer.startTag(null, name).text(Long.toString(number)).endTag(null, name);
 	}
 
-	private static void writeFloat(XmlSerializer writer, String name, float number)
-			throws IllegalArgumentException, IllegalStateException, IOException {
+	private static void writeFloat(XmlSerializer writer, String name, float number) throws IOException {
 		writer.startTag(null, name).text(Float.toString(number)).endTag(null, name);
 	}
 
@@ -400,13 +392,13 @@ public class AssetPrim extends AssetItem {
 			if (!parser.isEmptyElementTag()) {
 				parser.require(XmlPullParser.START_TAG, null, "OtherParts");
 
-				ArrayList<PrimObject> children = new ArrayList<PrimObject>();
+				List<PrimObject> childrenList = new ArrayList<>();
 				while (parser.nextTag() == XmlPullParser.START_TAG) {
 					PrimObject child = loadPrim(parser);
 					if (child != null)
-						children.add(child);
+						childrenList.add(child);
 				}
-				this.children = children;
+				this.children = childrenList;
 			}
 			return true;
 		}
@@ -706,22 +698,22 @@ public class AssetPrim extends AssetItem {
 
 			public OSDMap serialize() {
 				OSDMap map = new OSDMap();
-				map.put("softness", OSD.FromInteger(softness));
-				map.put("gravity", OSD.FromReal(gravity));
-				map.put("drag", OSD.FromReal(drag));
-				map.put("wind", OSD.FromReal(wind));
-				map.put("tension", OSD.FromReal(tension));
-				map.put("force", OSD.FromVector3(force));
+				map.put("softness", OSD.fromInteger(softness));
+				map.put("gravity", OSD.fromReal(gravity));
+				map.put("drag", OSD.fromReal(drag));
+				map.put("wind", OSD.fromReal(wind));
+				map.put("tension", OSD.fromReal(tension));
+				map.put("force", OSD.fromVector3(force));
 				return map;
 			}
 
 			public void deserialize(OSDMap map) {
-				softness = map.get("softness").AsInteger();
-				gravity = (float) map.get("gravity").AsReal();
-				drag = (float) map.get("drag").AsReal();
-				wind = (float) map.get("wind").AsReal();
-				tension = (float) map.get("tension").AsReal();
-				force = map.get("force").AsVector3();
+				softness = map.get("softness").asInteger();
+				gravity = (float) map.get("gravity").asReal();
+				drag = (float) map.get("drag").asReal();
+				wind = (float) map.get("wind").asReal();
+				tension = (float) map.get("tension").asReal();
+				force = map.get("force").asVector3();
 			}
 		}
 
@@ -734,20 +726,20 @@ public class AssetPrim extends AssetItem {
 
 			public OSDMap serialize() {
 				OSDMap map = new OSDMap();
-				map.put("color", OSD.FromColor4(color));
-				map.put("intensity", OSD.FromReal(intensity));
-				map.put("radius", OSD.FromReal(radius));
-				map.put("falloff", OSD.FromReal(falloff));
-				map.put("cutoff", OSD.FromReal(cutoff));
+				map.put("color", OSD.fromColor4(color));
+				map.put("intensity", OSD.fromReal(intensity));
+				map.put("radius", OSD.fromReal(radius));
+				map.put("falloff", OSD.fromReal(falloff));
+				map.put("cutoff", OSD.fromReal(cutoff));
 				return map;
 			}
 
 			public void deserialize(OSDMap map) {
-				color = map.get("color").AsColor4();
-				intensity = (float) map.get("intensity").AsReal();
-				radius = (float) map.get("radius").AsReal();
-				falloff = (float) map.get("falloff").AsReal();
-				cutoff = (float) map.get("cutoff").AsReal();
+				color = map.get("color").asColor4();
+				intensity = (float) map.get("intensity").asReal();
+				radius = (float) map.get("radius").asReal();
+				falloff = (float) map.get("falloff").asReal();
+				cutoff = (float) map.get("cutoff").asReal();
 			}
 		}
 
@@ -757,14 +749,14 @@ public class AssetPrim extends AssetItem {
 
 			public OSDMap serialize() {
 				OSDMap map = new OSDMap();
-				map.put("texture", OSD.FromUUID(texture));
-				map.put("type", OSD.FromInteger(type));
+				map.put("texture", OSD.fromUUID(texture));
+				map.put("type", OSD.fromInteger(type));
 				return map;
 			}
 
 			public void deserialize(OSDMap map) {
-				texture = map.get("texture").AsUUID();
-				type = (byte) map.get("type").AsInteger();
+				texture = map.get("texture").asUUID();
+				type = (byte) map.get("type").asInteger();
 			}
 		}
 
@@ -793,51 +785,51 @@ public class AssetPrim extends AssetItem {
 
 			public OSDMap serialize() {
 				OSDMap map = new OSDMap();
-				map.put("flags", OSD.FromInteger(flags));
-				map.put("pattern", OSD.FromInteger(pattern));
-				map.put("max_age", OSD.FromReal(maxAge));
-				map.put("start_age", OSD.FromReal(startAge));
-				map.put("inner_angle", OSD.FromReal(innerAngle));
-				map.put("outer_angle", OSD.FromReal(outerAngle));
-				map.put("burst_rate", OSD.FromReal(burstRate));
-				map.put("burst_radius", OSD.FromReal(burstRadius));
-				map.put("burst_speed_min", OSD.FromReal(burstSpeedMin));
-				map.put("burst_speed_max", OSD.FromReal(burstSpeedMax));
-				map.put("burst_particle_count", OSD.FromInteger(burstParticleCount));
-				map.put("angular_velocity", OSD.FromVector3(angularVelocity));
-				map.put("acceleration", OSD.FromVector3(acceleration));
-				map.put("texture_id", OSD.FromUUID(textureID));
-				map.put("target_id", OSD.FromUUID(targetID));
-				map.put("data_flags", OSD.FromInteger(dataFlags));
-				map.put("particle_max_age", OSD.FromReal(particleMaxAge));
-				map.put("particle_start_color", OSD.FromColor4(particleStartColor));
-				map.put("particle_end_color", OSD.FromColor4(particleEndColor));
-				map.put("particle_start_scale", OSD.FromVector2(particleStartScale));
-				map.put("particle_end_scale", OSD.FromVector2(particleEndScale));
+				map.put("flags", OSD.fromInteger(flags));
+				map.put("pattern", OSD.fromInteger(pattern));
+				map.put("max_age", OSD.fromReal(maxAge));
+				map.put("start_age", OSD.fromReal(startAge));
+				map.put("inner_angle", OSD.fromReal(innerAngle));
+				map.put("outer_angle", OSD.fromReal(outerAngle));
+				map.put("burst_rate", OSD.fromReal(burstRate));
+				map.put("burst_radius", OSD.fromReal(burstRadius));
+				map.put("burst_speed_min", OSD.fromReal(burstSpeedMin));
+				map.put("burst_speed_max", OSD.fromReal(burstSpeedMax));
+				map.put("burst_particle_count", OSD.fromInteger(burstParticleCount));
+				map.put("angular_velocity", OSD.fromVector3(angularVelocity));
+				map.put("acceleration", OSD.fromVector3(acceleration));
+				map.put("texture_id", OSD.fromUUID(textureID));
+				map.put("target_id", OSD.fromUUID(targetID));
+				map.put("data_flags", OSD.fromInteger(dataFlags));
+				map.put("particle_max_age", OSD.fromReal(particleMaxAge));
+				map.put("particle_start_color", OSD.fromColor4(particleStartColor));
+				map.put("particle_end_color", OSD.fromColor4(particleEndColor));
+				map.put("particle_start_scale", OSD.fromVector2(particleStartScale));
+				map.put("particle_end_scale", OSD.fromVector2(particleEndScale));
 				return map;
 			}
 
 			public void deserialize(OSDMap map) {
-				flags = map.get("flags").AsInteger();
-				pattern = map.get("pattern").AsInteger();
-				maxAge = (float) map.get("max_age").AsReal();
-				startAge = (float) map.get("start_age").AsReal();
-				innerAngle = (float) map.get("inner_angle").AsReal();
-				outerAngle = (float) map.get("outer_angle").AsReal();
-				burstRate = (float) map.get("burst_rate").AsReal();
-				burstRadius = (float) map.get("burst_radius").AsReal();
-				burstSpeedMin = (float) map.get("burst_speed_min").AsReal();
-				burstSpeedMax = (float) map.get("burst_speed_max").AsReal();
-				burstParticleCount = map.get("burst_particle_count").AsInteger();
-				angularVelocity = map.get("angular_velocity").AsVector3();
-				acceleration = map.get("acceleration").AsVector3();
-				textureID = map.get("texture_id").AsUUID();
-				dataFlags = map.get("data_flags").AsInteger();
-				particleMaxAge = (float) map.get("particle_max_age").AsReal();
-				particleStartColor = map.get("particle_start_color").AsColor4();
-				particleEndColor = map.get("particle_end_color").AsColor4();
-				particleStartScale = map.get("particle_start_scale").AsVector2();
-				particleEndScale = map.get("particle_end_scale").AsVector2();
+				flags = map.get("flags").asInteger();
+				pattern = map.get("pattern").asInteger();
+				maxAge = (float) map.get("max_age").asReal();
+				startAge = (float) map.get("start_age").asReal();
+				innerAngle = (float) map.get("inner_angle").asReal();
+				outerAngle = (float) map.get("outer_angle").asReal();
+				burstRate = (float) map.get("burst_rate").asReal();
+				burstRadius = (float) map.get("burst_radius").asReal();
+				burstSpeedMin = (float) map.get("burst_speed_min").asReal();
+				burstSpeedMax = (float) map.get("burst_speed_max").asReal();
+				burstParticleCount = map.get("burst_particle_count").asInteger();
+				angularVelocity = map.get("angular_velocity").asVector3();
+				acceleration = map.get("acceleration").asVector3();
+				textureID = map.get("texture_id").asUUID();
+				dataFlags = map.get("data_flags").asInteger();
+				particleMaxAge = (float) map.get("particle_max_age").asReal();
+				particleStartColor = map.get("particle_start_color").asColor4();
+				particleEndColor = map.get("particle_end_color").asColor4();
+				particleStartScale = map.get("particle_start_scale").asVector2();
+				particleEndScale = map.get("particle_end_scale").asVector2();
 			}
 		}
 
@@ -863,46 +855,46 @@ public class AssetPrim extends AssetItem {
 
 			public OSDMap serialize() {
 				OSDMap map = new OSDMap();
-				map.put("path_curve", OSD.FromInteger(pathCurve));
-				map.put("path_begin", OSD.FromReal(pathBegin));
-				map.put("path_end", OSD.FromReal(pathEnd));
-				map.put("path_scale_x", OSD.FromReal(pathScaleX));
-				map.put("path_scale_y", OSD.FromReal(pathScaleY));
-				map.put("path_shear_x", OSD.FromReal(pathShearX));
-				map.put("path_shear_y", OSD.FromReal(pathShearY));
-				map.put("path_twist", OSD.FromReal(pathTwist));
-				map.put("path_twist_begin", OSD.FromReal(pathTwistBegin));
-				map.put("path_radius_offset", OSD.FromReal(pathRadiusOffset));
-				map.put("path_taper_x", OSD.FromReal(pathTaperX));
-				map.put("path_taper_y", OSD.FromReal(pathTaperY));
-				map.put("path_revolutions", OSD.FromReal(pathRevolutions));
-				map.put("path_skew", OSD.FromReal(pathSkew));
-				map.put("profile_curve", OSD.FromInteger(profileCurve));
-				map.put("profile_begin", OSD.FromReal(profileBegin));
-				map.put("profile_end", OSD.FromReal(profileEnd));
-				map.put("profile_hollow", OSD.FromReal(profileHollow));
+				map.put("path_curve", OSD.fromInteger(pathCurve));
+				map.put("path_begin", OSD.fromReal(pathBegin));
+				map.put("path_end", OSD.fromReal(pathEnd));
+				map.put("path_scale_x", OSD.fromReal(pathScaleX));
+				map.put("path_scale_y", OSD.fromReal(pathScaleY));
+				map.put("path_shear_x", OSD.fromReal(pathShearX));
+				map.put("path_shear_y", OSD.fromReal(pathShearY));
+				map.put("path_twist", OSD.fromReal(pathTwist));
+				map.put("path_twist_begin", OSD.fromReal(pathTwistBegin));
+				map.put("path_radius_offset", OSD.fromReal(pathRadiusOffset));
+				map.put("path_taper_x", OSD.fromReal(pathTaperX));
+				map.put("path_taper_y", OSD.fromReal(pathTaperY));
+				map.put("path_revolutions", OSD.fromReal(pathRevolutions));
+				map.put("path_skew", OSD.fromReal(pathSkew));
+				map.put("profile_curve", OSD.fromInteger(profileCurve));
+				map.put("profile_begin", OSD.fromReal(profileBegin));
+				map.put("profile_end", OSD.fromReal(profileEnd));
+				map.put("profile_hollow", OSD.fromReal(profileHollow));
 				return map;
 			}
 
 			public void deserialize(OSDMap map) {
-				pathCurve = map.get("path_curve").AsInteger();
-				pathBegin = (float) map.get("path_begin").AsReal();
-				pathEnd = (float) map.get("path_end").AsReal();
-				pathScaleX = (float) map.get("path_scale_x").AsReal();
-				pathScaleY = (float) map.get("path_scale_y").AsReal();
-				pathShearX = (float) map.get("path_shear_x").AsReal();
-				pathShearY = (float) map.get("path_shear_y").AsReal();
-				pathTwist = (float) map.get("path_twist").AsReal();
-				pathTwistBegin = (float) map.get("path_twist_begin").AsReal();
-				pathRadiusOffset = (float) map.get("path_radius_offset").AsReal();
-				pathTaperX = (float) map.get("path_taper_x").AsReal();
-				pathTaperY = (float) map.get("path_taper_y").AsReal();
-				pathRevolutions = (float) map.get("path_revolutions").AsReal();
-				pathSkew = (float) map.get("path_skew").AsReal();
-				profileCurve = map.get("profile_curve").AsInteger();
-				profileBegin = (float) map.get("profile_begin").AsReal();
-				profileEnd = (float) map.get("profile_end").AsReal();
-				profileHollow = (float) map.get("profile_hollow").AsReal();
+				pathCurve = map.get("path_curve").asInteger();
+				pathBegin = (float) map.get("path_begin").asReal();
+				pathEnd = (float) map.get("path_end").asReal();
+				pathScaleX = (float) map.get("path_scale_x").asReal();
+				pathScaleY = (float) map.get("path_scale_y").asReal();
+				pathShearX = (float) map.get("path_shear_x").asReal();
+				pathShearY = (float) map.get("path_shear_y").asReal();
+				pathTwist = (float) map.get("path_twist").asReal();
+				pathTwistBegin = (float) map.get("path_twist_begin").asReal();
+				pathRadiusOffset = (float) map.get("path_radius_offset").asReal();
+				pathTaperX = (float) map.get("path_taper_x").asReal();
+				pathTaperY = (float) map.get("path_taper_y").asReal();
+				pathRevolutions = (float) map.get("path_revolutions").asReal();
+				pathSkew = (float) map.get("path_skew").asReal();
+				profileCurve = map.get("profile_curve").asInteger();
+				profileBegin = (float) map.get("profile_begin").asReal();
+				profileEnd = (float) map.get("profile_end").asReal();
+				profileHollow = (float) map.get("profile_hollow").asReal();
 			}
 		}
 
@@ -929,55 +921,8 @@ public class AssetPrim extends AssetItem {
 				public int flags;
 				public Date creationDate;
 
-				public OSDMap serialize() {
-					OSDMap map = new OSDMap();
-					map.put("id", OSD.FromUUID(id));
-					map.put("name", OSD.FromString(name));
-					map.put("owner_id", OSD.FromUUID(ownerID));
-					map.put("creator_id", OSD.FromUUID(creatorID));
-					map.put("group_id", OSD.FromUUID(groupID));
-					map.put("last_owner_id", OSD.FromUUID(lastOwnerID));
-					map.put("perms_granter_id", OSD.FromUUID(permsGranterID));
-					map.put("asset_id", OSD.FromUUID(assetID));
-					map.put("asset_type", OSD.FromInteger(assetType.getValue()));
-					map.put("inv_type", OSD.FromInteger(inventoryType.getValue()));
-					map.put("description", OSD.FromString(description));
-					map.put("perms_base", OSD.FromInteger(permsBase));
-					map.put("perms_owner", OSD.FromInteger(permsOwner));
-					map.put("perms_group", OSD.FromInteger(permsGroup));
-					map.put("perms_everyone", OSD.FromInteger(permsEveryone));
-					map.put("perms_next_owner", OSD.FromInteger(permsNextOwner));
-					map.put("sale_price", OSD.FromInteger(salePrice));
-					map.put("sale_type", OSD.FromInteger(saleType));
-					map.put("flags", OSD.FromInteger(flags));
-					map.put("creation_date", OSD.FromDate(creationDate));
-					return map;
-				}
-
-				public void deserialize(OSDMap map) {
-					id = map.get("id").AsUUID();
-					name = map.get("name").AsString();
-					ownerID = map.get("owner_id").AsUUID();
-					creatorID = map.get("creator_id").AsUUID();
-					groupID = map.get("group_id").AsUUID();
-					assetID = map.get("asset_id").AsUUID();
-					lastOwnerID = map.get("last_owner_id").AsUUID();
-					permsGranterID = map.get("perms_granter_id").AsUUID();
-					assetType = AssetType.setValue(map.get("asset_type").AsInteger());
-					inventoryType = InventoryType.setValue(map.get("inv_type").AsInteger());
-					description = map.get("description").AsString();
-					permsBase = map.get("perms_base").AsInteger();
-					permsOwner = map.get("perms_owner").AsInteger();
-					permsGroup = map.get("perms_group").AsInteger();
-					permsEveryone = map.get("perms_everyone").AsInteger();
-					permsNextOwner = map.get("perms_next_owner").AsInteger();
-					salePrice = map.get("sale_price").AsInteger();
-					saleType = map.get("sale_type").AsInteger();
-					flags = map.get("flags").AsInteger();
-					creationDate = map.get("creation_date").AsDate();
-				}
-
 				public ItemBlock() {
+					// Nothing to do
 				}
 
 				public ItemBlock(InventoryItem item) {
@@ -1003,6 +948,55 @@ public class AssetPrim extends AssetItem {
 					permsGranterID = UUID.Zero;
 					assetType = item.assetType;
 				}
+
+				public OSDMap serialize() {
+					OSDMap map = new OSDMap();
+					map.put("id", OSD.fromUUID(id));
+					map.put("name", OSD.fromString(name));
+					map.put("owner_id", OSD.fromUUID(ownerID));
+					map.put("creator_id", OSD.fromUUID(creatorID));
+					map.put("group_id", OSD.fromUUID(groupID));
+					map.put("last_owner_id", OSD.fromUUID(lastOwnerID));
+					map.put("perms_granter_id", OSD.fromUUID(permsGranterID));
+					map.put("asset_id", OSD.fromUUID(assetID));
+					map.put("asset_type", OSD.fromInteger(assetType.getValue()));
+					map.put("inv_type", OSD.fromInteger(inventoryType.getValue()));
+					map.put("description", OSD.fromString(description));
+					map.put("perms_base", OSD.fromInteger(permsBase));
+					map.put("perms_owner", OSD.fromInteger(permsOwner));
+					map.put("perms_group", OSD.fromInteger(permsGroup));
+					map.put("perms_everyone", OSD.fromInteger(permsEveryone));
+					map.put("perms_next_owner", OSD.fromInteger(permsNextOwner));
+					map.put("sale_price", OSD.fromInteger(salePrice));
+					map.put("sale_type", OSD.fromInteger(saleType));
+					map.put("flags", OSD.fromInteger(flags));
+					map.put("creation_date", OSD.fromDate(creationDate));
+					return map;
+				}
+
+				public void deserialize(OSDMap map) {
+					id = map.get("id").asUUID();
+					name = map.get("name").asString();
+					ownerID = map.get("owner_id").asUUID();
+					creatorID = map.get("creator_id").asUUID();
+					groupID = map.get("group_id").asUUID();
+					assetID = map.get("asset_id").asUUID();
+					lastOwnerID = map.get("last_owner_id").asUUID();
+					permsGranterID = map.get("perms_granter_id").asUUID();
+					assetType = AssetType.setValue(map.get("asset_type").asInteger());
+					inventoryType = InventoryType.setValue(map.get("inv_type").asInteger());
+					description = map.get("description").asString();
+					permsBase = map.get("perms_base").asInteger();
+					permsOwner = map.get("perms_owner").asInteger();
+					permsGroup = map.get("perms_group").asInteger();
+					permsEveryone = map.get("perms_everyone").asInteger();
+					permsNextOwner = map.get("perms_next_owner").asInteger();
+					salePrice = map.get("sale_price").asInteger();
+					saleType = map.get("sale_type").asInteger();
+					flags = map.get("flags").asInteger();
+					creationDate = map.get("creation_date").asDate();
+				}
+
 			}
 
 			public int serial;
@@ -1010,7 +1004,7 @@ public class AssetPrim extends AssetItem {
 
 			public OSDMap serialize() {
 				OSDMap map = new OSDMap();
-				map.put("serial", OSD.FromInteger(serial));
+				map.put("serial", OSD.fromInteger(serial));
 
 				if (items != null) {
 					OSDArray array = new OSDArray(items.length);
@@ -1023,7 +1017,7 @@ public class AssetPrim extends AssetItem {
 			}
 
 			public void deserialize(OSDMap map) {
-				serial = map.get("serial").AsInteger();
+				serial = map.get("serial").asInteger();
 
 				if (map.containsKey("items")) {
 					OSDArray array = (OSDArray) map.get("items");
@@ -1110,148 +1104,8 @@ public class AssetPrim extends AssetItem {
 		public TextureEntry textures;
 		public InventoryBlock inventory;
 
-		public OSDMap Serialize() {
-			OSDMap map = new OSDMap();
-			map.put("id", OSD.FromUUID(id));
-			map.put("attachment_position", OSD.FromVector3(attachmentPosition));
-			map.put("attachment_rotation", OSD.FromQuaternion(attachmentRotation));
-			map.put("before_attachment_rotation", OSD.FromQuaternion(beforeAttachmentRotation));
-			map.put("name", OSD.FromString(name));
-			map.put("description", OSD.FromString(description));
-			map.put("perms_base", OSD.FromInteger(permsBase));
-			map.put("perms_owner", OSD.FromInteger(permsOwner));
-			map.put("perms_group", OSD.FromInteger(permsGroup));
-			map.put("perms_everyone", OSD.FromInteger(permsEveryone));
-			map.put("perms_next_owner", OSD.FromInteger(permsNextOwner));
-			map.put("creator_identity", OSD.FromUUID(creatorID));
-			map.put("owner_identity", OSD.FromUUID(ownerID));
-			map.put("last_owner_identity", OSD.FromUUID(lastOwnerID));
-			map.put("group_identity", OSD.FromUUID(groupID));
-			map.put("folder_id", OSD.FromUUID(folderID));
-			map.put("region_handle", OSD.FromULong(regionHandle));
-			map.put("click_action", OSD.FromInteger(clickAction));
-			map.put("last_attachment_point", OSD.FromInteger(lastAttachmentPoint));
-			map.put("link_number", OSD.FromInteger(linkNumber));
-			map.put("local_id", OSD.FromInteger(localID));
-			map.put("parent_id", OSD.FromInteger(parentID));
-			map.put("position", OSD.FromVector3(position));
-			map.put("rotation", OSD.FromQuaternion(rotation));
-			map.put("velocity", OSD.FromVector3(velocity));
-			map.put("angular_velocity", OSD.FromVector3(angularVelocity));
-			map.put("acceleration", OSD.FromVector3(acceleration));
-			map.put("scale", OSD.FromVector3(scale));
-			map.put("sit_offset", OSD.FromVector3(sitOffset));
-			map.put("sit_rotation", OSD.FromQuaternion(sitRotation));
-			map.put("camera_eye_offset", OSD.FromVector3(cameraEyeOffset));
-			map.put("camera_at_offset", OSD.FromVector3(cameraAtOffset));
-			map.put("state", OSD.FromInteger(state));
-			map.put("prim_code", OSD.FromInteger(primCode));
-			map.put("material", OSD.FromInteger(material));
-			map.put("pass_touches", OSD.FromBoolean(passTouches));
-			map.put("sound_id", OSD.FromUUID(soundID));
-			map.put("sound_gain", OSD.FromReal(soundGain));
-			map.put("sound_radius", OSD.FromReal(soundRadius));
-			map.put("sound_flags", OSD.FromInteger(soundFlags));
-			map.put("text_color", OSD.FromColor4(textColor));
-			map.put("text", OSD.FromString(text));
-			map.put("sit_name", OSD.FromString(sitName));
-			map.put("touch_name", OSD.FromString(touchName));
-			map.put("selected", OSD.FromBoolean(selected));
-			map.put("selector_id", OSD.FromUUID(selectorID));
-			map.put("use_physics", OSD.FromBoolean(usePhysics));
-			map.put("phantom", OSD.FromBoolean(phantom));
-			map.put("remote_script_access_pin", OSD.FromInteger(remoteScriptAccessPIN));
-			map.put("volume_detect", OSD.FromBoolean(volumeDetect));
-			map.put("die_at_edge", OSD.FromBoolean(dieAtEdge));
-			map.put("return_at_edge", OSD.FromBoolean(returnAtEdge));
-			map.put("temporary", OSD.FromBoolean(temporary));
-			map.put("sandbox", OSD.FromBoolean(sandbox));
-			map.put("creation_date", OSD.FromDate(creationDate));
-			map.put("rez_date", OSD.FromDate(rezDate));
-			map.put("sale_price", OSD.FromInteger(salePrice));
-			map.put("sale_type", OSD.FromInteger(saleType));
-
-			if (flexible != null)
-				map.put("flexible", flexible.serialize());
-			if (light != null)
-				map.put("light", light.serialize());
-			if (sculpt != null)
-				map.put("sculpt", sculpt.serialize());
-			if (particles != null)
-				map.put("particles", particles.serialize());
-			if (shape != null)
-				map.put("shape", shape.serialize());
-			if (textures != null)
-				map.put("textures", textures.serialize());
-			if (inventory != null)
-				map.put("inventory", inventory.serialize());
-
-			return map;
-		}
-
-		public void deserialize(OSDMap map) {
-			id = map.get("id").AsUUID();
-			attachmentPosition = map.get("attachment_position").AsVector3();
-			attachmentRotation = map.get("attachment_rotation").AsQuaternion();
-			beforeAttachmentRotation = map.get("before_attachment_rotation").AsQuaternion();
-			name = map.get("name").AsString();
-			description = map.get("description").AsString();
-			permsBase = map.get("perms_base").AsInteger();
-			permsOwner = map.get("perms_owner").AsInteger();
-			permsGroup = map.get("perms_group").AsInteger();
-			permsEveryone = map.get("perms_everyone").AsInteger();
-			permsNextOwner = map.get("perms_next_owner").AsInteger();
-			creatorID = map.get("creator_identity").AsUUID();
-			ownerID = map.get("owner_identity").AsUUID();
-			lastOwnerID = map.get("last_owner_identity").AsUUID();
-			groupID = map.get("group_identity").AsUUID();
-			folderID = map.get("folder_id").AsUUID();
-			regionHandle = map.get("region_handle").AsULong();
-			clickAction = map.get("click_action").AsInteger();
-			lastAttachmentPoint = map.get("last_attachment_point").AsInteger();
-			linkNumber = map.get("link_number").AsInteger();
-			localID = map.get("local_id").AsInteger();
-			parentID = map.get("parent_id").AsInteger();
-			position = map.get("position").AsVector3();
-			rotation = map.get("rotation").AsQuaternion();
-			velocity = map.get("velocity").AsVector3();
-			angularVelocity = map.get("angular_velocity").AsVector3();
-			acceleration = map.get("acceleration").AsVector3();
-			scale = map.get("scale").AsVector3();
-			sitOffset = map.get("sit_offset").AsVector3();
-			sitRotation = map.get("sit_rotation").AsQuaternion();
-			cameraEyeOffset = map.get("camera_eye_offset").AsVector3();
-			cameraAtOffset = map.get("camera_at_offset").AsVector3();
-			state = map.get("state").AsInteger();
-			primCode = map.get("prim_code").AsInteger();
-			material = map.get("material").AsInteger();
-			passTouches = map.get("pass_touches").AsBoolean();
-			soundID = map.get("sound_id").AsUUID();
-			soundGain = (float) map.get("sound_gain").AsReal();
-			soundRadius = (float) map.get("sound_radius").AsReal();
-			soundFlags = (byte) map.get("sound_flags").AsInteger();
-			textColor = map.get("text_color").AsColor4();
-			text = map.get("text").AsString();
-			sitName = map.get("sit_name").AsString();
-			touchName = map.get("touch_name").AsString();
-			selected = map.get("selected").AsBoolean();
-			selectorID = map.get("selector_id").AsUUID();
-			usePhysics = map.get("use_physics").AsBoolean();
-			phantom = map.get("phantom").AsBoolean();
-			remoteScriptAccessPIN = map.get("remote_script_access_pin").AsInteger();
-			volumeDetect = map.get("volume_detect").AsBoolean();
-			dieAtEdge = map.get("die_at_edge").AsBoolean();
-			returnAtEdge = map.get("return_at_edge").AsBoolean();
-			temporary = map.get("temporary").AsBoolean();
-			sandbox = map.get("sandbox").AsBoolean();
-			creationDate = map.get("creation_date").AsDate();
-			rezDate = map.get("rez_date").AsDate();
-			salePrice = map.get("sale_price").AsInteger();
-			saleType = map.get("sale_type").AsInteger();
-		}
-
 		public PrimObject() {
-
+			// Nothing to do.
 		}
 
 		public PrimObject(Primitive obj) {
@@ -1385,6 +1239,146 @@ public class AssetPrim extends AssetItem {
 			// TouchName;
 			usePhysics = (obj.flags & PrimFlags.Physics) == PrimFlags.Physics;
 			velocity = obj.velocity;
+		}
+
+		public OSDMap serialize() {
+			OSDMap map = new OSDMap();
+			map.put("id", OSD.fromUUID(id));
+			map.put("attachment_position", OSD.fromVector3(attachmentPosition));
+			map.put("attachment_rotation", OSD.fromQuaternion(attachmentRotation));
+			map.put("before_attachment_rotation", OSD.fromQuaternion(beforeAttachmentRotation));
+			map.put("name", OSD.fromString(name));
+			map.put("description", OSD.fromString(description));
+			map.put("perms_base", OSD.fromInteger(permsBase));
+			map.put("perms_owner", OSD.fromInteger(permsOwner));
+			map.put("perms_group", OSD.fromInteger(permsGroup));
+			map.put("perms_everyone", OSD.fromInteger(permsEveryone));
+			map.put("perms_next_owner", OSD.fromInteger(permsNextOwner));
+			map.put("creator_identity", OSD.fromUUID(creatorID));
+			map.put("owner_identity", OSD.fromUUID(ownerID));
+			map.put("last_owner_identity", OSD.fromUUID(lastOwnerID));
+			map.put("group_identity", OSD.fromUUID(groupID));
+			map.put("folder_id", OSD.fromUUID(folderID));
+			map.put("region_handle", OSD.fromULong(regionHandle));
+			map.put("click_action", OSD.fromInteger(clickAction));
+			map.put("last_attachment_point", OSD.fromInteger(lastAttachmentPoint));
+			map.put("link_number", OSD.fromInteger(linkNumber));
+			map.put("local_id", OSD.fromInteger(localID));
+			map.put("parent_id", OSD.fromInteger(parentID));
+			map.put("position", OSD.fromVector3(position));
+			map.put("rotation", OSD.fromQuaternion(rotation));
+			map.put("velocity", OSD.fromVector3(velocity));
+			map.put("angular_velocity", OSD.fromVector3(angularVelocity));
+			map.put("acceleration", OSD.fromVector3(acceleration));
+			map.put("scale", OSD.fromVector3(scale));
+			map.put("sit_offset", OSD.fromVector3(sitOffset));
+			map.put("sit_rotation", OSD.fromQuaternion(sitRotation));
+			map.put("camera_eye_offset", OSD.fromVector3(cameraEyeOffset));
+			map.put("camera_at_offset", OSD.fromVector3(cameraAtOffset));
+			map.put("state", OSD.fromInteger(state));
+			map.put("prim_code", OSD.fromInteger(primCode));
+			map.put("material", OSD.fromInteger(material));
+			map.put("pass_touches", OSD.fromBoolean(passTouches));
+			map.put("sound_id", OSD.fromUUID(soundID));
+			map.put("sound_gain", OSD.fromReal(soundGain));
+			map.put("sound_radius", OSD.fromReal(soundRadius));
+			map.put("sound_flags", OSD.fromInteger(soundFlags));
+			map.put("text_color", OSD.fromColor4(textColor));
+			map.put("text", OSD.fromString(text));
+			map.put("sit_name", OSD.fromString(sitName));
+			map.put("touch_name", OSD.fromString(touchName));
+			map.put("selected", OSD.fromBoolean(selected));
+			map.put("selector_id", OSD.fromUUID(selectorID));
+			map.put("use_physics", OSD.fromBoolean(usePhysics));
+			map.put("phantom", OSD.fromBoolean(phantom));
+			map.put("remote_script_access_pin", OSD.fromInteger(remoteScriptAccessPIN));
+			map.put("volume_detect", OSD.fromBoolean(volumeDetect));
+			map.put("die_at_edge", OSD.fromBoolean(dieAtEdge));
+			map.put("return_at_edge", OSD.fromBoolean(returnAtEdge));
+			map.put("temporary", OSD.fromBoolean(temporary));
+			map.put("sandbox", OSD.fromBoolean(sandbox));
+			map.put("creation_date", OSD.fromDate(creationDate));
+			map.put("rez_date", OSD.fromDate(rezDate));
+			map.put("sale_price", OSD.fromInteger(salePrice));
+			map.put("sale_type", OSD.fromInteger(saleType));
+
+			if (flexible != null)
+				map.put("flexible", flexible.serialize());
+			if (light != null)
+				map.put("light", light.serialize());
+			if (sculpt != null)
+				map.put("sculpt", sculpt.serialize());
+			if (particles != null)
+				map.put("particles", particles.serialize());
+			if (shape != null)
+				map.put("shape", shape.serialize());
+			if (textures != null)
+				map.put("textures", textures.serialize());
+			if (inventory != null)
+				map.put("inventory", inventory.serialize());
+
+			return map;
+		}
+
+		public void deserialize(OSDMap map) {
+			id = map.get("id").asUUID();
+			attachmentPosition = map.get("attachment_position").asVector3();
+			attachmentRotation = map.get("attachment_rotation").asQuaternion();
+			beforeAttachmentRotation = map.get("before_attachment_rotation").asQuaternion();
+			name = map.get("name").asString();
+			description = map.get("description").asString();
+			permsBase = map.get("perms_base").asInteger();
+			permsOwner = map.get("perms_owner").asInteger();
+			permsGroup = map.get("perms_group").asInteger();
+			permsEveryone = map.get("perms_everyone").asInteger();
+			permsNextOwner = map.get("perms_next_owner").asInteger();
+			creatorID = map.get("creator_identity").asUUID();
+			ownerID = map.get("owner_identity").asUUID();
+			lastOwnerID = map.get("last_owner_identity").asUUID();
+			groupID = map.get("group_identity").asUUID();
+			folderID = map.get("folder_id").asUUID();
+			regionHandle = map.get("region_handle").asULong();
+			clickAction = map.get("click_action").asInteger();
+			lastAttachmentPoint = map.get("last_attachment_point").asInteger();
+			linkNumber = map.get("link_number").asInteger();
+			localID = map.get("local_id").asInteger();
+			parentID = map.get("parent_id").asInteger();
+			position = map.get("position").asVector3();
+			rotation = map.get("rotation").asQuaternion();
+			velocity = map.get("velocity").asVector3();
+			angularVelocity = map.get("angular_velocity").asVector3();
+			acceleration = map.get("acceleration").asVector3();
+			scale = map.get("scale").asVector3();
+			sitOffset = map.get("sit_offset").asVector3();
+			sitRotation = map.get("sit_rotation").asQuaternion();
+			cameraEyeOffset = map.get("camera_eye_offset").asVector3();
+			cameraAtOffset = map.get("camera_at_offset").asVector3();
+			state = map.get("state").asInteger();
+			primCode = map.get("prim_code").asInteger();
+			material = map.get("material").asInteger();
+			passTouches = map.get("pass_touches").asBoolean();
+			soundID = map.get("sound_id").asUUID();
+			soundGain = (float) map.get("sound_gain").asReal();
+			soundRadius = (float) map.get("sound_radius").asReal();
+			soundFlags = (byte) map.get("sound_flags").asInteger();
+			textColor = map.get("text_color").asColor4();
+			text = map.get("text").asString();
+			sitName = map.get("sit_name").asString();
+			touchName = map.get("touch_name").asString();
+			selected = map.get("selected").asBoolean();
+			selectorID = map.get("selector_id").asUUID();
+			usePhysics = map.get("use_physics").asBoolean();
+			phantom = map.get("phantom").asBoolean();
+			remoteScriptAccessPIN = map.get("remote_script_access_pin").asInteger();
+			volumeDetect = map.get("volume_detect").asBoolean();
+			dieAtEdge = map.get("die_at_edge").asBoolean();
+			returnAtEdge = map.get("return_at_edge").asBoolean();
+			temporary = map.get("temporary").asBoolean();
+			sandbox = map.get("sandbox").asBoolean();
+			creationDate = map.get("creation_date").asDate();
+			rezDate = map.get("rez_date").asDate();
+			salePrice = map.get("sale_price").asInteger();
+			saleType = map.get("sale_type").asInteger();
 		}
 
 		public Primitive toPrimitive() {

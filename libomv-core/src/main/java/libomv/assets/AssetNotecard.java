@@ -53,37 +53,12 @@ import libomv.utils.Helpers;
 public class AssetNotecard extends AssetItem {
 	private static final Logger logger = Logger.getLogger(AssetNotecard.class);
 
-	/* Override the base classes getAssetType */
-	@Override
-	public AssetType getAssetType() {
-		return AssetType.Notecard;
-	}
-
 	/** A text string containing main text of the notecard */
 	private String bodyText = null;
-
-	public String getBodyText() {
-		return bodyText;
-	}
-
-	public void setBodyText(String bodyText) {
-		invalidateAssetData();
-		this.bodyText = bodyText;
-	}
-
 	/**
 	 * List of <see cref="OpenMetaverse.InventoryItem"/>s embedded on the notecard
 	 */
 	private List<InventoryItem> embeddedItems = null;
-
-	public List<InventoryItem> geEmbeddedItems() {
-		return embeddedItems;
-	}
-
-	public void setEmbeddedItems(List<InventoryItem> embeddedItems) {
-		invalidateAssetData();
-		this.embeddedItems = embeddedItems;
-	}
 
 	/**
 	 * Construct an Asset object of type Notecard
@@ -107,6 +82,30 @@ public class AssetNotecard extends AssetItem {
 		super(null, null);
 		bodyText = text;
 		encode();
+	}
+
+	/* Override the base classes getAssetType */
+	@Override
+	public AssetType getAssetType() {
+		return AssetType.Notecard;
+	}
+
+	public String getBodyText() {
+		return bodyText;
+	}
+
+	public void setBodyText(String bodyText) {
+		invalidateAssetData();
+		this.bodyText = bodyText;
+	}
+
+	public List<InventoryItem> geEmbeddedItems() {
+		return embeddedItems;
+	}
+
+	public void setEmbeddedItems(List<InventoryItem> embeddedItems) {
+		invalidateAssetData();
+		this.embeddedItems = embeddedItems;
 	}
 
 	/*
@@ -179,7 +178,7 @@ public class AssetNotecard extends AssetItem {
 
 				output.append("\t\tname\t" + item.name.replace('|', '_') + "|\n");
 				output.append("\t\tdesc\t" + item.description.replace('|', '_') + "|\n");
-				output.append("\t\tcreation_date\t" + Helpers.DateTimeToUnixTime(item.creationDate) + "\n");
+				output.append("\t\tcreation_date\t" + Helpers.dateTimeToUnixTime(item.creationDate) + "\n");
 
 				output.append("\t}\n");
 
@@ -192,10 +191,10 @@ public class AssetNotecard extends AssetItem {
 		}
 
 		output.append("}\n");
-		output.append("Text length " + String.format("%d", Helpers.StringToBytes(body).length - 1) + "\n");
+		output.append("Text length " + String.format("%d", Helpers.stringToBytes(body).length - 1) + "\n");
 		output.append(body + "}\n");
 
-		assetData = Helpers.StringToBytes(output.toString());
+		assetData = Helpers.stringToBytes(output.toString());
 	}
 
 	/**
@@ -210,7 +209,7 @@ public class AssetNotecard extends AssetItem {
 
 	@Override
 	protected boolean decode() {
-		embeddedItems = new ArrayList<InventoryItem>();
+		embeddedItems = new ArrayList<>();
 		bodyText = Helpers.EmptyString;
 
 		if (assetData == null)

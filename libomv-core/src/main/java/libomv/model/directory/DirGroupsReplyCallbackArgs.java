@@ -1,6 +1,6 @@
 package libomv.model.directory;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import libomv.types.UUID;
 import libomv.utils.CallbackArgs;
@@ -8,7 +8,7 @@ import libomv.utils.CallbackArgs;
 /** Contains the group data returned from the data server */
 public class DirGroupsReplyCallbackArgs implements CallbackArgs {
 	private final UUID queryID;
-	private final ArrayList<GroupSearchData> matchedGroups;
+	private final List<GroupSearchData> matchedGroups;
 
 	/**
 	 * Construct a new instance of the DirGroupsReplyEventArgs class
@@ -20,7 +20,7 @@ public class DirGroupsReplyCallbackArgs implements CallbackArgs {
 	 * @param matchedGroups
 	 *            A list of groups data returned by the data server
 	 */
-	public DirGroupsReplyCallbackArgs(UUID queryID, ArrayList<GroupSearchData> matchedGroups) {
+	public DirGroupsReplyCallbackArgs(UUID queryID, List<GroupSearchData> matchedGroups) {
 		this.queryID = queryID;
 		this.matchedGroups = matchedGroups;
 	}
@@ -31,7 +31,7 @@ public class DirGroupsReplyCallbackArgs implements CallbackArgs {
 	}
 
 	// A list containing Groups data returned by the data server
-	public final ArrayList<GroupSearchData> getMatchedGroups() {
+	public final List<GroupSearchData> getMatchedGroups() {
 		return matchedGroups;
 	}
 

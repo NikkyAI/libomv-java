@@ -106,19 +106,19 @@ public final class LoginResponseData {
 	 */
 	public LoginResponseData parseLoginReply(OSDMap reply) {
 		if (reply.containsKey("login")) {
-			login = reply.get("login").AsString();
+			login = reply.get("login").asString();
 		}
-		success = reply.get("login").AsBoolean();
-		message = reply.get("message").AsString();
+		success = reply.get("login").asBoolean();
+		message = reply.get("message").asString();
 		if (!success) {
 			if (login != null && login.equals("indeterminate")) {
 				// Parse redirect options
 				if (reply.containsKey("next_url"))
-					nextUrl = reply.get("next_url").AsString();
+					nextUrl = reply.get("next_url").asString();
 				if (reply.containsKey("next_method"))
-					nextMethod = reply.get("next_method").AsString();
+					nextMethod = reply.get("next_method").asString();
 				if (reply.containsKey("next_duration"))
-					nextDuration = reply.get("next_duration").AsUInteger();
+					nextDuration = reply.get("next_duration").asUInteger();
 				if (reply.containsKey("next_options")) {
 					OSD osd = reply.get("next_options");
 					if (osd.getType().equals(OSDType.Array))
@@ -127,37 +127,37 @@ public final class LoginResponseData {
 			} else {
 				// login failed
 				// Reason can be: tos, critical, key, update, optional, presence
-				reason = reply.get("reason").AsString();
+				reason = reply.get("reason").asString();
 			}
 			return this;
 		}
 
 		// UDP Blacklist
 		if (reply.containsKey("udp_blacklist")) {
-			udpBlacklist = reply.get("udp_blacklist").AsString();
+			udpBlacklist = reply.get("udp_blacklist").asString();
 		}
-		agentID = reply.get("agent_id").AsUUID();
-		sessionID = reply.get("session_id").AsUUID();
-		secureSessionID = reply.get("secure_session_id").AsUUID();
-		firstName = reply.get("first_name").AsString();
-		lastName = reply.get("last_name").AsString();
+		agentID = reply.get("agent_id").asUUID();
+		sessionID = reply.get("session_id").asUUID();
+		secureSessionID = reply.get("secure_session_id").asUUID();
+		firstName = reply.get("first_name").asString();
+		lastName = reply.get("last_name").asString();
 
-		agentAccessMax = reply.get("agent_access_max").AsString();
+		agentAccessMax = reply.get("agent_access_max").asString();
 		if (agentAccessMax.isEmpty()) {
 			// we're on an older sim version (probably an opensim)
-			agentAccessMax = reply.get("agent_access").AsString();
+			agentAccessMax = reply.get("agent_access").asString();
 		}
-		agentAccessPref = reply.get("agent_region_access").AsString();
-		aoTransition = reply.get("ao_transition").AsInteger() == 1;
-		startLocation = reply.get("start_location").AsString();
+		agentAccessPref = reply.get("agent_region_access").asString();
+		aoTransition = reply.get("ao_transition").asInteger() == 1;
+		startLocation = reply.get("start_location").asString();
 
-		circuitCode = reply.get("circuit_code").AsUInteger();
-		region = Helpers.UIntsToLong(reply.get("region_x").AsUInteger(), reply.get("region_y").AsUInteger());
-		simPort = (short) reply.get("sim_port").AsUInteger();
-		simIP = reply.get("sim_ip").AsInetAddress();
+		circuitCode = reply.get("circuit_code").asUInteger();
+		region = Helpers.UIntsToLong(reply.get("region_x").asUInteger(), reply.get("region_y").asUInteger());
+		simPort = (short) reply.get("sim_port").asUInteger();
+		simIP = reply.get("sim_ip").asInetAddress();
 
-		seedCapability = reply.get("seed_capability").AsString();
-		secondsSinceEpoch = reply.get("seconds_since_epoch").AsUInteger();
+		seedCapability = reply.get("seed_capability").asString();
+		secondsSinceEpoch = reply.get("seconds_since_epoch").asUInteger();
 
 		// Home
 		homeRegion = 0;
@@ -165,7 +165,7 @@ public final class LoginResponseData {
 		homeLookAt = Vector3.Zero;
 		try {
 			if (reply.containsKey("home")) {
-				parseHome(reply.get("home").AsString());
+				parseHome(reply.get("home").asString());
 			}
 			lookAt = parseVector3("look_at", reply);
 		} catch (Exception ex) {
@@ -188,9 +188,9 @@ public final class LoginResponseData {
 					BuddyListEntry bud = new BuddyListEntry();
 					OSDMap buddy = (OSDMap) buddyArray.get(i);
 
-					bud.buddyID = buddy.get("buddy_id").AsString();
-					bud.buddyRightsGiven = buddy.get("buddy_rights_given").AsUInteger();
-					bud.buddyRightsHas = buddy.get("buddy_rights_has").AsUInteger();
+					bud.buddyID = buddy.get("buddy_id").asString();
+					bud.buddyRightsGiven = buddy.get("buddy_rights_given").asUInteger();
+					bud.buddyRightsHas = buddy.get("buddy_rights_has").asUInteger();
 
 					buddyList[i] = bud;
 				}
@@ -207,28 +207,28 @@ public final class LoginResponseData {
 		grid = parseGridInfo(reply);
 
 		if (reply.containsKey("max-agent-groups")) {
-			maxAgentGroups = reply.get("max-agent-groups").AsUInteger();
+			maxAgentGroups = reply.get("max-agent-groups").asUInteger();
 		} else {
 			// OpenSIM
 			if (reply.containsKey("max_groups"))
-				maxAgentGroups = reply.get("max_groups").AsUInteger();
+				maxAgentGroups = reply.get("max_groups").asUInteger();
 			else
 				maxAgentGroups = -1;
 		}
 
-		mapServerUrl = reply.get("map_server_url").AsString();
+		mapServerUrl = reply.get("map_server_url").asString();
 
 		if (reply.containsKey("openid_url")) {
-			openIDUrl = reply.get("openid_url").AsString();
+			openIDUrl = reply.get("openid_url").asString();
 		}
 
 		if (reply.containsKey("agent_appearance_service")) {
-			agentAppearanceServiceURL = reply.get("agent_appearance_service").AsString();
+			agentAppearanceServiceURL = reply.get("agent_appearance_service").asString();
 		}
 
 		cofVersion = 0;
 		if (reply.containsKey("cof_version")) {
-			cofVersion = reply.get("cof_version").AsUInteger();
+			cofVersion = reply.get("cof_version").asUInteger();
 		}
 
 		initialOutfit = Helpers.EmptyString;
@@ -239,12 +239,12 @@ public final class LoginResponseData {
 				osd = array.get(i);
 				if (osd.getType() == OSDType.Map) {
 					OSDMap map = (OSDMap) osd;
-					initialOutfit = map.get("folder_name").AsString();
+					initialOutfit = map.get("folder_name").asString();
 				}
 			}
 		}
 
-		gestures = new HashMap<UUID, UUID>();
+		gestures = new HashMap<>();
 		osd = reply.get("gestures");
 		if (osd != null && osd.getType() == OSDType.Array) {
 			OSDArray array = (OSDArray) osd;
@@ -257,13 +257,13 @@ public final class LoginResponseData {
 					}
 
 					UUID itemId = null;
-					RefObject<UUID> refItemId = new RefObject<UUID>(itemId);
+					RefObject<UUID> refItemId = new RefObject<>(itemId);
 					if (!UUID.TryParse(map.get("item_id").toString(), refItemId)) {
 						continue;
 					}
 
 					UUID assetId = null;
-					RefObject<UUID> refAssetId = new RefObject<UUID>(assetId);
+					RefObject<UUID> refAssetId = new RefObject<>(assetId);
 					if (!UUID.TryParse(map.get("asset_id").toString(), refAssetId)) {
 						continue;
 					}
@@ -281,7 +281,7 @@ public final class LoginResponseData {
 				osd = array.get(i);
 				if (osd.getType() == OSDType.Map) {
 					OSDMap map = (OSDMap) osd;
-					firstLogin = map.get("ever_logged_in").AsString().equalsIgnoreCase("N");
+					firstLogin = map.get("ever_logged_in").asString().equalsIgnoreCase("N");
 				}
 			}
 		}
@@ -296,7 +296,7 @@ public final class LoginResponseData {
 			if (homeRegionOSD != null && homeRegionOSD.getType().equals(OSDType.Array)) {
 				OSDArray homeArray = (OSDArray) homeRegionOSD;
 				if (homeArray.size() == 2) {
-					homeRegion = Helpers.UIntsToLong(homeArray.get(0).AsInteger(), homeArray.get(1).AsInteger());
+					homeRegion = Helpers.UIntsToLong(homeArray.get(0).asInteger(), homeArray.get(1).asInteger());
 				}
 			}
 			homePosition = parseVector3("position", home);
@@ -305,78 +305,78 @@ public final class LoginResponseData {
 	}
 
 	private GridInfo parseGridInfo(OSDMap reply) {
-		GridInfo grid = new GridInfo();
+		GridInfo result = new GridInfo();
 		boolean update = false;
 		if (reply.containsKey("gridname")) {
-			grid.gridname = reply.get("gridname").AsString();
+			result.gridname = reply.get("gridname").asString();
 			update = true;
 		}
 		if (reply.containsKey("loginuri")) {
-			grid.loginuri = reply.get("loginuri").AsString();
+			result.loginuri = reply.get("loginuri").asString();
 			update = true;
 		}
 		if (reply.containsKey("welcome")) {
-			grid.loginpage = reply.get("welcome").AsString();
+			result.loginpage = reply.get("welcome").asString();
 			update = true;
 		}
 		if (reply.containsKey("loginpage")) {
-			grid.loginpage = reply.get("loginpage").AsString();
+			result.loginpage = reply.get("loginpage").asString();
 			update = true;
 		}
 		if (reply.containsKey("economy")) {
-			grid.helperuri = reply.get("economy").AsString();
+			result.helperuri = reply.get("economy").asString();
 			update = true;
 		}
 		if (reply.containsKey("helperuri")) {
-			grid.helperuri = reply.get("helperuri").AsString();
+			result.helperuri = reply.get("helperuri").asString();
 			update = true;
 		}
 		if (reply.containsKey("about")) {
-			grid.website = reply.get("about").AsString();
+			result.website = reply.get("about").asString();
 			update = true;
 		}
 		if (reply.containsKey("website")) {
-			grid.website = reply.get("website").AsString();
+			result.website = reply.get("website").asString();
 			update = true;
 		}
 		if (reply.containsKey("help")) {
-			grid.support = reply.get("help").AsString();
+			result.support = reply.get("help").asString();
 			update = true;
 		}
 		if (reply.containsKey("support")) {
-			grid.support = reply.get("support").AsString();
+			result.support = reply.get("support").asString();
 			update = true;
 		}
 		if (reply.containsKey("register")) {
-			grid.register = reply.get("register").AsString();
+			result.register = reply.get("register").asString();
 			update = true;
 		}
 		if (reply.containsKey("account")) {
-			grid.register = reply.get("account").AsString();
+			result.register = reply.get("account").asString();
 			update = true;
 		}
 		if (reply.containsKey("password")) {
-			grid.passworduri = reply.get("password").AsString();
+			result.passworduri = reply.get("password").asString();
 			update = true;
 		}
 		if (reply.containsKey("search")) {
-			grid.searchurl = reply.get("search").AsString();
+			result.searchurl = reply.get("search").asString();
 			update = true;
 		}
 		if (reply.containsKey("currency")) {
-			grid.currencySym = reply.get("currency").AsString();
+			result.currencySym = reply.get("currency").asString();
 			update = true;
 		}
 		if (reply.containsKey("real_currency")) {
-			grid.realCurrencySym = reply.get("real_currency").AsString();
+			result.realCurrencySym = reply.get("real_currency").asString();
 			update = true;
 		}
 		if (reply.containsKey("directory_fee")) {
-			grid.directoryFee = reply.get("directory_fee").AsString();
+			result.directoryFee = reply.get("directory_fee").asString();
 			update = true;
 		}
 		if (update)
-			return grid;
+			return result;
 		return null;
 	}
 
@@ -395,11 +395,11 @@ public final class LoginResponseData {
 			for (int i = 0; i < array.size(); i++) {
 				if (array.get(i).getType().equals(OSDType.Map)) {
 					OSDMap map = (OSDMap) array.get(i);
-					folders[i] = new InventoryFolder(map.get("folder_id").AsUUID(), map.get("parent_id").AsUUID(),
+					folders[i] = new InventoryFolder(map.get("folder_id").asUUID(), map.get("parent_id").asUUID(),
 							ownerID);
-					folders[i].name = map.get("name").AsString();
-					folders[i].preferredType = FolderType.setValue(map.get("type_default").AsInteger());
-					folders[i].version = map.get("version").AsInteger();
+					folders[i].name = map.get("name").asString();
+					folders[i].preferredType = FolderType.setValue(map.get("type_default").asInteger());
+					folders[i].version = map.get("version").asInteger();
 				}
 			}
 			return folders;
@@ -409,7 +409,7 @@ public final class LoginResponseData {
 
 	private Vector3 parseVector3(String key, OSDMap reply) throws ParseException, IOException {
 		if (reply.containsKey(key)) {
-			return reply.get(key).AsVector3();
+			return reply.get(key).asVector3();
 		}
 		return Vector3.Zero;
 	}
@@ -422,7 +422,7 @@ public final class LoginResponseData {
 				OSDMap map = (OSDMap) array.get(0);
 				OSD folder = map.get(key2);
 				if (folder != null) {
-					return folder.AsUUID();
+					return folder.asUUID();
 				}
 			}
 		}

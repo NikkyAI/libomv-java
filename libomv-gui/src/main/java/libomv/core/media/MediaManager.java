@@ -30,6 +30,8 @@ package libomv.core.media;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -66,7 +68,7 @@ public class MediaManager extends MediaObject {
 
 	private SoundSystem system;
 
-	private ArrayList<MediaObject> sounds = new ArrayList<MediaObject>();
+	private List<MediaObject> sounds = new ArrayList<>();
 
 	// Vectors used for orienting spatial axes.
 	protected static Vector3 upVector;
@@ -176,7 +178,7 @@ public class MediaManager extends MediaObject {
 
 	public void RequestAsset(UUID soundID, AssetType type, boolean priority, Callback<AssetDownload> callback)
 			throws Exception {
-		_Main.getGridClient().Assets.RequestAsset(soundID, type, priority, callback);
+		_Main.getGridClient().assets.requestAsset(soundID, type, priority, callback);
 	}
 
 	/**
@@ -196,7 +198,7 @@ public class MediaManager extends MediaObject {
 					if (system == null)
 						continue;
 
-					AgentManager my = _Main.getGridClient().Self;
+					AgentManager my = _Main.getGridClient().agent;
 					Vector3 newPosition = new Vector3(my.getAgentPosition());
 					float newFace = my.getAgentRotation().W;
 
@@ -325,7 +327,7 @@ public class MediaManager extends MediaObject {
 	private class Sound_PreloadSound implements Callback<PreloadSoundCallbackArgs> {
 		public boolean callback(PreloadSoundCallbackArgs args) {
 			if (!args.getSoundID().equals(UUID.Zero)) {
-				if (!_Main.getGridClient().Assets.getCache().containsKey(args.getSoundID(), null))
+				if (!_Main.getGridClient().assets.getCache().containsKey(args.getSoundID(), null))
 					new BufferSound(args.getSoundID());
 			}
 			return false;
@@ -393,7 +395,7 @@ public class MediaManager extends MediaObject {
 		public boolean callback(KillObjectsCallbackArgs args) {
 			final SimulatorManager simulator = (SimulatorManager) args.getSimulator();
 			synchronized (simulator.getObjectsPrimitives()) {
-				HashMap<Integer, Primitive> prims = simulator.getObjectsPrimitives();
+				Map<Integer, Primitive> prims = simulator.getObjectsPrimitives();
 				for (int obj : args.getObjectLocalIDs()) {
 					Primitive p = prims.get(obj);
 					// Objects without sounds are not interesting.
@@ -433,25 +435,25 @@ public class MediaManager extends MediaObject {
 
 	void RegisterClientEvents(GridClient client) {
 		if (client != null) {
-			client.Sound.OnSoundTrigger.add(soundTriggerCallback);
-			client.Sound.OnAttachedSound.add(soundAttachedCallback);
-			client.Sound.OnPreloadSound.add(soundPreloadCallback);
-			client.Objects.OnObjectUpdate.add(primCallback);
-			client.Objects.OnKillObject.add(objectKillCallback);
-			client.Network.OnSimChanged.add(simChangedCallback);
-			client.Self.OnChat.add(chatCallback);
+			client.sound.onSoundTrigger.add(soundTriggerCallback);
+			client.sound.onAttachedSound.add(soundAttachedCallback);
+			client.sound.onPreloadSound.add(soundPreloadCallback);
+			client.objects.onObjectUpdate.add(primCallback);
+			client.objects.onKillObject.add(objectKillCallback);
+			client.network.onSimChanged.add(simChangedCallback);
+			client.agent.onChat.add(chatCallback);
 		}
 	}
 
 	void UnregisterClientEvents(GridClient client) {
 		if (client != null) {
-			client.Sound.OnSoundTrigger.remove(soundTriggerCallback);
-			client.Sound.OnAttachedSound.remove(soundAttachedCallback);
-			client.Sound.OnPreloadSound.remove(soundPreloadCallback);
-			client.Objects.OnObjectUpdate.remove(primCallback);
-			client.Objects.OnKillObject.remove(objectKillCallback);
-			client.Network.OnSimChanged.remove(simChangedCallback);
-			client.Self.OnChat.remove(chatCallback);
+			client.sound.onSoundTrigger.remove(soundTriggerCallback);
+			client.sound.onAttachedSound.remove(soundAttachedCallback);
+			client.sound.onPreloadSound.remove(soundPreloadCallback);
+			client.objects.onObjectUpdate.remove(primCallback);
+			client.objects.onKillObject.remove(objectKillCallback);
+			client.network.onSimChanged.remove(simChangedCallback);
+			client.agent.onChat.remove(chatCallback);
 		}
 	}
 
@@ -465,6 +467,6 @@ public class MediaManager extends MediaObject {
 		if (!soundSystemAvailable)
 			return;
 
-		new BufferSound(new UUID(), sound, false, true, _Main.getGridClient().Self.getAgentPosition(), UIVolume);
+		new BufferSound(new UUID(), sound, false, true, _Main.getGridClient().agent.getAgentPosition(), UIVolume);
 	}
 }

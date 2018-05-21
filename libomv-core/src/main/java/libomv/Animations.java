@@ -32,6 +32,7 @@ package libomv;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.Map;
 
 import libomv.types.UUID;
 
@@ -317,14 +318,14 @@ public class Animations {
 	 *          identify the purpose of the animation
 	 */
 
-	private static HashMap<UUID, String> dict = null;
+	private static Map<UUID, String> dict = null;
 
 	private Animations() {
 	}
 
-	public static HashMap<UUID, String> toDictionary() {
+	public static Map<UUID, String> toDictionary() {
 		if (dict == null) {
-			dict = new HashMap<UUID, String>();
+			dict = new HashMap<>();
 			java.lang.Class<?> type = Animations.class;
 			for (Field field : type.getDeclaredFields()) {
 				int flags = field.getModifiers();

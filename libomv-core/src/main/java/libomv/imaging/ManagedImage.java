@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import libomv.types.Vector3;
 import libomv.utils.Helpers;
@@ -323,9 +324,9 @@ public class ManagedImage implements Cloneable {
 		this.channels = channels;
 	}
 
-	public ArrayList<ArrayList<Vector3>> toRows(boolean mirror) {
+	public List<List<Vector3>> toRows(boolean mirror) {
 
-		ArrayList<ArrayList<Vector3>> rows = new ArrayList<ArrayList<Vector3>>(height);
+		List<List<Vector3>> rows = new ArrayList<>(height);
 
 		float pixScale = 1.0f / 255;
 
@@ -333,7 +334,7 @@ public class ManagedImage implements Cloneable {
 		int smNdx = 0;
 
 		for (rowNdx = 0; rowNdx < height; rowNdx++) {
-			ArrayList<Vector3> row = new ArrayList<Vector3>(width);
+			List<Vector3> row = new ArrayList<>(width);
 			for (colNdx = 0; colNdx < width; colNdx++) {
 				if (mirror)
 					row.add(new Vector3(-(red[smNdx] * pixScale - 0.5f), (green[smNdx] * pixScale - 0.5f),

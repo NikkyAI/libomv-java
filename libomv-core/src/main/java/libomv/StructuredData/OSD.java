@@ -84,51 +84,51 @@ public class OSD implements Cloneable {
 		return OSDType.Unknown;
 	}
 
-	public boolean AsBoolean() {
+	public boolean asBoolean() {
 		return false;
 	}
 
-	public int AsInteger() {
+	public int asInteger() {
 		return 0;
 	}
 
-	public int AsUInteger() {
+	public int asUInteger() {
 		return 0;
 	}
 
-	public long AsLong() {
+	public long asLong() {
 		return 0;
 	}
 
-	public long AsULong() {
+	public long asULong() {
 		return 0;
 	}
 
-	public double AsReal() {
+	public double asReal() {
 		return 0d;
 	}
 
-	public String AsString() {
+	public String asString() {
 		return "";
 	}
 
-	public UUID AsUUID() {
+	public UUID asUUID() {
 		return UUID.Zero;
 	}
 
-	public Date AsDate() {
+	public Date asDate() {
 		return Helpers.Epoch;
 	}
 
-	public URI AsUri() {
+	public URI asUri() {
 		return null;
 	}
 
-	public byte[] AsBinary() {
+	public byte[] asBinary() {
 		return Helpers.EmptyBytes;
 	}
 
-	public InetAddress AsInetAddress() {
+	public InetAddress asInetAddress() {
 		try {
 			return InetAddress.getByName("0.0.0.0");
 		} catch (UnknownHostException e) {
@@ -136,27 +136,27 @@ public class OSD implements Cloneable {
 		}
 	}
 
-	public Vector2 AsVector2() {
+	public Vector2 asVector2() {
 		return Vector2.Zero;
 	}
 
-	public Vector3 AsVector3() {
+	public Vector3 asVector3() {
 		return Vector3.Zero;
 	}
 
-	public Vector3d AsVector3d() {
+	public Vector3d asVector3d() {
 		return Vector3d.Zero;
 	}
 
-	public Vector4 AsVector4() {
+	public Vector4 asVector4() {
 		return Vector4.Zero;
 	}
 
-	public Quaternion AsQuaternion() {
+	public Quaternion asQuaternion() {
 		return Quaternion.Identity;
 	}
 
-	public Color4 AsColor4() {
+	public Color4 asColor4() {
 		return Color4.Black;
 	}
 
@@ -188,130 +188,130 @@ public class OSD implements Cloneable {
 		return "undef";
 	}
 
-	public static OSD FromBoolean(boolean value) {
+	public static OSD fromBoolean(boolean value) {
 		return new OSDBoolean(value);
 	}
 
-	public static OSD FromInteger(short value) {
+	public static OSD fromInteger(short value) {
 		return new OSDInteger(value);
 	}
 
-	public static OSD FromInteger(int value) {
+	public static OSD fromInteger(int value) {
 		return new OSDInteger(value);
 	}
 
-	public static OSD FromUInteger(int value) {
+	public static OSD fromUInteger(int value) {
 		return new OSDBinary(value & 0xffffffff);
 	}
 
-	public static OSD FromLong(long value) {
+	public static OSD fromLong(long value) {
 		return new OSDBinary(value);
 	}
 
-	public static OSD FromULong(long value) {
+	public static OSD fromULong(long value) {
 		return new OSDBinary(value & 0xffffffffffffffffl);
 	}
 
-	public static OSD FromReal(double value) {
+	public static OSD fromReal(double value) {
 		return new OSDReal(value);
 	}
 
-	public static OSD FromReal(float value) {
+	public static OSD fromReal(float value) {
 		return new OSDReal(value);
 	}
 
-	public static OSD FromString(String value) {
+	public static OSD fromString(String value) {
 		return new OSDString(value);
 	}
 
-	public static OSD FromString(InetAddress value) {
+	public static OSD fromString(InetAddress value) {
 		return new OSDString(value.getHostAddress());
 	}
 
-	public static OSD FromUUID(String value) {
+	public static OSD fromUUID(String value) {
 		if (value.length() >= 36) {
 			UUID uuid = UUID.parse(value);
 			if (uuid != null)
-				return OSD.FromUUID(uuid);
+				return OSD.fromUUID(uuid);
 		}
 		return new OSDString(value);
 	}
 
-	public static OSD FromUUID(UUID value) {
+	public static OSD fromUUID(UUID value) {
 		return new OSDUUID(value);
 	}
 
-	public static OSD FromDate(Date value) {
+	public static OSD fromDate(Date value) {
 		return new OSDDate(value);
 	}
 
-	public static OSD FromUri(URI value) {
+	public static OSD fromUri(URI value) {
 		return new OSDUri(value);
 	}
 
-	public static OSD FromBinary(byte[] value) {
+	public static OSD fromBinary(byte[] value) {
 		return new OSDBinary(value);
 	}
 
-	public static OSD FromBinary(long value) {
+	public static OSD fromBinary(long value) {
 		return new OSDBinary(value);
 	}
 
-	public static OSD FromBinary(InetAddress value) {
+	public static OSD fromBinary(InetAddress value) {
 		return new OSDBinary(value.getAddress());
 	}
 
-	public static OSD FromVector2(Vector2 value) {
+	public static OSD fromVector2(Vector2 value) {
 		OSDArray array = new OSDArray();
-		array.add(OSD.FromReal(value.X));
-		array.add(OSD.FromReal(value.Y));
+		array.add(OSD.fromReal(value.X));
+		array.add(OSD.fromReal(value.Y));
 		return array;
 	}
 
-	public static OSD FromVector3(Vector3 value) {
+	public static OSD fromVector3(Vector3 value) {
 		OSDArray array = new OSDArray();
-		array.add(OSD.FromReal(value.X));
-		array.add(OSD.FromReal(value.Y));
-		array.add(OSD.FromReal(value.Z));
+		array.add(OSD.fromReal(value.X));
+		array.add(OSD.fromReal(value.Y));
+		array.add(OSD.fromReal(value.Z));
 		return array;
 	}
 
-	public static OSD FromVector3d(Vector3d value) {
+	public static OSD fromVector3d(Vector3d value) {
 		OSDArray array = new OSDArray();
-		array.add(OSD.FromReal(value.X));
-		array.add(OSD.FromReal(value.Y));
-		array.add(OSD.FromReal(value.Z));
+		array.add(OSD.fromReal(value.X));
+		array.add(OSD.fromReal(value.Y));
+		array.add(OSD.fromReal(value.Z));
 		return array;
 	}
 
-	public static OSD FromVector4(Vector4 value) {
+	public static OSD fromVector4(Vector4 value) {
 		OSDArray array = new OSDArray();
-		array.add(OSD.FromReal(value.X));
-		array.add(OSD.FromReal(value.Y));
-		array.add(OSD.FromReal(value.Z));
-		array.add(OSD.FromReal(value.S));
+		array.add(OSD.fromReal(value.X));
+		array.add(OSD.fromReal(value.Y));
+		array.add(OSD.fromReal(value.Z));
+		array.add(OSD.fromReal(value.S));
 		return array;
 	}
 
-	public static OSD FromQuaternion(Quaternion value) {
+	public static OSD fromQuaternion(Quaternion value) {
 		OSDArray array = new OSDArray();
-		array.add(OSD.FromReal(value.X));
-		array.add(OSD.FromReal(value.Y));
-		array.add(OSD.FromReal(value.Z));
-		array.add(OSD.FromReal(value.W));
+		array.add(OSD.fromReal(value.X));
+		array.add(OSD.fromReal(value.Y));
+		array.add(OSD.fromReal(value.Z));
+		array.add(OSD.fromReal(value.W));
 		return array;
 	}
 
-	public static OSD FromColor4(Color4 value) {
+	public static OSD fromColor4(Color4 value) {
 		OSDArray array = new OSDArray();
-		array.add(OSD.FromReal(value.R));
-		array.add(OSD.FromReal(value.G));
-		array.add(OSD.FromReal(value.B));
-		array.add(OSD.FromReal(value.A));
+		array.add(OSD.fromReal(value.R));
+		array.add(OSD.fromReal(value.G));
+		array.add(OSD.fromReal(value.B));
+		array.add(OSD.fromReal(value.A));
 		return array;
 	}
 
-	public static OSD FromObject(Object value) {
+	public static OSD fromObject(Object value) {
 		if (value == null) {
 			return new OSD();
 		}
@@ -355,22 +355,22 @@ public class OSD implements Cloneable {
 			return new OSDBinary((Long) value);
 		}
 		if (value instanceof Vector2) {
-			return FromVector2((Vector2) value);
+			return fromVector2((Vector2) value);
 		}
 		if (value instanceof Vector3) {
-			return FromVector3((Vector3) value);
+			return fromVector3((Vector3) value);
 		}
 		if (value instanceof Vector3d) {
-			return FromVector3d((Vector3d) value);
+			return fromVector3d((Vector3d) value);
 		}
 		if (value instanceof Vector4) {
-			return FromVector4((Vector4) value);
+			return fromVector4((Vector4) value);
 		}
 		if (value instanceof Quaternion) {
-			return FromQuaternion((Quaternion) value);
+			return fromQuaternion((Quaternion) value);
 		}
 		if (value instanceof Color4) {
-			return FromColor4((Color4) value);
+			return fromColor4((Color4) value);
 		}
 		// We don't know this type
 		return new OSD();
@@ -380,40 +380,40 @@ public class OSD implements Cloneable {
 		if (type == null || value == null) {
 			return null;
 		} else if (type.isAssignableFrom(Long.class) || type == long.class) {
-			return value.AsLong();
+			return value.asLong();
 		} else if (type.isAssignableFrom(Integer.class) || type == int.class) {
-			return value.AsInteger();
+			return value.asInteger();
 		} else if (type.isAssignableFrom(Short.class) || type == short.class) {
-			return (short) value.AsInteger();
+			return (short) value.asInteger();
 		} else if (type.isAssignableFrom(Byte.class) || type == byte.class) {
-			return (byte) value.AsInteger();
+			return (byte) value.asInteger();
 		} else if (type.isAssignableFrom(Boolean.class) || type == boolean.class) {
-			return value.AsBoolean();
+			return value.asBoolean();
 		} else if (type.isAssignableFrom(Double.class) || type == double.class) {
-			return value.AsReal();
+			return value.asReal();
 		} else if (type.isAssignableFrom(Float.class) || type == float.class) {
-			return (float) value.AsReal();
+			return (float) value.asReal();
 		} else if (type.isAssignableFrom(String.class)) {
-			return value.AsString();
+			return value.asString();
 		} else if (type.isAssignableFrom(Date.class)) {
-			return value.AsDate();
+			return value.asDate();
 		} else if (type.isAssignableFrom(URI.class)) {
-			return value.AsUri();
+			return value.asUri();
 		} else if (type.isAssignableFrom(UUID.class)) {
-			return value.AsUUID();
+			return value.asUUID();
 		} else if (type.isAssignableFrom(Vector3.class)) {
 			if (value.getType() == OSDType.Array) {
-				return ((OSDArray) value).AsVector3();
+				return ((OSDArray) value).asVector3();
 			}
 			return Vector3.Zero;
 		} else if (type.isAssignableFrom(Vector4.class)) {
 			if (value.getType() == OSDType.Array) {
-				return ((OSDArray) value).AsVector4();
+				return ((OSDArray) value).asVector4();
 			}
 			return Vector4.Zero;
 		} else if (type.isAssignableFrom(Quaternion.class)) {
 			if (value.getType() == OSDType.Array) {
-				return ((OSDArray) value).AsQuaternion();
+				return ((OSDArray) value).asQuaternion();
 			}
 			return Quaternion.Identity;
 		} else if (type.isAssignableFrom(OSDArray.class)) {
@@ -446,7 +446,7 @@ public class OSD implements Cloneable {
 		OSDMap map = new OSDMap(fields.length);
 		for (Field field : fields) {
 			if (!Modifier.isTransient(field.getModifiers())) {
-				OSD serializedField = OSD.FromObject(field.get(obj));
+				OSD serializedField = OSD.fromObject(field.get(obj));
 
 				if (serializedField.getType() != OSDType.Unknown) {
 					map.put(field.getName(), serializedField);

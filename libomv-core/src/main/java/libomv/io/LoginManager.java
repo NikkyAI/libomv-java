@@ -31,6 +31,7 @@ package libomv.io;
 
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.log4j.Logger;
@@ -61,120 +62,120 @@ public class LoginManager {
 	/** Login Request Parameters */
 	public class LoginParams {
 		/** The URL of the Login Server */
-		public String URI;
+		public String uri;
 		/**
 		 * The number of milliseconds to wait before a login is considered failed due to
 		 * timeout
 		 */
-		public int Timeout;
+		public int timeout;
 		/**
 		 * The request method login_to_simulator is currently the only supported method
 		 */
-		public String MethodName;
+		public String methodName;
 		/** The Agents First name */
-		public String FirstName;
+		public String firstName;
 		/** The Agents First name */
-		public String LastName;
+		public String lastName;
 		/**
 		 * A md5 hashed password, plaintext password will be automatically hashed
 		 */
-		public String Password;
+		public String password;
 		/**
 		 * The agents starting location once logged in Either "last", "home", or a
 		 * string encoded URI containing the simulator name and x/y/z coordinates e.g:
 		 * uri:hooper&amp;128&amp;152&amp;17
 		 */
-		public String Start;
+		public String start;
 		/**
 		 * A string containing the client software channel information <example>Second
 		 * Life Release</example>
 		 */
-		public String Channel;
+		public String channel;
 		/**
 		 * The client software version information The official viewer uses: Second Life
 		 * Release n.n.n.n where n is replaced with the current version of the viewer
 		 */
-		public String Version;
+		public String version;
 		/** A string containing the platform information the agent is running on */
-		public String Platform;
+		public String platform;
 		/** A string containing version number for OS the agent is running on */
-		public String PlatformVersion;
+		public String platformVersion;
 		/** A string hash of the network cards Mac Address */
-		public String MAC;
+		public String mac;
 		/** Unknown or deprecated */
-		public String ViewerDigest;
+		public String viewerDigest;
 		/**
 		 * A string hash of the first disk drives ID used to identify this clients
 		 * uniqueness
 		 */
-		public String ID0;
+		public String id0;
 		/**
 		 * A string containing the viewers Software, this is not directly sent to the
 		 * login server but is used by the library to generate the Version information
 		 */
-		public String UserAgent;
+		public String userAgent;
 		/**
 		 * A string representing the software creator. This is not directly sent to the
 		 * login server but is used by the library to generate the Version information
 		 */
-		public String Author;
+		public String author;
 		/**
 		 * If true, this agent agrees to the Terms of Service of the grid its connecting
 		 * to
 		 */
-		public boolean AgreeToTos;
+		public boolean agreeToTos;
 		/** Unknown */
-		public boolean ReadCritical;
+		public boolean readCritical;
 		/**
 		 * Status of the last application run sent to the grid login server for
 		 * statistical purposes
 		 */
-		public LastExecStatus LastExecEvent = LastExecStatus.Normal;
+		public LastExecStatus lastExecEvent = LastExecStatus.Normal;
 		/**
 		 * An array of string sent to the login server to enable various options
 		 */
-		public String[] Options;
+		public String[] options;
 
 		/**
 		 * Default constructor, initializes sane default values
 		 */
 		public LoginParams() {
-			this.Options = new String[] { "inventory-root", "inventory-skeleton", "inventory-lib-root",
+			this.options = new String[] { "inventory-root", "inventory-skeleton", "inventory-lib-root",
 					"inventory-lib-owner", "inventory-skel-lib", "initial-outfit", "gestures", "event_categories",
 					"event_notifications", "classified_categories", "adult_compliant", "buddy-list", "ui-config",
 					"map-server-url", "tutorial_settings", "login-flags", "global-textures" };
-			this.MethodName = "login_to_simulator";
-			this.Start = "last";
-			this.Platform = Helpers.getPlatform();
-			this.PlatformVersion = Helpers.getPlatformVersion();
-			this.MAC = Helpers.getMAC();
-			this.ViewerDigest = "";
-			this.ID0 = Helpers.getMAC();
-			this.AgreeToTos = true;
-			this.ReadCritical = true;
-			this.Channel = LibSettings.LIBRARY_NAME;
-			this.Version = LibSettings.LIBRARY_VERSION;
-			this.LastExecEvent = LastExecStatus.Normal;
+			this.methodName = "login_to_simulator";
+			this.start = "last";
+			this.platform = Helpers.getPlatform();
+			this.platformVersion = Helpers.getPlatformVersion();
+			this.mac = Helpers.getMAC();
+			this.viewerDigest = "";
+			this.id0 = Helpers.getMAC();
+			this.agreeToTos = true;
+			this.readCritical = true;
+			this.channel = LibSettings.LIBRARY_NAME;
+			this.version = LibSettings.LIBRARY_VERSION;
+			this.lastExecEvent = LastExecStatus.Normal;
 		}
 
 		public LoginParams(GridClient client) {
 			this();
-			this.Timeout = client.Settings.LOGIN_TIMEOUT;
+			this.timeout = client.settings.LOGIN_TIMEOUT;
 			GridInfo gridInfo = client.getDefaultGrid();
-			this.URI = gridInfo.loginuri;
+			this.uri = gridInfo.loginuri;
 
 			String names[] = gridInfo.username.split("[\\. ]");
 
-			this.FirstName = names[0];
+			this.firstName = names[0];
 			if (names.length >= 2) {
-				this.LastName = names[1];
+				this.lastName = names[1];
 			} else {
-				this.LastName = "Resident";
+				this.lastName = "Resident";
 			}
 
-			this.Password = gridInfo.getPassword();
+			this.password = gridInfo.getPassword();
 			if (gridInfo.startLocation != null)
-				this.Start = gridInfo.startLocation;
+				this.start = gridInfo.startLocation;
 		}
 
 		/**
@@ -194,48 +195,40 @@ public class LoginManager {
 		public LoginParams(GridClient client, String firstName, String lastName, String password,
 				String startLocation) {
 			this();
-			this.URI = client.getDefaultGrid().loginuri;
-			this.Timeout = client.Settings.LOGIN_TIMEOUT;
-			this.FirstName = firstName;
-			this.LastName = lastName;
-			this.Password = password;
+			this.uri = client.getDefaultGrid().loginuri;
+			this.timeout = client.settings.LOGIN_TIMEOUT;
+			this.firstName = firstName;
+			this.lastName = lastName;
+			this.password = password;
 			if (startLocation != null)
-				this.Start = startLocation;
+				this.start = startLocation;
 		}
 	}
 
-	public CallbackHandler<LoginProgressCallbackArgs> OnLoginProgress = new CallbackHandler<LoginProgressCallbackArgs>();
+	public CallbackHandler<LoginProgressCallbackArgs> onLoginProgress = new CallbackHandler<>();
 
-	private HashMap<Callback<LoginProgressCallbackArgs>, String[]> CallbackOptions = new HashMap<Callback<LoginProgressCallbackArgs>, String[]>();
+	private Map<Callback<LoginProgressCallbackArgs>, String[]> callbackOptions = new HashMap<>();
 
-	public final void RegisterLoginProgressCallback(Callback<LoginProgressCallbackArgs> callback, String[] options,
+	public final void registerLoginProgressCallback(Callback<LoginProgressCallbackArgs> callback, String[] options,
 			boolean autoremove) {
 		if (options != null)
-			CallbackOptions.put(callback, options);
-		OnLoginProgress.add(callback, autoremove);
+			callbackOptions.put(callback, options);
+		onLoginProgress.add(callback, autoremove);
 	}
 
-	public final void UnregisterLoginProgressCallback(Callback<LoginProgressCallbackArgs> callback) {
-		CallbackOptions.remove(callback);
-		OnLoginProgress.remove(callback);
+	public final void unregisterLoginProgressCallback(Callback<LoginProgressCallbackArgs> callback) {
+		callbackOptions.remove(callback);
+		onLoginProgress.remove(callback);
 	}
-
-	// #endregion Callback handlers
 
 	// #region Private Members
-	private GridClient _Client;
-	private TimeoutEventQueue<LoginStatus> LoginEvents = new TimeoutEventQueue<LoginStatus>();
+	private GridClient client;
+	private TimeoutEventQueue<LoginStatus> loginEvents = new TimeoutEventQueue<>();
 	private AsyncHTTPClient<OSD> httpClient;
 
-	// #endregion
-
 	public LoginManager(GridClient client) {
-		this._Client = client;
+		this.client = client;
 	}
-
-	// #region Public Methods
-
-	// #region Login Routines
 
 	/**
 	 * Generate sane default values for a login request
@@ -251,9 +244,9 @@ public class LoginManager {
 	 *            start location
 	 * @return A populated {@link LoginParams} struct containing sane defaults
 	 */
-	public final LoginParams DefaultLoginParams(String firstName, String lastName, String password,
+	public final LoginParams defaultLoginParams(String firstName, String lastName, String password,
 			String startLocation) {
-		return new LoginParams(_Client, firstName, lastName, password, startLocation);
+		return new LoginParams(client, firstName, lastName, password, startLocation);
 	}
 
 	/**
@@ -271,11 +264,11 @@ public class LoginManager {
 	 *            Client application version
 	 * @return A populated {@link LoginParams} struct containing sane defaults
 	 */
-	public final LoginParams DefaultLoginParams(String firstName, String lastName, String password, String channel,
+	public final LoginParams defaultLoginParams(String firstName, String lastName, String password, String channel,
 			String version) {
-		LoginParams params = new LoginParams(_Client, firstName, lastName, password, null);
-		params.Channel = channel;
-		params.Version = version;
+		LoginParams params = new LoginParams(client, firstName, lastName, password, null);
+		params.channel = channel;
+		params.version = version;
 		return params;
 	}
 
@@ -294,8 +287,8 @@ public class LoginManager {
 	 *         the errors that have occurred
 	 * @throws Exception
 	 */
-	public final boolean Login(String firstName, String lastName, String password) throws Exception {
-		return Login(new LoginParams(_Client, firstName, lastName, password, null));
+	public final boolean login(String firstName, String lastName, String password) throws Exception {
+		return login(new LoginParams(client, firstName, lastName, password, null));
 	}
 
 	/**
@@ -315,9 +308,9 @@ public class LoginManager {
 	 *         the errors that have occurred
 	 * @throws Exception
 	 */
-	public final boolean Login(String firstName, String lastName, String password, String startLocation)
+	public final boolean login(String firstName, String lastName, String password, String startLocation)
 			throws Exception {
-		return Login(new LoginParams(_Client, firstName, lastName, password, startLocation));
+		return login(new LoginParams(client, firstName, lastName, password, startLocation));
 	}
 
 	/**
@@ -338,9 +331,9 @@ public class LoginManager {
 	 *         the errors that have occurred
 	 * @throws Exception
 	 */
-	public final boolean Login(String firstName, String lastName, String password, String channel, String version)
+	public final boolean login(String firstName, String lastName, String password, String channel, String version)
 			throws Exception {
-		return Login(DefaultLoginParams(firstName, lastName, password, channel, version));
+		return login(defaultLoginParams(firstName, lastName, password, channel, version));
 	}
 
 	/**
@@ -365,12 +358,12 @@ public class LoginManager {
 	 *         the errors that have occurred
 	 * @throws Exception
 	 */
-	public final boolean Login(String firstName, String lastName, String password, String start, String channel,
+	public final boolean login(String firstName, String lastName, String password, String start, String channel,
 			String version) throws Exception {
-		LoginParams loginParams = DefaultLoginParams(firstName, lastName, password, channel, version);
-		loginParams.Start = start;
+		LoginParams loginParams = defaultLoginParams(firstName, lastName, password, channel, version);
+		loginParams.start = start;
 
-		return Login(loginParams, null);
+		return login(loginParams, null);
 	}
 
 	/**
@@ -385,8 +378,8 @@ public class LoginManager {
 	 *         the errors that have occurred
 	 * @throws Exception
 	 */
-	public final boolean Login(LoginParams loginParams) throws Exception {
-		return Login(loginParams, null);
+	public final boolean login(LoginParams loginParams) throws Exception {
+		return login(loginParams, null);
 	}
 
 	/**
@@ -403,19 +396,19 @@ public class LoginManager {
 	 *         the errors that have occurred
 	 * @throws Exception
 	 */
-	public final boolean Login(LoginParams loginParams, Callback<LoginProgressCallbackArgs> callback) throws Exception {
+	public final boolean login(LoginParams loginParams, Callback<LoginProgressCallbackArgs> callback) throws Exception {
 		// FIXME: Now that we're using CAPS we could cancel the current login and start
 		// a new one
-		if (LoginEvents.size() != 0) {
+		if (loginEvents.size() != 0) {
 			throw new Exception("Login already in progress");
 		}
 
-		TimeoutEvent<LoginStatus> loginEvent = LoginEvents.create();
-		RequestLogin(loginParams, callback);
-		LoginStatus status = loginEvent.waitOne(loginParams.Timeout);
-		LoginEvents.cancel(loginEvent);
+		TimeoutEvent<LoginStatus> loginEvent = loginEvents.create();
+		requestLogin(loginParams, callback);
+		LoginStatus status = loginEvent.waitOne(loginParams.timeout);
+		loginEvents.cancel(loginEvent);
 		if (status == null) {
-			UpdateLoginStatus(LoginStatus.Failed, "Logon timed out", "timeout", null);
+			updateLoginStatus(LoginStatus.Failed, "Logon timed out", "timeout", null);
 			return false;
 		}
 		return (status == LoginStatus.Success);
@@ -434,7 +427,7 @@ public class LoginManager {
 	 *            Z coordinate to start at
 	 * @return String with a URI that can be used to login to a specified location
 	 */
-	public static String StartLocation(String sim, int x, int y, int z) {
+	public static String startLocation(String sim, int x, int y, int z) {
 		return String.format("uri:%s&%d&%d&%d", sim, x, y, z);
 	}
 
@@ -442,100 +435,100 @@ public class LoginManager {
 	 * Abort any ongoing login. If no login is currently ongoing, this function does
 	 * nothing
 	 */
-	public void AbortLogin() {
+	public void abortLogin() {
 		// FIXME: Now that we're using CAPS we could cancel the current login and start
 		// a new one
-		if (LoginEvents.size() != 0) {
-			UpdateLoginStatus(LoginStatus.Failed, "Abort Requested", " aborted", null);
+		if (loginEvents.size() != 0) {
+			updateLoginStatus(LoginStatus.Failed, "Abort Requested", " aborted", null);
 		}
 	}
 
-	public void RequestLogin(final LoginParams loginParams, Callback<LoginProgressCallbackArgs> callback)
+	public void requestLogin(final LoginParams loginParams, Callback<LoginProgressCallbackArgs> callback)
 			throws Exception {
 		// #region Sanity Check loginParams
-		if (loginParams.Options == null)
-			loginParams.Options = new String[] {};
+		if (loginParams.options == null)
+			loginParams.options = new String[] {};
 
-		if (loginParams.Password == null)
-			loginParams.Password = Helpers.EmptyString;
+		if (loginParams.password == null)
+			loginParams.password = Helpers.EmptyString;
 
 		// Convert the password to MD5 if it isn't already
-		if (loginParams.Password.length() != 35 && !loginParams.Password.startsWith("$1$"))
-			loginParams.Password = Helpers.MD5Password(loginParams.Password);
+		if (loginParams.password.length() != 35 && !loginParams.password.startsWith("$1$"))
+			loginParams.password = Helpers.MD5Password(loginParams.password);
 
-		if (loginParams.ViewerDigest == null)
-			loginParams.ViewerDigest = Helpers.EmptyString;
+		if (loginParams.viewerDigest == null)
+			loginParams.viewerDigest = Helpers.EmptyString;
 
-		if (loginParams.UserAgent == null)
-			loginParams.UserAgent = Helpers.EmptyString;
+		if (loginParams.userAgent == null)
+			loginParams.userAgent = Helpers.EmptyString;
 
-		if (loginParams.Version == null)
-			loginParams.Version = Helpers.EmptyString;
+		if (loginParams.version == null)
+			loginParams.version = Helpers.EmptyString;
 
-		if (loginParams.Platform == null)
-			loginParams.Platform = Helpers.getPlatform();
+		if (loginParams.platform == null)
+			loginParams.platform = Helpers.getPlatform();
 
-		if (loginParams.PlatformVersion == null)
-			loginParams.PlatformVersion = Helpers.getPlatformVersion();
+		if (loginParams.platformVersion == null)
+			loginParams.platformVersion = Helpers.getPlatformVersion();
 
-		if (loginParams.MAC == null)
-			loginParams.MAC = Helpers.getMAC();
+		if (loginParams.mac == null)
+			loginParams.mac = Helpers.getMAC();
 
-		if (loginParams.Channel == null || loginParams.Channel.isEmpty()) {
+		if (loginParams.channel == null || loginParams.channel.isEmpty()) {
 			logger.warn("Viewer channel not set. This is a TOS violation on some grids.");
-			loginParams.Channel = LibSettings.LIBRARY_NAME;
+			loginParams.channel = LibSettings.LIBRARY_NAME;
 		}
 
-		if (loginParams.Author == null)
-			loginParams.Author = Helpers.EmptyString;
+		if (loginParams.author == null)
+			loginParams.author = Helpers.EmptyString;
 		// #endregion
 
 		if (callback != null)
-			RegisterLoginProgressCallback(callback, loginParams.Options, false);
+			registerLoginProgressCallback(callback, loginParams.options, false);
 
 		URI loginUri;
 		try {
-			loginUri = new URI(loginParams.URI);
+			loginUri = new URI(loginParams.uri);
 		} catch (Exception ex) {
 			logger.error(GridClient
-					.Log(String.format("Failed to parse login URI %s, %s", loginParams.URI, ex.getMessage()), _Client));
+					.Log(String.format("Failed to parse login URI %s, %s", loginParams.uri, ex.getMessage()), client));
 			throw ex;
 		}
 
-		UpdateLoginStatus(LoginStatus.ConnectingToLogin,
-				"Logging in as " + loginParams.FirstName + " " + loginParams.LastName + " ...", null, null);
+		updateLoginStatus(LoginStatus.ConnectingToLogin,
+				"Logging in as " + loginParams.firstName + " " + loginParams.lastName + " ...", null, null);
 
 		try {
 			// Create the CAPS login structure
 			OSDMap loginLLSD = new OSDMap();
-			loginLLSD.put("first", OSD.FromString(loginParams.FirstName));
-			loginLLSD.put("last", OSD.FromString(loginParams.LastName));
-			loginLLSD.put("passwd", OSD.FromString(loginParams.Password));
-			loginLLSD.put("start", OSD.FromString(loginParams.Start));
-			loginLLSD.put("channel", OSD.FromString(loginParams.Channel));
-			loginLLSD.put("version", OSD.FromString(loginParams.Version));
-			loginLLSD.put("platform", OSD.FromString(loginParams.Platform));
-			loginLLSD.put("platform_version", OSD.FromString(loginParams.PlatformVersion));
-			loginLLSD.put("mac", OSD.FromString(loginParams.MAC));
-			loginLLSD.put("agree_to_tos", OSD.FromBoolean(loginParams.AgreeToTos));
-			loginLLSD.put("read_critical", OSD.FromBoolean(loginParams.ReadCritical));
-			loginLLSD.put("viewer_digest", OSD.FromString(loginParams.ViewerDigest));
-			loginLLSD.put("id0", OSD.FromString(loginParams.ID0));
-			loginLLSD.put("last_exec_event", OSD.FromInteger(loginParams.LastExecEvent.ordinal()));
+			loginLLSD.put("first", OSD.fromString(loginParams.firstName));
+			loginLLSD.put("last", OSD.fromString(loginParams.lastName));
+			loginLLSD.put("passwd", OSD.fromString(loginParams.password));
+			loginLLSD.put("start", OSD.fromString(loginParams.start));
+			loginLLSD.put("channel", OSD.fromString(loginParams.channel));
+			loginLLSD.put("version", OSD.fromString(loginParams.version));
+			loginLLSD.put("platform", OSD.fromString(loginParams.platform));
+			loginLLSD.put("platform_version", OSD.fromString(loginParams.platformVersion));
+			loginLLSD.put("mac", OSD.fromString(loginParams.mac));
+			loginLLSD.put("agree_to_tos", OSD.fromBoolean(loginParams.agreeToTos));
+			loginLLSD.put("read_critical", OSD.fromBoolean(loginParams.readCritical));
+			loginLLSD.put("viewer_digest", OSD.fromString(loginParams.viewerDigest));
+			loginLLSD.put("id0", OSD.fromString(loginParams.id0));
+			loginLLSD.put("last_exec_event", OSD.fromInteger(loginParams.lastExecEvent.ordinal()));
 
 			OSDArray optionsOSD;
 			// Create the options LLSD array
-			if (loginParams.Options != null && loginParams.Options.length > 0) {
-				optionsOSD = new OSDArray(loginParams.Options.length);
-				for (int i = 0; i < loginParams.Options.length; i++) {
-					optionsOSD.add(OSD.FromString(loginParams.Options[i]));
+			if (loginParams.options != null && loginParams.options.length > 0) {
+				optionsOSD = new OSDArray(loginParams.options.length);
+				for (int i = 0; i < loginParams.options.length; i++) {
+					optionsOSD.add(OSD.fromString(loginParams.options[i]));
 				}
 
-				for (String[] callbackOpts : CallbackOptions.values()) {
+				for (String[] callbackOpts : callbackOptions.values()) {
 					if (callbackOpts != null) {
 						for (int i = 0; i < callbackOpts.length; i++) {
 							if (!optionsOSD.contains(callbackOpts[i])) {
-								optionsOSD.add(OSD.FromString(callbackOpts[i]));
+								optionsOSD.add(OSD.fromString(callbackOpts[i]));
 							}
 						}
 					}
@@ -546,21 +539,21 @@ public class LoginManager {
 			loginLLSD.put("options", optionsOSD);
 
 			LoginReplyHandler handler = new LoginReplyHandler(loginParams);
-			if (_Client.Settings.getBool(LibSettings.USE_LLSD_LOGIN)) {
+			if (client.settings.getBool(LibSettings.USE_LLSD_LOGIN)) {
 				// Make the CAPS POST for login
-				CapsClient loginRequest = new CapsClient(_Client, "LoginAgent");
+				CapsClient loginRequest = new CapsClient(client, "LoginAgent");
 				httpClient = loginRequest;
-				loginRequest.executeHttpPost(loginUri, loginLLSD, OSDFormat.Xml, handler, loginParams.Timeout);
+				loginRequest.executeHttpPost(loginUri, loginLLSD, OSDFormat.Xml, handler, loginParams.timeout);
 			} else {
 				// Make the RPC call for login
 				OSDArray request = new OSDArray(1);
 				request.add(loginLLSD);
 				RpcClient loginRequest = new RpcClient("LoginAgent");
 				httpClient = loginRequest;
-				loginRequest.call(loginUri, loginParams.MethodName, request, handler, loginParams.Timeout);
+				loginRequest.call(loginUri, loginParams.methodName, request, handler, loginParams.timeout);
 			}
 		} catch (Exception ex) {
-			UpdateLoginStatus(LoginStatus.Failed, ex.toString(), ex.getClass().toString(), null);
+			updateLoginStatus(LoginStatus.Failed, ex.toString(), ex.getClass().toString(), null);
 			throw ex;
 		}
 	}
@@ -569,16 +562,16 @@ public class LoginManager {
 
 	// #region Private Methods
 
-	private void UpdateLoginStatus(LoginStatus status, String message, String reason, LoginResponseData reply) {
+	private void updateLoginStatus(LoginStatus status, String message, String reason, LoginResponseData reply) {
 		// Fire the login status callback
-		OnLoginProgress.dispatch(new LoginProgressCallbackArgs(status, message, reason, reply));
+		onLoginProgress.dispatch(new LoginProgressCallbackArgs(status, message, reason, reply));
 
 		// If we reached a login resolution
 		if (status == LoginStatus.Success || status == LoginStatus.Failed) {
 			// trigger the event
-			LoginEvents.set(status);
+			loginEvents.set(status);
 			// register our client for cleanup
-			_Client.Network.addClosableClient(httpClient);
+			client.network.addClosableClient(httpClient);
 			httpClient = null;
 		}
 	}
@@ -600,7 +593,7 @@ public class LoginManager {
 		@Override
 		public void completed(OSD result) {
 			if (result != null && result.getType().equals(OSDType.Map)) {
-				UpdateLoginStatus(LoginStatus.ReadingResponse, "Parsing Reply data", "parsing", null);
+				updateLoginStatus(LoginStatus.ReadingResponse, "Parsing Reply data", "parsing", null);
 
 				LoginResponseData reply = new LoginResponseData().parseLoginReply((OSDMap) result);
 
@@ -615,74 +608,74 @@ public class LoginManager {
 				}
 
 				try {
-					HandleLoginResponse(reply, loginParams);
+					handleLoginResponse(reply, loginParams);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 			} else {
 				// No LLSD response
-				UpdateLoginStatus(LoginStatus.Failed, "Empty or unparseable login response", "bad response", null);
+				updateLoginStatus(LoginStatus.Failed, "Empty or unparseable login response", "bad response", null);
 			}
 		}
 
 		@Override
 		public void failed(Exception ex) {
-			logger.error(GridClient.Log(String.format("Login exception %s", ex.getMessage()), _Client), ex);
+			logger.error(GridClient.Log(String.format("Login exception %s", ex.getMessage()), client), ex);
 			// Connection error
-			UpdateLoginStatus(LoginStatus.Failed, ex.getMessage(), ex.getClass().toString(), null);
+			updateLoginStatus(LoginStatus.Failed, ex.getMessage(), ex.getClass().toString(), null);
 		}
 
 		@Override
 		public void cancelled() {
 			// Connection canceled
-			UpdateLoginStatus(LoginStatus.Failed, "connection canceled", "canceled", null);
+			updateLoginStatus(LoginStatus.Failed, "connection canceled", "canceled", null);
 		}
 	}
 
-	private void HandleLoginResponse(LoginResponseData reply, LoginParams loginParams) throws Exception {
+	private void handleLoginResponse(LoginResponseData reply, LoginParams loginParams) throws Exception {
 		if (reply.login.equals("indeterminate")) {
 			// Login redirected
 
 			// Make the next login URL jump
-			UpdateLoginStatus(LoginStatus.Redirecting, reply.message, "redirecting", null);
-			loginParams.URI = reply.nextUrl;
-			loginParams.MethodName = reply.nextMethod;
-			loginParams.Options = reply.nextOptions;
+			updateLoginStatus(LoginStatus.Redirecting, reply.message, "redirecting", null);
+			loginParams.uri = reply.nextUrl;
+			loginParams.methodName = reply.nextMethod;
+			loginParams.options = reply.nextOptions;
 
 			// Sleep for some amount of time while the servers work
 			int seconds = reply.nextDuration;
-			logger.info(GridClient.Log("Sleeping for " + seconds + " seconds during a login redirect", _Client));
+			logger.info(GridClient.Log("Sleeping for " + seconds + " seconds during a login redirect", client));
 			try {
 				Thread.sleep(seconds * 1000);
 			} catch (InterruptedException ex) {
 			}
 
-			RequestLogin(loginParams, null);
+			requestLogin(loginParams, null);
 		} else if (reply.success) {
 			// Login succeeded
-			_Client.Network.setCircuitCode(reply.circuitCode);
-			_Client.Network.setUDPBlacklist(reply.udpBlacklist);
-			_Client.Network.setAgentAppearanceServiceURL(reply.agentAppearanceServiceURL);
+			client.network.setCircuitCode(reply.circuitCode);
+			client.network.setUDPBlacklist(reply.udpBlacklist);
+			client.network.setAgentAppearanceServiceURL(reply.agentAppearanceServiceURL);
 
-			UpdateLoginStatus(LoginStatus.ConnectingToSim, "Connecting to simulator...", "connecting", reply);
+			updateLoginStatus(LoginStatus.ConnectingToSim, "Connecting to simulator...", "connecting", reply);
 
 			if (reply.simIP != null && reply.simPort != 0) {
 				// Connect to the sim given in the login reply
-				if (_Client.Network.connect(reply.simIP, reply.simPort, reply.region, true,
+				if (client.network.connect(reply.simIP, reply.simPort, reply.region, true,
 						reply.seedCapability) != null) {
-					_Client.setCurrentGrid(reply.grid);
+					client.setCurrentGrid(reply.grid);
 
 					// Request the economy data right after login
-					_Client.Network.sendPacket(new EconomyDataRequestPacket());
+					client.network.sendPacket(new EconomyDataRequestPacket());
 
 					// Update the login message with the MOTD returned from the server
-					UpdateLoginStatus(LoginStatus.Success, reply.message, reply.reason, reply);
+					updateLoginStatus(LoginStatus.Success, reply.message, reply.reason, reply);
 				} else {
-					UpdateLoginStatus(LoginStatus.Failed, "Unable to establish a UDP connection to the simulator",
+					updateLoginStatus(LoginStatus.Failed, "Unable to establish a UDP connection to the simulator",
 							"connection failed", null);
 				}
 			} else {
-				UpdateLoginStatus(LoginStatus.Failed, "Login server did not return a valid simulator address", "no sim",
+				updateLoginStatus(LoginStatus.Failed, "Login server did not return a valid simulator address", "no sim",
 						null);
 			}
 		} else {
@@ -690,7 +683,7 @@ public class LoginManager {
 			if (reply.reason == null || reply.reason.isEmpty()) {
 				reply.reason = "unknown";
 			}
-			UpdateLoginStatus(LoginStatus.Failed, reply.message, reply.reason, reply);
+			updateLoginStatus(LoginStatus.Failed, reply.message, reply.reason, reply);
 		}
 	}
 	// #endregion

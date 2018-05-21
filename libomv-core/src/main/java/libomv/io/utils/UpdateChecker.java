@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -134,7 +134,7 @@ public class UpdateChecker {
 
 	private Package Package;
 
-	public CallbackHandler<UpdateCheckerArgs> OnUpdateInfoReceived = new CallbackHandler<UpdateCheckerArgs>();
+	public CallbackHandler<UpdateCheckerArgs> OnUpdateInfoReceived = new CallbackHandler<>();
 
 	private CapsClient client;
 
@@ -151,7 +151,7 @@ public class UpdateChecker {
 
 	/**
 	 * Compare a new version with the one from this package
-	 * 
+	 *
 	 * @param version
 	 *            Version string in the form <major>.<minor>.<bugfix>.<build>
 	 * @return true if the version is higher than the current version
@@ -189,12 +189,12 @@ public class UpdateChecker {
 			try {
 				OSDMap upd = (OSDMap) arg;
 				UpdateInfo inf = new UpdateInfo();
-				inf.setError(upd.get("Error").AsBoolean());
-				inf.setErrMessage(upd.get("ErrMessage").AsString());
-				inf.setCurrentVersion(upd.get("CurrentVersion").AsString());
-				inf.setDownloadSite(upd.get("DownloadSite").AsString());
-				inf.setDisplayMOTD(upd.get("DisplayMOTD").AsBoolean());
-				inf.setMOTD(upd.get("MOTD").AsString());
+				inf.setError(upd.get("Error").asBoolean());
+				inf.setErrMessage(upd.get("ErrMessage").asString());
+				inf.setCurrentVersion(upd.get("CurrentVersion").asString());
+				inf.setDownloadSite(upd.get("DownloadSite").asString());
+				inf.setDisplayMOTD(upd.get("DisplayMOTD").asBoolean());
+				inf.setMOTD(upd.get("MOTD").asString());
 				inf.UpdateAvailable = isNewerVersion(inf.getCurrentVersion());
 				checkArgs.Success = !inf.Error;
 				checkArgs.Info = inf;

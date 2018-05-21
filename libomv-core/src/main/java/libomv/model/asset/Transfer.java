@@ -1,6 +1,7 @@
 package libomv.model.asset;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import libomv.types.UUID;
 import libomv.utils.Helpers;
@@ -17,11 +18,11 @@ public class Transfer {
 	public int packetNum; // protected
 	public boolean success;
 	public long timeSinceLastPacket; // protected
-	public HashMap<Integer, DelayedTransfer> delayed; // protected
+	public Map<Integer, DelayedTransfer> delayed; // protected
 	public String suffix;
 
 	public Transfer() {
 		assetData = Helpers.EmptyBytes;
-		delayed = new HashMap<Integer, DelayedTransfer>();
+		delayed = new HashMap<>();
 	}
 }

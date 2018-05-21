@@ -30,6 +30,7 @@
 package libomv;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class Statistics {
 
@@ -55,10 +56,10 @@ public class Statistics {
 		}
 	}
 
-	private HashMap<String, Stat> statistics;
+	private Map<String, Stat> statistics;
 
 	public Statistics() {
-		statistics = new HashMap<String, Stat>();
+		statistics = new HashMap<>();
 	}
 
 	public void updateNetStats(String key, Type Type, long txBytes, long rxBytes) {
@@ -86,9 +87,9 @@ public class Statistics {
 		}
 	}
 
-	public HashMap<String, Stat> getStatistics() {
+	public Map<String, Stat> getStatistics() {
 		synchronized (statistics) {
-			return new HashMap<String, Stat>(statistics);
+			return new HashMap<>(statistics);
 		}
 	}
 }

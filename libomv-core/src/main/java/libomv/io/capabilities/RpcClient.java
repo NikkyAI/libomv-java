@@ -235,29 +235,29 @@ public class RpcClient extends AsyncHTTPClient<OSD> {
 			serializer.startTag(null, TYPE_NIL).endTag(null, TYPE_NIL);
 			break;
 		case Boolean:
-			serializer.startTag(null, TYPE_BOOLEAN).text(data.AsString()).endTag(null, TYPE_BOOLEAN);
+			serializer.startTag(null, TYPE_BOOLEAN).text(data.asString()).endTag(null, TYPE_BOOLEAN);
 			break;
 		case Integer:
-			serializer.startTag(null, TYPE_I4).text(data.AsString()).endTag(null, TYPE_I4);
+			serializer.startTag(null, TYPE_I4).text(data.asString()).endTag(null, TYPE_I4);
 			break;
 		// case Long:
 		// serializer.startTag(null, TYPE_I8).text(data.AsString()).endTag(null,
 		// TYPE_I8);
 		// break;
 		case Real:
-			serializer.startTag(null, TYPE_DOUBLE).text(data.AsString()).endTag(null, TYPE_DOUBLE);
+			serializer.startTag(null, TYPE_DOUBLE).text(data.asString()).endTag(null, TYPE_DOUBLE);
 			break;
 		case String:
 		case URI:
 		case UUID:
-			serializer.startTag(null, TYPE_STRING).text(data.AsString()).endTag(null, TYPE_STRING);
+			serializer.startTag(null, TYPE_STRING).text(data.asString()).endTag(null, TYPE_STRING);
 			break;
 		case Date:
-			String dateStr = dateFormat.format(data.AsDate());
+			String dateStr = dateFormat.format(data.asDate());
 			serializer.startTag(null, TYPE_DATE_TIME_ISO8601).text(dateStr).endTag(null, TYPE_DATE_TIME_ISO8601);
 			break;
 		case Binary:
-			String value = new String(Base64.encodeBase64(data.AsBinary()));
+			String value = new String(Base64.encodeBase64(data.asBinary()));
 			serializer.startTag(null, TYPE_BASE64).text(value).endTag(null, TYPE_BASE64);
 			break;
 		case Array:
@@ -313,32 +313,32 @@ public class RpcClient extends AsyncHTTPClient<OSD> {
 				if (notEmpty) {
 					num = Helpers.TryParseInt(parser.nextText());
 				}
-				ret = OSD.FromInteger(num);
+				ret = OSD.fromInteger(num);
 			} else if (name.equals(TYPE_I8)) {
 				long num = 0;
 				if (notEmpty) {
 					num = Helpers.TryParseLong(parser.nextText());
 				}
-				ret = OSD.FromLong(num);
+				ret = OSD.fromLong(num);
 			} else if (name.equals(TYPE_DOUBLE)) {
 				double num = 0d;
 				if (notEmpty) {
 					num = Helpers.TryParseDouble(parser.nextText());
 				}
-				ret = OSD.FromReal(num);
+				ret = OSD.fromReal(num);
 			} else if (name.equals(TYPE_BOOLEAN)) {
 				boolean bool = false;
 				if (notEmpty) {
 					value = parser.nextText().trim();
 					bool = (value != null && !value.isEmpty() && value.equals("1"));
 				}
-				ret = OSD.FromBoolean(bool);
+				ret = OSD.fromBoolean(bool);
 			} else if (name.equals(TYPE_STRING)) {
-				ret = OSD.FromUUID(parser.nextText());
+				ret = OSD.fromUUID(parser.nextText());
 			} else if (name.equals(TYPE_DATE_TIME_ISO8601)) {
 				value = parser.nextText();
 				try {
-					ret = OSD.FromDate(dateFormat.parse(value));
+					ret = OSD.fromDate(dateFormat.parse(value));
 				} catch (ParseException e) {
 					throw new IOException("Cannot deserialize dateTime " + value);
 				}
@@ -347,7 +347,7 @@ public class RpcClient extends AsyncHTTPClient<OSD> {
 				if (notEmpty) {
 					data = Base64.decodeBase64(parser.nextText());
 				}
-				ret = OSD.FromBinary(data);
+				ret = OSD.fromBinary(data);
 			} else if (name.equals(TYPE_ARRAY)) {
 				parser.nextTag(); // TAG_DATA (<data>)
 				parser.require(XmlPullParser.START_TAG, null, TAG_DATA);

@@ -42,6 +42,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class LindenSkeleton {
+
 	public class JointBase {
 		String name;
 		float[] pos;
@@ -144,7 +145,7 @@ public class LindenSkeleton {
 		}
 
 		public void startDocument() throws SAXException {
-			this.stack = new ArrayList<List<Joint>>();
+			this.stack = new ArrayList<>();
 			this.joints = null;
 		}
 
@@ -165,7 +166,7 @@ public class LindenSkeleton {
 			if (qName.equalsIgnoreCase("bone")) {
 				if (joint != null) {
 					if (joints == null)
-						joints = new ArrayList<Joint>();
+						joints = new ArrayList<>();
 					joints.add(joint); // parent into joints array
 					stack.add(joints); // joints array onto stack
 					joints = null;
@@ -234,7 +235,7 @@ public class LindenSkeleton {
 
 	/**
 	 * Load the default skeleton file "character/avatar_skeleton.xml"
-	 * 
+	 *
 	 * @return the loaded skeleton object or null
 	 * @throws Exception
 	 */
@@ -244,7 +245,7 @@ public class LindenSkeleton {
 
 	/**
 	 * Load the default skeleton file "character/avatar_skeleton.xml"
-	 * 
+	 *
 	 * @param client
 	 *            GridClient used to locate the code base as well as the settings
 	 *            for the character directory
@@ -291,17 +292,17 @@ public class LindenSkeleton {
 	 * Build and "expanded" list of joints
 	 *
 	 * The algorithm is based on this description:
-	 * 
+	 *
 	 * An "expanded" list of joints, not just a linear array of the joints as
 	 * defined in the skeleton file. In particular, any joint that has more than one
 	 * child will be repeated in the list for each of its children.
-	 * 
+	 *
 	 * @param jointsFilter
 	 *            The list should only take these joint names in consideration
 	 * @returns An "expanded" joints list as a flat list of bone names
 	 */
 	public List<String> buildExpandedJointList(String[] jointsFilter) {
-		List<String> expandedJointList = new ArrayList<String>();
+		List<String> expandedJointList = new ArrayList<>();
 
 		// not really sure about this algorithm, but it seems to fit the bill:
 		// and the mesh doesn't seem to be overly distorted

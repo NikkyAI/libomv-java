@@ -280,9 +280,9 @@ public class InventoryFolder extends InventoryNode {
 	 * @return an arraylist containing the children nodes of this folder or null if
 	 *         there is no children list yet
 	 */
-	public ArrayList<InventoryNode> getContents() {
+	public List<InventoryNode> getContents() {
 		if (children != null)
-			return new ArrayList<InventoryNode>(children);
+			return new ArrayList<>(children);
 		return null;
 	}
 
@@ -293,11 +293,11 @@ public class InventoryFolder extends InventoryNode {
 
 	protected OSDMap toOSD(boolean descendentRoot) {
 		OSDMap map = super.toOSD();
-		map.put(descendentRoot ? "folder_id" : "category_id", OSD.FromUUID(itemID));
-		map.put("type_default", OSD.FromInteger(preferredType.getValue()));
-		map.put("version", OSD.FromInteger(version));
+		map.put(descendentRoot ? "folder_id" : "category_id", OSD.fromUUID(itemID));
+		map.put("type_default", OSD.fromInteger(preferredType.getValue()));
+		map.put("version", OSD.fromInteger(version));
 		if (descendentRoot) {
-			map.put("descendents", OSD.FromInteger(descendentCount));
+			map.put("descendents", OSD.fromInteger(descendentCount));
 		}
 		return map;
 	}
@@ -305,14 +305,14 @@ public class InventoryFolder extends InventoryNode {
 	protected void fromOSD(OSDMap map) {
 		super.fromOSD(map);
 		if (ownerID == null)
-			ownerID = map.get("owner_id").AsUUID();
-		UUID folderID = map.get("category_id").AsUUID();
+			ownerID = map.get("owner_id").asUUID();
+		UUID folderID = map.get("category_id").asUUID();
 		if (folderID == null)
-			folderID = map.get("folder_id").AsUUID();
-		version = map.get("version").AsInteger();
-		preferredType = FolderType.setValue(map.get("type_default").AsInteger());
+			folderID = map.get("folder_id").asUUID();
+		version = map.get("version").asInteger();
+		preferredType = FolderType.setValue(map.get("type_default").asInteger());
 		if (map.containsKey("descendents")) {
-			descendentCount = map.get("descendents").AsInteger();
+			descendentCount = map.get("descendents").asInteger();
 		}
 	}
 
@@ -335,7 +335,7 @@ public class InventoryFolder extends InventoryNode {
 
 		int num = info.readInt();
 		if (num >= 0) {
-			children = new ArrayList<InventoryNode>(num);
+			children = new ArrayList<>(num);
 			for (int i = 0; i < num; i++)
 				children.add((InventoryNode) info.readObject());
 		}

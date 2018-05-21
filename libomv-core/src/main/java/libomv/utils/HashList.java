@@ -38,7 +38,7 @@ public class HashList<K, V> extends HashMap<K, V> {
 	private static final long serialVersionUID = 1L;
 
 	/** Variable KeyList. */
-	protected List<K> keyList = new ArrayList<K>();
+	protected List<K> keyList = new ArrayList<>();
 
 	/**
 	 * Instantiates a new HashList.
@@ -49,7 +49,7 @@ public class HashList<K, V> extends HashMap<K, V> {
 
 	/**
 	 * Instantiates a new HashList.
-	 * 
+	 *
 	 * @param map
 	 */
 	public HashList(Map<K, V> map) {
@@ -58,7 +58,7 @@ public class HashList<K, V> extends HashMap<K, V> {
 
 	/**
 	 * Instantiates a new HashList.
-	 * 
+	 *
 	 * @param t
 	 */
 	public HashList(Object[][] t) {
@@ -68,7 +68,7 @@ public class HashList<K, V> extends HashMap<K, V> {
 
 	/**
 	 * Instantiates a new HashList.
-	 * 
+	 *
 	 * @param initSz
 	 */
 	public HashList(int initSz) {
@@ -77,7 +77,7 @@ public class HashList<K, V> extends HashMap<K, V> {
 
 	/**
 	 * Instantiates a new HashList.
-	 * 
+	 *
 	 * @param initSz
 	 * @param factor
 	 */
@@ -88,9 +88,9 @@ public class HashList<K, V> extends HashMap<K, V> {
 	/**
 	 * Adds the 2D object array [row][col] to the HashList, where for each row,
 	 * using col=0 as key and col=1 as value.
-	 * 
+	 *
 	 * @param t
-	 * 
+	 *
 	 * @return Adds the as HashList
 	 */
 	@SuppressWarnings("unchecked")
@@ -117,9 +117,9 @@ public class HashList<K, V> extends HashMap<K, V> {
 
 	/**
 	 * Gets the String Value by Key.
-	 * 
+	 *
 	 * @param key
-	 * 
+	 *
 	 * @return the String as String
 	 */
 	public String getString(Object key) {
@@ -131,10 +131,10 @@ public class HashList<K, V> extends HashMap<K, V> {
 
 	/**
 	 * get stored object by position.
-	 * 
+	 *
 	 * @param position
 	 *            Position of stored object in the hash List.
-	 * 
+	 *
 	 * @return Object stored at that position.
 	 */
 	public V get(int position) {
@@ -146,10 +146,10 @@ public class HashList<K, V> extends HashMap<K, V> {
 
 	/**
 	 * get hash key of stored object by position.
-	 * 
+	 *
 	 * @param position
 	 *            Position of stored object in the hash List.
-	 * 
+	 *
 	 * @return Hash key of object stored at that position.
 	 */
 	public K getKey(int position) {
@@ -160,9 +160,9 @@ public class HashList<K, V> extends HashMap<K, V> {
 
 	/**
 	 * Gets the KeyPosition.
-	 * 
+	 *
 	 * @param key
-	 * 
+	 *
 	 * @return the KeyPosition as int
 	 */
 	public int getKeyPosition(K key) {
@@ -174,7 +174,7 @@ public class HashList<K, V> extends HashMap<K, V> {
 
 	/**
 	 * Gets the KeyList.
-	 * 
+	 *
 	 * @return the KeyList as List
 	 */
 	public List<K> getKeyList() {
@@ -188,10 +188,10 @@ public class HashList<K, V> extends HashMap<K, V> {
 
 	/**
 	 * Put value.
-	 * 
+	 *
 	 * @param key
 	 * @param value
-	 * 
+	 *
 	 * @return Put value as HashList
 	 */
 	protected HashList<K, V> putValue(K key, V value) {
@@ -235,7 +235,7 @@ public class HashList<K, V> extends HashMap<K, V> {
 
 	/**
 	 * Converts to Array.
-	 * 
+	 *
 	 * @return Array as Object[]
 	 */
 	public V[] toValueArray(V[] a) {
@@ -244,7 +244,7 @@ public class HashList<K, V> extends HashMap<K, V> {
 
 	/**
 	 * Converts to Array.
-	 * 
+	 *
 	 * @return Array as Object[]
 	 */
 	public Object[][] toKeyValueArray() {
@@ -259,9 +259,9 @@ public class HashList<K, V> extends HashMap<K, V> {
 
 	/**
 	 * Converts to List.
-	 * 
+	 *
 	 * @param v
-	 * 
+	 *
 	 * @return List
 	 */
 	public List<V> toValueList(List<V> v) {
@@ -273,7 +273,7 @@ public class HashList<K, V> extends HashMap<K, V> {
 
 	/**
 	 * Converts to List.
-	 * 
+	 *
 	 * @return List as List
 	 */
 	public List<V> toList() {

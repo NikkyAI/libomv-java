@@ -87,8 +87,8 @@ public class GroupChannel extends AbstractChannel {
 		add(getJScrpAttendents(), BorderLayout.EAST);
 
 		try {
-			if (!_Client.Self.GroupChatSessions.containsKey(session)) {
-				_Client.Self.ChatterBoxAcceptInvite(session);
+			if (!_Client.agent.groupChatSessions.containsKey(session)) {
+				_Client.agent.chatterBoxAcceptInvite(session);
 			}
 		} catch (Exception ex) {
 			logger.error(GridClient.Log("Failed to join group chat", _Client), ex);
@@ -106,7 +106,7 @@ public class GroupChannel extends AbstractChannel {
 	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style)
 			throws BadLocationException {
 		// Determine if this is a friend...
-		boolean friend = _Client.Friends.getFriendList().containsKey(fromId);
+		boolean friend = _Client.friends.getFriendList().containsKey(fromId);
 		String localStyle = style, localMessage = message;
 
 		// If this is an action message.
@@ -130,7 +130,7 @@ public class GroupChannel extends AbstractChannel {
 
 	@Override
 	public void transmitMessage(String message, ChatType type) throws UnsupportedEncodingException, Exception {
-		String localMessage = message, self = _Client.Self.getName();
+		String localMessage = message, self = _Client.agent.getName();
 
 		if (message.length() >= 1000) {
 			localMessage = message.substring(0, 1000);
@@ -158,11 +158,11 @@ public class GroupChannel extends AbstractChannel {
 		super.transmitMessage(localMessage, type);
 
 		// Send the message.
-		_Client.Self.InstantMessageGroup(getUUID(), localMessage);
+		_Client.agent.instantMessageGroup(getUUID(), localMessage);
 	}
 
 	protected void triggerTyping(boolean start) throws Exception {
-		_Client.Self.SendTypingState(getUUID(), getSession(), start);
+		_Client.agent.sendTypingState(getUUID(), getSession(), start);
 	}
 
 	private JScrollPane getJScrpAttendents() {

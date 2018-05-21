@@ -31,22 +31,15 @@ package libomv.assets;
 
 import java.io.UnsupportedEncodingException;
 
+import org.apache.log4j.Logger;
+
 import libomv.model.asset.AssetType;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
 
 /** Represents a Callingcard with AvatarID and Position vector */
 public class AssetCallingCard extends AssetItem {
-	/* Returns asset type */
-	@Override
-	public AssetType getAssetType() {
-		return AssetType.CallingCard;
-	}
-
-	/** UUID of the Callingcard target avatar */
-	public UUID getAvatarID() {
-		return assetID;
-	}
+	private static final Logger logger = Logger.getLogger(AssetCallingCard.class);
 
 	/**
 	 * Construct an Asset object of type Callingcard
@@ -70,13 +63,24 @@ public class AssetCallingCard extends AssetItem {
 		super(avatarID, null);
 	}
 
+	/* Returns asset type */
+	@Override
+	public AssetType getAssetType() {
+		return AssetType.CallingCard;
+	}
+
+	/** UUID of the Callingcard target avatar */
+	public UUID getAvatarID() {
+		return assetID;
+	}
+
 	/**
 	 * Encode the raw contents of a string with the specific Callingcard format
 	 */
 	@Override
 	protected void encode() {
 		String temp = "Callingcard version 2\n" + "avatar_id " + assetID.toString() + "\n";
-		assetData = Helpers.StringToBytes(temp);
+		assetData = Helpers.stringToBytes(temp);
 	}
 
 	/**
@@ -96,6 +100,7 @@ public class AssetCallingCard extends AssetItem {
 				return true;
 			}
 		} catch (UnsupportedEncodingException e) {
+			logger.error(e);
 		}
 		return false;
 	}

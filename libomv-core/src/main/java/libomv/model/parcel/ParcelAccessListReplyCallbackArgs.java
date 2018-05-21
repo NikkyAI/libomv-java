@@ -1,6 +1,6 @@
 package libomv.model.parcel;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import libomv.model.Simulator;
 import libomv.utils.CallbackArgs;
@@ -12,7 +12,7 @@ public class ParcelAccessListReplyCallbackArgs implements CallbackArgs {
 	private final int sequenceID;
 	private final int localID;
 	private final int flags;
-	private final ArrayList<ParcelAccessEntry> accessList;
+	private final List<ParcelAccessEntry> accessList;
 
 	/**
 	 * Construct a new instance of the ParcelAccessListReplyCallbackArgs class
@@ -30,7 +30,7 @@ public class ParcelAccessListReplyCallbackArgs implements CallbackArgs {
 	 *            The list containing the white/blacklisted agents for the parcel
 	 */
 	public ParcelAccessListReplyCallbackArgs(Simulator simulator, int sequenceID, int localID, int flags,
-			ArrayList<ParcelAccessEntry> accessEntries) {
+			List<ParcelAccessEntry> accessEntries) {
 		this.simulator = simulator;
 		this.sequenceID = sequenceID;
 		this.localID = localID;
@@ -60,7 +60,7 @@ public class ParcelAccessListReplyCallbackArgs implements CallbackArgs {
 	}
 
 	// Get the list containing the white/blacklisted agents for the parcel
-	public final ArrayList<ParcelAccessEntry> getAccessList() {
+	public final List<ParcelAccessEntry> getAccessList() {
 		return accessList;
 	}
 

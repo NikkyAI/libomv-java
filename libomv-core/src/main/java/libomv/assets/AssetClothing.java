@@ -34,11 +34,6 @@ import libomv.types.UUID;
 
 // Represents an {@link AssetWearable} that can be worn on an avatar such as a Shirt, Pants, etc.
 public class AssetClothing extends AssetWearable {
-	// Override the base classes AssetType
-	@Override
-	public AssetType getAssetType() {
-		return AssetType.Clothing;
-	}
 
 	/**
 	 * Initializes a new instance of an AssetClothing object with parameters
@@ -51,4 +46,11 @@ public class AssetClothing extends AssetWearable {
 	public AssetClothing(UUID assetID, byte[] assetData) {
 		super(assetID, assetData);
 	}
+
+	// Override the base classes AssetType
+	@Override
+	public AssetType getAssetType() {
+		return AssetType.Clothing;
+	}
+
 }

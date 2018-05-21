@@ -34,52 +34,52 @@ import libomv.utils.Helpers;
 public class OSDInteger extends OSD {
 	private int value;
 
-	@Override
-	public OSDType getType() {
-		return OSDType.Integer;
-	}
-
 	public OSDInteger(int value) {
 		this.value = value;
 	}
 
 	@Override
-	public boolean AsBoolean() {
+	public OSDType getType() {
+		return OSDType.Integer;
+	}
+
+	@Override
+	public boolean asBoolean() {
 		return value != 0;
 	}
 
 	@Override
-	public int AsInteger() {
+	public int asInteger() {
 		return value;
 	}
 
 	@Override
-	public int AsUInteger() {
+	public int asUInteger() {
 		return (value & 0xFFFFFFFF);
 	}
 
 	@Override
-	public long AsLong() {
+	public long asLong() {
 		return value;
 	}
 
 	@Override
-	public long AsULong() {
+	public long asULong() {
 		return (value & 0xFFFFFFFF);
 	}
 
 	@Override
-	public double AsReal() {
+	public double asReal() {
 		return value;
 	}
 
 	@Override
-	public String AsString() {
+	public String asString() {
 		return ((Integer) value).toString();
 	}
 
 	@Override
-	public byte[] AsBinary() {
+	public byte[] asBinary() {
 		return Helpers.Int32ToBytesB(value);
 	}
 
@@ -94,11 +94,11 @@ public class OSDInteger extends OSD {
 	}
 
 	public boolean equals(OSD osd) {
-		return osd != null && osd.AsInteger() == value;
+		return osd != null && osd.asInteger() == value;
 	}
 
 	@Override
 	public String toString() {
-		return AsString();
+		return asString();
 	}
 }

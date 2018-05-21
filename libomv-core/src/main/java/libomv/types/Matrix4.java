@@ -186,7 +186,7 @@ public final class Matrix4 {
 		double cx, cy, cz; // cosines
 		double sx, sz; // sines
 
-		angleY = Math.asin(Helpers.Clamp(M13, -1f, 1f));
+		angleY = Math.asin(Helpers.clamp(M13, -1f, 1f));
 		cy = Math.cos(angleY);
 
 		if (Math.abs(cy) > 0.005f) {

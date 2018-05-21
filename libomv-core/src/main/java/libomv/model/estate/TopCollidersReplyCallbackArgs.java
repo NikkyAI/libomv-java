@@ -1,6 +1,6 @@
 package libomv.model.estate;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import libomv.types.UUID;
 import libomv.utils.CallbackArgs;
@@ -10,7 +10,7 @@ import libomv.utils.CallbackArgs;
  */
 public class TopCollidersReplyCallbackArgs implements CallbackArgs {
 	private final int objectCount;
-	private final HashMap<UUID, EstateTask> tasks;
+	private final Map<UUID, EstateTask> tasks;
 
 	/**
 	 * Construct a new instance of the TopCollidersReplyEventArgs class
@@ -20,7 +20,7 @@ public class TopCollidersReplyCallbackArgs implements CallbackArgs {
 	 * @param tasks
 	 *            Dictionary of Object UUIDs to tasks returned in LandStatReply
 	 */
-	public TopCollidersReplyCallbackArgs(int objectCount, HashMap<UUID, EstateTask> tasks) {
+	public TopCollidersReplyCallbackArgs(int objectCount, Map<UUID, EstateTask> tasks) {
 		this.objectCount = objectCount;
 		this.tasks = tasks;
 	}
@@ -31,7 +31,7 @@ public class TopCollidersReplyCallbackArgs implements CallbackArgs {
 	}
 
 	// A Dictionary of Object UUIDs to tasks returned in LandStatReply
-	public HashMap<UUID, EstateTask> getTasks() {
+	public Map<UUID, EstateTask> getTasks() {
 		return tasks;
 	}
 

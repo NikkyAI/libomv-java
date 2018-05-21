@@ -4,7 +4,6 @@ import libomv.model.Simulator;
 import libomv.primitives.PhysicsProperties;
 import libomv.utils.CallbackArgs;
 
-//TODO:FIXME Why are these public?
 public class PhysicsPropertiesCallbackArgs implements CallbackArgs {
 	// Simulator where the message originated
 	public Simulator simulator;

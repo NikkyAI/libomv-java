@@ -361,7 +361,7 @@ public class HashMapInt<K> {
 		}
 
 		// Creates the new entry.
-		table[index] = new Entry<K>(hash, key, value, table[index]);
+		table[index] = new Entry<>(hash, key, value, table[index]);
 		if (size++ >= threshold)
 			resize(2 * table.length);
 

@@ -99,20 +99,20 @@ public class OARUnpackTest extends TestCase {
 		reader.close();
 
 		assertNotNull(settings);
-		assertTrue(settings.AllowLandResell);
-		assertTrue(settings.AllowLandJoinDivide);
-		assertTrue(settings.AgentLimit == 40);
-		assertTrue(settings.TerrainDetail0.equals(new UUID("7c2ee836-dc42-4100-be85-ff983385d78b")));
-		assertTrue(settings.TerrainDetail1.equals(new UUID("abb783e6-3e93-26c0-248a-247666855da3")));
-		assertTrue(settings.TerrainDetail2.equals(new UUID("179cdabd-398a-9b6b-1391-4dc333ba321f")));
-		assertTrue(settings.TerrainDetail3.equals(new UUID("beb169c7-11ea-fff2-efe5-0f24dc881df2")));
+		assertTrue(settings.allowLandResell);
+		assertTrue(settings.allowLandJoinDivide);
+		assertTrue(settings.agentLimit == 40);
+		assertTrue(settings.terrainDetail0.equals(new UUID("7c2ee836-dc42-4100-be85-ff983385d78b")));
+		assertTrue(settings.terrainDetail1.equals(new UUID("abb783e6-3e93-26c0-248a-247666855da3")));
+		assertTrue(settings.terrainDetail2.equals(new UUID("179cdabd-398a-9b6b-1391-4dc333ba321f")));
+		assertTrue(settings.terrainDetail3.equals(new UUID("beb169c7-11ea-fff2-efe5-0f24dc881df2")));
 	}
 
 	public void testUnpackArchive() throws Exception {
 		URL fileName = this.getClass().getClassLoader().getResource("opensim-openvce-2010-07-07.oar");
 		File file = new File(fileName.toURI());
 
-		OarFile.UnpackageArchive(file, new AssetLoadedCallback(), new TerrainLoadedCallback(),
+		OarFile.unpackageArchive(file, new AssetLoadedCallback(), new TerrainLoadedCallback(),
 				new SceneObjectLoadedCallback(), new SettingsLoadedCallback());
 	}
 }

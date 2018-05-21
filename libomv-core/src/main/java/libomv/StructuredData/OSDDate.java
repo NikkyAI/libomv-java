@@ -38,49 +38,49 @@ import libomv.utils.Helpers;
 public class OSDDate extends OSD {
 	private long value;
 
-	@Override
-	public OSDType getType() {
-		return OSDType.Date;
-	}
-
 	public OSDDate(Date value) {
 		this.value = value.getTime();
 	}
 
 	@Override
-	public String AsString() {
+	public OSDType getType() {
+		return OSDType.Date;
+	}
+
+	@Override
+	public String asString() {
 		SimpleDateFormat df = new SimpleDateFormat(FRACT_DATE_FMT);
 		df.setTimeZone(TimeZone.getTimeZone("UTC"));
 		return df.format(new Date(value));
 	}
 
 	@Override
-	public int AsInteger() {
+	public int asInteger() {
 		return (int) value / 1000;
 	}
 
 	@Override
-	public int AsUInteger() {
+	public int asUInteger() {
 		return (int) (value / 1000) & 0xffffffff;
 	}
 
 	@Override
-	public long AsLong() {
+	public long asLong() {
 		return (value / 1000);
 	}
 
 	@Override
-	public long AsULong() {
+	public long asULong() {
 		return (value / 1000) & 0xffffffffffffffffl;
 	}
 
 	@Override
-	public byte[] AsBinary() {
-		return Helpers.DoubleToBytesL(value / 1000.0);
+	public byte[] asBinary() {
+		return Helpers.doubleToBytesL(value / 1000.0);
 	}
 
 	@Override
-	public Date AsDate() {
+	public Date asDate() {
 		return new Date(value);
 	}
 
@@ -95,11 +95,11 @@ public class OSDDate extends OSD {
 	}
 
 	public boolean equals(OSD osd) {
-		return osd != null && osd.AsLong() == value;
+		return osd != null && osd.asLong() == value;
 	}
 
 	@Override
 	public String toString() {
-		return AsString();
+		return asString();
 	}
 }

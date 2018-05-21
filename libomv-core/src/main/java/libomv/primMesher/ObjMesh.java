@@ -35,6 +35,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.List;
 
 import libomv.primMesher.types.ViewerPolygon;
 import libomv.primMesher.types.ViewerVertex;
@@ -44,19 +45,19 @@ import libomv.utils.HashMapInt;
 import libomv.utils.Helpers;
 
 public class ObjMesh {
-	ArrayList<Vector3> coords = new ArrayList<Vector3>();
-	ArrayList<Vector3> normals = new ArrayList<Vector3>();
-	ArrayList<Vector2> uvs = new ArrayList<Vector2>();
+	List<Vector3> coords = new ArrayList<>();
+	List<Vector3> normals = new ArrayList<>();
+	List<Vector2> uvs = new ArrayList<>();
 
 	public String meshName = Helpers.EmptyString;
-	public ArrayList<ArrayList<ViewerVertex>> viewerVertices = new ArrayList<ArrayList<ViewerVertex>>();
-	public ArrayList<ArrayList<ViewerPolygon>> viewerPolygons = new ArrayList<ArrayList<ViewerPolygon>>();
+	public List<List<ViewerVertex>> viewerVertices = new ArrayList<>();
+	public List<List<ViewerPolygon>> viewerPolygons = new ArrayList<>();
 
-	ArrayList<ViewerVertex> faceVertices = new ArrayList<ViewerVertex>();
-	ArrayList<ViewerPolygon> facePolygons = new ArrayList<ViewerPolygon>();
+	List<ViewerVertex> faceVertices = new ArrayList<>();
+	List<ViewerPolygon> facePolygons = new ArrayList<>();
 	public int numPrimFaces;
 
-	HashMapInt<Integer> viewerVertexLookup = new HashMapInt<Integer>();
+	HashMapInt<Integer> viewerVertexLookup = new HashMapInt<>();
 
 	public ObjMesh(String path) throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(new File(path)));
@@ -163,12 +164,12 @@ public class ObjMesh {
 	private void makePrimFace() {
 		if (faceVertices.size() > 0 && facePolygons.size() > 0) {
 			viewerVertices.add(faceVertices);
-			faceVertices = new ArrayList<ViewerVertex>();
+			faceVertices = new ArrayList<>();
 			viewerPolygons.add(facePolygons);
 
-			facePolygons = new ArrayList<ViewerPolygon>();
+			facePolygons = new ArrayList<>();
 
-			viewerVertexLookup = new HashMapInt<Integer>();
+			viewerVertexLookup = new HashMapInt<>();
 
 			numPrimFaces++;
 		}

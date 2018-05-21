@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -163,7 +163,7 @@ public class AgentThrottle {
 		asset = (value * 0.484f / 3f);
 	}
 
-	private GridClient Client;
+	private GridClient client;
 	private float resend;
 	private float land;
 	private float wind;
@@ -174,14 +174,14 @@ public class AgentThrottle {
 
 	// Default constructor, uses a default high total of 1500 KBps (1536000)
 	public AgentThrottle(GridClient client) {
-		Client = client;
+		this.client = client;
 		setTotal(1536000.0f);
 	}
 
 	/**
 	 * Constructor that decodes an existing AgentThrottle packet in to individual
 	 * values
-	 * 
+	 *
 	 * @param data
 	 *            Reference to the throttle data in an AgentThrottle packet
 	 * @param pos
@@ -207,27 +207,27 @@ public class AgentThrottle {
 
 	/**
 	 * Send an AgentThrottle packet to the current server using the current values
-	 * 
+	 *
 	 * @throws Exception
 	 */
-	public final void Set() throws Exception {
-		Set(null);
+	public final void set() throws Exception {
+		set(null);
 	}
 
 	/**
 	 * Send an AgentThrottle packet to the specified server using the current values
-	 * 
+	 *
 	 * @param simulator
 	 *            the simulator to which to send the packet
 	 * @throws Exception
 	 */
-	public final void Set(SimulatorManager simulator) throws Exception {
+	public final void set(SimulatorManager simulator) throws Exception {
 		AgentThrottlePacket throttle = new AgentThrottlePacket();
-		throttle.AgentData.AgentID = Client.Self.getAgentID();
-		throttle.AgentData.SessionID = Client.Self.getSessionID();
-		throttle.AgentData.CircuitCode = Client.Network.getCircuitCode();
+		throttle.AgentData.AgentID = client.agent.getAgentID();
+		throttle.AgentData.SessionID = client.agent.getSessionID();
+		throttle.AgentData.CircuitCode = client.network.getCircuitCode();
 		throttle.Throttle.GenCounter = 0;
-		throttle.Throttle.setThrottles(this.ToBytes());
+		throttle.Throttle.setThrottles(this.toBytes());
 
 		simulator.sendPacket(throttle);
 	}
@@ -235,18 +235,18 @@ public class AgentThrottle {
 	/**
 	 * Convert the current throttle values to a byte array that can be put in an
 	 * AgentThrottle packet
-	 * 
+	 *
 	 * @return Byte array containing all the throttle values
 	 */
-	public final byte[] ToBytes() {
+	public final byte[] toBytes() {
 		byte[] data = new byte[7 * 4];
-		int i = Helpers.FloatToBytesL(resend, data, 0);
-		i += Helpers.FloatToBytesL(land, data, i);
-		i += Helpers.FloatToBytesL(wind, data, i);
-		i += Helpers.FloatToBytesL(cloud, data, i);
-		i += Helpers.FloatToBytesL(task, data, i);
-		i += Helpers.FloatToBytesL(texture, data, i);
-		i += Helpers.FloatToBytesL(asset, data, i);
+		int i = Helpers.floatToBytesL(resend, data, 0);
+		i += Helpers.floatToBytesL(land, data, i);
+		i += Helpers.floatToBytesL(wind, data, i);
+		i += Helpers.floatToBytesL(cloud, data, i);
+		i += Helpers.floatToBytesL(task, data, i);
+		i += Helpers.floatToBytesL(texture, data, i);
+		i += Helpers.floatToBytesL(asset, data, i);
 		return data;
 	}
 }

@@ -114,7 +114,7 @@ public class TarArchiveWriter {
 			oString[pos] = (char) '0';
 		}
 
-		return Helpers.StringToBytes(new String(oString), Helpers.ASCII_ENCODING);
+		return Helpers.stringToBytes(new String(oString), Helpers.ASCII_ENCODING);
 	}
 
 	/// Write a particular entry
@@ -125,20 +125,20 @@ public class TarArchiveWriter {
 		byte[] header = new byte[512];
 
 		// file path field (100)
-		byte[] nameBytes = Helpers.StringToBytes(filePath, Helpers.ASCII_ENCODING);
+		byte[] nameBytes = Helpers.stringToBytes(filePath, Helpers.ASCII_ENCODING);
 		int nameSize = (nameBytes.length >= 100) ? 100 : nameBytes.length;
 		System.arraycopy(header, 0, nameBytes, 0, nameSize);
 
 		// file mode (8)
-		byte[] modeBytes = Helpers.StringToBytes("0000777", Helpers.ASCII_ENCODING);
+		byte[] modeBytes = Helpers.stringToBytes("0000777", Helpers.ASCII_ENCODING);
 		System.arraycopy(header, 100, modeBytes, 0, 7);
 
 		// owner user id (8)
-		byte[] ownerIdBytes = Helpers.StringToBytes("0000764", Helpers.ASCII_ENCODING);
+		byte[] ownerIdBytes = Helpers.stringToBytes("0000764", Helpers.ASCII_ENCODING);
 		System.arraycopy(header, 108, ownerIdBytes, 0, 7);
 
 		// group user id (8)
-		byte[] groupIdBytes = Helpers.StringToBytes("0000764", Helpers.ASCII_ENCODING);
+		byte[] groupIdBytes = Helpers.stringToBytes("0000764", Helpers.ASCII_ENCODING);
 		System.arraycopy(header, 116, groupIdBytes, 0, 7);
 
 		// file size in bytes (12)
@@ -151,17 +151,17 @@ public class TarArchiveWriter {
 		System.arraycopy(header, 124, fileSizeBytes, 0, 11);
 
 		// last modification time (12)
-		byte[] lastModTimeBytes = Helpers.StringToBytes("11017037332", Helpers.ASCII_ENCODING);
+		byte[] lastModTimeBytes = Helpers.stringToBytes("11017037332", Helpers.ASCII_ENCODING);
 		System.arraycopy(header, 136, lastModTimeBytes, 0, 11);
 
 		// entry type indicator (1)
 		header[156] = (byte) fileType;
 
-		System.arraycopy(header, 329, Helpers.StringToBytes("0000000", Helpers.ASCII_ENCODING), 0, 7);
-		System.arraycopy(header, 337, Helpers.StringToBytes("0000000", Helpers.ASCII_ENCODING), 0, 7);
+		System.arraycopy(header, 329, Helpers.stringToBytes("0000000", Helpers.ASCII_ENCODING), 0, 7);
+		System.arraycopy(header, 337, Helpers.stringToBytes("0000000", Helpers.ASCII_ENCODING), 0, 7);
 
 		// check sum for header block (8) [calculated last]
-		System.arraycopy(header, 148, Helpers.StringToBytes("        ", Helpers.ASCII_ENCODING), 0, 8);
+		System.arraycopy(header, 148, Helpers.stringToBytes("        ", Helpers.ASCII_ENCODING), 0, 8);
 
 		int checksum = 0;
 		for (byte b : header) {

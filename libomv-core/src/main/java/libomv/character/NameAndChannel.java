@@ -22,7 +22,7 @@ import java.util.Map;
 
 /**
  * each data target,usually bones x 3
- * 
+ *
  * @author aki
  */
 public class NameAndChannel {
@@ -30,8 +30,9 @@ public class NameAndChannel {
 	private int channelType;
 	private Channels channels;
 	public static Map<String, String> orderMap;
+
 	static {
-		orderMap = new HashMap<String, String>();
+		orderMap = new HashMap<>();
 		orderMap.put("X", "XYZ");
 		orderMap.put("XY", "XYZ");
 		orderMap.put("XZ", "XZY");
@@ -45,6 +46,12 @@ public class NameAndChannel {
 		orderMap.put("ZY", "ZYX");
 
 		orderMap.put("", "XYZ");
+	}
+
+	public NameAndChannel(String name, int channel, Channels channels) {
+		this.name = name;
+		this.channelType = channel;
+		this.channels = channels;
 	}
 
 	public String getName() {
@@ -61,12 +68,6 @@ public class NameAndChannel {
 
 	public void setChannel(int channel) {
 		this.channelType = channel;
-	}
-
-	public NameAndChannel(String name, int channel, Channels channels) {
-		this.name = name;
-		this.channelType = channel;
-		this.channels = channels;
 	}
 
 	public String getOrder() {

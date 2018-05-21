@@ -71,7 +71,7 @@ public class MultiMap<K, V> {
 	}
 
 	public MultiMap(MultiMap<K, V> innerMap) {
-		this.inner = new HashMap<K, List<V>>();
+		this.inner = new HashMap<>();
 		valueCount = 0;
 		for (Entry<K, List<V>> values : innerMap.entrySet()) {
 			this.inner.put(values.getKey(), values.getValue());
@@ -102,7 +102,7 @@ public class MultiMap<K, V> {
 		List<V> values = inner.get(key);
 		if (values == null) {
 			if (returnEmptyList)
-				return new ArrayList<V>();
+				return new ArrayList<>();
 			else
 				return null;
 		}
@@ -141,7 +141,7 @@ public class MultiMap<K, V> {
 
 	/**
 	 * Gets an iterator for the collection mapped to the specified key.
-	 * 
+	 *
 	 * @param key
 	 *            the key to get an iterator for
 	 * @return the iterator of the collection at the key, empty iterator if key not
@@ -164,7 +164,7 @@ public class MultiMap<K, V> {
 	public void put(K key, V value) {
 		List<V> values = inner.get(key);
 		if (values == null) {
-			values = new ArrayList<V>();
+			values = new ArrayList<>();
 			inner.put(key, values);
 		}
 		if (values.add(value)) {
@@ -302,7 +302,7 @@ public class MultiMap<K, V> {
 	 * @return a Collection containing all the values in the MultiMap.
 	 */
 	public List<V> values() {
-		List<V> allValues = new ArrayList<V>(valueCount());
+		List<V> allValues = new ArrayList<>(valueCount());
 		for (List<V> values : inner.values()) {
 			allValues.addAll(values);
 		}
@@ -327,7 +327,7 @@ public class MultiMap<K, V> {
 	 * @return
 	 */
 	public List<MultiMapEntry> expandedEntries() {
-		List<MultiMapEntry> entries = new ArrayList<MultiMapEntry>(valueCount());
+		List<MultiMapEntry> entries = new ArrayList<>(valueCount());
 		for (Map.Entry<K, List<V>> e : entrySet()) {
 			final K key = e.getKey();
 			for (V value : e.getValue()) {

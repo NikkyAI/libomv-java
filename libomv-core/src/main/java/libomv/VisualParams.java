@@ -182,15 +182,7 @@ public class VisualParams {
 		}
 	}
 
-	public static SortedMap<Integer, VisualParam> params = new TreeMap<Integer, VisualParam>();
-
-	public VisualParam find(String name, String wearable) {
-		for (Entry<Integer, VisualParam> param : params.entrySet())
-			if (param.getValue().name == name && param.getValue().wearable == wearable)
-				return param.getValue();
-
-		return new VisualParam();
-	}
+	public static SortedMap<Integer, VisualParam> params = new TreeMap<>();
 
 	public VisualParams() {
 		params.put(1, new VisualParam(1, "Big_Brow", 0, "shape", "Brow Size", "Small", "Large", -0.3f, -0.3f, 2f, false,
@@ -1486,4 +1478,13 @@ public class VisualParams {
 						"Breast Physics LeftRight Damping", Helpers.EmptyString, Helpers.EmptyString, 0.2f, 0f, 1f,
 						false, null, null, null));
 	}
+
+	public VisualParam find(String name, String wearable) {
+		for (Entry<Integer, VisualParam> param : params.entrySet())
+			if (param.getValue().name == name && param.getValue().wearable == wearable)
+				return param.getValue();
+
+		return new VisualParam();
+	}
+
 }

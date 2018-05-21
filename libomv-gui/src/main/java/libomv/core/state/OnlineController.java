@@ -64,7 +64,7 @@ public class OnlineController implements StateController {
 
 	public OnlineController(MainControl main) {
 		_Main = main;
-		_Main.getGridClient().Self.OnBalanceUpdated.add(balanceUpdateCallback);
+		_Main.getGridClient().agent.onBalanceUpdated.add(balanceUpdateCallback);
 
 		// Create the CommWindow right away as hidden window as it is also our
 		// communication manager
@@ -96,7 +96,7 @@ public class OnlineController implements StateController {
 	}
 
 	public void dispose() {
-		_Main.getGridClient().Self.OnBalanceUpdated.remove(balanceUpdateCallback);
+		_Main.getGridClient().agent.onBalanceUpdated.remove(balanceUpdateCallback);
 		_Comm.dispose();
 	}
 
@@ -172,9 +172,9 @@ public class OnlineController implements StateController {
 
 	private JLabel getJAmount() {
 		if (jMiAmount == null) {
-			_Main.getGridClient().Self.getBalance();
+			_Main.getGridClient().agent.getBalance();
 			jMiAmount = new JLabel(String.format("%s %s", _Main.getGridClient().getGrid(null).currencySym,
-					_Main.getGridClient().Self.getBalance()));
+					_Main.getGridClient().agent.getBalance()));
 		}
 		return jMiAmount;
 	}

@@ -189,29 +189,29 @@ public final class LLSDXml extends OSDParser {
 			writer.startTag(null, UNDEF_TAG).endTag(null, UNDEF_TAG);
 			break;
 		case Boolean:
-			writer.startTag(null, BOOLEAN_TAG).text(data.AsString()).endTag(null, BOOLEAN_TAG);
+			writer.startTag(null, BOOLEAN_TAG).text(data.asString()).endTag(null, BOOLEAN_TAG);
 			break;
 		case Integer:
-			writer.startTag(null, INTEGER_TAG).text(data.AsString()).endTag(null, INTEGER_TAG);
+			writer.startTag(null, INTEGER_TAG).text(data.asString()).endTag(null, INTEGER_TAG);
 			break;
 		case Real:
-			writer.startTag(null, REAL_TAG).text(data.AsString()).endTag(null, REAL_TAG);
+			writer.startTag(null, REAL_TAG).text(data.asString()).endTag(null, REAL_TAG);
 			break;
 		case String:
-			writer.startTag(null, STRING_TAG).text(data.AsString()).endTag(null, STRING_TAG);
+			writer.startTag(null, STRING_TAG).text(data.asString()).endTag(null, STRING_TAG);
 			break;
 		case UUID:
-			writer.startTag(null, UUID_TAG).text(data.AsString()).endTag(null, UUID_TAG);
+			writer.startTag(null, UUID_TAG).text(data.asString()).endTag(null, UUID_TAG);
 			break;
 		case Date:
-			writer.startTag(null, DATE_TAG).text(data.AsString()).endTag(null, DATE_TAG);
+			writer.startTag(null, DATE_TAG).text(data.asString()).endTag(null, DATE_TAG);
 			break;
 		case URI:
-			writer.startTag(null, URI_TAG).text(data.AsString()).endTag(null, URI_TAG);
+			writer.startTag(null, URI_TAG).text(data.asString()).endTag(null, URI_TAG);
 			break;
 		case Binary:
 			writer.startTag(null, BINARY_TAG).attribute(null, "encoding", "base64")
-					.text(Base64.encodeBase64String(data.AsBinary())).endTag(null, BINARY_TAG);
+					.text(Base64.encodeBase64String(data.asBinary())).endTag(null, BINARY_TAG);
 			break;
 		case Map:
 			OSDMap map = (OSDMap) data;
@@ -261,36 +261,36 @@ public final class LLSDXml extends OSDParser {
 				s = parser.nextText().trim();
 				bool = (s != null && !s.isEmpty() && (s.toLowerCase().equals("true") || s.equals("1")));
 			}
-			ret = OSD.FromBoolean(bool);
+			ret = OSD.fromBoolean(bool);
 		} else if (name.equals(INTEGER_TAG)) {
 			int value = 0;
 			if (notEmpty) {
 				value = Helpers.TryParseInt(parser.nextText());
 			}
-			ret = OSD.FromInteger(value);
+			ret = OSD.fromInteger(value);
 		} else if (name.equals(REAL_TAG)) {
 			double real = 0d;
 			if (notEmpty) {
 				real = Helpers.TryParseDouble(parser.nextText());
 			}
-			ret = OSD.FromReal(real);
+			ret = OSD.fromReal(real);
 		} else if (name.equals(UUID_TAG)) {
 			UUID uuid = UUID.Zero;
 			if (notEmpty) {
 				uuid = new UUID(parser.nextText());
 			}
-			ret = OSD.FromUUID(uuid);
+			ret = OSD.fromUUID(uuid);
 		} else if (name.equals(DATE_TAG)) {
 			Date date = Helpers.Epoch;
 			if (notEmpty) {
-				date = new OSDString(parser.nextText()).AsDate();
+				date = new OSDString(parser.nextText()).asDate();
 			}
-			ret = OSD.FromDate(date);
+			ret = OSD.fromDate(date);
 		} else if (name.equals(STRING_TAG)) {
 			if (notEmpty) {
 				s = parser.nextText();
 			}
-			ret = OSD.FromString(s);
+			ret = OSD.fromString(s);
 		} else if (name.equals(BINARY_TAG)) {
 			s = parser.getAttributeValue(null, "encoding");
 			if (s != null && !s.equals("base64")) {
@@ -300,14 +300,14 @@ public final class LLSDXml extends OSDParser {
 			if (notEmpty) {
 				data = Base64.decodeBase64(parser.nextText());
 			}
-			ret = OSD.FromBinary(data);
+			ret = OSD.fromBinary(data);
 		} else if (name.equals(URI_TAG)) {
 			try {
 				URI uri = new URI(Helpers.EmptyString);
 				if (notEmpty) {
 					uri = new URI(parser.nextText());
 				}
-				ret = OSD.FromUri(uri);
+				ret = OSD.fromUri(uri);
 			} catch (URISyntaxException ex) {
 				throw new XmlPullParserException("Error parsing URI: " + ex.getMessage(), parser, ex);
 			}

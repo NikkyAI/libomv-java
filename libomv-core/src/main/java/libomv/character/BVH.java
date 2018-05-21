@@ -51,7 +51,7 @@ public class BVH {
 		this.hiearchy = hiearchy;
 	}
 
-	public List<NameAndChannel> nameAndChannels = new ArrayList<NameAndChannel>();
+	public List<NameAndChannel> nameAndChannels = new ArrayList<>();
 
 	public List<NameAndChannel> getNameAndChannels() {
 		return nameAndChannels;
@@ -92,7 +92,7 @@ public class BVH {
 	}
 
 	public List<BVHNode> getNodeList() {
-		List<BVHNode> nodes = new ArrayList<BVHNode>();
+		List<BVHNode> nodes = new ArrayList<>();
 		addNode(nodes, getHiearchy());
 		return nodes;
 	}

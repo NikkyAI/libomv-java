@@ -26,8 +26,8 @@ public final class GroupNotice {
 		}
 
 		OSDMap att = new OSDMap();
-		att.put("item_id", OSD.FromUUID(attachmentID));
-		att.put("owner_id", OSD.FromUUID(ownerID));
+		att.put("item_id", OSD.fromUUID(attachmentID));
+		att.put("owner_id", OSD.fromUUID(ownerID));
 
 		return OSDParser.serializeToBytes(att, OSDFormat.Xml, true, Helpers.UTF8_ENCODING);
 	}

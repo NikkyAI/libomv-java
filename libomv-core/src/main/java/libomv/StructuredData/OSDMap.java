@@ -44,28 +44,28 @@ import libomv.types.Vector3d;
 import libomv.types.Vector4;
 
 public class OSDMap extends OSD implements Map<String, OSD> {
-	private HashMap<String, OSD> value;
+	private Map<String, OSD> value;
+
+	public OSDMap() {
+		this.value = new HashMap<>();
+	}
+
+	public OSDMap(int capacity) {
+		this.value = new HashMap<>(capacity);
+	}
+
+	public OSDMap(Map<String, OSD> value) {
+		if (value != null) {
+			this.value = value;
+		} else {
+			this.value = new HashMap<>();
+		}
+	}
 
 	@Override
 	// OSD
 	public OSDType getType() {
 		return OSDType.Map;
-	}
-
-	public OSDMap() {
-		value = new HashMap<String, OSD>();
-	}
-
-	public OSDMap(int capacity) {
-		value = new HashMap<String, OSD>(capacity);
-	}
-
-	public OSDMap(HashMap<String, OSD> value) {
-		if (value != null) {
-			this.value = value;
-		} else {
-			this.value = new HashMap<String, OSD>();
-		}
 	}
 
 	@Override
@@ -80,64 +80,64 @@ public class OSDMap extends OSD implements Map<String, OSD> {
 	}
 
 	@Override
-	public boolean AsBoolean() {
+	public boolean asBoolean() {
 		return !isEmpty();
 	}
 
 	@Override
-	public Vector2 AsVector2() {
+	public Vector2 asVector2() {
 		Vector2 vec = new Vector2(Vector2.Zero);
 		if (containsKey("X") && containsKey("Y")) {
-			vec.X = (float) get("X").AsReal();
-			vec.Y = (float) get("Y").AsReal();
+			vec.X = (float) get("X").asReal();
+			vec.Y = (float) get("Y").asReal();
 		}
 		return vec;
 	}
 
 	@Override
-	public Vector3 AsVector3() {
+	public Vector3 asVector3() {
 		Vector3 vec = new Vector3(Vector3.Zero);
 		if (containsKey("X") && containsKey("Y") && containsKey("Z")) {
-			vec.X = (float) get("X").AsReal();
-			vec.Y = (float) get("Y").AsReal();
-			vec.Z = (float) get("Z").AsReal();
+			vec.X = (float) get("X").asReal();
+			vec.Y = (float) get("Y").asReal();
+			vec.Z = (float) get("Z").asReal();
 		}
 		return vec;
 	}
 
 	@Override
-	public Vector3d AsVector3d() {
+	public Vector3d asVector3d() {
 		Vector3d vec = new Vector3d(Vector3d.Zero);
 		if (containsKey("X") && containsKey("Y") && containsKey("Z")) {
-			vec.X = get("X").AsReal();
-			vec.Y = get("Y").AsReal();
-			vec.Z = get("Z").AsReal();
+			vec.X = get("X").asReal();
+			vec.Y = get("Y").asReal();
+			vec.Z = get("Z").asReal();
 		}
 		return vec;
 	}
 
 	@Override
-	public Vector4 AsVector4() {
+	public Vector4 asVector4() {
 		Vector4 vector = new Vector4(Vector4.Zero);
 
 		if (this.size() == 4) {
-			vector.X = (float) this.get("X").AsReal();
-			vector.Y = (float) this.get("Y").AsReal();
-			vector.Z = (float) this.get("Z").AsReal();
-			vector.S = (float) this.get("S").AsReal();
+			vector.X = (float) this.get("X").asReal();
+			vector.Y = (float) this.get("Y").asReal();
+			vector.Z = (float) this.get("Z").asReal();
+			vector.S = (float) this.get("S").asReal();
 		}
 		return vector;
 	}
 
 	@Override
-	public Quaternion AsQuaternion() {
+	public Quaternion asQuaternion() {
 		Quaternion quaternion = new Quaternion(Quaternion.Identity);
 
 		if (this.size() == 4) {
-			quaternion.X = (float) this.get("X").AsReal();
-			quaternion.Y = (float) this.get("Y").AsReal();
-			quaternion.Z = (float) this.get("Z").AsReal();
-			quaternion.W = (float) this.get("W").AsReal();
+			quaternion.X = (float) this.get("X").asReal();
+			quaternion.Y = (float) this.get("Y").asReal();
+			quaternion.Z = (float) this.get("Z").asReal();
+			quaternion.W = (float) this.get("W").asReal();
 		}
 		return quaternion;
 	}
@@ -159,7 +159,7 @@ public class OSDMap extends OSD implements Map<String, OSD> {
 	@Override
 	public OSD clone() {
 		OSDMap osd = (OSDMap) super.clone();
-		osd.value = new HashMap<String, OSD>(this.value);
+		osd.value = new HashMap<>(this.value);
 		return osd;
 	}
 

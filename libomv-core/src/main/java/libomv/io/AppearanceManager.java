@@ -120,6 +120,19 @@ import libomv.utils.TimeoutEvent;
 public class AppearanceManager implements PacketCallback {
 	private static final Logger logger = Logger.getLogger(AppearanceManager.class);
 
+	private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs> {
+		@Override
+		public boolean callback(SettingsUpdateCallbackArgs params) {
+			String key = params.getName();
+			if (key == null) {
+				sendAppearanceUpdates = client.settings.getBool(LibSettings.SEND_AGENT_APPEARANCE);
+			} else if (key.equals(LibSettings.SEND_AGENT_APPEARANCE)) {
+				sendAppearanceUpdates = params.getValue().asBoolean();
+			}
+			return false;
+		}
+	}
+
 	// #region Constants
 	// Maximum number of concurrent downloads for wearable assets and textures
 	private static final int MAX_CONCURRENT_DOWNLOADS = 5;
@@ -177,74 +190,45 @@ public class AppearanceManager implements PacketCallback {
 	// face
 	public static final UUID DEFAULT_AVATAR_TEXTURE = new UUID("c228d1cf-4b5d-4ba8-84f4-899a0796aa97");
 
-	public CallbackHandler<AgentWearablesReplyCallbackArgs> OnAgentWearablesReply = new CallbackHandler<AgentWearablesReplyCallbackArgs>();
+	public CallbackHandler<AgentWearablesReplyCallbackArgs> onAgentWearablesReply = new CallbackHandler<>();
 
-	public CallbackHandler<AgentCachedBakesReplyCallbackArgs> OnAgentCachedBakesReply = new CallbackHandler<AgentCachedBakesReplyCallbackArgs>();
+	public CallbackHandler<AgentCachedBakesReplyCallbackArgs> onAgentCachedBakesReply = new CallbackHandler<>();
 
-	public CallbackHandler<AppearanceSetCallbackArgs> OnAppearanceSet = new CallbackHandler<AppearanceSetCallbackArgs>();
+	public CallbackHandler<AppearanceSetCallbackArgs> onAppearanceSet = new CallbackHandler<>();
 
-	public CallbackHandler<RebakeAvatarTexturesCallbackArgs> OnRebakeAvatarReply = new CallbackHandler<RebakeAvatarTexturesCallbackArgs>();
-
-	// #endregion
-
-	// #region Properties and public fields
-
-	/**
-	 * Returns true if AppearanceManager is busy and trying to set or change
-	 * appearance will fail
-	 */
-	public boolean getManagerBusy() {
-		return _AppearanceThread.isAlive();
-	}
+	public CallbackHandler<RebakeAvatarTexturesCallbackArgs> onRebakeAvatarReply = new CallbackHandler<>();
 
 	// Visual parameters last sent to the sim
-	public byte[] MyVisualParameters = null;
+	public byte[] myVisualParameters = null;
 
 	// Textures about this client sent to the sim
-	public TextureEntry MyTextures = null;
-
-	// #endregion Properties
-
-	// #region Private Members
+	public TextureEntry myTextures = null;
 
 	// A cache of wearables currently being worn
-	private MultiMap<WearableType, WearableData> _Wearables = new MultiMap<WearableType, WearableData>();
+	private MultiMap<WearableType, WearableData> wearables = new MultiMap<>();
 	// A cache of textures currently being worn
-	private TextureData[] _Textures = new TextureData[AvatarTextureIndex.getNumValues()];
+	private TextureData[] textures = new TextureData[AvatarTextureIndex.getNumValues()];
 	// Incrementing serial number for AgentCachedTexture packets
-	private AtomicInteger CacheCheckSerialNum = new AtomicInteger(-1);
+	private AtomicInteger cacheCheckSerialNum = new AtomicInteger(-1);
 	// Incrementing serial number for AgentSetAppearance packets
-	private AtomicInteger SetAppearanceSerialNum = new AtomicInteger();
+	private AtomicInteger setAppearanceSerialNum = new AtomicInteger();
 	// Indicates if WearablesRequest succeeded
-	private boolean GotWearables = false;
+	private boolean gotWearables = false;
 	// Indicates whether or not the appearance thread is currently running, to
 	// prevent multiple
 	// appearance threads from running simultaneously
 	// private AtomicBoolean AppearanceThreadRunning = new AtomicBoolean(false);
 	// Reference to our agent
-	private GridClient _Client;
+	private GridClient client;
 	// Timer used for delaying rebake on changing outfit
-	private Timer _RebakeScheduleTimer;
+	private Timer rebakeScheduleTimer;
 	// Main appearance thread
-	private Thread _AppearanceThread;
+	private Thread appearanceThread;
 	// Is server baking complete. It needs doing only once
-	private boolean ServerBakingDone = false;
+	private boolean serverBakingDone = false;
 	// #endregion Private Members
 
 	private boolean sendAppearanceUpdates;
-
-	private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs> {
-		@Override
-		public boolean callback(SettingsUpdateCallbackArgs params) {
-			String key = params.getName();
-			if (key == null) {
-				sendAppearanceUpdates = _Client.Settings.getBool(LibSettings.SEND_AGENT_APPEARANCE);
-			} else if (key.equals(LibSettings.SEND_AGENT_APPEARANCE)) {
-				sendAppearanceUpdates = params.getValue().AsBoolean();
-			}
-			return false;
-		}
-	}
 
 	/**
 	 * Default constructor
@@ -253,45 +237,51 @@ public class AppearanceManager implements PacketCallback {
 	 *            A reference to our agent
 	 */
 	public AppearanceManager(GridClient client) {
-		_Client = client;
+		this.client = client;
 
-		_Client.Settings.onSettingsUpdate.add(new SettingsUpdate());
-		sendAppearanceUpdates = _Client.Settings.getBool(LibSettings.SEND_AGENT_APPEARANCE);
+		this.client.settings.onSettingsUpdate.add(new SettingsUpdate());
+		this.sendAppearanceUpdates = this.client.settings.getBool(LibSettings.SEND_AGENT_APPEARANCE);
 
-		for (int i = 0; i < _Textures.length; i++) {
-			_Textures[i] = new TextureData();
-			_Textures[i].textureIndex = AvatarTextureIndex.setValue(i);
+		for (int i = 0; i < this.textures.length; i++) {
+			this.textures[i] = new TextureData();
+			this.textures[i].textureIndex = AvatarTextureIndex.setValue(i);
 		}
 
-		if (_Client.Assets == null)
-			logger.error(GridClient.Log("AppearanceManager requires a working AssetManager!", _Client));
+		if (this.client.assets == null)
+			logger.error(GridClient.Log("AppearanceManager requires a working AssetManager!", this.client));
 
-		_Client.Network.RegisterCallback(PacketType.AgentWearablesUpdate, this);
-		_Client.Network.RegisterCallback(PacketType.AgentCachedTextureResponse, this);
-		_Client.Network.RegisterCallback(PacketType.RebakeAvatarTextures, this);
+		this.client.network.registerCallback(PacketType.AgentWearablesUpdate, this);
+		this.client.network.registerCallback(PacketType.AgentCachedTextureResponse, this);
+		this.client.network.registerCallback(PacketType.RebakeAvatarTextures, this);
 
-		_Client.Network.OnEventQueueRunning.add(new Network_OnEventQueueRunning());
-		_Client.Network.OnDisconnected.add(new Network_OnDisconnected(), true);
+		this.client.network.onEventQueueRunning.add(new Network_OnEventQueueRunning());
+		this.client.network.onDisconnected.add(new Network_OnDisconnected(), true);
 	}
 
 	@Override
 	public void packetCallback(Packet packet, Simulator simulator) throws Exception {
 		switch (packet.getType()) {
 		case AgentWearablesUpdate:
-			HandleAgentWearablesUpdate(packet, simulator);
+			handleAgentWearablesUpdate(packet, simulator);
 			break;
 		case AgentCachedTextureResponse:
-			HandleAgentCachedTextureResponse(packet, simulator);
+			handleAgentCachedTextureResponse(packet, simulator);
 			break;
 		case RebakeAvatarTextures:
-			HandleRebakeAvatarTextures(packet, simulator);
+			handleRebakeAvatarTextures(packet, simulator);
 			break;
 		default:
 			break;
 		}
 	}
 
-	// #region Publics Methods
+	/**
+	 * Returns true if AppearanceManager is busy and trying to set or change
+	 * appearance will fail
+	 */
+	public boolean getManagerBusy() {
+		return appearanceThread.isAlive();
+	}
 
 	/**
 	 * Check if current region supports server side baking
@@ -299,15 +289,15 @@ public class AppearanceManager implements PacketCallback {
 	 * @returns True if server side baking support is detected
 	 */
 	public boolean isServerBakingRegion() {
-		return _Client.Network.getCurrentSim() != null
-				&& ((_Client.Network.getCurrentSim().Protocols & RegionProtocols.AgentAppearanceService) != 0);
+		return client.network.getCurrentSim() != null
+				&& ((client.network.getCurrentSim().protocols & RegionProtocols.AgentAppearanceService) != 0);
 	}
 
 	/**
 	 * Starts the appearance setting thread
 	 */
-	public void RequestSetAppearance() {
-		RequestSetAppearance(false);
+	public void requestSetAppearance() {
+		requestSetAppearance(false);
 	}
 
 	/**
@@ -316,20 +306,20 @@ public class AppearanceManager implements PacketCallback {
 	 * @param forceRebake
 	 *            True to force rebaking, otherwise false
 	 */
-	public void RequestSetAppearance(final boolean forceRebake) {
-		if (_AppearanceThread != null && _AppearanceThread.isAlive()) {
-			logger.warn(GridClient.Log("Appearance thread is already running, skipping", _Client));
+	public void requestSetAppearance(final boolean forceRebake) {
+		if (appearanceThread != null && appearanceThread.isAlive()) {
+			logger.warn(GridClient.Log("Appearance thread is already running, skipping", client));
 			return;
 		}
 
 		// If we have an active delayed scheduled appearance bake, we dispose of it
-		if (_RebakeScheduleTimer != null) {
-			_RebakeScheduleTimer.cancel();
-			_RebakeScheduleTimer = null;
+		if (rebakeScheduleTimer != null) {
+			rebakeScheduleTimer.cancel();
+			rebakeScheduleTimer = null;
 		}
 
 		// This is the first time setting appearance, run through the entire sequence
-		_AppearanceThread = new Thread("AppearenceThread") {
+		appearanceThread = new Thread("AppearenceThread") {
 			@Override
 			public void run() {
 				boolean success = true;
@@ -338,85 +328,85 @@ public class AppearanceManager implements PacketCallback {
 						// Set all of the baked textures to UUID.Zero to force rebaking
 						for (BakeType type : BakeType.values()) {
 							if (type != BakeType.Unknown)
-								_Textures[BakeTypeToAgentTextureIndex(type).getValue()].textureID = UUID.Zero;
+								textures[bakeTypeToAgentTextureIndex(type).getValue()].textureID = UUID.Zero;
 						}
 					}
 
 					// Is this server side baking enabled sim
 					if (isServerBakingRegion()) {
-						if (!GotWearables) {
+						if (!gotWearables) {
 							// Fetch a list of the current agent wearables
-							if (GetAgentWearables()) {
-								GotWearables = true;
+							if (getAgentWearables()) {
+								gotWearables = true;
 							}
 						}
 
-						if (!ServerBakingDone || forceRebake) {
-							success = UpdateAvatarAppearance();
+						if (!serverBakingDone || forceRebake) {
+							success = updateAvatarAppearance();
 							if (success) {
-								ServerBakingDone = true;
+								serverBakingDone = true;
 							}
 						}
 					} else // Classic client side baking
 					{
-						if (!GotWearables) {
+						if (!gotWearables) {
 							// Fetch a list of the current agent wearables
-							if (!GetAgentWearables()) {
+							if (!getAgentWearables()) {
 								logger.error(GridClient.Log(
 										"Failed to retrieve a list of current agent wearables, appearance cannot be set",
-										_Client));
+										client));
 								throw new Exception(
 										"Failed to retrieve a list of current agent wearables, appearance cannot be set");
 							}
-							GotWearables = true;
+							gotWearables = true;
 						}
 
 						// If we get back to server side baking region re-request server bake
-						ServerBakingDone = false;
+						serverBakingDone = false;
 
 						// Download and parse all of the agent wearables
-						success = DownloadWearables();
+						success = downloadWearables();
 						if (!success) {
 							logger.warn(GridClient.Log(
 									"One or more agent wearables failed to download, appearance will be incomplete",
-									_Client));
+									client));
 						}
 
 						// If this is the first time setting appearance and we're not forcing rebakes,
 						// check the server
 						// for cached bakes
-						if (SetAppearanceSerialNum.get() == 0 && !forceRebake) {
+						if (setAppearanceSerialNum.get() == 0 && !forceRebake) {
 							// Compute hashes for each bake layer and compare against what the simulator
 							// currently has
-							if (!GetCachedBakes()) {
+							if (!getCachedBakes()) {
 								logger.warn(GridClient.Log(
 										"Failed to get a list of cached bakes from the simulator, appearance will be rebaked",
-										_Client));
+										client));
 							}
 						}
 
 						// Download textures, compute bakes, and upload for any cache misses
-						if (!CreateBakes()) {
+						if (!createBakes()) {
 							success = false;
 							logger.warn(GridClient.Log(
 									"Failed to create or upload one or more bakes, appearance will be incomplete",
-									_Client));
+									client));
 						}
 
 						// Send the appearance packet
-						RequestAgentSetAppearance();
+						requestAgentSetAppearance();
 					}
 				} catch (Exception ex) {
 					success = false;
 					logger.warn(GridClient.Log(
-							"Failed to get cached bakes from the simulator, appearance will be rebaked", _Client), ex);
+							"Failed to get cached bakes from the simulator, appearance will be rebaked", client), ex);
 				} finally {
-					OnAppearanceSet.dispatch(new AppearanceSetCallbackArgs(success));
+					onAppearanceSet.dispatch(new AppearanceSetCallbackArgs(success));
 				}
 			}
 		};
-		_AppearanceThread.setDaemon(true);
-		_AppearanceThread.start();
+		appearanceThread.setDaemon(true);
+		appearanceThread.start();
 	}
 
 	/**
@@ -424,9 +414,9 @@ public class AppearanceManager implements PacketCallback {
 	 *
 	 * @return True if server side baking support is detected
 	 */
-	public boolean ServerBakingRegion() {
-		return _Client.Network.getCurrentSim() != null
-				&& ((_Client.Network.getCurrentSim().Protocols & RegionProtocols.AgentAppearanceService) != 0);
+	public boolean serverBakingRegion() {
+		return client.network.getCurrentSim() != null
+				&& ((client.network.getCurrentSim().protocols & RegionProtocols.AgentAppearanceService) != 0);
 	}
 
 	/**
@@ -434,12 +424,12 @@ public class AppearanceManager implements PacketCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void RequestAgentWearables() throws Exception {
+	public void requestAgentWearables() throws Exception {
 		AgentWearablesRequestPacket request = new AgentWearablesRequestPacket();
-		request.AgentData.AgentID = _Client.Self.getAgentID();
-		request.AgentData.SessionID = _Client.Self.getSessionID();
+		request.AgentData.AgentID = client.agent.getAgentID();
+		request.AgentData.SessionID = client.agent.getSessionID();
 
-		_Client.Network.sendPacket(request);
+		client.network.sendPacket(request);
 	}
 
 	/**
@@ -448,16 +438,16 @@ public class AppearanceManager implements PacketCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void RequestCachedBakes() throws Exception {
+	public void requestCachedBakes() throws Exception {
 		ArrayList<AgentCachedTexturePacket.WearableDataBlock> hashes = new ArrayList<AgentCachedTexturePacket.WearableDataBlock>();
 		AgentCachedTexturePacket cache = new AgentCachedTexturePacket();
 
 		// Build hashes for each of the bake layers from the individual components
-		synchronized (_Wearables) {
+		synchronized (wearables) {
 			for (BakeType bakeType : BakeType.values()) {
 				// Don't do a cache request for a skirt bake if we're not wearing a skirt
 				if (bakeType == BakeType.Unknown
-						|| (bakeType == BakeType.Skirt && !_Wearables.containsKey(WearableType.Skirt)))
+						|| (bakeType == BakeType.Skirt && !wearables.containsKey(WearableType.Skirt)))
 					continue;
 
 				// Build a hash of all the texture asset IDs in this baking layer
@@ -466,8 +456,8 @@ public class AppearanceManager implements PacketCallback {
 					WearableType type = WEARABLE_BAKE_MAP[bakeType.getValue()][wearableIndex];
 
 					if (type != WearableType.Invalid) {
-						if (_Wearables.containsKey(type)) {
-							for (WearableData data : _Wearables.get(type)) {
+						if (wearables.containsKey(type)) {
+							for (WearableData data : wearables.get(type)) {
 								hash = UUID.XOr(hash, data.assetID);
 							}
 						}
@@ -481,25 +471,25 @@ public class AppearanceManager implements PacketCallback {
 					// Add this to the list of hashes to send out
 					AgentCachedTexturePacket.WearableDataBlock block = cache.new WearableDataBlock();
 					block.ID = hash;
-					block.TextureIndex = BakeTypeToAgentTextureIndex(bakeType).getValue();
+					block.TextureIndex = bakeTypeToAgentTextureIndex(bakeType).getValue();
 					hashes.add(block);
 
-					logger.debug(GridClient.Log("Checking cache for " + bakeType + ", hash = " + block.ID, _Client));
+					logger.debug(GridClient.Log("Checking cache for " + bakeType + ", hash = " + block.ID, client));
 				}
 			}
 		}
 
 		// Only send the packet out if there's something to check
 		if (hashes.size() > 0) {
-			cache.AgentData.AgentID = _Client.Self.getAgentID();
-			cache.AgentData.SessionID = _Client.Self.getSessionID();
-			cache.AgentData.SerialNum = CacheCheckSerialNum.incrementAndGet();
+			cache.AgentData.AgentID = client.agent.getAgentID();
+			cache.AgentData.SessionID = client.agent.getSessionID();
+			cache.AgentData.SerialNum = cacheCheckSerialNum.incrementAndGet();
 
 			cache.WearableData = new WearableDataBlock[hashes.size()];
 			for (int i = 0; i < hashes.size(); i++) {
 				cache.WearableData[i] = hashes.get(i);
 			}
-			_Client.Network.sendPacket(cache);
+			client.network.sendPacket(cache);
 		}
 	}
 
@@ -511,10 +501,10 @@ public class AppearanceManager implements PacketCallback {
 	/// <returns>The UUID of the asset being worn in the given slot, or
 	/// UUID.Zero if no wearable is attached to the given slot or wearables
 	/// have not been downloaded yet
-	public UUID GetWearableAsset(WearableType type) {
-		synchronized (_Wearables) {
-			if (_Wearables.containsKey(type) && _Wearables.get(type).get(0) != null) {
-				return _Wearables.get(type).get(0).assetID;
+	public UUID getWearableAsset(WearableType type) {
+		synchronized (wearables) {
+			if (wearables.containsKey(type) && wearables.get(type).get(0) != null) {
+				return wearables.get(type).get(0).assetID;
 			}
 		}
 		return UUID.Zero;
@@ -530,11 +520,11 @@ public class AppearanceManager implements PacketCallback {
 	 *          empty list if no wearable is attached to the given slot or wearables
 	 *          have not been downloaded yet
 	 */
-	public List<UUID> GetWearableAssets(WearableType type) {
+	public List<UUID> getWearableAssets(WearableType type) {
 		ArrayList<UUID> list = new ArrayList<UUID>();
-		synchronized (_Wearables) {
-			if (_Wearables.containsKey(type)) {
-				for (WearableData data : _Wearables.get(type))
+		synchronized (wearables) {
+			if (wearables.containsKey(type)) {
+				for (WearableData data : wearables.get(type))
 					list.add(data.assetID);
 			}
 		}
@@ -551,10 +541,10 @@ public class AppearanceManager implements PacketCallback {
 	 *            replaced
 	 * @throws Exception
 	 */
-	public void AddToOutfit(InventoryItem wearableItem, boolean replace) throws Exception {
+	public void addToOutfit(InventoryItem wearableItem, boolean replace) throws Exception {
 		List<InventoryItem> wearableItems = new ArrayList<InventoryItem>();
 		wearableItems.add(wearableItem);
-		AddToOutfit(wearableItems, replace);
+		addToOutfit(wearableItems, replace);
 	}
 
 	/**
@@ -564,8 +554,8 @@ public class AppearanceManager implements PacketCallback {
 	 *            List of wearable inventory items to be added to the outfit
 	 * @throws Exception
 	 */
-	public void AddToOutfit(List<InventoryItem> wearableItems) throws Exception {
-		AddToOutfit(wearableItems, true);
+	public void addToOutfit(List<InventoryItem> wearableItems) throws Exception {
+		addToOutfit(wearableItems, true);
 	}
 
 	/**
@@ -578,20 +568,20 @@ public class AppearanceManager implements PacketCallback {
 	 *            replaced
 	 * @throws Exception
 	 */
-	public void AddToOutfit(List<InventoryItem> wearableItems, boolean replace) throws Exception {
-		List<InventoryWearable> wearables = new ArrayList<InventoryWearable>();
+	public void addToOutfit(List<InventoryItem> wearableItems, boolean replace) throws Exception {
+		List<InventoryWearable> wearablesList = new ArrayList<InventoryWearable>();
 		List<InventoryItem> attachments = new ArrayList<InventoryItem>();
 
 		for (InventoryItem item : wearableItems) {
 			if (item instanceof InventoryWearable)
-				wearables.add((InventoryWearable) item);
+				wearablesList.add((InventoryWearable) item);
 			else if (item instanceof InventoryAttachment || item instanceof InventoryObject)
 				attachments.add(item);
 		}
 
-		synchronized (_Wearables) {
+		synchronized (wearables) {
 			// Add the given wearables to the wearables collection
-			for (InventoryWearable wearableItem : wearables) {
+			for (InventoryWearable wearableItem : wearablesList) {
 				WearableData wd = new WearableData();
 				wd.assetID = wearableItem.assetID;
 				wd.assetType = wearableItem.assetType;
@@ -599,18 +589,18 @@ public class AppearanceManager implements PacketCallback {
 				wd.wearableType = wearableItem.getWearableType();
 
 				if (replace) // Dump everything from the key
-					_Wearables.remove(wearableItem.getWearableType());
-				_Wearables.put(wearableItem.getWearableType(), wd);
+					wearables.remove(wearableItem.getWearableType());
+				wearables.put(wearableItem.getWearableType(), wd);
 			}
 		}
 
 		if (attachments.size() > 0) {
-			AddAttachments(attachments, false, replace);
+			addAttachments(attachments, false, replace);
 		}
 
-		if (wearables.size() > 0) {
-			SendAgentIsNowWearing();
-			DelayedRequestSetAppearance();
+		if (wearablesList.size() > 0) {
+			sendAgentIsNowWearing();
+			delayedRequestSetAppearance();
 		}
 	}
 
@@ -621,10 +611,10 @@ public class AppearanceManager implements PacketCallback {
 	 *            Wearable to be removed from the outfit
 	 * @throws Exception
 	 */
-	public void RemoveFromOutfit(InventoryItem wearableItem) throws Exception {
+	public void removeFromOutfit(InventoryItem wearableItem) throws Exception {
 		List<InventoryItem> wearableItems = new ArrayList<InventoryItem>();
 		wearableItems.add(wearableItem);
-		RemoveFromOutfit(wearableItems);
+		removeFromOutfit(wearableItems);
 	}
 
 	/**
@@ -634,29 +624,29 @@ public class AppearanceManager implements PacketCallback {
 	 *            List of wearable inventory items to be removed from the outfit
 	 * @throws Exception
 	 */
-	public void RemoveFromOutfit(List<InventoryItem> wearableItems) throws Exception {
-		List<InventoryWearable> wearables = new ArrayList<InventoryWearable>();
+	public void removeFromOutfit(List<InventoryItem> wearableItems) throws Exception {
+		List<InventoryWearable> wearablesList = new ArrayList<InventoryWearable>();
 		List<InventoryItem> attachments = new ArrayList<InventoryItem>();
 
 		for (InventoryItem item : wearableItems) {
 			if (item instanceof InventoryWearable)
-				wearables.add((InventoryWearable) item);
+				wearablesList.add((InventoryWearable) item);
 			else if (item instanceof InventoryAttachment || item instanceof InventoryObject)
 				attachments.add(item);
 		}
 
 		boolean needSetAppearance = false;
-		synchronized (_Wearables) {
+		synchronized (wearables) {
 			// Remove the given wearables from the wearables collection
-			for (InventoryWearable wearableItem : wearables) {
+			for (InventoryWearable wearableItem : wearablesList) {
 				if (wearableItem.assetType != AssetType.Bodypart // Remove if it's not a body part
-						&& _Wearables.containsKey(wearableItem.getWearableType())) // And we have that wearabe type
+						&& wearables.containsKey(wearableItem.getWearableType())) // And we have that wearabe type
 				{
-					Collection<WearableData> worn = _Wearables.get(wearableItem.getWearableType());
+					Collection<WearableData> worn = wearables.get(wearableItem.getWearableType());
 					if (worn != null) {
 						for (WearableData wearable : worn) {
 							if (wearable.itemID.equals(wearableItem.itemID)) {
-								_Wearables.remove(wearableItem.getWearableType(), wearable);
+								wearables.remove(wearableItem.getWearableType(), wearable);
 								needSetAppearance = true;
 							}
 						}
@@ -666,12 +656,12 @@ public class AppearanceManager implements PacketCallback {
 		}
 
 		for (int i = 0; i < attachments.size(); i++) {
-			Detach(attachments.get(i).itemID);
+			detach(attachments.get(i).itemID);
 		}
 
 		if (needSetAppearance) {
-			SendAgentIsNowWearing();
-			DelayedRequestSetAppearance();
+			sendAgentIsNowWearing();
+			delayedRequestSetAppearance();
 		}
 	}
 
@@ -682,8 +672,8 @@ public class AppearanceManager implements PacketCallback {
 	 *            List of wearable inventory items that define a new outfit
 	 * @throws Exception
 	 */
-	public void ReplaceOutfit(List<InventoryItem> wearableItems) throws Exception {
-		ReplaceOutfit(wearableItems, true);
+	public void replaceOutfit(List<InventoryItem> wearableItems) throws Exception {
+		replaceOutfit(wearableItems, true);
 	}
 
 	/**
@@ -696,15 +686,15 @@ public class AppearanceManager implements PacketCallback {
 	 *            know what you're doing
 	 * @throws Exception
 	 */
-	public void ReplaceOutfit(List<InventoryItem> wearableItems, boolean safe) throws Exception {
-		List<InventoryWearable> wearables = new ArrayList<InventoryWearable>();
+	public void replaceOutfit(List<InventoryItem> wearableItems, boolean safe) throws Exception {
+		List<InventoryWearable> wearablesList = new ArrayList<InventoryWearable>();
 		List<InventoryItem> attachments = new ArrayList<InventoryItem>();
 
 		for (int i = 0; i < wearableItems.size(); i++) {
 			InventoryItem item = wearableItems.get(i);
 
 			if (item instanceof InventoryWearable)
-				wearables.add((InventoryWearable) item);
+				wearablesList.add((InventoryWearable) item);
 			else if (item instanceof InventoryAttachment || item instanceof InventoryObject)
 				attachments.add(item);
 		}
@@ -718,20 +708,20 @@ public class AppearanceManager implements PacketCallback {
 			// the
 			// current wearables first
 			boolean needsCurrentWearables = false;
-			synchronized (_Wearables) {
+			synchronized (wearables) {
 				for (WearableType wearableType : WearableType.values()) {
 					if (wearableType != WearableType.Invalid
-							&& WearableTypeToAssetType(wearableType) == AssetType.Bodypart
-							&& !_Wearables.containsKey(wearableType)) {
+							&& wearableTypeToAssetType(wearableType) == AssetType.Bodypart
+							&& !wearables.containsKey(wearableType)) {
 						needsCurrentWearables = true;
 						break;
 					}
 				}
 			}
 
-			if (needsCurrentWearables && !GetAgentWearables()) {
+			if (needsCurrentWearables && !getAgentWearables()) {
 				logger.error(GridClient.Log("Failed to fetch the current agent wearables, cannot safely replace outfit",
-						_Client));
+						client));
 				return;
 			}
 		}
@@ -739,12 +729,12 @@ public class AppearanceManager implements PacketCallback {
 		// Replace our local Wearables collection, send the packet(s) to update our
 		// attachments, tell sim what we are wearing now, and start the baking process
 		if (!safe) {
-			SetAppearanceSerialNum.incrementAndGet();
+			setAppearanceSerialNum.incrementAndGet();
 		}
-		ReplaceWearables(wearables);
-		AddAttachments(attachments, true, false);
-		SendAgentIsNowWearing();
-		DelayedRequestSetAppearance();
+		replaceWearables(wearablesList);
+		addAttachments(attachments, true, false);
+		sendAgentIsNowWearing();
+		delayedRequestSetAppearance();
 	}
 
 	/**
@@ -755,9 +745,9 @@ public class AppearanceManager implements PacketCallback {
 	 * @returnsThe WearableType slot that the item is being worn in, or
 	 *             WearableType.Invalid if it is not currently being worn
 	 */
-	public WearableType IsItemWorn(InventoryItem item) {
-		synchronized (_Wearables) {
-			for (Entry<WearableType, List<WearableData>> entry : _Wearables.entrySet()) {
+	public WearableType isItemWorn(InventoryItem item) {
+		synchronized (wearables) {
+			for (Entry<WearableType, List<WearableData>> entry : wearables.entrySet()) {
 				for (WearableData data : entry.getValue()) {
 					if (data.itemID.equals(item.itemID))
 						return entry.getKey();
@@ -774,15 +764,15 @@ public class AppearanceManager implements PacketCallback {
 	 *
 	 * @returnsA copy of the agents currently worn wearables
 	 */
-	public Collection<WearableData> GetWearables() {
-		synchronized (_Wearables) {
-			return new ArrayList<WearableData>(_Wearables.values());
+	public Collection<WearableData> getWearables() {
+		synchronized (wearables) {
+			return new ArrayList<WearableData>(wearables.values());
 		}
 	}
 
-	public MultiMap<WearableType, WearableData> GetWearablesByType() {
-		synchronized (_Wearables) {
-			return new MultiMap<WearableType, WearableData>(_Wearables);
+	public MultiMap<WearableType, WearableData> getWearablesByType() {
+		synchronized (wearables) {
+			return new MultiMap<WearableType, WearableData>(wearables);
 		}
 	}
 
@@ -798,7 +788,7 @@ public class AppearanceManager implements PacketCallback {
 	 *            to add these items to the existing outfit
 	 * @throws Exception
 	 */
-	public void WearOutfit(List<InventoryItem> wearables, boolean replaceItems) throws Exception {
+	public void wearOutfit(List<InventoryItem> wearables, boolean replaceItems) throws Exception {
 		List<InventoryItem> wearableItems = new ArrayList<InventoryItem>(wearables.size());
 		Iterator<InventoryItem> iter = wearables.iterator();
 		while (iter.hasNext()) {
@@ -806,9 +796,9 @@ public class AppearanceManager implements PacketCallback {
 		}
 
 		if (replaceItems)
-			ReplaceOutfit(wearableItems);
+			replaceOutfit(wearableItems);
 		else
-			AddToOutfit(wearableItems);
+			addToOutfit(wearableItems);
 	}
 	// #endregion Publics Methods
 
@@ -823,8 +813,8 @@ public class AppearanceManager implements PacketCallback {
 	 *            If true, tells simulator to remove existing attachment first
 	 * @throws Exception
 	 */
-	public void AddAttachments(List<InventoryItem> attachments, boolean removeExistingFirst) throws Exception {
-		AddAttachments(attachments, removeExistingFirst, true);
+	public void addAttachments(List<InventoryItem> attachments, boolean removeExistingFirst) throws Exception {
+		addAttachments(attachments, removeExistingFirst, true);
 	}
 
 	/**
@@ -839,13 +829,13 @@ public class AppearanceManager implements PacketCallback {
 	 *            otherwise add to it (multi-attachments)
 	 * @throws Exception
 	 */
-	public void AddAttachments(List<InventoryItem> attachments, boolean removeExistingFirst, boolean replace)
+	public void addAttachments(List<InventoryItem> attachments, boolean removeExistingFirst, boolean replace)
 			throws Exception {
 		// Use RezMultipleAttachmentsFromInv to clear out current attachments, and
 		// attach new ones
 		RezMultipleAttachmentsFromInvPacket attachmentsPacket = new RezMultipleAttachmentsFromInvPacket();
-		attachmentsPacket.AgentData.AgentID = _Client.Self.getAgentID();
-		attachmentsPacket.AgentData.SessionID = _Client.Self.getSessionID();
+		attachmentsPacket.AgentData.AgentID = client.agent.getAgentID();
+		attachmentsPacket.AgentData.SessionID = client.agent.getSessionID();
 
 		attachmentsPacket.HeaderData.CompoundMsgID = new UUID();
 		attachmentsPacket.HeaderData.FirstDetachAll = removeExistingFirst;
@@ -861,8 +851,8 @@ public class AppearanceManager implements PacketCallback {
 				attachmentsPacket.ObjectData[i].GroupMask = attachment.permissions.GroupMask;
 				attachmentsPacket.ObjectData[i].ItemFlags = attachment.itemFlags;
 				attachmentsPacket.ObjectData[i].ItemID = attachment.itemID;
-				attachmentsPacket.ObjectData[i].setName(Helpers.StringToBytes(attachment.name));
-				attachmentsPacket.ObjectData[i].setDescription(Helpers.StringToBytes(attachment.description));
+				attachmentsPacket.ObjectData[i].setName(Helpers.stringToBytes(attachment.name));
+				attachmentsPacket.ObjectData[i].setDescription(Helpers.stringToBytes(attachment.description));
 				attachmentsPacket.ObjectData[i].NextOwnerMask = attachment.permissions.NextOwnerMask;
 				attachmentsPacket.ObjectData[i].OwnerID = attachment.getOwnerID();
 			} else if (attachments.get(i) instanceof InventoryObject) {
@@ -872,15 +862,15 @@ public class AppearanceManager implements PacketCallback {
 				attachmentsPacket.ObjectData[i].GroupMask = attachment.permissions.GroupMask;
 				attachmentsPacket.ObjectData[i].ItemFlags = attachment.itemFlags;
 				attachmentsPacket.ObjectData[i].ItemID = attachment.itemID;
-				attachmentsPacket.ObjectData[i].setName(Helpers.StringToBytes(attachment.name));
-				attachmentsPacket.ObjectData[i].setDescription(Helpers.StringToBytes(attachment.description));
+				attachmentsPacket.ObjectData[i].setName(Helpers.stringToBytes(attachment.name));
+				attachmentsPacket.ObjectData[i].setDescription(Helpers.stringToBytes(attachment.description));
 				attachmentsPacket.ObjectData[i].NextOwnerMask = attachment.permissions.NextOwnerMask;
 				attachmentsPacket.ObjectData[i].OwnerID = attachment.getOwnerID();
 			} else {
-				logger.warn(GridClient.Log("Cannot attach inventory item " + attachment.name, _Client));
+				logger.warn(GridClient.Log("Cannot attach inventory item " + attachment.name, client));
 			}
 		}
-		_Client.Network.sendPacket(attachmentsPacket);
+		client.network.sendPacket(attachmentsPacket);
 	}
 
 	/**
@@ -893,8 +883,8 @@ public class AppearanceManager implements PacketCallback {
 	 *            to attach the item to
 	 * @throws Exception
 	 */
-	public void Attach(InventoryItem item, AttachmentPoint attachPoint) throws Exception {
-		Attach(item.itemID, item.getOwnerID(), item.name, item.description, item.permissions, item.itemFlags,
+	public void attach(InventoryItem item, AttachmentPoint attachPoint) throws Exception {
+		attach(item.itemID, item.getOwnerID(), item.name, item.description, item.permissions, item.itemFlags,
 				attachPoint, true);
 	}
 
@@ -911,8 +901,8 @@ public class AppearanceManager implements PacketCallback {
 	 *            otherwise add to it (multi-attachments)
 	 * @throws Exception
 	 */
-	public void Attach(InventoryItem item, AttachmentPoint attachPoint, boolean replace) throws Exception {
-		Attach(item.itemID, item.getOwnerID(), item.name, item.description, item.permissions, item.itemFlags,
+	public void attach(InventoryItem item, AttachmentPoint attachPoint, boolean replace) throws Exception {
+		attach(item.itemID, item.getOwnerID(), item.name, item.description, item.permissions, item.itemFlags,
 				attachPoint, replace);
 	}
 
@@ -938,9 +928,9 @@ public class AppearanceManager implements PacketCallback {
 	 *            to attach the item to
 	 * @throws Exception
 	 */
-	public void Attach(UUID itemID, UUID ownerID, String name, String description, Permissions perms, int itemFlags,
+	public void attach(UUID itemID, UUID ownerID, String name, String description, Permissions perms, int itemFlags,
 			AttachmentPoint attachPoint) throws Exception {
-		Attach(itemID, ownerID, name, description, perms, itemFlags, attachPoint, true);
+		attach(itemID, ownerID, name, description, perms, itemFlags, attachPoint, true);
 	}
 
 	/**
@@ -968,7 +958,7 @@ public class AppearanceManager implements PacketCallback {
 	 *            otherwise add to it (multi-attachments)
 	 * @throws Exception
 	 */
-	public void Attach(UUID itemID, UUID ownerID, String name, String description, Permissions perms, int itemFlags,
+	public void attach(UUID itemID, UUID ownerID, String name, String description, Permissions perms, int itemFlags,
 			AttachmentPoint attachPoint, boolean replace) throws Exception {
 		// TODO: At some point it might be beneficial to have AppearanceManager track
 		// what we
@@ -976,20 +966,20 @@ public class AppearanceManager implements PacketCallback {
 		// easier
 		RezSingleAttachmentFromInvPacket attach = new RezSingleAttachmentFromInvPacket();
 
-		attach.AgentData.AgentID = _Client.Self.getAgentID();
-		attach.AgentData.SessionID = _Client.Self.getSessionID();
+		attach.AgentData.AgentID = client.agent.getAgentID();
+		attach.AgentData.SessionID = client.agent.getSessionID();
 
 		attach.ObjectData.AttachmentPt = attachPoint.getValue(replace);
-		attach.ObjectData.setDescription(Helpers.StringToBytes(description));
+		attach.ObjectData.setDescription(Helpers.stringToBytes(description));
 		attach.ObjectData.EveryoneMask = perms.EveryoneMask;
 		attach.ObjectData.GroupMask = perms.GroupMask;
 		attach.ObjectData.ItemFlags = itemFlags;
 		attach.ObjectData.ItemID = itemID;
-		attach.ObjectData.setName(Helpers.StringToBytes(name));
+		attach.ObjectData.setName(Helpers.stringToBytes(name));
 		attach.ObjectData.NextOwnerMask = perms.NextOwnerMask;
 		attach.ObjectData.OwnerID = ownerID;
 
-		_Client.Network.sendPacket(attach);
+		client.network.sendPacket(attach);
 	}
 
 	/**
@@ -1000,8 +990,8 @@ public class AppearanceManager implements PacketCallback {
 	 *            An <see cref="OpenMetaverse.InventoryItem"/> object
 	 * @throws Exception
 	 */
-	public void Detach(InventoryItem item) throws Exception {
-		Detach(item.itemID);
+	public void detach(InventoryItem item) throws Exception {
+		detach(item.itemID);
 	}
 
 	/**
@@ -1011,12 +1001,12 @@ public class AppearanceManager implements PacketCallback {
 	 *            The inventory itemID of the item to detach
 	 * @throws Exception
 	 */
-	public void Detach(UUID itemID) throws Exception {
+	public void detach(UUID itemID) throws Exception {
 		DetachAttachmentIntoInvPacket detach = new DetachAttachmentIntoInvPacket();
-		detach.ObjectData.AgentID = _Client.Self.getAgentID();
+		detach.ObjectData.AgentID = client.agent.getAgentID();
 		detach.ObjectData.ItemID = itemID;
 
-		_Client.Network.sendPacket(detach);
+		client.network.sendPacket(detach);
 	}
 	// #endregion Attachments
 
@@ -1027,28 +1017,28 @@ public class AppearanceManager implements PacketCallback {
 	 *
 	 * @throws Exception
 	 */
-	private void SendAgentIsNowWearing() throws Exception {
+	private void sendAgentIsNowWearing() throws Exception {
 		AgentIsNowWearingPacket wearing = new AgentIsNowWearingPacket();
-		wearing.AgentData.AgentID = _Client.Self.getAgentID();
-		wearing.AgentData.SessionID = _Client.Self.getSessionID();
+		wearing.AgentData.AgentID = client.agent.getAgentID();
+		wearing.AgentData.SessionID = client.agent.getSessionID();
 		wearing.WearableData = new AgentIsNowWearingPacket.WearableDataBlock[WearableType.getNumValues()];
 
-		synchronized (_Wearables) {
+		synchronized (wearables) {
 			for (WearableType type : WearableType.values()) {
 				if (type != WearableType.Invalid) {
 					AgentIsNowWearingPacket.WearableDataBlock block = wearing.new WearableDataBlock();
 					block.WearableType = type.getValue();
 
 					// This appears to be hacked on SL server side to support multi-layers
-					if (_Wearables.containsKey(type) && _Wearables.get(type).get(0) != null)
-						block.ItemID = _Wearables.get(type).get(0).itemID;
+					if (wearables.containsKey(type) && wearables.get(type).get(0) != null)
+						block.ItemID = wearables.get(type).get(0).itemID;
 					else
 						block.ItemID = UUID.Zero;
 					wearing.WearableData[type.getValue()] = block;
 				}
 			}
 		}
-		_Client.Network.sendPacket(wearing);
+		client.network.sendPacket(wearing);
 	}
 
 	/**
@@ -1057,14 +1047,14 @@ public class AppearanceManager implements PacketCallback {
 	 * @param wearableItems
 	 *            Wearable items to replace the Wearables collection with
 	 */
-	private void ReplaceWearables(List<InventoryWearable> wearableItems) {
+	private void replaceWearables(List<InventoryWearable> wearableItems) {
 		MultiMap<WearableType, WearableData> newWearables = new MultiMap<WearableType, WearableData>();
 
-		synchronized (_Wearables) {
+		synchronized (wearables) {
 			// Preserve body parts from the previous set of wearables. They may be
 			// overwritten,
 			// but cannot be missing in the new set
-			for (Entry<WearableType, List<WearableData>> entry : _Wearables.entrySet()) {
+			for (Entry<WearableType, List<WearableData>> entry : wearables.entrySet()) {
 				for (WearableData data : entry.getValue()) {
 					if (data.assetType == AssetType.Bodypart)
 						newWearables.put(entry.getKey(), data);
@@ -1083,7 +1073,7 @@ public class AppearanceManager implements PacketCallback {
 			}
 
 			// Replace the Wearables collection
-			_Wearables = newWearables;
+			wearables = newWearables;
 		}
 	}
 
@@ -1095,7 +1085,7 @@ public class AppearanceManager implements PacketCallback {
 	 *            list of ColorParamInfo tuples
 	 * @returns Base color/tint for the wearable
 	 */
-	public Color4 GetColorFromParams(List<ColorParamInfo> param) {
+	public Color4 getColorFromParams(List<ColorParamInfo> param) {
 		// Start off with a blank slate, black, fully transparent
 		Color4 res = new Color4(0, 0, 0, 0);
 
@@ -1202,7 +1192,7 @@ public class AppearanceManager implements PacketCallback {
 	 * @returns True on success, otherwise false
 	 * @throws Exception
 	 */
-	boolean GetAgentWearables() throws Exception {
+	boolean getAgentWearables() throws Exception {
 		final TimeoutEvent<Boolean> wearablesEvent = new TimeoutEvent<Boolean>();
 		Callback<AgentWearablesReplyCallbackArgs> wearablesCallback = new Callback<AgentWearablesReplyCallbackArgs>() {
 			@Override
@@ -1212,13 +1202,13 @@ public class AppearanceManager implements PacketCallback {
 			}
 		};
 
-		OnAgentWearablesReply.add(wearablesCallback);
+		onAgentWearablesReply.add(wearablesCallback);
 
-		RequestAgentWearables();
+		requestAgentWearables();
 
 		boolean success = wearablesEvent.waitOne(WEARABLE_TIMEOUT);
 
-		OnAgentWearablesReply.remove(wearablesCallback);
+		onAgentWearablesReply.remove(wearablesCallback);
 
 		return success;
 	}
@@ -1229,7 +1219,7 @@ public class AppearanceManager implements PacketCallback {
 	 * @returns True on success, otherwise false
 	 * @throws Exception
 	 */
-	boolean GetCachedBakes() throws Exception {
+	boolean getCachedBakes() throws Exception {
 		final TimeoutEvent<Boolean> cacheCheckEvent = new TimeoutEvent<Boolean>();
 		Callback<AgentCachedBakesReplyCallbackArgs> cacheCallback = new Callback<AgentCachedBakesReplyCallbackArgs>() {
 			@Override
@@ -1239,13 +1229,13 @@ public class AppearanceManager implements PacketCallback {
 			}
 		};
 
-		OnAgentCachedBakesReply.add(cacheCallback);
+		onAgentCachedBakesReply.add(cacheCallback);
 
-		RequestCachedBakes();
+		requestCachedBakes();
 
 		Boolean success = cacheCheckEvent.waitOne(WEARABLE_TIMEOUT);
 
-		OnAgentCachedBakesReply.remove(cacheCallback);
+		onAgentCachedBakesReply.remove(cacheCallback);
 
 		return success != null ? success : false;
 	}
@@ -1258,7 +1248,7 @@ public class AppearanceManager implements PacketCallback {
 	 * @param textures
 	 *            Texture data
 	 */
-	public void DecodeWearableParams(WearableData wearable, TextureData[] textures) {
+	public void decodeWearableParams(WearableData wearable, TextureData[] textures) {
 		HashMap<VisualAlphaParam, Float> alphaMasks = new HashMap<VisualAlphaParam, Float>();
 		List<ColorParamInfo> colorParams = new ArrayList<ColorParamInfo>();
 
@@ -1331,7 +1321,7 @@ public class AppearanceManager implements PacketCallback {
 
 		Color4 wearableColor = Color4.White; // Never actually used
 		if (colorParams.size() > 0) {
-			wearableColor = GetColorFromParams(colorParams);
+			wearableColor = getColorFromParams(colorParams);
 			logger.debug("Setting tint " + wearableColor + " for " + wearable.wearableType);
 		}
 
@@ -1352,7 +1342,7 @@ public class AppearanceManager implements PacketCallback {
 					textures[i].textureID = UUID.Zero;
 				else
 					textures[i].textureID = entry.getValue();
-				logger.debug(GridClient.Log("Set " + entry.getKey() + " to " + textures[i].textureID, _Client));
+				logger.debug(GridClient.Log("Set " + entry.getKey() + " to " + textures[i].textureID, client));
 
 				textures[i].texture = null;
 			}
@@ -1370,20 +1360,20 @@ public class AppearanceManager implements PacketCallback {
 
 		public boolean callback(AssetDownload transfer) {
 			if (transfer.success) {
-				wearable.asset = (AssetWearable) AssetManager.CreateAssetItem(transfer.assetType, transfer.itemID,
+				wearable.asset = (AssetWearable) AssetManager.createAssetItem(transfer.assetType, transfer.itemID,
 						transfer.assetData);
 				if (wearable.asset != null) {
-					DecodeWearableParams(wearable, _Textures);
+					decodeWearableParams(wearable, textures);
 					logger.debug(GridClient.Log("Downloaded wearable asset " + wearable.wearableType + " with "
 							+ wearable.asset.params.size() + " visual params and " + wearable.asset.textures.size()
-							+ " textures", _Client));
+							+ " textures", client));
 
 				} else {
-					logger.error(GridClient.Log("Failed to decode wearable asset: " + transfer.itemID, _Client));
+					logger.error(GridClient.Log("Failed to decode wearable asset: " + transfer.itemID, client));
 				}
 			} else {
 				logger.warn(GridClient.Log("Wearable " + wearable.wearableType + " {" + wearable.assetID
-						+ "} failed to download, status:  " + transfer.status, _Client));
+						+ "} failed to download, status:  " + transfer.status, client));
 			}
 			latch.countDown();
 			return true;
@@ -1395,35 +1385,35 @@ public class AppearanceManager implements PacketCallback {
 	 *
 	 * @returns True on success, otherwise false
 	 */
-	private boolean DownloadWearables() {
+	private boolean downloadWearables() {
 		boolean success = true;
 
 		// Make a copy of the wearables dictionary to enumerate over
-		MultiMap<WearableType, WearableData> wearables;
-		synchronized (_Wearables) {
-			wearables = new MultiMap<WearableType, WearableData>(_Wearables);
+		MultiMap<WearableType, WearableData> wearablesMap;
+		synchronized (wearables) {
+			wearablesMap = new MultiMap<WearableType, WearableData>(wearables);
 		}
 
 		// We will refresh the textures (zero out all non bake textures)
-		for (int i = 0; i < _Textures.length; i++) {
+		for (int i = 0; i < textures.length; i++) {
 			boolean isBake = false;
 			for (BakeType type : BakeType.values()) {
-				if (BakeTypeToAgentTextureIndex(type).getValue() == i) {
+				if (bakeTypeToAgentTextureIndex(type).getValue() == i) {
 					isBake = true;
 					break;
 				}
 			}
 			if (!isBake) {
-				_Textures[i].texture = null;
-				_Textures[i].textureID = null;
-				_Textures[i].color = null;
+				textures[i].texture = null;
+				textures[i].textureID = null;
+				textures[i].color = null;
 			}
 		}
 
-		final CountDownLatch latch = new CountDownLatch(wearables.size());
-		for (WearableData wearable : wearables.values()) {
+		final CountDownLatch latch = new CountDownLatch(wearablesMap.size());
+		for (WearableData wearable : wearablesMap.values()) {
 			if (wearable.asset != null) {
-				DecodeWearableParams(wearable, _Textures);
+				decodeWearableParams(wearable, textures);
 				latch.countDown();
 			}
 		}
@@ -1435,14 +1425,14 @@ public class AppearanceManager implements PacketCallback {
 		logger.debug("Downloading " + pendingWearables + " wearable assets");
 
 		ExecutorService executor = Executors.newFixedThreadPool(Math.min(pendingWearables, MAX_CONCURRENT_DOWNLOADS));
-		for (final WearableData wearable : wearables.values()) {
+		for (final WearableData wearable : wearablesMap.values()) {
 			if (wearable.asset == null) {
 				executor.submit(new Runnable() {
 					@Override
 					public void run() {
 						// Fetch this wearable asset
 						try {
-							_Client.Assets.RequestAsset(wearable.assetID, wearable.assetType, true,
+							client.assets.requestAsset(wearable.assetID, wearable.assetType, true,
 									new WearablesReceived(latch, wearable));
 						} catch (Exception ex) {
 						}
@@ -1467,14 +1457,14 @@ public class AppearanceManager implements PacketCallback {
 	 *            Bake layer to get texture AssetIDs for
 	 * @returns A list of texture AssetIDs to download
 	 */
-	private List<UUID> GetTextureDownloadList(BakeType bakeType) {
-		List<AvatarTextureIndex> indices = BakeTypeToTextures(bakeType);
+	private List<UUID> getTextureDownloadList(BakeType bakeType) {
+		List<AvatarTextureIndex> indices = bakeTypeToTextures(bakeType);
 		List<UUID> textures = new ArrayList<UUID>();
 
 		for (AvatarTextureIndex index : indices) {
 			// If this is not the skirt layer or we're wearing a skirt then add it
-			if (index != AvatarTextureIndex.Skirt || _Wearables.containsKey(WearableType.Skirt))
-				AddTextureDownload(index, textures);
+			if (index != AvatarTextureIndex.Skirt || wearables.containsKey(WearableType.Skirt))
+				addTextureDownload(index, textures);
 		}
 		return textures;
 	}
@@ -1486,8 +1476,8 @@ public class AppearanceManager implements PacketCallback {
 	 * @param index
 	 * @param textures
 	 */
-	private void AddTextureDownload(AvatarTextureIndex index, List<UUID> textures) {
-		TextureData textureData = _Textures[index.getValue()];
+	private void addTextureDownload(AvatarTextureIndex index, List<UUID> textures) {
+		TextureData textureData = this.textures[index.getValue()];
 		// Add the textureID to the list if this layer has a valid textureID set, it has
 		// not already
 		// been downloaded, and it is not already in the download list
@@ -1504,11 +1494,11 @@ public class AppearanceManager implements PacketCallback {
 	 * @param bakeLayers
 	 *            A list of layers that need baking
 	 */
-	private void DownloadTextures(List<BakeType> bakeLayers) {
+	private void downloadTextures(List<BakeType> bakeLayers) {
 		List<UUID> textureIDs = new ArrayList<UUID>();
 
 		for (int i = 0; i < bakeLayers.size(); i++) {
-			List<UUID> layerTextureIDs = GetTextureDownloadList(bakeLayers.get(i));
+			List<UUID> layerTextureIDs = getTextureDownloadList(bakeLayers.get(i));
 
 			for (int j = 0; j < layerTextureIDs.size(); j++) {
 				UUID uuid = layerTextureIDs.get(j);
@@ -1521,23 +1511,23 @@ public class AppearanceManager implements PacketCallback {
 
 		final CountDownLatch latch = new CountDownLatch(textureIDs.size());
 		for (UUID textureID : textureIDs) {
-			_Client.Assets.RequestImage(textureID, new Callback<ImageDownload>() {
+			client.assets.requestImage(textureID, new Callback<ImageDownload>() {
 				@Override
 				public boolean callback(ImageDownload download) {
 					if (download.state == TextureRequestState.Finished && download.assetData != null) {
-						AssetTexture texture = (AssetTexture) AssetManager.CreateAssetItem(AssetType.Texture,
+						AssetTexture texture = (AssetTexture) AssetManager.createAssetItem(AssetType.Texture,
 								download.itemID, download.assetData);
 						if (texture == null) {
-							logger.error(GridClient.Log("Failed to decode texture: " + textureID, _Client));
+							logger.error(GridClient.Log("Failed to decode texture: " + textureID, client));
 						}
 
-						for (int i = 0; i < _Textures.length; i++) {
-							if (_Textures[i].textureID != null && _Textures[i].textureID.equals(download.itemID))
-								_Textures[i].texture = texture;
+						for (int i = 0; i < textures.length; i++) {
+							if (textures[i].textureID != null && textures[i].textureID.equals(download.itemID))
+								textures[i].texture = texture;
 						}
 					} else {
 						logger.warn(GridClient.Log("Texture " + download.itemID
-								+ " failed to download, one or more bakes will be incomplete", _Client));
+								+ " failed to download, one or more bakes will be incomplete", client));
 					}
 					latch.countDown();
 					return true;
@@ -1557,16 +1547,16 @@ public class AppearanceManager implements PacketCallback {
 	 *
 	 * @returns True on success, otherwise false
 	 */
-	private boolean CreateBakes() {
+	private boolean createBakes() {
 		List<BakeType> pendingBakes = new ArrayList<BakeType>();
 
 		// Check each bake layer in the Textures array for missing bakes
 		for (BakeType type : BakeType.values()) {
 			if (type != BakeType.Unknown) {
-				UUID uuid = _Textures[BakeTypeToAgentTextureIndex(type).getValue()].textureID;
+				UUID uuid = textures[bakeTypeToAgentTextureIndex(type).getValue()].textureID;
 				if (UUID.isZeroOrNull(uuid)) {
 					// If this is the skirt layer and we're not wearing a skirt then skip it
-					if (type == BakeType.Skirt && !_Wearables.containsKey(WearableType.Skirt))
+					if (type == BakeType.Skirt && !wearables.containsKey(WearableType.Skirt))
 						continue;
 
 					pendingBakes.add(type);
@@ -1576,7 +1566,7 @@ public class AppearanceManager implements PacketCallback {
 
 		final AtomicBoolean success = new AtomicBoolean(true);
 		if (pendingBakes.size() > 0) {
-			DownloadTextures(pendingBakes);
+			downloadTextures(pendingBakes);
 
 			ExecutorService executor = Executors
 					.newFixedThreadPool(Math.min(pendingBakes.size(), MAX_CONCURRENT_UPLOADS));
@@ -1585,7 +1575,7 @@ public class AppearanceManager implements PacketCallback {
 					@Override
 					public void run() {
 						try {
-							if (!CreateBake(bakeType))
+							if (!createBake(bakeType))
 								success.set(false);
 						} catch (Exception e) {
 							success.set(false);
@@ -1596,8 +1586,8 @@ public class AppearanceManager implements PacketCallback {
 		}
 
 		// Free up all the textures we're holding on to
-		for (int i = 0; i < _Textures.length; i++) {
-			_Textures[i].texture = null;
+		for (int i = 0; i < textures.length; i++) {
+			textures[i].texture = null;
 		}
 
 		// We just allocated and freed a ridiculous amount of memory while baking.
@@ -1616,20 +1606,20 @@ public class AppearanceManager implements PacketCallback {
 	 * @throws CloneNotSupportedException
 	 * @returns True on success, otherwise false
 	 */
-	private boolean CreateBake(BakeType bakeType) throws URISyntaxException, CloneNotSupportedException {
-		List<AvatarTextureIndex> textureIndices = BakeTypeToTextures(bakeType);
-		Baker oven = new Baker(_Client, bakeType);
+	private boolean createBake(BakeType bakeType) throws URISyntaxException, CloneNotSupportedException {
+		List<AvatarTextureIndex> textureIndices = bakeTypeToTextures(bakeType);
+		Baker oven = new Baker(client, bakeType);
 
 		for (int i = 0; i < textureIndices.size(); i++) {
 			AvatarTextureIndex textureIndex = textureIndices.get(i);
-			TextureData texture = _Textures[AvatarTextureIndex.getValue(textureIndex)];
+			TextureData texture = textures[AvatarTextureIndex.getValue(textureIndex)];
 
-			oven.AddTexture(texture);
+			oven.addTexture(texture);
 		}
 
 		long start = System.currentTimeMillis();
 		;
-		oven.Bake();
+		oven.bake();
 		logger.debug("Baking " + bakeType + " took " + (System.currentTimeMillis() - start) + "ms");
 
 		UUID newAssetID = UUID.Zero;
@@ -1637,7 +1627,7 @@ public class AppearanceManager implements PacketCallback {
 
 		do {
 			try {
-				newAssetID = UploadBake(new AssetTexture(oven.getBakedTexture()).getAssetData());
+				newAssetID = uploadBake(new AssetTexture(oven.getBakedTexture()).getAssetData());
 			} catch (IOException e) {
 				return false;
 			} catch (InterruptedException e) {
@@ -1646,10 +1636,10 @@ public class AppearanceManager implements PacketCallback {
 			--retries;
 		} while (UUID.isZeroOrNull(newAssetID) && retries > 0);
 
-		_Textures[BakeTypeToAgentTextureIndex(bakeType).getValue()].textureID = newAssetID;
+		textures[bakeTypeToAgentTextureIndex(bakeType).getValue()].textureID = newAssetID;
 
 		if (UUID.isZeroOrNull(newAssetID)) {
-			logger.warn(GridClient.Log("Failed uploading bake " + bakeType, _Client));
+			logger.warn(GridClient.Log("Failed uploading bake " + bakeType, client));
 			return false;
 		}
 		return true;
@@ -1664,10 +1654,10 @@ public class AppearanceManager implements PacketCallback {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	private UUID UploadBake(byte[] textureData) throws IOException, InterruptedException {
+	private UUID uploadBake(byte[] textureData) throws IOException, InterruptedException {
 		final TimeoutEvent<UUID> uploadEvent = new TimeoutEvent<UUID>();
 
-		_Client.Assets.RequestUploadBakedTexture(textureData, new BakedTextureUploadedCallback() {
+		client.assets.requestUploadBakedTexture(textureData, new BakedTextureUploadedCallback() {
 			@Override
 			public void callback(UUID newAssetID) {
 				uploadEvent.set(newAssetID);
@@ -1689,17 +1679,17 @@ public class AppearanceManager implements PacketCallback {
 	 *
 	 * @returns True if the server baking was successful
 	 */
-	private boolean UpdateAvatarAppearance() throws Exception {
-		URI url = _Client.Network.getCapabilityURI("UpdateAvatarAppearance");
+	private boolean updateAvatarAppearance() throws Exception {
+		URI url = client.network.getCapabilityURI("UpdateAvatarAppearance");
 		if (url == null) {
 			return false;
 		}
 
-		InventoryFolder COF = _Client.Inventory.FindFolderForType(FolderType.CurrentOutfit);
+		InventoryFolder COF = client.inventory.findFolderForType(FolderType.CurrentOutfit);
 		if (COF == null) {
-			_Client.Inventory.FolderContents(_Client.Inventory.getRootNode(false).itemID, _Client.Self.getAgentID(),
-					true, true, InventorySortOrder.ByDate, true, _Client.Settings.CAPS_TIMEOUT);
-			COF = _Client.Inventory.FindFolderForType(FolderType.CurrentOutfit);
+			client.inventory.folderContents(client.inventory.getRootNode(false).itemID, client.agent.getAgentID(), true,
+					true, InventorySortOrder.ByDate, true, client.settings.CAPS_TIMEOUT);
+			COF = client.inventory.findFolderForType(FolderType.CurrentOutfit);
 		}
 
 		if (COF == null) {
@@ -1707,25 +1697,25 @@ public class AppearanceManager implements PacketCallback {
 			return false;
 		}
 
-		CapsClient capsRequest = new CapsClient(_Client, "UpdateAvatarAppearance");
+		CapsClient capsRequest = new CapsClient(client, "UpdateAvatarAppearance");
 		OSDMap request = new OSDMap(1);
-		request.put("cof_version", OSD.FromInteger(COF.version));
+		request.put("cof_version", OSD.fromInteger(COF.version));
 
 		String msg = "Setting server side baking failed";
-		OSD res = capsRequest.getResponse(url, request, OSDFormat.Xml, _Client.Settings.CAPS_TIMEOUT * 2);
+		OSD res = capsRequest.getResponse(url, request, OSDFormat.Xml, client.settings.CAPS_TIMEOUT * 2);
 		if (res != null && res instanceof OSDMap) {
 			OSDMap result = (OSDMap) res;
-			if (result.get("success").AsBoolean()) {
-				logger.info(GridClient.Log("Successfully set appearance", _Client));
+			if (result.get("success").asBoolean()) {
+				logger.info(GridClient.Log("Successfully set appearance", client));
 				// TODO: Set local visual params and baked textures based on the result here
 				return true;
 			}
 			if (result.containsKey("error")) {
-				msg += ": " + result.get("error").AsString();
+				msg += ": " + result.get("error").asString();
 			}
 		}
 		capsRequest.shutdown(true);
-		logger.error(GridClient.Log(msg, _Client));
+		logger.error(GridClient.Log(msg, client));
 
 		return false;
 	}
@@ -1736,11 +1726,11 @@ public class AppearanceManager implements PacketCallback {
 	 *
 	 * @throws Exception
 	 */
-	private void RequestAgentSetAppearance() throws Exception {
+	private void requestAgentSetAppearance() throws Exception {
 		AgentSetAppearancePacket set = new AgentSetAppearancePacket();
-		set.AgentData.AgentID = _Client.Self.getAgentID();
-		set.AgentData.SessionID = _Client.Self.getSessionID();
-		set.AgentData.SerialNum = SetAppearanceSerialNum.incrementAndGet();
+		set.AgentData.AgentID = client.agent.getAgentID();
+		set.AgentData.SessionID = client.agent.getSessionID();
+		set.AgentData.SerialNum = setAppearanceSerialNum.incrementAndGet();
 
 		// Visual params used in the agent height calculation
 		float agentSizeVPHeight = 0.0f;
@@ -1751,12 +1741,12 @@ public class AppearanceManager implements PacketCallback {
 		float agentSizeVPNeckLength = 0.0f;
 		float agentSizeVPHipLength = 0.0f;
 
-		synchronized (_Wearables) {
+		synchronized (wearables) {
 			// #region VisualParam
 
 			int vpIndex = 0;
 			int nrParams;
-			boolean wearingPhysics = _Wearables.containsKey(WearableType.Physics);
+			boolean wearingPhysics = wearables.containsKey(WearableType.Physics);
 
 			if (wearingPhysics) {
 				nrParams = 251;
@@ -1772,7 +1762,7 @@ public class AppearanceManager implements PacketCallback {
 				boolean found = false;
 
 				// Try and find this value in our collection of downloaded wearables
-				for (Entry<WearableType, List<WearableData>> entry : _Wearables.entrySet()) {
+				for (Entry<WearableType, List<WearableData>> entry : wearables.entrySet()) {
 					for (WearableData data : entry.getValue()) {
 						if (data.asset != null && data.asset.params.containsKey(vp.paramID)) {
 							paramValue = data.asset.params.get(vp.paramID);
@@ -1790,7 +1780,7 @@ public class AppearanceManager implements PacketCallback {
 
 				// Only Group-0 parameters are sent in AgentSetAppearance packets
 				if (kvp.getValue().group == 0) {
-					set.ParamValue[vpIndex] = Helpers.FloatToByte(paramValue, vp.minValue, vp.maxValue);
+					set.ParamValue[vpIndex] = Helpers.floatToByte(paramValue, vp.minValue, vp.maxValue);
 					++vpIndex;
 				}
 
@@ -1826,30 +1816,29 @@ public class AppearanceManager implements PacketCallback {
 					break;
 			}
 
-			MyVisualParameters = new byte[set.ParamValue.length];
-			System.arraycopy(MyVisualParameters, 0, set.ParamValue, 0, set.ParamValue.length);
+			myVisualParameters = new byte[set.ParamValue.length];
+			System.arraycopy(myVisualParameters, 0, set.ParamValue, 0, set.ParamValue.length);
 			// #endregion VisualParam
 
 			// #region TextureEntry
 
 			TextureEntry te = new TextureEntry(DEFAULT_AVATAR_TEXTURE);
 
-			for (int i = 0; i < _Textures.length; i++) {
+			for (int i = 0; i < textures.length; i++) {
 				TextureEntry.TextureEntryFace face = te.createFace(i);
-				if ((i == 0 || i == 5 || i == 6) && !_Client.Settings.CLIENT_IDENTIFICATION_TAG.equals(UUID.Zero)) {
-					face.setTextureID(_Client.Settings.CLIENT_IDENTIFICATION_TAG);
+				if ((i == 0 || i == 5 || i == 6) && !client.settings.CLIENT_IDENTIFICATION_TAG.equals(UUID.Zero)) {
+					face.setTextureID(client.settings.CLIENT_IDENTIFICATION_TAG);
 					logger.debug(GridClient.Log(
-							"Sending client identification tag: " + _Client.Settings.CLIENT_IDENTIFICATION_TAG,
-							_Client));
-				} else if (_Textures[i].textureID != UUID.Zero) {
-					face.setTextureID(_Textures[i].textureID);
-					logger.debug(GridClient.Log("Sending texture entry for " + i + " to " + _Textures[i].textureID,
-							_Client));
+							"Sending client identification tag: " + client.settings.CLIENT_IDENTIFICATION_TAG, client));
+				} else if (textures[i].textureID != UUID.Zero) {
+					face.setTextureID(textures[i].textureID);
+					logger.debug(
+							GridClient.Log("Sending texture entry for " + i + " to " + textures[i].textureID, client));
 				}
 			}
 
 			set.ObjectData.setTextureEntry(te.getBytes());
-			MyTextures = te;
+			myTextures = te;
 
 			// #endregion TextureEntry
 
@@ -1867,8 +1856,8 @@ public class AppearanceManager implements PacketCallback {
 				for (int wearableIndex = 0; wearableIndex < WEARABLES_PER_LAYER; wearableIndex++) {
 					WearableType type = WEARABLE_BAKE_MAP[bakeType.getValue()][wearableIndex];
 
-					if (type != WearableType.Invalid && _Wearables.containsKey(type)) {
-						for (WearableData wearable : _Wearables.get(type)) {
+					if (type != WearableType.Invalid && wearables.containsKey(type)) {
+						for (WearableData wearable : wearables.get(type)) {
 							hash = UUID.XOr(hash, wearable.assetID);
 						}
 					}
@@ -1881,10 +1870,10 @@ public class AppearanceManager implements PacketCallback {
 
 				// Tell the server what cached texture assetID to use for each bake layer
 				AgentSetAppearancePacket.WearableDataBlock block = set.new WearableDataBlock();
-				block.TextureIndex = BakeTypeToAgentTextureIndex(bakeType).getValue();
+				block.TextureIndex = bakeTypeToAgentTextureIndex(bakeType).getValue();
 				block.CacheID = hash;
 				set.WearableData[bakeType.getValue()] = block;
-				logger.debug(GridClient.Log("Sending TextureIndex " + bakeType + " with CacheID " + hash, _Client));
+				logger.debug(GridClient.Log("Sending TextureIndex " + bakeType + " with CacheID " + hash, client));
 			}
 
 			// #endregion WearableData
@@ -1905,26 +1894,26 @@ public class AppearanceManager implements PacketCallback {
 
 			// #endregion Agent Size
 
-			if (_Client.Settings.getBool(LibSettings.AVATAR_TRACKING)) {
-				Avatar me = _Client.Network.getCurrentSim().getObjectsAvatars().get(_Client.Self.getLocalID());
+			if (client.settings.getBool(LibSettings.AVATAR_TRACKING)) {
+				Avatar me = client.network.getCurrentSim().getObjectsAvatars().get(client.agent.getLocalID());
 				if (me != null) {
-					me.textures = MyTextures;
-					me.visualParameters = MyVisualParameters;
+					me.textures = myTextures;
+					me.visualParameters = myVisualParameters;
 				}
 			}
 		}
-		_Client.Network.sendPacket(set);
-		logger.debug(GridClient.Log("Sent AgentSetAppearance packet", _Client));
+		client.network.sendPacket(set);
+		logger.debug(GridClient.Log("Sent AgentSetAppearance packet", client));
 	}
 
-	private void DelayedRequestSetAppearance() {
-		if (_RebakeScheduleTimer == null) {
-			_RebakeScheduleTimer = new Timer("DelayedRequestSetAppearance");
+	private void delayedRequestSetAppearance() {
+		if (rebakeScheduleTimer == null) {
+			rebakeScheduleTimer = new Timer("DelayedRequestSetAppearance");
 		}
-		_RebakeScheduleTimer.schedule(new TimerTask() {
+		rebakeScheduleTimer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				RequestSetAppearance(true);
+				requestSetAppearance(true);
 			}
 		}, REBAKE_DELAY);
 	}
@@ -1932,65 +1921,59 @@ public class AppearanceManager implements PacketCallback {
 
 	// #region Inventory Helpers
 
-	public boolean GetFolderWearables(String[] folderPath, List<InventoryWearable> wearables,
+	public boolean getFolderWearables(String[] folderPath, List<InventoryWearable> wearables,
 			List<InventoryItem> attachments) throws Exception {
-		UUID folder = _Client.Inventory.FindObjectByPath(_Client.Inventory.getRootNode(false).itemID,
-				_Client.Self.getAgentID(), String.join("/", folderPath), INVENTORY_TIMEOUT);
+		UUID folder = client.inventory.findObjectByPath(client.inventory.getRootNode(false).itemID,
+				client.agent.getAgentID(), String.join("/", folderPath), INVENTORY_TIMEOUT);
 
 		if (folder != UUID.Zero) {
-			return GetFolderWearables(folder, wearables, attachments);
+			return getFolderWearables(folder, wearables, attachments);
 		}
-		logger.error(GridClient.Log("Failed to resolve outfit folder path " + folderPath, _Client));
-		wearables = null;
-		attachments = null;
+		logger.error(GridClient.Log("Failed to resolve outfit folder path " + folderPath, client));
 		return false;
 	}
 
-	private boolean GetFolderWearables(UUID folder, List<InventoryWearable> wearables, List<InventoryItem> attachments)
+	private boolean getFolderWearables(UUID folder, List<InventoryWearable> wearables, List<InventoryItem> attachments)
 			throws Exception {
-		List<InventoryNode> objects = _Client.Inventory.FolderContents(folder, _Client.Self.getAgentID(), false, true,
+		List<InventoryNode> objects = client.inventory.folderContents(folder, client.agent.getAgentID(), false, true,
 				InventorySortOrder.ByName, INVENTORY_TIMEOUT);
 
 		if (objects != null) {
 			for (InventoryNode ib : objects) {
 				if (ib.getType() == InventoryType.Wearable) {
-					logger.debug(GridClient.Log("Adding wearable " + ib.name, _Client));
+					logger.debug(GridClient.Log("Adding wearable " + ib.name, client));
 					wearables.add((InventoryWearable) ib);
 				} else if (ib.getType() == InventoryType.Attachment) {
-					logger.debug(GridClient.Log("Adding attachment (attachment) " + ib.name, _Client));
+					logger.debug(GridClient.Log("Adding attachment (attachment) " + ib.name, client));
 					attachments.add((InventoryItem) ib);
 				} else if (ib.getType() == InventoryType.Object) {
-					logger.debug(GridClient.Log("Adding attachment (object) " + ib.name, _Client));
+					logger.debug(GridClient.Log("Adding attachment (object) " + ib.name, client));
 					attachments.add((InventoryItem) ib);
 				} else {
-					logger.debug(GridClient.Log("Ignoring inventory item " + ib.name, _Client));
+					logger.debug(GridClient.Log("Ignoring inventory item " + ib.name, client));
 				}
 			}
 		} else {
-			logger.error(GridClient.Log("Failed to download folder contents of + " + folder, _Client));
+			logger.error(GridClient.Log("Failed to download folder contents of + " + folder, client));
 			return false;
 		}
 
 		return true;
 	}
 
-	// #endregion Inventory Helpers
-
-	// #region Callbacks
-
-	private void HandleAgentWearablesUpdate(Packet packet, Simulator simulator) {
+	private void handleAgentWearablesUpdate(Packet packet, Simulator simulator) {
 		boolean changed = false;
 		AgentWearablesUpdatePacket update = (AgentWearablesUpdatePacket) packet;
 
-		synchronized (_Wearables) {
+		synchronized (wearables) {
 			// #region Test if anything changed in this update
 			for (AgentWearablesUpdatePacket.WearableDataBlock block : update.WearableData) {
 				WearableType type = WearableType.setValue(block.WearableType);
 
 				if (!block.AssetID.equals(UUID.Zero)) {
-					if (_Wearables.containsKey(type)) {
+					if (wearables.containsKey(type)) {
 						boolean match = false;
-						for (WearableData wearable : _Wearables.get(type)) {
+						for (WearableData wearable : wearables.get(type)) {
 							if (wearable != null && wearable.assetID.equals(block.AssetID)
 									&& wearable.itemID.equals(block.ItemID)) {
 								// Same wearable as before
@@ -2006,7 +1989,7 @@ public class AppearanceManager implements PacketCallback {
 						changed = true;
 						break;
 					}
-				} else if (_Wearables.containsKey(type)) {
+				} else if (wearables.containsKey(type)) {
 					// This index is now empty
 					changed = true;
 					break;
@@ -2016,9 +1999,9 @@ public class AppearanceManager implements PacketCallback {
 		// #endregion Test if anything changed in this update
 
 		if (changed) {
-			logger.debug(GridClient.Log("New wearables received in AgentWearablesUpdate", _Client));
-			synchronized (_Wearables) {
-				_Wearables.clear();
+			logger.debug(GridClient.Log("New wearables received in AgentWearablesUpdate", client));
+			synchronized (wearables) {
+				wearables.clear();
 
 				for (int i = 0; i < update.WearableData.length; i++) {
 					AgentWearablesUpdatePacket.WearableDataBlock block = update.WearableData[i];
@@ -2029,42 +2012,42 @@ public class AppearanceManager implements PacketCallback {
 						WearableData data = new WearableData();
 						data.asset = null;
 						data.assetID = block.AssetID;
-						data.assetType = WearableTypeToAssetType(type);
+						data.assetType = wearableTypeToAssetType(type);
 						data.itemID = block.ItemID;
 						data.wearableType = type;
 
 						// Add this wearable to our collection
-						_Wearables.put(type, data);
+						wearables.put(type, data);
 					}
 				}
 			}
 			// Fire the callback
-			OnAgentWearablesReply.dispatch(new AgentWearablesReplyCallbackArgs());
+			onAgentWearablesReply.dispatch(new AgentWearablesReplyCallbackArgs());
 		} else {
-			logger.debug(GridClient.Log("Duplicate AgentWearablesUpdate received, discarding", _Client));
+			logger.debug(GridClient.Log("Duplicate AgentWearablesUpdate received, discarding", client));
 		}
 	}
 
-	private void HandleRebakeAvatarTextures(Packet packet, Simulator simulator) {
+	private void handleRebakeAvatarTextures(Packet packet, Simulator simulator) {
 		RebakeAvatarTexturesPacket rebake = (RebakeAvatarTexturesPacket) packet;
 
 		// allow the library to do the rebake
 		if (sendAppearanceUpdates) {
-			RequestSetAppearance(true);
+			requestSetAppearance(true);
 		}
-		OnRebakeAvatarReply.dispatch(new RebakeAvatarTexturesCallbackArgs(rebake.TextureID));
+		onRebakeAvatarReply.dispatch(new RebakeAvatarTexturesCallbackArgs(rebake.TextureID));
 	}
 
-	private void HandleAgentCachedTextureResponse(Packet packet, Simulator simulator)
+	private void handleAgentCachedTextureResponse(Packet packet, Simulator simulator)
 			throws UnsupportedEncodingException {
 		AgentCachedTextureResponsePacket response = (AgentCachedTextureResponsePacket) packet;
 
 		for (AgentCachedTextureResponsePacket.WearableDataBlock block : response.WearableData) {
 			AvatarTextureIndex index = AvatarTextureIndex.setValue(block.TextureIndex);
 
-			logger.debug(GridClient.Log("Cache response for " + index + ", TextureID = " + block.TextureID, _Client));
+			logger.debug(GridClient.Log("Cache response for " + index + ", TextureID = " + block.TextureID, client));
 
-			TextureData tex = _Textures[index.getValue()];
+			TextureData tex = textures[index.getValue()];
 			if (!block.TextureID.equals(UUID.Zero)) {
 				// A simulator has a cache of this bake layer
 				tex.textureID = block.TextureID;
@@ -2074,20 +2057,20 @@ public class AppearanceManager implements PacketCallback {
 				// upload
 			}
 		}
-		if (OnAgentCachedBakesReply.count() > 0)
-			OnAgentCachedBakesReply.dispatch(
+		if (onAgentCachedBakesReply.count() > 0)
+			onAgentCachedBakesReply.dispatch(
 					new AgentCachedBakesReplyCallbackArgs(response.AgentData.SerialNum, response.WearableData.length));
 	}
 
 	private class Network_OnEventQueueRunning implements Callback<EventQueueRunningCallbackArgs> {
 		@Override
 		public boolean callback(EventQueueRunningCallbackArgs e) {
-			if (sendAppearanceUpdates && e.getSimulator().equals(_Client.Network.getCurrentSim())) {
+			if (sendAppearanceUpdates && e.getSimulator().equals(client.network.getCurrentSim())) {
 				// Update appearance each time we enter a new sim and capabilities have been
 				// retrieved
 				logger.warn(GridClient.Log("Starting AppearanceRequest from server " + e.getSimulator().getSimName(),
-						_Client));
-				RequestSetAppearance(false);
+						client));
+				requestSetAppearance(false);
 			}
 			return false;
 		}
@@ -2097,16 +2080,16 @@ public class AppearanceManager implements PacketCallback {
 		@SuppressWarnings("deprecation")
 		@Override
 		public boolean callback(DisconnectedCallbackArgs e) {
-			if (_RebakeScheduleTimer != null) {
-				_RebakeScheduleTimer.cancel();
-				_RebakeScheduleTimer = null;
+			if (rebakeScheduleTimer != null) {
+				rebakeScheduleTimer.cancel();
+				rebakeScheduleTimer = null;
 			}
 
-			if (_AppearanceThread != null) {
-				if (_AppearanceThread.isAlive()) {
-					_AppearanceThread.stop();
+			if (appearanceThread != null) {
+				if (appearanceThread.isAlive()) {
+					appearanceThread.stop();
 				}
-				_AppearanceThread = null;
+				appearanceThread = null;
 			}
 			return true;
 		}
@@ -2122,7 +2105,7 @@ public class AppearanceManager implements PacketCallback {
 	 *            A WearableType
 	 * @returns AssetType.Bodypart or AssetType.Clothing or AssetType.Unknown
 	 */
-	public static AssetType WearableTypeToAssetType(WearableType type) {
+	public static AssetType wearableTypeToAssetType(WearableType type) {
 		switch (type) {
 		case Shape:
 		case Skin:
@@ -2155,7 +2138,7 @@ public class AppearanceManager implements PacketCallback {
 	 *            A BakeType
 	 * @returns The AvatarTextureIndex slot that holds the given BakeType
 	 */
-	public static AvatarTextureIndex BakeTypeToAgentTextureIndex(BakeType index) {
+	public static AvatarTextureIndex bakeTypeToAgentTextureIndex(BakeType index) {
 		switch (index) {
 		case Head:
 			return AvatarTextureIndex.HeadBaked;
@@ -2182,7 +2165,7 @@ public class AppearanceManager implements PacketCallback {
 	 * @returns Which layer number as defined in BakeTypeToTextures is used for
 	 *          morph mask
 	 */
-	public static AvatarTextureIndex MorphLayerForBakeType(BakeType bakeType) {
+	public static AvatarTextureIndex morphLayerForBakeType(BakeType bakeType) {
 		// Indexes return here correspond to those returned
 		// in BakeTypeToTextures(), those two need to be in sync.
 		// Which wearable layer is used for morph is defined in avatar_lad.xml
@@ -2213,7 +2196,7 @@ public class AppearanceManager implements PacketCallback {
 	 *            A BakeType
 	 * @returns A list of texture slots that are inputs for the given bake
 	 */
-	public static List<AvatarTextureIndex> BakeTypeToTextures(BakeType bakeType) {
+	public static List<AvatarTextureIndex> bakeTypeToTextures(BakeType bakeType) {
 		List<AvatarTextureIndex> textures = new ArrayList<AvatarTextureIndex>();
 
 		switch (bakeType) {

@@ -159,17 +159,17 @@ public class Permissions implements Serializable {
 
 	public OSD serialize() {
 		OSDMap permissions = new OSDMap(5);
-		permissions.put("creator_id", OSD.FromUUID(creatorID));
-		permissions.put("owner_id", OSD.FromUUID(ownerID));
-		permissions.put("last_owner_id", OSD.FromUUID(lastOwnerID));
-		permissions.put("group_id", OSD.FromUUID(groupID));
-		permissions.put("is_owner_group", OSD.FromBoolean(isGroupOwned));
+		permissions.put("creator_id", OSD.fromUUID(creatorID));
+		permissions.put("owner_id", OSD.fromUUID(ownerID));
+		permissions.put("last_owner_id", OSD.fromUUID(lastOwnerID));
+		permissions.put("group_id", OSD.fromUUID(groupID));
+		permissions.put("is_owner_group", OSD.fromBoolean(isGroupOwned));
 
-		permissions.put("base_mask", OSD.FromInteger(BaseMask));
-		permissions.put("owner_mask", OSD.FromInteger(OwnerMask));
-		permissions.put("group_mask", OSD.FromInteger(GroupMask));
-		permissions.put("everyone_mask", OSD.FromInteger(EveryoneMask));
-		permissions.put("next_owner_mask", OSD.FromInteger(NextOwnerMask));
+		permissions.put("base_mask", OSD.fromInteger(BaseMask));
+		permissions.put("owner_mask", OSD.fromInteger(OwnerMask));
+		permissions.put("group_mask", OSD.fromInteger(GroupMask));
+		permissions.put("everyone_mask", OSD.fromInteger(EveryoneMask));
+		permissions.put("next_owner_mask", OSD.fromInteger(NextOwnerMask));
 		return permissions;
 	}
 
@@ -178,17 +178,17 @@ public class Permissions implements Serializable {
 		OSDMap map = (OSDMap) ((llsd instanceof OSDMap) ? llsd : null);
 
 		if (map != null) {
-			permissions.creatorID = map.get("creator_id").AsUUID();
-			permissions.ownerID = map.get("owner_id").AsUUID();
-			permissions.lastOwnerID = map.get("last_owner_id").AsUUID();
-			permissions.groupID = map.get("group_id").AsUUID();
-			permissions.isGroupOwned = map.get("is_owner_group").AsBoolean();
+			permissions.creatorID = map.get("creator_id").asUUID();
+			permissions.ownerID = map.get("owner_id").asUUID();
+			permissions.lastOwnerID = map.get("last_owner_id").asUUID();
+			permissions.groupID = map.get("group_id").asUUID();
+			permissions.isGroupOwned = map.get("is_owner_group").asBoolean();
 
-			permissions.BaseMask = map.get("base_mask").AsUInteger();
-			permissions.EveryoneMask = map.get("everyone_mask").AsUInteger();
-			permissions.GroupMask = map.get("group_mask").AsUInteger();
-			permissions.NextOwnerMask = map.get("next_owner_mask").AsUInteger();
-			permissions.OwnerMask = map.get("owner_mask").AsUInteger();
+			permissions.BaseMask = map.get("base_mask").asUInteger();
+			permissions.EveryoneMask = map.get("everyone_mask").asUInteger();
+			permissions.GroupMask = map.get("group_mask").asUInteger();
+			permissions.NextOwnerMask = map.get("next_owner_mask").asUInteger();
+			permissions.OwnerMask = map.get("owner_mask").asUInteger();
 		}
 
 		return permissions;

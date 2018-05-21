@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import libomv.primMesher.types.Face;
 import libomv.primMesher.types.ViewerFace;
@@ -41,12 +42,12 @@ import libomv.types.Vector2;
 import libomv.types.Vector3;
 
 public class SculptMesh implements Cloneable {
-	public ArrayList<Vector3> coords;
-	public ArrayList<Face> faces;
+	public List<Vector3> coords;
+	public List<Face> faces;
 
-	public ArrayList<ViewerFace> viewerFaces;
-	public ArrayList<Vector3> normals;
-	public ArrayList<Vector2> uvs;
+	public List<ViewerFace> viewerFaces;
+	public List<Vector3> normals;
+	public List<Vector2> uvs;
 
 	public enum SculptType {
 		sphere, torus, plane, cylinder;
@@ -84,12 +85,12 @@ public class SculptMesh implements Cloneable {
 			return;
 		}
 
-		coords = new ArrayList<Vector3>();
-		faces = new ArrayList<Face>();
-		normals = new ArrayList<Vector3>();
-		uvs = new ArrayList<Vector2>();
+		coords = new ArrayList<>();
+		faces = new ArrayList<>();
+		normals = new ArrayList<>();
+		uvs = new ArrayList<>();
 
-		viewerFaces = new ArrayList<ViewerFace>();
+		viewerFaces = new ArrayList<>();
 
 		int p1, p2, p3, p4;
 
@@ -145,24 +146,24 @@ public class SculptMesh implements Cloneable {
 			calcVertexNormals(SculptType.plane, numXElements, numYElements);
 	}
 
-	public SculptMesh(ArrayList<ArrayList<Vector3>> rows, SculptType sculptType, boolean viewerMode, boolean mirror,
+	public SculptMesh(List<List<Vector3>> rows, SculptType sculptType, boolean viewerMode, boolean mirror,
 			boolean invert) {
 		_SculptMesh(rows, sculptType, viewerMode, mirror, invert);
 	}
 
 	// TODO:FIXME
 	// What the ...
-	void _SculptMesh(ArrayList<ArrayList<Vector3>> rows, SculptType sculptType, boolean viewerMode, boolean mirror,
+	void _SculptMesh(List<List<Vector3>> rows, SculptType sculptType, boolean viewerMode, boolean mirror,
 			boolean invert) {
-		coords = new ArrayList<Vector3>();
-		faces = new ArrayList<Face>();
-		normals = new ArrayList<Vector3>();
-		uvs = new ArrayList<Vector2>();
+		coords = new ArrayList<>();
+		faces = new ArrayList<>();
+		normals = new ArrayList<>();
+		uvs = new ArrayList<>();
 
 		if (mirror)
 			invert = !invert;
 
-		viewerFaces = new ArrayList<ViewerFace>();
+		viewerFaces = new ArrayList<>();
 
 		int height = rows.size();
 		int width = rows.get(0).size();
@@ -187,8 +188,8 @@ public class SculptMesh implements Cloneable {
 		Vector3 bottomPole = rows.get(height - 1).get(width / 2);
 		if (sculptType == SculptType.sphere) {
 			if (height % 2 == 0) {
-				ArrayList<Vector3> topPoleRow = new ArrayList<Vector3>(width);
-				ArrayList<Vector3> bottomPoleRow = new ArrayList<Vector3>(width);
+				List<Vector3> topPoleRow = new ArrayList<>(width);
+				List<Vector3> bottomPoleRow = new ArrayList<>(width);
 
 				for (int i = 0; i < height; i++) {
 					topPoleRow.add(topPole);
@@ -197,8 +198,8 @@ public class SculptMesh implements Cloneable {
 				rows.add(0, topPoleRow);
 				rows.add(bottomPoleRow);
 			} else {
-				ArrayList<Vector3> topPoleRow = rows.get(0);
-				ArrayList<Vector3> bottomPoleRow = rows.get(height - 1);
+				List<Vector3> topPoleRow = rows.get(0);
+				List<Vector3> bottomPoleRow = rows.get(height - 1);
 
 				for (int i = 0; i < height; i++) {
 					topPoleRow.set(i, topPole);
@@ -290,11 +291,11 @@ public class SculptMesh implements Cloneable {
 	}
 
 	public SculptMesh(SculptMesh sm) {
-		coords = new ArrayList<Vector3>(sm.coords);
-		faces = new ArrayList<Face>(sm.faces);
-		viewerFaces = new ArrayList<ViewerFace>(sm.viewerFaces);
-		normals = new ArrayList<Vector3>(sm.normals);
-		uvs = new ArrayList<Vector2>(sm.uvs);
+		coords = new ArrayList<>(sm.coords);
+		faces = new ArrayList<>(sm.faces);
+		viewerFaces = new ArrayList<>(sm.viewerFaces);
+		normals = new ArrayList<>(sm.normals);
+		uvs = new ArrayList<>(sm.uvs);
 	}
 
 	private void calcVertexNormals(SculptType sculptType, int xSize, int ySize) {

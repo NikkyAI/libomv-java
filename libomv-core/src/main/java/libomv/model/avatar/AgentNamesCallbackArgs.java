@@ -1,18 +1,18 @@
 package libomv.model.avatar;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import libomv.types.UUID;
 import libomv.utils.CallbackArgs;
 
 public class AgentNamesCallbackArgs implements CallbackArgs {
-	private HashMap<UUID, String> names;
+	private Map<UUID, String> names;
 
-	public AgentNamesCallbackArgs(HashMap<UUID, String> names) {
+	public AgentNamesCallbackArgs(Map<UUID, String> names) {
 		this.names = names;
 	}
 
-	public HashMap<UUID, String> getNames() {
+	public Map<UUID, String> getNames() {
 		return names;
 	}
 

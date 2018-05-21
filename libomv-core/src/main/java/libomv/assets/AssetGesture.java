@@ -55,11 +55,6 @@ public class AssetGesture extends AssetItem {
 
 	/* Describes animation step of a gesture */
 	public class GestureStepAnimation extends GestureStep {
-		/* Returns what kind of gesture step this is */
-		@Override
-		public GestureStepType getGestureStepType() {
-			return GestureStepType.Animation;
-		}
 
 		/*
 		 * If true, this step represents start of animation, otherwise animation stop
@@ -72,6 +67,12 @@ public class AssetGesture extends AssetItem {
 		/* Animation inventory name */
 		public String name;
 
+		/* Returns what kind of gesture step this is */
+		@Override
+		public GestureStepType getGestureStepType() {
+			return GestureStepType.Animation;
+		}
+
 		@Override
 		public String toString() {
 			if (animationStart) {
@@ -83,17 +84,17 @@ public class AssetGesture extends AssetItem {
 
 	/* Describes sound step of a gesture */
 	public class GestureStepSound extends GestureStep {
-		/* Returns what kind of gesture step this is */
-		@Override
-		public GestureStepType getGestureStepType() {
-			return GestureStepType.Sound;
-		}
-
 		/* Sound asset <see cref="UUID"/> */
 		public UUID id;
 
 		/* Sound inventory name */
 		public String name;
+
+		/* Returns what kind of gesture step this is */
+		@Override
+		public GestureStepType getGestureStepType() {
+			return GestureStepType.Sound;
+		}
 
 		@Override
 		public String toString() {
@@ -104,14 +105,14 @@ public class AssetGesture extends AssetItem {
 
 	/* Describes sound step of a gesture */
 	public class GestureStepChat extends GestureStep {
+		/* Text to output in chat */
+		public String text;
+
 		/* Returns what kind of gesture step this is */
 		@Override
 		public GestureStepType getGestureStepType() {
 			return GestureStepType.Chat;
 		}
-
-		/* Text to output in chat */
-		public String text;
 
 		@Override
 		public String toString() {
@@ -121,12 +122,6 @@ public class AssetGesture extends AssetItem {
 
 	/* Describes sound step of a gesture */
 	public class GestureStepWait extends GestureStep {
-		/* Returns what kind of gesture step this is */
-		@Override
-		public GestureStepType getGestureStepType() {
-			return GestureStepType.Wait;
-		}
-
 		/* If true in this step we wait for all animations to finish */
 		public boolean waitForAnimation;
 
@@ -135,6 +130,12 @@ public class AssetGesture extends AssetItem {
 
 		/* Time in seconds to wait if WaitForAnimation is false */
 		public float waitTime;
+
+		/* Returns what kind of gesture step this is */
+		@Override
+		public GestureStepType getGestureStepType() {
+			return GestureStepType.Wait;
+		}
 
 		@Override
 		public String toString() {
@@ -174,63 +175,14 @@ public class AssetGesture extends AssetItem {
 
 	/* Keyboard key that triggers the gesture */
 	private byte triggerKey;
-
-	public byte getTriggerKey() {
-		return triggerKey;
-	}
-
-	public void setTriggerKey(byte triggerKey) {
-		invalidateAssetData();
-		this.triggerKey = triggerKey;
-	}
-
 	/* Modifier to the trigger key */
 	private int triggerKeyMask;
-
-	public int getTriggerKeyMask() {
-		return triggerKeyMask;
-	}
-
-	public void setTriggerKeyMask(int triggerKeyMask) {
-		invalidateAssetData();
-		this.triggerKeyMask = triggerKeyMask;
-	}
-
 	/* String that triggers playing of the gesture sequence */
 	private String trigger;
-
-	public String getTrigger() {
-		return trigger;
-	}
-
-	public void setTrigger(String trigger) {
-		invalidateAssetData();
-		this.trigger = trigger;
-	}
-
 	/* Text that replaces trigger in chat once gesture is triggered */
 	private String replaceWith;
-
-	public String getReplaceWith() {
-		return replaceWith;
-	}
-
-	public void setReplaceWith(String replaceWith) {
-		invalidateAssetData();
-		this.replaceWith = replaceWith;
-	}
-
 	/* Sequence of gesture steps */
 	private List<GestureStep> sequence;
-
-	public List<GestureStep> getSequence() {
-		return sequence;
-	}
-
-	public void setSequence(List<GestureStep> sequence) {
-		invalidateAssetData();
-		this.sequence = sequence;
-	}
 
 	/**
 	 * Constructs gesture asset
@@ -242,6 +194,51 @@ public class AssetGesture extends AssetItem {
 	 */
 	public AssetGesture(UUID assetID, byte[] assetData) {
 		super(assetID, assetData);
+	}
+
+	public byte getTriggerKey() {
+		return triggerKey;
+	}
+
+	public void setTriggerKey(byte triggerKey) {
+		invalidateAssetData();
+		this.triggerKey = triggerKey;
+	}
+
+	public int getTriggerKeyMask() {
+		return triggerKeyMask;
+	}
+
+	public void setTriggerKeyMask(int triggerKeyMask) {
+		invalidateAssetData();
+		this.triggerKeyMask = triggerKeyMask;
+	}
+
+	public String getTrigger() {
+		return trigger;
+	}
+
+	public void setTrigger(String trigger) {
+		invalidateAssetData();
+		this.trigger = trigger;
+	}
+
+	public String getReplaceWith() {
+		return replaceWith;
+	}
+
+	public void setReplaceWith(String replaceWith) {
+		invalidateAssetData();
+		this.replaceWith = replaceWith;
+	}
+
+	public List<GestureStep> getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(List<GestureStep> sequence) {
+		invalidateAssetData();
+		this.sequence = sequence;
 	}
 
 	/**
@@ -315,7 +312,7 @@ public class AssetGesture extends AssetItem {
 				break;
 			}
 		}
-		assetData = Helpers.StringToBytes(sb.toString());
+		assetData = Helpers.stringToBytes(sb.toString());
 	}
 
 	/**
@@ -330,7 +327,7 @@ public class AssetGesture extends AssetItem {
 
 		try {
 			String[] lines = Helpers.BytesToString(assetData).split("\n");
-			sequence = new ArrayList<GestureStep>();
+			sequence = new ArrayList<>();
 
 			int i = 0;
 

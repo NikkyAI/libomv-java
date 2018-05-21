@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import libomv.capabilities.CapsMessage.ParcelPropertiesUpdateMessage;
 import libomv.io.SimulatorManager;
@@ -127,10 +128,10 @@ public class Parcel {
 	public boolean regionPushOverride;
 	// Access list of who is whitelisted on this
 	// Tangible_doc_comment_body parcel
-	public ArrayList<ParcelAccessEntry> accessWhiteList;
+	public List<ParcelAccessEntry> accessWhiteList;
 	// Access list of who is blacklisted on this
 	// Tangible_doc_comment_body parcel
-	public ArrayList<ParcelAccessEntry> accessBlackList;
+	public List<ParcelAccessEntry> accessBlackList;
 	// TRUE of region denies access to age unverified users
 	public boolean regionDenyAgeUnverified;
 	// true to obscure (hide) media url
@@ -159,8 +160,8 @@ public class Parcel {
 		this.name = Helpers.EmptyString;
 		this.desc = Helpers.EmptyString;
 		this.musicURL = Helpers.EmptyString;
-		this.accessWhiteList = new ArrayList<ParcelAccessEntry>(0);
-		this.accessBlackList = new ArrayList<ParcelAccessEntry>(0);
+		this.accessWhiteList = new ArrayList<>(0);
+		this.accessBlackList = new ArrayList<>(0);
 		this.media = new ParcelMedia();
 	}
 
@@ -194,9 +195,9 @@ public class Parcel {
 	 * @throws Exception
 	 */
 	public final void update(SimulatorManager simulator, boolean wantReply) throws Exception {
-		URI url = simulator.getClient().Network.getCapabilityURI("ParcelPropertiesUpdate");
+		URI url = simulator.getClient().network.getCapabilityURI("ParcelPropertiesUpdate");
 		if (url != null) {
-			ParcelPropertiesUpdateMessage req = simulator.getClient().Messages.new ParcelPropertiesUpdateMessage();
+			ParcelPropertiesUpdateMessage req = simulator.getClient().messages.new ParcelPropertiesUpdateMessage();
 			req.authBuyerID = this.authBuyerID;
 			req.category = this.category;
 			req.desc = this.desc;
@@ -227,25 +228,25 @@ public class Parcel {
 			req.groupAVSounds = this.groupAVSounds;
 
 			new CapsClient(simulator.getClient(), "UpdateParcel").executeHttpPost(url, req, null,
-					simulator.getClient().Settings.CAPS_TIMEOUT);
+					simulator.getClient().settings.CAPS_TIMEOUT);
 		} else {
 			ParcelPropertiesUpdatePacket request = new ParcelPropertiesUpdatePacket();
 
-			request.AgentData.AgentID = simulator.getClient().Self.getAgentID();
-			request.AgentData.SessionID = simulator.getClient().Self.getSessionID();
+			request.AgentData.AgentID = simulator.getClient().agent.getAgentID();
+			request.AgentData.SessionID = simulator.getClient().agent.getSessionID();
 
 			request.ParcelData.LocalID = this.localID;
 
 			request.ParcelData.AuthBuyerID = this.authBuyerID;
 			request.ParcelData.Category = this.category.getValue();
-			request.ParcelData.setDesc(Helpers.StringToBytes(this.desc));
+			request.ParcelData.setDesc(Helpers.stringToBytes(this.desc));
 			request.ParcelData.GroupID = this.groupID;
 			request.ParcelData.LandingType = this.landing.getValue();
 			request.ParcelData.MediaAutoScale = (this.media.mediaAutoScale) ? (byte) 0x1 : (byte) 0x0;
 			request.ParcelData.MediaID = this.media.mediaID;
-			request.ParcelData.setMediaURL(Helpers.StringToBytes(this.media.mediaURL.toString()));
-			request.ParcelData.setMusicURL(Helpers.StringToBytes(this.musicURL.toString()));
-			request.ParcelData.setName(Helpers.StringToBytes(this.name));
+			request.ParcelData.setMediaURL(Helpers.stringToBytes(this.media.mediaURL.toString()));
+			request.ParcelData.setMusicURL(Helpers.stringToBytes(this.musicURL.toString()));
+			request.ParcelData.setName(Helpers.stringToBytes(this.name));
 			if (wantReply) {
 				request.ParcelData.Flags = 1;
 			}
@@ -271,8 +272,8 @@ public class Parcel {
 	 */
 	public final void updateOtherCleanTime(SimulatorManager simulator) throws Exception {
 		ParcelSetOtherCleanTimePacket request = new ParcelSetOtherCleanTimePacket();
-		request.AgentData.AgentID = simulator.getClient().Self.getAgentID();
-		request.AgentData.SessionID = simulator.getClient().Self.getSessionID();
+		request.AgentData.AgentID = simulator.getClient().agent.getAgentID();
+		request.AgentData.SessionID = simulator.getClient().agent.getSessionID();
 		request.ParcelData.LocalID = this.localID;
 		request.ParcelData.OtherCleanTime = this.otherCleanTime;
 

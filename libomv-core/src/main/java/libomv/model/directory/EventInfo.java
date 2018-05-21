@@ -40,7 +40,7 @@ public final class EventInfo {
 	 */
 	public String toSLurl() {
 		float[] values = new float[2];
-		Helpers.GlobalPosToRegionHandle((float) this.globalPos.X, (float) this.globalPos.Y, values);
+		Helpers.globalPosToRegionHandle((float) this.globalPos.X, (float) this.globalPos.Y, values);
 		return "secondlife://" + this.simName + "/" + values[0] + "/" + values[1] + "/" + this.globalPos.Z;
 	}
 
@@ -51,6 +51,6 @@ public final class EventInfo {
 	 */
 	@Override
 	public String toString() {
-		return Helpers.StructToString(this);
+		return Helpers.structToString(this);
 	}
 }

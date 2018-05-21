@@ -259,44 +259,44 @@ public class InventoryItem extends InventoryNode {
 	@Override
 	protected OSDMap toOSD() {
 		OSDMap map = super.toOSD();
-		map.put("item_id", OSD.FromUUID(itemID));
-		map.put("asset_id", OSD.FromUUID(assetID));
-		map.put("type", OSD.FromInteger(assetType.getValue()));
-		map.put("inv_type", OSD.FromInteger(getType().getValue()));
+		map.put("item_id", OSD.fromUUID(itemID));
+		map.put("asset_id", OSD.fromUUID(assetID));
+		map.put("type", OSD.fromInteger(assetType.getValue()));
+		map.put("inv_type", OSD.fromInteger(getType().getValue()));
 
-		map.put("flags", OSD.FromUInteger(itemFlags));
+		map.put("flags", OSD.fromUInteger(itemFlags));
 
 		map.put("permissions", permissions.serialize());
 
-		map.put("created_at", OSD.FromDate(creationDate));
+		map.put("created_at", OSD.fromDate(creationDate));
 		return map;
 	}
 
 	protected void fromOSD(OSDMap map) {
-		InventoryType type = InventoryType.setValue(map.get("inv_type").AsInteger());
-		if (type == InventoryType.Texture && AssetType.setValue(map.get("type").AsInteger()) == AssetType.Object) {
+		InventoryType type = InventoryType.setValue(map.get("inv_type").asInteger());
+		if (type == InventoryType.Texture && AssetType.setValue(map.get("type").asInteger()) == AssetType.Object) {
 			type = InventoryType.Attachment;
 		}
 
-		UUID itemID = map.get("asset_id").AsUUID();
+		UUID itemID = map.get("asset_id").asUUID();
 		if (itemID == null)
-			itemID = map.get("item_id").AsUUID();
+			itemID = map.get("item_id").asUUID();
 		InventoryItem item = create(type, itemID);
 
-		item.ownerID = map.get("agent_id").AsUUID();
-		item.parentID = map.get("parent_id").AsUUID();
+		item.ownerID = map.get("agent_id").asUUID();
+		item.parentID = map.get("parent_id").asUUID();
 
-		item.name = map.get("name").AsString();
-		item.description = map.get("desc").AsString();
-		item.assetID = map.get("asset_id").AsUUID();
-		item.assetType = AssetType.setValue(map.get("type").AsInteger());
-		item.creationDate = Helpers.UnixTimeToDateTime(map.get("created_at").AsReal());
-		item.itemFlags = map.get("flags").AsUInteger();
+		item.name = map.get("name").asString();
+		item.description = map.get("desc").asString();
+		item.assetID = map.get("asset_id").asUUID();
+		item.assetType = AssetType.setValue(map.get("type").asInteger());
+		item.creationDate = Helpers.UnixTimeToDateTime(map.get("created_at").asReal());
+		item.itemFlags = map.get("flags").asUInteger();
 		item.permissions = libomv.types.Permissions.fromOSD(map.get("permissions"));
 
 		OSDMap sale = (OSDMap) map.get("sale_info");
-		item.salePrice = sale.get("sale_price").AsInteger();
-		item.saleType = SaleType.setValue(sale.get("sale_type").AsInteger());
+		item.salePrice = sale.get("sale_price").asInteger();
+		item.saleType = SaleType.setValue(sale.get("sale_type").asInteger());
 	}
 
 	/**

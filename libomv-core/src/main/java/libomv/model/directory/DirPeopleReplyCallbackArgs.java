@@ -1,6 +1,6 @@
 package libomv.model.directory;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import libomv.types.UUID;
 import libomv.utils.CallbackArgs;
@@ -8,7 +8,7 @@ import libomv.utils.CallbackArgs;
 /** Contains the people data returned from the data server */
 public class DirPeopleReplyCallbackArgs implements CallbackArgs {
 	private final UUID queryID;
-	private final ArrayList<AgentSearchData> matchedPeople;
+	private final List<AgentSearchData> matchedPeople;
 
 	/**
 	 * Construct a new instance of the DirPeopleReplyEventArgs class
@@ -20,7 +20,7 @@ public class DirPeopleReplyCallbackArgs implements CallbackArgs {
 	 * @param matchedPeople
 	 *            A list of people data returned by the data server
 	 */
-	public DirPeopleReplyCallbackArgs(UUID queryID, ArrayList<AgentSearchData> matchedPeople) {
+	public DirPeopleReplyCallbackArgs(UUID queryID, List<AgentSearchData> matchedPeople) {
 		this.queryID = queryID;
 		this.matchedPeople = matchedPeople;
 	}
@@ -31,7 +31,7 @@ public class DirPeopleReplyCallbackArgs implements CallbackArgs {
 	}
 
 	// A list containing People data returned by the data server
-	public final ArrayList<AgentSearchData> getMatchedPeople() {
+	public final List<AgentSearchData> getMatchedPeople() {
 		return matchedPeople;
 	}
 

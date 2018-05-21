@@ -1,6 +1,6 @@
 package libomv.model.group;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import libomv.types.UUID;
 import libomv.utils.CallbackArgs;
@@ -9,7 +9,7 @@ import libomv.utils.CallbackArgs;
 public class GroupRolesDataReplyCallbackArgs implements CallbackArgs {
 	private final UUID requestID;
 	private final UUID groupID;
-	private final HashMap<UUID, GroupRole> roles;
+	private final Map<UUID, GroupRole> roles;
 
 	/**
 	 * Construct a new instance of the GroupRolesDataReplyCallbackArgs class
@@ -22,7 +22,7 @@ public class GroupRolesDataReplyCallbackArgs implements CallbackArgs {
 	 * @param roles
 	 *            The dictionary containing the roles
 	 */
-	public GroupRolesDataReplyCallbackArgs(UUID requestID, UUID groupID, java.util.HashMap<UUID, GroupRole> roles) {
+	public GroupRolesDataReplyCallbackArgs(UUID requestID, UUID groupID, Map<UUID, GroupRole> roles) {
 		this.requestID = requestID;
 		this.groupID = groupID;
 		this.roles = roles;
@@ -40,7 +40,7 @@ public class GroupRolesDataReplyCallbackArgs implements CallbackArgs {
 	}
 
 	// Get the dictionary containing the roles
-	public final java.util.HashMap<UUID, GroupRole> getRoles() {
+	public final Map<UUID, GroupRole> getRoles() {
 		return roles;
 	}
 

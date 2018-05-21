@@ -817,11 +817,11 @@ public class Primitive {
 
 		// Attachment point to an avatar
 		public AttachmentPoint getAttachmentPoint() {
-			return AttachmentPoint.values()[Helpers.SwapNibbles(state)];
+			return AttachmentPoint.values()[Helpers.swapNibbles(state)];
 		}
 
 		public void setAttachmentPoint(AttachmentPoint value) {
-			state = Helpers.SwapNibbles((byte) value.ordinal());
+			state = Helpers.swapNibbles((byte) value.ordinal());
 		}
 
 		public byte getProfileValue() {
@@ -871,27 +871,27 @@ public class Primitive {
 
 		public OSD serialize() {
 			OSDMap path = new OSDMap(14);
-			path.put("begin", OSD.FromReal(pathBegin));
-			path.put("curve", OSD.FromInteger(pathCurve.getValue()));
-			path.put("end", OSD.FromReal(pathEnd));
-			path.put("radius_offset", OSD.FromReal(pathRadiusOffset));
-			path.put("revolutions", OSD.FromReal(pathRevolutions));
-			path.put("scale_x", OSD.FromReal(pathScaleX));
-			path.put("scale_y", OSD.FromReal(pathScaleY));
-			path.put("shear_x", OSD.FromReal(pathShearX));
-			path.put("shear_y", OSD.FromReal(pathShearY));
-			path.put("skew", OSD.FromReal(pathSkew));
-			path.put("taper_x", OSD.FromReal(pathTaperX));
-			path.put("taper_y", OSD.FromReal(pathTaperY));
-			path.put("twist", OSD.FromReal(pathTwist));
-			path.put("twist_begin", OSD.FromReal(pathTwistBegin));
+			path.put("begin", OSD.fromReal(pathBegin));
+			path.put("curve", OSD.fromInteger(pathCurve.getValue()));
+			path.put("end", OSD.fromReal(pathEnd));
+			path.put("radius_offset", OSD.fromReal(pathRadiusOffset));
+			path.put("revolutions", OSD.fromReal(pathRevolutions));
+			path.put("scale_x", OSD.fromReal(pathScaleX));
+			path.put("scale_y", OSD.fromReal(pathScaleY));
+			path.put("shear_x", OSD.fromReal(pathShearX));
+			path.put("shear_y", OSD.fromReal(pathShearY));
+			path.put("skew", OSD.fromReal(pathSkew));
+			path.put("taper_x", OSD.fromReal(pathTaperX));
+			path.put("taper_y", OSD.fromReal(pathTaperY));
+			path.put("twist", OSD.fromReal(pathTwist));
+			path.put("twist_begin", OSD.fromReal(pathTwistBegin));
 
 			OSDMap profile = new OSDMap(4);
-			profile.put("begin", OSD.FromReal(profileBegin));
-			profile.put("curve", OSD.FromInteger(profileCurve.getValue()));
-			profile.put("hole", OSD.FromInteger(profileHole.getValue()));
-			profile.put("end", OSD.FromReal(profileEnd));
-			profile.put("hollow", OSD.FromReal(profileHollow));
+			profile.put("begin", OSD.fromReal(profileBegin));
+			profile.put("curve", OSD.fromInteger(profileCurve.getValue()));
+			profile.put("hole", OSD.fromInteger(profileHole.getValue()));
+			profile.put("end", OSD.fromReal(profileEnd));
+			profile.put("hollow", OSD.fromReal(profileHollow));
 
 			OSDMap volume = new OSDMap(2);
 			volume.put("path", path);
@@ -909,29 +909,29 @@ public class Primitive {
 				OSDMap profile = (OSDMap) volume.get("profile");
 
 				state = 0;
-				material = Primitive.Material.setValue(map.get("material").AsInteger());
+				material = Primitive.Material.setValue(map.get("material").asInteger());
 				primCode = Primitive.PCode.Prim; // TODO: Put this in SD
 
-				pathBegin = (float) path.get("begin").AsReal();
-				pathCurve = Primitive.PathCurve.setValue((byte) path.get("curve").AsInteger());
-				pathEnd = (float) path.get("end").AsReal();
-				pathRadiusOffset = (float) path.get("radius_offset").AsReal();
-				pathRevolutions = (float) path.get("revolutions").AsReal();
-				pathScaleX = (float) path.get("scale_x").AsReal();
-				pathScaleY = (float) path.get("scale_y").AsReal();
-				pathShearX = (float) path.get("shear_x").AsReal();
-				pathShearY = (float) path.get("shear_y").AsReal();
-				pathSkew = (float) path.get("skew").AsReal();
-				pathTaperX = (float) path.get("taper_x").AsReal();
-				pathTaperY = (float) path.get("taper_y").AsReal();
-				pathTwist = (float) path.get("twist").AsReal();
-				pathTwistBegin = (float) path.get("twist_begin").AsReal();
+				pathBegin = (float) path.get("begin").asReal();
+				pathCurve = Primitive.PathCurve.setValue((byte) path.get("curve").asInteger());
+				pathEnd = (float) path.get("end").asReal();
+				pathRadiusOffset = (float) path.get("radius_offset").asReal();
+				pathRevolutions = (float) path.get("revolutions").asReal();
+				pathScaleX = (float) path.get("scale_x").asReal();
+				pathScaleY = (float) path.get("scale_y").asReal();
+				pathShearX = (float) path.get("shear_x").asReal();
+				pathShearY = (float) path.get("shear_y").asReal();
+				pathSkew = (float) path.get("skew").asReal();
+				pathTaperX = (float) path.get("taper_x").asReal();
+				pathTaperY = (float) path.get("taper_y").asReal();
+				pathTwist = (float) path.get("twist").asReal();
+				pathTwistBegin = (float) path.get("twist_begin").asReal();
 
-				profileBegin = (float) profile.get("begin").AsReal();
-				profileEnd = (float) profile.get("end").AsReal();
-				profileHollow = (float) profile.get("hollow").AsReal();
-				profileCurve = Primitive.ProfileCurve.setValue(profile.get("curve").AsInteger());
-				profileHole = Primitive.HoleType.setValue(profile.get("hole").AsInteger());
+				profileBegin = (float) profile.get("begin").asReal();
+				profileEnd = (float) profile.get("end").asReal();
+				profileHollow = (float) profile.get("hollow").asReal();
+				profileCurve = Primitive.ProfileCurve.setValue(profile.get("curve").asInteger());
+				profileHole = Primitive.HoleType.setValue(profile.get("hole").asInteger());
 
 			}
 		}
@@ -1039,12 +1039,12 @@ public class Primitive {
 		public OSD Serialize() {
 			OSDMap map = new OSDMap();
 
-			map.put("simulate_lod", OSD.FromInteger(softness));
-			map.put("gravity", OSD.FromReal(gravity));
-			map.put("air_friction", OSD.FromReal(drag));
-			map.put("wind_sensitivity", OSD.FromReal(wind));
-			map.put("tension", OSD.FromReal(tension));
-			map.put("user_force", OSD.FromVector3(force));
+			map.put("simulate_lod", OSD.fromInteger(softness));
+			map.put("gravity", OSD.fromReal(gravity));
+			map.put("air_friction", OSD.fromReal(drag));
+			map.put("wind_sensitivity", OSD.fromReal(wind));
+			map.put("tension", OSD.fromReal(tension));
+			map.put("user_force", OSD.fromVector3(force));
 
 			return map;
 		}
@@ -1053,12 +1053,12 @@ public class Primitive {
 			if (osd.getType() == OSDType.Map) {
 				OSDMap map = (OSDMap) osd;
 
-				softness = map.get("simulate_lod").AsInteger();
-				gravity = (float) map.get("gravity").AsReal();
-				drag = (float) map.get("air_friction").AsReal();
-				wind = (float) map.get("wind_sensitivity").AsReal();
-				tension = (float) map.get("tension").AsReal();
-				force = map.get("user_force").AsVector3();
+				softness = map.get("simulate_lod").asInteger();
+				gravity = (float) map.get("gravity").asReal();
+				drag = (float) map.get("air_friction").asReal();
+				wind = (float) map.get("wind_sensitivity").asReal();
+				tension = (float) map.get("tension").asReal();
+				force = map.get("user_force").asVector3();
 			}
 		}
 
@@ -1129,9 +1129,9 @@ public class Primitive {
 			Color4 tmpColor = color;
 			tmpColor.A = intensity;
 			tmpColor.toBytes(data, 0);
-			Helpers.FloatToBytesL(radius, data, 4);
-			Helpers.FloatToBytesL(cutoff, data, 8);
-			Helpers.FloatToBytesL(falloff, data, 12);
+			Helpers.floatToBytesL(radius, data, 4);
+			Helpers.floatToBytesL(cutoff, data, 8);
+			Helpers.floatToBytesL(falloff, data, 12);
 
 			return data;
 		}
@@ -1139,11 +1139,11 @@ public class Primitive {
 		public OSD serialize() {
 			OSDMap map = new OSDMap();
 
-			map.put("color", OSD.FromColor4(color));
-			map.put("intensity", OSD.FromReal(intensity));
-			map.put("radius", OSD.FromReal(radius));
-			map.put("cutoff", OSD.FromReal(cutoff));
-			map.put("falloff", OSD.FromReal(falloff));
+			map.put("color", OSD.fromColor4(color));
+			map.put("intensity", OSD.fromReal(intensity));
+			map.put("radius", OSD.fromReal(radius));
+			map.put("cutoff", OSD.fromReal(cutoff));
+			map.put("falloff", OSD.fromReal(falloff));
 
 			return map;
 		}
@@ -1152,11 +1152,11 @@ public class Primitive {
 			if (osd.getType() == OSDType.Map) {
 				OSDMap map = (OSDMap) osd;
 
-				color = map.get("color").AsColor4();
-				intensity = (float) map.get("intensity").AsReal();
-				radius = (float) map.get("radius").AsReal();
-				cutoff = (float) map.get("cutoff").AsReal();
-				falloff = (float) map.get("falloff").AsReal();
+				color = map.get("color").asColor4();
+				intensity = (float) map.get("intensity").asReal();
+				radius = (float) map.get("radius").asReal();
+				cutoff = (float) map.get("cutoff").asReal();
+				falloff = (float) map.get("falloff").asReal();
 			}
 		}
 
@@ -1246,8 +1246,8 @@ public class Primitive {
 		public OSD serialize() {
 			OSDMap map = new OSDMap();
 
-			map.put("texture", OSD.FromUUID(sculptTexture));
-			map.put("type", OSD.FromInteger(type));
+			map.put("texture", OSD.fromUUID(sculptTexture));
+			map.put("type", OSD.fromInteger(type));
 
 			return map;
 		}
@@ -1256,8 +1256,8 @@ public class Primitive {
 			if (osd.getType() == OSDType.Map) {
 				OSDMap map = (OSDMap) osd;
 
-				sculptTexture = map.get("texture").AsUUID();
-				type = (byte) map.get("type").AsInteger();
+				sculptTexture = map.get("texture").asUUID();
+				type = (byte) map.get("type").asInteger();
 			}
 		}
 
@@ -1316,8 +1316,8 @@ public class Primitive {
 		public OSD serialize() {
 			OSDMap map = new OSDMap();
 
-			map.put("texture", OSD.FromUUID(lightTexture));
-			map.put("params", OSD.FromVector3(params));
+			map.put("texture", OSD.fromUUID(lightTexture));
+			map.put("params", OSD.fromVector3(params));
 
 			return map;
 		}
@@ -1326,8 +1326,8 @@ public class Primitive {
 			if (osd.getType() == OSDType.Map) {
 				OSDMap map = (OSDMap) osd;
 
-				lightTexture = map.get("texture").AsUUID();
-				params = map.get("params").AsVector3();
+				lightTexture = map.get("texture").asUUID();
+				params = map.get("params").asVector3();
 			}
 		}
 
@@ -1552,21 +1552,21 @@ public class Primitive {
 
 		OSDMap prim = new OSDMap(9);
 		if (properties != null) {
-			prim.put("name", OSD.FromString(properties.name));
-			prim.put("description", OSD.FromString(properties.description));
+			prim.put("name", OSD.fromString(properties.name));
+			prim.put("description", OSD.fromString(properties.description));
 		} else {
-			prim.put("name", OSD.FromString("Object"));
-			prim.put("description", OSD.FromString(Helpers.EmptyString));
+			prim.put("name", OSD.fromString("Object"));
+			prim.put("description", OSD.fromString(Helpers.EmptyString));
 		}
 
-		prim.put("phantom", OSD.FromBoolean((flags & PrimFlags.Phantom) != 0));
-		prim.put("physical", OSD.FromBoolean((flags & PrimFlags.Physics) != 0));
-		prim.put("position", OSD.FromVector3(position));
-		prim.put("rotation", OSD.FromQuaternion(rotation));
-		prim.put("scale", OSD.FromVector3(scale));
-		prim.put("material", OSD.FromInteger(primData.material.getValue()));
-		prim.put("shadows", OSD.FromBoolean((flags & PrimFlags.CastShadows) != 0));
-		prim.put("parentid", OSD.FromInteger(parentID));
+		prim.put("phantom", OSD.fromBoolean((flags & PrimFlags.Phantom) != 0));
+		prim.put("physical", OSD.fromBoolean((flags & PrimFlags.Physics) != 0));
+		prim.put("position", OSD.fromVector3(position));
+		prim.put("rotation", OSD.fromQuaternion(rotation));
+		prim.put("scale", OSD.fromVector3(scale));
+		prim.put("material", OSD.fromInteger(primData.material.getValue()));
+		prim.put("shadows", OSD.fromBoolean((flags & PrimFlags.CastShadows) != 0));
+		prim.put("parentid", OSD.fromInteger(parentID));
 
 		prim.put("volume", primData.serialize());
 
@@ -1595,19 +1595,19 @@ public class Primitive {
 		if (osd instanceof OSDMap) {
 			OSDMap map = (OSDMap) osd;
 
-			if (map.get("phantom").AsBoolean())
+			if (map.get("phantom").asBoolean())
 				flags = PrimFlags.Phantom;
 
-			if (map.get("physical").AsBoolean())
+			if (map.get("physical").asBoolean())
 				flags |= PrimFlags.Physics;
 
-			if (map.get("shadows").AsBoolean())
+			if (map.get("shadows").asBoolean())
 				flags |= PrimFlags.CastShadows;
 
-			parentID = map.get("parentid").AsInteger();
-			position = map.get("position").AsVector3();
-			rotation = map.get("rotation").AsQuaternion();
-			scale = map.get("scale").AsVector3();
+			parentID = map.get("parentid").asInteger();
+			position = map.get("position").asVector3();
+			rotation = map.get("rotation").asQuaternion();
+			scale = map.get("scale").asVector3();
 
 			primData = new ConstructionData(map.get("volume"));
 			flexible = new FlexibleData(map.get("flex"));
@@ -1625,11 +1625,11 @@ public class Primitive {
 			properties = new ObjectProperties();
 
 			String s;
-			s = map.get("name").AsString();
+			s = map.get("name").asString();
 			if (s != null && !s.isEmpty()) {
 				properties.name = s;
 			}
-			s = map.get("description").AsString();
+			s = map.get("description").asString();
 			if (s != null && !s.isEmpty()) {
 				properties.description = s;
 			}

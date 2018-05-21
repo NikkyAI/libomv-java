@@ -1,6 +1,6 @@
 package libomv.model.group;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import libomv.types.UUID;
 import libomv.utils.CallbackArgs;
@@ -8,7 +8,7 @@ import libomv.utils.CallbackArgs;
 // Represents a list of active group notices
 public class GroupNoticesListReplyCallbackArgs implements CallbackArgs {
 	private final UUID groupID;
-	private final ArrayList<GroupNoticesListEntry> notices;
+	private final List<GroupNoticesListEntry> notices;
 
 	/**
 	 * Construct a new instance of the GroupNoticesListReplyCallbackArgs class
@@ -18,7 +18,7 @@ public class GroupNoticesListReplyCallbackArgs implements CallbackArgs {
 	 * @param notices
 	 *            The list containing active notices
 	 */
-	public GroupNoticesListReplyCallbackArgs(UUID groupID, ArrayList<GroupNoticesListEntry> notices) {
+	public GroupNoticesListReplyCallbackArgs(UUID groupID, List<GroupNoticesListEntry> notices) {
 		this.groupID = groupID;
 		this.notices = notices;
 	}
@@ -29,7 +29,7 @@ public class GroupNoticesListReplyCallbackArgs implements CallbackArgs {
 	}
 
 	// Get the notices list
-	public final ArrayList<GroupNoticesListEntry> getNotices() {
+	public final List<GroupNoticesListEntry> getNotices() {
 		return notices;
 	}
 

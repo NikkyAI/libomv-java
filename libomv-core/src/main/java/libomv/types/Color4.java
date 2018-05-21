@@ -88,10 +88,10 @@ public final class Color4 {
 		}
 
 		// Valid range is from 0.0 to 1.0
-		R = Helpers.Clamp(r, 0f, 1f);
-		G = Helpers.Clamp(g, 0f, 1f);
-		B = Helpers.Clamp(b, 0f, 1f);
-		A = Helpers.Clamp(a, 0f, 1f);
+		R = Helpers.clamp(r, 0f, 1f);
+		G = Helpers.clamp(g, 0f, 1f);
+		B = Helpers.clamp(b, 0f, 1f);
+		A = Helpers.clamp(a, 0f, 1f);
 	}
 
 	/**
@@ -259,10 +259,10 @@ public final class Color4 {
 	}
 
 	public void write(OutputStream stream, boolean inverted) throws IOException {
-		byte R = Helpers.FloatToByte(this.R, 0f, 1f);
-		byte G = Helpers.FloatToByte(this.G, 0f, 1f);
-		byte B = Helpers.FloatToByte(this.B, 0f, 1f);
-		byte A = Helpers.FloatToByte(this.A, 0f, 1f);
+		byte R = Helpers.floatToByte(this.R, 0f, 1f);
+		byte G = Helpers.floatToByte(this.G, 0f, 1f);
+		byte B = Helpers.floatToByte(this.B, 0f, 1f);
+		byte A = Helpers.floatToByte(this.A, 0f, 1f);
 
 		if (inverted) {
 			stream.write((byte) (255 - (R & 0xFF)));
@@ -310,10 +310,10 @@ public final class Color4 {
 	 * @return number of bytes filled to the byte array
 	 */
 	public int toBytes(byte[] dest, int pos, boolean inverted) {
-		dest[pos + 0] = Helpers.FloatToByte(R, 0f, 1f);
-		dest[pos + 1] = Helpers.FloatToByte(G, 0f, 1f);
-		dest[pos + 2] = Helpers.FloatToByte(B, 0f, 1f);
-		dest[pos + 3] = Helpers.FloatToByte(A, 0f, 1f);
+		dest[pos + 0] = Helpers.floatToByte(R, 0f, 1f);
+		dest[pos + 1] = Helpers.floatToByte(G, 0f, 1f);
+		dest[pos + 2] = Helpers.floatToByte(B, 0f, 1f);
+		dest[pos + 3] = Helpers.floatToByte(A, 0f, 1f);
 
 		if (inverted) {
 			dest[pos + 0] = (byte) (255 - (dest[pos + 0] & 0xFF));
@@ -335,10 +335,10 @@ public final class Color4 {
 	 * @return number of bytes filled to the byte array
 	 */
 	public int toFloatBytesL(byte[] dest, int pos) {
-		Helpers.FloatToBytesL(R, dest, pos + 0);
-		Helpers.FloatToBytesL(G, dest, pos + 4);
-		Helpers.FloatToBytesL(B, dest, pos + 8);
-		Helpers.FloatToBytesL(A, dest, pos + 12);
+		Helpers.floatToBytesL(R, dest, pos + 0);
+		Helpers.floatToBytesL(G, dest, pos + 4);
+		Helpers.floatToBytesL(B, dest, pos + 8);
+		Helpers.floatToBytesL(A, dest, pos + 12);
 		return 4;
 	}
 
@@ -496,8 +496,8 @@ public final class Color4 {
 	 * @return The interpolated color
 	 */
 	public static Color4 lerp(Color4 value1, Color4 value2, float amount) {
-		return new Color4(Helpers.Lerp(value1.R, value2.R, amount), Helpers.Lerp(value1.G, value2.G, amount),
-				Helpers.Lerp(value1.B, value2.B, amount), Helpers.Lerp(value1.A, value2.A, amount));
+		return new Color4(Helpers.lerp(value1.R, value2.R, amount), Helpers.lerp(value1.G, value2.G, amount),
+				Helpers.lerp(value1.B, value2.B, amount), Helpers.lerp(value1.A, value2.A, amount));
 	}
 
 	static public Color4 parse(XmlPullParser parser) throws XmlPullParserException, IOException {

@@ -139,13 +139,13 @@ public class Vector3d {
 	 */
 	public void write(OutputStream stream, boolean le) throws IOException {
 		if (le) {
-			stream.write(Helpers.DoubleToBytesL(X));
-			stream.write(Helpers.DoubleToBytesL(Y));
-			stream.write(Helpers.DoubleToBytesL(Z));
+			stream.write(Helpers.doubleToBytesL(X));
+			stream.write(Helpers.doubleToBytesL(Y));
+			stream.write(Helpers.doubleToBytesL(Z));
 		} else {
-			stream.write(Helpers.DoubleToBytesB(X));
-			stream.write(Helpers.DoubleToBytesB(Y));
-			stream.write(Helpers.DoubleToBytesB(Z));
+			stream.write(Helpers.doubleToBytesB(X));
+			stream.write(Helpers.doubleToBytesB(Y));
+			stream.write(Helpers.doubleToBytesB(Z));
 		}
 	}
 
@@ -219,13 +219,13 @@ public class Vector3d {
 
 	public int toBytes(byte[] dest, int pos, boolean le) {
 		if (le) {
-			Helpers.DoubleToBytesL(X, dest, pos + 0);
-			Helpers.DoubleToBytesL(Y, dest, pos + 4);
-			Helpers.DoubleToBytesL(Z, dest, pos + 8);
+			Helpers.doubleToBytesL(X, dest, pos + 0);
+			Helpers.doubleToBytesL(Y, dest, pos + 4);
+			Helpers.doubleToBytesL(Z, dest, pos + 8);
 		} else {
-			Helpers.DoubleToBytesB(X, dest, pos + 0);
-			Helpers.DoubleToBytesB(Y, dest, pos + 4);
-			Helpers.DoubleToBytesB(Z, dest, pos + 8);
+			Helpers.doubleToBytesB(X, dest, pos + 0);
+			Helpers.doubleToBytesB(Y, dest, pos + 4);
+			Helpers.doubleToBytesB(Z, dest, pos + 8);
 		}
 		return 24;
 	}

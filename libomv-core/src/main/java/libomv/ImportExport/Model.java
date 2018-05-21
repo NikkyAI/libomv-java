@@ -40,9 +40,9 @@ public class Model {
 				-128, -128, -128, -128, -128, 0, 0, -128, -128, -128, -128, -128, -128, 0, 0, 0, 0, -128, -128, 0, 0,
 				-128, -128 };
 		OSDMap ret = new OSDMap();
-		ret.put("Max", OSD.FromVector3(new Vector3(0.5f, 0.5f, 0.5f)));
-		ret.put("Min", OSD.FromVector3(new Vector3(-0.5f, -0.5f, -0.5f)));
-		ret.put("BoundingVerts", OSD.FromBinary(vertix));
+		ret.put("Max", OSD.fromVector3(new Vector3(0.5f, 0.5f, 0.5f)));
+		ret.put("Min", OSD.fromVector3(new Vector3(-0.5f, -0.5f, -0.5f)));
+		ret.put("BoundingVerts", OSD.fromBinary(vertix));
 		return ret;
 	}
 }

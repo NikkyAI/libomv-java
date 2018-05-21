@@ -50,11 +50,6 @@ import libomv.utils.Helpers;
 public class OSDString extends OSD {
 	private String value;
 
-	@Override
-	public OSDType getType() {
-		return OSDType.String;
-	}
-
 	public OSDString(String value) {
 		// Refuse to hold null pointers
 		if (value != null)
@@ -64,7 +59,12 @@ public class OSDString extends OSD {
 	}
 
 	@Override
-	public boolean AsBoolean() {
+	public OSDType getType() {
+		return OSDType.String;
+	}
+
+	@Override
+	public boolean asBoolean() {
 		if (value == null || value.isEmpty() || value.equalsIgnoreCase("false"))
 			return false;
 
@@ -78,7 +78,7 @@ public class OSDString extends OSD {
 	}
 
 	@Override
-	public int AsInteger() {
+	public int asInteger() {
 		try {
 			return (int) Math.floor(Double.parseDouble(value));
 		} catch (NumberFormatException ex) {
@@ -87,7 +87,7 @@ public class OSDString extends OSD {
 	}
 
 	@Override
-	public int AsUInteger() {
+	public int asUInteger() {
 		try {
 			return ((int) Math.floor(Double.parseDouble(value)) & 0xffffffff);
 		} catch (NumberFormatException ex) {
@@ -96,7 +96,7 @@ public class OSDString extends OSD {
 	}
 
 	@Override
-	public long AsLong() {
+	public long asLong() {
 		try {
 			return (long) Math.floor(Double.parseDouble(value));
 		} catch (NumberFormatException ex) {
@@ -105,7 +105,7 @@ public class OSDString extends OSD {
 	}
 
 	@Override
-	public long AsULong() {
+	public long asULong() {
 		try {
 			return ((long) Math.floor(Double.parseDouble(value)) & 0xffffffffffffffffl);
 		} catch (NumberFormatException ex) {
@@ -114,76 +114,76 @@ public class OSDString extends OSD {
 	}
 
 	@Override
-	public double AsReal() {
+	public double asReal() {
 		return Helpers.TryParseDouble(value);
 	}
 
 	@Override
-	public Vector2 AsVector2() {
+	public Vector2 asVector2() {
 		try {
-			return OSDParser.deserialize(this.value, OSDFormat.Notation).AsVector2();
+			return OSDParser.deserialize(this.value, OSDFormat.Notation).asVector2();
 		} catch (Exception ex) {
 			return Vector2.Zero;
 		}
 	}
 
 	@Override
-	public Vector3 AsVector3() {
+	public Vector3 asVector3() {
 		try {
-			return OSDParser.deserialize(this.value, OSDFormat.Notation).AsVector3();
+			return OSDParser.deserialize(this.value, OSDFormat.Notation).asVector3();
 		} catch (Exception ex) {
 			return Vector3.Zero;
 		}
 	}
 
 	@Override
-	public Vector3d AsVector3d() {
+	public Vector3d asVector3d() {
 		try {
-			return OSDParser.deserialize(this.value, OSDFormat.Notation).AsVector3d();
+			return OSDParser.deserialize(this.value, OSDFormat.Notation).asVector3d();
 		} catch (Exception ex) {
 			return Vector3d.Zero;
 		}
 	}
 
 	@Override
-	public Vector4 AsVector4() {
+	public Vector4 asVector4() {
 		try {
-			return OSDParser.deserialize(this.value, OSDFormat.Notation).AsVector4();
+			return OSDParser.deserialize(this.value, OSDFormat.Notation).asVector4();
 		} catch (Exception ex) {
 			return Vector4.Zero;
 		}
 	}
 
 	@Override
-	public Quaternion AsQuaternion() {
+	public Quaternion asQuaternion() {
 		try {
-			return OSDParser.deserialize(this.value, OSDFormat.Notation).AsQuaternion();
+			return OSDParser.deserialize(this.value, OSDFormat.Notation).asQuaternion();
 		} catch (Exception ex) {
 			return Quaternion.Identity;
 		}
 	}
 
 	@Override
-	public Color4 AsColor4() {
+	public Color4 asColor4() {
 		try {
-			return OSDParser.deserialize(this.value, OSDFormat.Notation).AsColor4();
+			return OSDParser.deserialize(this.value, OSDFormat.Notation).asColor4();
 		} catch (Exception ex) {
 			return Color4.Black;
 		}
 	}
 
 	@Override
-	public String AsString() {
+	public String asString() {
 		return value;
 	}
 
 	@Override
-	public byte[] AsBinary() {
-		return Helpers.StringToBytes(value);
+	public byte[] asBinary() {
+		return Helpers.stringToBytes(value);
 	}
 
 	@Override
-	public InetAddress AsInetAddress() {
+	public InetAddress asInetAddress() {
 		try {
 			int i = value.indexOf(':');
 			if (i < 0)
@@ -195,12 +195,12 @@ public class OSDString extends OSD {
 	}
 
 	@Override
-	public UUID AsUUID() {
+	public UUID asUUID() {
 		return new UUID(value);
 	}
 
 	@Override
-	public Date AsDate() {
+	public Date asDate() {
 		SimpleDateFormat df = new SimpleDateFormat(FRACT_DATE_FMT);
 		df.setTimeZone(TimeZone.getTimeZone("UTC"));
 		try {
@@ -216,7 +216,7 @@ public class OSDString extends OSD {
 	}
 
 	@Override
-	public URI AsUri() {
+	public URI asUri() {
 		try {
 			return new URI(value);
 		} catch (URISyntaxException ex) {
@@ -235,11 +235,11 @@ public class OSDString extends OSD {
 	}
 
 	public boolean equals(OSD osd) {
-		return osd != null && osd.AsString().equals(value);
+		return osd != null && osd.asString().equals(value);
 	}
 
 	@Override
 	public String toString() {
-		return AsString();
+		return asString();
 	}
 }

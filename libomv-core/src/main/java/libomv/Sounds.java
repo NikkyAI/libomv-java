@@ -3,15 +3,13 @@ package libomv;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.Map;
 
 import libomv.types.UUID;
 
 // pre-defined built in sounds
 // From http://wiki.secondlife.com/wiki/Client_sounds
 public class Sounds {
-	private Sounds() {
-	}
-
 	public final static UUID BELL_TING = new UUID("ed124764-705d-d497-167a-182cd9fa2e6c");
 
 	public final static UUID CLICK = new UUID("4c8c3c77-de8d-bde2-b9b8-32635e0fd4a6");
@@ -96,6 +94,9 @@ public class Sounds {
 
 	public final static UUID ZIPPER = new UUID("6cf2be26-90cb-2669-a599-f5ab7698225f");
 
+	private Sounds() {
+	}
+
 	/**
 	 * A dictionary containing all pre-defined sounds
 	 *
@@ -103,8 +104,8 @@ public class Sounds {
 	 *         sounds ID, and the value is a string containing a name to identify
 	 *         the purpose of the sound
 	 */
-	public static HashMap<UUID, String> toDictionary() {
-		HashMap<UUID, String> dict = new HashMap<UUID, String>();
+	public static Map<UUID, String> toDictionary() {
+		Map<UUID, String> dict = new HashMap<>();
 		for (Field field : Sounds.class.getDeclaredFields()) {
 			if ((field.getModifiers() & (Modifier.STATIC | Modifier.PUBLIC)) == (Modifier.STATIC | Modifier.PUBLIC)) {
 				try {

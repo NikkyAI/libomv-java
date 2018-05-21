@@ -1,6 +1,6 @@
 package libomv.model.group;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 
 import libomv.types.UUID;
@@ -10,7 +10,7 @@ import libomv.utils.CallbackArgs;
 public class GroupRolesMembersReplyCallbackArgs implements CallbackArgs {
 	private final UUID requestID;
 	private final UUID groupID;
-	private final ArrayList<Entry<UUID, UUID>> rolesMembers;
+	private final List<Entry<UUID, UUID>> rolesMembers;
 
 	/**
 	 * Construct a new instance of the GroupRolesMembersReplyCallbackArgs class
@@ -23,7 +23,7 @@ public class GroupRolesMembersReplyCallbackArgs implements CallbackArgs {
 	 * @param rolesMembers
 	 *            The member to roles map
 	 */
-	public GroupRolesMembersReplyCallbackArgs(UUID requestID, UUID groupID, ArrayList<Entry<UUID, UUID>> rolesMembers) {
+	public GroupRolesMembersReplyCallbackArgs(UUID requestID, UUID groupID, List<Entry<UUID, UUID>> rolesMembers) {
 		this.requestID = requestID;
 		this.groupID = groupID;
 		this.rolesMembers = rolesMembers;
@@ -41,7 +41,7 @@ public class GroupRolesMembersReplyCallbackArgs implements CallbackArgs {
 	}
 
 	// Get the member to roles map
-	public final ArrayList<Entry<UUID, UUID>> getRolesMembers() {
+	public final List<Entry<UUID, UUID>> getRolesMembers() {
 		return rolesMembers;
 	}
 

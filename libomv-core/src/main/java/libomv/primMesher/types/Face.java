@@ -29,7 +29,7 @@
  */
 package libomv.primMesher.types;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import libomv.types.Vector3;
 
@@ -91,7 +91,7 @@ public class Face {
 		this.uv3 = face.uv3;
 	}
 
-	public Vector3 surfaceNormal(ArrayList<Vector3> coordList) {
+	public Vector3 surfaceNormal(List<Vector3> coordList) {
 		Vector3 c1 = coordList.get(this.v1);
 		Vector3 c2 = coordList.get(this.v2);
 		Vector3 c3 = coordList.get(this.v3);

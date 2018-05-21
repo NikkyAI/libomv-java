@@ -37,6 +37,8 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
@@ -129,16 +131,16 @@ public class CapsMessage implements IMessage {
 			OSDArray infoArray = new OSDArray(1);
 
 			OSDMap info = new OSDMap(8);
-			info.put("AgentID", OSD.FromUUID(agentID));
-			info.put("LocationID", OSD.FromInteger(locationID)); // Unused by
+			info.put("AgentID", OSD.fromUUID(agentID));
+			info.put("LocationID", OSD.fromInteger(locationID)); // Unused by
 																	// the
 																	// client
-			info.put("RegionHandle", OSD.FromULong(regionHandle));
-			info.put("SeedCapability", OSD.FromUri(seedCapability));
-			info.put("SimAccess", OSD.FromInteger(simAccess.getValue()));
-			info.put("SimIP", OSD.FromBinary(ip.getAddress()));
-			info.put("SimPort", OSD.FromInteger(port));
-			info.put("TeleportFlags", OSD.FromInteger(TeleportFlags.getValue(flags)));
+			info.put("RegionHandle", OSD.fromULong(regionHandle));
+			info.put("SeedCapability", OSD.fromUri(seedCapability));
+			info.put("SimAccess", OSD.fromInteger(simAccess.getValue()));
+			info.put("SimIP", OSD.fromBinary(ip.getAddress()));
+			info.put("SimPort", OSD.fromInteger(port));
+			info.put("TeleportFlags", OSD.fromInteger(TeleportFlags.getValue(flags)));
 
 			infoArray.add(info);
 
@@ -158,14 +160,14 @@ public class CapsMessage implements IMessage {
 			OSDArray array = (OSDArray) map.get("Info");
 			OSDMap blockMap = (OSDMap) array.get(0);
 
-			agentID = blockMap.get("AgentID").AsUUID();
-			locationID = blockMap.get("LocationID").AsInteger();
-			regionHandle = blockMap.get("RegionHandle").AsULong();
-			seedCapability = blockMap.get("SeedCapability").AsUri();
-			simAccess = libomv.model.simulator.SimAccess.setValue(blockMap.get("SimAccess").AsInteger());
-			ip = blockMap.get("SimIP").AsInetAddress();
-			port = blockMap.get("SimPort").AsInteger();
-			flags = TeleportFlags.setValue(blockMap.get("TeleportFlags").AsUInteger());
+			agentID = blockMap.get("AgentID").asUUID();
+			locationID = blockMap.get("LocationID").asInteger();
+			regionHandle = blockMap.get("RegionHandle").asULong();
+			seedCapability = blockMap.get("SeedCapability").asUri();
+			simAccess = libomv.model.simulator.SimAccess.setValue(blockMap.get("SimAccess").asInteger());
+			ip = blockMap.get("SimIP").asInetAddress();
+			port = blockMap.get("SimPort").asInteger();
+			flags = TeleportFlags.setValue(blockMap.get("TeleportFlags").asUInteger());
 		}
 	}
 
@@ -193,9 +195,9 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(3);
-			map.put("agent-id", OSD.FromUUID(agentID));
-			map.put("sim-ip-and-port", OSD.FromString(String.format("%s:%d", address.getHostAddress(), port)));
-			map.put("seed-capability", OSD.FromUri(seedCapability));
+			map.put("agent-id", OSD.fromUUID(agentID));
+			map.put("sim-ip-and-port", OSD.fromString(String.format("%s:%d", address.getHostAddress(), port)));
+			map.put("seed-capability", OSD.fromUri(seedCapability));
 			return map;
 		}
 
@@ -207,10 +209,10 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			String ipAndPort = map.get("sim-ip-and-port").AsString();
+			String ipAndPort = map.get("sim-ip-and-port").asString();
 			int i = ipAndPort.indexOf(':');
 
-			agentID = map.get("agent-id").AsUUID();
+			agentID = map.get("agent-id").asUUID();
 			port = 2345; // FIXME: What default port should we use?
 			try {
 				if (i >= 0) {
@@ -222,7 +224,7 @@ public class CapsMessage implements IMessage {
 			} catch (UnknownHostException e) {
 				address = null;
 			}
-			seedCapability = map.get("seed-capability").AsUri();
+			seedCapability = map.get("seed-capability").asUri();
 		}
 	}
 
@@ -255,24 +257,24 @@ public class CapsMessage implements IMessage {
 
 			OSDArray infoArray = new OSDArray(1);
 			OSDMap infoMap = new OSDMap(2);
-			infoMap.put("LookAt", OSD.FromVector3(lookAt));
-			infoMap.put("Position", OSD.FromVector3(position));
+			infoMap.put("LookAt", OSD.fromVector3(lookAt));
+			infoMap.put("Position", OSD.fromVector3(position));
 			infoArray.add(infoMap);
 			map.put("Info", infoArray);
 
 			OSDArray agentDataArray = new OSDArray(1);
 			OSDMap agentDataMap = new OSDMap(2);
-			agentDataMap.put("AgentID", OSD.FromUUID(agentID));
-			agentDataMap.put("SessionID", OSD.FromUUID(sessionID));
+			agentDataMap.put("AgentID", OSD.fromUUID(agentID));
+			agentDataMap.put("SessionID", OSD.fromUUID(sessionID));
 			agentDataArray.add(agentDataMap);
 			map.put("AgentData", agentDataArray);
 
 			OSDArray regionDataArray = new OSDArray(1);
 			OSDMap regionDataMap = new OSDMap(4);
-			regionDataMap.put("RegionHandle", OSD.FromULong(regionHandle));
-			regionDataMap.put("SeedCapability", OSD.FromUri(seedCapability));
-			regionDataMap.put("SimIP", OSD.FromBinary(ip.getAddress()));
-			regionDataMap.put("SimPort", OSD.FromInteger(port));
+			regionDataMap.put("RegionHandle", OSD.fromULong(regionHandle));
+			regionDataMap.put("SeedCapability", OSD.fromUri(seedCapability));
+			regionDataMap.put("SimIP", OSD.fromBinary(ip.getAddress()));
+			regionDataMap.put("SimPort", OSD.fromInteger(port));
 			regionDataArray.add(regionDataMap);
 			map.put("RegionData", regionDataArray);
 
@@ -288,18 +290,18 @@ public class CapsMessage implements IMessage {
 		@Override
 		public void deserialize(OSDMap map) {
 			OSDMap infoMap = (OSDMap) ((OSDArray) map.get("Info")).get(0);
-			lookAt = infoMap.get("LookAt").AsVector3();
-			position = infoMap.get("Position").AsVector3();
+			lookAt = infoMap.get("LookAt").asVector3();
+			position = infoMap.get("Position").asVector3();
 
 			OSDMap agentDataMap = (OSDMap) ((OSDArray) map.get("AgentData")).get(0);
-			agentID = agentDataMap.get("AgentID").AsUUID();
-			sessionID = agentDataMap.get("SessionID").AsUUID();
+			agentID = agentDataMap.get("AgentID").asUUID();
+			sessionID = agentDataMap.get("SessionID").asUUID();
 
 			OSDMap regionDataMap = (OSDMap) ((OSDArray) map.get("RegionData")).get(0);
-			regionHandle = regionDataMap.get("RegionHandle").AsULong();
-			seedCapability = regionDataMap.get("SeedCapability").AsUri();
-			ip = regionDataMap.get("SimIP").AsInetAddress();
-			port = regionDataMap.get("SimPort").AsInteger();
+			regionHandle = regionDataMap.get("RegionHandle").asULong();
+			seedCapability = regionDataMap.get("SeedCapability").asUri();
+			ip = regionDataMap.get("SimIP").asInetAddress();
+			port = regionDataMap.get("SimPort").asInteger();
 		}
 	}
 
@@ -334,9 +336,9 @@ public class CapsMessage implements IMessage {
 				SimulatorInfoBlock block = simulators[i];
 
 				OSDMap blockMap = new OSDMap(3);
-				blockMap.put("Handle", OSD.FromULong(block.regionHandle));
-				blockMap.put("IP", OSD.FromBinary(block.ip));
-				blockMap.put("Port", OSD.FromInteger(block.port));
+				blockMap.put("Handle", OSD.fromULong(block.regionHandle));
+				blockMap.put("IP", OSD.fromBinary(block.ip));
+				blockMap.put("Port", OSD.fromInteger(block.port));
 				array.add(blockMap);
 			}
 
@@ -359,9 +361,9 @@ public class CapsMessage implements IMessage {
 				OSDMap blockMap = (OSDMap) array.get(i);
 
 				SimulatorInfoBlock block = new SimulatorInfoBlock();
-				block.regionHandle = blockMap.get("Handle").AsULong();
-				block.ip = blockMap.get("IP").AsInetAddress();
-				block.port = blockMap.get("Port").AsInteger();
+				block.regionHandle = blockMap.get("Handle").asULong();
+				block.ip = blockMap.get("IP").asInetAddress();
+				block.port = blockMap.get("Port").asInteger();
 				simulators[i] = block;
 			}
 		}
@@ -401,15 +403,15 @@ public class CapsMessage implements IMessage {
 
 			OSDMap alertInfoMap = new OSDMap(2);
 
-			alertInfoMap.put("ExtraParams", OSD.FromString(extraParams));
-			alertInfoMap.put("Message", OSD.FromString(messageKey));
+			alertInfoMap.put("ExtraParams", OSD.fromString(extraParams));
+			alertInfoMap.put("Message", OSD.fromString(messageKey));
 			OSDArray alertArray = new OSDArray();
 			alertArray.add(alertInfoMap);
 			map.put("AlertInfo", alertArray);
 
 			OSDMap infoMap = new OSDMap(2);
-			infoMap.put("AgentID", OSD.FromUUID(agentID));
-			infoMap.put("Reason", OSD.FromString(reason));
+			infoMap.put("AgentID", OSD.fromUUID(agentID));
+			infoMap.put("Reason", OSD.fromString(reason));
 			OSDArray infoArray = new OSDArray();
 			infoArray.add(infoMap);
 			map.put("Info", infoArray);
@@ -429,13 +431,13 @@ public class CapsMessage implements IMessage {
 			OSDArray alertInfoArray = (OSDArray) map.get("AlertInfo");
 
 			OSDMap alertInfoMap = (OSDMap) alertInfoArray.get(0);
-			extraParams = alertInfoMap.get("ExtraParams").AsString();
-			messageKey = alertInfoMap.get("Message").AsString();
+			extraParams = alertInfoMap.get("ExtraParams").asString();
+			messageKey = alertInfoMap.get("Message").asString();
 
 			OSDArray infoArray = (OSDArray) map.get("Info");
 			OSDMap infoMap = (OSDMap) infoArray.get(0);
-			agentID = infoMap.get("AgentID").AsUUID();
-			reason = infoMap.get("Reason").AsString();
+			agentID = infoMap.get("AgentID").asUUID();
+			reason = infoMap.get("Reason").asString();
 		}
 	}
 
@@ -475,9 +477,9 @@ public class CapsMessage implements IMessage {
 			OSDMap map = new OSDMap(3);
 
 			OSDMap requestDataMap = new OSDMap(3);
-			requestDataMap.put("ReportType", OSD.FromUInteger(this.reportType));
-			requestDataMap.put("RequestFlags", OSD.FromUInteger(this.requestFlags));
-			requestDataMap.put("TotalObjectCount", OSD.FromUInteger(this.totalObjectCount));
+			requestDataMap.put("ReportType", OSD.fromUInteger(this.reportType));
+			requestDataMap.put("RequestFlags", OSD.fromUInteger(this.requestFlags));
+			requestDataMap.put("TotalObjectCount", OSD.fromUInteger(this.totalObjectCount));
 
 			OSDArray requestDatArray = new OSDArray();
 			requestDatArray.add(requestDataMap);
@@ -487,19 +489,19 @@ public class CapsMessage implements IMessage {
 			OSDArray dataExtendedArray = new OSDArray();
 			for (int i = 0; i < reportDataBlocks.length; i++) {
 				OSDMap reportMap = new OSDMap(8);
-				reportMap.put("LocationX", OSD.FromReal(reportDataBlocks[i].location.X));
-				reportMap.put("LocationY", OSD.FromReal(reportDataBlocks[i].location.Y));
-				reportMap.put("LocationZ", OSD.FromReal(reportDataBlocks[i].location.Z));
-				reportMap.put("OwnerName", OSD.FromString(reportDataBlocks[i].ownerName));
-				reportMap.put("Score", OSD.FromReal(reportDataBlocks[i].score));
-				reportMap.put("TaskID", OSD.FromUUID(reportDataBlocks[i].taskID));
-				reportMap.put("TaskLocalID", OSD.FromReal(reportDataBlocks[i].taskLocalID));
-				reportMap.put("TaskName", OSD.FromString(reportDataBlocks[i].taskName));
+				reportMap.put("LocationX", OSD.fromReal(reportDataBlocks[i].location.X));
+				reportMap.put("LocationY", OSD.fromReal(reportDataBlocks[i].location.Y));
+				reportMap.put("LocationZ", OSD.fromReal(reportDataBlocks[i].location.Z));
+				reportMap.put("OwnerName", OSD.fromString(reportDataBlocks[i].ownerName));
+				reportMap.put("Score", OSD.fromReal(reportDataBlocks[i].score));
+				reportMap.put("TaskID", OSD.fromUUID(reportDataBlocks[i].taskID));
+				reportMap.put("TaskLocalID", OSD.fromReal(reportDataBlocks[i].taskLocalID));
+				reportMap.put("TaskName", OSD.fromString(reportDataBlocks[i].taskName));
 				reportDataArray.add(reportMap);
 
 				OSDMap extendedMap = new OSDMap(2);
-				extendedMap.put("MonoScore", OSD.FromReal(reportDataBlocks[i].monoScore));
-				extendedMap.put("TimeStamp", OSD.FromDate(reportDataBlocks[i].timeStamp));
+				extendedMap.put("MonoScore", OSD.fromReal(reportDataBlocks[i].monoScore));
+				extendedMap.put("TimeStamp", OSD.fromDate(reportDataBlocks[i].timeStamp));
 				dataExtendedArray.add(extendedMap);
 			}
 
@@ -521,9 +523,9 @@ public class CapsMessage implements IMessage {
 			OSDArray requestDataArray = (OSDArray) map.get("RequestData");
 			OSDMap requestMap = (OSDMap) requestDataArray.get(0);
 
-			this.reportType = requestMap.get("ReportType").AsUInteger();
-			this.requestFlags = requestMap.get("RequestFlags").AsUInteger();
-			this.totalObjectCount = requestMap.get("TotalObjectCount").AsUInteger();
+			this.reportType = requestMap.get("ReportType").asUInteger();
+			this.requestFlags = requestMap.get("RequestFlags").asUInteger();
+			this.totalObjectCount = requestMap.get("TotalObjectCount").asUInteger();
 
 			if (totalObjectCount < 1) {
 				reportDataBlocks = new ReportDataBlock[0];
@@ -538,15 +540,15 @@ public class CapsMessage implements IMessage {
 				OSDMap blockMap = (OSDMap) dataArray.get(i);
 				OSDMap extMap = (OSDMap) dataExtendedArray.get(i);
 				ReportDataBlock block = new ReportDataBlock();
-				block.location = new Vector3((float) blockMap.get("LocationX").AsReal(),
-						(float) blockMap.get("LocationY").AsReal(), (float) blockMap.get("LocationZ").AsReal());
-				block.ownerName = blockMap.get("OwnerName").AsString();
-				block.score = (float) blockMap.get("Score").AsReal();
-				block.taskID = blockMap.get("TaskID").AsUUID();
-				block.taskLocalID = blockMap.get("TaskLocalID").AsUInteger();
-				block.taskName = blockMap.get("TaskName").AsString();
-				block.monoScore = (float) extMap.get("MonoScore").AsReal();
-				block.timeStamp = Helpers.UnixTimeToDateTime(extMap.get("TimeStamp").AsUInteger());
+				block.location = new Vector3((float) blockMap.get("LocationX").asReal(),
+						(float) blockMap.get("LocationY").asReal(), (float) blockMap.get("LocationZ").asReal());
+				block.ownerName = blockMap.get("OwnerName").asString();
+				block.score = (float) blockMap.get("Score").asReal();
+				block.taskID = blockMap.get("TaskID").asUUID();
+				block.taskLocalID = blockMap.get("TaskLocalID").asUInteger();
+				block.taskName = blockMap.get("TaskName").asString();
+				block.monoScore = (float) extMap.get("MonoScore").asReal();
+				block.timeStamp = Helpers.UnixTimeToDateTime(extMap.get("TimeStamp").asUInteger());
 
 				reportDataBlocks[i] = block;
 			}
@@ -605,14 +607,14 @@ public class CapsMessage implements IMessage {
 
 			for (int i = 0; i < PrimOwnersBlock.length; i++) {
 				OSDMap dataMap = new OSDMap(4);
-				dataMap.put("OwnerID", OSD.FromUUID(PrimOwnersBlock[i].ownerID));
-				dataMap.put("Count", OSD.FromInteger(PrimOwnersBlock[i].count));
-				dataMap.put("IsGroupOwned", OSD.FromBoolean(PrimOwnersBlock[i].isGroupOwned));
-				dataMap.put("OnlineStatus", OSD.FromBoolean(PrimOwnersBlock[i].onlineStatus));
+				dataMap.put("OwnerID", OSD.fromUUID(PrimOwnersBlock[i].ownerID));
+				dataMap.put("Count", OSD.fromInteger(PrimOwnersBlock[i].count));
+				dataMap.put("IsGroupOwned", OSD.fromBoolean(PrimOwnersBlock[i].isGroupOwned));
+				dataMap.put("OnlineStatus", OSD.fromBoolean(PrimOwnersBlock[i].onlineStatus));
 				dataArray.add(dataMap);
 
 				OSDMap dataExtendedMap = new OSDMap(1);
-				dataExtendedMap.put("TimeStamp", OSD.FromDate(PrimOwnersBlock[i].timeStamp));
+				dataExtendedMap.put("TimeStamp", OSD.fromDate(PrimOwnersBlock[i].timeStamp));
 				dataExtendedArray.add(dataExtendedMap);
 			}
 
@@ -648,17 +650,17 @@ public class CapsMessage implements IMessage {
 			for (int i = 0; i < dataArray.size(); i++) {
 				OSDMap dataMap = (OSDMap) dataArray.get(i);
 				PrimOwner block = new PrimOwner();
-				block.ownerID = dataMap.get("OwnerID").AsUUID();
-				block.count = dataMap.get("Count").AsInteger();
-				block.isGroupOwned = dataMap.get("IsGroupOwned").AsBoolean();
-				block.onlineStatus = dataMap.get("OnlineStatus").AsBoolean(); // deprecated
+				block.ownerID = dataMap.get("OwnerID").asUUID();
+				block.count = dataMap.get("Count").asInteger();
+				block.isGroupOwned = dataMap.get("IsGroupOwned").asBoolean();
+				block.onlineStatus = dataMap.get("OnlineStatus").asBoolean(); // deprecated
 
 				// if the agent has no permissions, or there are no prims, the
 				// counts
 				// should not match up, so we don't decode the DataExtended map
 				if (dataExtendedArray.size() == dataArray.size()) {
 					OSDMap dataExtendedMap = (OSDMap) dataExtendedArray.get(i);
-					block.timeStamp = Helpers.UnixTimeToDateTime(dataExtendedMap.get("TimeStamp").AsUInteger());
+					block.timeStamp = Helpers.UnixTimeToDateTime(dataExtendedMap.get("TimeStamp").asUInteger());
 				}
 				PrimOwnersBlock[i] = block;
 			}
@@ -817,75 +819,75 @@ public class CapsMessage implements IMessage {
 
 			OSDArray dataArray = new OSDArray(1);
 			OSDMap parcelDataMap = new OSDMap(47);
-			parcelDataMap.put("LocalID", OSD.FromInteger(localID));
-			parcelDataMap.put("AABBMax", OSD.FromVector3(aabbMax));
-			parcelDataMap.put("AABBMin", OSD.FromVector3(aabbMin));
-			parcelDataMap.put("Area", OSD.FromInteger(area));
-			parcelDataMap.put("AuctionID", OSD.FromInteger(auctionID));
-			parcelDataMap.put("AuthBuyerID", OSD.FromUUID(authBuyerID));
-			parcelDataMap.put("Bitmap", OSD.FromBinary(bitmap));
-			parcelDataMap.put("Category", OSD.FromInteger(category.getValue()));
-			parcelDataMap.put("ClaimDate", OSD.FromDate(claimDate));
-			parcelDataMap.put("ClaimPrice", OSD.FromInteger(claimPrice));
-			parcelDataMap.put("Desc", OSD.FromString(desc));
-			parcelDataMap.put("ParcelFlags", OSD.FromUInteger(parcelFlags));
-			parcelDataMap.put("GroupID", OSD.FromUUID(groupID));
-			parcelDataMap.put("GroupPrims", OSD.FromInteger(groupPrims));
-			parcelDataMap.put("IsGroupOwned", OSD.FromBoolean(isGroupOwned));
-			parcelDataMap.put("LandingType", OSD.FromInteger(landingType.getValue()));
-			parcelDataMap.put("MaxPrims", OSD.FromInteger(maxPrims));
-			parcelDataMap.put("MediaID", OSD.FromUUID(mediaID));
-			parcelDataMap.put("MediaURL", OSD.FromString(mediaURL));
-			parcelDataMap.put("MediaAutoScale", OSD.FromBoolean(mediaAutoScale));
-			parcelDataMap.put("MusicURL", OSD.FromString(musicURL));
-			parcelDataMap.put("Name", OSD.FromString(name));
-			parcelDataMap.put("OtherCleanTime", OSD.FromInteger(otherCleanTime));
-			parcelDataMap.put("OtherCount", OSD.FromInteger(otherCount));
-			parcelDataMap.put("OtherPrims", OSD.FromInteger(otherPrims));
-			parcelDataMap.put("OwnerID", OSD.FromUUID(ownerID));
-			parcelDataMap.put("OwnerPrims", OSD.FromInteger(ownerPrims));
-			parcelDataMap.put("ParcelPrimBonus", OSD.FromReal(parcelPrimBonus));
-			parcelDataMap.put("PassHours", OSD.FromReal(passHours));
-			parcelDataMap.put("PassPrice", OSD.FromInteger(passPrice));
-			parcelDataMap.put("PublicCount", OSD.FromInteger(publicCount));
-			parcelDataMap.put("Privacy", OSD.FromBoolean(privacy));
-			parcelDataMap.put("RegionDenyAnonymous", OSD.FromBoolean(regionDenyAnonymous));
-			parcelDataMap.put("RegionPushOverride", OSD.FromBoolean(regionPushOverride));
-			parcelDataMap.put("RentPrice", OSD.FromInteger(rentPrice));
-			parcelDataMap.put("RequestResult", OSD.FromInteger(requestResult.getValue()));
-			parcelDataMap.put("SalePrice", OSD.FromInteger(salePrice));
-			parcelDataMap.put("SelectedPrims", OSD.FromInteger(selectedPrims));
-			parcelDataMap.put("SelfCount", OSD.FromInteger(selfCount));
-			parcelDataMap.put("SequenceID", OSD.FromInteger(sequenceID));
-			parcelDataMap.put("SimWideMaxPrims", OSD.FromInteger(simWideMaxPrims));
-			parcelDataMap.put("SimWideTotalPrims", OSD.FromInteger(simWideTotalPrims));
-			parcelDataMap.put("SnapSelection", OSD.FromBoolean(snapSelection));
-			parcelDataMap.put("SnapshotID", OSD.FromUUID(snapshotID));
-			parcelDataMap.put("Status", OSD.FromInteger(status.getValue()));
-			parcelDataMap.put("TotalPrims", OSD.FromInteger(totalPrims));
-			parcelDataMap.put("UserLocation", OSD.FromVector3(userLocation));
-			parcelDataMap.put("UserLookAt", OSD.FromVector3(userLookAt));
-			parcelDataMap.put("SeeAVs", OSD.FromBoolean(seeAVs));
-			parcelDataMap.put("AnyAVSounds", OSD.FromBoolean(anyAVSounds));
-			parcelDataMap.put("GroupAVSounds", OSD.FromBoolean(groupAVSounds));
+			parcelDataMap.put("LocalID", OSD.fromInteger(localID));
+			parcelDataMap.put("AABBMax", OSD.fromVector3(aabbMax));
+			parcelDataMap.put("AABBMin", OSD.fromVector3(aabbMin));
+			parcelDataMap.put("Area", OSD.fromInteger(area));
+			parcelDataMap.put("AuctionID", OSD.fromInteger(auctionID));
+			parcelDataMap.put("AuthBuyerID", OSD.fromUUID(authBuyerID));
+			parcelDataMap.put("Bitmap", OSD.fromBinary(bitmap));
+			parcelDataMap.put("Category", OSD.fromInteger(category.getValue()));
+			parcelDataMap.put("ClaimDate", OSD.fromDate(claimDate));
+			parcelDataMap.put("ClaimPrice", OSD.fromInteger(claimPrice));
+			parcelDataMap.put("Desc", OSD.fromString(desc));
+			parcelDataMap.put("ParcelFlags", OSD.fromUInteger(parcelFlags));
+			parcelDataMap.put("GroupID", OSD.fromUUID(groupID));
+			parcelDataMap.put("GroupPrims", OSD.fromInteger(groupPrims));
+			parcelDataMap.put("IsGroupOwned", OSD.fromBoolean(isGroupOwned));
+			parcelDataMap.put("LandingType", OSD.fromInteger(landingType.getValue()));
+			parcelDataMap.put("MaxPrims", OSD.fromInteger(maxPrims));
+			parcelDataMap.put("MediaID", OSD.fromUUID(mediaID));
+			parcelDataMap.put("MediaURL", OSD.fromString(mediaURL));
+			parcelDataMap.put("MediaAutoScale", OSD.fromBoolean(mediaAutoScale));
+			parcelDataMap.put("MusicURL", OSD.fromString(musicURL));
+			parcelDataMap.put("Name", OSD.fromString(name));
+			parcelDataMap.put("OtherCleanTime", OSD.fromInteger(otherCleanTime));
+			parcelDataMap.put("OtherCount", OSD.fromInteger(otherCount));
+			parcelDataMap.put("OtherPrims", OSD.fromInteger(otherPrims));
+			parcelDataMap.put("OwnerID", OSD.fromUUID(ownerID));
+			parcelDataMap.put("OwnerPrims", OSD.fromInteger(ownerPrims));
+			parcelDataMap.put("ParcelPrimBonus", OSD.fromReal(parcelPrimBonus));
+			parcelDataMap.put("PassHours", OSD.fromReal(passHours));
+			parcelDataMap.put("PassPrice", OSD.fromInteger(passPrice));
+			parcelDataMap.put("PublicCount", OSD.fromInteger(publicCount));
+			parcelDataMap.put("Privacy", OSD.fromBoolean(privacy));
+			parcelDataMap.put("RegionDenyAnonymous", OSD.fromBoolean(regionDenyAnonymous));
+			parcelDataMap.put("RegionPushOverride", OSD.fromBoolean(regionPushOverride));
+			parcelDataMap.put("RentPrice", OSD.fromInteger(rentPrice));
+			parcelDataMap.put("RequestResult", OSD.fromInteger(requestResult.getValue()));
+			parcelDataMap.put("SalePrice", OSD.fromInteger(salePrice));
+			parcelDataMap.put("SelectedPrims", OSD.fromInteger(selectedPrims));
+			parcelDataMap.put("SelfCount", OSD.fromInteger(selfCount));
+			parcelDataMap.put("SequenceID", OSD.fromInteger(sequenceID));
+			parcelDataMap.put("SimWideMaxPrims", OSD.fromInteger(simWideMaxPrims));
+			parcelDataMap.put("SimWideTotalPrims", OSD.fromInteger(simWideTotalPrims));
+			parcelDataMap.put("SnapSelection", OSD.fromBoolean(snapSelection));
+			parcelDataMap.put("SnapshotID", OSD.fromUUID(snapshotID));
+			parcelDataMap.put("Status", OSD.fromInteger(status.getValue()));
+			parcelDataMap.put("TotalPrims", OSD.fromInteger(totalPrims));
+			parcelDataMap.put("UserLocation", OSD.fromVector3(userLocation));
+			parcelDataMap.put("UserLookAt", OSD.fromVector3(userLookAt));
+			parcelDataMap.put("SeeAVs", OSD.fromBoolean(seeAVs));
+			parcelDataMap.put("AnyAVSounds", OSD.fromBoolean(anyAVSounds));
+			parcelDataMap.put("GroupAVSounds", OSD.fromBoolean(groupAVSounds));
 			dataArray.add(parcelDataMap);
 			map.put("ParcelData", dataArray);
 
 			OSDArray mediaDataArray = new OSDArray(1);
 			OSDMap mediaDataMap = new OSDMap(7);
-			mediaDataMap.put("MediaDesc", OSD.FromString(mediaDesc));
-			mediaDataMap.put("MediaHeight", OSD.FromInteger(mediaHeight));
-			mediaDataMap.put("MediaWidth", OSD.FromInteger(mediaWidth));
-			mediaDataMap.put("MediaLoop", OSD.FromBoolean(mediaLoop));
-			mediaDataMap.put("MediaType", OSD.FromString(mediaType));
-			mediaDataMap.put("ObscureMedia", OSD.FromBoolean(obscureMedia));
-			mediaDataMap.put("ObscureMusic", OSD.FromBoolean(obscureMusic));
+			mediaDataMap.put("MediaDesc", OSD.fromString(mediaDesc));
+			mediaDataMap.put("MediaHeight", OSD.fromInteger(mediaHeight));
+			mediaDataMap.put("MediaWidth", OSD.fromInteger(mediaWidth));
+			mediaDataMap.put("MediaLoop", OSD.fromBoolean(mediaLoop));
+			mediaDataMap.put("MediaType", OSD.fromString(mediaType));
+			mediaDataMap.put("ObscureMedia", OSD.fromBoolean(obscureMedia));
+			mediaDataMap.put("ObscureMusic", OSD.fromBoolean(obscureMusic));
 			mediaDataArray.add(mediaDataMap);
 			map.put("MediaData", mediaDataArray);
 
 			OSDArray ageVerificationBlockArray = new OSDArray(1);
 			OSDMap ageVerificationBlockMap = new OSDMap(1);
-			ageVerificationBlockMap.put("RegionDenyAgeUnverified", OSD.FromBoolean(regionDenyAgeUnverified));
+			ageVerificationBlockMap.put("RegionDenyAgeUnverified", OSD.fromBoolean(regionDenyAgeUnverified));
 			ageVerificationBlockArray.add(ageVerificationBlockMap);
 			map.put("AgeVerificationBlock", ageVerificationBlockArray);
 
@@ -901,82 +903,82 @@ public class CapsMessage implements IMessage {
 		@Override
 		public void deserialize(OSDMap map) {
 			OSDMap parcelDataMap = (OSDMap) ((OSDArray) map.get("ParcelData")).get(0);
-			localID = parcelDataMap.get("LocalID").AsInteger();
-			aabbMax = parcelDataMap.get("AABBMax").AsVector3();
-			aabbMin = parcelDataMap.get("AABBMin").AsVector3();
-			area = parcelDataMap.get("Area").AsInteger();
-			auctionID = parcelDataMap.get("AuctionID").AsInteger();
-			authBuyerID = parcelDataMap.get("AuthBuyerID").AsUUID();
-			bitmap = parcelDataMap.get("Bitmap").AsBinary();
-			category = ParcelCategory.setValue(parcelDataMap.get("Category").AsInteger());
-			claimDate = Helpers.UnixTimeToDateTime(parcelDataMap.get("ClaimDate").AsInteger());
-			claimPrice = parcelDataMap.get("ClaimPrice").AsInteger();
-			desc = parcelDataMap.get("Desc").AsString();
+			localID = parcelDataMap.get("LocalID").asInteger();
+			aabbMax = parcelDataMap.get("AABBMax").asVector3();
+			aabbMin = parcelDataMap.get("AABBMin").asVector3();
+			area = parcelDataMap.get("Area").asInteger();
+			auctionID = parcelDataMap.get("AuctionID").asInteger();
+			authBuyerID = parcelDataMap.get("AuthBuyerID").asUUID();
+			bitmap = parcelDataMap.get("Bitmap").asBinary();
+			category = ParcelCategory.setValue(parcelDataMap.get("Category").asInteger());
+			claimDate = Helpers.UnixTimeToDateTime(parcelDataMap.get("ClaimDate").asInteger());
+			claimPrice = parcelDataMap.get("ClaimPrice").asInteger();
+			desc = parcelDataMap.get("Desc").asString();
 
 			// LL sends this as binary, we'll convert it here
 			if (parcelDataMap.get("ParcelFlags").getType() == OSDType.Binary) {
-				byte[] bytes = parcelDataMap.get("ParcelFlags").AsBinary();
+				byte[] bytes = parcelDataMap.get("ParcelFlags").asBinary();
 				parcelFlags = ParcelFlags.getValue((int) Helpers.BytesToUInt32B(bytes));
 			} else {
-				parcelFlags = ParcelFlags.getValue(parcelDataMap.get("ParcelFlags").AsUInteger());
+				parcelFlags = ParcelFlags.getValue(parcelDataMap.get("ParcelFlags").asUInteger());
 			}
-			groupID = parcelDataMap.get("GroupID").AsUUID();
-			groupPrims = parcelDataMap.get("GroupPrims").AsInteger();
-			isGroupOwned = parcelDataMap.get("IsGroupOwned").AsBoolean();
-			landingType = LandingTypeEnum.setValue(parcelDataMap.get("LandingType").AsInteger());
-			maxPrims = parcelDataMap.get("MaxPrims").AsInteger();
-			mediaID = parcelDataMap.get("MediaID").AsUUID();
-			mediaURL = parcelDataMap.get("MediaURL").AsString();
-			mediaAutoScale = parcelDataMap.get("MediaAutoScale").AsBoolean(); // 0x1
+			groupID = parcelDataMap.get("GroupID").asUUID();
+			groupPrims = parcelDataMap.get("GroupPrims").asInteger();
+			isGroupOwned = parcelDataMap.get("IsGroupOwned").asBoolean();
+			landingType = LandingTypeEnum.setValue(parcelDataMap.get("LandingType").asInteger());
+			maxPrims = parcelDataMap.get("MaxPrims").asInteger();
+			mediaID = parcelDataMap.get("MediaID").asUUID();
+			mediaURL = parcelDataMap.get("MediaURL").asString();
+			mediaAutoScale = parcelDataMap.get("MediaAutoScale").asBoolean(); // 0x1
 																				// =
 																				// yes
-			musicURL = parcelDataMap.get("MusicURL").AsString();
-			name = parcelDataMap.get("Name").AsString();
-			otherCleanTime = parcelDataMap.get("OtherCleanTime").AsInteger();
-			otherCount = parcelDataMap.get("OtherCount").AsInteger();
-			otherPrims = parcelDataMap.get("OtherPrims").AsInteger();
-			ownerID = parcelDataMap.get("OwnerID").AsUUID();
-			ownerPrims = parcelDataMap.get("OwnerPrims").AsInteger();
-			parcelPrimBonus = (float) parcelDataMap.get("ParcelPrimBonus").AsReal();
-			passHours = (float) parcelDataMap.get("PassHours").AsReal();
-			passPrice = parcelDataMap.get("PassPrice").AsInteger();
-			publicCount = parcelDataMap.get("PublicCount").AsInteger();
-			privacy = parcelDataMap.get("Privacy").AsBoolean();
-			regionDenyAnonymous = parcelDataMap.get("RegionDenyAnonymous").AsBoolean();
-			regionPushOverride = parcelDataMap.get("RegionPushOverride").AsBoolean();
-			rentPrice = parcelDataMap.get("RentPrice").AsInteger();
-			requestResult = ParcelResult.setValue(parcelDataMap.get("RequestResult").AsInteger());
-			salePrice = parcelDataMap.get("SalePrice").AsInteger();
-			selectedPrims = parcelDataMap.get("SelectedPrims").AsInteger();
-			selfCount = parcelDataMap.get("SelfCount").AsInteger();
-			sequenceID = parcelDataMap.get("SequenceID").AsInteger();
-			simWideMaxPrims = parcelDataMap.get("SimWideMaxPrims").AsInteger();
-			simWideTotalPrims = parcelDataMap.get("SimWideTotalPrims").AsInteger();
-			snapSelection = parcelDataMap.get("SnapSelection").AsBoolean();
-			snapshotID = parcelDataMap.get("SnapshotID").AsUUID();
-			status = ParcelStatus.setValue(parcelDataMap.get("Status").AsInteger());
-			totalPrims = parcelDataMap.get("TotalPrims").AsInteger();
-			userLocation = parcelDataMap.get("UserLocation").AsVector3();
-			userLookAt = parcelDataMap.get("UserLookAt").AsVector3();
-			seeAVs = parcelDataMap.get("SeeAVs").AsBoolean();
-			anyAVSounds = parcelDataMap.get("AnyAVSounds").AsBoolean();
-			groupAVSounds = parcelDataMap.get("GroupAVSounds").AsBoolean();
+			musicURL = parcelDataMap.get("MusicURL").asString();
+			name = parcelDataMap.get("Name").asString();
+			otherCleanTime = parcelDataMap.get("OtherCleanTime").asInteger();
+			otherCount = parcelDataMap.get("OtherCount").asInteger();
+			otherPrims = parcelDataMap.get("OtherPrims").asInteger();
+			ownerID = parcelDataMap.get("OwnerID").asUUID();
+			ownerPrims = parcelDataMap.get("OwnerPrims").asInteger();
+			parcelPrimBonus = (float) parcelDataMap.get("ParcelPrimBonus").asReal();
+			passHours = (float) parcelDataMap.get("PassHours").asReal();
+			passPrice = parcelDataMap.get("PassPrice").asInteger();
+			publicCount = parcelDataMap.get("PublicCount").asInteger();
+			privacy = parcelDataMap.get("Privacy").asBoolean();
+			regionDenyAnonymous = parcelDataMap.get("RegionDenyAnonymous").asBoolean();
+			regionPushOverride = parcelDataMap.get("RegionPushOverride").asBoolean();
+			rentPrice = parcelDataMap.get("RentPrice").asInteger();
+			requestResult = ParcelResult.setValue(parcelDataMap.get("RequestResult").asInteger());
+			salePrice = parcelDataMap.get("SalePrice").asInteger();
+			selectedPrims = parcelDataMap.get("SelectedPrims").asInteger();
+			selfCount = parcelDataMap.get("SelfCount").asInteger();
+			sequenceID = parcelDataMap.get("SequenceID").asInteger();
+			simWideMaxPrims = parcelDataMap.get("SimWideMaxPrims").asInteger();
+			simWideTotalPrims = parcelDataMap.get("SimWideTotalPrims").asInteger();
+			snapSelection = parcelDataMap.get("SnapSelection").asBoolean();
+			snapshotID = parcelDataMap.get("SnapshotID").asUUID();
+			status = ParcelStatus.setValue(parcelDataMap.get("Status").asInteger());
+			totalPrims = parcelDataMap.get("TotalPrims").asInteger();
+			userLocation = parcelDataMap.get("UserLocation").asVector3();
+			userLookAt = parcelDataMap.get("UserLookAt").asVector3();
+			seeAVs = parcelDataMap.get("SeeAVs").asBoolean();
+			anyAVSounds = parcelDataMap.get("AnyAVSounds").asBoolean();
+			groupAVSounds = parcelDataMap.get("GroupAVSounds").asBoolean();
 
 			if (map.containsKey("MediaData")) // temporary, OpenSim doesn't send
 												// this block
 			{
 				OSDMap mediaDataMap = (OSDMap) ((OSDArray) map.get("MediaData")).get(0);
-				mediaDesc = mediaDataMap.get("MediaDesc").AsString();
-				mediaHeight = mediaDataMap.get("MediaHeight").AsInteger();
-				mediaWidth = mediaDataMap.get("MediaWidth").AsInteger();
-				mediaLoop = mediaDataMap.get("MediaLoop").AsBoolean();
-				mediaType = mediaDataMap.get("MediaType").AsString();
-				obscureMedia = mediaDataMap.get("ObscureMedia").AsBoolean();
-				obscureMusic = mediaDataMap.get("ObscureMusic").AsBoolean();
+				mediaDesc = mediaDataMap.get("MediaDesc").asString();
+				mediaHeight = mediaDataMap.get("MediaHeight").asInteger();
+				mediaWidth = mediaDataMap.get("MediaWidth").asInteger();
+				mediaLoop = mediaDataMap.get("MediaLoop").asBoolean();
+				mediaType = mediaDataMap.get("MediaType").asString();
+				obscureMedia = mediaDataMap.get("ObscureMedia").asBoolean();
+				obscureMusic = mediaDataMap.get("ObscureMusic").asBoolean();
 			}
 
 			OSDMap ageVerificationBlockMap = (OSDMap) ((OSDArray) map.get("AgeVerificationBlock")).get(0);
-			regionDenyAgeUnverified = ageVerificationBlockMap.get("RegionDenyAgeUnverified").AsBoolean();
+			regionDenyAgeUnverified = ageVerificationBlockMap.get("RegionDenyAgeUnverified").asBoolean();
 		}
 	}
 
@@ -1064,36 +1066,36 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap();
-			map.put("auth_buyer_id", OSD.FromUUID(authBuyerID));
-			map.put("auto_scale", OSD.FromBoolean(mediaAutoScale));
-			map.put("category", OSD.FromInteger(category.getValue()));
-			map.put("description", OSD.FromString(desc));
-			map.put("flags", OSD.FromBinary(Helpers.EmptyBytes));
-			map.put("group_id", OSD.FromUUID(groupID));
-			map.put("landing_type", OSD.FromInteger(landingType.getValue()));
-			map.put("local_id", OSD.FromInteger(localID));
-			map.put("media_desc", OSD.FromString(mediaDesc));
-			map.put("media_height", OSD.FromInteger(mediaHeight));
-			map.put("media_id", OSD.FromUUID(mediaID));
-			map.put("media_loop", OSD.FromBoolean(mediaLoop));
-			map.put("media_type", OSD.FromString(mediaType));
-			map.put("media_url", OSD.FromString(mediaURL));
-			map.put("media_width", OSD.FromInteger(mediaWidth));
-			map.put("music_url", OSD.FromString(musicURL));
-			map.put("name", OSD.FromString(name));
-			map.put("obscure_media", OSD.FromBoolean(obscureMedia));
-			map.put("obscure_music", OSD.FromBoolean(obscureMusic));
-			map.put("parcel_flags", OSD.FromUInteger(parcelFlags));
-			map.put("pass_hours", OSD.FromReal(passHours));
-			map.put("pass_price", OSD.FromInteger(passPrice));
-			map.put("privacy", OSD.FromBoolean(privacy));
-			map.put("sale_price", OSD.FromInteger(salePrice));
-			map.put("snapshot_id", OSD.FromUUID(snapshotID));
-			map.put("user_location", OSD.FromVector3(userLocation));
-			map.put("user_look_at", OSD.FromVector3(userLookAt));
-			map.put("see_avs", OSD.FromBoolean(seeAVs));
-			map.put("any_av_sounds", OSD.FromBoolean(anyAVSounds));
-			map.put("group_av_sounds", OSD.FromBoolean(groupAVSounds));
+			map.put("auth_buyer_id", OSD.fromUUID(authBuyerID));
+			map.put("auto_scale", OSD.fromBoolean(mediaAutoScale));
+			map.put("category", OSD.fromInteger(category.getValue()));
+			map.put("description", OSD.fromString(desc));
+			map.put("flags", OSD.fromBinary(Helpers.EmptyBytes));
+			map.put("group_id", OSD.fromUUID(groupID));
+			map.put("landing_type", OSD.fromInteger(landingType.getValue()));
+			map.put("local_id", OSD.fromInteger(localID));
+			map.put("media_desc", OSD.fromString(mediaDesc));
+			map.put("media_height", OSD.fromInteger(mediaHeight));
+			map.put("media_id", OSD.fromUUID(mediaID));
+			map.put("media_loop", OSD.fromBoolean(mediaLoop));
+			map.put("media_type", OSD.fromString(mediaType));
+			map.put("media_url", OSD.fromString(mediaURL));
+			map.put("media_width", OSD.fromInteger(mediaWidth));
+			map.put("music_url", OSD.fromString(musicURL));
+			map.put("name", OSD.fromString(name));
+			map.put("obscure_media", OSD.fromBoolean(obscureMedia));
+			map.put("obscure_music", OSD.fromBoolean(obscureMusic));
+			map.put("parcel_flags", OSD.fromUInteger(parcelFlags));
+			map.put("pass_hours", OSD.fromReal(passHours));
+			map.put("pass_price", OSD.fromInteger(passPrice));
+			map.put("privacy", OSD.fromBoolean(privacy));
+			map.put("sale_price", OSD.fromInteger(salePrice));
+			map.put("snapshot_id", OSD.fromUUID(snapshotID));
+			map.put("user_location", OSD.fromVector3(userLocation));
+			map.put("user_look_at", OSD.fromVector3(userLookAt));
+			map.put("see_avs", OSD.fromBoolean(seeAVs));
+			map.put("any_av_sounds", OSD.fromBoolean(anyAVSounds));
+			map.put("group_av_sounds", OSD.fromBoolean(groupAVSounds));
 
 			return map;
 		}
@@ -1106,36 +1108,36 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			authBuyerID = map.get("auth_buyer_id").AsUUID();
-			mediaAutoScale = map.get("auto_scale").AsBoolean();
-			category = ParcelCategory.setValue(map.get("category").AsInteger());
-			desc = map.get("description").AsString();
-			groupID = map.get("group_id").AsUUID();
-			landingType = LandingTypeEnum.setValue(map.get("landing_type").AsUInteger());
-			localID = map.get("local_id").AsInteger();
-			mediaDesc = map.get("media_desc").AsString();
-			mediaHeight = map.get("media_height").AsInteger();
-			mediaLoop = map.get("media_loop").AsBoolean();
-			mediaID = map.get("media_id").AsUUID();
-			mediaType = map.get("media_type").AsString();
-			mediaURL = map.get("media_url").AsString();
-			mediaWidth = map.get("media_width").AsInteger();
-			musicURL = map.get("music_url").AsString();
-			name = map.get("name").AsString();
-			obscureMedia = map.get("obscure_media").AsBoolean();
-			obscureMusic = map.get("obscure_music").AsBoolean();
-			parcelFlags = ParcelFlags.setValue((map.get("parcel_flags").AsUInteger()));
-			passHours = (float) map.get("pass_hours").AsReal();
-			passPrice = map.get("pass_price").AsUInteger();
-			privacy = map.get("privacy").AsBoolean();
-			salePrice = map.get("sale_price").AsUInteger();
-			snapshotID = map.get("snapshot_id").AsUUID();
-			userLocation = map.get("user_location").AsVector3();
-			userLookAt = map.get("user_look_at").AsVector3();
+			authBuyerID = map.get("auth_buyer_id").asUUID();
+			mediaAutoScale = map.get("auto_scale").asBoolean();
+			category = ParcelCategory.setValue(map.get("category").asInteger());
+			desc = map.get("description").asString();
+			groupID = map.get("group_id").asUUID();
+			landingType = LandingTypeEnum.setValue(map.get("landing_type").asUInteger());
+			localID = map.get("local_id").asInteger();
+			mediaDesc = map.get("media_desc").asString();
+			mediaHeight = map.get("media_height").asInteger();
+			mediaLoop = map.get("media_loop").asBoolean();
+			mediaID = map.get("media_id").asUUID();
+			mediaType = map.get("media_type").asString();
+			mediaURL = map.get("media_url").asString();
+			mediaWidth = map.get("media_width").asInteger();
+			musicURL = map.get("music_url").asString();
+			name = map.get("name").asString();
+			obscureMedia = map.get("obscure_media").asBoolean();
+			obscureMusic = map.get("obscure_music").asBoolean();
+			parcelFlags = ParcelFlags.setValue((map.get("parcel_flags").asUInteger()));
+			passHours = (float) map.get("pass_hours").asReal();
+			passPrice = map.get("pass_price").asUInteger();
+			privacy = map.get("privacy").asBoolean();
+			salePrice = map.get("sale_price").asUInteger();
+			snapshotID = map.get("snapshot_id").asUUID();
+			userLocation = map.get("user_location").asVector3();
+			userLookAt = map.get("user_look_at").asVector3();
 			if (map.containsKey("see_avs")) {
-				seeAVs = map.get("see_avs").AsBoolean();
-				anyAVSounds = map.get("any_av_sounds").AsBoolean();
-				groupAVSounds = map.get("group_av_sounds").AsBoolean();
+				seeAVs = map.get("see_avs").asBoolean();
+				anyAVSounds = map.get("any_av_sounds").asBoolean();
+				groupAVSounds = map.get("group_av_sounds").asBoolean();
 			} else {
 				seeAVs = true;
 				anyAVSounds = true;
@@ -1179,9 +1181,9 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(3);
-			map.put("location", OSD.FromVector3(location));
-			map.put("region_handle", OSD.FromULong(regionHandle));
-			map.put("region_id", OSD.FromUUID(regionID));
+			map.put("location", OSD.fromVector3(location));
+			map.put("region_handle", OSD.fromULong(regionHandle));
+			map.put("region_id", OSD.fromUUID(regionID));
 			return map;
 		}
 
@@ -1193,9 +1195,9 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			location = map.get("location").AsVector3();
-			regionHandle = map.get("region_handle").AsULong();
-			regionID = map.get("region_id").AsUUID();
+			location = map.get("location").asVector3();
+			regionHandle = map.get("region_handle").asULong();
+			regionID = map.get("region_id").asUUID();
 		}
 	}
 
@@ -1221,7 +1223,7 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(1);
-			map.put("parcel_id", OSD.FromUUID(parcelID));
+			map.put("parcel_id", OSD.fromUUID(parcelID));
 			return map;
 		}
 
@@ -1236,7 +1238,7 @@ public class CapsMessage implements IMessage {
 			if (map == null || !map.containsKey("parcel_id"))
 				parcelID = UUID.Zero;
 			else
-				parcelID = map.get("parcel_id").AsUUID();
+				parcelID = map.get("parcel_id").asUUID();
 		}
 	}
 
@@ -1280,7 +1282,7 @@ public class CapsMessage implements IMessage {
 				request.deserialize(map);
 			} else
 				logger.warn("Unable to deserialize RemoteParcelRequest: No message handler exists for method: "
-						+ map.AsString());
+						+ map.asString());
 		}
 	}
 
@@ -1311,11 +1313,11 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(5);
-			map.put("folder_id", OSD.FromUUID(folderID));
-			map.put("asset_type", OSD.FromString(assetType.toString()));
-			map.put("inventory_type", OSD.FromString(inventoryType.toString()));
-			map.put("name", OSD.FromString(name));
-			map.put("description", OSD.FromString(description));
+			map.put("folder_id", OSD.fromUUID(folderID));
+			map.put("asset_type", OSD.fromString(assetType.toString()));
+			map.put("inventory_type", OSD.fromString(inventoryType.toString()));
+			map.put("name", OSD.fromString(name));
+			map.put("description", OSD.fromString(description));
 
 			return map;
 		}
@@ -1328,11 +1330,11 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			folderID = map.get("folder_id").AsUUID();
-			assetType = AssetType.setValue(map.get("asset_type").AsString());
-			inventoryType = InventoryItem.InventoryType.setValue(map.get("inventory_type").AsString());
-			name = map.get("name").AsString();
-			description = map.get("description").AsString();
+			folderID = map.get("folder_id").asUUID();
+			assetType = AssetType.setValue(map.get("asset_type").asString());
+			inventoryType = InventoryItem.InventoryType.setValue(map.get("inventory_type").asString());
+			name = map.get("name").asString();
+			description = map.get("description").asString();
 		}
 	}
 
@@ -1344,10 +1346,10 @@ public class CapsMessage implements IMessage {
 			public FolderType type;
 
 			public FolderDataInfo(OSDMap map) {
-				folderID = map.get("FolderID").AsUUID();
-				parentID = map.get("ParentID").AsUUID();
-				name = map.get("Name").AsString();
-				type = FolderType.setValue(map.get("Type").AsInteger());
+				folderID = map.get("FolderID").asUUID();
+				parentID = map.get("ParentID").asUUID();
+				name = map.get("Name").asString();
+				type = FolderType.setValue(map.get("Type").asInteger());
 			}
 		}
 
@@ -1376,28 +1378,28 @@ public class CapsMessage implements IMessage {
 			public int crc;
 
 			public ItemDataInfo(OSDMap map) {
-				itemID = map.get("ItemID").AsUUID();
-				callbackID = map.get("CallbackID").AsUInteger();
-				folderID = map.get("FolderID").AsUUID();
-				creatorID = map.get("CreatorID").AsUUID();
-				ownerID = map.get("OwnerID").AsUUID();
-				groupID = map.get("GroupID").AsUUID();
-				baseMask = PermissionMask.setValue(map.get("BaseMask").AsUInteger());
-				ownerMask = PermissionMask.setValue(map.get("OwnerMask").AsUInteger());
-				groupMask = PermissionMask.setValue(map.get("GroupMask").AsUInteger());
-				everyoneMask = PermissionMask.setValue(map.get("EveryoneMask").AsUInteger());
-				nextOwnerMask = PermissionMask.setValue(map.get("NextOwnerMask").AsUInteger());
-				groupOwned = map.get("GroupOwned").AsBoolean();
-				assetID = map.get("AssetID").AsUUID();
-				assetType = AssetType.setValue(map.get("Type").AsInteger());
-				inventoryType = InventoryType.setValue(map.get("InvType").AsInteger());
-				flags = map.get("Flags").AsUInteger();
-				saleType = SaleType.setValue(map.get("SaleType").AsInteger());
-				salePrice = map.get("SaleType").AsInteger();
-				name = map.get("Name").AsString();
-				description = map.get("Description").AsString();
-				creationDate = Helpers.UnixTimeToDateTime(map.get("CreationDate").AsReal());
-				crc = map.get("CRC").AsUInteger();
+				itemID = map.get("ItemID").asUUID();
+				callbackID = map.get("CallbackID").asUInteger();
+				folderID = map.get("FolderID").asUUID();
+				creatorID = map.get("CreatorID").asUUID();
+				ownerID = map.get("OwnerID").asUUID();
+				groupID = map.get("GroupID").asUUID();
+				baseMask = PermissionMask.setValue(map.get("BaseMask").asUInteger());
+				ownerMask = PermissionMask.setValue(map.get("OwnerMask").asUInteger());
+				groupMask = PermissionMask.setValue(map.get("GroupMask").asUInteger());
+				everyoneMask = PermissionMask.setValue(map.get("EveryoneMask").asUInteger());
+				nextOwnerMask = PermissionMask.setValue(map.get("NextOwnerMask").asUInteger());
+				groupOwned = map.get("GroupOwned").asBoolean();
+				assetID = map.get("AssetID").asUUID();
+				assetType = AssetType.setValue(map.get("Type").asInteger());
+				inventoryType = InventoryType.setValue(map.get("InvType").asInteger());
+				flags = map.get("Flags").asUInteger();
+				saleType = SaleType.setValue(map.get("SaleType").asInteger());
+				salePrice = map.get("SaleType").asInteger();
+				name = map.get("Name").asString();
+				description = map.get("Description").asString();
+				creationDate = Helpers.UnixTimeToDateTime(map.get("CreationDate").asReal());
+				crc = map.get("CRC").asUInteger();
 			}
 		}
 
@@ -1425,8 +1427,8 @@ public class CapsMessage implements IMessage {
 				OSDArray array = (OSDArray) map.get("AgentData");
 				if (array.size() > 0) {
 					OSDMap adata = (OSDMap) array.get(0);
-					agentID = adata.get("AgentID").AsUUID();
-					transactionID = adata.get("TransactionID").AsUUID();
+					agentID = adata.get("AgentID").asUUID();
+					transactionID = adata.get("TransactionID").asUUID();
 				}
 			}
 
@@ -1545,7 +1547,7 @@ public class CapsMessage implements IMessage {
 			OSDMap map = new OSDMap(3);
 
 			OSDMap agent = new OSDMap(1);
-			agent.put("AgentID", OSD.FromUUID(agentID));
+			agent.put("AgentID", OSD.fromUUID(agentID));
 
 			OSDArray agentArray = new OSDArray();
 			agentArray.add(agent);
@@ -1556,13 +1558,13 @@ public class CapsMessage implements IMessage {
 
 			for (int i = 0; i < groupDataBlock.length; i++) {
 				OSDMap group = new OSDMap(7);
-				group.put("AcceptNotices", OSD.FromBoolean(groupDataBlock[i].acceptNotices));
-				group.put("Contribution", OSD.FromInteger(groupDataBlock[i].contribution));
-				group.put("GroupID", OSD.FromUUID(groupDataBlock[i].groupID));
-				group.put("GroupInsigniaID", OSD.FromUUID(groupDataBlock[i].groupInsigniaID));
-				group.put("GroupName", OSD.FromString(groupDataBlock[i].groupName));
-				group.put("GroupTitle", OSD.FromString(groupDataBlock[i].groupTitle));
-				group.put("GroupPowers", OSD.FromLong(groupDataBlock[i].groupPowers));
+				group.put("AcceptNotices", OSD.fromBoolean(groupDataBlock[i].acceptNotices));
+				group.put("Contribution", OSD.fromInteger(groupDataBlock[i].contribution));
+				group.put("GroupID", OSD.fromUUID(groupDataBlock[i].groupID));
+				group.put("GroupInsigniaID", OSD.fromUUID(groupDataBlock[i].groupInsigniaID));
+				group.put("GroupName", OSD.fromString(groupDataBlock[i].groupName));
+				group.put("GroupTitle", OSD.fromString(groupDataBlock[i].groupTitle));
+				group.put("GroupPowers", OSD.fromLong(groupDataBlock[i].groupPowers));
 				groupDataArray.add(group);
 			}
 
@@ -1572,7 +1574,7 @@ public class CapsMessage implements IMessage {
 
 			for (int i = 0; i < newGroupDataBlock.length; i++) {
 				OSDMap group = new OSDMap(1);
-				group.put("ListInProfile", OSD.FromBoolean(newGroupDataBlock[i].listInProfile));
+				group.put("ListInProfile", OSD.fromBoolean(newGroupDataBlock[i].listInProfile));
 				newGroupDataArray.add(group);
 			}
 
@@ -1591,7 +1593,7 @@ public class CapsMessage implements IMessage {
 		public void deserialize(OSDMap map) {
 			OSDArray agentArray = (OSDArray) map.get("AgentData");
 			OSDMap agentMap = (OSDMap) agentArray.get(0);
-			agentID = agentMap.get("AgentID").AsUUID();
+			agentID = agentMap.get("AgentID").asUUID();
 
 			OSDArray groupArray = (OSDArray) map.get("GroupData");
 
@@ -1602,14 +1604,14 @@ public class CapsMessage implements IMessage {
 
 				GroupData groupData = new GroupData();
 
-				groupData.groupID = groupMap.get("GroupID").AsUUID();
-				groupData.contribution = groupMap.get("Contribution").AsInteger();
-				groupData.groupInsigniaID = groupMap.get("GroupInsigniaID").AsUUID();
-				groupData.groupName = groupMap.get("GroupName").AsString();
-				groupData.groupPowers = groupMap.get("GroupPowers").AsLong();
-				groupData.acceptNotices = groupMap.get("AcceptNotices").AsBoolean();
+				groupData.groupID = groupMap.get("GroupID").asUUID();
+				groupData.contribution = groupMap.get("Contribution").asInteger();
+				groupData.groupInsigniaID = groupMap.get("GroupInsigniaID").asUUID();
+				groupData.groupName = groupMap.get("GroupName").asString();
+				groupData.groupPowers = groupMap.get("GroupPowers").asLong();
+				groupData.acceptNotices = groupMap.get("AcceptNotices").asBoolean();
 				if (groupMap.containsKey("GroupTitle"))
-					groupData.groupTitle = groupMap.get("GroupTitle").AsString();
+					groupData.groupTitle = groupMap.get("GroupTitle").asString();
 				groupDataBlock[i] = groupData;
 			}
 
@@ -1624,7 +1626,7 @@ public class CapsMessage implements IMessage {
 				for (int i = 0; i < newGroupArray.size(); i++) {
 					OSDMap newGroupMap = (OSDMap) newGroupArray.get(i);
 					NewGroupData newGroupData = new NewGroupData();
-					newGroupData.listInProfile = newGroupMap.get("ListInProfile").AsBoolean();
+					newGroupData.listInProfile = newGroupMap.get("ListInProfile").asBoolean();
 					newGroupDataBlock[i] = newGroupData;
 				}
 			} else {
@@ -1664,8 +1666,8 @@ public class CapsMessage implements IMessage {
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(2);
 
-			map.put("language", OSD.FromString(language));
-			map.put("language_is_public", OSD.FromBoolean(languagePublic));
+			map.put("language", OSD.fromString(language));
+			map.put("language_is_public", OSD.fromBoolean(languagePublic));
 
 			return map;
 		}
@@ -1678,8 +1680,8 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			languagePublic = map.get("language_is_public").AsBoolean();
-			language = map.get("language").AsString();
+			languagePublic = map.get("language_is_public").asBoolean();
+			language = map.get("language").asString();
 		}
 	}
 
@@ -1719,8 +1721,8 @@ public class CapsMessage implements IMessage {
 
 			for (int i = 0; i < agentDataBlock.length; i++) {
 				OSDMap agentMap = new OSDMap(2);
-				agentMap.put("AgentID", OSD.FromUUID(agentDataBlock[i].agentID));
-				agentMap.put("GroupID", OSD.FromUUID(agentDataBlock[i].groupID));
+				agentMap.put("AgentID", OSD.fromUUID(agentDataBlock[i].agentID));
+				agentMap.put("GroupID", OSD.fromUUID(agentDataBlock[i].groupID));
 				agentDataArray.add(agentMap);
 			}
 			map.put("AgentData", agentDataArray);
@@ -1744,8 +1746,8 @@ public class CapsMessage implements IMessage {
 				OSDMap agentMap = (OSDMap) agentDataArray.get(i);
 				AgentData agentData = new AgentData();
 
-				agentData.agentID = agentMap.get("AgentID").AsUUID();
-				agentData.groupID = agentMap.get("GroupID").AsUUID();
+				agentData.agentID = agentMap.get("AgentID").asUUID();
+				agentData.groupID = agentMap.get("GroupID").asUUID();
 
 				agentDataBlock[i] = agentData;
 			}
@@ -1785,19 +1787,19 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap access = new OSDMap(1);
-			access.put("max", OSD.FromString(preferences.maxAccess));
+			access.put("max", OSD.fromString(preferences.maxAccess));
 
 			OSDMap prefs = new OSDMap(6);
-			prefs.put("god_level", OSD.FromInteger(preferences.godLevel));
-			prefs.put("language_is_public", OSD.FromBoolean(preferences.languageIsPublic));
-			prefs.put("language", OSD.FromString(preferences.language));
-			prefs.put("alter_permanent_objects", OSD.FromBoolean(preferences.alterPermanentObjects));
-			prefs.put("alter_navmesh_objects", OSD.FromBoolean(preferences.alterNavmeshObjects));
+			prefs.put("god_level", OSD.fromInteger(preferences.godLevel));
+			prefs.put("language_is_public", OSD.fromBoolean(preferences.languageIsPublic));
+			prefs.put("language", OSD.fromString(preferences.language));
+			prefs.put("alter_permanent_objects", OSD.fromBoolean(preferences.alterPermanentObjects));
+			prefs.put("alter_navmesh_objects", OSD.fromBoolean(preferences.alterNavmeshObjects));
 			prefs.put("access_prefs", access);
 
 			OSDMap map = new OSDMap(3);
-			map.put("has_modified_navmesh", OSD.FromBoolean(hasModifiedNavmesh));
-			map.put("can_modify_navmesh", OSD.FromBoolean(canModifyNavmesh));
+			map.put("has_modified_navmesh", OSD.fromBoolean(hasModifiedNavmesh));
+			map.put("can_modify_navmesh", OSD.fromBoolean(canModifyNavmesh));
 			map.put("preferences", prefs);
 
 			return map;
@@ -1811,20 +1813,20 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			hasModifiedNavmesh = map.get("has_modified_navmesh").AsBoolean();
-			canModifyNavmesh = map.get("can_modify_navmesh").AsBoolean();
+			hasModifiedNavmesh = map.get("has_modified_navmesh").asBoolean();
+			canModifyNavmesh = map.get("can_modify_navmesh").asBoolean();
 			preferences = new Preferences();
 
 			OSDMap prefs = (OSDMap) map.get("preferences");
 			if (prefs != null) {
-				preferences.godLevel = prefs.get("god_level").AsInteger();
-				preferences.languageIsPublic = prefs.get("language_is_public").AsBoolean();
-				preferences.language = prefs.get("language").AsString();
-				preferences.alterPermanentObjects = prefs.get("alter_permanent_objects").AsBoolean();
-				preferences.alterNavmeshObjects = prefs.get("alter_navmesh_objects").AsBoolean();
+				preferences.godLevel = prefs.get("god_level").asInteger();
+				preferences.languageIsPublic = prefs.get("language_is_public").asBoolean();
+				preferences.language = prefs.get("language").asString();
+				preferences.alterPermanentObjects = prefs.get("alter_permanent_objects").asBoolean();
+				preferences.alterNavmeshObjects = prefs.get("alter_navmesh_objects").asBoolean();
 
 				OSDMap access = (OSDMap) prefs.get("access_prefs");
-				preferences.maxAccess = access.get("max").AsString();
+				preferences.maxAccess = access.get("max").asString();
 			}
 		}
 	}
@@ -1859,16 +1861,16 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(2);
-			map.put("state", OSD.FromString(state));
-			map.put("uploader", OSD.FromUri(url));
+			map.put("state", OSD.fromString(state));
+			map.put("uploader", OSD.fromUri(url));
 
 			return map;
 		}
 
 		@Override
 		public void deserialize(OSDMap map) {
-			url = map.get("uploader").AsUri();
-			state = map.get("state").AsString();
+			url = map.get("uploader").asUri();
+			state = map.get("state").asString();
 		}
 	}
 
@@ -1885,16 +1887,16 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(2);
-			map.put("state", OSD.FromString(state));
-			map.put("new_asset", OSD.FromUUID(assetID));
+			map.put("state", OSD.fromString(state));
+			map.put("new_asset", OSD.fromUUID(assetID));
 
 			return map;
 		}
 
 		@Override
 		public void deserialize(OSDMap map) {
-			assetID = map.get("new_asset").AsUUID();
-			state = map.get("state").AsString();
+			assetID = map.get("new_asset").asUUID();
+			state = map.get("state").asString();
 		}
 	}
 
@@ -1932,7 +1934,7 @@ public class CapsMessage implements IMessage {
 		@Override
 		public void deserialize(OSDMap map) {
 			if (map.containsKey("state")) {
-				String value = map.get("state").AsString();
+				String value = map.get("state").asString();
 				if (value.equals("upload")) {
 					request = new UploaderRequestUpload();
 					request.deserialize(map);
@@ -1976,9 +1978,9 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(4);
-			map.put("major_version", OSD.FromInteger(majorVersion));
-			map.put("minor_version", OSD.FromInteger(minorVersion));
-			map.put("region_name", OSD.FromString(regionName));
+			map.put("major_version", OSD.fromInteger(majorVersion));
+			map.put("minor_version", OSD.fromInteger(minorVersion));
+			map.put("region_name", OSD.fromString(regionName));
 
 			return map;
 		}
@@ -1991,9 +1993,9 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			majorVersion = map.get("major_version").AsInteger();
-			minorVersion = map.get("minor_version").AsInteger();
-			regionName = map.get("region_name").AsString();
+			majorVersion = map.get("major_version").asInteger();
+			minorVersion = map.get("minor_version").asInteger();
+			regionName = map.get("region_name").asString();
 		}
 	}
 
@@ -2024,11 +2026,11 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(3);
-			map.put("parcel_local_id", OSD.FromInteger(parcelID));
-			map.put("region_name", OSD.FromString(regionName));
+			map.put("parcel_local_id", OSD.fromInteger(parcelID));
+			map.put("region_name", OSD.fromString(regionName));
 
 			OSDMap vcMap = new OSDMap(1);
-			vcMap.put("channel_uri", OSD.FromUri(sipChannelUri));
+			vcMap.put("channel_uri", OSD.fromUri(sipChannelUri));
 
 			map.put("voice_credentials", vcMap);
 
@@ -2043,11 +2045,11 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			parcelID = map.get("parcel_local_id").AsInteger();
-			regionName = map.get("region_name").AsString();
+			parcelID = map.get("parcel_local_id").asInteger();
+			regionName = map.get("region_name").asString();
 
 			OSDMap vcMap = (OSDMap) map.get("voice_credentials");
-			sipChannelUri = vcMap.get("channel_uri").AsUri();
+			sipChannelUri = vcMap.get("channel_uri").asUri();
 		}
 	}
 
@@ -2074,8 +2076,8 @@ public class CapsMessage implements IMessage {
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(2);
 
-			map.put("username", OSD.FromString(username));
-			map.put("password", OSD.FromString(password));
+			map.put("username", OSD.fromString(username));
+			map.put("password", OSD.fromString(password));
 
 			return map;
 		}
@@ -2088,8 +2090,8 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			username = map.get("username").AsString();
-			password = map.get("password").AsString();
+			username = map.get("username").asString();
+			password = map.get("password").asString();
 		}
 	}
 
@@ -2139,7 +2141,7 @@ public class CapsMessage implements IMessage {
 		@Override
 		public void deserialize(OSDMap map) {
 			if (map.containsKey("state")) {
-				String value = map.get("state").AsString();
+				String value = map.get("state").asString();
 				if (value.equals("upload")) {
 					request = new UploaderRequestUpload();
 					request.deserialize(map);
@@ -2184,10 +2186,10 @@ public class CapsMessage implements IMessage {
 			OSDMap map = new OSDMap(2);
 
 			OSDMap scriptMap = new OSDMap(4);
-			scriptMap.put("ItemID", OSD.FromUUID(itemID));
-			scriptMap.put("Mono", OSD.FromBoolean(mono));
-			scriptMap.put("ObjectID", OSD.FromUUID(objectID));
-			scriptMap.put("Running", OSD.FromBoolean(running));
+			scriptMap.put("ItemID", OSD.fromUUID(itemID));
+			scriptMap.put("Mono", OSD.fromBoolean(mono));
+			scriptMap.put("ObjectID", OSD.fromUUID(objectID));
+			scriptMap.put("Running", OSD.fromBoolean(running));
 
 			OSDArray scriptArray = new OSDArray(1);
 			scriptArray.add(scriptMap);
@@ -2209,10 +2211,10 @@ public class CapsMessage implements IMessage {
 
 			OSDMap scriptMap = (OSDMap) scriptArray.get(0);
 
-			itemID = scriptMap.get("ItemID").AsUUID();
-			mono = scriptMap.get("Mono").AsBoolean();
-			objectID = scriptMap.get("ObjectID").AsUUID();
-			running = scriptMap.get("Running").AsBoolean();
+			itemID = scriptMap.get("ItemID").asUUID();
+			mono = scriptMap.get("Mono").asBoolean();
+			objectID = scriptMap.get("ObjectID").asUUID();
+			running = scriptMap.get("Running").asBoolean();
 		}
 	}
 
@@ -2252,7 +2254,7 @@ public class CapsMessage implements IMessage {
 				request = new UpdateAgentInventoryRequestMessage();
 				request.deserialize(map);
 			} else if (map.containsKey("state")) {
-				String value = map.get("state").AsString();
+				String value = map.get("state").asString();
 				if (value.equals("upload")) {
 					request = new UploaderRequestUpload();
 					request.deserialize(map);
@@ -2265,7 +2267,7 @@ public class CapsMessage implements IMessage {
 									+ value);
 			} else
 				logger.warn("Unable to deserialize UpdateGestureAgentInventory: No message handler exists for message "
-						+ map.AsString());
+						+ map.asString());
 		}
 	}
 
@@ -2293,8 +2295,8 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(1);
-			map.put("task_id", OSD.FromUUID(taskID));
-			map.put("item_id", OSD.FromUUID(itemID));
+			map.put("task_id", OSD.fromUUID(taskID));
+			map.put("item_id", OSD.fromUUID(itemID));
 
 			return map;
 		}
@@ -2307,8 +2309,8 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			taskID = map.get("task_id").AsUUID();
-			itemID = map.get("item_id").AsUUID();
+			taskID = map.get("task_id").asUUID();
+			itemID = map.get("item_id").asUUID();
 		}
 	}
 
@@ -2329,7 +2331,7 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(1);
-			map.put("item_id", OSD.FromUUID(itemID));
+			map.put("item_id", OSD.fromUUID(itemID));
 
 			return map;
 		}
@@ -2342,7 +2344,7 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			itemID = map.get("item_id").AsUUID();
+			itemID = map.get("item_id").asUUID();
 		}
 	}
 
@@ -2382,7 +2384,7 @@ public class CapsMessage implements IMessage {
 				request = new UpdateAgentInventoryRequestMessage();
 				request.deserialize(map);
 			} else if (map.containsKey("state")) {
-				String value = map.get("state").AsString();
+				String value = map.get("state").asString();
 				if (value.equals("upload")) {
 					request = new UploaderRequestUpload();
 					request.deserialize(map);
@@ -2422,11 +2424,11 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(5);
-			map.put("callback-id", OSD.FromInteger(callbackID));
-			map.put("folder-id", OSD.FromUUID(folderID));
-			map.put("item-id", OSD.FromUUID(itemID));
-			map.put("notecard-id", OSD.FromUUID(notecardID));
-			map.put("object-id", OSD.FromUUID(objectID));
+			map.put("callback-id", OSD.fromInteger(callbackID));
+			map.put("folder-id", OSD.fromUUID(folderID));
+			map.put("item-id", OSD.fromUUID(itemID));
+			map.put("notecard-id", OSD.fromUUID(notecardID));
+			map.put("object-id", OSD.fromUUID(objectID));
 
 			return map;
 		}
@@ -2439,11 +2441,11 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			callbackID = map.get("callback-id").AsInteger();
-			folderID = map.get("folder-id").AsUUID();
-			itemID = map.get("item-id").AsUUID();
-			notecardID = map.get("notecard-id").AsUUID();
-			objectID = map.get("object-id").AsUUID();
+			callbackID = map.get("callback-id").asInteger();
+			folderID = map.get("folder-id").asUUID();
+			itemID = map.get("item-id").asUUID();
+			notecardID = map.get("notecard-id").asUUID();
+			objectID = map.get("object-id").asUUID();
 		}
 	}
 
@@ -2470,24 +2472,24 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(4);
-			map.put("state", OSD.FromString(state));
-			map.put("new_asset", OSD.FromUUID(assetID));
-			map.put("compiled", OSD.FromBoolean(compiled));
+			map.put("state", OSD.fromString(state));
+			map.put("new_asset", OSD.fromUUID(assetID));
+			map.put("compiled", OSD.fromBoolean(compiled));
 
 			OSDArray errorsArray = new OSDArray();
-			errorsArray.add(OSD.FromString(error));
+			errorsArray.add(OSD.fromString(error));
 			map.put("errors", errorsArray);
 			return map;
 		}
 
 		@Override
 		public void deserialize(OSDMap map) {
-			assetID = map.get("new_asset").AsUUID();
-			compiled = map.get("compiled").AsBoolean();
-			state = map.get("state").AsString();
+			assetID = map.get("new_asset").asUUID();
+			compiled = map.get("compiled").asBoolean();
+			state = map.get("state").asString();
 
 			OSDArray errorsArray = (OSDArray) map.get("errors");
-			error = errorsArray.get(0).AsString();
+			error = errorsArray.get(0).asString();
 		}
 	}
 
@@ -2522,10 +2524,10 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(4);
-			map.put("is_script_running", OSD.FromBoolean(scriptRunning));
-			map.put("item_id", OSD.FromUUID(itemID));
-			map.put("target", OSD.FromString(target));
-			map.put("task_id", OSD.FromUUID(taskID));
+			map.put("is_script_running", OSD.fromBoolean(scriptRunning));
+			map.put("item_id", OSD.fromUUID(itemID));
+			map.put("target", OSD.fromString(target));
+			map.put("task_id", OSD.fromUUID(taskID));
 			return map;
 		}
 
@@ -2537,10 +2539,10 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			scriptRunning = map.get("is_script_running").AsBoolean();
-			itemID = map.get("item_id").AsUUID();
-			target = map.get("target").AsString();
-			taskID = map.get("task_id").AsUUID();
+			scriptRunning = map.get("is_script_running").asBoolean();
+			itemID = map.get("item_id").asUUID();
+			target = map.get("target").asString();
+			taskID = map.get("task_id").asUUID();
 		}
 	}
 
@@ -2569,7 +2571,7 @@ public class CapsMessage implements IMessage {
 		}
 
 		public void getMessageHandler(OSDMap map) {
-			String value = map.get("method").AsString();
+			String value = map.get("method").asString();
 			if (value.equals("task_id")) {
 				request = new UpdateScriptTaskUpdateMessage();
 			} else if (value.equals("upload")) {
@@ -2595,7 +2597,7 @@ public class CapsMessage implements IMessage {
 				request = new UpdateScriptTaskUpdateMessage();
 				request.deserialize(map);
 			} else if (map.containsKey("state")) {
-				String value = map.get("state").AsString();
+				String value = map.get("state").asString();
 				if (value.equals("upload")) {
 					request = new UploaderRequestUpload();
 					request.deserialize(map);
@@ -2610,7 +2612,7 @@ public class CapsMessage implements IMessage {
 							+ value);
 			} else
 				logger.warn("Unable to deserialize UpdateScriptTaskMessage: No message handler exists for message "
-						+ map.AsString());
+						+ map.asString());
 		}
 	}
 
@@ -2629,16 +2631,16 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(2);
-			map.put("state", OSD.FromString(state));
-			map.put("new_asset", OSD.FromUUID(assetID));
-			map.put("compiled", OSD.FromBoolean(compiled));
+			map.put("state", OSD.fromString(state));
+			map.put("new_asset", OSD.fromUUID(assetID));
+			map.put("compiled", OSD.fromBoolean(compiled));
 			return map;
 		}
 
 		@Override
 		public void deserialize(OSDMap map) {
-			assetID = map.get("new_asset").AsUUID();
-			compiled = map.get("compiled").AsBoolean();
+			assetID = map.get("new_asset").asUUID();
+			compiled = map.get("compiled").asBoolean();
 		}
 	}
 
@@ -2661,8 +2663,8 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(2);
-			map.put("item_id", OSD.FromUUID(itemID));
-			map.put("target", OSD.FromString(target));
+			map.put("item_id", OSD.fromUUID(itemID));
+			map.put("target", OSD.fromString(target));
 			return map;
 		}
 
@@ -2674,8 +2676,8 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			itemID = map.get("item_id").AsUUID();
-			target = map.get("target").AsString();
+			itemID = map.get("item_id").asUUID();
+			target = map.get("target").asString();
 		}
 	}
 
@@ -2718,7 +2720,7 @@ public class CapsMessage implements IMessage {
 				request = new UploaderScriptRequestError();
 				request.deserialize(map);
 			} else if (map.containsKey("state")) {
-				String value = map.get("state").AsString();
+				String value = map.get("state").asString();
 				if (value.equals("upload")) {
 					request = new UploaderRequestUpload();
 					request.deserialize(map);
@@ -2730,7 +2732,7 @@ public class CapsMessage implements IMessage {
 							"Unable to deserialize UpdateScriptAgent: No message handler exists for state " + value);
 			} else
 				logger.warn("Unable to deserialize UpdateScriptAgent: No message handler exists for message "
-						+ map.AsString());
+						+ map.asString());
 		}
 	}
 
@@ -2758,12 +2760,12 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(6);
-			map.put("from", OSD.FromString(fromEmail));
-			map.put("msg", OSD.FromString(message));
-			map.put("name", OSD.FromString(fromName));
-			map.put("pos-global", OSD.FromVector3(globalPosition));
-			map.put("subject", OSD.FromString(subject));
-			map.put("to", OSD.FromString(toEmail));
+			map.put("from", OSD.fromString(fromEmail));
+			map.put("msg", OSD.fromString(message));
+			map.put("name", OSD.fromString(fromName));
+			map.put("pos-global", OSD.fromVector3(globalPosition));
+			map.put("subject", OSD.fromString(subject));
+			map.put("to", OSD.fromString(toEmail));
 			return map;
 		}
 
@@ -2775,12 +2777,12 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			fromEmail = map.get("from").AsString();
-			message = map.get("msg").AsString();
-			fromName = map.get("name").AsString();
-			globalPosition = map.get("pos-global").AsVector3();
-			subject = map.get("subject").AsString();
-			toEmail = map.get("to").AsString();
+			fromEmail = map.get("from").asString();
+			message = map.get("msg").asString();
+			fromName = map.get("name").asString();
+			globalPosition = map.get("pos-global").asVector3();
+			subject = map.get("subject").asString();
+			toEmail = map.get("to").asString();
 		}
 	}
 
@@ -2810,13 +2812,13 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(1);
-			map.put("Flags", OSD.FromInteger(flags));
+			map.put("Flags", OSD.fromInteger(flags));
 			return map;
 		}
 
 		@Override
 		public void deserialize(OSDMap map) {
-			flags = map.get("Flags").AsInteger();
+			flags = map.get("Flags").asInteger();
 		}
 	}
 
@@ -2849,18 +2851,18 @@ public class CapsMessage implements IMessage {
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(2);
 			OSDMap agentMap = new OSDMap(1);
-			agentMap.put("Flags", OSD.FromInteger(flags));
+			agentMap.put("Flags", OSD.fromInteger(flags));
 			map.put("AgentData", agentMap);
 
 			OSDArray layerArray = new OSDArray(layerDataBlocks.length);
 
 			for (int i = 0; i < layerDataBlocks.length; i++) {
 				OSDMap layerMap = new OSDMap(5);
-				layerMap.put("ImageID", OSD.FromUUID(layerDataBlocks[i].imageID));
-				layerMap.put("Bottom", OSD.FromInteger(layerDataBlocks[i].bottom));
-				layerMap.put("Left", OSD.FromInteger(layerDataBlocks[i].left));
-				layerMap.put("Top", OSD.FromInteger(layerDataBlocks[i].top));
-				layerMap.put("Right", OSD.FromInteger(layerDataBlocks[i].right));
+				layerMap.put("ImageID", OSD.fromUUID(layerDataBlocks[i].imageID));
+				layerMap.put("Bottom", OSD.fromInteger(layerDataBlocks[i].bottom));
+				layerMap.put("Left", OSD.fromInteger(layerDataBlocks[i].left));
+				layerMap.put("Top", OSD.fromInteger(layerDataBlocks[i].top));
+				layerMap.put("Right", OSD.fromInteger(layerDataBlocks[i].right));
 
 				layerArray.add(layerMap);
 			}
@@ -2879,7 +2881,7 @@ public class CapsMessage implements IMessage {
 		@Override
 		public void deserialize(OSDMap map) {
 			OSDMap agentMap = (OSDMap) map.get("AgentData");
-			flags = agentMap.get("Flags").AsInteger();
+			flags = agentMap.get("Flags").asInteger();
 
 			OSDArray layerArray = (OSDArray) map.get("LayerData");
 
@@ -2889,11 +2891,11 @@ public class CapsMessage implements IMessage {
 				OSDMap layerMap = (OSDMap) layerArray.get(i);
 
 				LayerData layer = new LayerData();
-				layer.imageID = layerMap.get("ImageID").AsUUID();
-				layer.top = layerMap.get("Top").AsInteger();
-				layer.right = layerMap.get("Right").AsInteger();
-				layer.left = layerMap.get("Left").AsInteger();
-				layer.bottom = layerMap.get("Bottom").AsInteger();
+				layer.imageID = layerMap.get("ImageID").asUUID();
+				layer.top = layerMap.get("Top").asInteger();
+				layer.right = layerMap.get("Right").asInteger();
+				layer.left = layerMap.get("Left").asInteger();
+				layer.bottom = layerMap.get("Bottom").asInteger();
 
 				layerDataBlocks[i] = layer;
 			}
@@ -2998,7 +3000,7 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(1);
-			map.put("classified_id", OSD.FromUUID(classifiedID));
+			map.put("classified_id", OSD.fromUUID(classifiedID));
 			return map;
 		}
 
@@ -3010,7 +3012,7 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			classifiedID = map.get("classified_id").AsUUID();
+			classifiedID = map.get("classified_id").asUUID();
 		}
 	}
 
@@ -3030,12 +3032,12 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(6);
-			map.put("map_clicks", OSD.FromInteger(mapClicks));
-			map.put("profile_clicks", OSD.FromInteger(profileClicks));
-			map.put("search_map_clicks", OSD.FromInteger(searchMapClicks));
-			map.put("search_profile_clicks", OSD.FromInteger(searchProfileClicks));
-			map.put("search_teleport_clicks", OSD.FromInteger(searchTeleportClicks));
-			map.put("teleport_clicks", OSD.FromInteger(teleportClicks));
+			map.put("map_clicks", OSD.fromInteger(mapClicks));
+			map.put("profile_clicks", OSD.fromInteger(profileClicks));
+			map.put("search_map_clicks", OSD.fromInteger(searchMapClicks));
+			map.put("search_profile_clicks", OSD.fromInteger(searchProfileClicks));
+			map.put("search_teleport_clicks", OSD.fromInteger(searchTeleportClicks));
+			map.put("teleport_clicks", OSD.fromInteger(teleportClicks));
 			return map;
 		}
 
@@ -3047,12 +3049,12 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			mapClicks = map.get("map_clicks").AsInteger();
-			profileClicks = map.get("profile_clicks").AsInteger();
-			searchMapClicks = map.get("search_map_clicks").AsInteger();
-			searchProfileClicks = map.get("search_profile_clicks").AsInteger();
-			searchTeleportClicks = map.get("search_teleport_clicks").AsInteger();
-			teleportClicks = map.get("teleport_clicks").AsInteger();
+			mapClicks = map.get("map_clicks").asInteger();
+			profileClicks = map.get("profile_clicks").asInteger();
+			searchMapClicks = map.get("search_map_clicks").asInteger();
+			searchProfileClicks = map.get("search_profile_clicks").asInteger();
+			searchTeleportClicks = map.get("search_teleport_clicks").asInteger();
+			teleportClicks = map.get("teleport_clicks").asInteger();
 		}
 	}
 
@@ -3093,7 +3095,7 @@ public class CapsMessage implements IMessage {
 				request.deserialize(map);
 			} else
 				logger.warn("Unable to deserialize SearchStatRequest: No message handler exists for method "
-						+ map.get("method").AsString());
+						+ map.get("method").asString());
 		}
 	}
 
@@ -3137,13 +3139,13 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(3);
-			map.put("method", OSD.FromString(method));
+			map.put("method", OSD.fromString(method));
 			OSDArray agentsArray = new OSDArray();
 			for (int i = 0; i < agentsBlock.length; i++) {
-				agentsArray.add(OSD.FromUUID(agentsBlock[i]));
+				agentsArray.add(OSD.fromUUID(agentsBlock[i]));
 			}
 			map.put("params", agentsArray);
-			map.put("session-id", OSD.FromUUID(sessionID));
+			map.put("session-id", OSD.fromUUID(sessionID));
 
 			return map;
 		}
@@ -3156,16 +3158,16 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			method = map.get("method").AsString();
+			method = map.get("method").asString();
 			OSDArray agentsArray = (OSDArray) map.get("params");
 
 			agentsBlock = new UUID[agentsArray.size()];
 
 			for (int i = 0; i < agentsArray.size(); i++) {
-				agentsBlock[i] = agentsArray.get(i).AsUUID();
+				agentsBlock[i] = agentsArray.get(i).asUUID();
 			}
 
-			sessionID = map.get("session-id").AsUUID();
+			sessionID = map.get("session-id").asUUID();
 		}
 	}
 
@@ -3208,17 +3210,17 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(3);
-			map.put("method", OSD.FromString(method));
+			map.put("method", OSD.fromString(method));
 
 			OSDMap muteMap = new OSDMap(1);
-			muteMap.put(requestKey, OSD.FromBoolean(requestValue));
+			muteMap.put(requestKey, OSD.fromBoolean(requestValue));
 
 			OSDMap paramMap = new OSDMap(2);
-			paramMap.put("agent_id", OSD.FromUUID(agentID));
+			paramMap.put("agent_id", OSD.fromUUID(agentID));
 			paramMap.put("mute_info", muteMap);
 
 			map.put("params", paramMap);
-			map.put("session-id", OSD.FromUUID(sessionID));
+			map.put("session-id", OSD.fromUUID(sessionID));
 
 			return map;
 		}
@@ -3231,20 +3233,20 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			method = map.get("method").AsString();
-			sessionID = map.get("session-id").AsUUID();
+			method = map.get("method").asString();
+			sessionID = map.get("session-id").asUUID();
 
 			OSDMap paramsMap = (OSDMap) map.get("params");
 			OSDMap muteMap = (OSDMap) paramsMap.get("mute_info");
 
-			agentID = paramsMap.get("agent_id").AsUUID();
+			agentID = paramsMap.get("agent_id").asUUID();
 
 			if (muteMap.containsKey("text"))
 				requestKey = "text";
 			else if (muteMap.containsKey("voice"))
 				requestKey = "voice";
 
-			requestValue = muteMap.get(requestKey).AsBoolean();
+			requestValue = muteMap.get(requestKey).asBoolean();
 		}
 	}
 
@@ -3274,8 +3276,8 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(2);
-			map.put("method", OSD.FromString(method));
-			map.put("session-id", OSD.FromUUID(sessionID));
+			map.put("method", OSD.fromString(method));
+			map.put("session-id", OSD.fromUUID(sessionID));
 			return map;
 		}
 
@@ -3287,8 +3289,8 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			method = map.get("method").AsString();
-			sessionID = map.get("session-id").AsUUID();
+			method = map.get("method").asString();
+			sessionID = map.get("session-id").asUUID();
 		}
 	}
 
@@ -3322,7 +3324,7 @@ public class CapsMessage implements IMessage {
 		@Override
 		public void deserialize(OSDMap map) {
 			if (map.containsKey("method")) {
-				String value = map.get("method").AsString();
+				String value = map.get("method").asString();
 				if (value.equals("start conference")) {
 					request = new ChatSessionRequestStartConference();
 					request.deserialize(map);
@@ -3337,7 +3339,7 @@ public class CapsMessage implements IMessage {
 							"Unable to deserialize ChatSessionRequest: No message handler exists for method " + value);
 			} else
 				logger.warn("Unable to deserialize ChatSessionRequest: No message handler exists for message "
-						+ map.AsString());
+						+ map.asString());
 		}
 	}
 
@@ -3363,8 +3365,8 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(2);
-			map.put("success", OSD.FromBoolean(success));
-			map.put("session_id", OSD.FromUUID(sessionID)); // FIXME: Verify
+			map.put("success", OSD.fromBoolean(success));
+			map.put("session_id", OSD.fromUUID(sessionID)); // FIXME: Verify
 															// this is correct
 															// map name
 
@@ -3379,8 +3381,8 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			success = map.get("success").AsBoolean();
-			sessionID = map.get("session_id").AsUUID();
+			success = map.get("success").asBoolean();
+			sessionID = map.get("session_id").asUUID();
 		}
 	}
 
@@ -3413,18 +3415,18 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap moderatedMap = new OSDMap(1);
-			moderatedMap.put("voice", OSD.FromBoolean(moderatedVoice));
+			moderatedMap.put("voice", OSD.fromBoolean(moderatedVoice));
 
 			OSDMap sessionMap = new OSDMap(4);
-			sessionMap.put("type", OSD.FromInteger(type));
-			sessionMap.put("session_name", OSD.FromString(sessionName));
-			sessionMap.put("voice_enabled", OSD.FromBoolean(voiceEnabled));
+			sessionMap.put("type", OSD.fromInteger(type));
+			sessionMap.put("session_name", OSD.fromString(sessionName));
+			sessionMap.put("voice_enabled", OSD.fromBoolean(voiceEnabled));
 			sessionMap.put("moderated_mode", moderatedMap);
 
 			OSDMap map = new OSDMap(4);
-			map.put("session_id", OSD.FromUUID(sessionID));
-			map.put("temp_session_id", OSD.FromUUID(tempSessionID));
-			map.put("success", OSD.FromBoolean(success));
+			map.put("session_id", OSD.fromUUID(sessionID));
+			map.put("temp_session_id", OSD.fromUUID(tempSessionID));
+			map.put("success", OSD.fromBoolean(success));
 			map.put("session_info", sessionMap);
 
 			return map;
@@ -3438,18 +3440,18 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			sessionID = map.get("session_id").AsUUID();
-			tempSessionID = map.get("temp_session_id").AsUUID();
-			success = map.get("success").AsBoolean();
+			sessionID = map.get("session_id").asUUID();
+			tempSessionID = map.get("temp_session_id").asUUID();
+			success = map.get("success").asBoolean();
 
 			if (success) {
 				OSDMap sessionMap = (OSDMap) map.get("session_info");
-				sessionName = sessionMap.get("session_name").AsString();
-				type = sessionMap.get("type").AsInteger();
-				voiceEnabled = sessionMap.get("voice_enabled").AsBoolean();
+				sessionName = sessionMap.get("session_name").asString();
+				type = sessionMap.get("type").asInteger();
+				voiceEnabled = sessionMap.get("voice_enabled").asBoolean();
 
 				OSDMap moderatedModeMap = (OSDMap) sessionMap.get("moderated_mode");
-				moderatedVoice = moderatedModeMap.get("voice").AsBoolean();
+				moderatedVoice = moderatedModeMap.get("voice").asBoolean();
 			}
 		}
 	}
@@ -3500,21 +3502,21 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap dataMap = new OSDMap(3);
-			dataMap.put("timestamp", OSD.FromDate(timestamp));
-			dataMap.put("type", OSD.FromInteger(dialog.getValue()));
-			dataMap.put("binary_bucket", OSD.FromBinary(binaryBucket));
+			dataMap.put("timestamp", OSD.fromDate(timestamp));
+			dataMap.put("type", OSD.fromInteger(dialog.getValue()));
+			dataMap.put("binary_bucket", OSD.fromBinary(binaryBucket));
 
 			OSDMap paramsMap = new OSDMap(11);
-			paramsMap.put("from_id", OSD.FromUUID(fromAgentID));
-			paramsMap.put("from_name", OSD.FromString(fromAgentName));
-			paramsMap.put("to_id", OSD.FromUUID(toAgentID));
-			paramsMap.put("parent_estate_id", OSD.FromInteger(parentEstateID));
-			paramsMap.put("region_id", OSD.FromUUID(regionID));
-			paramsMap.put("position", OSD.FromVector3(position));
-			paramsMap.put("from_group", OSD.FromBoolean(groupIM));
-			paramsMap.put("id", OSD.FromUUID(imSessionID));
-			paramsMap.put("message", OSD.FromString(message));
-			paramsMap.put("offline", OSD.FromInteger(offline.getValue()));
+			paramsMap.put("from_id", OSD.fromUUID(fromAgentID));
+			paramsMap.put("from_name", OSD.fromString(fromAgentName));
+			paramsMap.put("to_id", OSD.fromUUID(toAgentID));
+			paramsMap.put("parent_estate_id", OSD.fromInteger(parentEstateID));
+			paramsMap.put("region_id", OSD.fromUUID(regionID));
+			paramsMap.put("position", OSD.fromVector3(position));
+			paramsMap.put("from_group", OSD.fromBoolean(groupIM));
+			paramsMap.put("id", OSD.fromUUID(imSessionID));
+			paramsMap.put("message", OSD.fromString(message));
+			paramsMap.put("offline", OSD.fromInteger(offline.getValue()));
 
 			paramsMap.put("data", dataMap);
 
@@ -3536,29 +3538,29 @@ public class CapsMessage implements IMessage {
 		@Override
 		public void deserialize(OSDMap map) {
 			if (map.containsKey("voice")) {
-				fromAgentID = map.get("from_id").AsUUID();
-				fromAgentName = map.get("from_name").AsString();
-				imSessionID = map.get("session_id").AsUUID();
-				binaryBucket = Helpers.StringToBytes(map.get("session_name").AsString());
+				fromAgentID = map.get("from_id").asUUID();
+				fromAgentName = map.get("from_name").asString();
+				imSessionID = map.get("session_id").asUUID();
+				binaryBucket = Helpers.stringToBytes(map.get("session_name").asString());
 				voice = true;
 			} else {
 				OSDMap im = (OSDMap) map.get("instantmessage");
 				OSDMap msg = (OSDMap) im.get("message_params");
 				OSDMap msgdata = (OSDMap) msg.get("data");
 
-				fromAgentID = msg.get("from_id").AsUUID();
-				fromAgentName = msg.get("from_name").AsString();
-				toAgentID = msg.get("to_id").AsUUID();
-				parentEstateID = msg.get("parent_estate_id").AsInteger();
-				regionID = msg.get("region_id").AsUUID();
-				position = msg.get("position").AsVector3();
-				groupIM = msg.get("from_group").AsBoolean();
-				imSessionID = msg.get("id").AsUUID();
-				message = msg.get("message").AsString();
-				offline = InstantMessageOnline.setValue(msg.get("offline").AsInteger());
-				dialog = InstantMessageDialog.setValue(msgdata.get("type").AsInteger());
-				binaryBucket = msgdata.get("binary_bucket").AsBinary();
-				timestamp = msgdata.get("timestamp").AsDate();
+				fromAgentID = msg.get("from_id").asUUID();
+				fromAgentName = msg.get("from_name").asString();
+				toAgentID = msg.get("to_id").asUUID();
+				parentEstateID = msg.get("parent_estate_id").asInteger();
+				regionID = msg.get("region_id").asUUID();
+				position = msg.get("position").asVector3();
+				groupIM = msg.get("from_group").asBoolean();
+				imSessionID = msg.get("id").asUUID();
+				message = msg.get("message").asString();
+				offline = InstantMessageOnline.setValue(msg.get("offline").asInteger());
+				dialog = InstantMessageDialog.setValue(msgdata.get("type").asInteger());
+				binaryBucket = msgdata.get("binary_bucket").asBinary();
+				timestamp = msgdata.get("timestamp").asDate();
 				voice = false;
 			}
 		}
@@ -3585,10 +3587,10 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(3);
-			map.put("parcel_local_id", OSD.FromInteger(parcelLocalID));
-			map.put("region_name", OSD.FromString(regionName));
+			map.put("parcel_local_id", OSD.fromInteger(parcelLocalID));
+			map.put("region_name", OSD.fromString(regionName));
 			OSDMap voiceMap = new OSDMap(1);
-			voiceMap.put("channel_uri", OSD.FromString(channelUri));
+			voiceMap.put("channel_uri", OSD.fromString(channelUri));
 			map.put("voice_credentials", voiceMap);
 			return map;
 		}
@@ -3601,10 +3603,10 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			this.parcelLocalID = map.get("parcel_local_id").AsInteger();
-			this.regionName = map.get("region_name").AsString();
+			this.parcelLocalID = map.get("parcel_local_id").asInteger();
+			this.regionName = map.get("region_name").asString();
 			OSDMap voiceMap = (OSDMap) map.get("voice_credentials");
-			this.channelUri = voiceMap.get("channel_uri").AsString();
+			this.channelUri = voiceMap.get("channel_uri").asString();
 		}
 	}
 
@@ -3692,22 +3694,22 @@ public class CapsMessage implements IMessage {
 			OSDMap agent_updatesMap = new OSDMap(1);
 			for (int i = 0; i < updates.length; i++) {
 				OSDMap mutesMap = new OSDMap(2);
-				mutesMap.put("text", OSD.FromBoolean(updates[i].muteText));
-				mutesMap.put("voice", OSD.FromBoolean(updates[i].muteVoice));
+				mutesMap.put("text", OSD.fromBoolean(updates[i].muteText));
+				mutesMap.put("voice", OSD.fromBoolean(updates[i].muteVoice));
 
 				OSDMap infoMap = new OSDMap(3);
-				infoMap.put("can_voice_chat", OSD.FromBoolean(updates[i].canVoiceChat));
-				infoMap.put("is_moderator", OSD.FromBoolean(updates[i].isModerator));
+				infoMap.put("can_voice_chat", OSD.fromBoolean(updates[i].canVoiceChat));
+				infoMap.put("is_moderator", OSD.fromBoolean(updates[i].isModerator));
 				infoMap.put("mutes", mutesMap);
 
 				OSDMap imap = new OSDMap(2);
 				imap.put("info", infoMap);
-				imap.put("transition", OSD.FromString(updates[i].transition));
+				imap.put("transition", OSD.fromString(updates[i].transition));
 
 				agent_updatesMap.put(updates[i].agentID.toString(), imap);
 			}
 			map.put("agent_updates", agent_updatesMap);
-			map.put("session_id", OSD.FromUUID(sessionID));
+			map.put("session_id", OSD.fromUUID(sessionID));
 
 			return map;
 		}
@@ -3722,9 +3724,9 @@ public class CapsMessage implements IMessage {
 		public void deserialize(OSDMap map) {
 
 			OSDMap agent_updates = (OSDMap) map.get("agent_updates");
-			sessionID = map.get("session_id").AsUUID();
+			sessionID = map.get("session_id").asUUID();
 
-			ArrayList<AgentUpdatesBlock> updatesList = new ArrayList<AgentUpdatesBlock>();
+			List<AgentUpdatesBlock> updatesList = new ArrayList<>();
 
 			for (Entry<String, OSD> kvp : agent_updates.entrySet()) {
 
@@ -3766,15 +3768,15 @@ public class CapsMessage implements IMessage {
 
 					OSDMap agentPermsMap = (OSDMap) infoMap.get("info");
 
-					block.canVoiceChat = agentPermsMap.get("can_voice_chat").AsBoolean();
-					block.isModerator = agentPermsMap.get("is_moderator").AsBoolean();
+					block.canVoiceChat = agentPermsMap.get("can_voice_chat").asBoolean();
+					block.isModerator = agentPermsMap.get("is_moderator").asBoolean();
 
-					block.transition = infoMap.get("transition").AsString();
+					block.transition = infoMap.get("transition").asString();
 
 					if (agentPermsMap.containsKey("mutes")) {
 						OSDMap mutesMap = (OSDMap) agentPermsMap.get("mutes");
-						block.muteText = mutesMap.get("text").AsBoolean();
-						block.muteVoice = mutesMap.get("voice").AsBoolean();
+						block.muteText = mutesMap.get("text").asBoolean();
+						block.muteVoice = mutesMap.get("voice").asBoolean();
 					}
 					updatesList.add(block);
 				}
@@ -3819,8 +3821,8 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(2);
-			map.put("reason", OSD.FromString(reason));
-			map.put("session_id", OSD.FromUUID(sessionID));
+			map.put("reason", OSD.fromString(reason));
+			map.put("session_id", OSD.fromUUID(sessionID));
 
 			return map;
 		}
@@ -3833,8 +3835,8 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			reason = map.get("reason").AsString();
-			sessionID = map.get("session_id").AsUUID();
+			reason = map.get("reason").asString();
+			sessionID = map.get("session_id").asUUID();
 		}
 	}
 
@@ -3861,8 +3863,8 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap();
-			map.put("ack", OSD.FromInteger(ackID));
-			map.put("done", OSD.FromBoolean(done));
+			map.put("ack", OSD.fromInteger(ackID));
+			map.put("done", OSD.fromBoolean(done));
 			return map;
 		}
 
@@ -3874,8 +3876,8 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			ackID = map.get("ack").AsInteger();
-			done = map.get("done").AsBoolean();
+			ackID = map.get("ack").asInteger();
+			done = map.get("done").asBoolean();
 		}
 	}
 
@@ -3902,12 +3904,12 @@ public class CapsMessage implements IMessage {
 			for (int i = 0; i < messageEvents.length; i++) {
 				OSDMap eventMap = new OSDMap(2);
 				eventMap.put("body", messageEvents[i].eventMessage.serialize());
-				eventMap.put("message", OSD.FromString(messageEvents[i].messageKey.toString()));
+				eventMap.put("message", OSD.fromString(messageEvents[i].messageKey.toString()));
 				eventsArray.add(eventMap);
 			}
 
 			map.put("events", eventsArray);
-			map.put("id", OSD.FromInteger(sequence));
+			map.put("id", OSD.fromInteger(sequence));
 
 			return map;
 		}
@@ -3920,7 +3922,7 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			sequence = map.get("id").AsInteger();
+			sequence = map.get("id").asInteger();
 			OSDArray arrayEvents = (OSDArray) map.get("events");
 
 			messageEvents = new QueueEvent[arrayEvents.size()];
@@ -3929,7 +3931,7 @@ public class CapsMessage implements IMessage {
 				OSDMap eventMap = (OSDMap) arrayEvents.get(i);
 				QueueEvent ev = new QueueEvent();
 
-				ev.messageKey = CapsEventType.valueOf(eventMap.get("message").AsString());
+				ev.messageKey = CapsEventType.valueOf(eventMap.get("message").asString());
 				ev.eventMessage = (CapsMessage) decodeEvent(ev.messageKey, (OSDMap) eventMap.get("body"));
 				messageEvents[i] = ev;
 			}
@@ -4047,78 +4049,78 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(5);
-			map.put("session_id", OSD.FromUUID(sessionID));
+			map.put("session_id", OSD.fromUUID(sessionID));
 
 			OSDMap agentMap = new OSDMap(11);
-			agentMap.put("agents_in_view", OSD.FromInteger(agentsInView));
-			agentMap.put("fps", OSD.FromReal(agentFPS));
-			agentMap.put("language", OSD.FromString(agentLanguage));
-			agentMap.put("mem_use", OSD.FromReal(agentMemoryUsed));
-			agentMap.put("meters_traveled", OSD.FromReal(metersTraveled));
-			agentMap.put("ping", OSD.FromReal(agentPing));
-			agentMap.put("regions_visited", OSD.FromInteger(regionsVisited));
-			agentMap.put("run_time", OSD.FromReal(agentRuntime));
-			agentMap.put("sim_fps", OSD.FromReal(simulatorFPS));
-			agentMap.put("start_time", OSD.FromUInteger((int) (long) Helpers.DateTimeToUnixTime(agentStartTime)));
-			agentMap.put("version", OSD.FromString(agentVersion));
+			agentMap.put("agents_in_view", OSD.fromInteger(agentsInView));
+			agentMap.put("fps", OSD.fromReal(agentFPS));
+			agentMap.put("language", OSD.fromString(agentLanguage));
+			agentMap.put("mem_use", OSD.fromReal(agentMemoryUsed));
+			agentMap.put("meters_traveled", OSD.fromReal(metersTraveled));
+			agentMap.put("ping", OSD.fromReal(agentPing));
+			agentMap.put("regions_visited", OSD.fromInteger(regionsVisited));
+			agentMap.put("run_time", OSD.fromReal(agentRuntime));
+			agentMap.put("sim_fps", OSD.fromReal(simulatorFPS));
+			agentMap.put("start_time", OSD.fromUInteger((int) (long) Helpers.dateTimeToUnixTime(agentStartTime)));
+			agentMap.put("version", OSD.fromString(agentVersion));
 			map.put("agent", agentMap);
 
 			OSDMap downloadsMap = new OSDMap(3); // downloads
-			downloadsMap.put("object_kbytes", OSD.FromReal(object_kbytes));
-			downloadsMap.put("texture_kbytes", OSD.FromReal(texture_kbytes));
-			downloadsMap.put("world_kbytes", OSD.FromReal(world_kbytes));
+			downloadsMap.put("object_kbytes", OSD.fromReal(object_kbytes));
+			downloadsMap.put("texture_kbytes", OSD.fromReal(texture_kbytes));
+			downloadsMap.put("world_kbytes", OSD.fromReal(world_kbytes));
 			map.put("downloads", downloadsMap);
 
 			OSDMap miscMap = new OSDMap(2);
-			miscMap.put("Version", OSD.FromReal(miscVersion));
-			miscMap.put("Vertex Buffers Enabled", OSD.FromBoolean(vertexBuffersEnabled));
+			miscMap.put("Version", OSD.fromReal(miscVersion));
+			miscMap.put("Vertex Buffers Enabled", OSD.fromBoolean(vertexBuffersEnabled));
 			map.put("misc", miscMap);
 
 			OSDMap statsMap = new OSDMap(2);
 
 			OSDMap failuresMap = new OSDMap(6);
-			failuresMap.put("dropped", OSD.FromInteger(statsDropped));
-			failuresMap.put("failed_resends", OSD.FromInteger(statsFailedResends));
-			failuresMap.put("invalid", OSD.FromInteger(failuresInvalid));
-			failuresMap.put("off_circuit", OSD.FromInteger(failuresOffCircuit));
-			failuresMap.put("resent", OSD.FromInteger(failuresResent));
-			failuresMap.put("send_packet", OSD.FromInteger(failuresSendPacket));
+			failuresMap.put("dropped", OSD.fromInteger(statsDropped));
+			failuresMap.put("failed_resends", OSD.fromInteger(statsFailedResends));
+			failuresMap.put("invalid", OSD.fromInteger(failuresInvalid));
+			failuresMap.put("off_circuit", OSD.fromInteger(failuresOffCircuit));
+			failuresMap.put("resent", OSD.fromInteger(failuresResent));
+			failuresMap.put("send_packet", OSD.fromInteger(failuresSendPacket));
 			statsMap.put("failures", failuresMap);
 
 			OSDMap statsMiscMap = new OSDMap(3);
-			statsMiscMap.put("int_1", OSD.FromInteger(miscInt1));
-			statsMiscMap.put("int_2", OSD.FromInteger(miscInt2));
-			statsMiscMap.put("string_1", OSD.FromString(miscString1));
+			statsMiscMap.put("int_1", OSD.fromInteger(miscInt1));
+			statsMiscMap.put("int_2", OSD.fromInteger(miscInt2));
+			statsMiscMap.put("string_1", OSD.fromString(miscString1));
 			statsMap.put("misc", statsMiscMap);
 
 			OSDMap netMap = new OSDMap(3);
 
 			// in
 			OSDMap netInMap = new OSDMap(4);
-			netInMap.put("compressed_packets", OSD.FromInteger(inCompressedPackets));
-			netInMap.put("kbytes", OSD.FromReal(inKbytes));
-			netInMap.put("packets", OSD.FromReal(inPackets));
-			netInMap.put("savings", OSD.FromReal(inSavings));
+			netInMap.put("compressed_packets", OSD.fromInteger(inCompressedPackets));
+			netInMap.put("kbytes", OSD.fromReal(inKbytes));
+			netInMap.put("packets", OSD.fromReal(inPackets));
+			netInMap.put("savings", OSD.fromReal(inSavings));
 			netMap.put("in", netInMap);
 			// out
 			OSDMap netOutMap = new OSDMap(4);
-			netOutMap.put("compressed_packets", OSD.FromInteger(outCompressedPackets));
-			netOutMap.put("kbytes", OSD.FromReal(outKbytes));
-			netOutMap.put("packets", OSD.FromReal(outPackets));
-			netOutMap.put("savings", OSD.FromReal(outSavings));
+			netOutMap.put("compressed_packets", OSD.fromInteger(outCompressedPackets));
+			netOutMap.put("kbytes", OSD.fromReal(outKbytes));
+			netOutMap.put("packets", OSD.fromReal(outPackets));
+			netOutMap.put("savings", OSD.fromReal(outSavings));
 			netMap.put("out", netOutMap);
 
 			statsMap.put("net", netMap);
 
 			// system
 			OSDMap systemStatsMap = new OSDMap(7);
-			systemStatsMap.put("cpu", OSD.FromString(systemCPU));
-			systemStatsMap.put("gpu", OSD.FromString(systemGPU));
-			systemStatsMap.put("gpu_class", OSD.FromInteger(systemGPUClass));
-			systemStatsMap.put("gpu_vendor", OSD.FromString(systemGPUVendor));
-			systemStatsMap.put("gpu_version", OSD.FromString(systemGPUVersion));
-			systemStatsMap.put("os", OSD.FromString(systemOS));
-			systemStatsMap.put("ram", OSD.FromInteger(systemInstalledRam));
+			systemStatsMap.put("cpu", OSD.fromString(systemCPU));
+			systemStatsMap.put("gpu", OSD.fromString(systemGPU));
+			systemStatsMap.put("gpu_class", OSD.fromInteger(systemGPUClass));
+			systemStatsMap.put("gpu_vendor", OSD.fromString(systemGPUVendor));
+			systemStatsMap.put("gpu_version", OSD.fromString(systemGPUVersion));
+			systemStatsMap.put("os", OSD.fromString(systemOS));
+			systemStatsMap.put("ram", OSD.fromInteger(systemInstalledRam));
 			map.put("system", systemStatsMap);
 
 			map.put("stats", statsMap);
@@ -4133,66 +4135,66 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			sessionID = map.get("session_id").AsUUID();
+			sessionID = map.get("session_id").asUUID();
 
 			OSDMap agentMap = (OSDMap) map.get("agent");
-			agentsInView = agentMap.get("agents_in_view").AsInteger();
-			agentFPS = (float) agentMap.get("fps").AsReal();
-			agentLanguage = agentMap.get("language").AsString();
-			agentMemoryUsed = (float) agentMap.get("mem_use").AsReal();
-			metersTraveled = agentMap.get("meters_traveled").AsInteger();
-			agentPing = (float) agentMap.get("ping").AsReal();
-			regionsVisited = agentMap.get("regions_visited").AsInteger();
-			agentRuntime = (float) agentMap.get("run_time").AsReal();
-			simulatorFPS = (float) agentMap.get("sim_fps").AsReal();
-			agentStartTime = Helpers.UnixTimeToDateTime(agentMap.get("start_time").AsUInteger());
-			agentVersion = agentMap.get("version").AsString();
+			agentsInView = agentMap.get("agents_in_view").asInteger();
+			agentFPS = (float) agentMap.get("fps").asReal();
+			agentLanguage = agentMap.get("language").asString();
+			agentMemoryUsed = (float) agentMap.get("mem_use").asReal();
+			metersTraveled = agentMap.get("meters_traveled").asInteger();
+			agentPing = (float) agentMap.get("ping").asReal();
+			regionsVisited = agentMap.get("regions_visited").asInteger();
+			agentRuntime = (float) agentMap.get("run_time").asReal();
+			simulatorFPS = (float) agentMap.get("sim_fps").asReal();
+			agentStartTime = Helpers.UnixTimeToDateTime(agentMap.get("start_time").asUInteger());
+			agentVersion = agentMap.get("version").asString();
 
 			OSDMap downloadsMap = (OSDMap) map.get("downloads");
-			object_kbytes = (float) downloadsMap.get("object_kbytes").AsReal();
-			texture_kbytes = (float) downloadsMap.get("texture_kbytes").AsReal();
-			world_kbytes = (float) downloadsMap.get("world_kbytes").AsReal();
+			object_kbytes = (float) downloadsMap.get("object_kbytes").asReal();
+			texture_kbytes = (float) downloadsMap.get("texture_kbytes").asReal();
+			world_kbytes = (float) downloadsMap.get("world_kbytes").asReal();
 
 			OSDMap miscMap = (OSDMap) map.get("misc");
-			miscVersion = (float) miscMap.get("Version").AsReal();
-			vertexBuffersEnabled = miscMap.get("Vertex Buffers Enabled").AsBoolean();
+			miscVersion = (float) miscMap.get("Version").asReal();
+			vertexBuffersEnabled = miscMap.get("Vertex Buffers Enabled").asBoolean();
 
 			OSDMap statsMap = (OSDMap) map.get("stats");
 			OSDMap failuresMap = (OSDMap) statsMap.get("failures");
-			statsDropped = failuresMap.get("dropped").AsInteger();
-			statsFailedResends = failuresMap.get("failed_resends").AsInteger();
-			failuresInvalid = failuresMap.get("invalid").AsInteger();
-			failuresOffCircuit = failuresMap.get("off_circuit").AsInteger();
-			failuresResent = failuresMap.get("resent").AsInteger();
-			failuresSendPacket = failuresMap.get("send_packet").AsInteger();
+			statsDropped = failuresMap.get("dropped").asInteger();
+			statsFailedResends = failuresMap.get("failed_resends").asInteger();
+			failuresInvalid = failuresMap.get("invalid").asInteger();
+			failuresOffCircuit = failuresMap.get("off_circuit").asInteger();
+			failuresResent = failuresMap.get("resent").asInteger();
+			failuresSendPacket = failuresMap.get("send_packet").asInteger();
 
 			OSDMap statsMiscMap = (OSDMap) statsMap.get("misc");
-			miscInt1 = statsMiscMap.get("int_1").AsInteger();
-			miscInt2 = statsMiscMap.get("int_2").AsInteger();
-			miscString1 = statsMiscMap.get("string_1").AsString();
+			miscInt1 = statsMiscMap.get("int_1").asInteger();
+			miscInt2 = statsMiscMap.get("int_2").asInteger();
+			miscString1 = statsMiscMap.get("string_1").asString();
 			OSDMap netMap = (OSDMap) statsMap.get("net");
 			// in
 			OSDMap netInMap = (OSDMap) netMap.get("in");
-			inCompressedPackets = netInMap.get("compressed_packets").AsInteger();
-			inKbytes = netInMap.get("kbytes").AsInteger();
-			inPackets = netInMap.get("packets").AsInteger();
-			inSavings = netInMap.get("savings").AsInteger();
+			inCompressedPackets = netInMap.get("compressed_packets").asInteger();
+			inKbytes = netInMap.get("kbytes").asInteger();
+			inPackets = netInMap.get("packets").asInteger();
+			inSavings = netInMap.get("savings").asInteger();
 			// out
 			OSDMap netOutMap = (OSDMap) netMap.get("out");
-			outCompressedPackets = netOutMap.get("compressed_packets").AsInteger();
-			outKbytes = netOutMap.get("kbytes").AsInteger();
-			outPackets = netOutMap.get("packets").AsInteger();
-			outSavings = netOutMap.get("savings").AsInteger();
+			outCompressedPackets = netOutMap.get("compressed_packets").asInteger();
+			outKbytes = netOutMap.get("kbytes").asInteger();
+			outPackets = netOutMap.get("packets").asInteger();
+			outSavings = netOutMap.get("savings").asInteger();
 
 			// system
 			OSDMap systemStatsMap = (OSDMap) map.get("system");
-			systemCPU = systemStatsMap.get("cpu").AsString();
-			systemGPU = systemStatsMap.get("gpu").AsString();
-			systemGPUClass = systemStatsMap.get("gpu_class").AsInteger();
-			systemGPUVendor = systemStatsMap.get("gpu_vendor").AsString();
-			systemGPUVersion = systemStatsMap.get("gpu_version").AsString();
-			systemOS = systemStatsMap.get("os").AsString();
-			systemInstalledRam = systemStatsMap.get("ram").AsInteger();
+			systemCPU = systemStatsMap.get("cpu").asString();
+			systemGPU = systemStatsMap.get("gpu").asString();
+			systemGPUClass = systemStatsMap.get("gpu_class").asInteger();
+			systemGPUVendor = systemStatsMap.get("gpu_vendor").asString();
+			systemGPUVersion = systemStatsMap.get("gpu_version").asString();
+			systemOS = systemStatsMap.get("os").asString();
+			systemInstalledRam = systemStatsMap.get("ram").asInteger();
 		}
 	}
 
@@ -4240,8 +4242,8 @@ public class CapsMessage implements IMessage {
 
 			// add the AgentData map
 			OSDMap agentIDmap = new OSDMap(2);
-			agentIDmap.put("AgentID", OSD.FromUUID(agentID));
-			agentIDmap.put("QueryID", OSD.FromUUID(queryID));
+			agentIDmap.put("AgentID", OSD.fromUUID(agentID));
+			agentIDmap.put("QueryID", OSD.fromUUID(queryID));
 
 			OSDArray agentDataArray = new OSDArray();
 			agentDataArray.add(agentIDmap);
@@ -4252,20 +4254,20 @@ public class CapsMessage implements IMessage {
 			OSDArray dataBlocksArray = new OSDArray(queryDataBlocks.length);
 			for (int i = 0; i < queryDataBlocks.length; i++) {
 				OSDMap queryDataMap = new OSDMap(14);
-				queryDataMap.put("ActualArea", OSD.FromInteger(queryDataBlocks[i].actualArea));
-				queryDataMap.put("BillableArea", OSD.FromInteger(queryDataBlocks[i].billableArea));
-				queryDataMap.put("Desc", OSD.FromString(queryDataBlocks[i].description));
-				queryDataMap.put("Dwell", OSD.FromReal(queryDataBlocks[i].dwell));
-				queryDataMap.put("Flags", OSD.FromInteger(queryDataBlocks[i].flags));
-				queryDataMap.put("GlobalX", OSD.FromReal(queryDataBlocks[i].globalX));
-				queryDataMap.put("GlobalY", OSD.FromReal(queryDataBlocks[i].globalY));
-				queryDataMap.put("GlobalZ", OSD.FromReal(queryDataBlocks[i].globalZ));
-				queryDataMap.put("Name", OSD.FromString(queryDataBlocks[i].name));
-				queryDataMap.put("OwnerID", OSD.FromUUID(queryDataBlocks[i].ownerID));
-				queryDataMap.put("Price", OSD.FromInteger(queryDataBlocks[i].price));
-				queryDataMap.put("SimName", OSD.FromString(queryDataBlocks[i].simName));
-				queryDataMap.put("SnapshotID", OSD.FromUUID(queryDataBlocks[i].snapShotID));
-				queryDataMap.put("ProductSKU", OSD.FromString(queryDataBlocks[i].productSku));
+				queryDataMap.put("ActualArea", OSD.fromInteger(queryDataBlocks[i].actualArea));
+				queryDataMap.put("BillableArea", OSD.fromInteger(queryDataBlocks[i].billableArea));
+				queryDataMap.put("Desc", OSD.fromString(queryDataBlocks[i].description));
+				queryDataMap.put("Dwell", OSD.fromReal(queryDataBlocks[i].dwell));
+				queryDataMap.put("Flags", OSD.fromInteger(queryDataBlocks[i].flags));
+				queryDataMap.put("GlobalX", OSD.fromReal(queryDataBlocks[i].globalX));
+				queryDataMap.put("GlobalY", OSD.fromReal(queryDataBlocks[i].globalY));
+				queryDataMap.put("GlobalZ", OSD.fromReal(queryDataBlocks[i].globalZ));
+				queryDataMap.put("Name", OSD.fromString(queryDataBlocks[i].name));
+				queryDataMap.put("OwnerID", OSD.fromUUID(queryDataBlocks[i].ownerID));
+				queryDataMap.put("Price", OSD.fromInteger(queryDataBlocks[i].price));
+				queryDataMap.put("SimName", OSD.fromString(queryDataBlocks[i].simName));
+				queryDataMap.put("SnapshotID", OSD.fromUUID(queryDataBlocks[i].snapShotID));
+				queryDataMap.put("ProductSKU", OSD.fromString(queryDataBlocks[i].productSku));
 				dataBlocksArray.add(queryDataMap);
 			}
 
@@ -4273,7 +4275,7 @@ public class CapsMessage implements IMessage {
 
 			// add the TransactionData map
 			OSDMap transMap = new OSDMap(1);
-			transMap.put("TransactionID", OSD.FromUUID(transactionID));
+			transMap.put("TransactionID", OSD.fromUUID(transactionID));
 			OSDArray transArray = new OSDArray();
 			transArray.add(transMap);
 			map.put("TransactionData", transArray);
@@ -4292,34 +4294,34 @@ public class CapsMessage implements IMessage {
 			OSDArray agentDataArray = (OSDArray) map.get("AgentData");
 
 			OSDMap agentDataMap = (OSDMap) agentDataArray.get(0);
-			agentID = agentDataMap.get("AgentID").AsUUID();
-			queryID = agentDataMap.get("QueryID").AsUUID();
+			agentID = agentDataMap.get("AgentID").asUUID();
+			queryID = agentDataMap.get("QueryID").asUUID();
 
 			OSDArray dataBlocksArray = (OSDArray) map.get("QueryData");
 			queryDataBlocks = new QueryData[dataBlocksArray.size()];
 			for (int i = 0; i < dataBlocksArray.size(); i++) {
 				OSDMap dataMap = (OSDMap) dataBlocksArray.get(i);
 				QueryData data = new QueryData();
-				data.actualArea = dataMap.get("ActualArea").AsInteger();
-				data.billableArea = dataMap.get("BillableArea").AsInteger();
-				data.description = dataMap.get("Desc").AsString();
-				data.dwell = (float) dataMap.get("Dwell").AsReal();
-				data.flags = dataMap.get("Flags").AsInteger();
-				data.globalX = (float) dataMap.get("GlobalX").AsReal();
-				data.globalY = (float) dataMap.get("GlobalY").AsReal();
-				data.globalZ = (float) dataMap.get("GlobalZ").AsReal();
-				data.name = dataMap.get("Name").AsString();
-				data.ownerID = dataMap.get("OwnerID").AsUUID();
-				data.price = dataMap.get("Price").AsInteger();
-				data.simName = dataMap.get("SimName").AsString();
-				data.snapShotID = dataMap.get("SnapshotID").AsUUID();
-				data.productSku = dataMap.get("ProductSKU").AsString();
+				data.actualArea = dataMap.get("ActualArea").asInteger();
+				data.billableArea = dataMap.get("BillableArea").asInteger();
+				data.description = dataMap.get("Desc").asString();
+				data.dwell = (float) dataMap.get("Dwell").asReal();
+				data.flags = dataMap.get("Flags").asInteger();
+				data.globalX = (float) dataMap.get("GlobalX").asReal();
+				data.globalY = (float) dataMap.get("GlobalY").asReal();
+				data.globalZ = (float) dataMap.get("GlobalZ").asReal();
+				data.name = dataMap.get("Name").asString();
+				data.ownerID = dataMap.get("OwnerID").asUUID();
+				data.price = dataMap.get("Price").asInteger();
+				data.simName = dataMap.get("SimName").asString();
+				data.snapShotID = dataMap.get("SnapshotID").asUUID();
+				data.productSku = dataMap.get("ProductSKU").asString();
 				queryDataBlocks[i] = data;
 			}
 
 			OSDArray transactionArray = (OSDArray) map.get("TransactionData");
 			OSDMap transactionDataMap = (OSDMap) transactionArray.get(0);
-			transactionID = transactionDataMap.get("TransactionID").AsUUID();
+			transactionID = transactionDataMap.get("TransactionID").asUUID();
 		}
 	}
 
@@ -4343,7 +4345,7 @@ public class CapsMessage implements IMessage {
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(1);
 			OSDMap prefsMap = new OSDMap(1);
-			prefsMap.put("max", OSD.FromString(maxAccess));
+			prefsMap.put("max", OSD.fromString(maxAccess));
 			map.put("access_prefs", prefsMap);
 			return map;
 		}
@@ -4357,7 +4359,7 @@ public class CapsMessage implements IMessage {
 		@Override
 		public void deserialize(OSDMap map) {
 			OSDMap prefsMap = (OSDMap) map.get("access_prefs");
-			maxAccess = prefsMap.get("max").AsString();
+			maxAccess = prefsMap.get("max").asString();
 		}
 	}
 
@@ -4395,13 +4397,13 @@ public class CapsMessage implements IMessage {
 			OSDMap map = new OSDMap(3);
 
 			OSDMap agentMap = new OSDMap(1);
-			agentMap.put("AgentID", OSD.FromUUID(agentID));
+			agentMap.put("AgentID", OSD.fromUUID(agentID));
 			OSDArray agentDataArray = new OSDArray(1);
 			agentDataArray.add(agentMap);
 			map.put("AgentData", agentDataArray);
 
 			OSDMap queryMap = new OSDMap(1);
-			queryMap.put("QueryID", OSD.FromUUID(queryID));
+			queryMap.put("QueryID", OSD.fromUUID(queryID));
 			OSDArray queryDataArray = new OSDArray(1);
 			queryDataArray.add(queryMap);
 			map.put("QueryData", queryDataArray);
@@ -4409,13 +4411,13 @@ public class CapsMessage implements IMessage {
 			OSDArray queryReplyArray = new OSDArray();
 			for (int i = 0; i < queryReplies.length; i++) {
 				OSDMap queryReply = new OSDMap(100);
-				queryReply.put("ActualArea", OSD.FromInteger(queryReplies[i].actualArea));
-				queryReply.put("Auction", OSD.FromBoolean(queryReplies[i].auction));
-				queryReply.put("ForSale", OSD.FromBoolean(queryReplies[i].forSale));
-				queryReply.put("Name", OSD.FromString(queryReplies[i].name));
-				queryReply.put("ParcelID", OSD.FromUUID(queryReplies[i].parcelID));
-				queryReply.put("ProductSKU", OSD.FromString(queryReplies[i].productSku));
-				queryReply.put("SalePrice", OSD.FromInteger(queryReplies[i].salePrice));
+				queryReply.put("ActualArea", OSD.fromInteger(queryReplies[i].actualArea));
+				queryReply.put("Auction", OSD.fromBoolean(queryReplies[i].auction));
+				queryReply.put("ForSale", OSD.fromBoolean(queryReplies[i].forSale));
+				queryReply.put("Name", OSD.fromString(queryReplies[i].name));
+				queryReply.put("ParcelID", OSD.fromUUID(queryReplies[i].parcelID));
+				queryReply.put("ProductSKU", OSD.fromString(queryReplies[i].productSku));
+				queryReply.put("SalePrice", OSD.fromInteger(queryReplies[i].salePrice));
 
 				queryReplyArray.add(queryReply);
 			}
@@ -4434,11 +4436,11 @@ public class CapsMessage implements IMessage {
 		public void deserialize(OSDMap map) {
 			OSDArray agentDataArray = (OSDArray) map.get("AgentData");
 			OSDMap agentDataMap = (OSDMap) agentDataArray.get(0);
-			agentID = agentDataMap.get("AgentID").AsUUID();
+			agentID = agentDataMap.get("AgentID").asUUID();
 
 			OSDArray queryDataArray = (OSDArray) map.get("QueryData");
 			OSDMap queryDataMap = (OSDMap) queryDataArray.get(0);
-			queryID = queryDataMap.get("QueryID").AsUUID();
+			queryID = queryDataMap.get("QueryID").asUUID();
 
 			OSDArray queryRepliesArray = (OSDArray) map.get("QueryReplies");
 
@@ -4446,13 +4448,13 @@ public class CapsMessage implements IMessage {
 			for (int i = 0; i < queryRepliesArray.size(); i++) {
 				QueryReply reply = new QueryReply();
 				OSDMap replyMap = (OSDMap) queryRepliesArray.get(i);
-				reply.actualArea = replyMap.get("ActualArea").AsInteger();
-				reply.auction = replyMap.get("Auction").AsBoolean();
-				reply.forSale = replyMap.get("ForSale").AsBoolean();
-				reply.name = replyMap.get("Name").AsString();
-				reply.parcelID = replyMap.get("ParcelID").AsUUID();
-				reply.productSku = replyMap.get("ProductSKU").AsString();
-				reply.salePrice = replyMap.get("SalePrice").AsInteger();
+				reply.actualArea = replyMap.get("ActualArea").asInteger();
+				reply.auction = replyMap.get("Auction").asBoolean();
+				reply.forSale = replyMap.get("ForSale").asBoolean();
+				reply.name = replyMap.get("Name").asString();
+				reply.parcelID = replyMap.get("ParcelID").asUUID();
+				reply.productSku = replyMap.get("ProductSKU").asString();
+				reply.salePrice = replyMap.get("SalePrice").asInteger();
 
 				queryReplies[i] = reply;
 			}
@@ -4480,33 +4482,33 @@ public class CapsMessage implements IMessage {
 
 				public OSDMap serialize() {
 					OSDMap map = new OSDMap();
-					map.put("bump", OSD.FromInteger(bump.getValue()));
-					map.put("colors", OSD.FromColor4(color));
-					map.put("fullbright", OSD.FromBoolean(fullbright));
-					map.put("glow", OSD.FromReal(glow));
-					map.put("imageid", OSD.FromUUID(imageID));
-					map.put("imagerot", OSD.FromReal(imageRot));
-					map.put("media_flags", OSD.FromInteger(mediaFlags));
-					map.put("offsets", OSD.FromReal(offsetS));
-					map.put("offsett", OSD.FromReal(offsetT));
-					map.put("scales", OSD.FromReal(scaleS));
-					map.put("scalet", OSD.FromReal(scaleT));
+					map.put("bump", OSD.fromInteger(bump.getValue()));
+					map.put("colors", OSD.fromColor4(color));
+					map.put("fullbright", OSD.fromBoolean(fullbright));
+					map.put("glow", OSD.fromReal(glow));
+					map.put("imageid", OSD.fromUUID(imageID));
+					map.put("imagerot", OSD.fromReal(imageRot));
+					map.put("media_flags", OSD.fromInteger(mediaFlags));
+					map.put("offsets", OSD.fromReal(offsetS));
+					map.put("offsett", OSD.fromReal(offsetT));
+					map.put("scales", OSD.fromReal(scaleS));
+					map.put("scalet", OSD.fromReal(scaleT));
 
 					return map;
 				}
 
 				public Face(OSDMap map) {
-					bump = Bumpiness.setValue(map.get("bump").AsInteger());
-					color = map.get("colors").AsColor4();
-					fullbright = map.get("fullbright").AsBoolean();
-					glow = (float) map.get("glow").AsReal();
-					imageID = map.get("imageid").AsUUID();
-					imageRot = (float) map.get("imagerot").AsReal();
-					mediaFlags = map.get("media_flags").AsInteger();
-					offsetS = (float) map.get("offsets").AsReal();
-					offsetT = (float) map.get("offsett").AsReal();
-					scaleS = (float) map.get("scales").AsReal();
-					scaleT = (float) map.get("scalet").AsReal();
+					bump = Bumpiness.setValue(map.get("bump").asInteger());
+					color = map.get("colors").asColor4();
+					fullbright = map.get("fullbright").asBoolean();
+					glow = (float) map.get("glow").asReal();
+					imageID = map.get("imageid").asUUID();
+					imageRot = (float) map.get("imagerot").asReal();
+					mediaFlags = map.get("media_flags").asInteger();
+					offsetS = (float) map.get("offsets").asReal();
+					offsetT = (float) map.get("offsett").asReal();
+					scaleS = (float) map.get("scales").asReal();
+					scaleT = (float) map.get("scalet").asReal();
 				}
 			}
 
@@ -4518,15 +4520,15 @@ public class CapsMessage implements IMessage {
 
 				public OSDMap serialize() {
 					OSDMap map = new OSDMap();
-					map.put("extra_parameter", OSD.FromInteger(type.getValue()));
-					map.put("param_data", OSD.FromBinary(extraParamData));
+					map.put("extra_parameter", OSD.fromInteger(type.getValue()));
+					map.put("param_data", OSD.fromBinary(extraParamData));
 
 					return map;
 				}
 
 				public ExtraParam(OSDMap map) {
-					type = ExtraParamType.setValue(map.get("extra_parameter").AsInteger());
-					extraParamData = map.get("param_data").AsBinary();
+					type = ExtraParamType.setValue(map.get("extra_parameter").asInteger());
+					extraParamData = map.get("param_data").asBinary();
 				}
 			}
 
@@ -4562,12 +4564,12 @@ public class CapsMessage implements IMessage {
 			public OSDMap serialize() {
 				OSDMap map = new OSDMap();
 
-				map.put("group-id", OSD.FromUUID(groupID));
-				map.put("material", OSD.FromInteger(material.getValue()));
-				map.put("name", OSD.FromString(name));
-				map.put("pos", OSD.FromVector3(position));
-				map.put("rotation", OSD.FromQuaternion(rotation));
-				map.put("scale", OSD.FromVector3(scale));
+				map.put("group-id", OSD.fromUUID(groupID));
+				map.put("material", OSD.fromInteger(material.getValue()));
+				map.put("name", OSD.fromString(name));
+				map.put("pos", OSD.fromVector3(position));
+				map.put("rotation", OSD.fromQuaternion(rotation));
+				map.put("scale", OSD.fromVector3(scale));
 
 				// Extra params
 				OSDArray extra_parameters = new OSDArray();
@@ -4588,30 +4590,30 @@ public class CapsMessage implements IMessage {
 				// Shape
 				OSDMap shape = new OSDMap();
 				OSDMap path = new OSDMap();
-				path.put("begin", OSD.FromReal(pathBegin));
-				path.put("curve", OSD.FromInteger(pathCurve));
-				path.put("end", OSD.FromReal(pathEnd));
-				path.put("radius_offset", OSD.FromReal(radiusOffset));
-				path.put("revolutions", OSD.FromReal(revolutions));
-				path.put("scale_x", OSD.FromReal(scaleX));
-				path.put("scale_y", OSD.FromReal(scaleY));
-				path.put("shear_x", OSD.FromReal(shearX));
-				path.put("shear_y", OSD.FromReal(shearY));
-				path.put("skew", OSD.FromReal(skew));
-				path.put("taper_x", OSD.FromReal(taperX));
-				path.put("taper_y", OSD.FromReal(taperY));
-				path.put("twist", OSD.FromReal(twist));
-				path.put("twist_begin", OSD.FromReal(twistBegin));
+				path.put("begin", OSD.fromReal(pathBegin));
+				path.put("curve", OSD.fromInteger(pathCurve));
+				path.put("end", OSD.fromReal(pathEnd));
+				path.put("radius_offset", OSD.fromReal(radiusOffset));
+				path.put("revolutions", OSD.fromReal(revolutions));
+				path.put("scale_x", OSD.fromReal(scaleX));
+				path.put("scale_y", OSD.fromReal(scaleY));
+				path.put("shear_x", OSD.fromReal(shearX));
+				path.put("shear_y", OSD.fromReal(shearY));
+				path.put("skew", OSD.fromReal(skew));
+				path.put("taper_x", OSD.fromReal(taperX));
+				path.put("taper_y", OSD.fromReal(taperY));
+				path.put("twist", OSD.fromReal(twist));
+				path.put("twist_begin", OSD.fromReal(twistBegin));
 				shape.put("path", path);
 				OSDMap profile = new OSDMap();
-				profile.put("begin", OSD.FromReal(profileBegin));
-				profile.put("curve", OSD.FromInteger(profileCurve));
-				profile.put("end", OSD.FromReal(profileEnd));
-				profile.put("hollow", OSD.FromReal(profileHollow));
+				profile.put("begin", OSD.fromReal(profileBegin));
+				profile.put("curve", OSD.fromInteger(profileCurve));
+				profile.put("end", OSD.fromReal(profileEnd));
+				profile.put("hollow", OSD.fromReal(profileHollow));
 				shape.put("profile", profile);
 				OSDMap sculpt = new OSDMap();
-				sculpt.put("id", OSD.FromUUID(sculptID));
-				sculpt.put("type", OSD.FromInteger(sculptType.getValue()));
+				sculpt.put("id", OSD.fromUUID(sculptID));
+				sculpt.put("type", OSD.fromInteger(sculptType.getValue()));
 				shape.put("sculpt", sculpt);
 				map.put("shape", shape);
 
@@ -4620,12 +4622,12 @@ public class CapsMessage implements IMessage {
 
 			public Object(OSDMap map) {
 				if (map != null) {
-					groupID = map.get("group-id").AsUUID();
-					material = libomv.primitives.Primitive.Material.setValue(map.get("material").AsInteger());
-					name = map.get("name").AsString();
-					position = map.get("pos").AsVector3();
-					rotation = map.get("rotation").AsQuaternion();
-					scale = map.get("scale").AsVector3();
+					groupID = map.get("group-id").asUUID();
+					material = libomv.primitives.Primitive.Material.setValue(map.get("material").asInteger());
+					name = map.get("name").asString();
+					position = map.get("pos").asVector3();
+					rotation = map.get("rotation").asQuaternion();
+					scale = map.get("scale").asVector3();
 
 					// Extra params
 					OSDArray extra_parameters = (OSDArray) map.get("extra_parameters");
@@ -4653,31 +4655,31 @@ public class CapsMessage implements IMessage {
 					// Shape
 					OSDMap shape = (OSDMap) map.get("shape");
 					OSDMap path = (OSDMap) shape.get("path");
-					pathBegin = (float) path.get("begin").AsReal();
-					pathCurve = path.get("curve").AsInteger();
-					pathEnd = (float) path.get("end").AsReal();
-					radiusOffset = (float) path.get("radius_offset").AsReal();
-					revolutions = (float) path.get("revolutions").AsReal();
-					scaleX = (float) path.get("scale_x").AsReal();
-					scaleY = (float) path.get("scale_y").AsReal();
-					shearX = (float) path.get("shear_x").AsReal();
-					shearY = (float) path.get("shear_y").AsReal();
-					skew = (float) path.get("skew").AsReal();
-					taperX = (float) path.get("taper_x").AsReal();
-					taperY = (float) path.get("taper_y").AsReal();
-					twist = (float) path.get("twist").AsReal();
-					twistBegin = (float) path.get("twist_begin").AsReal();
+					pathBegin = (float) path.get("begin").asReal();
+					pathCurve = path.get("curve").asInteger();
+					pathEnd = (float) path.get("end").asReal();
+					radiusOffset = (float) path.get("radius_offset").asReal();
+					revolutions = (float) path.get("revolutions").asReal();
+					scaleX = (float) path.get("scale_x").asReal();
+					scaleY = (float) path.get("scale_y").asReal();
+					shearX = (float) path.get("shear_x").asReal();
+					shearY = (float) path.get("shear_y").asReal();
+					skew = (float) path.get("skew").asReal();
+					taperX = (float) path.get("taper_x").asReal();
+					taperY = (float) path.get("taper_y").asReal();
+					twist = (float) path.get("twist").asReal();
+					twistBegin = (float) path.get("twist_begin").asReal();
 
 					OSDMap profile = (OSDMap) shape.get("profile");
-					profileBegin = (float) profile.get("begin").AsReal();
-					profileCurve = profile.get("curve").AsInteger();
-					profileEnd = (float) profile.get("end").AsReal();
-					profileHollow = (float) profile.get("hollow").AsReal();
+					profileBegin = (float) profile.get("begin").asReal();
+					profileCurve = profile.get("curve").asInteger();
+					profileEnd = (float) profile.get("end").asReal();
+					profileHollow = (float) profile.get("hollow").asReal();
 
 					OSDMap sculpt = (OSDMap) shape.get("sculpt");
 					if (sculpt != null) {
-						sculptID = sculpt.get("id").AsUUID();
-						sculptType = libomv.primitives.Primitive.SculptType.setValue(sculpt.get("type").AsInteger());
+						sculptID = sculpt.get("id").asUUID();
+						sculptType = libomv.primitives.Primitive.SculptType.setValue(sculpt.get("type").asInteger());
 					} else {
 						sculptID = UUID.Zero;
 						sculptType = libomv.primitives.Primitive.SculptType.None;
@@ -4818,9 +4820,9 @@ public class CapsMessage implements IMessage {
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(3);
 
-			map.put("current_url", OSD.FromString(url));
-			map.put("object_id", OSD.FromUUID(primID));
-			map.put("texture_index", OSD.FromInteger(face));
+			map.put("current_url", OSD.fromString(url));
+			map.put("object_id", OSD.fromUUID(primID));
+			map.put("texture_index", OSD.fromInteger(face));
 
 			return map;
 		}
@@ -4833,9 +4835,9 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			url = map.get("current_url").AsString();
-			primID = map.get("object_id").AsUUID();
-			face = map.get("texture_index").AsInteger();
+			url = map.get("current_url").asString();
+			primID = map.get("object_id").asUUID();
+			face = map.get("texture_index").asInteger();
 		}
 	}
 
@@ -4864,8 +4866,8 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(2);
-			map.put("object_id", OSD.FromUUID(primID));
-			map.put("verb", OSD.FromString(verb));
+			map.put("object_id", OSD.fromUUID(primID));
+			map.put("verb", OSD.fromString(verb));
 			return map;
 		}
 
@@ -4877,8 +4879,8 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			primID = map.get("object_id").AsUUID();
-			verb = map.get("verb").AsString();
+			primID = map.get("object_id").asUUID();
+			verb = map.get("verb").asString();
 		}
 	}
 
@@ -4902,7 +4904,7 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(2);
-			map.put("object_id", OSD.FromUUID(primID));
+			map.put("object_id", OSD.fromUUID(primID));
 
 			if (faceMedia == null) {
 				map.put("object_media_data", new OSDArray());
@@ -4919,7 +4921,7 @@ public class CapsMessage implements IMessage {
 				map.put("object_media_data", mediaData);
 			}
 
-			map.put("object_media_version", OSD.FromString(version));
+			map.put("object_media_version", OSD.fromString(version));
 			return map;
 		}
 
@@ -4931,7 +4933,7 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			primID = map.get("object_id").AsUUID();
+			primID = map.get("object_id").asUUID();
 
 			if (map.get("object_media_data").getType() == OSDType.Array) {
 				OSDArray mediaData = (OSDArray) map.get("object_media_data");
@@ -4944,7 +4946,7 @@ public class CapsMessage implements IMessage {
 					}
 				}
 			}
-			version = map.get("object_media_version").AsString();
+			version = map.get("object_media_version").asString();
 		}
 	}
 
@@ -4967,7 +4969,7 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(2);
-			map.put("object_id", OSD.FromUUID(primID));
+			map.put("object_id", OSD.fromUUID(primID));
 
 			if (faceMedia == null) {
 				map.put("object_media_data", new OSDArray());
@@ -4984,7 +4986,7 @@ public class CapsMessage implements IMessage {
 				map.put("object_media_data", mediaData);
 			}
 
-			map.put("verb", OSD.FromString(verb));
+			map.put("verb", OSD.fromString(verb));
 			return map;
 		}
 
@@ -4996,7 +4998,7 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			primID = map.get("object_id").AsUUID();
+			primID = map.get("object_id").asUUID();
 
 			if (map.get("object_media_data").getType() == OSDType.Array) {
 				OSDArray mediaData = (OSDArray) map.get("object_media_data");
@@ -5009,7 +5011,7 @@ public class CapsMessage implements IMessage {
 					}
 				}
 			}
-			verb = map.get("verb").AsString();
+			verb = map.get("verb").asString();
 		}
 	}
 
@@ -5045,10 +5047,10 @@ public class CapsMessage implements IMessage {
 		@Override
 		public void deserialize(OSDMap map) {
 			if (map.containsKey("verb")) {
-				if (map.get("verb").AsString() == "GET") {
+				if (map.get("verb").asString() == "GET") {
 					request = new ObjectMediaRequest();
 					request.deserialize(map);
-				} else if (map.get("verb").AsString() == "UPDATE") {
+				} else if (map.get("verb").asString() == "UPDATE") {
 					request = new ObjectMediaUpdate();
 					request.deserialize(map);
 				}
@@ -5057,7 +5059,7 @@ public class CapsMessage implements IMessage {
 				request.deserialize(map);
 			} else
 				logger.warn(
-						"Unable to deserialize ObjectMedia: No message handler exists for method: " + map.AsString());
+						"Unable to deserialize ObjectMedia: No message handler exists for method: " + map.asString());
 		}
 	}
 
@@ -5091,7 +5093,7 @@ public class CapsMessage implements IMessage {
 		@Override
 		public void deserialize(OSDMap map) {
 			try {
-				materialData = Helpers.ZDecompressOSD(new ByteArrayInputStream(map.get("Zipped").AsBinary()));
+				materialData = Helpers.ZDecompressOSD(new ByteArrayInputStream(map.get("Zipped").asBinary()));
 			} catch (Exception ex) {
 				logger.warn("Failed to decode RenderMaterials message:", ex);
 				materialData = new OSDMap();
@@ -5116,7 +5118,7 @@ public class CapsMessage implements IMessage {
 				objectIDs = new UUID[array.size()];
 
 				for (int i = 0; i < array.size(); i++) {
-					objectIDs[i] = array.get(i).AsUUID();
+					objectIDs[i] = array.get(i).asUUID();
 				}
 			} else {
 				objectIDs = new UUID[0];
@@ -5134,7 +5136,7 @@ public class CapsMessage implements IMessage {
 			OSDArray array = new OSDArray();
 
 			for (int i = 0; i < objectIDs.length; i++) {
-				array.add(OSD.FromUUID(objectIDs[i]));
+				array.add(OSD.fromUUID(objectIDs[i]));
 			}
 
 			ret.put("object_ids", array);
@@ -5180,10 +5182,10 @@ public class CapsMessage implements IMessage {
 				OSDMap values = (OSDMap) map.get(key);
 				cost.objectID = UUID.parse(key);
 
-				cost.linkCost = values.get("linked_set_resource_cost").AsReal();
-				cost.objectCost = values.get("resource_cost").AsReal();
-				cost.physicsCost = values.get("physics_cost").AsReal();
-				cost.linkPhysicsCost = values.get("linked_set_physics_cost").AsReal();
+				cost.linkCost = values.get("linked_set_resource_cost").asReal();
+				cost.objectCost = values.get("resource_cost").asReal();
+				cost.physicsCost = values.get("physics_cost").asReal();
+				cost.linkPhysicsCost = values.get("linked_set_physics_cost").asReal();
 				// value["resource_limiting_type"].AsString();
 				objectCosts[i++] = cost;
 			}
@@ -5198,10 +5200,10 @@ public class CapsMessage implements IMessage {
 			OSDMap map = new OSDMap(objectCosts.length);
 			for (ObjectCost cost : objectCosts) {
 				OSDMap values = new OSDMap(4);
-				values.put("linked_set_resource_cost", OSD.FromReal(cost.linkCost));
-				values.put("resource_cost", OSD.FromReal(cost.objectCost));
-				values.put("physics_cost", OSD.FromReal(cost.physicsCost));
-				values.put("linked_set_physics_cost", OSD.FromReal(cost.linkPhysicsCost));
+				values.put("linked_set_resource_cost", OSD.fromReal(cost.linkCost));
+				values.put("resource_cost", OSD.fromReal(cost.objectCost));
+				values.put("physics_cost", OSD.fromReal(cost.physicsCost));
+				values.put("linked_set_physics_cost", OSD.fromReal(cost.linkPhysicsCost));
 
 				map.put(cost.objectID.toString(), values);
 			}
@@ -5249,12 +5251,12 @@ public class CapsMessage implements IMessage {
 				OSDMap values = (OSDMap) map.get(key);
 				physics.objectID = UUID.parse(key);
 
-				physics.shapeType = values.get("PhysicsShapeType").AsInteger();
+				physics.shapeType = values.get("PhysicsShapeType").asInteger();
 				if (values.containsKey("Density")) {
-					physics.density = values.get("Density").AsReal();
-					physics.friction = values.get("Friction").AsReal();
-					physics.restitution = values.get("Restitution").AsReal();
-					physics.gravityMultiplier = values.get("GravityMultiplier").AsReal();
+					physics.density = values.get("Density").asReal();
+					physics.friction = values.get("Friction").asReal();
+					physics.restitution = values.get("Restitution").asReal();
+					physics.gravityMultiplier = values.get("GravityMultiplier").asReal();
 					objectPhysics[i++] = physics;
 				}
 			}
@@ -5269,11 +5271,11 @@ public class CapsMessage implements IMessage {
 			OSDMap map = new OSDMap(objectPhysics.length);
 			for (ObjectPhysics physics : objectPhysics) {
 				OSDMap values = new OSDMap(4);
-				values.put("PhysicsShapeType", OSD.FromReal(physics.shapeType));
-				values.put("Density", OSD.FromReal(physics.density));
-				values.put("Friction", OSD.FromReal(physics.friction));
-				values.put("Restitution", OSD.FromReal(physics.restitution));
-				values.put("GravityMultiplier", OSD.FromReal(physics.gravityMultiplier));
+				values.put("PhysicsShapeType", OSD.fromReal(physics.shapeType));
+				values.put("Density", OSD.fromReal(physics.density));
+				values.put("Friction", OSD.fromReal(physics.friction));
+				values.put("Restitution", OSD.fromReal(physics.restitution));
+				values.put("GravityMultiplier", OSD.fromReal(physics.gravityMultiplier));
 
 				map.put(physics.objectID.toString(), values);
 			}
@@ -5301,7 +5303,7 @@ public class CapsMessage implements IMessage {
 		public UUID ownerID;
 		// Resource usage, keys are resource names, values are resource usage
 		// for that specific resource
-		public HashMap<String, Integer> resources;
+		public Map<String, Integer> resources;
 
 		/**
 		 * Serialize the object
@@ -5319,16 +5321,16 @@ public class CapsMessage implements IMessage {
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		public void deserialize(OSDMap obj) {
-			objectID = obj.get("id").AsUUID();
-			name = obj.get("name").AsString();
-			location = obj.get("location").AsVector3d();
-			groupOwned = obj.get("is_group_owned").AsBoolean();
-			ownerID = obj.get("owner_id").AsUUID();
+			objectID = obj.get("id").asUUID();
+			name = obj.get("name").asString();
+			location = obj.get("location").asVector3d();
+			groupOwned = obj.get("is_group_owned").asBoolean();
+			ownerID = obj.get("owner_id").asUUID();
 
 			OSDMap resourcesOSD = (OSDMap) obj.get("resources");
-			resources = new HashMap<String, Integer>(resourcesOSD.size());
+			resources = new HashMap<>(resourcesOSD.size());
 			for (Entry<String, OSD> kvp : resourcesOSD.entrySet()) {
-				resources.put(kvp.getKey(), kvp.getValue().AsInteger());
+				resources.put(kvp.getKey(), kvp.getValue().asInteger());
 			}
 		}
 	}
@@ -5367,11 +5369,11 @@ public class CapsMessage implements IMessage {
 		 *            An <see cref="OSDMap"/> containing the data
 		 */
 		public void deserialize(OSDMap map) {
-			parcelID = map.get("id").AsUUID();
-			localID = map.get("local_id").AsInteger();
-			name = map.get("name").AsString();
-			groupOwned = map.get("is_group_owned").AsBoolean();
-			ownerID = map.get("owner_id").AsUUID();
+			parcelID = map.get("id").asUUID();
+			localID = map.get("local_id").asInteger();
+			name = map.get("name").asString();
+			groupOwned = map.get("is_group_owned").asBoolean();
+			ownerID = map.get("owner_id").asUUID();
 
 			OSDArray objectsOSD = (OSDArray) map.get("objects");
 			objects = new ObjectResourcesDetail[objectsOSD.size()];
@@ -5388,10 +5390,10 @@ public class CapsMessage implements IMessage {
 	public abstract class BaseResourcesInfo implements IMessage {
 		// Summary of available resources, keys are resource names, values are
 		// resource usage for that specific resource
-		public HashMap<String, Integer> summaryAvailable;
+		public Map<String, Integer> summaryAvailable;
 		// Summary resource usage, keys are resource names, values are resource
 		// usage for that specific resource
-		public HashMap<String, Integer> summaryUsed;
+		public Map<String, Integer> summaryUsed;
 
 		@Override
 		public OSDMap serialize() {
@@ -5406,8 +5408,8 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			summaryAvailable = new HashMap<String, Integer>();
-			summaryUsed = new HashMap<String, Integer>();
+			summaryAvailable = new HashMap<>();
+			summaryUsed = new HashMap<>();
 
 			OSDMap summary = (OSDMap) map.get("summary");
 			OSDArray available = (OSDArray) summary.get("available");
@@ -5415,12 +5417,12 @@ public class CapsMessage implements IMessage {
 
 			for (int i = 0; i < available.size(); i++) {
 				OSDMap limit = (OSDMap) available.get(i);
-				summaryAvailable.put(limit.get("type").AsString(), limit.get("amount").AsInteger());
+				summaryAvailable.put(limit.get("type").asString(), limit.get("amount").asInteger());
 			}
 
 			for (int i = 0; i < used.size(); i++) {
 				OSDMap limit = (OSDMap) used.get(i);
-				summaryUsed.put(limit.get("type").AsString(), limit.get("amount").AsInteger());
+				summaryUsed.put(limit.get("type").asString(), limit.get("amount").asInteger());
 			}
 		}
 	}
@@ -5429,7 +5431,7 @@ public class CapsMessage implements IMessage {
 		BaseResourcesInfo summaryInfoBlock;
 
 		// Per attachment point object resource usage
-		public HashMap<AttachmentPoint, ObjectResourcesDetail[]> attachments;
+		public Map<AttachmentPoint, ObjectResourcesDetail[]> attachments;
 
 		@Override
 		public CapsEventType getType() {
@@ -5459,11 +5461,11 @@ public class CapsMessage implements IMessage {
 			if (map != null) {
 				super.deserialize(map);
 				OSDArray attachmentsOSD = (OSDArray) map.get("attachments");
-				attachments = new HashMap<AttachmentPoint, ObjectResourcesDetail[]>();
+				attachments = new HashMap<>();
 
 				for (int i = 0; i < attachmentsOSD.size(); i++) {
 					OSDMap attachment = (OSDMap) attachmentsOSD.get(i);
-					AttachmentPoint pt = AttachmentPoint.setValue(attachment.get("location").AsString());
+					AttachmentPoint pt = AttachmentPoint.setValue(attachment.get("location").asString());
 
 					OSDArray objectsOSD = (OSDArray) attachment.get("objects");
 					ObjectResourcesDetail[] objects = new ObjectResourcesDetail[objectsOSD.size()];
@@ -5500,7 +5502,7 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap(1);
-			map.put("parcel_id", OSD.FromUUID(parcelID));
+			map.put("parcel_id", OSD.fromUUID(parcelID));
 			return map;
 		}
 
@@ -5512,7 +5514,7 @@ public class CapsMessage implements IMessage {
 		 */
 		@Override
 		public void deserialize(OSDMap map) {
-			parcelID = map.get("parcel_id").AsUUID();
+			parcelID = map.get("parcel_id").asUUID();
 		}
 	}
 
@@ -5539,11 +5541,11 @@ public class CapsMessage implements IMessage {
 		public OSDMap serialize() {
 			OSDMap map = new OSDMap();
 			if (scriptResourceSummary != null) {
-				map.put("ScriptResourceSummary", OSD.FromString(scriptResourceSummary.toString()));
+				map.put("ScriptResourceSummary", OSD.fromString(scriptResourceSummary.toString()));
 			}
 
 			if (scriptResourceDetails != null) {
-				map.put("ScriptResourceDetails", OSD.FromString(scriptResourceDetails.toString()));
+				map.put("ScriptResourceDetails", OSD.fromString(scriptResourceDetails.toString()));
 			}
 			return map;
 		}
@@ -5558,10 +5560,10 @@ public class CapsMessage implements IMessage {
 		public void deserialize(OSDMap map) {
 			try {
 				if (map.containsKey("ScriptResourceSummary")) {
-					scriptResourceSummary = new URI(map.get("ScriptResourceSummary").AsString());
+					scriptResourceSummary = new URI(map.get("ScriptResourceSummary").asString());
 				}
 				if (map.containsKey("ScriptResourceDetails")) {
-					scriptResourceDetails = new URI(map.get("ScriptResourceDetails").AsString());
+					scriptResourceDetails = new URI(map.get("ScriptResourceDetails").asString());
 				}
 			} catch (URISyntaxException e) {
 			}
@@ -5654,7 +5656,7 @@ public class CapsMessage implements IMessage {
 			OSDArray badIDsOSD = new OSDArray();
 			if (badIDs != null && badIDs.length > 0) {
 				for (int i = 0; i < badIDs.length; i++) {
-					badIDsOSD.add(OSD.FromUUID(badIDs[i]));
+					badIDsOSD.add(OSD.fromUUID(badIDs[i]));
 				}
 			}
 
@@ -5684,7 +5686,7 @@ public class CapsMessage implements IMessage {
 					badIDs = new UUID[badIDsOSD.size()];
 
 					for (int i = 0; i < badIDsOSD.size(); i++) {
-						badIDs[i] = badIDsOSD.get(i).AsUUID();
+						badIDs[i] = badIDsOSD.get(i).asUUID();
 					}
 				}
 			}
@@ -5712,8 +5714,8 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDArray names = new OSDArray(2);
-			names.add(OSD.FromString(oldDisplayName));
-			names.add(OSD.FromString(newDisplayName));
+			names.add(OSD.fromString(oldDisplayName));
+			names.add(OSD.fromString(newDisplayName));
 
 			OSDMap name = new OSDMap();
 			name.put("display_name", names);
@@ -5723,8 +5725,8 @@ public class CapsMessage implements IMessage {
 		@Override
 		public void deserialize(OSDMap map) {
 			OSDArray names = (OSDArray) map.get("display_name");
-			oldDisplayName = names.get(0).AsString();
-			newDisplayName = names.get(1).AsString();
+			oldDisplayName = names.get(0).asString();
+			newDisplayName = names.get(1).asString();
 		}
 	}
 
@@ -5753,16 +5755,16 @@ public class CapsMessage implements IMessage {
 		public OSDMap serialize() {
 			OSDMap ret = new OSDMap(3);
 			ret.put("content", displayName.toOSD());
-			ret.put("reason", OSD.FromString(reason));
-			ret.put("status", OSD.FromInteger(status));
+			ret.put("reason", OSD.fromString(reason));
+			ret.put("status", OSD.fromInteger(status));
 			return ret;
 		}
 
 		@Override
 		public void deserialize(OSDMap map) {
 			displayName.fromOSD(map.get("content"));
-			reason = map.get("reason").AsString();
-			status = map.get("status").AsInteger();
+			reason = map.get("reason").asString();
+			status = map.get("status").asInteger();
 		}
 	}
 
@@ -5787,7 +5789,7 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			OSDMap agent = (OSDMap) displayName.toOSD();
-			agent.put("old_display_name", OSD.FromString(oldDisplayName));
+			agent.put("old_display_name", OSD.fromString(oldDisplayName));
 			OSDMap ret = new OSDMap();
 			ret.put("agent", agent);
 			return ret;
@@ -5797,7 +5799,7 @@ public class CapsMessage implements IMessage {
 		public void deserialize(OSDMap map) {
 			OSDMap agent = (OSDMap) map.get("agent");
 			displayName.fromOSD(agent);
-			oldDisplayName = agent.get("old_display_name").AsString();
+			oldDisplayName = agent.get("old_display_name").asString();
 		}
 	}
 

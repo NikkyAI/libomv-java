@@ -655,26 +655,26 @@ public class TypeTest extends TestCase {
 		float f = 1.20f;
 		String a, b = "1.2";
 
-		a = Helpers.FloatToTerseString(f);
+		a = Helpers.floatToTerseString(f);
 		boolean e = a.equals(b);
 		assertTrue(String.format("%f converted to %s, expecting %s", f, a, b), e);
 
 		f = 24.00f;
 		b = "24";
 
-		a = Helpers.FloatToTerseString(f);
+		a = Helpers.floatToTerseString(f);
 		assertTrue(String.format("%f converted to %s, expecting %s", f, a, b), a.equals(b));
 
 		f = -0.59f;
 		b = "-.59";
 
-		a = Helpers.FloatToTerseString(f);
+		a = Helpers.floatToTerseString(f);
 		assertTrue(String.format("%f converted to %s, expecting %s", f, a, b), a.equals(b));
 
 		f = 0.59f;
 		b = ".59";
 
-		a = Helpers.FloatToTerseString(f);
+		a = Helpers.floatToTerseString(f);
 		assertTrue(String.format("%f converted to %s, expecting %s", f, a, b), a.equals(b));
 	}
 
@@ -753,24 +753,24 @@ public class TypeTest extends TestCase {
 		assertTrue("Expected OSDArray, got " + obj.getType().toString(), obj instanceof OSDArray);
 		OSDArray array = (OSDArray) obj;
 		assertTrue("Expected three contained objects, got " + array.size(), array.size() == 3);
-		assertTrue("Unexpected value for first real " + array.get(0).AsReal(),
-				array.get(0).AsReal() > 0.9d && array.get(0).AsReal() < 1.0d);
-		assertTrue("Unexpected value for second real " + array.get(1).AsReal(),
-				array.get(1).AsReal() < 0.0d && array.get(1).AsReal() > -0.03d);
-		assertTrue("Unexpected value for third real " + array.get(2).AsReal(), array.get(2).AsReal() == 0.0d);
+		assertTrue("Unexpected value for first real " + array.get(0).asReal(),
+				array.get(0).asReal() > 0.9d && array.get(0).asReal() < 1.0d);
+		assertTrue("Unexpected value for second real " + array.get(1).asReal(),
+				array.get(1).asReal() < 0.0d && array.get(1).asReal() > -0.03d);
+		assertTrue("Unexpected value for third real " + array.get(2).asReal(), array.get(2).asReal() == 0.0d);
 
 		obj = OSDParser.deserialize(testTwo, OSDFormat.Notation);
 		assertTrue("Expected OSDArray, got " + obj.getType().toString(), obj instanceof OSDArray);
 		array = (OSDArray) obj;
 		assertTrue("Expected two contained objects, got " + array.size(), array.size() == 2);
-		assertTrue("Unexpected value for real " + array.get(1).AsReal(), array.get(1).AsReal() == 0.0d);
+		assertTrue("Unexpected value for real " + array.get(1).asReal(), array.get(1).asReal() == 0.0d);
 		obj = array.get(0);
 		assertTrue("Expected ArrayList, got " + obj.getType().toString(), obj instanceof OSDArray);
 		array = (OSDArray) obj;
 		assertTrue(
-				"Unexpected value(s) for nested array: " + array.get(0).AsReal() + ", " + array.get(1).AsReal() + ", "
-						+ array.get(2).AsReal(),
-				array.get(0).AsReal() == 1.0d && array.get(1).AsReal() == 1.0d && array.get(2).AsReal() == 1.0d);
+				"Unexpected value(s) for nested array: " + array.get(0).asReal() + ", " + array.get(1).asReal() + ", "
+						+ array.get(2).asReal(),
+				array.get(0).asReal() == 1.0d && array.get(1).asReal() == 1.0d && array.get(2).asReal() == 1.0d);
 
 		obj = OSDParser.deserialize(testThree, OSDFormat.Notation);
 		assertTrue("Expected OSDMap, got " + obj.getType().toString(), obj instanceof OSDMap);

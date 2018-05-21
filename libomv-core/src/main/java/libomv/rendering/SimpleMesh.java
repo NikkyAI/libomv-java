@@ -32,8 +32,6 @@ package libomv.rendering;
 import java.util.ArrayList;
 import java.util.List;
 
-import libomv.types.Vector3;
-
 public class SimpleMesh extends Mesh {
 	public List<Vertex> vertices;
 	public List<Short> indices;
@@ -42,17 +40,17 @@ public class SimpleMesh extends Mesh {
 	}
 
 	public SimpleMesh(SimpleMesh mesh) {
-		this.indices = new ArrayList<Short>(mesh.indices);
+		this.indices = new ArrayList<>(mesh.indices);
 		this.path.open = mesh.path.open;
-		this.path.points = new ArrayList<PathPoint>(mesh.path.points);
+		this.path.points = new ArrayList<>(mesh.path.points);
 		this.prim = mesh.prim;
 		this.profile.concave = mesh.profile.concave;
-		this.profile.faces = new ArrayList<ProfileFace>(mesh.profile.faces);
+		this.profile.faces = new ArrayList<>(mesh.profile.faces);
 		this.profile.maxX = mesh.profile.maxX;
 		this.profile.minX = mesh.profile.minX;
 		this.profile.open = mesh.profile.open;
-		this.profile.positions = new ArrayList<Vector3>(mesh.profile.positions);
+		this.profile.positions = new ArrayList<>(mesh.profile.positions);
 		this.profile.totalOutsidePoints = mesh.profile.totalOutsidePoints;
-		this.vertices = new ArrayList<Vertex>(mesh.vertices);
+		this.vertices = new ArrayList<>(mesh.vertices);
 	}
 }

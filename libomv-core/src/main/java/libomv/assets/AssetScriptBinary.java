@@ -34,11 +34,6 @@ import libomv.types.UUID;
 
 // Represents an AssetScriptBinary object containing the LSO compiled bytecode of an LSL script
 public class AssetScriptBinary extends AssetItem {
-	// Override the base classes AssetType
-	@Override
-	public AssetType getAssetType() {
-		return AssetType.LSLBytecode;
-	}
 
 	/**
 	 * Initializes a new instance of an AssetScriptBinary object with parameters
@@ -50,6 +45,12 @@ public class AssetScriptBinary extends AssetItem {
 	 */
 	public AssetScriptBinary(UUID assetID, byte[] assetData) {
 		super(assetID, assetData);
+	}
+
+	// Override the base classes AssetType
+	@Override
+	public AssetType getAssetType() {
+		return AssetType.LSLBytecode;
 	}
 
 	/**

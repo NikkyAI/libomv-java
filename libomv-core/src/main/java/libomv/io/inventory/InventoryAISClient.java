@@ -26,11 +26,11 @@ public class InventoryAISClient {
 	}
 
 	public boolean IsAvailable() {
-		return _Client.Network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME) != null;
+		return _Client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME) != null;
 	}
 
 	public void CreateInventory(UUID parentUuid, OSD newInventory, Callback<OSD> callback) {
-		URI cap = _Client.Network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
+		URI cap = _Client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
 		if (cap == null) {
 			logger.warn(GridClient.Log("No AIS3 Capability!", _Client));
 			return;
@@ -43,7 +43,7 @@ public class InventoryAISClient {
 	}
 
 	public void SlamFolder(UUID folderUuid, OSD newInventory, Callback<OSD> callback) {
-		URI cap = _Client.Network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
+		URI cap = _Client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
 		if (cap == null) {
 			logger.warn(GridClient.Log("No AIS3 Capability!", _Client));
 			return;
@@ -56,7 +56,7 @@ public class InventoryAISClient {
 	}
 
 	public void RemoveCategory(UUID categoryUuid, Callback<OSD> callback) {
-		URI cap = _Client.Network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
+		URI cap = _Client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
 		if (cap == null) {
 			logger.warn(GridClient.Log("No AIS3 Capability!", _Client));
 			return;
@@ -68,7 +68,7 @@ public class InventoryAISClient {
 	}
 
 	public void RemoveItem(UUID itemUuid, Callback<OSD> callback) {
-		URI cap = _Client.Network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
+		URI cap = _Client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
 		if (cap == null) {
 			logger.warn(GridClient.Log("No AIS3 Capability!", _Client));
 			return;
@@ -80,7 +80,7 @@ public class InventoryAISClient {
 	}
 
 	public void CopyLibraryCategory(UUID sourceUuid, UUID destUuid, boolean copySubfolders, Callback<OSD> callback) {
-		URI cap = _Client.Network.getCurrentSim().getCapabilityURI(LIBRARY_CAP_NAME);
+		URI cap = _Client.network.getCurrentSim().getCapabilityURI(LIBRARY_CAP_NAME);
 		if (cap == null) {
 			logger.warn(GridClient.Log("No AIS3 Capability!", _Client));
 			return;
@@ -95,7 +95,7 @@ public class InventoryAISClient {
 	}
 
 	public void PurgeDescendents(UUID categoryUuid, Callback<OSD> callback) {
-		URI cap = _Client.Network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
+		URI cap = _Client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
 		if (cap == null) {
 			logger.warn(GridClient.Log("No AIS3 Capability!", _Client));
 			return;
@@ -107,7 +107,7 @@ public class InventoryAISClient {
 	}
 
 	public void UpdateCategory(UUID categoryUuid, OSD updates, Callback<OSD> callback) {
-		URI cap = _Client.Network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
+		URI cap = _Client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
 		if (cap == null) {
 			logger.warn(GridClient.Log("No AIS3 Capability!", _Client));
 			return;
@@ -119,7 +119,7 @@ public class InventoryAISClient {
 	}
 
 	public void UpdateItem(UUID itemUuid, OSD updates, Callback<OSD> callback) {
-		URI cap = _Client.Network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
+		URI cap = _Client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
 		if (cap == null) {
 			logger.warn(GridClient.Log("No AIS3 Capability!", _Client));
 			return;

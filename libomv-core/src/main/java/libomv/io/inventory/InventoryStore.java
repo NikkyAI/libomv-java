@@ -5,7 +5,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -63,7 +63,7 @@ import libomv.utils.MultiMap;
  * moved, for example) simply pass InventoryStore.add(parentID, node) the
  * updated InventoryNode without changing the parentID yet and it will make the
  * appropriate changes to its internal representation.
- * 
+ *
  * We use a lazy tree linking approach in order to handle nodes that arrive
  * before their parent has arrived. Each node also has a storage for the
  * parentID besides the direct reference to its parent. When inserting a new
@@ -141,7 +141,7 @@ public class InventoryStore extends InventoryFolder {
 	private UUID _LibraryID;
 
 	public InventoryStore(GridClient client) {
-		this(client, client.Self.getAgentID());
+		this(client, client.agent.getAgentID());
 	}
 
 	public InventoryStore(GridClient client, UUID owner) {
@@ -198,7 +198,7 @@ public class InventoryStore extends InventoryFolder {
 	/**
 	 * Used to find out if Inventory contains the InventoryItem specified by
 	 * <code>uuid</code>.
-	 * 
+	 *
 	 * @param uuid
 	 *            The UUID to check.
 	 * @return true if inventory contains an item with uuid, false otherwise
@@ -210,7 +210,7 @@ public class InventoryStore extends InventoryFolder {
 	/**
 	 * Used to find out if Inventory contains the InventoryFolder specified by
 	 * <code>uuid</code>.
-	 * 
+	 *
 	 * @param uuid
 	 *            The UUID to check.
 	 * @return true if inventory contains an item with uuid, false otherwise
@@ -228,7 +228,7 @@ public class InventoryStore extends InventoryFolder {
 
 	/**
 	 * Returns the item with the specified id
-	 * 
+	 *
 	 * @param uuid
 	 *            The UUID of the InventoryItem to get
 	 * @return The InventoryItem corresponding to <code>uuid</code>.
@@ -239,7 +239,7 @@ public class InventoryStore extends InventoryFolder {
 
 	/**
 	 * Returns the folder with the specified id
-	 * 
+	 *
 	 * @param uuid
 	 *            The UUID of the InventoryFolder to get
 	 * @return The InventoryFolder corresponding to <code>uuid</code>.
@@ -250,7 +250,7 @@ public class InventoryStore extends InventoryFolder {
 
 	/**
 	 * Returns either a folder or item with the specified id
-	 * 
+	 *
 	 * @param uuid
 	 *            The UUID of the InventoryNode to get
 	 * @return The InventoryNode corresponding to <code>uuid</code>.
@@ -266,7 +266,7 @@ public class InventoryStore extends InventoryFolder {
 	 * according HashMap for later reference and fast lookup by its ID, first
 	 * removing it from its previous parent if present and not equal to the new
 	 * parent.
-	 * 
+	 *
 	 * @param node
 	 *            The node whose parentID to return
 	 */
@@ -320,7 +320,7 @@ public class InventoryStore extends InventoryFolder {
 
 	/**
 	 * Convenience method
-	 * 
+	 *
 	 * @param parentID
 	 *            The parent ID of this node to assign the node to
 	 * @param node
@@ -333,7 +333,7 @@ public class InventoryStore extends InventoryFolder {
 
 	/**
 	 * Removes the InventoryNode and all related node data from the Inventory
-	 * 
+	 *
 	 * @param item
 	 *            The InventoryNode to remove.
 	 */
@@ -358,14 +358,14 @@ public class InventoryStore extends InventoryFolder {
 
 	/**
 	 * Returns the contents of the specified folder
-	 * 
+	 *
 	 * @param folder
 	 *            A folder's UUID
 	 * @return The contents of the folder corresponding to <code>folder</code>
 	 * @exception InventoryException
 	 *                When <code>folder</code> does not exist in the inventory
 	 */
-	protected final ArrayList<InventoryNode> getContents(UUID folder) throws InventoryException {
+	protected final List<InventoryNode> getContents(UUID folder) throws InventoryException {
 		synchronized (_Folders) {
 			if (!_Folders.containsKey(folder)) {
 				throw new InventoryException("Unknown folder: " + folder);
@@ -402,7 +402,7 @@ public class InventoryStore extends InventoryFolder {
 
 	/**
 	 * Saves the current inventory structure to a cache file
-	 * 
+	 *
 	 * @param filename
 	 *            Name of the cache file to save to
 	 */
@@ -429,7 +429,7 @@ public class InventoryStore extends InventoryFolder {
 	/**
 	 * Loads in inventory cache file into the inventory structure. Note only valid
 	 * to call after login has been successful.
-	 * 
+	 *
 	 * @param filename
 	 *            Name of the cache file to load
 	 * @return The number of inventory items sucessfully reconstructed into the

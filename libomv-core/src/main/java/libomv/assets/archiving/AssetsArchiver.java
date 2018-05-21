@@ -57,7 +57,7 @@ public class AssetsArchiver {
 
 	/// Archive the assets given to this archiver to the given archive.
 	/// <param name="archive"></param>
-	public void Archive(TarArchiveWriter archive) throws IOException {
+	public void archive(TarArchiveWriter archive) throws IOException {
 		// WriteMetadata(archive);
 		writeData(archive);
 	}

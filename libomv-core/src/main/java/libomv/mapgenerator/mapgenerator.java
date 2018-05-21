@@ -302,12 +302,12 @@ public class mapgenerator {
 
 		switch (field.type) {
 		case FieldType.Variable:
-			writer.println("output += Helpers.FieldToString(_" + fieldName.toLowerCase() + ", \"" + fieldName
+			writer.println("output += Helpers.fieldToString(_" + fieldName.toLowerCase() + ", \"" + fieldName
 					+ "\") + \"\\n\";");
 			break;
 		case FieldType.Fixed:
 			writer.println(
-					"output += Helpers.FieldToString(" + fieldName + ", \"" + fieldName + index2 + "\") + \"\\n\";");
+					"output += Helpers.fieldToString(" + fieldName + ", \"" + fieldName + index2 + "\") + \"\\n\";");
 			break;
 		case FieldType.BOOL:
 			writer.println("output += \"" + fieldName + index1 + ": \" + Boolean.toString(" + fieldName + index2

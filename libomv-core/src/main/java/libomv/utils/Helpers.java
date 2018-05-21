@@ -143,7 +143,7 @@ public class Helpers {
 	 *            Maximum allowable value
 	 * @return A value inclusively between lower and upper
 	 */
-	public static float Clamp(float value, float min, float max) {
+	public static float clamp(float value, float min, float max) {
 		// First we check to see if we're greater than the max
 		value = (value > max) ? max : value;
 
@@ -165,7 +165,7 @@ public class Helpers {
 	 *            Maximum allowable value
 	 * @return A value inclusively between lower and upper
 	 */
-	public static double Clamp(double value, double min, double max) {
+	public static double clamp(double value, double min, double max) {
 		// First we check to see if we're greater than the max
 		value = (value > max) ? max : value;
 
@@ -187,7 +187,7 @@ public class Helpers {
 	 *            Maximum allowable value
 	 * @return A value inclusively between lower and upper
 	 */
-	public static int Clamp(int value, int min, int max) {
+	public static int clamp(int value, int min, int max) {
 		// First we check to see if we're greater than the max
 		value = (value > max) ? max : value;
 
@@ -218,12 +218,12 @@ public class Helpers {
 	}
 
 	/** Test if a single precision float is a finite number */
-	public static boolean IsFinite(float value) {
+	public static boolean isFinite(float value) {
 		return !(Float.isNaN(value) || Float.isInfinite(value));
 	}
 
 	/** Test if a double precision float is a finite number */
-	public static boolean IsFinite(double value) {
+	public static boolean isFinite(double value) {
 		return !(Double.isNaN(value) || Double.isInfinite(value));
 	}
 
@@ -236,11 +236,11 @@ public class Helpers {
 	 *            Second value
 	 * @return The distance between the two values
 	 */
-	public static float Distance(float value1, float value2) {
+	public static float distance(float value1, float value2) {
 		return Math.abs(value1 - value2);
 	}
 
-	public static float Hermite(float value1, float tangent1, float value2, float tangent2, float amount) {
+	public static float hermite(float value1, float tangent1, float value2, float tangent2, float amount) {
 		// All transformed to double not to lose precision
 		// Otherwise, for high numbers of param:amount the result is NaN instead
 		// of Infinity
@@ -259,7 +259,7 @@ public class Helpers {
 		return (float) result;
 	}
 
-	public static double Hermite(double value1, double tangent1, double value2, double tangent2, double amount) {
+	public static double hermite(double value1, double tangent1, double value2, double tangent2, double amount) {
 		// All transformed to double not to lose precision
 		// Otherwise, for high numbers of param:amount the result is NaN instead
 		// of Infinity
@@ -278,28 +278,28 @@ public class Helpers {
 		return result;
 	}
 
-	public static float Lerp(float value1, float value2, float amount) {
+	public static float lerp(float value1, float value2, float amount) {
 		return value1 + (value2 - value1) * amount;
 	}
 
-	public static double Lerp(double value1, double value2, double amount) {
+	public static double lerp(double value1, double value2, double amount) {
 		return value1 + (value2 - value1) * amount;
 	}
 
-	public static float SmoothStep(float value1, float value2, float amount) {
+	public static float smoothStep(float value1, float value2, float amount) {
 		// It is expected that 0 < amount < 1
 		// If amount < 0, return value1
 		// If amount > 1, return value2
-		float result = Clamp(amount, 0f, 1f);
-		return Hermite(value1, 0f, value2, 0f, result);
+		float result = clamp(amount, 0f, 1f);
+		return hermite(value1, 0f, value2, 0f, result);
 	}
 
-	public static double SmoothStep(double value1, double value2, double amount) {
+	public static double smoothStep(double value1, double value2, double amount) {
 		// It is expected that 0 < amount < 1
 		// If amount < 0, return value1
 		// If amount > 1, return value2
-		double result = Clamp(amount, 0f, 1f);
-		return Hermite(value1, 0f, value2, 0f, result);
+		double result = clamp(amount, 0f, 1f);
+		return hermite(value1, 0f, value2, 0f, result);
 	}
 
 	public static float ToDegrees(float radians) {
@@ -330,7 +330,7 @@ public class Helpers {
 	// // <param name="a">The 64-bit input integer</param>// <param name="b">The
 	// left-hand (or X) output value</param>// <param name="c">The right-hand
 	// (or Y) output value</param>
-	public static void LongToUInts(long a, int[] b) {
+	public static void longToUInts(long a, int[] b) {
 		b[0] = (int) (a >> 32);
 		b[1] = (int) (a & 0x00000000FFFFFFFFL);
 	}
@@ -343,7 +343,7 @@ public class Helpers {
 	 *            Floating point number to convert to a string
 	 * @return A terse string representation of the input number
 	 */
-	public static String FloatToTerseString(float val) {
+	public static String floatToTerseString(float val) {
 		if (val == 0) {
 			return ".00";
 		}
@@ -376,8 +376,8 @@ public class Helpers {
 	// hex dump will be put in the String instead</remarks>
 	// <param name="bytes">The byte array to convert to a String</param>
 	// <returns>A UTF8 String, minus the null terminator</returns>
-	public static String FieldToString(byte[] bytes) throws Exception {
-		return FieldToString(bytes, "");
+	public static String fieldToString(byte[] bytes) throws Exception {
+		return fieldToString(bytes, "");
 	}
 
 	// Convert a variable length field (byte array) to a String, with a
@@ -389,7 +389,7 @@ public class Helpers {
 	// <param name="fieldName">A field name to prepend to each line of
 	// output</param>
 	// <returns>A UTF8 String, minus the null terminator</returns>
-	public static String FieldToString(byte[] bytes, String fieldName) throws Exception {
+	public static String fieldToString(byte[] bytes, String fieldName) throws Exception {
 		String output = "";
 		boolean printable = true;
 
@@ -455,7 +455,7 @@ public class Helpers {
 	 * @return A null-terminated byte array
 	 * @throws Exception
 	 */
-	public static byte[] StringToField(String str) throws Exception {
+	public static byte[] stringToField(String str) throws Exception {
 		if (!str.endsWith("\0")) {
 			str += "\0";
 		}
@@ -479,7 +479,7 @@ public class Helpers {
 	 * &#64;Override public override string toString() { return
 	 *           Helpers.StructToString(this); } </code> </example>
 	 */
-	public static String StructToString(Object t) {
+	public static String structToString(Object t) {
 		StringBuilder result = new StringBuilder();
 		java.lang.Class<?> structType = t.getClass();
 
@@ -500,7 +500,7 @@ public class Helpers {
 		return Epoch.getTime() / 1000.0;
 	}
 
-	public static double DateTimeToUnixTime(Date date) {
+	public static double dateTimeToUnixTime(Date date) {
 		return date.getTime() / 1000.0;
 	}
 
@@ -508,7 +508,7 @@ public class Helpers {
 		return new Date(Math.round(time * 1000.0));
 	}
 
-	public static Date StringToDate(String string) {
+	public static Date stringToDate(String string) {
 		SimpleDateFormat df = new SimpleDateFormat(FRACT_DATE_FMT);
 		try {
 			return df.parse(string);
@@ -536,7 +536,7 @@ public class Helpers {
 	 *            [1] The returned sim-local Y position of the global Y
 	 * @return A 64-bit region handle that can be used to teleport to
 	 */
-	public static long GlobalPosToRegionHandle(float globalX, float globalY, float[] locals) {
+	public static long globalPosToRegionHandle(float globalX, float globalY, float[] locals) {
 		int x = ((int) globalX >> 8) << 8;
 		int y = ((int) globalY >> 8) << 8;
 		locals[0] = globalX - x;
@@ -544,9 +544,9 @@ public class Helpers {
 		return IntsToLong(x, y);
 	}
 
-	public static Vector3d RegionHandleToGlobalPos(long regionHandle, Vector3 local) {
+	public static Vector3d regionHandleToGlobalPos(long regionHandle, Vector3 local) {
 		int[] globals = new int[2];
-		LongToUInts(regionHandle, globals);
+		longToUInts(regionHandle, globals);
 		return new Vector3d(globals[0] + local.X, globals[1] + local.Y, local.Z);
 	}
 
@@ -569,7 +569,7 @@ public class Helpers {
 	// <param name="groupMask">Group mask (permissions)</param>
 	// <param name="ownerMask">Owner mask (permisions)</param>
 	// <returns>The calculated CRC</returns>
-	public static int InventoryCRC(int creationDate, byte saleType, byte invType, byte type, UUID assetID, UUID groupID,
+	public static int inventoryCRC(int creationDate, byte saleType, byte invType, byte type, UUID assetID, UUID groupID,
 			int salePrice, UUID ownerID, UUID creatorID, UUID itemID, UUID folderID, int everyoneMask, int flags,
 			int nextOwnerMask, int groupMask, int ownerMask) {
 		int CRC = 0;
@@ -618,7 +618,7 @@ public class Helpers {
 	}
 
 	public static Vector<String> split(String s, String c) {
-		Vector<String> v = new Vector<String>();
+		Vector<String> v = new Vector<>();
 		StringTokenizer tokens = new StringTokenizer(s, c);
 		while (tokens.hasMoreTokens()) {
 			v.addElement(tokens.nextToken());
@@ -993,14 +993,14 @@ public class Helpers {
 	 *
 	 * number SL-FP IEEE-754 MIN_NUM 000000000 11111111111 0.0 100000000 00000000000
 	 * MAX_NUM 111111111 01111111111
-	 * 
+	 *
 	 * @param fixedVal
 	 * @param signed
 	 * @param intBits
 	 * @param fracBits
 	 * @return
 	 */
-	private static float FixedToFloat(long fixedVal, boolean signed, int intBits, int fracBits) {
+	private static float fixedToFloat(long fixedVal, boolean signed, int intBits, int fracBits) {
 		int maxVal = 1 << intBits;
 		double floatVal = fixedVal / (1 << fracBits);
 
@@ -1028,7 +1028,7 @@ public class Helpers {
 		} else {
 			return 0.0f;
 		}
-		return FixedToFloat(fixedVal, signed, intBits, fracBits);
+		return fixedToFloat(fixedVal, signed, intBits, fracBits);
 	}
 
 	public static float BytesToFixedB(byte[] bytes, int pos, boolean signed, int intBits, int fracBits) {
@@ -1049,7 +1049,7 @@ public class Helpers {
 		} else {
 			return 0.0f;
 		}
-		return FixedToFloat(fixedVal, signed, intBits, fracBits);
+		return fixedToFloat(fixedVal, signed, intBits, fracBits);
 	}
 
 	public static int Int8ToBytes(byte value, byte[] dest, int pos) {
@@ -1273,47 +1273,47 @@ public class Helpers {
 	 *            A floating point value
 	 * @return A four byte array containing the value in little endian ordering
 	 */
-	public static byte[] FloatToBytesL(float value) {
+	public static byte[] floatToBytesL(float value) {
 		byte[] bytes = new byte[4];
 		Int32ToBytesL(Float.floatToIntBits(value), bytes, 0);
 		return bytes;
 	}
 
-	public static int FloatToBytesL(float value, byte[] dest, int pos) {
+	public static int floatToBytesL(float value, byte[] dest, int pos) {
 		return Int32ToBytesL(Float.floatToIntBits(value), dest, pos);
 	}
 
-	public static byte[] FloatToBytesB(float value) {
+	public static byte[] floatToBytesB(float value) {
 		byte[] bytes = new byte[4];
 		Int32ToBytesB(Float.floatToIntBits(value), bytes, 0);
 		return bytes;
 	}
 
-	public static int FloatToBytesB(float value, byte[] dest, int pos) {
+	public static int floatToBytesB(float value, byte[] dest, int pos) {
 		return Int32ToBytesB(Float.floatToIntBits(value), dest, pos);
 	}
 
-	public static byte[] DoubleToBytesL(double value) {
+	public static byte[] doubleToBytesL(double value) {
 		byte[] bytes = new byte[8];
 		Int64ToBytesL(Double.doubleToLongBits(value), bytes, 0);
 		return bytes;
 	}
 
-	public static int DoubleToBytesL(double value, byte[] dest, int pos) {
+	public static int doubleToBytesL(double value, byte[] dest, int pos) {
 		return Int64ToBytesL(Double.doubleToLongBits(value), dest, pos);
 	}
 
-	public static byte[] DoubleToBytesB(double value) {
+	public static byte[] doubleToBytesB(double value) {
 		byte[] bytes = new byte[8];
 		Int64ToBytesB(Double.doubleToLongBits(value), bytes, 0);
 		return bytes;
 	}
 
-	public static int DoubleToBytesB(double value, byte[] dest, int pos) {
+	public static int doubleToBytesB(double value, byte[] dest, int pos) {
 		return Int64ToBytesB(Double.doubleToLongBits(value), dest, pos);
 	}
 
-	private static float FloatToFixed(float data, boolean isSigned, int intBits, int fracBits) {
+	private static float floatToFixed(float data, boolean isSigned, int intBits, int fracBits) {
 		int min, max = 1 << intBits;
 
 		if (isSigned) {
@@ -1323,7 +1323,7 @@ public class Helpers {
 			min = 0;
 		}
 
-		float fixedVal = Clamp(data, min, max);
+		float fixedVal = clamp(data, min, max);
 		if (isSigned) {
 			fixedVal += max;
 		}
@@ -1331,44 +1331,44 @@ public class Helpers {
 		return fixedVal;
 	}
 
-	public static int FixedToBytesL(byte[] dest, int pos, float data, boolean isSigned, int intBits, int fracBits) {
+	public static int fixedToBytesL(byte[] dest, int pos, float data, boolean isSigned, int intBits, int fracBits) {
 		int totalBits = intBits + fracBits;
 		if (isSigned) {
 			totalBits++;
 		}
 
 		if (totalBits <= 8) {
-			dest[pos] = (byte) FloatToFixed(data, isSigned, intBits, fracBits);
+			dest[pos] = (byte) floatToFixed(data, isSigned, intBits, fracBits);
 			return 1;
 		} else if (totalBits <= 16) {
-			UInt16ToBytesL((int) FloatToFixed(data, isSigned, intBits, fracBits), dest, pos);
+			UInt16ToBytesL((int) floatToFixed(data, isSigned, intBits, fracBits), dest, pos);
 			return 2;
 		} else if (totalBits <= 31) {
-			UInt32ToBytesL((long) FloatToFixed(data, isSigned, intBits, fracBits), dest, pos);
+			UInt32ToBytesL((long) floatToFixed(data, isSigned, intBits, fracBits), dest, pos);
 			return 4;
 		} else {
-			UInt64ToBytesL((long) FloatToFixed(data, isSigned, intBits, fracBits), dest, pos);
+			UInt64ToBytesL((long) floatToFixed(data, isSigned, intBits, fracBits), dest, pos);
 			return 8;
 		}
 	}
 
-	public static int FixedToBytesB(byte[] dest, int pos, float data, boolean isSigned, int intBits, int fracBits) {
+	public static int fixedToBytesB(byte[] dest, int pos, float data, boolean isSigned, int intBits, int fracBits) {
 		int totalBits = intBits + fracBits;
 		if (isSigned) {
 			totalBits++;
 		}
 
 		if (totalBits <= 8) {
-			dest[pos] = (byte) FloatToFixed(data, isSigned, intBits, fracBits);
+			dest[pos] = (byte) floatToFixed(data, isSigned, intBits, fracBits);
 			return 1;
 		} else if (totalBits <= 16) {
-			UInt16ToBytesB((int) FloatToFixed(data, isSigned, intBits, fracBits), dest, pos);
+			UInt16ToBytesB((int) floatToFixed(data, isSigned, intBits, fracBits), dest, pos);
 			return 2;
 		} else if (totalBits <= 31) {
-			UInt32ToBytesB((long) FloatToFixed(data, isSigned, intBits, fracBits), dest, pos);
+			UInt32ToBytesB((long) floatToFixed(data, isSigned, intBits, fracBits), dest, pos);
 			return 4;
 		} else {
-			UInt64ToBytesB((long) FloatToFixed(data, isSigned, intBits, fracBits), dest, pos);
+			UInt64ToBytesB((long) floatToFixed(data, isSigned, intBits, fracBits), dest, pos);
 			return 8;
 		}
 	}
@@ -1396,7 +1396,7 @@ public class Helpers {
 	 * @param c
 	 *            The right-hand (or Y) output value
 	 */
-	public static void LongToUInts(long a, RefObject<Integer> b, RefObject<Integer> c) {
+	public static void longToUInts(long a, RefObject<Integer> b, RefObject<Integer> c) {
 		b.argvalue = (int) (a >> 32);
 		c.argvalue = (int) (a & 0x00000000FFFFFFFF);
 	}
@@ -1408,7 +1408,7 @@ public class Helpers {
 	 *            Byte to swap the nibbles in
 	 * @return Byte value with the nibbles swapped
 	 */
-	public static byte SwapNibbles(byte value) {
+	public static byte swapNibbles(byte value) {
 		return (byte) (((value & 0xF0) >> 4) | ((value & 0x0F) << 4));
 	}
 
@@ -1423,7 +1423,7 @@ public class Helpers {
 		return String.format("%#08x", i);
 	}
 
-	public static String LocalIDToString(int localID) {
+	public static String localIDToString(int localID) {
 		return Long.toString(localID & 0xFFFFFFFFL);
 	}
 
@@ -1551,11 +1551,11 @@ public class Helpers {
 	 *            The string to convert
 	 * @return A null-terminated UTF8 byte array
 	 */
-	public static byte[] StringToBytes(String str) {
-		return StringToBytes(str, UTF8_ENCODING);
+	public static byte[] stringToBytes(String str) {
+		return stringToBytes(str, UTF8_ENCODING);
 	}
 
-	public static byte[] StringToBytes(String str, String encoding) {
+	public static byte[] stringToBytes(String str, String encoding) {
 		if (Helpers.isEmpty(str)) {
 			return Helpers.EmptyBytes;
 		}
@@ -1581,7 +1581,7 @@ public class Helpers {
 	 * @return The converted byte array
 	 * @throws Exception
 	 */
-	public static byte[] HexStringToBytes(String hexString, boolean handleDirty) throws Exception {
+	public static byte[] hexStringToBytes(String hexString, boolean handleDirty) throws Exception {
 		if (Helpers.isEmpty(hexString)) {
 			return Helpers.EmptyBytes;
 		}
@@ -1593,7 +1593,7 @@ public class Helpers {
 			// remove all non A-F, 0-9, characters
 			for (int i = 0; i < hexString.length(); i++) {
 				c = hexString.charAt(i);
-				if (IsHexDigit(c)) {
+				if (isHexDigit(c)) {
 					stripped.append(c);
 				}
 			}
@@ -1611,7 +1611,7 @@ public class Helpers {
 		int j = 0;
 
 		for (int i = 0; i < bytes.length; i++) {
-			bytes[i] = HexToByte(hexString.substring(j, 2));
+			bytes[i] = hexToByte(hexString.substring(j, 2));
 			j += 2;
 		}
 		return bytes;
@@ -1624,7 +1624,7 @@ public class Helpers {
 	 *            Character to test
 	 * @return true if hex digit, false if not
 	 */
-	private static boolean IsHexDigit(char c) {
+	private static boolean isHexDigit(char c) {
 		return Character.digit(c, 16) >= 0;
 	}
 
@@ -1636,7 +1636,7 @@ public class Helpers {
 	 * @return byte
 	 * @throws Exception
 	 */
-	private static byte HexToByte(String hex) throws Exception {
+	private static byte hexToByte(String hex) throws Exception {
 		if (Helpers.isEmpty(hex) || hex.length() > 2 || hex.length() <= 0) {
 			throw new Exception("hex must be 1 or 2 characters in length");
 		}
@@ -1655,8 +1655,8 @@ public class Helpers {
 	 *            Maximum value range
 	 * @return A single byte representing the original float value
 	 */
-	public static byte FloatToByte(float val, float lower, float upper) {
-		val = Helpers.Clamp(val, lower, upper);
+	public static byte floatToByte(float val, float lower, float upper) {
+		val = Helpers.clamp(val, lower, upper);
 		// Normalize the value
 		val -= lower;
 		val /= (upper - lower);
@@ -1751,7 +1751,7 @@ public class Helpers {
 		return fval;
 	}
 
-	public static int FloatToUInt16(float value, float lower, float upper) {
+	public static int floatToUInt16(float value, float lower, float upper) {
 		float delta = upper - lower;
 		value -= lower;
 		value /= delta;
@@ -1760,7 +1760,7 @@ public class Helpers {
 	}
 
 	public static byte[] TEOffsetShort(float offset) {
-		offset = Helpers.Clamp(offset, -1.0f, 1.0f);
+		offset = Helpers.clamp(offset, -1.0f, 1.0f);
 		offset *= 32767.0f;
 		return Int16ToBytesL((short) roundFromZero(offset));
 	}
@@ -1894,7 +1894,7 @@ public class Helpers {
 	 *            Enum value
 	 * @return Text representation of the enum
 	 */
-	public static String EnumToText(Enum<?> value) {
+	public static String enumToText(Enum<?> value) {
 		// Get the type
 		Class<?> type = value.getClass();
 		if (!type.isEnum()) {
@@ -2009,7 +2009,7 @@ public class Helpers {
 	 *            the String to repeat n times
 	 * @param n
 	 *            the number of repetitions of string str
-	 * 
+	 *
 	 * @return <code>true</code> if the String is empty or null
 	 */
 	public static String repeat(String str, int n) {
@@ -2275,7 +2275,7 @@ public class Helpers {
 			String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!"));
 			JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
 			Enumeration<JarEntry> entries = jar.entries(); // gives ALL entries in jar
-			Set<String> result = new HashSet<String>(); // avoid duplicates in case it is a subdirectory
+			Set<String> result = new HashSet<>(); // avoid duplicates in case it is a subdirectory
 			while (entries.hasMoreElements()) {
 				String name = entries.nextElement().getName();
 				if (name.startsWith(path)) { // filter according to the path

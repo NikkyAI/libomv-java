@@ -54,7 +54,7 @@ public class PrivateChannel extends AbstractChannel {
 	public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style)
 			throws BadLocationException {
 		// Determine if this is a friend...
-		boolean friend = _Client.Friends.getFriendList().containsKey(fromId);
+		boolean friend = _Client.friends.getFriendList().containsKey(fromId);
 		String localMessage = message, localStyle = style;
 
 		// If this is an action message.
@@ -79,7 +79,7 @@ public class PrivateChannel extends AbstractChannel {
 		// Indicate that we're no longer typing.
 		super.transmitMessage(message, chatType);
 
-		String localMessage = message, self = _Client.Self.getName();
+		String localMessage = message, self = _Client.agent.getName();
 		if (getUUID() != null) {
 			if (message.length() >= 1000) {
 				localMessage = message.substring(0, 1000);
@@ -99,13 +99,13 @@ public class PrivateChannel extends AbstractChannel {
 			}
 
 			// Send the message.
-			_Client.Self.InstantMessage(getUUID(), localMessage, getSession());
+			_Client.agent.instantMessage(getUUID(), localMessage, getSession());
 		} else {
 			addMessage(new ChatItem(self, STYLE_CHATLOCAL, ": Invalid UUID for this chat channel", STYLE_ERROR));
 		}
 	}
 
 	protected void triggerTyping(boolean start) throws Exception {
-		_Client.Self.SendTypingState(getUUID(), getSession(), start);
+		_Client.agent.sendTypingState(getUUID(), getSession(), start);
 	}
 }

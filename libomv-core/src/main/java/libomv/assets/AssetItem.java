@@ -42,6 +42,20 @@ public abstract class AssetItem {
 	/** A byte array containing the raw asset data */
 	public byte[] assetData;
 
+	/**
+	 * Construct a new Asset object
+	 *
+	 * @param assetID
+	 *            A unique <see cref="UUID"/> specific to this asset
+	 * @param assetData
+	 *            A byte array containing the raw asset data
+	 */
+	public AssetItem(UUID assetID, byte[] assetData) {
+		this.assetID = assetID;
+		this.assetData = assetData;
+		decode();
+	}
+
 	public UUID getAssetID() {
 		return assetID;
 	}
@@ -67,20 +81,6 @@ public abstract class AssetItem {
 	 */
 	public void invalidateAssetData() {
 		assetData = null;
-	}
-
-	/**
-	 * Construct a new Asset object
-	 *
-	 * @param assetID
-	 *            A unique <see cref="UUID"/> specific to this asset
-	 * @param assetData
-	 *            A byte array containing the raw asset data
-	 */
-	public AssetItem(UUID assetID, byte[] assetData) {
-		this.assetID = assetID;
-		this.assetData = assetData;
-		decode();
 	}
 
 	/** The "type" of asset, Notecard, Animation, etc */

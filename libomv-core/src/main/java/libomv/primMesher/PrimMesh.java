@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import libomv.primMesher.types.Face;
 import libomv.primMesher.types.Profile;
@@ -55,7 +56,7 @@ public class PrimMesh {
 	}
 
 	public class Path {
-		public ArrayList<PathNode> pathNodes = new ArrayList<PathNode>();
+		public List<PathNode> pathNodes = new ArrayList<>();
 
 		public float twistBegin = 0.0f;
 		public float twistEnd = 0.0f;
@@ -268,11 +269,11 @@ public class PrimMesh {
 
 	public String errorMessage = "";
 
-	public ArrayList<Vector3> coords;
-	public ArrayList<Vector3> normals;
-	public ArrayList<Face> faces;
+	public List<Vector3> coords;
+	public List<Vector3> normals;
+	public List<Face> faces;
 
-	public ArrayList<ViewerFace> viewerFaces;
+	public List<ViewerFace> viewerFaces;
 
 	private int sides = 4;
 	private int hollowSides = 4;
@@ -348,7 +349,7 @@ public class PrimMesh {
 
 	/**
 	 * Constructs a PrimMesh object and creates the profile for extrusion.
-	 * 
+	 *
 	 * @param sides
 	 * @param profileStart
 	 * @param profileEnd
@@ -356,8 +357,8 @@ public class PrimMesh {
 	 * @param hollowSides
 	 */
 	public PrimMesh(int sides, float profileStart, float profileEnd, float hollow, int hollowSides) {
-		this.coords = new ArrayList<Vector3>();
-		this.faces = new ArrayList<Face>();
+		this.coords = new ArrayList<>();
+		this.faces = new ArrayList<>();
 
 		this.sides = sides;
 		this.profileStart = profileStart;
@@ -385,22 +386,22 @@ public class PrimMesh {
 
 	/**
 	 * Extrudes a profile along a path.
-	 * 
+	 *
 	 * @param pathType
 	 */
 	public void extrude(PathType pathType) {
 		boolean needEndFaces = false;
 
-		this.coords = new ArrayList<Vector3>();
-		this.faces = new ArrayList<Face>();
+		this.coords = new ArrayList<>();
+		this.faces = new ArrayList<>();
 
 		if (this.viewerMode) {
-			this.viewerFaces = new ArrayList<ViewerFace>();
+			this.viewerFaces = new ArrayList<>();
 			this.calcVertexNormals = true;
 		}
 
 		if (this.calcVertexNormals)
-			this.normals = new ArrayList<Vector3>();
+			this.normals = new ArrayList<>();
 
 		int steps = 1;
 
@@ -560,7 +561,7 @@ public class PrimMesh {
 					Vector3 faceNormal = newLayer.faceNormal;
 					ViewerFace newViewerFace = new ViewerFace(profile.bottomFaceNumber);
 					int numFaces = newLayer.faces.size();
-					ArrayList<Face> faces = newLayer.faces;
+					List<Face> faces = newLayer.faces;
 
 					for (int i = 0; i < numFaces; i++) {
 						Face face = faces.get(i);
@@ -787,7 +788,7 @@ public class PrimMesh {
 				Vector3 faceNormal = newLayer.faceNormal;
 				ViewerFace newViewerFace = new ViewerFace(0);
 				int numFaces = newLayer.faces.size();
-				ArrayList<Face> faces = newLayer.faces;
+				List<Face> faces = newLayer.faces;
 
 				for (int i = 0; i < numFaces; i++) {
 					Face face = faces.get(i);
@@ -821,7 +822,7 @@ public class PrimMesh {
 
 	/**
 	 * DEPRICATED - use Extrude(PathType.Linear) instead
-	 * 
+	 *
 	 * Extrudes a profile along a straight line path. Used for prim types box,
 	 * cylinder, and prism.
 	 */
@@ -855,7 +856,7 @@ public class PrimMesh {
 
 	/**
 	 * Calculate the surface normal for a face in the list of faces
-	 * 
+	 *
 	 * @param faceIndex
 	 * @throws Exception
 	 * @returns
@@ -871,7 +872,7 @@ public class PrimMesh {
 	/**
 	 * Duplicates a PrimMesh object. All object properties are copied by value,
 	 * including lists.
-	 * 
+	 *
 	 * @returns
 	 */
 	public PrimMesh copy() {
@@ -898,10 +899,10 @@ public class PrimMesh {
 		copy.numPrimFaces = this.numPrimFaces;
 		copy.errorMessage = this.errorMessage;
 
-		copy.coords = new ArrayList<Vector3>(this.coords);
-		copy.faces = new ArrayList<Face>(this.faces);
-		copy.viewerFaces = new ArrayList<ViewerFace>(this.viewerFaces);
-		copy.normals = new ArrayList<Vector3>(this.normals);
+		copy.coords = new ArrayList<>(this.coords);
+		copy.faces = new ArrayList<>(this.faces);
+		copy.viewerFaces = new ArrayList<>(this.viewerFaces);
+		copy.normals = new ArrayList<>(this.normals);
 
 		return copy;
 	}
@@ -909,7 +910,7 @@ public class PrimMesh {
 	/**
 	 * Calculate surface normals for all of the faces in the list of faces in this
 	 * mesh
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void calcNormals() throws Exception {
@@ -921,7 +922,7 @@ public class PrimMesh {
 		int numFaces = faces.size();
 
 		if (!this.calcVertexNormals)
-			this.normals = new ArrayList<Vector3>();
+			this.normals = new ArrayList<>();
 
 		for (int i = 0; i < numFaces; i++) {
 			Face face = faces.get(i);
@@ -939,7 +940,7 @@ public class PrimMesh {
 
 	/**
 	 * Adds a value to each XYZ vertex coordinate in the mesh
-	 * 
+	 *
 	 * @param x
 	 * @param y
 	 * @param z

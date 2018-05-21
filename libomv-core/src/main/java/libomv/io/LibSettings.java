@@ -458,7 +458,7 @@ public class LibSettings extends Settings implements PacketCallback {
 	}
 
 	public void startup(GridClient client) {
-		client.Network.RegisterCallback(PacketType.EconomyData, this);
+		client.network.registerCallback(PacketType.EconomyData, this);
 	}
 
 	@Override

@@ -91,11 +91,11 @@ public class FacetedMesh extends Mesh {
 			}
 
 			FacetedMesh mesh = new FacetedMesh();
-			mesh.faces = new ArrayList<Face>();
+			mesh.faces = new ArrayList<>();
 			mesh.prim = prim;
-			mesh.profile.faces = new ArrayList<ProfileFace>();
-			mesh.profile.positions = new ArrayList<Vector3>();
-			mesh.path.points = new ArrayList<PathPoint>();
+			mesh.profile.faces = new ArrayList<>();
+			mesh.profile.positions = new ArrayList<>();
+			mesh.path.points = new ArrayList<>();
 
 			OSDArray decodedMeshOsdArray = (OSDArray) facesOSD;
 
@@ -110,13 +110,13 @@ public class FacetedMesh extends Mesh {
 					// Level
 					// of Detail Blocks (maps) contain just a NoGeometry key to signal there is no
 					// geometry for this submesh.
-					if (subMeshMap.containsKey("NoGeometry") && (subMeshMap.get("NoGeometry").AsBoolean()))
+					if (subMeshMap.containsKey("NoGeometry") && (subMeshMap.get("NoGeometry").asBoolean()))
 						continue;
 
 					Face oface = mesh.new Face();
 					oface.id = faceNr;
-					oface.vertices = new ArrayList<Vertex>();
-					oface.indices = new ArrayList<Integer>();
+					oface.vertices = new ArrayList<>();
+					oface.indices = new ArrayList<>();
 					oface.textureFace = prim.textures.getFace(faceNr);
 
 					Vector3 posMax;
@@ -125,20 +125,20 @@ public class FacetedMesh extends Mesh {
 					// If PositionDomain is not specified, the default is from -0.5 to 0.5
 					OSD osd = subMeshMap.get("PositionDomain");
 					if (osd != null) {
-						posMax = ((OSDMap) osd).get("Max").AsVector3();
-						posMin = ((OSDMap) osd).get("Min").AsVector3();
+						posMax = ((OSDMap) osd).get("Max").asVector3();
+						posMin = ((OSDMap) osd).get("Min").asVector3();
 					} else {
 						posMax = new Vector3(0.5f, 0.5f, 0.5f);
 						posMin = new Vector3(-0.5f, -0.5f, -0.5f);
 					}
 
 					// Vertex positions
-					byte[] posBytes = subMeshMap.get("Position").AsBinary();
+					byte[] posBytes = subMeshMap.get("Position").asBinary();
 
 					// Normals
 					byte[] norBytes = null;
 					if (subMeshMap.containsKey("Normal")) {
-						norBytes = subMeshMap.get("Normal").AsBinary();
+						norBytes = subMeshMap.get("Normal").asBinary();
 					}
 
 					// UV texture map
@@ -147,10 +147,10 @@ public class FacetedMesh extends Mesh {
 					byte[] texBytes = null;
 					osd = subMeshMap.get("TexCoord0");
 					if (osd != null) {
-						texBytes = osd.AsBinary();
+						texBytes = osd.asBinary();
 						osd = subMeshMap.get("TexCoord0Domain");
-						texPosMax = ((OSDMap) osd).get("Max").AsVector2();
-						texPosMin = ((OSDMap) osd).get("Min").AsVector2();
+						texPosMax = ((OSDMap) osd).get("Max").asVector2();
+						texPosMin = ((OSDMap) osd).get("Min").asVector2();
 					}
 
 					// Extract the vertex position data
@@ -179,7 +179,7 @@ public class FacetedMesh extends Mesh {
 						oface.vertices.add(vx);
 					}
 
-					byte[] triangleBytes = subMeshMap.get("TriangleList").AsBinary();
+					byte[] triangleBytes = subMeshMap.get("TriangleList").asBinary();
 					for (int i = 0; i < triangleBytes.length; i += 6) {
 						oface.indices.add(Helpers.BytesToUInt16L(triangleBytes, i));
 						oface.indices.add(Helpers.BytesToUInt16L(triangleBytes, i + 2));

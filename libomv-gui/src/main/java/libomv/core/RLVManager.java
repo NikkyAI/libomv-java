@@ -73,7 +73,7 @@ public class RLVManager {
 			if (params.getName() == null) {
 				enabled = _Main.getAppSettings().getBool(AppSettings.ENABLE_RLV_MANAGER);
 			} else {
-				enabled = params.getValue().AsBoolean();
+				enabled = params.getValue().asBoolean();
 			}
 			return false;
 		}

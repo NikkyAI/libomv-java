@@ -68,209 +68,209 @@ public class MessageCapability extends AbstractMessage {
 	@Override
 	public byte getMessageI8(String blockName, String fieldName, short blockNumber) throws Exception {
 		OSD osd = getField(blockName, fieldName, blockNumber);
-		return (byte) osd.AsInteger();
+		return (byte) osd.asInteger();
 	}
 
 	@Override
 	public short getMessageU8(String blockName, String fieldName, short blockNumber) throws Exception {
 		OSD osd = getField(blockName, fieldName, blockNumber);
-		return (short) osd.AsUInteger();
+		return (short) osd.asUInteger();
 	}
 
 	@Override
 	public short getMessageI16(String blockName, String fieldName, short blockNumber) throws Exception {
 		OSD osd = getField(blockName, fieldName, blockNumber);
-		return (short) osd.AsInteger();
+		return (short) osd.asInteger();
 	}
 
 	@Override
 	public int getMessageU16(String blockName, String fieldName, short blockNumber) throws Exception {
 		OSD osd = getField(blockName, fieldName, blockNumber);
-		return osd.AsUInteger();
+		return osd.asUInteger();
 	}
 
 	@Override
 	public int getMessageI32(String blockName, String fieldName, short blockNumber) throws Exception {
 		OSD osd = getField(blockName, fieldName, blockNumber);
-		return osd.AsInteger();
+		return osd.asInteger();
 	}
 
 	@Override
 	public long getMessageU32(String blockName, String fieldName, short blockNumber) throws Exception {
 		OSD osd = getField(blockName, fieldName, blockNumber);
-		return osd.AsULong();
+		return osd.asULong();
 	}
 
 	@Override
 	public long getMessageI64(String blockName, String fieldName, short blockNumber) throws Exception {
 		OSD osd = getField(blockName, fieldName, blockNumber);
-		return osd.AsLong();
+		return osd.asLong();
 	}
 
 	@Override
 	public long getMessageU64(String blockName, String fieldName, short blockNumber) throws Exception {
 		OSD osd = getField(blockName, fieldName, blockNumber);
-		return osd.AsULong();
+		return osd.asULong();
 	}
 
 	@Override
 	public float getMessageF32(String blockName, String fieldName, short blockNumber) throws Exception {
 		OSD osd = getField(blockName, fieldName, blockNumber);
-		return (float) osd.AsReal();
+		return (float) osd.asReal();
 	}
 
 	@Override
 	public double getMessageF64(String blockName, String fieldName, short blockNumber) throws Exception {
 		OSD osd = getField(blockName, fieldName, blockNumber);
-		return osd.AsReal();
+		return osd.asReal();
 	}
 
 	@Override
 	public String getMessageString(String blockName, String fieldName, short blockNumber) throws Exception {
 		OSD osd = getField(blockName, fieldName, blockNumber);
-		return osd.AsString();
+		return osd.asString();
 	}
 
 	@Override
 	public UUID getMessageUUID(String blockName, String fieldName, short blockNumber) throws Exception {
 		OSD osd = getField(blockName, fieldName, blockNumber);
-		return osd.AsUUID();
+		return osd.asUUID();
 	}
 
 	@Override
 	public Date getMessageDate(String blockName, String fieldName, short blockNumber) throws Exception {
 		OSD osd = getField(blockName, fieldName, blockNumber);
-		return osd.AsDate();
+		return osd.asDate();
 	}
 
 	@Override
 	public Vector3 getMessageVector3(String blockName, String fieldName, short blockNumber) throws Exception {
 		OSD osd = getField(blockName, fieldName, blockNumber);
-		return osd.AsVector3();
+		return osd.asVector3();
 	}
 
 	@Override
 	public Vector3d getMessageVector3d(String blockName, String fieldName, short blockNumber) throws Exception {
 		OSD osd = getField(blockName, fieldName, blockNumber);
-		return osd.AsVector3d();
+		return osd.asVector3d();
 	}
 
 	@Override
 	public Vector4 getMessageVector4(String blockName, String fieldName, short blockNumber) throws Exception {
 		OSD osd = getField(blockName, fieldName, blockNumber);
-		return osd.AsVector4();
+		return osd.asVector4();
 	}
 
 	@Override
 	public Quaternion getMessageQuaternion(String blockName, String fieldName, short blockNumber) throws Exception {
 		OSD osd = getField(blockName, fieldName, blockNumber);
-		return osd.AsQuaternion();
+		return osd.asQuaternion();
 	}
 
 	@Override
 	public int getNumberOfBlocks(int blockName) throws Exception {
-		return getNumberOfBlocks(client.Protocol.keywordPosition(blockName));
+		return getNumberOfBlocks(client.protocol.keywordPosition(blockName));
 	}
 
 	@Override
 	public byte getMessageI8(int blockName, int fieldName, short blockNumber) throws Exception {
-		return getMessageI8(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(fieldName),
+		return getMessageI8(client.protocol.keywordPosition(blockName), client.protocol.keywordPosition(fieldName),
 				blockNumber);
 	}
 
 	@Override
 	public short getMessageU8(int blockName, int fieldName, short blockNumber) throws Exception {
-		return getMessageU8(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(fieldName),
+		return getMessageU8(client.protocol.keywordPosition(blockName), client.protocol.keywordPosition(fieldName),
 				blockNumber);
 	}
 
 	@Override
 	public short getMessageI16(int blockName, int fieldName, short blockNumber) throws Exception {
-		return getMessageI16(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(fieldName),
+		return getMessageI16(client.protocol.keywordPosition(blockName), client.protocol.keywordPosition(fieldName),
 				blockNumber);
 	}
 
 	@Override
 	public int getMessageU16(int blockName, int fieldName, short blockNumber) throws Exception {
-		return getMessageU16(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(fieldName),
+		return getMessageU16(client.protocol.keywordPosition(blockName), client.protocol.keywordPosition(fieldName),
 				blockNumber);
 	}
 
 	@Override
 	public int getMessageI32(int blockName, int fieldName, short blockNumber) throws Exception {
-		return getMessageI32(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(fieldName),
+		return getMessageI32(client.protocol.keywordPosition(blockName), client.protocol.keywordPosition(fieldName),
 				blockNumber);
 	}
 
 	@Override
 	public long getMessageU32(int blockName, int fieldName, short blockNumber) throws Exception {
-		return getMessageU32(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(fieldName),
+		return getMessageU32(client.protocol.keywordPosition(blockName), client.protocol.keywordPosition(fieldName),
 				blockNumber);
 	}
 
 	@Override
 	public long getMessageI64(int blockName, int fieldName, short blockNumber) throws Exception {
-		return getMessageI64(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(fieldName),
+		return getMessageI64(client.protocol.keywordPosition(blockName), client.protocol.keywordPosition(fieldName),
 				blockNumber);
 	}
 
 	@Override
 	public long getMessageU64(int blockName, int fieldName, short blockNumber) throws Exception {
-		return getMessageU64(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(fieldName),
+		return getMessageU64(client.protocol.keywordPosition(blockName), client.protocol.keywordPosition(fieldName),
 				blockNumber);
 	}
 
 	@Override
 	public float getMessageF32(int blockName, int fieldName, short blockNumber) throws Exception {
-		return getMessageF32(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(fieldName),
+		return getMessageF32(client.protocol.keywordPosition(blockName), client.protocol.keywordPosition(fieldName),
 				blockNumber);
 	}
 
 	@Override
 	public double getMessageF64(int blockName, int fieldName, short blockNumber) throws Exception {
-		return getMessageF64(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(fieldName),
+		return getMessageF64(client.protocol.keywordPosition(blockName), client.protocol.keywordPosition(fieldName),
 				blockNumber);
 	}
 
 	@Override
 	public String getMessageString(int blockName, int fieldName, short blockNumber) throws Exception {
-		return getMessageString(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(fieldName),
+		return getMessageString(client.protocol.keywordPosition(blockName), client.protocol.keywordPosition(fieldName),
 				blockNumber);
 	}
 
 	@Override
 	public UUID getMessageUUID(int blockName, int fieldName, short blockNumber) throws Exception {
-		return getMessageUUID(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(fieldName),
+		return getMessageUUID(client.protocol.keywordPosition(blockName), client.protocol.keywordPosition(fieldName),
 				blockNumber);
 	}
 
 	@Override
 	public Date getMessageDate(int blockName, int fieldName, short blockNumber) throws Exception {
-		return getMessageDate(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(fieldName),
+		return getMessageDate(client.protocol.keywordPosition(blockName), client.protocol.keywordPosition(fieldName),
 				blockNumber);
 	}
 
 	@Override
 	public Vector3 getMessageVector3(int blockName, int fieldName, short blockNumber) throws Exception {
-		return getMessageVector3(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(fieldName),
+		return getMessageVector3(client.protocol.keywordPosition(blockName), client.protocol.keywordPosition(fieldName),
 				blockNumber);
 	}
 
 	@Override
 	public Vector3d getMessageVector3d(int blockName, int fieldName, short blockNumber) throws Exception {
-		return getMessageVector3d(client.Protocol.keywordPosition(blockName),
-				client.Protocol.keywordPosition(fieldName), blockNumber);
+		return getMessageVector3d(client.protocol.keywordPosition(blockName),
+				client.protocol.keywordPosition(fieldName), blockNumber);
 	}
 
 	@Override
 	public Vector4 getMessageVector4(int blockName, int fieldName, short blockNumber) throws Exception {
-		return getMessageVector4(client.Protocol.keywordPosition(blockName), client.Protocol.keywordPosition(fieldName),
+		return getMessageVector4(client.protocol.keywordPosition(blockName), client.protocol.keywordPosition(fieldName),
 				blockNumber);
 	}
 
 	@Override
 	public Quaternion getMessageQuaternion(int blockName, int fieldName, short blockNumber) throws Exception {
-		return getMessageQuaternion(client.Protocol.keywordPosition(blockName),
-				client.Protocol.keywordPosition(fieldName), blockNumber);
+		return getMessageQuaternion(client.protocol.keywordPosition(blockName),
+				client.protocol.keywordPosition(fieldName), blockNumber);
 	}
 }

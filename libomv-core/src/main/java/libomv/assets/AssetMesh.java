@@ -50,6 +50,18 @@ public class AssetMesh extends AssetItem {
 	// Decoded mesh data
 	private OSDMap meshData;
 
+	/**
+	 * Initializes a new instance of an AssetMesh object with parameters
+	 *
+	 * @param assetID
+	 *            A unique <see cref="UUID"/> specific to this asset
+	 * @param assetData
+	 *            A byte array containing the raw asset data
+	 */
+	public AssetMesh(UUID assetID, byte[] assetData) {
+		super(assetID, assetData);
+	}
+
 	public OSDMap getMeshData() {
 		return meshData;
 	}
@@ -63,18 +75,6 @@ public class AssetMesh extends AssetItem {
 	@Override
 	public AssetType getAssetType() {
 		return AssetType.Mesh;
-	}
-
-	/**
-	 * Initializes a new instance of an AssetMesh object with parameters
-	 *
-	 * @param assetID
-	 *            A unique <see cref="UUID"/> specific to this asset
-	 * @param assetData
-	 *            A byte array containing the raw asset data
-	 */
-	public AssetMesh(UUID assetID, byte[] assetData) {
-		super(assetID, assetData);
 	}
 
 	// TODO: Encodes Collada file into LLMesh format
@@ -106,7 +106,7 @@ public class AssetMesh extends AssetItem {
 				OSD value = header.get(partName);
 				if (value.getType() == OSDType.Map) {
 					OSDMap partInfo = (OSDMap) value;
-					int offset = partInfo.get("offset").AsInteger(), size = partInfo.get("size").AsInteger();
+					int offset = partInfo.get("offset").asInteger(), size = partInfo.get("size").asInteger();
 					if (offset >= 0 && size > 0) {
 						data.reset();
 						data.skip(offset);
@@ -123,6 +123,7 @@ public class AssetMesh extends AssetItem {
 			try {
 				data.close();
 			} catch (IOException e) {
+				// Ignore this final exception as we can't do anything at this point.
 			}
 		}
 	}

@@ -1,6 +1,6 @@
 package libomv.model.parcel;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import libomv.model.Simulator;
 import libomv.utils.CallbackArgs;
@@ -9,7 +9,7 @@ import libomv.utils.CallbackArgs;
 // response to an <see cref="RequestParcelAccesslist"/> request
 public class ParcelObjectOwnersReplyCallbackArgs implements CallbackArgs {
 	private final Simulator simulator;
-	private final ArrayList<ParcelPrimOwners> owners;
+	private final List<ParcelPrimOwners> owners;
 
 	/**
 	 * Construct a new instance of the ParcelObjectOwnersReplyCallbackArgs class
@@ -19,7 +19,7 @@ public class ParcelObjectOwnersReplyCallbackArgs implements CallbackArgs {
 	 * @param primOwners
 	 *            The list containing prim ownership counts
 	 */
-	public ParcelObjectOwnersReplyCallbackArgs(Simulator simulator, ArrayList<ParcelPrimOwners> primOwners) {
+	public ParcelObjectOwnersReplyCallbackArgs(Simulator simulator, List<ParcelPrimOwners> primOwners) {
 		this.simulator = simulator;
 		this.owners = primOwners;
 	}
@@ -30,7 +30,7 @@ public class ParcelObjectOwnersReplyCallbackArgs implements CallbackArgs {
 	}
 
 	// Get the list containing prim ownership counts
-	public final ArrayList<ParcelPrimOwners> getPrimOwners() {
+	public final List<ParcelPrimOwners> getPrimOwners() {
 		return owners;
 	}
 

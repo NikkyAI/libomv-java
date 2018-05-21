@@ -24,10 +24,20 @@ import java.util.List;
 import libomv.types.Vector3;
 
 public class BVHNode {
-	public boolean[] mIgnorePos;
-	public boolean[] mIgnoreRot;
+	public boolean[] ignorePos;
+	public boolean[] ignoreRot;
 
 	private Vector3 offset;
+	private List<Vector3> endSites = new ArrayList<>();
+	private String name;
+	private Channels channels;
+	private List<BVHNode> joints = new ArrayList<>();
+	// usually null for special purpose
+	private String parentName;
+	private BVHTranslation translation;
+
+	public int numPosKeys;
+	public int numRotKeys;
 
 	public Vector3 getOffset() {
 		return offset;
@@ -68,11 +78,6 @@ public class BVHNode {
 		this.channels = channels;
 	}
 
-	private List<Vector3> endSites = new ArrayList<Vector3>();
-	private String name;
-	private Channels channels;
-	private List<BVHNode> joints = new ArrayList<BVHNode>();
-
 	public List<BVHNode> getJoints() {
 		return joints;
 	}
@@ -80,9 +85,6 @@ public class BVHNode {
 	public void add(BVHNode joint) {
 		joints.add(joint);
 	}
-
-	// usually null for special purpose
-	private String parentName;
 
 	public String getParentName() {
 		return parentName;
@@ -92,8 +94,6 @@ public class BVHNode {
 		this.parentName = parentName;
 	}
 
-	private BVHTranslation translation;
-
 	public BVHTranslation getTranslation() {
 		return translation;
 	}
@@ -102,6 +102,4 @@ public class BVHNode {
 		this.translation = translation;
 	}
 
-	public int mNumPosKeys;
-	public int mNumRotKeys;
 }

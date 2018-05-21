@@ -1,6 +1,6 @@
 package libomv.model.directory;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import libomv.types.UUID;
 import libomv.utils.CallbackArgs;
@@ -8,7 +8,7 @@ import libomv.utils.CallbackArgs;
 /** Contains the places data returned from the data server */
 public class DirPlacesReplyCallbackArgs implements CallbackArgs {
 	private final UUID queryID;
-	private final ArrayList<DirectoryParcel> matchedParcels;
+	private final List<DirectoryParcel> matchedParcels;
 
 	/**
 	 * Construct a new instance of the DirPlacesReplyEventArgs class
@@ -20,7 +20,7 @@ public class DirPlacesReplyCallbackArgs implements CallbackArgs {
 	 * @param matchedParcels
 	 *            A list containing land data returned by the data server
 	 */
-	public DirPlacesReplyCallbackArgs(UUID queryID, ArrayList<DirectoryParcel> matchedParcels) {
+	public DirPlacesReplyCallbackArgs(UUID queryID, List<DirectoryParcel> matchedParcels) {
 		this.queryID = queryID;
 		this.matchedParcels = matchedParcels;
 	}
@@ -32,7 +32,7 @@ public class DirPlacesReplyCallbackArgs implements CallbackArgs {
 	}
 
 	// A list containing Places data returned by the data server
-	public final ArrayList<DirectoryParcel> getMatchedParcels() {
+	public final List<DirectoryParcel> getMatchedParcels() {
 		return matchedParcels;
 	}
 

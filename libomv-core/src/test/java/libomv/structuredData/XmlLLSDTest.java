@@ -93,14 +93,14 @@ public class XmlLLSDTest extends TestCase {
 		assertTrue(tempSD instanceof OSDUUID);
 		assertTrue(tempSD.getType() == OSDType.UUID);
 		tempUUID = (OSDUUID) tempSD;
-		assertEquals(new UUID("67153d5b-3659-afb4-8510-adda2c034649"), tempUUID.AsUUID());
+		assertEquals(new UUID("67153d5b-3659-afb4-8510-adda2c034649"), tempUUID.asUUID());
 
 		tempSD = map.get("scale");
 		assertNotNull(tempSD);
 		assertTrue(tempSD instanceof OSDString);
 		assertTrue(tempSD.getType() == OSDType.String);
 		tempStr = (OSDString) tempSD;
-		assertEquals("one minute", tempStr.AsString());
+		assertEquals("one minute", tempStr.asString());
 
 		tempSD = map.get("simulator statistics");
 		assertNotNull(tempSD);
@@ -114,42 +114,42 @@ public class XmlLLSDTest extends TestCase {
 		assertTrue(tempSD.getType() == OSDType.Real);
 		tempReal = (OSDReal) tempSD;
 
-		assertEquals(0.9878624d, tempReal.AsReal());
+		assertEquals(0.9878624d, tempReal.asReal());
 		// TODO - figure out any relevant rounding variability for 64 bit reals
 		tempSD = map.get("sim fps");
 		assertNotNull(tempSD);
 		assertTrue(tempSD instanceof OSDReal);
 		assertTrue(tempSD.getType() == OSDType.Real);
 		tempReal = (OSDReal) tempSD;
-		assertEquals(44.38898d, tempReal.AsReal());
+		assertEquals(44.38898d, tempReal.asReal());
 
 		tempSD = map.get("agent updates per second");
 		assertNotNull(tempSD);
 		assertTrue(tempSD instanceof OSDReal);
 		assertTrue(tempSD.getType() == OSDType.Real);
 		tempReal = (OSDReal) tempSD;
-		assertEquals(Double.NaN, tempSD.AsReal());
+		assertEquals(Double.NaN, tempSD.asReal());
 
 		tempSD = map.get("total task count");
 		assertNotNull(tempSD);
 		assertTrue(tempSD instanceof OSDReal);
 		assertTrue(tempSD.getType() == OSDType.Real);
 		tempReal = (OSDReal) tempSD;
-		assertEquals(4.0d, tempReal.AsReal());
+		assertEquals(4.0d, tempReal.asReal());
 
 		tempSD = map.get("active task count");
 		assertNotNull(tempSD);
 		assertTrue(tempSD instanceof OSDReal);
 		assertTrue(tempSD.getType() == OSDType.Real);
 		tempReal = (OSDReal) tempSD;
-		assertEquals(0.0d, tempReal.AsReal());
+		assertEquals(0.0d, tempReal.asReal());
 
 		tempSD = map.get("pending uploads");
 		assertNotNull(tempSD);
 		assertTrue(tempSD instanceof OSDReal);
 		assertTrue(tempSD.getType() == OSDType.Real);
 		tempReal = (OSDReal) tempSD;
-		assertEquals(0.0001096525d, tempReal.AsReal());
+		assertEquals(0.0001096525d, tempReal.asReal());
 	}
 
 	/// Test that various Real representations are parsed correctly.
@@ -170,23 +170,23 @@ public class XmlLLSDTest extends TestCase {
 
 		assertEquals(OSDType.Real, array.get(0).getType());
 		tempReal = (OSDReal) array.get(0);
-		assertEquals(44.38898d, tempReal.AsReal());
+		assertEquals(44.38898d, tempReal.asReal());
 
 		assertEquals(OSDType.Real, array.get(1).getType());
 		tempReal = (OSDReal) array.get(1);
-		assertEquals(Double.NaN, tempReal.AsReal());
+		assertEquals(Double.NaN, tempReal.asReal());
 
 		assertEquals(OSDType.Real, array.get(2).getType());
 		tempReal = (OSDReal) array.get(2);
-		assertEquals(4.0d, tempReal.AsReal());
+		assertEquals(4.0d, tempReal.asReal());
 
 		assertEquals(OSDType.Real, array.get(3).getType());
 		tempReal = (OSDReal) array.get(3);
-		assertEquals(-13.333d, tempReal.AsReal());
+		assertEquals(-13.333d, tempReal.asReal());
 
 		assertEquals(OSDType.Real, array.get(4).getType());
 		tempReal = (OSDReal) array.get(4);
-		assertEquals(0d, tempReal.AsReal());
+		assertEquals(0d, tempReal.asReal());
 	}
 
 	/// Test that various String representations are parsed correctly.
@@ -209,19 +209,19 @@ public class XmlLLSDTest extends TestCase {
 
 		assertEquals(OSDType.String, array.get(0).getType());
 		tempStr = (OSDString) array.get(0);
-		assertEquals("Kissling", tempStr.AsString());
+		assertEquals("Kissling", tempStr.asString());
 
 		assertEquals(OSDType.String, array.get(1).getType());
 		tempStr = (OSDString) array.get(1);
-		assertEquals("Attack ships on fire off the shoulder of Orion", tempStr.AsString());
+		assertEquals("Attack ships on fire off the shoulder of Orion", tempStr.asString());
 
 		assertEquals(OSDType.String, array.get(2).getType());
 		tempStr = (OSDString) array.get(2);
-		assertEquals("< > & \' \"", tempStr.AsString());
+		assertEquals("< > & \' \"", tempStr.asString());
 
 		assertEquals(OSDType.String, array.get(3).getType());
 		tempStr = (OSDString) array.get(3);
-		assertEquals("", tempStr.AsString());
+		assertEquals("", tempStr.asString());
 	}
 
 	/// Test that various Integer representations are parsed correctly.
@@ -248,23 +248,23 @@ public class XmlLLSDTest extends TestCase {
 
 		assertEquals(OSDType.Integer, array.get(0).getType());
 		tempInt = (OSDInteger) array.get(0);
-		assertEquals(2147483647, tempInt.AsInteger());
+		assertEquals(2147483647, tempInt.asInteger());
 
 		assertEquals(OSDType.Integer, array.get(1).getType());
 		tempInt = (OSDInteger) array.get(1);
-		assertEquals(-2147483648, tempInt.AsInteger());
+		assertEquals(-2147483648, tempInt.asInteger());
 
 		assertEquals(OSDType.Integer, array.get(2).getType());
 		tempInt = (OSDInteger) array.get(2);
-		assertEquals(0, tempInt.AsInteger());
+		assertEquals(0, tempInt.asInteger());
 
 		assertEquals(OSDType.Integer, array.get(3).getType());
 		tempInt = (OSDInteger) array.get(3);
-		assertEquals(13, tempInt.AsInteger());
+		assertEquals(13, tempInt.asInteger());
 
 		assertEquals(OSDType.Integer, array.get(4).getType());
 		tempInt = (OSDInteger) array.get(4);
-		assertEquals(0, tempInt.AsInteger());
+		assertEquals(0, tempInt.asInteger());
 	}
 
 	/// Test that various UUID representations are parsed correctly.
@@ -285,11 +285,11 @@ public class XmlLLSDTest extends TestCase {
 
 		assertEquals(OSDType.UUID, array.get(0).getType());
 		tempUUID = (OSDUUID) array.get(0);
-		assertEquals(new UUID("d7f4aeca-88f1-42a1-b385-b9db18abb255"), tempUUID.AsUUID());
+		assertEquals(new UUID("d7f4aeca-88f1-42a1-b385-b9db18abb255"), tempUUID.asUUID());
 
 		assertEquals(OSDType.UUID, array.get(1).getType());
 		tempUUID = (OSDUUID) array.get(1);
-		assertEquals(UUID.Zero, tempUUID.AsUUID());
+		assertEquals(UUID.Zero, tempUUID.asUUID());
 	}
 
 	/// Test that various date representations are parsed correctly.
@@ -313,17 +313,17 @@ public class XmlLLSDTest extends TestCase {
 		tempDate = (OSDDate) array.get(0);
 		dt.clear();
 		dt.set(2006, 2 - 1, 1, 14, 29, 53);
-		assertEquals(dt.getTime(), tempDate.AsDate());
+		assertEquals(dt.getTime(), tempDate.asDate());
 
 		assertEquals(OSDType.Date, array.get(1).getType());
 		tempDate = (OSDDate) array.get(1);
 		dt.clear();
 		dt.set(1999, 1 - 1, 1, 0, 0, 0);
-		assertEquals(dt.getTime(), tempDate.AsDate());
+		assertEquals(dt.getTime(), tempDate.asDate());
 
 		assertEquals(OSDType.Date, array.get(2).getType());
 		tempDate = (OSDDate) array.get(2);
-		assertEquals(Helpers.Epoch, tempDate.AsDate());
+		assertEquals(Helpers.Epoch, tempDate.asDate());
 	}
 
 	/// Test that various Boolean representations are parsed correctly.
@@ -346,31 +346,31 @@ public class XmlLLSDTest extends TestCase {
 
 		assertEquals(OSDType.Boolean, array.get(0).getType());
 		tempBool = (OSDBoolean) array.get(0);
-		assertEquals(true, tempBool.AsBoolean());
+		assertEquals(true, tempBool.asBoolean());
 
 		assertEquals(OSDType.Boolean, array.get(1).getType());
 		tempBool = (OSDBoolean) array.get(1);
-		assertEquals(true, tempBool.AsBoolean());
+		assertEquals(true, tempBool.asBoolean());
 
 		assertEquals(OSDType.Boolean, array.get(2).getType());
 		tempBool = (OSDBoolean) array.get(2);
-		assertEquals(false, tempBool.AsBoolean());
+		assertEquals(false, tempBool.asBoolean());
 
 		assertEquals(OSDType.Boolean, array.get(3).getType());
 		tempBool = (OSDBoolean) array.get(3);
-		assertEquals(false, tempBool.AsBoolean());
+		assertEquals(false, tempBool.asBoolean());
 
 		assertEquals(OSDType.Boolean, array.get(4).getType());
 		tempBool = (OSDBoolean) array.get(4);
-		assertEquals(false, tempBool.AsBoolean());
+		assertEquals(false, tempBool.asBoolean());
 
 		assertEquals(OSDType.String, array.get(5).getType());
 		tempStr = (OSDString) array.get(5);
-		assertEquals(true, tempStr.AsBoolean());
+		assertEquals(true, tempStr.asBoolean());
 
 		assertEquals(OSDType.String, array.get(6).getType());
 		tempStr = (OSDString) array.get(6);
-		assertEquals(false, tempStr.AsBoolean());
+		assertEquals(false, tempStr.asBoolean());
 	}
 
 	byte[] binary = { 116, 104, 101, 32, 113, 117, 105, 99, 107, 32, 98, 114, 111, 119, 110, 32, 102, 111, 120, 91, 20,
@@ -399,24 +399,24 @@ public class XmlLLSDTest extends TestCase {
 		assertEquals(OSDType.Binary, array.get(0).getType());
 		tempBinary = (OSDBinary) array.get(0);
 		byte[] testData1 = { 114, 97, 110, 100, 111, 109 };
-		assertTrue(Arrays.equals(tempBinary.AsBinary(), testData1));
+		assertTrue(Arrays.equals(tempBinary.asBinary(), testData1));
 
 		assertEquals(OSDType.Binary, array.get(1).getType());
 		tempBinary = (OSDBinary) array.get(1);
 		byte[] testData2 = { 116, 104, 101, 32, 113, 117, 105, 99, 107, 32, 98, 114, 111, 119, 110, 32, 102, 111, 120 };
-		assertTrue(Arrays.equals(tempBinary.AsBinary(), testData2));
+		assertTrue(Arrays.equals(tempBinary.asBinary(), testData2));
 
 		assertEquals(OSDType.Binary, array.get(1).getType());
 		tempBinary = (OSDBinary) array.get(2);
-		assertEquals(0, tempBinary.AsBinary().length);
+		assertEquals(0, tempBinary.asBinary().length);
 	}
 
 	public void testSerializeBinary() throws IOException, ParseException {
-		OSD llsdBinary = OSD.FromBinary(binary);
+		OSD llsdBinary = OSD.fromBinary(binary);
 		String sBinarySerialized = OSDParser.serializeToString(llsdBinary, OSDFormat.Xml);
 		OSD llsdBinaryDS = OSDParser.deserialize(sBinarySerialized);
 		assertEquals(OSDType.Binary, llsdBinaryDS.getType());
-		assertTrue(Arrays.equals(binary, llsdBinaryDS.AsBinary()));
+		assertTrue(Arrays.equals(binary, llsdBinaryDS.asBinary()));
 	}
 
 	/// Test that undefined elements are parsed correctly.
@@ -453,11 +453,11 @@ public class XmlLLSDTest extends TestCase {
 		assertEquals(OSDType.URI, array.get(0).getType());
 		tempURI = (OSDUri) array.get(0);
 		URI testURI = new URI("http://sim956.agni.lindenlab.com:12035/runtime/agents");
-		assertEquals(testURI, tempURI.AsUri());
+		assertEquals(testURI, tempURI.asUri());
 
 		assertEquals(OSDType.URI, array.get(1).getType());
 		tempURI = (OSDUri) array.get(1);
-		assertEquals("", tempURI.AsUri().toString());
+		assertEquals("", tempURI.asUri().toString());
 	}
 
 	/// Test some nested containers. This is not a very deep or complicated SD graph

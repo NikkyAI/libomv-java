@@ -44,6 +44,7 @@
 		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
 		<maven-bundle-plugin.version>3.0.1</maven-bundle-plugin.version>
 		<maven-surefire-plugin.version>2.12.4</maven-surefire-plugin.version>
+		<maven-jacoco-plugin.version>0.8.1</maven-jacoco-plugin.version>
 		<maven-install-plugin.version>2.4</maven-install-plugin.version>
 		<maven-release-plugin.version>2.3.2</maven-release-plugin.version>
 		<maven-jar-plugin.version>2.4</maven-jar-plugin.version>
@@ -171,6 +172,11 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>${maven-surefire-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>${maven-jacoco-plugin.version}</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>

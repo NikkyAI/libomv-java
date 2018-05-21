@@ -30,9 +30,8 @@ package libomv.utils;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
-
-import libomv.utils.Callback;
 
 public class CallbackHandler<T> {
 	/*
@@ -41,7 +40,7 @@ public class CallbackHandler<T> {
 	 * user callbacks being added after the library callbacks but depending on
 	 * information in the library that has been inserted by the library callback.
 	 */
-	private LinkedHashMap<Callback<T>, Boolean> callbackHandlers = null;
+	private Map<Callback<T>, Boolean> callbackHandlers = null;
 
 	public synchronized int count() {
 		if (callbackHandlers != null) {
@@ -68,7 +67,7 @@ public class CallbackHandler<T> {
 	public synchronized boolean add(Callback<T> handler, boolean autoremove) {
 		if (handler != null) {
 			if (callbackHandlers == null)
-				callbackHandlers = new LinkedHashMap<Callback<T>, Boolean>();
+				callbackHandlers = new LinkedHashMap<>();
 
 			return (callbackHandlers.put(handler, autoremove) != null);
 		}

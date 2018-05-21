@@ -94,16 +94,16 @@ public class GroupList extends JScrollPane implements ActionListener {
 		_Comm = comm;
 		_Client = _Main.getGridClient();
 
-		_Client.Groups.OnGroupJoinedReply.add(new GroupJoined());
-		_Client.Groups.OnGroupLeaveReply.add(new GroupLeave());
+		_Client.groups.onGroupJoinedReply.add(new GroupJoined());
+		_Client.groups.onGroupLeaveReply.add(new GroupLeave());
 
-		_Client.Groups.OnCurrentGroups.add(new GroupCurrentGroups());
+		_Client.groups.onCurrentGroups.add(new GroupCurrentGroups());
 		// _Client.Groups.OnGroupCreatedReply.add(new GroupCreated());
 		// _Client.Self.OnMuteListUpdated.add(new MuteListUpdated());
 
 		// CapsEventQueue must be working for this
 		try {
-			_Client.Groups.RequestCurrentGroups();
+			_Client.groups.requestCurrentGroups();
 		} catch (Exception ex) {
 			logger.error(GridClient.Log("Error requesting group names", _Client), ex);
 		}
@@ -251,7 +251,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 			int style = font.getStyle();
 			Group group = (Group) value;
 
-			if (_Client.Self.getActiveGroup().equals(group.getID())) {
+			if (_Client.agent.getActiveGroup().equals(group.getID())) {
 				style |= Font.BOLD;
 			} else {
 				style &= ~Font.BOLD;
@@ -296,7 +296,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 			// Send message
 			add(getJmiSendMessage());
 			// Activate this group
-			add(getJmiActivate(_Client.Self.getActiveGroup().equals(_Info.getID())));
+			add(getJmiActivate(_Client.agent.getActiveGroup().equals(_Info.getID())));
 			// Add the group invitation menu
 			add(getJmiInvite());
 			// Add the group info menu item
@@ -448,7 +448,7 @@ public class GroupList extends JScrollPane implements ActionListener {
 
 				// We need to request to join the group chat
 				try {
-					_Client.Self.RequestJoinGroupChat(info.getID());
+					_Client.agent.requestJoinGroupChat(info.getID());
 					_Comm.setFocus(null, info.getID());
 				} catch (Exception ex) {
 					logger.error(GridClient.Log("Start GroupIM failed", _Client), ex);
@@ -457,14 +457,14 @@ public class GroupList extends JScrollPane implements ActionListener {
 			_Comm.setFocus(null, info.getID());
 		} else if (e.getActionCommand().equals(cmdActivate)) {
 			try {
-				_Client.Groups.ActivateGroup(info.getID());
+				_Client.groups.activateGroup(info.getID());
 			} catch (Exception ex) {
 				logger.error(GridClient.Log("Activate Group failed", _Client), ex);
 			}
 		} else if (e.getActionCommand().equals(cmdLeaveGroup)) {
 			// Terminate the membership
 			try {
-				_Client.Groups.LeaveGroup(info.getID());
+				_Client.groups.leaveGroup(info.getID());
 			} catch (Exception ex) {
 				logger.error(GridClient.Log("Leave Group failed", _Client), ex);
 			}

@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -28,7 +28,7 @@
  */
 package libomv.core.media;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
@@ -38,7 +38,7 @@ import libomv.types.Vector3;
 
 public class MediaObject {
 	protected static MediaManager manager;
-	protected static HashMap<UUID, BufferSound> allBuffers;
+	protected static Map<UUID, BufferSound> allBuffers;
 	protected static LineListener lineCallback;
 
 	/* Indicates if this object's resources have already been disposed */
@@ -117,9 +117,9 @@ public class MediaObject {
 
 	/**
 	 * A callback for asynchronous FMOD calls.
-	 * 
+	 *
 	 * Note: Subclasses override these methods to handle callbacks.
-	 * 
+	 *
 	 * @return true on success, false otherwise
 	 */
 	protected class DispatchEndCallback implements LineListener {
@@ -139,8 +139,8 @@ public class MediaObject {
 		return true;
 	}
 
-	protected static HashMap<SoundSource, MediaObject> allSounds;
-	protected static HashMap<SoundChannel, MediaObject> allChannels;
+	protected static Map<SoundSource, MediaObject> allSounds;
+	protected static Map<SoundChannel, MediaObject> allChannels;
 
 	protected void registerSound(SoundSource sound) {
 		allSounds.put(sound, this);

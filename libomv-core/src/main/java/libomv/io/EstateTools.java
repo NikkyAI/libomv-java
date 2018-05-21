@@ -33,6 +33,7 @@ package libomv.io;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -76,55 +77,55 @@ import libomv.utils.Helpers;
 public class EstateTools implements PacketCallback, CapsCallback {
 	private static final Logger logger = Logger.getLogger(EstateTools.class);
 
-	private GridClient _Client;
+	private GridClient client;
 
 	/// Textures for each of the four terrain height levels
-	public GroundTextureSettings GroundTextures;
+	public GroundTextureSettings groundTextures;
 
 	/// Upper/lower texture boundaries for each corner of the sim
-	public GroundTextureHeightSettings GroundTextureLimits;
+	public GroundTextureHeightSettings groundTextureLimits;
 
-	public CallbackHandler<TopCollidersReplyCallbackArgs> OnTopCollidersReply = new CallbackHandler<TopCollidersReplyCallbackArgs>();
+	public CallbackHandler<TopCollidersReplyCallbackArgs> onTopCollidersReply = new CallbackHandler<>();
 
-	public CallbackHandler<TopScriptsReplyCallbackArgs> OnTopScriptsReply = new CallbackHandler<TopScriptsReplyCallbackArgs>();
+	public CallbackHandler<TopScriptsReplyCallbackArgs> onTopScriptsReply = new CallbackHandler<>();
 
-	public CallbackHandler<EstateBansReplyCallbackArgs> OnEstateBansReply = new CallbackHandler<EstateBansReplyCallbackArgs>();
+	public CallbackHandler<EstateBansReplyCallbackArgs> onEstateBansReply = new CallbackHandler<>();
 
-	public CallbackHandler<EstateUsersReplyCallbackArgs> OnEstateUsersReply = new CallbackHandler<EstateUsersReplyCallbackArgs>();
+	public CallbackHandler<EstateUsersReplyCallbackArgs> onEstateUsersReply = new CallbackHandler<>();
 
-	public CallbackHandler<EstateGroupsReplyCallbackArgs> OnEstateGroupsReply = new CallbackHandler<EstateGroupsReplyCallbackArgs>();
+	public CallbackHandler<EstateGroupsReplyCallbackArgs> onEstateGroupsReply = new CallbackHandler<>();
 
-	public CallbackHandler<EstateManagersReplyCallbackArgs> OnEstateManagersReply = new CallbackHandler<EstateManagersReplyCallbackArgs>();
+	public CallbackHandler<EstateManagersReplyCallbackArgs> onEstateManagersReply = new CallbackHandler<>();
 
-	public CallbackHandler<EstateCovenantReplyCallbackArgs> OnEstateCovenantReply = new CallbackHandler<EstateCovenantReplyCallbackArgs>();
+	public CallbackHandler<EstateCovenantReplyCallbackArgs> onEstateCovenantReply = new CallbackHandler<>();
 
-	public CallbackHandler<EstateUpdateInfoReplyCallbackArgs> OnEstateUpdateInfoReply = new CallbackHandler<EstateUpdateInfoReplyCallbackArgs>();
+	public CallbackHandler<EstateUpdateInfoReplyCallbackArgs> onEstateUpdateInfoReply = new CallbackHandler<>();
 
 	// @param client
 	public EstateTools(GridClient client) {
-		_Client = client;
+		this.client = client;
 
-		GroundTextures = new GroundTextureSettings();
-		GroundTextureLimits = new GroundTextureHeightSettings();
+		this.groundTextures = new GroundTextureSettings();
+		this.groundTextureLimits = new GroundTextureHeightSettings();
 
-		_Client.Network.RegisterCallback(PacketType.LandStatReply, this);
-		_Client.Network.RegisterCallback(PacketType.EstateOwnerMessage, this);
-		_Client.Network.RegisterCallback(PacketType.EstateCovenantReply, this);
+		this.client.network.registerCallback(PacketType.LandStatReply, this);
+		this.client.network.registerCallback(PacketType.EstateOwnerMessage, this);
+		this.client.network.registerCallback(PacketType.EstateCovenantReply, this);
 
-		_Client.Network.RegisterCallback(CapsEventType.LandStatReply, this);
+		this.client.network.registerCallback(CapsEventType.LandStatReply, this);
 	}
 
 	@Override
 	public void packetCallback(Packet packet, Simulator simulator) throws Exception {
 		switch (packet.getType()) {
 		case LandStatReply:
-			HandleLandStatReply(packet, simulator);
+			handleLandStatReply(packet, simulator);
 			break;
 		case EstateOwnerMessage:
-			HandleEstateOwnerMessage(packet, simulator);
+			handleEstateOwnerMessage(packet, simulator);
 			break;
 		case EstateCovenantReply:
-			HandleEstateCovenantReply(packet, simulator);
+			handleEstateCovenantReply(packet, simulator);
 			break;
 		default:
 			break;
@@ -135,7 +136,7 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	public void capsCallback(IMessage message, SimulatorManager simulator) throws Exception {
 		switch (message.getType()) {
 		case LandStatReply:
-			HandleLandStatReply(message, simulator);
+			handleLandStatReply(message, simulator);
 			break;
 		default:
 			break;
@@ -151,34 +152,34 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 * @param filter
 	 * @throws Exception
 	 */
-	public void LandStatRequest(int parcelLocalID, LandStatReportType reportType, int requestFlags, String filter)
+	public void landStatRequest(int parcelLocalID, LandStatReportType reportType, int requestFlags, String filter)
 			throws Exception {
 		LandStatRequestPacket p = new LandStatRequestPacket();
-		p.AgentData.AgentID = _Client.Self.getAgentID();
-		p.AgentData.SessionID = _Client.Self.getSessionID();
-		p.RequestData.setFilter(Helpers.StringToBytes(filter));
+		p.AgentData.AgentID = client.agent.getAgentID();
+		p.AgentData.SessionID = client.agent.getSessionID();
+		p.RequestData.setFilter(Helpers.stringToBytes(filter));
 		p.RequestData.ParcelLocalID = parcelLocalID;
 		p.RequestData.ReportType = reportType.ordinal();
 		p.RequestData.RequestFlags = requestFlags;
-		_Client.Network.sendPacket(p);
+		client.network.sendPacket(p);
 	}
 
 	/// <summary>Requests estate settings, including estate manager and access/ban
 	/// lists</summary>
-	public void RequestInfo() throws Exception {
-		EstateOwnerMessage("getinfo", "");
+	public void requestInfo() throws Exception {
+		estateOwnerMessage("getinfo", "");
 	}
 
 	/// <summary>Requests the "Top Scripts" list for the current region</summary>
-	public void RequestTopScripts() throws Exception {
+	public void requestTopScripts() throws Exception {
 		// EstateOwnerMessage("scripts", "");
-		LandStatRequest(0, LandStatReportType.TopScripts, 0, "");
+		landStatRequest(0, LandStatReportType.TopScripts, 0, "");
 	}
 
 	/// <summary>Requests the "Top Colliders" list for the current region</summary>
-	public void RequestTopColliders() throws Exception {
+	public void requestTopColliders() throws Exception {
 		// EstateOwnerMessage("colliders", "");
-		LandStatRequest(0, LandStatReportType.TopColliders, 0, "");
+		landStatRequest(0, LandStatReportType.TopColliders, 0, "");
 	}
 
 	/**
@@ -202,7 +203,7 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *            true the static position the sun will remain.
 	 * @remarks >6.0 = Sunrise, 30.0 = Sunset
 	 */
-	public void SetTerrainVariables(float waterHeight, float terrainRaiseLimit, float terrainLowerLimit,
+	public void setTerrainVariables(float waterHeight, float terrainRaiseLimit, float terrainLowerLimit,
 			boolean useEstateSun, boolean fixedSun, float sunPosition) throws Exception {
 		ArrayList<String> simVariables = new ArrayList<String>();
 		simVariables.add(String.format(Helpers.EnUsCulture, "%f", waterHeight));
@@ -214,7 +215,7 @@ public class EstateTools implements PacketCallback, CapsCallback {
 		simVariables.add("Y"); // Not used?
 		simVariables.add("N"); // Not used?
 		simVariables.add("0.00"); // Also not used?
-		EstateOwnerMessage("setregionterrain", simVariables);
+		estateOwnerMessage("setregionterrain", simVariables);
 	}
 
 	/**
@@ -228,19 +229,19 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 * @param estateWide
 	 *            true to perform return on entire estate
 	 */
-	public void SimWideReturn(UUID target, EstateReturnFlags flag, boolean estateWide) throws Exception {
+	public void simWideReturn(UUID target, EstateReturnFlags flag, boolean estateWide) throws Exception {
 		if (estateWide) {
 			ArrayList<String> param = new ArrayList<String>();
 			param.add(flag.toString());
 			param.add(target.toString());
-			EstateOwnerMessage("estateobjectreturn", param);
+			estateOwnerMessage("estateobjectreturn", param);
 		} else {
 			SimWideDeletesPacket simDelete = new SimWideDeletesPacket();
-			simDelete.AgentData.AgentID = _Client.Self.getAgentID();
-			simDelete.AgentData.SessionID = _Client.Self.getSessionID();
+			simDelete.AgentData.AgentID = client.agent.getAgentID();
+			simDelete.AgentData.SessionID = client.agent.getSessionID();
 			simDelete.DataBlock.TargetID = target;
 			simDelete.DataBlock.Flags = flag.getValue();
-			_Client.Network.sendPacket(simDelete);
+			client.network.sendPacket(simDelete);
 		}
 	}
 
@@ -253,10 +254,10 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *            Single parameter to include
 	 * @throws Exception
 	 */
-	public void EstateOwnerMessage(String method, String param) throws Exception {
+	public void estateOwnerMessage(String method, String param) throws Exception {
 		ArrayList<String> listParams = new ArrayList<String>();
 		listParams.add(param);
-		EstateOwnerMessage(method, listParams);
+		estateOwnerMessage(method, listParams);
 	}
 
 	/**
@@ -268,19 +269,19 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *            List of parameters to include
 	 * @throws Exception
 	 */
-	public void EstateOwnerMessage(String method, ArrayList<String> listParams) throws Exception {
+	public void estateOwnerMessage(String method, List<String> listParams) throws Exception {
 		EstateOwnerMessagePacket estate = new EstateOwnerMessagePacket();
-		estate.AgentData.AgentID = _Client.Self.getAgentID();
-		estate.AgentData.SessionID = _Client.Self.getSessionID();
+		estate.AgentData.AgentID = client.agent.getAgentID();
+		estate.AgentData.SessionID = client.agent.getSessionID();
 		estate.AgentData.TransactionID = UUID.Zero;
 		estate.MethodData.Invoice = new UUID();
-		estate.MethodData.setMethod(Helpers.StringToBytes(method));
+		estate.MethodData.setMethod(Helpers.stringToBytes(method));
 		estate.ParamList = new EstateOwnerMessagePacket.ParamListBlock[listParams.size()];
 		for (int i = 0; i < listParams.size(); i++) {
 			estate.ParamList[i] = estate.new ParamListBlock();
-			estate.ParamList[i].setParameter(Helpers.StringToBytes(listParams.get(i)));
+			estate.ParamList[i].setParameter(Helpers.stringToBytes(listParams.get(i)));
 		}
-		_Client.Network.sendPacket(estate);
+		client.network.sendPacket(estate);
 	}
 
 	/**
@@ -291,8 +292,8 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void KickUser(UUID userID) throws Exception {
-		EstateOwnerMessage("kickestate", userID.toString());
+	public void kickUser(UUID userID) throws Exception {
+		estateOwnerMessage("kickestate", userID.toString());
 	}
 
 	/**
@@ -305,17 +306,17 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void EjectUser(UUID targetID, boolean ban) throws Exception {
+	public void ejectUser(UUID targetID, boolean ban) throws Exception {
 		EjectUserPacket eject = new EjectUserPacket();
-		eject.AgentData.AgentID = _Client.Self.getAgentID();
-		eject.AgentData.SessionID = _Client.Self.getSessionID();
+		eject.AgentData.AgentID = client.agent.getAgentID();
+		eject.AgentData.SessionID = client.agent.getSessionID();
 		eject.Data.TargetID = targetID;
 		if (ban)
 			eject.Data.Flags = 1;
 		else
 			eject.Data.Flags = 0;
 
-		_Client.Network.sendPacket(eject);
+		client.network.sendPacket(eject);
 	}
 
 	/**
@@ -328,17 +329,17 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void FreezeUser(UUID targetID, boolean freeze) throws Exception {
+	public void freezeUser(UUID targetID, boolean freeze) throws Exception {
 		FreezeUserPacket frz = new FreezeUserPacket();
-		frz.AgentData.AgentID = _Client.Self.getAgentID();
-		frz.AgentData.SessionID = _Client.Self.getSessionID();
+		frz.AgentData.AgentID = client.agent.getAgentID();
+		frz.AgentData.SessionID = client.agent.getSessionID();
 		frz.Data.TargetID = targetID;
 		if (freeze)
 			frz.Data.Flags = 0;
 		else
 			frz.Data.Flags = 1;
 
-		_Client.Network.sendPacket(frz);
+		client.network.sendPacket(frz);
 	}
 
 	/**
@@ -352,14 +353,14 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void BanUser(UUID userID, boolean allEstates) throws Exception {
+	public void banUser(UUID userID, boolean allEstates) throws Exception {
 		ArrayList<String> listParams = new ArrayList<String>();
 		Integer flag = allEstates ? EstateAccessDelta.BanUserAllEstates.getValue()
 				: EstateAccessDelta.BanUser.getValue();
-		listParams.add(_Client.Self.getAgentID().toString());
+		listParams.add(client.agent.getAgentID().toString());
 		listParams.add(flag.toString());
 		listParams.add(userID.toString());
-		EstateOwnerMessage("estateaccessdelta", listParams);
+		estateOwnerMessage("estateaccessdelta", listParams);
 	}
 
 	/**
@@ -373,14 +374,14 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void UnbanUser(UUID userID, boolean allEstates) throws Exception {
+	public void unbanUser(UUID userID, boolean allEstates) throws Exception {
 		ArrayList<String> listParams = new ArrayList<String>();
 		Integer flag = allEstates ? EstateAccessDelta.UnbanUserAllEstates.getValue()
 				: EstateAccessDelta.UnbanUser.getValue();
-		listParams.add(_Client.Self.getAgentID().toString());
+		listParams.add(client.agent.getAgentID().toString());
 		listParams.add(flag.toString());
 		listParams.add(userID.toString());
-		EstateOwnerMessage("estateaccessdelta", listParams);
+		estateOwnerMessage("estateaccessdelta", listParams);
 	}
 
 	/**
@@ -391,11 +392,11 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void EstateMessage(String message) throws Exception {
+	public void estateMessage(String message) throws Exception {
 		ArrayList<String> listParams = new ArrayList<String>(2);
-		listParams.add(_Client.Self.getName());
+		listParams.add(client.agent.getName());
 		listParams.add(message);
-		EstateOwnerMessage("instantmessage", listParams);
+		estateOwnerMessage("instantmessage", listParams);
 	}
 
 	/**
@@ -406,14 +407,14 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void SimulatorMessage(String message) throws Exception {
+	public void simulatorMessage(String message) throws Exception {
 		ArrayList<String> listParams = new ArrayList<String>(5);
 		listParams.add("-1");
 		listParams.add("-1");
-		listParams.add(_Client.Self.getAgentID().toString());
-		listParams.add(_Client.Self.getName());
+		listParams.add(client.agent.getAgentID().toString());
+		listParams.add(client.agent.getName());
 		listParams.add(message);
-		EstateOwnerMessage("simulatormessage", listParams);
+		estateOwnerMessage("simulatormessage", listParams);
 	}
 
 	/**
@@ -424,11 +425,11 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void TeleportHomeUser(UUID userID) throws Exception {
+	public void teleportHomeUser(UUID userID) throws Exception {
 		ArrayList<String> listParams = new ArrayList<String>(2);
-		listParams.add(_Client.Self.getAgentID().toString());
+		listParams.add(client.agent.getAgentID().toString());
 		listParams.add(userID.toString());
-		EstateOwnerMessage("teleporthomeuser", listParams);
+		estateOwnerMessage("teleporthomeuser", listParams);
 	}
 
 	/**
@@ -439,10 +440,10 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void TeleportHomeAllUsers(UUID userID) throws Exception {
+	public void teleportHomeAllUsers(UUID userID) throws Exception {
 		ArrayList<String> listParams = new ArrayList<String>();
-		listParams.add(_Client.Self.getAgentID().toString());
-		EstateOwnerMessage("teleporthomeallusers", listParams);
+		listParams.add(client.agent.getAgentID().toString());
+		estateOwnerMessage("teleporthomeallusers", listParams);
 	}
 
 	/**
@@ -450,8 +451,8 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void RestartRegion() throws Exception {
-		EstateOwnerMessage("restart", "120");
+	public void restartRegion() throws Exception {
+		estateOwnerMessage("restart", "120");
 	}
 
 	/**
@@ -459,8 +460,8 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void CancelRestart() throws Exception {
-		EstateOwnerMessage("restart", "-1");
+	public void cancelRestart() throws Exception {
+		estateOwnerMessage("restart", "-1");
 	}
 
 	/**
@@ -468,7 +469,7 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void SetRegionInfo(boolean blockTerraform, boolean blockFly, boolean allowDamage, boolean allowLandResell,
+	public void setRegionInfo(boolean blockTerraform, boolean blockFly, boolean allowDamage, boolean allowLandResell,
 			boolean restrictPushing, boolean allowParcelJoinDivide, float agentLimit, float objectBonus, boolean mature)
 			throws Exception {
 		ArrayList<String> listParams = new ArrayList<String>(9);
@@ -502,7 +503,7 @@ public class EstateTools implements PacketCallback, CapsCallback {
 			listParams.add("Y");
 		else
 			listParams.add("N");
-		EstateOwnerMessage("setregioninfo", listParams);
+		estateOwnerMessage("setregioninfo", listParams);
 	}
 
 	/**
@@ -510,7 +511,7 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void SetRegionDebug(boolean disableScripts, boolean disableCollisions, boolean disablePhysics)
+	public void setRegionDebug(boolean disableScripts, boolean disableCollisions, boolean disablePhysics)
 			throws Exception {
 		ArrayList<String> listParams = new ArrayList<String>(3);
 		if (disableScripts)
@@ -525,7 +526,7 @@ public class EstateTools implements PacketCallback, CapsCallback {
 			listParams.add("Y");
 		else
 			listParams.add("N");
-		EstateOwnerMessage("setregiondebug", listParams);
+		estateOwnerMessage("setregiondebug", listParams);
 	}
 
 	/**
@@ -538,14 +539,14 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void SetRegionTerrain(UUID low, UUID midLow, UUID midHigh, UUID high) throws Exception {
+	public void setRegionTerrain(UUID low, UUID midLow, UUID midHigh, UUID high) throws Exception {
 		ArrayList<String> listParams = new ArrayList<String>(4);
 		listParams.add("0 " + low.toString());
 		listParams.add("1 " + midLow.toString());
 		listParams.add("2 " + midHigh.toString());
 		listParams.add("3 " + high.toString());
-		EstateOwnerMessage("texturedetail", listParams);
-		EstateOwnerMessage("texturecommit", "");
+		estateOwnerMessage("texturedetail", listParams);
+		estateOwnerMessage("texturecommit", "");
 	}
 
 	/**
@@ -553,15 +554,15 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void SetRegionTerrainHeights(float lowSW, float highSW, float lowNW, float highNW, float lowSE, float highSE,
+	public void setRegionTerrainHeights(float lowSW, float highSW, float lowNW, float highNW, float lowSE, float highSE,
 			float lowNE, float highNE) throws Exception {
 		ArrayList<String> listParams = new ArrayList<String>(4);
 		listParams.add(String.format(Helpers.EnUsCulture, "0 %f %f", lowSW, highSW)); // SW low-high
 		listParams.add(String.format(Helpers.EnUsCulture, "1 %f %f", lowNW, highNW)); // NW low-high
 		listParams.add(String.format(Helpers.EnUsCulture, "2 %f %f", lowSE, highSE)); // SE low-high
 		listParams.add(String.format(Helpers.EnUsCulture, "3 %f %f", lowNE, highNE)); // NE low-high
-		EstateOwnerMessage("textureheights", listParams);
-		EstateOwnerMessage("texturecommit", "");
+		estateOwnerMessage("textureheights", listParams);
+		estateOwnerMessage("texturecommit", "");
 	}
 
 	/**
@@ -569,11 +570,11 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void RequestCovenant() throws Exception {
+	public void requestCovenant() throws Exception {
 		EstateCovenantRequestPacket req = new EstateCovenantRequestPacket();
-		req.AgentData.AgentID = _Client.Self.getAgentID();
-		req.AgentData.SessionID = _Client.Self.getSessionID();
-		_Client.Network.sendPacket(req);
+		req.AgentData.AgentID = client.agent.getAgentID();
+		req.AgentData.SessionID = client.agent.getSessionID();
+		client.network.sendPacket(req);
 	}
 
 	/**
@@ -586,9 +587,9 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 * @throws Exception
 	 * @returns The Id of the transfer request
 	 */
-	public UUID UploadTerrain(byte[] fileData, String fileName) throws Exception {
+	public UUID uploadTerrain(byte[] fileData, String fileName) throws Exception {
 		// Tell the library we have a pending file to upload
-		UUID transactionID = _Client.Assets.RequestUpload(AssetType.Unknown, fileData, false);
+		UUID transactionID = client.assets.requestUpload(AssetType.Unknown, fileData, false);
 
 		// Create and populate a list with commands specific to uploading a raw terrain
 		// file
@@ -597,7 +598,7 @@ public class EstateTools implements PacketCallback, CapsCallback {
 		paramList.add(fileName);
 
 		// Tell the simulator we have a new raw file to upload
-		EstateOwnerMessage("terrain", paramList);
+		estateOwnerMessage("terrain", paramList);
 
 		return transactionID;
 	}
@@ -607,10 +608,10 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void TeleportHomeAllUsers() throws Exception {
+	public void teleportHomeAllUsers() throws Exception {
 		ArrayList<String> params = new ArrayList<String>(1);
-		params.add(_Client.Self.getAgentID().toString());
-		EstateOwnerMessage("teleporthomeallusers", params);
+		params.add(client.agent.getAgentID().toString());
+		estateOwnerMessage("teleporthomeallusers", params);
 	}
 
 	/**
@@ -624,14 +625,14 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void RemoveEstateManager(UUID userID, boolean allEstates) throws Exception {
+	public void removeEstateManager(UUID userID, boolean allEstates) throws Exception {
 		ArrayList<String> listParams = new ArrayList<String>(3);
 		Integer flag = allEstates ? EstateAccessDelta.RemoveManagerAllEstates.getValue()
 				: EstateAccessDelta.RemoveManager.getValue();
-		listParams.add(_Client.Self.getAgentID().toString());
+		listParams.add(client.agent.getAgentID().toString());
 		listParams.add(flag.toString());
 		listParams.add(userID.toString());
-		EstateOwnerMessage("estateaccessdelta", listParams);
+		estateOwnerMessage("estateaccessdelta", listParams);
 	}
 
 	/**
@@ -645,14 +646,14 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void AddEstateManager(UUID userID, boolean allEstates) throws Exception {
+	public void addEstateManager(UUID userID, boolean allEstates) throws Exception {
 		ArrayList<String> listParams = new ArrayList<String>(3);
 		Integer flag = allEstates ? EstateAccessDelta.AddManagerAllEstates.getValue()
 				: EstateAccessDelta.AddManager.getValue();
-		listParams.add(_Client.Self.getAgentID().toString());
+		listParams.add(client.agent.getAgentID().toString());
 		listParams.add(flag.toString());
 		listParams.add(userID.toString());
-		EstateOwnerMessage("estateaccessdelta", listParams);
+		estateOwnerMessage("estateaccessdelta", listParams);
 	}
 
 	/**
@@ -665,14 +666,14 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void AddAllowedUser(UUID userID, boolean allEstates) throws Exception {
+	public void addAllowedUser(UUID userID, boolean allEstates) throws Exception {
 		ArrayList<String> listParams = new ArrayList<String>(3);
 		Integer flag = allEstates ? EstateAccessDelta.AddAllowedAllEstates.getValue()
 				: EstateAccessDelta.AddUserAsAllowed.getValue();
-		listParams.add(_Client.Self.getAgentID().toString());
+		listParams.add(client.agent.getAgentID().toString());
 		listParams.add(flag.toString());
 		listParams.add(userID.toString());
-		EstateOwnerMessage("estateaccessdelta", listParams);
+		estateOwnerMessage("estateaccessdelta", listParams);
 	}
 
 	/**
@@ -684,14 +685,14 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *            Removes agent as an allowed resident from all estates if true
 	 * @throws Exception
 	 */
-	public void RemoveAllowedUser(UUID userID, boolean allEstates) throws Exception {
+	public void removeAllowedUser(UUID userID, boolean allEstates) throws Exception {
 		ArrayList<String> listParams = new ArrayList<String>(3);
 		Integer flag = allEstates ? EstateAccessDelta.RemoveUserAllowedAllEstates.getValue()
 				: EstateAccessDelta.RemoveUserAsAllowed.getValue();
-		listParams.add(_Client.Self.getAgentID().toString());
+		listParams.add(client.agent.getAgentID().toString());
 		listParams.add(flag.toString());
 		listParams.add(userID.toString());
-		EstateOwnerMessage("estateaccessdelta", listParams);
+		estateOwnerMessage("estateaccessdelta", listParams);
 	}
 
 	/**
@@ -704,15 +705,15 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void AddAllowedGroup(UUID groupID, boolean allEstates) throws Exception {
+	public void addAllowedGroup(UUID groupID, boolean allEstates) throws Exception {
 		ArrayList<String> listParams = new ArrayList<String>(3);
 		Integer flag = allEstates ? EstateAccessDelta.AddGroupAllowedAllEstates.getValue()
 				: EstateAccessDelta.AddGroupAsAllowed.getValue();
 
-		listParams.add(_Client.Self.getAgentID().toString());
+		listParams.add(client.agent.getAgentID().toString());
 		listParams.add(flag.toString());
 		listParams.add(groupID.toString());
-		EstateOwnerMessage("estateaccessdelta", listParams);
+		estateOwnerMessage("estateaccessdelta", listParams);
 	}
 
 	/**
@@ -725,26 +726,26 @@ public class EstateTools implements PacketCallback, CapsCallback {
 	 *
 	 * @throws Exception
 	 */
-	public void RemoveAllowedGroup(UUID groupID, boolean allEstates) throws Exception {
+	public void removeAllowedGroup(UUID groupID, boolean allEstates) throws Exception {
 		ArrayList<String> listParams = new ArrayList<String>(3);
 		Integer flag = allEstates ? EstateAccessDelta.RemoveGroupAllowedAllEstates.getValue()
 				: EstateAccessDelta.RemoveGroupAsAllowed.getValue();
-		listParams.add(_Client.Self.getAgentID().toString());
+		listParams.add(client.agent.getAgentID().toString());
 		listParams.add(flag.toString());
 		listParams.add(groupID.toString());
-		EstateOwnerMessage("estateaccessdelta", listParams);
+		estateOwnerMessage("estateaccessdelta", listParams);
 	}
 	// #endregion
 
 	// #region Packet Handlers
-	private void HandleEstateCovenantReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
+	private void handleEstateCovenantReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
 		EstateCovenantReplyPacket reply = (EstateCovenantReplyPacket) packet;
-		OnEstateCovenantReply
+		onEstateCovenantReply
 				.dispatch(new EstateCovenantReplyCallbackArgs(reply.Data.CovenantID, reply.Data.CovenantTimestamp,
 						Helpers.BytesToString(reply.Data.getEstateName()), reply.Data.EstateOwnerID));
 	}
 
-	private void HandleEstateOwnerMessage(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
+	private void handleEstateOwnerMessage(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
 		EstateOwnerMessagePacket message = (EstateOwnerMessagePacket) packet;
 		int estateID;
 		String method = Helpers.BytesToString(message.MethodData.getMethod());
@@ -764,7 +765,7 @@ public class EstateTools implements PacketCallback, CapsCallback {
 			else
 				denyNoPaymentInfo = false;
 
-			OnEstateUpdateInfoReply.dispatch(
+			onEstateUpdateInfoReply.dispatch(
 					new EstateUpdateInfoReplyCallbackArgs(estateName, estateOwner, estateID, denyNoPaymentInfo));
 		}
 
@@ -796,10 +797,10 @@ public class EstateTools implements PacketCallback, CapsCallback {
 								UUID managerID = new UUID(message.ParamList[i].getParameter(), 0);
 								managers.add(managerID);
 							} catch (Exception ex) {
-								logger.error(GridClient.Log(ex.getMessage(), _Client), ex);
+								logger.error(GridClient.Log(ex.getMessage(), client), ex);
 							}
 						}
-						OnEstateManagersReply.dispatch(new EstateManagersReplyCallbackArgs(estateID, param, managers));
+						onEstateManagersReply.dispatch(new EstateManagersReplyCallbackArgs(estateID, param, managers));
 					}
 				}
 					break;
@@ -818,10 +819,10 @@ public class EstateTools implements PacketCallback, CapsCallback {
 								UUID bannedID = new UUID(message.ParamList[i].getParameter(), 0);
 								bannedUsers.add(bannedID);
 							} catch (Exception ex) {
-								logger.error(GridClient.Log(ex.getMessage(), _Client), ex);
+								logger.error(GridClient.Log(ex.getMessage(), client), ex);
 							}
 						}
-						OnEstateBansReply.dispatch(new EstateBansReplyCallbackArgs(estateID, param, bannedUsers));
+						onEstateBansReply.dispatch(new EstateBansReplyCallbackArgs(estateID, param, bannedUsers));
 					}
 				}
 					break;
@@ -840,10 +841,10 @@ public class EstateTools implements PacketCallback, CapsCallback {
 								UUID allowedID = new UUID(message.ParamList[i].getParameter(), 0);
 								allowedUsers.add(allowedID);
 							} catch (Exception ex) {
-								logger.error(GridClient.Log(ex.getMessage(), _Client), ex);
+								logger.error(GridClient.Log(ex.getMessage(), client), ex);
 							}
 						}
-						OnEstateUsersReply.dispatch(new EstateUsersReplyCallbackArgs(estateID, param, allowedUsers));
+						onEstateUsersReply.dispatch(new EstateUsersReplyCallbackArgs(estateID, param, allowedUsers));
 					}
 				}
 					break;
@@ -862,10 +863,10 @@ public class EstateTools implements PacketCallback, CapsCallback {
 								UUID groupID = new UUID(message.ParamList[i].getParameter(), 0);
 								allowedGroups.add(groupID);
 							} catch (Exception ex) {
-								logger.error(GridClient.Log(ex.getMessage(), _Client), ex);
+								logger.error(GridClient.Log(ex.getMessage(), client), ex);
 							}
 						}
-						OnEstateGroupsReply.dispatch(new EstateGroupsReplyCallbackArgs(estateID, param, allowedGroups));
+						onEstateGroupsReply.dispatch(new EstateGroupsReplyCallbackArgs(estateID, param, allowedGroups));
 					}
 				}
 					break;
@@ -876,7 +877,7 @@ public class EstateTools implements PacketCallback, CapsCallback {
 		}
 	}
 
-	private void HandleLandStatReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
+	private void handleLandStatReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
 		// if (OnLandStatReply != null || OnGetTopScripts != null || OnGetTopColliders
 		// != null)
 		// if (OnGetTopScripts != null || OnGetTopColliders != null)
@@ -898,9 +899,9 @@ public class EstateTools implements PacketCallback, CapsCallback {
 			LandStatReportType type = LandStatReportType.setValue(p.RequestData.ReportType);
 
 			if (type == LandStatReportType.TopScripts) {
-				OnTopScriptsReply.dispatch(new TopScriptsReplyCallbackArgs(p.RequestData.TotalObjectCount, Tasks));
+				onTopScriptsReply.dispatch(new TopScriptsReplyCallbackArgs(p.RequestData.TotalObjectCount, Tasks));
 			} else if (type == LandStatReportType.TopColliders) {
-				OnTopCollidersReply.dispatch(new TopCollidersReplyCallbackArgs(p.RequestData.TotalObjectCount, Tasks));
+				onTopCollidersReply.dispatch(new TopCollidersReplyCallbackArgs(p.RequestData.TotalObjectCount, Tasks));
 			}
 
 			/*
@@ -911,7 +912,7 @@ public class EstateTools implements PacketCallback, CapsCallback {
 		}
 	}
 
-	private void HandleLandStatReply(IMessage message, Simulator simulator) {
+	private void handleLandStatReply(IMessage message, Simulator simulator) {
 		LandStatReplyMessage m = (LandStatReplyMessage) message;
 		HashMap<UUID, EstateTask> Tasks = new HashMap<UUID, EstateTask>(m.reportDataBlocks.length);
 
@@ -930,9 +931,9 @@ public class EstateTools implements PacketCallback, CapsCallback {
 		LandStatReportType type = LandStatReportType.setValue(m.reportType);
 
 		if (type == LandStatReportType.TopScripts) {
-			OnTopScriptsReply.dispatch(new TopScriptsReplyCallbackArgs(m.totalObjectCount, Tasks));
+			onTopScriptsReply.dispatch(new TopScriptsReplyCallbackArgs(m.totalObjectCount, Tasks));
 		} else if (type == LandStatReportType.TopColliders) {
-			OnTopCollidersReply.dispatch(new TopCollidersReplyCallbackArgs(m.totalObjectCount, Tasks));
+			onTopCollidersReply.dispatch(new TopCollidersReplyCallbackArgs(m.totalObjectCount, Tasks));
 		}
 	}
 	// #endregion

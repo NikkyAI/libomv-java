@@ -57,7 +57,7 @@ public class InventoryTree extends JScrollPane implements TreeWillExpandListener
 
 	private JTree getJTInventory() {
 		if (jTrInventory == null) {
-			jTrInventory = new JTree(new InventoryTreeModel(_Client.Inventory));
+			jTrInventory = new JTree(new InventoryTreeModel(_Client.inventory));
 			jTrInventory.setRootVisible(false);
 			jTrInventory.setCellRenderer(new CellRenderer(jTrInventory.getCellRenderer()));
 		}

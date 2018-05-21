@@ -1,7 +1,7 @@
 package libomv.model.group;
 
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Map;
 
 import libomv.types.UUID;
 import libomv.utils.CallbackArgs;
@@ -10,9 +10,9 @@ import libomv.utils.CallbackArgs;
 public class BannedAgentsCallbackArgs implements CallbackArgs {
 	private final UUID groupID;
 	private final boolean success;
-	private final HashMap<UUID, Date> bannedAgents;
+	private final Map<UUID, Date> bannedAgents;
 
-	public BannedAgentsCallbackArgs(UUID groupID, boolean success, HashMap<UUID, Date> bannedAgents) {
+	public BannedAgentsCallbackArgs(UUID groupID, boolean success, Map<UUID, Date> bannedAgents) {
 		this.groupID = groupID;
 		this.success = success;
 		this.bannedAgents = bannedAgents;
@@ -29,7 +29,7 @@ public class BannedAgentsCallbackArgs implements CallbackArgs {
 	}
 
 	// Array containing a list of UUIDs of the agents banned from a group
-	public HashMap<UUID, Date> getBannedAgents() {
+	public Map<UUID, Date> getBannedAgents() {
 		return bannedAgents;
 	}
 

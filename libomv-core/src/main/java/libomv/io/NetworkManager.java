@@ -37,6 +37,8 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -97,150 +99,15 @@ import libomv.utils.TimeoutEvent;
 public class NetworkManager implements PacketCallback, CapsCallback {
 	private static final Logger logger = Logger.getLogger(NetworkManager.class);
 
-	public CallbackHandler<SimConnectingCallbackArgs> OnSimConnecting = new CallbackHandler<SimConnectingCallbackArgs>();
-
-	public CallbackHandler<SimConnectedCallbackArgs> OnSimConnected = new CallbackHandler<SimConnectedCallbackArgs>();
-
-	/**
-	 * Fire an event when an event queue connects for capabilities
-	 *
-	 * @param simulator
-	 *            Simulator the event queue is attached to
-	 */
-	public void RaiseSimConnectedEvent(Simulator simulator) {
-		OnSimConnected.dispatch(new SimConnectedCallbackArgs(simulator));
-	}
-
-	public CallbackHandler<SimChangedCallbackArgs> OnSimChanged = new CallbackHandler<SimChangedCallbackArgs>();
-
-	public CallbackHandler<SimDisconnectedCallbackArgs> OnSimDisconnected = new CallbackHandler<SimDisconnectedCallbackArgs>();
-
-	public CallbackHandler<DisconnectedCallbackArgs> OnDisconnected = new CallbackHandler<DisconnectedCallbackArgs>();
-
-	public CallbackHandler<PacketSentCallbackArgs> OnPacketSent = new CallbackHandler<PacketSentCallbackArgs>();
-
-	public void RaisePacketSentCallback(byte[] data, int bytes, Simulator sim) {
-		_Client.Network.OnPacketSent.dispatch(new PacketSentCallbackArgs(data, bytes, sim));
-	}
-
-	public CallbackHandler<EventQueueRunningCallbackArgs> OnEventQueueRunning = new CallbackHandler<EventQueueRunningCallbackArgs>();
-
-	public final void raiseConnectedEvent(SimulatorManager simulator) {
-		OnEventQueueRunning.dispatch(new EventQueueRunningCallbackArgs(simulator));
-	}
-
-	public CallbackHandler<LoggedOutCallbackArgs> OnLoggedOut = new CallbackHandler<LoggedOutCallbackArgs>();
-
-	private HashMap<PacketType, ArrayList<PacketCallback>> simCallbacks;
-	private HashMap<CapsEventType, ArrayList<CapsCallback>> capCallbacks;
-
-	private GridClient _Client;
-
-	/**
-	 * The ID number associated with this particular connection to the simulator,
-	 * used to emulate TCP connections. This is used internally for packets that
-	 * have a CircuitCode field.
-	 */
-	private int _CircuitCode;
-
-	public int getCircuitCode() {
-		return _CircuitCode;
-	}
-
-	public void setCircuitCode(int code) {
-		_CircuitCode = code;
-	}
-
-	/**
-	 * A list of packets obtained during the login process which NetworkManager will
-	 * log but not process
-	 */
-	private final ArrayList<PacketType> _UDPBlacklist = new ArrayList<PacketType>();
-
-	public void setUDPBlacklist(String blacklist) {
-		if (blacklist != null) {
-			synchronized (_UDPBlacklist) {
-				for (String s : blacklist.split(","))
-					_UDPBlacklist.add(PacketType.valueOf(s));
-				logger.debug(GridClient.Log("UDP blacklisted packets: " + _UDPBlacklist.toString(), _Client));
-			}
-		}
-	}
-
-	// Server side baking service URL
-	private String AgentAppearanceServiceURL;
-
-	public void setAgentAppearanceServiceURL(String url) {
-		AgentAppearanceServiceURL = url;
-	}
-
-	public String getAgentAppearanceServiceURL() {
-		return AgentAppearanceServiceURL;
-	}
-
-	private ArrayList<AsyncHTTPClient<OSD>> closableClients = new ArrayList<AsyncHTTPClient<OSD>>();
-
-	public void addClosableClient(AsyncHTTPClient<OSD> client) {
-		synchronized (closableClients) {
-			closableClients.add(client);
-		}
-	}
-
-	private void cleanClosableClients() throws InterruptedException, IOException {
-		synchronized (closableClients) {
-			long time = System.currentTimeMillis();
-			for (AsyncHTTPClient<OSD> client : closableClients) {
-				client.shutdown(false);
-			}
-
-			if (closableClients.size() > 0) {
-				logger.info(GridClient.Log("Closing " + closableClients.size() + " clients in "
-						+ (System.currentTimeMillis() - time) + " ms.", _Client));
-				closableClients.clear();
-			}
-		}
-	}
-
-	private ArrayList<SimulatorManager> _Simulators;
-
-	/**
-	 * Get the array with all currently known simulators. This list must be
-	 * protected with a synchronization lock on itself if you do anything with it.
-	 *
-	 * @return array of simulator objects known to this client
-	 */
-	public ArrayList<SimulatorManager> getSimulators() {
-		return _Simulators;
-	}
-
-	/** Incoming packets that are awaiting handling */
-	private BlockingQueue<IncomingPacket> _PacketInbox = new LinkedBlockingQueue<IncomingPacket>(
-			LibSettings.PACKET_INBOX_SIZE);
-	/** Outgoing packets that are awaiting handling */
-	private BlockingQueue<OutgoingPacket> _PacketOutbox = new LinkedBlockingQueue<OutgoingPacket>(
-			LibSettings.PACKET_OUTBOX_SIZE);
-
-	/** Number of packets in the incoming queue */
-	public final int getInboxCount() {
-		return _PacketInbox.size();
-	}
-
-	/** Number of packets in the outgoing queue */
-	public final int getOutboxCount() {
-		return _PacketOutbox.size();
-	}
-
-	private IncomingPacketHandler _PacketHandlerThread;
-
 	private class OutgoingPacketHandler implements Runnable {
 		@Override
 		public void run() {
 			long lastTime = System.currentTimeMillis();
 			int count = 0;
 
-			while (_Connected) {
+			while (connected) {
 				try {
-					OutgoingPacket outgoingPacket = _PacketOutbox.poll(100, TimeUnit.MILLISECONDS);
+					OutgoingPacket outgoingPacket = packetOutbox.poll(100, TimeUnit.MILLISECONDS);
 					if (outgoingPacket != null) {
 						// Very primitive rate limiting, keeps a fixed minimum buffer of time between
 						// each packet
@@ -264,78 +131,9 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 						count = 0;
 					}
 				} catch (InterruptedException | IOException ex) {
-					logger.debug(GridClient.Log("Call interrupted", _Client), ex);
+					logger.debug(GridClient.Log("Call interrupted", client), ex);
 				}
 			}
-		}
-	}
-
-	private void FirePacketCallbacks(Packet packet, Simulator simulator) {
-		boolean specialHandler = false;
-		PacketType type = packet.getType();
-
-		synchronized (simCallbacks) {
-			// Fire any default callbacks
-			ArrayList<PacketCallback> callbackArray = simCallbacks.get(PacketType.Default);
-			if (callbackArray != null) {
-				for (PacketCallback callback : callbackArray) {
-					try {
-						callback.packetCallback(packet, simulator);
-					} catch (Exception ex) {
-						logger.error(GridClient.Log("Default packet event handler: " + type, _Client), ex);
-					}
-				}
-			}
-			// Fire any registered callbacks
-			callbackArray = simCallbacks.get(type);
-			if (callbackArray != null) {
-				for (PacketCallback callback : callbackArray) {
-					try {
-						callback.packetCallback(packet, simulator);
-					} catch (Exception ex) {
-						logger.error(GridClient.Log("Packet event handler: " + type, _Client), ex);
-					}
-					specialHandler = true;
-				}
-			}
-		}
-
-		if (!specialHandler && type != PacketType.Default && type != PacketType.PacketAck) {
-			// logger.test("No handler registered for packet event " + type,
-			// LogLevel.Warning, _Client);
-		}
-	}
-
-	private void FireCapsCallbacks(IMessage message, SimulatorManager simulator) {
-		boolean specialHandler = false;
-
-		synchronized (capCallbacks) {
-			// Fire any default callbacks
-			ArrayList<CapsCallback> callbackArray = capCallbacks.get(CapsEventType.Default);
-			if (callbackArray != null) {
-				for (CapsCallback callback : callbackArray) {
-					try {
-						callback.capsCallback(message, simulator);
-					} catch (Exception ex) {
-						logger.error(GridClient.Log("CAPS event handler: " + message.getType(), _Client), ex);
-					}
-				}
-			}
-			// Fire any registered callbacks
-			callbackArray = capCallbacks.get(message.getType());
-			if (callbackArray != null) {
-				for (CapsCallback callback : callbackArray) {
-					try {
-						callback.capsCallback(message, simulator);
-					} catch (Exception ex) {
-						logger.error(GridClient.Log("CAPS event handler: " + message.getType(), _Client), ex);
-					}
-					specialHandler = true;
-				}
-			}
-		}
-		if (!specialHandler) {
-			logger.warn(GridClient.Log("Unhandled CAPS event " + message.getType(), _Client));
 		}
 	}
 
@@ -349,9 +147,9 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 		@Override
 		public void run() {
 			if (packet.packet != null)
-				FirePacketCallbacks(packet.packet, packet.simulator);
+				firePacketCallbacks(packet.packet, packet.simulator);
 			else
-				FireCapsCallbacks(packet.message, (SimulatorManager) packet.simulator);
+				fireCapsCallbacks(packet.message, (SimulatorManager) packet.simulator);
 		}
 	}
 
@@ -364,27 +162,27 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 
 		@Override
 		public void run() {
-			while (_Connected) {
+			while (connected) {
 				try {
-					IncomingPacket incomingPacket = _PacketInbox.poll(100, TimeUnit.MILLISECONDS);
+					IncomingPacket incomingPacket = packetInbox.poll(100, TimeUnit.MILLISECONDS);
 					if (incomingPacket != null) {
 						if (incomingPacket.packet != null) {
 							// skip blacklisted packets
-							if (_UDPBlacklist.contains(incomingPacket.packet.getType())) {
+							if (udpBlacklist.contains(incomingPacket.packet.getType())) {
 								logger.warn(GridClient.Log(
 										String.format("Discarding Blacklisted packet %s from %s",
 												incomingPacket.packet.getType(),
 												((SimulatorManager) incomingPacket.simulator).getIPEndPoint()),
-										_Client));
+										client));
 							} else if (syncPacketCallbacks) {
-								FirePacketCallbacks(incomingPacket.packet, incomingPacket.simulator);
+								firePacketCallbacks(incomingPacket.packet, incomingPacket.simulator);
 							} else {
 								if (!threadPool.isShutdown())
 									threadPool.submit(new PacketCallbackExecutor(incomingPacket));
 							}
 						} else if (incomingPacket.message != null) {
 							if (syncPacketCallbacks) {
-								FireCapsCallbacks(incomingPacket.message, (SimulatorManager) incomingPacket.simulator);
+								fireCapsCallbacks(incomingPacket.message, (SimulatorManager) incomingPacket.simulator);
 							} else {
 								if (!threadPool.isShutdown())
 									threadPool.submit(new PacketCallbackExecutor(incomingPacket));
@@ -397,604 +195,22 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 		}
 	}
 
-	private Timer _DisconnectTimer;
-	private Timer _LogoutTimer;
-
-	// The simulator that the logged in avatar is currently occupying
-	private SimulatorManager _CurrentSim;
-
-	public SimulatorManager getCurrentSim() {
-		return _CurrentSim;
-	}
-
-	public final void setCurrentSim(SimulatorManager value) {
-		_CurrentSim = value;
-	}
-
-	// Shows whether the network layer is logged in to the grid or not
-	private boolean _Connected;
-
-	public boolean getConnected() {
-		return _Connected;
-	}
-
-	@Override
-	public void packetCallback(Packet packet, Simulator simulator) throws Exception {
-		switch (packet.getType()) {
-		case RegionHandshake:
-			HandleRegionHandshake(packet, simulator);
-			break;
-		case StartPingCheck:
-			HandleStartPingCheck(packet, simulator);
-			break;
-		case CompletePingCheck:
-			HandleCompletePingCheck(packet, simulator);
-			break;
-		case EnableSimulator:
-			HandleEnableSimulator(packet, simulator);
-			break;
-		case DisableSimulator:
-			HandleDisableSimulator(packet, simulator);
-			break;
-		case LogoutReply:
-			HandleLogoutReply(packet, simulator);
-			break;
-		case SimStats:
-			HandleSimStats(packet, simulator);
-			break;
-		case KickUser:
-			HandleKickUser(packet, simulator);
-			break;
-		default:
-			break;
-		}
-	}
-
-	@Override
-	public void capsCallback(IMessage message, SimulatorManager simulator) throws Exception {
-		switch (message.getType()) {
-		case EnableSimulator:
-			HandleEnableSimulator(message, simulator);
-			break;
-		default:
-			break;
-		}
-
-	}
-
-	private boolean syncPacketCallbacks;
-	private boolean sendAgentUpdates;
-	private boolean enableSimStats;
-
 	private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs> {
 		@Override
 		public boolean callback(SettingsUpdateCallbackArgs params) {
 			String key = params.getName();
 			if (key == null) {
-				syncPacketCallbacks = _Client.Settings.getBool(LibSettings.SYNC_PACKETCALLBACKS);
-				sendAgentUpdates = _Client.Settings.getBool(LibSettings.SEND_AGENT_UPDATES);
-				enableSimStats = _Client.Settings.getBool(LibSettings.ENABLE_SIMSTATS);
+				syncPacketCallbacks = client.settings.getBool(LibSettings.SYNC_PACKETCALLBACKS);
+				sendAgentUpdates = client.settings.getBool(LibSettings.SEND_AGENT_UPDATES);
+				enableSimStats = client.settings.getBool(LibSettings.ENABLE_SIMSTATS);
 			} else if (key.equals(LibSettings.SYNC_PACKETCALLBACKS)) {
-				syncPacketCallbacks = params.getValue().AsBoolean();
+				syncPacketCallbacks = params.getValue().asBoolean();
 			} else if (key.equals(LibSettings.SEND_AGENT_UPDATES)) {
-				sendAgentUpdates = params.getValue().AsBoolean();
+				sendAgentUpdates = params.getValue().asBoolean();
 			} else if (key.equals(LibSettings.ENABLE_SIMSTATS)) {
-				enableSimStats = params.getValue().AsBoolean();
+				enableSimStats = params.getValue().asBoolean();
 			}
 			return false;
-		}
-	}
-
-	/**
-	 * Constructor for this manager
-	 *
-	 * @param client
-	 *            The GridClient which controls this manager
-	 * @throws Exception
-	 */
-	// <param name="client"></param>
-	public NetworkManager(GridClient client) throws Exception {
-		_Client = client;
-		_Simulators = new ArrayList<SimulatorManager>();
-		simCallbacks = new HashMap<PacketType, ArrayList<PacketCallback>>();
-		capCallbacks = new HashMap<CapsEventType, ArrayList<CapsCallback>>();
-		_LogoutTimer = new Timer("LogoutTimer");
-		_CurrentSim = null;
-
-		syncPacketCallbacks = _Client.Settings.getBool(LibSettings.SYNC_PACKETCALLBACKS);
-		sendAgentUpdates = _Client.Settings.getBool(LibSettings.SEND_AGENT_UPDATES);
-		enableSimStats = _Client.Settings.getBool(LibSettings.ENABLE_SIMSTATS);
-		_Client.Settings.onSettingsUpdate.add(new SettingsUpdate());
-
-		// Register internal CAPS callbacks
-		RegisterCallback(CapsEventType.EnableSimulator, this);
-
-		// Register the internal callbacks
-		RegisterCallback(PacketType.RegionHandshake, this);
-		RegisterCallback(PacketType.StartPingCheck, this);
-		RegisterCallback(PacketType.DisableSimulator, this);
-		RegisterCallback(PacketType.EnableSimulator, this);
-		RegisterCallback(PacketType.KickUser, this);
-		RegisterCallback(PacketType.LogoutReply, this);
-		RegisterCallback(PacketType.CompletePingCheck, this);
-		RegisterCallback(PacketType.SimStats, this);
-	}
-
-	/**
-	 * Get the capability URL from the current simulator
-	 *
-	 * @param capability
-	 *            The name of the capability to retrieve the URL from
-	 * @return The URI for the capability or null if it doesn't exist
-	 */
-	public URI getCapabilityURI(String capability) {
-		return getCapabilityURI(capability, _CurrentSim);
-	}
-
-	/**
-	 * Get the capability URL from the currenta specific simulator
-	 *
-	 * @param capability
-	 *            The name of the capability to retrieve the URL from
-	 * @param simulator
-	 *            The simulator for which the capability URL should be returned If
-	 *            "simulator" is null, this function uses the current simulator
-	 * @return The URI for the capability or null if it doesn't exist
-	 */
-	public URI getCapabilityURI(String capability, SimulatorManager simulator) {
-		synchronized (_Simulators) {
-			if (simulator == null)
-				simulator = _CurrentSim;
-
-			if (simulator != null) {
-				return simulator.getCapabilityURI(capability);
-			}
-		}
-		return null;
-	}
-
-	public boolean getIsEventQueueRunning() {
-		synchronized (_Simulators) {
-			return (_CurrentSim != null && _CurrentSim.getIsEventQueueRunning());
-		}
-	}
-
-	public void RegisterCallback(CapsEventType capability, CapsCallback callback) {
-		/* Don't accept null callbacks */
-		if (callback == null)
-			return;
-
-		synchronized (capCallbacks) {
-			ArrayList<CapsCallback> callbacks = capCallbacks.get(capability);
-			if (callbacks == null) {
-				callbacks = new ArrayList<CapsCallback>();
-				capCallbacks.put(capability, callbacks);
-			} else {
-				callbacks.remove(callback);
-			}
-			callbacks.add(callback);
-		}
-	}
-
-	public void UnregisterCallback(CapsEventType capability, CapsCallback callback) {
-		synchronized (capCallbacks) {
-			if (!capCallbacks.containsKey(capability)) {
-				logger.info(GridClient.Log("Trying to unregister a callback for capability " + capability
-						+ " when no callbacks are setup for that capability", _Client));
-				return;
-			}
-
-			ArrayList<CapsCallback> callbackArray = capCallbacks.get(capability);
-
-			if (callbackArray.contains(callback)) {
-				callbackArray.remove(callback);
-				if (callbackArray.isEmpty()) {
-					capCallbacks.remove(capability);
-				}
-			} else {
-				logger.info(GridClient.Log("Trying to unregister a non-existant callback for capability " + capability,
-						_Client));
-			}
-		}
-	}
-
-	public void RegisterCallback(PacketType type, PacketCallback callback) {
-		/* Don't accept null callbacks */
-		if (callback == null)
-			return;
-
-		synchronized (simCallbacks) {
-			ArrayList<PacketCallback> callbacks = simCallbacks.get(type);
-			if (callbacks == null) {
-				callbacks = new ArrayList<PacketCallback>();
-				simCallbacks.put(type, callbacks);
-			} else {
-				callbacks.remove(callback);
-			}
-			callbacks.add(callback);
-		}
-	}
-
-	public void UnregisterCallback(PacketType type, PacketCallback callback) {
-		synchronized (simCallbacks) {
-			if (!simCallbacks.containsKey(type)) {
-				logger.info(GridClient.Log("Trying to unregister a callback for packet " + type
-						+ " when no callbacks are setup for that packet", _Client));
-				return;
-			}
-
-			ArrayList<PacketCallback> callbackArray = simCallbacks.get(type);
-			if (callbackArray.contains(callback)) {
-				callbackArray.remove(callback);
-				if (callbackArray.isEmpty()) {
-					simCallbacks.remove(type);
-				}
-			} else {
-				logger.info(GridClient.Log("Trying to unregister a non-existant callback for packet " + type, _Client));
-			}
-		}
-	}
-
-	/**
-	 * Send an UDP packet to the current simulator
-	 *
-	 * @param packet
-	 *            The packet to send
-	 * @throws Exception
-	 */
-	public void sendPacket(Packet packet) throws Exception {
-		// try CurrentSim, however directly after login this will be null, so if it is,
-		// we'll
-		// try to find the first simulator we're connected to in order to send the
-		// packet.
-		SimulatorManager simulator = _CurrentSim;
-		if (simulator == null) {
-			synchronized (_Simulators) {
-				if (_Simulators.size() >= 1) {
-					logger.debug(GridClient.Log("CurrentSim object was null, using first found connected simulator",
-							_Client));
-					simulator = _Simulators.get(0);
-				}
-			}
-		}
-
-		if (simulator != null && simulator.getConnected()) {
-			simulator.sendPacket(packet);
-		} else {
-			ConnectException ex = new ConnectException(
-					"Packet received before simulator packet processing threads running, make certain you are completely logged in");
-			logger.error(GridClient.Log(ex.getMessage(), _Client), ex);
-			throw ex;
-		}
-	}
-
-	public void QueuePacket(OutgoingPacket packet) throws InterruptedException {
-		_PacketOutbox.put(packet);
-	}
-
-	public void DistributePacket(Simulator simulator, Packet packet) {
-		try {
-			_PacketInbox.add(new IncomingPacket(simulator, packet));
-		} catch (Exception ex) {
-			logger.warn(GridClient.Log("Suppressing packet " + packet.toString(), _Client), ex);
-		}
-	}
-
-	public void DistributeCaps(Simulator simulator, IMessage message) {
-		try {
-			_PacketInbox.add(new IncomingPacket(simulator, message));
-		} catch (Exception ex) {
-			logger.warn(GridClient.Log("Suppressing message " + message.toString(), _Client), ex);
-		}
-	}
-
-	public SimulatorManager connect(InetAddress ip, short port, long handle, boolean setDefault, String seedcaps)
-			throws Exception {
-		return connect(new InetSocketAddress(ip, port), handle, setDefault, seedcaps);
-	}
-
-	/**
-	 * Connect to a simulator
-	 *
-	 * @param endPoint
-	 *            IP address and port to connect to
-	 * @param handle
-	 *            Handle for this simulator, to identify its location in the grid
-	 * @param setDefault
-	 *            Whether to set CurrentSim to this new connection, use this if the
-	 *            avatar is moving in to this simulator
-	 * @param seedcaps
-	 *            URL of the capabilities server to use for this sim connection
-	 * @return A Simulator object on success, otherwise null
-	 */
-	public SimulatorManager connect(InetSocketAddress endPoint, long handle, boolean setDefault, String seedcaps)
-			throws Exception {
-		SimulatorManager simulator = FindSimulator(endPoint);
-
-		if (simulator == null) {
-			// We're not tracking this sim, create a new Simulator object
-			simulator = new SimulatorManager(_Client, endPoint, handle);
-
-			synchronized (_Simulators) {
-				// Immediately add this simulator to the list of current sims.
-				// It will be removed if the connection fails
-				_Simulators.add(simulator);
-			}
-		}
-
-		if (!simulator.getConnected()) {
-			if (!_Connected) {
-				// Mark that we are connecting/connected to the grid
-				_Connected = true;
-
-				// Start the packet decoding thread
-				_PacketHandlerThread = new IncomingPacketHandler();
-				Thread decodeThread = new Thread(_PacketHandlerThread);
-				decodeThread.setName("Incoming UDP packet dispatcher");
-				decodeThread.start();
-
-				// Start the packet sending thread
-				Thread sendThread = new Thread(new OutgoingPacketHandler());
-				sendThread.setName("Outgoing UDP packet dispatcher");
-				sendThread.start();
-			}
-
-			if (OnSimConnecting.count() > 0) {
-				SimConnectingCallbackArgs args = new SimConnectingCallbackArgs(endPoint);
-				OnSimConnecting.dispatch(args);
-				if (args.getCancel()) {
-					synchronized (_Simulators) {
-						// Callback is requesting that we abort this connection
-						_Simulators.remove(simulator);
-					}
-					return null;
-				}
-			}
-
-			// Attempt to establish a connection to the simulator
-			if (simulator.connect(setDefault)) {
-				if (_DisconnectTimer == null) {
-					// Start a timer that checks if we've been disconnected
-					_DisconnectTimer = new Timer("_DisconnectTimer");
-					_DisconnectTimer.scheduleAtFixedRate(new DisconnectTimer_Elapsed(),
-							_Client.Settings.SIMULATOR_TIMEOUT, _Client.Settings.SIMULATOR_TIMEOUT);
-				}
-
-				if (setDefault) {
-					setCurrentSim(simulator, seedcaps);
-				}
-
-				// Raise the SimConnected event
-				OnSimConnected.dispatch(new SimConnectedCallbackArgs(simulator));
-
-				// If enabled, send an AgentThrottle packet to the server to
-				// increase our bandwidth
-				if (_Client.Throttle != null) {
-					_Client.Throttle.Set(simulator);
-				}
-			} else {
-				synchronized (_Simulators) {
-					// Connection failed, remove this simulator from our list
-					// and destroy it
-					_Simulators.remove(simulator);
-				}
-				return null;
-			}
-		} else if (setDefault) {
-			// Move in to this simulator
-			simulator.useCircuitCode();
-			_Client.Self.CompleteAgentMovement(simulator);
-
-			// We're already connected to this server, but need to set it to the default
-			setCurrentSim(simulator, seedcaps);
-
-			// Send an initial AgentUpdate to complete our movement in to the sim
-			if (sendAgentUpdates) {
-				_Client.Self.SendMovementUpdate(true, simulator);
-			}
-		} else {
-			// Already connected to this simulator and wasn't asked to set it as
-			// the default, just return a reference to the existing object
-		}
-		return simulator;
-	}
-
-	/**
-	 * Begins the non-blocking logout. Makes sure that the LoggedOut event is called
-	 * even if the server does not send a logout reply, and shutdown() is properly
-	 * called.
-	 *
-	 * @throws Exception
-	 */
-	public void BeginLogout() throws Exception {
-		// Wait for a logout response (by way of the LoggedOut event. If the response is
-		// received,
-		// shutdown will be fired in the callback itself that caused this event to be
-		// triggered.
-		// Otherwise we fire it manually with a NetworkTimeout type after LOGOUT_TIMEOUT
-		class LoggedOutHandler extends TimerTask implements Callback<LoggedOutCallbackArgs> {
-			// Executed when the timer times out
-			@Override
-			public void run() {
-				try {
-					shutdown(DisconnectType.NetworkTimeout, "User logged out");
-				} catch (Exception e) {
-				}
-				/* Remove ourself from the event dispatcher */
-				OnLoggedOut.remove(this);
-				OnLoggedOut.dispatch(new LoggedOutCallbackArgs(new Vector<UUID>()));
-			}
-
-			// Executed when the log out resulted in an acknowledgement from the server
-			@Override
-			public boolean callback(LoggedOutCallbackArgs params) {
-				this.cancel();
-				/* Remove ourself from the event dispatcher */
-				return true;
-			}
-
-		}
-
-		LoggedOutHandler timeoutTask = new LoggedOutHandler();
-
-		OnLoggedOut.add(timeoutTask);
-
-		// Send the packet requesting a clean logout
-		RequestLogout();
-		_LogoutTimer.schedule(timeoutTask, _Client.Settings.LOGOUT_TIMEOUT);
-	}
-
-	/**
-	 * Initiate a blocking logout request. This will return when the logout
-	 * handshake has completed or when <code>Settings.LOGOUT_TIMEOUT</code> has
-	 * expired and the network layer is manually shut down
-	 */
-	public void Logout() throws Exception {
-		final TimeoutEvent<Boolean> timeout = new TimeoutEvent<Boolean>();
-
-		Callback<LoggedOutCallbackArgs> loggedOut = new Callback<LoggedOutCallbackArgs>() {
-			@Override
-			public boolean callback(LoggedOutCallbackArgs params) {
-				timeout.set(true);
-				/* Remove ourself from the event dispatcher */
-				return true;
-			}
-		};
-
-		OnLoggedOut.add(loggedOut);
-
-		// Send the packet requesting a clean logout
-		RequestLogout();
-
-		// Wait for a logout response. If the response is received, shutdown() will
-		// be fired in the callback. Otherwise we fire it manually with a NetworkTimeout
-		// type
-		Boolean success = timeout.waitOne(_Client.Settings.LOGOUT_TIMEOUT);
-		if (success == null || !success) {
-			// Shutdown the network layer
-			shutdown(DisconnectType.NetworkTimeout, "User logged out");
-		}
-		OnLoggedOut.remove(loggedOut);
-	}
-
-	/**
-	 * Initiate the logout process. The <code>Shutdown()</code> function needs to be
-	 * manually called.
-	 *
-	 * @throws Exception
-	 */
-	public void RequestLogout() throws Exception {
-		if (_DisconnectTimer == null) {
-			_DisconnectTimer.cancel();
-			_DisconnectTimer = null;
-		}
-
-		// This will catch a Logout when the client is not logged in
-		if (_CurrentSim == null || !_Connected) {
-			return;
-		}
-
-		_Connected = false;
-		_Client.setCurrentGrid((String) null);
-		_PacketHandlerThread.shutdown();
-
-		logger.info(GridClient.Log("Logging out", _Client));
-
-		// Send a logout request to the current sim
-		LogoutRequestPacket logout = new LogoutRequestPacket();
-		logout.AgentData.AgentID = _Client.Self.getAgentID();
-		logout.AgentData.SessionID = _Client.Self.getSessionID();
-
-		_CurrentSim.sendPacket(logout);
-	}
-
-	private void setCurrentSim(SimulatorManager simulator, String seedcaps) throws InterruptedException, IOException {
-		if (!simulator.equals(getCurrentSim())) {
-			Simulator oldSim = getCurrentSim();
-			synchronized (_Simulators) // CurrentSim is synchronized against
-										// Simulators
-			{
-				setCurrentSim(simulator);
-			}
-			simulator.setSeedCaps(seedcaps);
-
-			// If the current simulator changed fire the callback
-			if (!simulator.equals(oldSim)) {
-				OnSimChanged.dispatch(new SimChangedCallbackArgs(oldSim));
-			}
-		}
-	}
-
-	public void disconnectSim(Runnable sim, boolean sendCloseCircuit) throws Exception {
-		if (sim != null) {
-			SimulatorManager simulator = (SimulatorManager) sim;
-			simulator.disconnect(sendCloseCircuit);
-
-			// Fire the SimDisconnected event if a handler is registered
-			OnSimDisconnected.dispatch(new SimDisconnectedCallbackArgs(simulator, DisconnectType.NetworkTimeout));
-
-			synchronized (_Simulators) {
-				_Simulators.remove(simulator);
-				if (_Simulators.isEmpty()) {
-					shutdown(DisconnectType.SimShutdown, "Last simulator disconnected");
-				}
-			}
-		} else {
-			logger.warn("DisconnectSim() called with a null Simulator reference");
-		}
-	}
-
-	/**
-	 * Shutdown will disconnect all the sims except for the current sim first, and
-	 * then kill the connection to CurrentSim. This should only be called if the
-	 * logout process times out on <code>RequestLogout</code>
-	 *
-	 * @param type
-	 *            Type of shutdown
-	 * @throws Exception
-	 */
-	public final void shutdown(DisconnectType type) throws Exception {
-		shutdown(type, type.toString());
-	}
-
-	private void shutdown(DisconnectType type, String message) throws Exception {
-		logger.info(GridClient.Log("NetworkManager shutdown initiated", _Client));
-
-		// Send a CloseCircuit packet to simulators if we are initiating the
-		// disconnect
-		boolean sendCloseCircuit = (type == DisconnectType.ClientInitiated || type == DisconnectType.NetworkTimeout);
-
-		synchronized (_Simulators) {
-			// Disconnect all simulators except the current one
-			for (int i = 0; i < _Simulators.size(); i++) {
-				SimulatorManager simulator = _Simulators.get(i);
-				// Don't disconnect the current sim, we'll use LogoutRequest for
-				// that
-				if (simulator != null && !simulator.equals(_CurrentSim)) {
-					simulator.disconnect(sendCloseCircuit);
-
-					// Fire the SimDisconnected event if a handler is registered
-					OnSimDisconnected
-							.dispatch(new SimDisconnectedCallbackArgs(simulator, DisconnectType.NetworkTimeout));
-				}
-
-			}
-			_Simulators.clear();
-
-			if (_CurrentSim != null) {
-				_CurrentSim.disconnect(sendCloseCircuit);
-
-				// Fire the SimDisconnected event if a handler is registered
-				OnSimDisconnected.dispatch(new SimDisconnectedCallbackArgs(_CurrentSim, DisconnectType.NetworkTimeout));
-			}
-
-		}
-		_Connected = false;
-		_LogoutTimer.cancel();
-		_LogoutTimer = null;
-
-		if (OnDisconnected.count() > 0) {
-			OnDisconnected.dispatch(new DisconnectedCallbackArgs(type, message));
 		}
 	}
 
@@ -1002,22 +218,22 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 		@Override
 		public void run() {
 			// If the current simulator is disconnected, shutdown + callback + return
-			if (!_Connected || _CurrentSim == null) {
-				if (_DisconnectTimer != null) {
-					_DisconnectTimer.cancel();
-					_DisconnectTimer = null;
+			if (!connected || currentSim == null) {
+				if (disconnectTimer != null) {
+					disconnectTimer.cancel();
+					disconnectTimer = null;
 				}
-				_Connected = false;
-			} else if (_CurrentSim.getDisconnectCandidate()) {
+				connected = false;
+			} else if (currentSim.getDisconnectCandidate()) {
 				// The currently occupied simulator hasn't sent us any traffic in a while,
 				// shutdown
-				logger.warn("Network timeout for the current simulator (" + _CurrentSim.getName() + "), logging out");
+				logger.warn("Network timeout for the current simulator (" + currentSim.getName() + "), logging out");
 
-				if (_DisconnectTimer != null) {
-					_DisconnectTimer.cancel();
-					_DisconnectTimer = null;
+				if (disconnectTimer != null) {
+					disconnectTimer.cancel();
+					disconnectTimer = null;
 				}
-				_Connected = false;
+				connected = false;
 
 				// Shutdown the network layer
 				try {
@@ -1029,14 +245,14 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 				return;
 			}
 
-			ArrayList<SimulatorManager> disconnectedSims = null;
+			List<SimulatorManager> disconnectedSims = null;
 
 			// Check all of the connected sims for disconnects
-			synchronized (_Simulators) {
-				for (SimulatorManager simulator : _Simulators) {
+			synchronized (simulators) {
+				for (SimulatorManager simulator : simulators) {
 					if (simulator.getDisconnectCandidate()) {
 						if (disconnectedSims == null) {
-							disconnectedSims = new ArrayList<SimulatorManager>();
+							disconnectedSims = new ArrayList<>();
 						}
 						disconnectedSims.add(simulator);
 					} else {
@@ -1061,6 +277,781 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 		}
 	}
 
+	public CallbackHandler<SimConnectingCallbackArgs> onSimConnecting = new CallbackHandler<>();
+	public CallbackHandler<SimConnectedCallbackArgs> onSimConnected = new CallbackHandler<>();
+	public CallbackHandler<SimChangedCallbackArgs> onSimChanged = new CallbackHandler<>();
+	public CallbackHandler<SimDisconnectedCallbackArgs> onSimDisconnected = new CallbackHandler<>();
+	public CallbackHandler<DisconnectedCallbackArgs> onDisconnected = new CallbackHandler<>();
+	public CallbackHandler<PacketSentCallbackArgs> onPacketSent = new CallbackHandler<>();
+	public CallbackHandler<EventQueueRunningCallbackArgs> onEventQueueRunning = new CallbackHandler<>();
+	public CallbackHandler<LoggedOutCallbackArgs> onLoggedOut = new CallbackHandler<LoggedOutCallbackArgs>();
+
+	private Map<PacketType, List<PacketCallback>> simCallbacks;
+	private Map<CapsEventType, List<CapsCallback>> capCallbacks;
+
+	private GridClient client;
+
+	/**
+	 * The ID number associated with this particular connection to the simulator,
+	 * used to emulate TCP connections. This is used internally for packets that
+	 * have a CircuitCode field.
+	 */
+	private int circuitCode;
+
+	/**
+	 * A list of packets obtained during the login process which NetworkManager will
+	 * log but not process
+	 */
+	private final List<PacketType> udpBlacklist = new ArrayList<>();
+
+	// Server side baking service URL
+	private String agentAppearanceServiceURL;
+	private List<AsyncHTTPClient<OSD>> closableClients = new ArrayList<AsyncHTTPClient<OSD>>();
+
+	private List<SimulatorManager> simulators;
+
+	/** Incoming packets that are awaiting handling */
+	private BlockingQueue<IncomingPacket> packetInbox = new LinkedBlockingQueue<>(LibSettings.PACKET_INBOX_SIZE);
+	/** Outgoing packets that are awaiting handling */
+	private BlockingQueue<OutgoingPacket> packetOutbox = new LinkedBlockingQueue<>(LibSettings.PACKET_OUTBOX_SIZE);
+
+	private IncomingPacketHandler packetHandlerThread;
+
+	private Timer disconnectTimer;
+	private Timer logoutTimer;
+
+	// The simulator that the logged in avatar is currently occupying
+	private SimulatorManager currentSim;
+	// Shows whether the network layer is logged in to the grid or not
+	private boolean connected;
+
+	private boolean syncPacketCallbacks;
+	private boolean sendAgentUpdates;
+	private boolean enableSimStats;
+
+	/**
+	 * Constructor for this manager
+	 *
+	 * @param client
+	 *            The GridClient which controls this manager
+	 * @throws Exception
+	 */
+	// <param name="client"></param>
+	public NetworkManager(GridClient client) throws Exception {
+		this.client = client;
+		simulators = new ArrayList<SimulatorManager>();
+		simCallbacks = new HashMap<>();
+		capCallbacks = new HashMap<>();
+		logoutTimer = new Timer("LogoutTimer");
+		currentSim = null;
+
+		syncPacketCallbacks = client.settings.getBool(LibSettings.SYNC_PACKETCALLBACKS);
+		sendAgentUpdates = client.settings.getBool(LibSettings.SEND_AGENT_UPDATES);
+		enableSimStats = client.settings.getBool(LibSettings.ENABLE_SIMSTATS);
+		client.settings.onSettingsUpdate.add(new SettingsUpdate());
+
+		// Register internal CAPS callbacks
+		registerCallback(CapsEventType.EnableSimulator, this);
+
+		// Register the internal callbacks
+		registerCallback(PacketType.RegionHandshake, this);
+		registerCallback(PacketType.StartPingCheck, this);
+		registerCallback(PacketType.DisableSimulator, this);
+		registerCallback(PacketType.EnableSimulator, this);
+		registerCallback(PacketType.KickUser, this);
+		registerCallback(PacketType.LogoutReply, this);
+		registerCallback(PacketType.CompletePingCheck, this);
+		registerCallback(PacketType.SimStats, this);
+	}
+
+	/**
+	 * Fire an event when an event queue connects for capabilities
+	 *
+	 * @param simulator
+	 *            Simulator the event queue is attached to
+	 */
+	public void raiseSimConnectedEvent(Simulator simulator) {
+		onSimConnected.dispatch(new SimConnectedCallbackArgs(simulator));
+	}
+
+	public void raisePacketSentCallback(byte[] data, int bytes, Simulator sim) {
+		client.network.onPacketSent.dispatch(new PacketSentCallbackArgs(data, bytes, sim));
+	}
+
+	public final void raiseConnectedEvent(SimulatorManager simulator) {
+		onEventQueueRunning.dispatch(new EventQueueRunningCallbackArgs(simulator));
+	}
+
+	public int getCircuitCode() {
+		return circuitCode;
+	}
+
+	public void setCircuitCode(int code) {
+		circuitCode = code;
+	}
+
+	public void setUDPBlacklist(String blacklist) {
+		if (blacklist != null) {
+			synchronized (udpBlacklist) {
+				for (String s : blacklist.split(","))
+					udpBlacklist.add(PacketType.valueOf(s));
+				logger.debug(GridClient.Log("UDP blacklisted packets: " + udpBlacklist.toString(), client));
+			}
+		}
+	}
+
+	public void setAgentAppearanceServiceURL(String url) {
+		agentAppearanceServiceURL = url;
+	}
+
+	public String getAgentAppearanceServiceURL() {
+		return agentAppearanceServiceURL;
+	}
+
+	public void addClosableClient(AsyncHTTPClient<OSD> client) {
+		synchronized (closableClients) {
+			closableClients.add(client);
+		}
+	}
+
+	private void cleanClosableClients() throws InterruptedException, IOException {
+		synchronized (closableClients) {
+			long time = System.currentTimeMillis();
+			for (AsyncHTTPClient<OSD> client : closableClients) {
+				client.shutdown(false);
+			}
+
+			if (closableClients.size() > 0) {
+				logger.info(GridClient.Log("Closing " + closableClients.size() + " clients in "
+						+ (System.currentTimeMillis() - time) + " ms.", client));
+				closableClients.clear();
+			}
+		}
+	}
+
+	/**
+	 * Get the array with all currently known simulators. This list must be
+	 * protected with a synchronization lock on itself if you do anything with it.
+	 *
+	 * @return array of simulator objects known to this client
+	 */
+	public List<SimulatorManager> getSimulators() {
+		return simulators;
+	}
+
+	/** Number of packets in the incoming queue */
+	public final int getInboxCount() {
+		return packetInbox.size();
+	}
+
+	/** Number of packets in the outgoing queue */
+	public final int getOutboxCount() {
+		return packetOutbox.size();
+	}
+
+	private void firePacketCallbacks(Packet packet, Simulator simulator) {
+		boolean specialHandler = false;
+		PacketType type = packet.getType();
+
+		synchronized (simCallbacks) {
+			// Fire any default callbacks
+			List<PacketCallback> callbackArray = simCallbacks.get(PacketType.Default);
+			if (callbackArray != null) {
+				for (PacketCallback callback : callbackArray) {
+					try {
+						callback.packetCallback(packet, simulator);
+					} catch (Exception ex) {
+						logger.error(GridClient.Log("Default packet event handler: " + type, client), ex);
+					}
+				}
+			}
+			// Fire any registered callbacks
+			callbackArray = simCallbacks.get(type);
+			if (callbackArray != null) {
+				for (PacketCallback callback : callbackArray) {
+					try {
+						callback.packetCallback(packet, simulator);
+					} catch (Exception ex) {
+						logger.error(GridClient.Log("Packet event handler: " + type, client), ex);
+					}
+					specialHandler = true;
+				}
+			}
+		}
+
+		if (!specialHandler && type != PacketType.Default && type != PacketType.PacketAck) {
+			// logger.test("No handler registered for packet event " + type,
+			// LogLevel.Warning, _Client);
+		}
+	}
+
+	private void fireCapsCallbacks(IMessage message, SimulatorManager simulator) {
+		boolean specialHandler = false;
+
+		synchronized (capCallbacks) {
+			// Fire any default callbacks
+			List<CapsCallback> callbackArray = capCallbacks.get(CapsEventType.Default);
+			if (callbackArray != null) {
+				for (CapsCallback callback : callbackArray) {
+					try {
+						callback.capsCallback(message, simulator);
+					} catch (Exception ex) {
+						logger.error(GridClient.Log("CAPS event handler: " + message.getType(), client), ex);
+					}
+				}
+			}
+			// Fire any registered callbacks
+			callbackArray = capCallbacks.get(message.getType());
+			if (callbackArray != null) {
+				for (CapsCallback callback : callbackArray) {
+					try {
+						callback.capsCallback(message, simulator);
+					} catch (Exception ex) {
+						logger.error(GridClient.Log("CAPS event handler: " + message.getType(), client), ex);
+					}
+					specialHandler = true;
+				}
+			}
+		}
+		if (!specialHandler) {
+			logger.warn(GridClient.Log("Unhandled CAPS event " + message.getType(), client));
+		}
+	}
+
+	public SimulatorManager getCurrentSim() {
+		return currentSim;
+	}
+
+	public final void setCurrentSim(SimulatorManager value) {
+		currentSim = value;
+	}
+
+	public boolean getConnected() {
+		return connected;
+	}
+
+	@Override
+	public void packetCallback(Packet packet, Simulator simulator) throws Exception {
+		switch (packet.getType()) {
+		case RegionHandshake:
+			handleRegionHandshake(packet, simulator);
+			break;
+		case StartPingCheck:
+			handleStartPingCheck(packet, simulator);
+			break;
+		case CompletePingCheck:
+			handleCompletePingCheck(packet, simulator);
+			break;
+		case EnableSimulator:
+			handleEnableSimulator(packet, simulator);
+			break;
+		case DisableSimulator:
+			handleDisableSimulator(packet, simulator);
+			break;
+		case LogoutReply:
+			handleLogoutReply(packet, simulator);
+			break;
+		case SimStats:
+			handleSimStats(packet, simulator);
+			break;
+		case KickUser:
+			handleKickUser(packet, simulator);
+			break;
+		default:
+			break;
+		}
+	}
+
+	@Override
+	public void capsCallback(IMessage message, SimulatorManager simulator) throws Exception {
+		switch (message.getType()) {
+		case EnableSimulator:
+			handleEnableSimulator(message, simulator);
+			break;
+		default:
+			break;
+		}
+
+	}
+
+	/**
+	 * Get the capability URL from the current simulator
+	 *
+	 * @param capability
+	 *            The name of the capability to retrieve the URL from
+	 * @return The URI for the capability or null if it doesn't exist
+	 */
+	public URI getCapabilityURI(String capability) {
+		return getCapabilityURI(capability, currentSim);
+	}
+
+	/**
+	 * Get the capability URL from the currenta specific simulator
+	 *
+	 * @param capability
+	 *            The name of the capability to retrieve the URL from
+	 * @param simulator
+	 *            The simulator for which the capability URL should be returned If
+	 *            "simulator" is null, this function uses the current simulator
+	 * @return The URI for the capability or null if it doesn't exist
+	 */
+	public URI getCapabilityURI(String capability, SimulatorManager simulator) {
+		synchronized (simulators) {
+			if (simulator == null)
+				simulator = currentSim;
+
+			if (simulator != null) {
+				return simulator.getCapabilityURI(capability);
+			}
+		}
+		return null;
+	}
+
+	public boolean getIsEventQueueRunning() {
+		synchronized (simulators) {
+			return (currentSim != null && currentSim.getIsEventQueueRunning());
+		}
+	}
+
+	public void registerCallback(CapsEventType capability, CapsCallback callback) {
+		/* Don't accept null callbacks */
+		if (callback == null)
+			return;
+
+		synchronized (capCallbacks) {
+			List<CapsCallback> callbacks = capCallbacks.get(capability);
+			if (callbacks == null) {
+				callbacks = new ArrayList<CapsCallback>();
+				capCallbacks.put(capability, callbacks);
+			} else {
+				callbacks.remove(callback);
+			}
+			callbacks.add(callback);
+		}
+	}
+
+	public void unregisterCallback(CapsEventType capability, CapsCallback callback) {
+		synchronized (capCallbacks) {
+			if (!capCallbacks.containsKey(capability)) {
+				logger.info(GridClient.Log("Trying to unregister a callback for capability " + capability
+						+ " when no callbacks are setup for that capability", client));
+				return;
+			}
+
+			List<CapsCallback> callbackArray = capCallbacks.get(capability);
+
+			if (callbackArray.contains(callback)) {
+				callbackArray.remove(callback);
+				if (callbackArray.isEmpty()) {
+					capCallbacks.remove(capability);
+				}
+			} else {
+				logger.info(GridClient.Log("Trying to unregister a non-existant callback for capability " + capability,
+						client));
+			}
+		}
+	}
+
+	public void registerCallback(PacketType type, PacketCallback callback) {
+		/* Don't accept null callbacks */
+		if (callback == null)
+			return;
+
+		synchronized (simCallbacks) {
+			List<PacketCallback> callbacks = simCallbacks.get(type);
+			if (callbacks == null) {
+				callbacks = new ArrayList<PacketCallback>();
+				simCallbacks.put(type, callbacks);
+			} else {
+				callbacks.remove(callback);
+			}
+			callbacks.add(callback);
+		}
+	}
+
+	public void unregisterCallback(PacketType type, PacketCallback callback) {
+		synchronized (simCallbacks) {
+			if (!simCallbacks.containsKey(type)) {
+				logger.info(GridClient.Log("Trying to unregister a callback for packet " + type
+						+ " when no callbacks are setup for that packet", client));
+				return;
+			}
+
+			List<PacketCallback> callbackArray = simCallbacks.get(type);
+			if (callbackArray.contains(callback)) {
+				callbackArray.remove(callback);
+				if (callbackArray.isEmpty()) {
+					simCallbacks.remove(type);
+				}
+			} else {
+				logger.info(GridClient.Log("Trying to unregister a non-existant callback for packet " + type, client));
+			}
+		}
+	}
+
+	/**
+	 * Send an UDP packet to the current simulator
+	 *
+	 * @param packet
+	 *            The packet to send
+	 * @throws Exception
+	 */
+	public void sendPacket(Packet packet) throws Exception {
+		// try CurrentSim, however directly after login this will be null, so if it is,
+		// we'll
+		// try to find the first simulator we're connected to in order to send the
+		// packet.
+		SimulatorManager simulator = currentSim;
+		if (simulator == null) {
+			synchronized (simulators) {
+				if (simulators.size() >= 1) {
+					logger.debug(GridClient.Log("CurrentSim object was null, using first found connected simulator",
+							client));
+					simulator = simulators.get(0);
+				}
+			}
+		}
+
+		if (simulator != null && simulator.getConnected()) {
+			simulator.sendPacket(packet);
+		} else {
+			ConnectException ex = new ConnectException(
+					"Packet received before simulator packet processing threads running, make certain you are completely logged in");
+			logger.error(GridClient.Log(ex.getMessage(), client), ex);
+			throw ex;
+		}
+	}
+
+	public void queuePacket(OutgoingPacket packet) throws InterruptedException {
+		packetOutbox.put(packet);
+	}
+
+	public void distributePacket(Simulator simulator, Packet packet) {
+		try {
+			packetInbox.add(new IncomingPacket(simulator, packet));
+		} catch (Exception ex) {
+			logger.warn(GridClient.Log("Suppressing packet " + packet.toString(), client), ex);
+		}
+	}
+
+	public void distributeCaps(Simulator simulator, IMessage message) {
+		try {
+			packetInbox.add(new IncomingPacket(simulator, message));
+		} catch (Exception ex) {
+			logger.warn(GridClient.Log("Suppressing message " + message.toString(), client), ex);
+		}
+	}
+
+	public SimulatorManager connect(InetAddress ip, short port, long handle, boolean setDefault, String seedcaps)
+			throws Exception {
+		return connect(new InetSocketAddress(ip, port), handle, setDefault, seedcaps);
+	}
+
+	/**
+	 * Connect to a simulator
+	 *
+	 * @param endPoint
+	 *            IP address and port to connect to
+	 * @param handle
+	 *            Handle for this simulator, to identify its location in the grid
+	 * @param setDefault
+	 *            Whether to set CurrentSim to this new connection, use this if the
+	 *            avatar is moving in to this simulator
+	 * @param seedcaps
+	 *            URL of the capabilities server to use for this sim connection
+	 * @return A Simulator object on success, otherwise null
+	 */
+	public SimulatorManager connect(InetSocketAddress endPoint, long handle, boolean setDefault, String seedcaps)
+			throws Exception {
+		SimulatorManager simulator = findSimulator(endPoint);
+
+		if (simulator == null) {
+			// We're not tracking this sim, create a new Simulator object
+			simulator = new SimulatorManager(client, endPoint, handle);
+
+			synchronized (simulators) {
+				// Immediately add this simulator to the list of current sims.
+				// It will be removed if the connection fails
+				simulators.add(simulator);
+			}
+		}
+
+		if (!simulator.getConnected()) {
+			if (!connected) {
+				// Mark that we are connecting/connected to the grid
+				connected = true;
+
+				// Start the packet decoding thread
+				packetHandlerThread = new IncomingPacketHandler();
+				Thread decodeThread = new Thread(packetHandlerThread);
+				decodeThread.setName("Incoming UDP packet dispatcher");
+				decodeThread.start();
+
+				// Start the packet sending thread
+				Thread sendThread = new Thread(new OutgoingPacketHandler());
+				sendThread.setName("Outgoing UDP packet dispatcher");
+				sendThread.start();
+			}
+
+			if (onSimConnecting.count() > 0) {
+				SimConnectingCallbackArgs args = new SimConnectingCallbackArgs(endPoint);
+				onSimConnecting.dispatch(args);
+				if (args.getCancel()) {
+					synchronized (simulators) {
+						// Callback is requesting that we abort this connection
+						simulators.remove(simulator);
+					}
+					return null;
+				}
+			}
+
+			// Attempt to establish a connection to the simulator
+			if (simulator.connect(setDefault)) {
+				if (disconnectTimer == null) {
+					// Start a timer that checks if we've been disconnected
+					disconnectTimer = new Timer("_DisconnectTimer");
+					disconnectTimer.scheduleAtFixedRate(new DisconnectTimer_Elapsed(),
+							client.settings.SIMULATOR_TIMEOUT, client.settings.SIMULATOR_TIMEOUT);
+				}
+
+				if (setDefault) {
+					setCurrentSim(simulator, seedcaps);
+				}
+
+				// Raise the SimConnected event
+				onSimConnected.dispatch(new SimConnectedCallbackArgs(simulator));
+
+				// If enabled, send an AgentThrottle packet to the server to
+				// increase our bandwidth
+				if (client.throttle != null) {
+					client.throttle.set(simulator);
+				}
+			} else {
+				synchronized (simulators) {
+					// Connection failed, remove this simulator from our list
+					// and destroy it
+					simulators.remove(simulator);
+				}
+				return null;
+			}
+		} else if (setDefault) {
+			// Move in to this simulator
+			simulator.useCircuitCode();
+			client.agent.completeAgentMovement(simulator);
+
+			// We're already connected to this server, but need to set it to the default
+			setCurrentSim(simulator, seedcaps);
+
+			// Send an initial AgentUpdate to complete our movement in to the sim
+			if (sendAgentUpdates) {
+				client.agent.sendMovementUpdate(true, simulator);
+			}
+		} else {
+			// Already connected to this simulator and wasn't asked to set it as
+			// the default, just return a reference to the existing object
+		}
+		return simulator;
+	}
+
+	/**
+	 * Begins the non-blocking logout. Makes sure that the LoggedOut event is called
+	 * even if the server does not send a logout reply, and shutdown() is properly
+	 * called.
+	 *
+	 * @throws Exception
+	 */
+	public void beginLogout() throws Exception {
+		// Wait for a logout response (by way of the LoggedOut event. If the response is
+		// received,
+		// shutdown will be fired in the callback itself that caused this event to be
+		// triggered.
+		// Otherwise we fire it manually with a NetworkTimeout type after LOGOUT_TIMEOUT
+		class LoggedOutHandler extends TimerTask implements Callback<LoggedOutCallbackArgs> {
+			// Executed when the timer times out
+			@Override
+			public void run() {
+				try {
+					shutdown(DisconnectType.NetworkTimeout, "User logged out");
+				} catch (Exception e) {
+				}
+				/* Remove ourself from the event dispatcher */
+				onLoggedOut.remove(this);
+				onLoggedOut.dispatch(new LoggedOutCallbackArgs(new Vector<UUID>()));
+			}
+
+			// Executed when the log out resulted in an acknowledgement from the server
+			@Override
+			public boolean callback(LoggedOutCallbackArgs params) {
+				this.cancel();
+				/* Remove ourself from the event dispatcher */
+				return true;
+			}
+
+		}
+
+		LoggedOutHandler timeoutTask = new LoggedOutHandler();
+
+		onLoggedOut.add(timeoutTask);
+
+		// Send the packet requesting a clean logout
+		requestLogout();
+		logoutTimer.schedule(timeoutTask, client.settings.LOGOUT_TIMEOUT);
+	}
+
+	/**
+	 * Initiate a blocking logout request. This will return when the logout
+	 * handshake has completed or when <code>Settings.LOGOUT_TIMEOUT</code> has
+	 * expired and the network layer is manually shut down
+	 */
+	public void logout() throws Exception {
+		final TimeoutEvent<Boolean> timeout = new TimeoutEvent<Boolean>();
+
+		Callback<LoggedOutCallbackArgs> loggedOut = new Callback<LoggedOutCallbackArgs>() {
+			@Override
+			public boolean callback(LoggedOutCallbackArgs params) {
+				timeout.set(true);
+				/* Remove ourself from the event dispatcher */
+				return true;
+			}
+		};
+
+		onLoggedOut.add(loggedOut);
+
+		// Send the packet requesting a clean logout
+		requestLogout();
+
+		// Wait for a logout response. If the response is received, shutdown() will
+		// be fired in the callback. Otherwise we fire it manually with a NetworkTimeout
+		// type
+		Boolean success = timeout.waitOne(client.settings.LOGOUT_TIMEOUT);
+		if (success == null || !success) {
+			// Shutdown the network layer
+			shutdown(DisconnectType.NetworkTimeout, "User logged out");
+		}
+		onLoggedOut.remove(loggedOut);
+	}
+
+	/**
+	 * Initiate the logout process. The <code>Shutdown()</code> function needs to be
+	 * manually called.
+	 *
+	 * @throws Exception
+	 */
+	public void requestLogout() throws Exception {
+		if (disconnectTimer == null) {
+			disconnectTimer.cancel();
+			disconnectTimer = null;
+		}
+
+		// This will catch a Logout when the client is not logged in
+		if (currentSim == null || !connected) {
+			return;
+		}
+
+		connected = false;
+		client.setCurrentGrid((String) null);
+		packetHandlerThread.shutdown();
+
+		logger.info(GridClient.Log("Logging out", client));
+
+		// Send a logout request to the current sim
+		LogoutRequestPacket logout = new LogoutRequestPacket();
+		logout.AgentData.AgentID = client.agent.getAgentID();
+		logout.AgentData.SessionID = client.agent.getSessionID();
+
+		currentSim.sendPacket(logout);
+	}
+
+	private void setCurrentSim(SimulatorManager simulator, String seedcaps) throws InterruptedException, IOException {
+		if (!simulator.equals(getCurrentSim())) {
+			Simulator oldSim = getCurrentSim();
+			synchronized (simulators) // CurrentSim is synchronized against
+										// Simulators
+			{
+				setCurrentSim(simulator);
+			}
+			simulator.setSeedCaps(seedcaps);
+
+			// If the current simulator changed fire the callback
+			if (!simulator.equals(oldSim)) {
+				onSimChanged.dispatch(new SimChangedCallbackArgs(oldSim));
+			}
+		}
+	}
+
+	public void disconnectSim(Runnable sim, boolean sendCloseCircuit) throws Exception {
+		if (sim != null) {
+			SimulatorManager simulator = (SimulatorManager) sim;
+			simulator.disconnect(sendCloseCircuit);
+
+			// Fire the SimDisconnected event if a handler is registered
+			onSimDisconnected.dispatch(new SimDisconnectedCallbackArgs(simulator, DisconnectType.NetworkTimeout));
+
+			synchronized (simulators) {
+				simulators.remove(simulator);
+				if (simulators.isEmpty()) {
+					shutdown(DisconnectType.SimShutdown, "Last simulator disconnected");
+				}
+			}
+		} else {
+			logger.warn("DisconnectSim() called with a null Simulator reference");
+		}
+	}
+
+	/**
+	 * Shutdown will disconnect all the sims except for the current sim first, and
+	 * then kill the connection to CurrentSim. This should only be called if the
+	 * logout process times out on <code>RequestLogout</code>
+	 *
+	 * @param type
+	 *            Type of shutdown
+	 * @throws Exception
+	 */
+	public final void shutdown(DisconnectType type) throws Exception {
+		shutdown(type, type.toString());
+	}
+
+	private void shutdown(DisconnectType type, String message) throws Exception {
+		logger.info(GridClient.Log("NetworkManager shutdown initiated", client));
+
+		// Send a CloseCircuit packet to simulators if we are initiating the
+		// disconnect
+		boolean sendCloseCircuit = (type == DisconnectType.ClientInitiated || type == DisconnectType.NetworkTimeout);
+
+		synchronized (simulators) {
+			// Disconnect all simulators except the current one
+			for (int i = 0; i < simulators.size(); i++) {
+				SimulatorManager simulator = simulators.get(i);
+				// Don't disconnect the current sim, we'll use LogoutRequest for
+				// that
+				if (simulator != null && !simulator.equals(currentSim)) {
+					simulator.disconnect(sendCloseCircuit);
+
+					// Fire the SimDisconnected event if a handler is registered
+					onSimDisconnected
+							.dispatch(new SimDisconnectedCallbackArgs(simulator, DisconnectType.NetworkTimeout));
+				}
+
+			}
+			simulators.clear();
+
+			if (currentSim != null) {
+				currentSim.disconnect(sendCloseCircuit);
+
+				// Fire the SimDisconnected event if a handler is registered
+				onSimDisconnected.dispatch(new SimDisconnectedCallbackArgs(currentSim, DisconnectType.NetworkTimeout));
+			}
+
+		}
+		connected = false;
+		logoutTimer.cancel();
+		logoutTimer = null;
+
+		if (onDisconnected.count() > 0) {
+			onDisconnected.dispatch(new DisconnectedCallbackArgs(type, message));
+		}
+	}
+
 	/**
 	 * Searches through the list of currently connected simulators to find one
 	 * attached to the given IPEndPoint
@@ -1069,9 +1060,9 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 	 *            InetSocketAddress of the Simulator to search for
 	 * @return A Simulator reference on success, otherwise null
 	 */
-	public final SimulatorManager FindSimulator(InetSocketAddress endPoint) {
-		synchronized (_Simulators) {
-			for (SimulatorManager simulator : _Simulators) {
+	public final SimulatorManager findSimulator(InetSocketAddress endPoint) {
+		synchronized (simulators) {
+			for (SimulatorManager simulator : simulators) {
 				if (simulator.getIPEndPoint().equals(endPoint)) {
 					return simulator;
 				}
@@ -1080,58 +1071,58 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 		return null;
 	}
 
-	private void HandleRegionHandshake(Packet packet, Simulator sim) throws Exception {
+	private void handleRegionHandshake(Packet packet, Simulator sim) throws Exception {
 		RegionHandshakePacket handshake = (RegionHandshakePacket) packet;
 		SimulatorManager simulator = (SimulatorManager) sim;
-		simulator.ID = handshake.RegionInfo.CacheID;
+		simulator.id = handshake.RegionInfo.CacheID;
 
-		simulator.IsEstateManager = handshake.RegionInfo.IsEstateManager;
+		simulator.isEstateManager = handshake.RegionInfo.IsEstateManager;
 		simulator.setSimName(Helpers.BytesToString(handshake.RegionInfo.getSimName()));
-		simulator.SimOwner = handshake.RegionInfo.SimOwner;
-		simulator.TerrainBase0 = handshake.RegionInfo.TerrainBase0;
-		simulator.TerrainBase1 = handshake.RegionInfo.TerrainBase1;
-		simulator.TerrainBase2 = handshake.RegionInfo.TerrainBase2;
-		simulator.TerrainBase3 = handshake.RegionInfo.TerrainBase3;
-		simulator.TerrainDetail0 = handshake.RegionInfo.TerrainDetail0;
-		simulator.TerrainDetail1 = handshake.RegionInfo.TerrainDetail1;
-		simulator.TerrainDetail2 = handshake.RegionInfo.TerrainDetail2;
-		simulator.TerrainDetail3 = handshake.RegionInfo.TerrainDetail3;
-		simulator.TerrainHeightRange00 = handshake.RegionInfo.TerrainHeightRange00;
-		simulator.TerrainHeightRange01 = handshake.RegionInfo.TerrainHeightRange01;
-		simulator.TerrainHeightRange10 = handshake.RegionInfo.TerrainHeightRange10;
-		simulator.TerrainHeightRange11 = handshake.RegionInfo.TerrainHeightRange11;
-		simulator.TerrainStartHeight00 = handshake.RegionInfo.TerrainStartHeight00;
-		simulator.TerrainStartHeight01 = handshake.RegionInfo.TerrainStartHeight01;
-		simulator.TerrainStartHeight10 = handshake.RegionInfo.TerrainStartHeight10;
-		simulator.TerrainStartHeight11 = handshake.RegionInfo.TerrainStartHeight11;
+		simulator.simOwner = handshake.RegionInfo.SimOwner;
+		simulator.terrainBase0 = handshake.RegionInfo.TerrainBase0;
+		simulator.terrainBase1 = handshake.RegionInfo.TerrainBase1;
+		simulator.terrainBase2 = handshake.RegionInfo.TerrainBase2;
+		simulator.terrainBase3 = handshake.RegionInfo.TerrainBase3;
+		simulator.terrainDetail0 = handshake.RegionInfo.TerrainDetail0;
+		simulator.terrainDetail1 = handshake.RegionInfo.TerrainDetail1;
+		simulator.terrainDetail2 = handshake.RegionInfo.TerrainDetail2;
+		simulator.terrainDetail3 = handshake.RegionInfo.TerrainDetail3;
+		simulator.terrainHeightRange00 = handshake.RegionInfo.TerrainHeightRange00;
+		simulator.terrainHeightRange01 = handshake.RegionInfo.TerrainHeightRange01;
+		simulator.terrainHeightRange10 = handshake.RegionInfo.TerrainHeightRange10;
+		simulator.terrainHeightRange11 = handshake.RegionInfo.TerrainHeightRange11;
+		simulator.terrainStartHeight00 = handshake.RegionInfo.TerrainStartHeight00;
+		simulator.terrainStartHeight01 = handshake.RegionInfo.TerrainStartHeight01;
+		simulator.terrainStartHeight10 = handshake.RegionInfo.TerrainStartHeight10;
+		simulator.terrainStartHeight11 = handshake.RegionInfo.TerrainStartHeight11;
 
-		simulator.WaterHeight = handshake.RegionInfo.WaterHeight;
-		simulator.Flags = RegionFlags.setValue(handshake.RegionInfo.RegionFlags);
-		simulator.BillableFactor = handshake.RegionInfo.BillableFactor;
-		simulator.Access = SimAccess.setValue(handshake.RegionInfo.SimAccess);
+		simulator.waterHeight = handshake.RegionInfo.WaterHeight;
+		simulator.flags = RegionFlags.setValue(handshake.RegionInfo.RegionFlags);
+		simulator.billableFactor = handshake.RegionInfo.BillableFactor;
+		simulator.access = SimAccess.setValue(handshake.RegionInfo.SimAccess);
 
-		simulator.RegionID = handshake./* RegionInfo2. */RegionID;
+		simulator.regionID = handshake./* RegionInfo2. */RegionID;
 
-		simulator.ColoLocation = Helpers.BytesToString(handshake.RegionInfo3.getColoName());
-		simulator.CPUClass = handshake.RegionInfo3.CPUClassID;
-		simulator.CPURatio = handshake.RegionInfo3.CPURatio;
-		simulator.ProductName = Helpers.BytesToString(handshake.RegionInfo3.getProductName());
-		simulator.ProductSku = Helpers.BytesToString(handshake.RegionInfo3.getProductSKU());
+		simulator.coLocation = Helpers.BytesToString(handshake.RegionInfo3.getColoName());
+		simulator.cpuClass = handshake.RegionInfo3.CPUClassID;
+		simulator.cpuRatio = handshake.RegionInfo3.CPURatio;
+		simulator.productName = Helpers.BytesToString(handshake.RegionInfo3.getProductName());
+		simulator.productSku = Helpers.BytesToString(handshake.RegionInfo3.getProductSKU());
 
 		if (handshake.RegionInfo4 != null && handshake.RegionInfo4.length > 0) {
-			simulator.Protocols = RegionProtocols.setValue(handshake.RegionInfo4[0].RegionProtocols);
+			simulator.protocols = RegionProtocols.setValue(handshake.RegionInfo4[0].RegionProtocols);
 			// Yes, overwrite region flags if we have extended version of them
-			simulator.Flags = RegionFlags.setValue(handshake.RegionInfo4[0].RegionFlagsExtended);
+			simulator.flags = RegionFlags.setValue(handshake.RegionInfo4[0].RegionFlagsExtended);
 		}
 
 		// Send a RegionHandshakeReply
 		RegionHandshakeReplyPacket reply = new RegionHandshakeReplyPacket();
-		reply.AgentData.AgentID = _Client.Self.getAgentID();
-		reply.AgentData.SessionID = _Client.Self.getSessionID();
+		reply.AgentData.AgentID = client.agent.getAgentID();
+		reply.AgentData.SessionID = client.agent.getSessionID();
 		reply.Flags = (int) RegionProtocols.SelfAppearanceSupport;
 		simulator.sendPacket(reply);
 
-		logger.debug(GridClient.Log("Received a region handshake for " + simulator.getName(), _Client));
+		logger.debug(GridClient.Log("Received a region handshake for " + simulator.getName(), client));
 	}
 
 	/**
@@ -1143,7 +1134,7 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 	 *            The sender
 	 * @throws Exception
 	 */
-	private void HandleStartPingCheck(Packet packet, Simulator simulator) throws Exception {
+	private void handleStartPingCheck(Packet packet, Simulator simulator) throws Exception {
 		StartPingCheckPacket incomingPing = (StartPingCheckPacket) packet;
 		CompletePingCheckPacket ping = new CompletePingCheckPacket();
 		ping.PingID = incomingPing.PingID.PingID;
@@ -1157,22 +1148,22 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 	/**
 	 * Process a ping answer
 	 */
-	private final void HandleCompletePingCheck(Packet packet, Simulator sim) {
+	private final void handleCompletePingCheck(Packet packet, Simulator sim) {
 		CompletePingCheckPacket pong = (CompletePingCheckPacket) packet;
 		long timeMilli = System.currentTimeMillis();
 
 		SimulatorManager simulator = (SimulatorManager) sim;
-		simulator.Statistics.lastLag = timeMilli - simulator.Statistics.lastPingSent;
-		simulator.Statistics.receivedPongs++;
+		simulator.statistics.lastLag = timeMilli - simulator.statistics.lastPingSent;
+		simulator.statistics.receivedPongs++;
 
 		if (LibSettings.OUTPUT_TIMING_STATS) {
-			String retval = "Pong2: " + simulator.getName() + " lag : " + simulator.Statistics.lastLag + "ms";
+			String retval = "Pong2: " + simulator.getName() + " lag : " + simulator.statistics.lastLag + "ms";
 
-			if ((pong.PingID - simulator.Statistics.lastPingID + 1) != 0) {
-				retval += " (gap of " + (pong.PingID - simulator.Statistics.lastPingID + 1) + ")";
+			if ((pong.PingID - simulator.statistics.lastPingID + 1) != 0) {
+				retval += " (gap of " + (pong.PingID - simulator.statistics.lastPingID + 1) + ")";
 			}
 
-			logger.debug(GridClient.Log(retval, _Client));
+			logger.debug(GridClient.Log(retval, client));
 		}
 	}
 
@@ -1184,7 +1175,7 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 	 * @param simulator
 	 *            The sender
 	 */
-	private final void HandleSimStats(Packet packet, Simulator sim) {
+	private final void handleSimStats(Packet packet, Simulator sim) {
 		if (enableSimStats) {
 			SimulatorManager simulator = (SimulatorManager) sim;
 			SimStatsPacket stats = (SimStatsPacket) packet;
@@ -1193,162 +1184,162 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 
 				switch (SimStatType.setValue(s.StatID)) {
 				case TimeDilation:
-					simulator.Statistics.dilation = s.StatValue;
+					simulator.statistics.dilation = s.StatValue;
 					break;
 				case SimFPS:
-					simulator.Statistics.fps = Helpers.BytesToInt32L(Helpers.FloatToBytesL(s.StatValue));
+					simulator.statistics.fps = Helpers.BytesToInt32L(Helpers.floatToBytesL(s.StatValue));
 					break;
 				case PhysicsFPS:
-					simulator.Statistics.physicsFPS = s.StatValue;
+					simulator.statistics.physicsFPS = s.StatValue;
 					break;
 				case AgentUpdates:
-					simulator.Statistics.agentUpdates = s.StatValue;
+					simulator.statistics.agentUpdates = s.StatValue;
 					break;
 				case FrameMS:
-					simulator.Statistics.frameTime = s.StatValue;
+					simulator.statistics.frameTime = s.StatValue;
 					break;
 				case NetMS:
-					simulator.Statistics.netTime = s.StatValue;
+					simulator.statistics.netTime = s.StatValue;
 					break;
 				case OtherMS:
-					simulator.Statistics.otherTime = s.StatValue;
+					simulator.statistics.otherTime = s.StatValue;
 					break;
 				case PhysicsMS:
-					simulator.Statistics.physicsTime = s.StatValue;
+					simulator.statistics.physicsTime = s.StatValue;
 					break;
 				case AgentMS:
-					simulator.Statistics.agentTime = s.StatValue;
+					simulator.statistics.agentTime = s.StatValue;
 					break;
 				case ImageMS:
-					simulator.Statistics.imageTime = s.StatValue;
+					simulator.statistics.imageTime = s.StatValue;
 					break;
 				case ScriptMS:
-					simulator.Statistics.scriptTime = s.StatValue;
+					simulator.statistics.scriptTime = s.StatValue;
 					break;
 				case TotalPrim:
-					simulator.Statistics.objects = (int) s.StatValue;
+					simulator.statistics.objects = (int) s.StatValue;
 					break;
 				case ActivePrim:
-					simulator.Statistics.scriptedObjects = (int) s.StatValue;
+					simulator.statistics.scriptedObjects = (int) s.StatValue;
 					break;
 				case Agents:
-					simulator.Statistics.agents = (int) s.StatValue;
+					simulator.statistics.agents = (int) s.StatValue;
 					break;
 				case ChildAgents:
-					simulator.Statistics.childAgents = (int) s.StatValue;
+					simulator.statistics.childAgents = (int) s.StatValue;
 					break;
 				case ActiveScripts:
-					simulator.Statistics.activeScripts = (int) s.StatValue;
+					simulator.statistics.activeScripts = (int) s.StatValue;
 					break;
 				case ScriptInstructionsPerSecond:
-					simulator.Statistics.lslIPS = (int) s.StatValue;
+					simulator.statistics.lslIPS = (int) s.StatValue;
 					break;
 				case InPacketsPerSecond:
-					simulator.Statistics.inPPS = (int) s.StatValue;
+					simulator.statistics.inPPS = (int) s.StatValue;
 					break;
 				case OutPacketsPerSecond:
-					simulator.Statistics.outPPS = (int) s.StatValue;
+					simulator.statistics.outPPS = (int) s.StatValue;
 					break;
 				case PendingDownloads:
-					simulator.Statistics.pendingDownloads = (int) s.StatValue;
+					simulator.statistics.pendingDownloads = (int) s.StatValue;
 					break;
 				case PendingUploads:
-					simulator.Statistics.pendingUploads = (int) s.StatValue;
+					simulator.statistics.pendingUploads = (int) s.StatValue;
 					break;
 				case VirtualSizeKB:
-					simulator.Statistics.virtualSize = (int) s.StatValue;
+					simulator.statistics.virtualSize = (int) s.StatValue;
 					break;
 				case ResidentSizeKB:
-					simulator.Statistics.residentSize = (int) s.StatValue;
+					simulator.statistics.residentSize = (int) s.StatValue;
 					break;
 				case PendingLocalUploads:
-					simulator.Statistics.pendingLocalUploads = (int) s.StatValue;
+					simulator.statistics.pendingLocalUploads = (int) s.StatValue;
 					break;
 				case UnAckedBytes:
-					simulator.Statistics.unackedBytes = (int) s.StatValue;
+					simulator.statistics.unackedBytes = (int) s.StatValue;
 					break;
 				case PhysicsPinnedTasks:
-					simulator.Statistics.physicsPinnedTasks = (int) s.StatValue;
+					simulator.statistics.physicsPinnedTasks = (int) s.StatValue;
 					break;
 				case PhysicsLODTasks:
-					simulator.Statistics.physicsLODTasks = (int) s.StatValue;
+					simulator.statistics.physicsLODTasks = (int) s.StatValue;
 					break;
 				case PhysicsStepMS:
-					simulator.Statistics.physicsStepMS = (int) s.StatValue;
+					simulator.statistics.physicsStepMS = (int) s.StatValue;
 					break;
 				case PhysicsShapeMS:
-					simulator.Statistics.physicsShapeMS = (int) s.StatValue;
+					simulator.statistics.physicsShapeMS = (int) s.StatValue;
 					break;
 				case PhysicsOtherMS:
-					simulator.Statistics.physicsOtherMS = (int) s.StatValue;
+					simulator.statistics.physicsOtherMS = (int) s.StatValue;
 					break;
 				case PhysicsMemory:
-					simulator.Statistics.physicsMemory = (int) s.StatValue;
+					simulator.statistics.physicsMemory = (int) s.StatValue;
 					break;
 				case ScriptEPS:
-					simulator.Statistics.scriptEPS = (int) s.StatValue;
+					simulator.statistics.scriptEPS = (int) s.StatValue;
 					break;
 				case SimSpareTime:
-					simulator.Statistics.simSpareTime = (int) s.StatValue;
+					simulator.statistics.simSpareTime = (int) s.StatValue;
 					break;
 				case SimSleepTime:
-					simulator.Statistics.simSleepTime = (int) s.StatValue;
+					simulator.statistics.simSleepTime = (int) s.StatValue;
 					break;
 				case SimIOPumpTime:
-					simulator.Statistics.simIOPumpTime = (int) s.StatValue;
+					simulator.statistics.simIOPumpTime = (int) s.StatValue;
 					break;
 				case SimPctScriptsRun:
-					simulator.Statistics.simPctScriptsRun = (int) s.StatValue;
+					simulator.statistics.simPctScriptsRun = (int) s.StatValue;
 					break;
 				case SimAIStepMsec:
-					simulator.Statistics.simAIStepMsec = (int) s.StatValue;
+					simulator.statistics.simAIStepMsec = (int) s.StatValue;
 					break;
 				case SimSkippedSilhouetteSteps:
-					simulator.Statistics.simSkippedSilhouetteSteps = (int) s.StatValue;
+					simulator.statistics.simSkippedSilhouetteSteps = (int) s.StatValue;
 					break;
 				case SimPctSteppedCharacters:
-					simulator.Statistics.simPctSteppedCharacters = (int) s.StatValue;
+					simulator.statistics.simPctSteppedCharacters = (int) s.StatValue;
 					break;
 				default:
-					logger.debug(GridClient.Log("Unknown stat id: " + s.StatID, _Client));
+					logger.debug(GridClient.Log("Unknown stat id: " + s.StatID, client));
 					break;
 				}
 			}
 		}
 	}
 
-	private void HandleEnableSimulator(IMessage message, Simulator simulator) throws Exception {
-		if (_Client.Settings.getBool(LibSettings.MULTIPLE_SIMS)) {
+	private void handleEnableSimulator(IMessage message, Simulator simulator) throws Exception {
+		if (client.settings.getBool(LibSettings.MULTIPLE_SIMS)) {
 			EnableSimulatorMessage msg = (EnableSimulatorMessage) message;
 
 			for (int i = 0; i < msg.simulators.length; i++) {
 				InetAddress ip = msg.simulators[i].ip;
 				InetSocketAddress endPoint = new InetSocketAddress(ip, msg.simulators[i].port);
 
-				if (FindSimulator(endPoint) != null)
+				if (findSimulator(endPoint) != null)
 					return;
 
 				if (connect(endPoint, msg.simulators[i].regionHandle, false, null) == null) {
 					logger.error(GridClient.Log("Unable to connect to new sim " + ip + ":" + msg.simulators[i].port,
-							_Client));
+							client));
 				}
 			}
 		}
 	}
 
-	private void HandleEnableSimulator(Packet packet, Simulator simulator) throws Exception {
-		if (_Client.Settings.getBool(LibSettings.MULTIPLE_SIMS)) {
+	private void handleEnableSimulator(Packet packet, Simulator simulator) throws Exception {
+		if (client.settings.getBool(LibSettings.MULTIPLE_SIMS)) {
 			EnableSimulatorPacket msg = (EnableSimulatorPacket) packet;
 
 			InetAddress ip = InetAddress.getByAddress(Helpers.Int32ToBytesB(msg.SimulatorInfo.IP));
 			InetSocketAddress endPoint = new InetSocketAddress(ip, msg.SimulatorInfo.Port);
 
-			if (FindSimulator(endPoint) != null)
+			if (findSimulator(endPoint) != null)
 				return;
 
 			if (connect(endPoint, msg.SimulatorInfo.Handle, false, null) == null) {
 				logger.error(
-						GridClient.Log("Unable to connect to new sim " + ip + ":" + msg.SimulatorInfo.Port, _Client));
+						GridClient.Log("Unable to connect to new sim " + ip + ":" + msg.SimulatorInfo.Port, client));
 			}
 		}
 	}
@@ -1362,7 +1353,7 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 	 *            The packet data
 	 * @throws Exception
 	 */
-	private final void HandleDisableSimulator(Packet packet, Simulator simulator) throws Exception {
+	private final void handleDisableSimulator(Packet packet, Simulator simulator) throws Exception {
 		disconnectSim(simulator, false);
 	}
 
@@ -1375,28 +1366,28 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 	 *            The sender
 	 * @throws Exception
 	 */
-	private void HandleLogoutReply(Packet packet, Simulator simulator) throws Exception {
+	private void handleLogoutReply(Packet packet, Simulator simulator) throws Exception {
 		LogoutReplyPacket logout = (LogoutReplyPacket) packet;
 
-		if ((logout.AgentData.SessionID.equals(_Client.Self.getSessionID()))
-				&& (logout.AgentData.AgentID.equals(_Client.Self.getAgentID()))) {
-			logger.debug(GridClient.Log("Logout reply received", _Client));
+		if ((logout.AgentData.SessionID.equals(client.agent.getSessionID()))
+				&& (logout.AgentData.AgentID.equals(client.agent.getAgentID()))) {
+			logger.debug(GridClient.Log("Logout reply received", client));
 
 			// Deal with callbacks, if any
-			if (OnLoggedOut.count() > 0) {
+			if (onLoggedOut.count() > 0) {
 				Vector<UUID> itemIDs = new Vector<UUID>();
 
 				for (UUID inventoryID : logout.ItemID) {
 					itemIDs.add(inventoryID);
 				}
-				OnLoggedOut.dispatch(new LoggedOutCallbackArgs(itemIDs));
+				onLoggedOut.dispatch(new LoggedOutCallbackArgs(itemIDs));
 			}
 
 			// If we are receiving a LogoutReply packet assume this is a client
 			// initiated shutdown
 			shutdown(DisconnectType.ClientInitiated, "Logout from simulator");
 		} else {
-			logger.warn(GridClient.Log("Invalid Session or Agent ID received in Logout Reply... ignoring", _Client));
+			logger.warn(GridClient.Log("Invalid Session or Agent ID received in Logout Reply... ignoring", client));
 		}
 	}
 
@@ -1408,7 +1399,7 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 	 * @param packet
 	 *            The packet data
 	 */
-	private void HandleKickUser(Packet packet, Simulator simulator) throws Exception {
+	private void handleKickUser(Packet packet, Simulator simulator) throws Exception {
 		String message = Helpers.BytesToString(((KickUserPacket) packet).UserInfo.getReason());
 
 		// Shutdown the network layer

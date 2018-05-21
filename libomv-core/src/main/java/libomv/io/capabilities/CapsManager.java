@@ -70,106 +70,41 @@ public class CapsManager extends Thread {
 		// The simulator that received a capability
 		private SimulatorManager simulator;
 
+		public CapabilitiesReceivedCallbackArgs(SimulatorManager simulator) {
+			this.simulator = simulator;
+		}
+
 		public SimulatorManager getSimulator() {
 			return simulator;
 		}
 
-		public CapabilitiesReceivedCallbackArgs(SimulatorManager simulator) {
-			this.simulator = simulator;
-		}
-	}
-
-	public CallbackHandler<CapabilitiesReceivedCallbackArgs> OnCapabilitiesReceived = new CallbackHandler<CapabilitiesReceivedCallbackArgs>();
-
-	/* Reference to the simulator this system is connected to */
-	private SimulatorManager _Simulator;
-
-	/*
-	 * Asynchronous HTTP Client used for both the seedRequest as well as the
-	 * eventQueue
-	 */
-	private CapsClient _Client;
-
-	/* Capabilities URI this system was initialized with */
-	private String _SeedCapsURI;
-
-	public final String getSeedCapsURI() {
-		return _SeedCapsURI;
-	}
-
-	private Hashtable<String, URI> _Capabilities = new Hashtable<String, URI>();
-
-	/**
-	 * Request the URI of a named capability
-	 *
-	 * @param capability
-	 *            Name of the capability to request
-	 * @return The URI of the requested capability, or String. Empty if the
-	 *         capability does not exist
-	 */
-	public final URI capabilityURI(String capability) {
-		synchronized (_Capabilities) {
-			return _Capabilities.get(capability);
-		}
 	}
 
 	private enum CapsState {
 		Seeding, Running, Closing, Closed;
 	}
 
+	public CallbackHandler<CapabilitiesReceivedCallbackArgs> onCapabilitiesReceived = new CallbackHandler<>();
+
+	/* Reference to the simulator this system is connected to */
+	private SimulatorManager simulator;
+
+	/*
+	 * Asynchronous HTTP Client used for both the seedRequest as well as the
+	 * eventQueue
+	 */
+	private CapsClient client;
+
+	/* Capabilities URI this system was initialized with */
+	private String seedCapsURI;
+
+	private Map<String, URI> capabilities = new Hashtable<>();
+
 	/*
 	 * Whether the capabilities event queue is connected and listening for incoming
 	 * events
 	 */
-	private CapsState _Running = CapsState.Closed;
-
-	private void setState(CapsState state) {
-		synchronized (_Running) {
-			_Running = state;
-		}
-	}
-
-	private final boolean isClosed() {
-		synchronized (_Running) {
-			return _Running == CapsState.Closed;
-		}
-	}
-
-	private final boolean isActiveAndMakeClosing() {
-		synchronized (_Running) {
-			boolean active = _Running == CapsState.Seeding || _Running == CapsState.Running;
-			if (active)
-				_Running = CapsState.Closing;
-			return active;
-		}
-	}
-
-	private final boolean isSeedingAndMakeRun() {
-		synchronized (_Running) {
-			boolean seeding = _Running == CapsState.Seeding;
-			if (seeding)
-				_Running = CapsState.Running;
-			return seeding;
-		}
-	}
-
-	private final boolean isSeeding() {
-		synchronized (_Running) {
-			return _Running == CapsState.Seeding;
-		}
-	}
-
-	public final boolean isRunning() {
-		synchronized (_Running) {
-			return _Running == CapsState.Running;
-		}
-	}
-
-	public final boolean isClosing() {
-		synchronized (_Running) {
-			return _Running == CapsState.Closing;
-		}
-	}
+	private CapsState running = CapsState.Closed;
 
 	/**
 	 * Default constructor
@@ -180,20 +115,86 @@ public class CapsManager extends Thread {
 	 */
 	public CapsManager(SimulatorManager simulator, String seedcaps) throws IOReactorException {
 		super("CapsManager");
-		_Simulator = simulator;
+		this.simulator = simulator;
 
-		_SeedCapsURI = seedcaps;
-		_Client = new CapsClient(simulator.getClient(), CapsEventType.EventQueueGet.toString());
+		this.seedCapsURI = seedcaps;
+		this.client = new CapsClient(simulator.getClient(), CapsEventType.EventQueueGet.toString());
 
 		start();
 	}
 
+	public final String getSeedCapsURI() {
+		return seedCapsURI;
+	}
+
+	/**
+	 * Request the URI of a named capability
+	 *
+	 * @param capability
+	 *            Name of the capability to request
+	 * @return The URI of the requested capability, or String. Empty if the
+	 *         capability does not exist
+	 */
+	public final URI capabilityURI(String capability) {
+		synchronized (capabilities) {
+			return capabilities.get(capability);
+		}
+	}
+
+	private void setState(CapsState state) {
+		synchronized (running) {
+			running = state;
+		}
+	}
+
+	private final boolean isClosed() {
+		synchronized (running) {
+			return running == CapsState.Closed;
+		}
+	}
+
+	private final boolean isActiveAndMakeClosing() {
+		synchronized (running) {
+			boolean active = running == CapsState.Seeding || running == CapsState.Running;
+			if (active)
+				running = CapsState.Closing;
+			return active;
+		}
+	}
+
+	private final boolean isSeedingAndMakeRun() {
+		synchronized (running) {
+			boolean seeding = running == CapsState.Seeding;
+			if (seeding)
+				running = CapsState.Running;
+			return seeding;
+		}
+	}
+
+	private final boolean isSeeding() {
+		synchronized (running) {
+			return running == CapsState.Seeding;
+		}
+	}
+
+	public final boolean isRunning() {
+		synchronized (running) {
+			return running == CapsState.Running;
+		}
+	}
+
+	public final boolean isClosing() {
+		synchronized (running) {
+			return running == CapsState.Closing;
+		}
+	}
+
 	public final void disconnect(boolean immediate) throws InterruptedException {
 		if (isActiveAndMakeClosing()) {
-			_Client.cancel(immediate);
+			client.cancel(immediate);
 			logger.info(GridClient.Log(
-					"Caps system for " + _Simulator.getName() + " is " + (immediate ? "aborting" : "disconnecting"),
-					_Simulator.getClient()));
+					"Caps system for " + simulator.getName() + " is " + (immediate ? "aborting" : "disconnecting"),
+					simulator.getClient()));
 		}
 	}
 
@@ -208,21 +209,21 @@ public class CapsManager extends Thread {
 
 			runEventQueueLoop(eventQueueGet);
 		} catch (Exception ex) {
-			logger.error(GridClient.Log("Couldn't startup capability system", _Simulator.getClient()), ex);
+			logger.error(GridClient.Log("Couldn't startup capability system", simulator.getClient()), ex);
 			setState(CapsState.Closed);
 		} finally {
 			try {
-				_Client.shutdown(true);
+				client.shutdown(true);
 			} catch (InterruptedException | IOException ex) {
 			} finally {
-				_Client = null;
+				client = null;
 			}
 		}
 	}
 
 	private URI makeSeedRequest()
 			throws InterruptedException, ExecutionException, TimeoutException, IOException, URISyntaxException {
-		if (_Simulator != null && _Simulator.getClient().Network.getConnected()) {
+		if (simulator != null && simulator.getClient().network.getConnected()) {
 			// Create a request list
 			OSDArray req = new OSDArray();
 			// This list can be updated by using the following command to obtain a
@@ -231,125 +232,125 @@ public class CapsManager extends Thread {
 			// https://bitbucket.org/lindenlab/viewer-release/raw/default/indra/newview/llviewerregion.cpp
 			// | grep 'capabilityNames.append' | sed 's/^[
 			// \t]*//;s/capabilityNames.append("/req.Add("/'
-			req.add(OSD.FromString("AgentPreferences"));
-			req.add(OSD.FromString("AgentState"));
-			req.add(OSD.FromString("AttachmentResources"));
-			req.add(OSD.FromString("AvatarPickerSearch"));
-			req.add(OSD.FromString("AvatarRenderInfo"));
-			req.add(OSD.FromString("CharacterProperties"));
-			req.add(OSD.FromString("ChatSessionRequest"));
-			req.add(OSD.FromString("CopyInventoryFromNotecard"));
-			req.add(OSD.FromString("CreateInventoryCategory"));
-			req.add(OSD.FromString("DispatchRegionInfo"));
-			req.add(OSD.FromString("DirectDelivery"));
-			req.add(OSD.FromString("EnvironmentSettings"));
-			req.add(OSD.FromString("EstateChangeInfo"));
-			req.add(OSD.FromString("EventQueueGet"));
-			req.add(OSD.FromString("FacebookConnect"));
-			req.add(OSD.FromString("FlickrConnect"));
-			req.add(OSD.FromString("TwitterConnect"));
-			req.add(OSD.FromString("FetchInventory2"));
-			req.add(OSD.FromString("FetchInventoryDescendents2"));
-			req.add(OSD.FromString("FetchLib2"));
-			req.add(OSD.FromString("FetchLibDescendents2"));
-			req.add(OSD.FromString("GetDisplayNames"));
-			req.add(OSD.FromString("GetExperiences"));
-			req.add(OSD.FromString("AgentExperiences"));
-			req.add(OSD.FromString("FindExperienceByName"));
-			req.add(OSD.FromString("GetExperienceInfo"));
-			req.add(OSD.FromString("GetAdminExperiences"));
-			req.add(OSD.FromString("GetCreatorExperiences"));
-			req.add(OSD.FromString("ExperiencePreferences"));
-			req.add(OSD.FromString("GroupExperiences"));
-			req.add(OSD.FromString("UpdateExperience"));
-			req.add(OSD.FromString("IsExperienceAdmin"));
-			req.add(OSD.FromString("IsExperienceContributor"));
-			req.add(OSD.FromString("RegionExperiences"));
-			req.add(OSD.FromString("GetMesh"));
-			req.add(OSD.FromString("GetMesh2"));
-			req.add(OSD.FromString("GetMetadata"));
-			req.add(OSD.FromString("GetObjectCost"));
-			req.add(OSD.FromString("GetObjectPhysicsData"));
-			req.add(OSD.FromString("GetTexture"));
-			req.add(OSD.FromString("GroupAPIv1"));
-			req.add(OSD.FromString("GroupMemberData"));
-			req.add(OSD.FromString("GroupProposalBallot"));
-			req.add(OSD.FromString("HomeLocation"));
-			req.add(OSD.FromString("IncrementCOFVersion"));
-			req.add(OSD.FromString("LandResources"));
-			req.add(OSD.FromString("LSLSyntax"));
-			req.add(OSD.FromString("MapLayer"));
-			req.add(OSD.FromString("MapLayerGod"));
-			req.add(OSD.FromString("MeshUploadFlags"));
-			req.add(OSD.FromString("NavMeshGenerationStatus"));
-			req.add(OSD.FromString("NewFileAgentInventory"));
-			req.add(OSD.FromString("ObjectMedia"));
-			req.add(OSD.FromString("ObjectMediaNavigate"));
-			req.add(OSD.FromString("ObjNavMeshProperties"));
-			req.add(OSD.FromString("ParcelPropertiesUpdate"));
-			req.add(OSD.FromString("ParcelVoiceInfoRequest"));
-			req.add(OSD.FromString("ProductInfoRequest"));
-			req.add(OSD.FromString("ProvisionVoiceAccountRequest"));
-			req.add(OSD.FromString("RemoteParcelRequest"));
-			req.add(OSD.FromString("RenderMaterials"));
-			req.add(OSD.FromString("RequestTextureDownload"));
-			req.add(OSD.FromString("ResourceCostSelected"));
-			req.add(OSD.FromString("RetrieveNavMeshSrc"));
-			req.add(OSD.FromString("SearchStatRequest"));
-			req.add(OSD.FromString("SearchStatTracking"));
-			req.add(OSD.FromString("SendPostcard"));
-			req.add(OSD.FromString("SendUserReport"));
-			req.add(OSD.FromString("SendUserReportWithScreenshot"));
-			req.add(OSD.FromString("ServerReleaseNotes"));
-			req.add(OSD.FromString("SetDisplayName"));
-			req.add(OSD.FromString("SimConsoleAsync"));
-			req.add(OSD.FromString("SimulatorFeatures"));
-			req.add(OSD.FromString("StartGroupProposal"));
-			req.add(OSD.FromString("TerrainNavMeshProperties"));
-			req.add(OSD.FromString("TextureStats"));
-			req.add(OSD.FromString("UntrustedSimulatorMessage"));
-			req.add(OSD.FromString("UpdateAgentInformation"));
-			req.add(OSD.FromString("UpdateAgentLanguage"));
-			req.add(OSD.FromString("UpdateAvatarAppearance"));
-			req.add(OSD.FromString("UpdateGestureAgentInventory"));
-			req.add(OSD.FromString("UpdateGestureTaskInventory"));
-			req.add(OSD.FromString("UpdateNotecardAgentInventory"));
-			req.add(OSD.FromString("UpdateNotecardTaskInventory"));
-			req.add(OSD.FromString("UpdateScriptAgent"));
-			req.add(OSD.FromString("UpdateScriptTask"));
-			req.add(OSD.FromString("UploadBakedTexture"));
-			req.add(OSD.FromString("ViewerMetrics"));
-			req.add(OSD.FromString("ViewerStartAuction"));
-			req.add(OSD.FromString("ViewerStats"));
-			req.add(OSD.FromString("WebFetchInventoryDescendents"));
+			req.add(OSD.fromString("AgentPreferences"));
+			req.add(OSD.fromString("AgentState"));
+			req.add(OSD.fromString("AttachmentResources"));
+			req.add(OSD.fromString("AvatarPickerSearch"));
+			req.add(OSD.fromString("AvatarRenderInfo"));
+			req.add(OSD.fromString("CharacterProperties"));
+			req.add(OSD.fromString("ChatSessionRequest"));
+			req.add(OSD.fromString("CopyInventoryFromNotecard"));
+			req.add(OSD.fromString("CreateInventoryCategory"));
+			req.add(OSD.fromString("DispatchRegionInfo"));
+			req.add(OSD.fromString("DirectDelivery"));
+			req.add(OSD.fromString("EnvironmentSettings"));
+			req.add(OSD.fromString("EstateChangeInfo"));
+			req.add(OSD.fromString("EventQueueGet"));
+			req.add(OSD.fromString("FacebookConnect"));
+			req.add(OSD.fromString("FlickrConnect"));
+			req.add(OSD.fromString("TwitterConnect"));
+			req.add(OSD.fromString("FetchInventory2"));
+			req.add(OSD.fromString("FetchInventoryDescendents2"));
+			req.add(OSD.fromString("FetchLib2"));
+			req.add(OSD.fromString("FetchLibDescendents2"));
+			req.add(OSD.fromString("GetDisplayNames"));
+			req.add(OSD.fromString("GetExperiences"));
+			req.add(OSD.fromString("AgentExperiences"));
+			req.add(OSD.fromString("FindExperienceByName"));
+			req.add(OSD.fromString("GetExperienceInfo"));
+			req.add(OSD.fromString("GetAdminExperiences"));
+			req.add(OSD.fromString("GetCreatorExperiences"));
+			req.add(OSD.fromString("ExperiencePreferences"));
+			req.add(OSD.fromString("GroupExperiences"));
+			req.add(OSD.fromString("UpdateExperience"));
+			req.add(OSD.fromString("IsExperienceAdmin"));
+			req.add(OSD.fromString("IsExperienceContributor"));
+			req.add(OSD.fromString("RegionExperiences"));
+			req.add(OSD.fromString("GetMesh"));
+			req.add(OSD.fromString("GetMesh2"));
+			req.add(OSD.fromString("GetMetadata"));
+			req.add(OSD.fromString("GetObjectCost"));
+			req.add(OSD.fromString("GetObjectPhysicsData"));
+			req.add(OSD.fromString("GetTexture"));
+			req.add(OSD.fromString("GroupAPIv1"));
+			req.add(OSD.fromString("GroupMemberData"));
+			req.add(OSD.fromString("GroupProposalBallot"));
+			req.add(OSD.fromString("HomeLocation"));
+			req.add(OSD.fromString("IncrementCOFVersion"));
+			req.add(OSD.fromString("LandResources"));
+			req.add(OSD.fromString("LSLSyntax"));
+			req.add(OSD.fromString("MapLayer"));
+			req.add(OSD.fromString("MapLayerGod"));
+			req.add(OSD.fromString("MeshUploadFlags"));
+			req.add(OSD.fromString("NavMeshGenerationStatus"));
+			req.add(OSD.fromString("NewFileAgentInventory"));
+			req.add(OSD.fromString("ObjectMedia"));
+			req.add(OSD.fromString("ObjectMediaNavigate"));
+			req.add(OSD.fromString("ObjNavMeshProperties"));
+			req.add(OSD.fromString("ParcelPropertiesUpdate"));
+			req.add(OSD.fromString("ParcelVoiceInfoRequest"));
+			req.add(OSD.fromString("ProductInfoRequest"));
+			req.add(OSD.fromString("ProvisionVoiceAccountRequest"));
+			req.add(OSD.fromString("RemoteParcelRequest"));
+			req.add(OSD.fromString("RenderMaterials"));
+			req.add(OSD.fromString("RequestTextureDownload"));
+			req.add(OSD.fromString("ResourceCostSelected"));
+			req.add(OSD.fromString("RetrieveNavMeshSrc"));
+			req.add(OSD.fromString("SearchStatRequest"));
+			req.add(OSD.fromString("SearchStatTracking"));
+			req.add(OSD.fromString("SendPostcard"));
+			req.add(OSD.fromString("SendUserReport"));
+			req.add(OSD.fromString("SendUserReportWithScreenshot"));
+			req.add(OSD.fromString("ServerReleaseNotes"));
+			req.add(OSD.fromString("SetDisplayName"));
+			req.add(OSD.fromString("SimConsoleAsync"));
+			req.add(OSD.fromString("SimulatorFeatures"));
+			req.add(OSD.fromString("StartGroupProposal"));
+			req.add(OSD.fromString("TerrainNavMeshProperties"));
+			req.add(OSD.fromString("TextureStats"));
+			req.add(OSD.fromString("UntrustedSimulatorMessage"));
+			req.add(OSD.fromString("UpdateAgentInformation"));
+			req.add(OSD.fromString("UpdateAgentLanguage"));
+			req.add(OSD.fromString("UpdateAvatarAppearance"));
+			req.add(OSD.fromString("UpdateGestureAgentInventory"));
+			req.add(OSD.fromString("UpdateGestureTaskInventory"));
+			req.add(OSD.fromString("UpdateNotecardAgentInventory"));
+			req.add(OSD.fromString("UpdateNotecardTaskInventory"));
+			req.add(OSD.fromString("UpdateScriptAgent"));
+			req.add(OSD.fromString("UpdateScriptTask"));
+			req.add(OSD.fromString("UploadBakedTexture"));
+			req.add(OSD.fromString("ViewerMetrics"));
+			req.add(OSD.fromString("ViewerStartAuction"));
+			req.add(OSD.fromString("ViewerStats"));
+			req.add(OSD.fromString("WebFetchInventoryDescendents"));
 			// AIS3
-			req.add(OSD.FromString("InventoryAPIv3"));
-			req.add(OSD.FromString("LibraryAPIv3"));
+			req.add(OSD.fromString("InventoryAPIv3"));
+			req.add(OSD.fromString("LibraryAPIv3"));
 
 			try {
-				OSD result = _Client.getResponse(new URI(_SeedCapsURI), req, OSD.OSDFormat.Xml,
-						_Simulator.getClient().Settings.CAPS_TIMEOUT);
+				OSD result = client.getResponse(new URI(seedCapsURI), req, OSD.OSDFormat.Xml,
+						simulator.getClient().settings.CAPS_TIMEOUT);
 				if (result != null && result.getType().equals(OSDType.Map)) {
 					URI eventQueueGet = null;
 					OSDMap respTable = (OSDMap) result;
-					synchronized (_Capabilities) {
+					synchronized (capabilities) {
 						for (Map.Entry<String, OSD> entry : respTable.entrySet()) {
 							OSD value = entry.getValue();
 							if (value.getType() == OSD.OSDType.String || value.getType() == OSD.OSDType.URI) {
-								URI capsURI = value.AsUri();
+								URI capsURI = value.asUri();
 								if (entry.getKey().equals("EventQueueGet"))
 									eventQueueGet = capsURI;
-								_Capabilities.put(entry.getKey(), capsURI);
+								capabilities.put(entry.getKey(), capsURI);
 							}
 						}
 					}
 
-					OnCapabilitiesReceived.dispatch(new CapabilitiesReceivedCallbackArgs(_Simulator));
+					onCapabilitiesReceived.dispatch(new CapabilitiesReceivedCallbackArgs(simulator));
 
 					if (eventQueueGet == null) {
 						logger.warn(GridClient.Log(
 								"Caps seed: Returned capabilities does not contain an EventQueueGet caps",
-								_Simulator.getClient()));
+								simulator.getClient()));
 					}
 					/* when successful: return and startup eventqueue */
 					return eventQueueGet;
@@ -358,11 +359,11 @@ public class CapsManager extends Thread {
 				if (ex.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
 					logger.error(GridClient.Log(
 							"Caps seed: Seed capability returned a 404 status, capability system is aborting",
-							_Simulator.getClient()));
+							simulator.getClient()));
 					throw ex;
 				}
 				logger.warn(
-						GridClient.Log("Caps seed: Seed capability returned an error status", _Simulator.getClient()),
+						GridClient.Log("Caps seed: Seed capability returned an error status", simulator.getClient()),
 						ex);
 			}
 		}
@@ -371,7 +372,7 @@ public class CapsManager extends Thread {
 	}
 
 	private void runEventQueueLoop(URI eventQueueGet) {
-		logger.info(GridClient.Log("Starting event queue for " + _Simulator.getName(), _Simulator.getClient()));
+		logger.info(GridClient.Log("Starting event queue for " + simulator.getName(), simulator.getClient()));
 
 		OSDMap osdRequest = new OSDMap(2);
 		osdRequest.put("ack", new OSD());
@@ -380,10 +381,10 @@ public class CapsManager extends Thread {
 		int errorCount = 0;
 
 		while (!isClosed()) {
-			osdRequest.put("done", OSD.FromBoolean(isClosing()));
+			osdRequest.put("done", OSD.fromBoolean(isClosing()));
 
 			// Start or resume the connection
-			Future<OSD> request = _Client.executeHttpPost(eventQueueGet, osdRequest, OSD.OSDFormat.Xml, null,
+			Future<OSD> request = client.executeHttpPost(eventQueueGet, osdRequest, OSD.OSDFormat.Xml, null,
 					CapsClient.TIMEOUT_INFINITE);
 
 			// Handle incoming events from previous request
@@ -395,33 +396,33 @@ public class CapsManager extends Thread {
 					OSD osd = evt.get("body");
 					if (osd.getType().equals(OSDType.Map)) {
 						OSDMap body = (OSDMap) osd;
-						String eventName = evt.get("message").AsString();
+						String eventName = evt.get("message").asString();
 
-						IMessage message = _Simulator.getClient().Messages.decodeEvent(eventName, body);
+						IMessage message = simulator.getClient().messages.decodeEvent(eventName, body);
 						if (message != null) {
-							logger.debug(GridClient.Log("Caps message: " + eventName + ".", _Simulator.getClient()));
-							_Simulator.getClient().Network.DistributeCaps(_Simulator, message);
+							logger.debug(GridClient.Log("Caps message: " + eventName + ".", simulator.getClient()));
+							simulator.getClient().network.distributeCaps(simulator, message);
 						} else {
 							logger.warn(GridClient.Log(
 									"Caps loop: No Message handler exists for event " + eventName
 											+ ". Unable to decode. Will try Generic Handler next",
-									_Simulator.getClient()));
+									simulator.getClient()));
 							logger.debug(GridClient.Log(
 									"Caps loop: Please report this information to http://sourceforge.net/tracker/?group_id=387920&atid=1611745\n"
 											+ body,
-									_Simulator.getClient()));
+									simulator.getClient()));
 
 							// try generic decoder next which takes a caps event and tries to match it to an
 							// existing packet
 							Packet packet = CapsToPacket.buildPacket(eventName, body);
 							if (packet != null) {
 								logger.debug(GridClient.Log("Caps loop: Serializing " + packet.getType()
-										+ " capability with generic handler", _Simulator.getClient()));
-								_Simulator.getClient().Network.DistributePacket(_Simulator, packet);
+										+ " capability with generic handler", simulator.getClient()));
+								simulator.getClient().network.distributePacket(simulator, packet);
 							} else {
 								logger.warn(GridClient.Log(
 										"Caps loop: No Packet or Message handler exists for " + eventName,
-										_Simulator.getClient()));
+										simulator.getClient()));
 							}
 						}
 					}
@@ -431,15 +432,15 @@ public class CapsManager extends Thread {
 
 			if (!isClosing()) {
 				try {
-					OSD result = request.get(_Simulator.getClient().Settings.CAPS_TIMEOUT, TimeUnit.MILLISECONDS);
+					OSD result = request.get(simulator.getClient().settings.CAPS_TIMEOUT, TimeUnit.MILLISECONDS);
 					if (result == null) {
 						++errorCount;
 						logger.warn(GridClient.Log("Caps loop: Got an unparseable response from the event queue!",
-								_Simulator.getClient()));
+								simulator.getClient()));
 					} else if (result instanceof OSDMap) {
 						errorCount = 0;
 						if (isSeedingAndMakeRun()) {
-							_Simulator.getClient().Network.raiseConnectedEvent(_Simulator);
+							simulator.getClient().network.raiseConnectedEvent(simulator);
 						}
 
 						OSDMap map = (OSDMap) result;
@@ -454,7 +455,7 @@ public class CapsManager extends Thread {
 							setState(CapsState.Closed);
 							logger.info(GridClient.Log(
 									String.format("Closing event queue at %s due to missing caps URI", eventQueueGet),
-									_Simulator.getClient()));
+									simulator.getClient()));
 						} else if (status == HttpStatus.SC_BAD_GATEWAY) {
 							// This is not good (server) protocol design, but it's normal.
 							// The EventQueue server is a proxy that connects to a Squid
@@ -468,26 +469,26 @@ public class CapsManager extends Thread {
 							if (status != HttpStatus.SC_OK) {
 								logger.warn(
 										GridClient.Log(String.format("Unrecognized caps connection problem from %s: %d",
-												eventQueueGet, status), _Simulator.getClient()));
+												eventQueueGet, status), simulator.getClient()));
 							} else if (ex.getCause() != null) {
 								logger.warn(GridClient.Log("Unrecognized internal caps exception from " + eventQueueGet
-										+ ": " + ex.getCause().getMessage(), _Simulator.getClient()));
+										+ ": " + ex.getCause().getMessage(), simulator.getClient()));
 							} else {
 								logger.warn(GridClient.Log(
 										"Unrecognized caps exception from " + eventQueueGet + ": " + ex.getMessage(),
-										_Simulator.getClient()));
+										simulator.getClient()));
 							}
 						}
 					} else {
 						++errorCount;
 
 						logger.warn(GridClient.Log("No response from the event queue but no reported HTTP error either",
-								_Simulator.getClient()), ex);
+								simulator.getClient()), ex);
 					}
 				} catch (Exception ex) {
 					++errorCount;
 					logger.warn(GridClient.Log("Error retrieving response from the event queue request!",
-							_Simulator.getClient()), ex);
+							simulator.getClient()), ex);
 				}
 				request = null;
 
@@ -502,6 +503,6 @@ public class CapsManager extends Thread {
 				setState(CapsState.Closed);
 			}
 		}
-		logger.info(GridClient.Log("Terminated event queue for " + _Simulator.getName(), _Simulator.getClient()));
+		logger.info(GridClient.Log("Terminated event queue for " + simulator.getName(), simulator.getClient()));
 	}
 }

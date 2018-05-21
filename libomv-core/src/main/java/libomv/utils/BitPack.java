@@ -113,7 +113,7 @@ public class BitPack {
 	 *            Floating point value to pack
 	 */
 	public void packFloat(float data) {
-		packBitArray(Helpers.FloatToBytesL(data), 32);
+		packBitArray(Helpers.floatToBytesL(data), 32);
 	}
 
 	/**
@@ -141,7 +141,7 @@ public class BitPack {
 		if (isSigned)
 			totalBits++;
 		byte[] dest = new byte[(totalBits + 7) / 8];
-		Helpers.FixedToBytesL(dest, 0, data, isSigned, intBits, fracBits);
+		Helpers.fixedToBytesL(dest, 0, data, isSigned, intBits, fracBits);
 		packBitArray(dest, totalBits);
 	}
 

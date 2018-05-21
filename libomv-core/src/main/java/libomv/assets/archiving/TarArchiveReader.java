@@ -65,10 +65,10 @@ public class TarArchiveReader {
 		m_br = s;
 	}
 
-	public byte[] ReadEntry(TarHeader header) throws IOException {
-		TarHeader hdr = ReadHeader();
+	public byte[] readEntry(TarHeader header) throws IOException {
+		TarHeader hdr = readHeader();
 		if (hdr != null && hdr.FileSize > 0) {
-			byte[] data = ReadData(hdr.FileSize);
+			byte[] data = readData(hdr.FileSize);
 			header.EntryType = hdr.EntryType;
 			header.FilePath = hdr.FilePath;
 			header.FileSize = hdr.FileSize;
@@ -80,8 +80,8 @@ public class TarArchiveReader {
 	/// Read the next 512 byte chunk of data as a tar header.
 	/// <returns>A tar header struct. null if we have reached the end of the
 	/// archive.</returns>
-	protected TarHeader ReadHeader() throws IOException {
-		byte[] header = ReadData(512);
+	protected TarHeader readHeader() throws IOException {
+		byte[] header = readData(512);
 
 		// If we've reached the end of the archive we'll be in null block territory,
 		// which means
@@ -94,18 +94,18 @@ public class TarArchiveReader {
 		// If we're looking at a GNU tar long link then extract the long name and pull
 		// up the next header
 		if (header[156] == (byte) 'L') {
-			int longNameLength = ConvertOctalBytesToDecimal(header, 124, 11);
-			byte[] nameBytes = ReadData(longNameLength);
+			int longNameLength = convertOctalBytesToDecimal(header, 124, 11);
+			byte[] nameBytes = readData(longNameLength);
 			tarHeader.FilePath = Helpers.BytesToString(nameBytes, 0, longNameLength, Helpers.ASCII_ENCODING);
 			// Logger.Log("[TAR ARCHIVE READER]: Got long file name " + tarHeader.FilePath,
 			// Logger.LogLevel.Debug);
-			header = ReadData(512);
+			header = readData(512);
 		} else {
 			tarHeader.FilePath = Helpers.BytesToString(header, 0, 100).trim();
 			// Logger.Log("[TAR ARCHIVE READER]: Got short file name " + tarHeader.FilePath,
 			// Logger.LogLevel.Debug);
 		}
-		tarHeader.FileSize = ConvertOctalBytesToDecimal(header, 124, 11);
+		tarHeader.FileSize = convertOctalBytesToDecimal(header, 124, 11);
 
 		switch (header[156]) {
 		case 0:
@@ -140,7 +140,7 @@ public class TarArchiveReader {
 	/// Read data following a header
 	/// <param name="fileSize"></param>
 	/// <returns></returns>
-	protected byte[] ReadData(int size) throws IOException {
+	protected byte[] readData(int size) throws IOException {
 		int offset = 0, read = 0;
 		byte[] data = new byte[size];
 		while (read >= 0 && size > offset) {
@@ -176,7 +176,7 @@ public class TarArchiveReader {
 	/// <param name="count"></param>
 	/// <param name="startIndex"></param>
 	/// <returns></returns>
-	protected static int ConvertOctalBytesToDecimal(byte[] bytes, int startIndex, int count)
+	protected static int convertOctalBytesToDecimal(byte[] bytes, int startIndex, int count)
 			throws UnsupportedEncodingException {
 		// Trim leading white space: ancient tars do that instead
 		// of leading 0s :-( don't ask. really.

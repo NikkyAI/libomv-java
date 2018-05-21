@@ -29,9 +29,10 @@
 package libomv.utils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TimeoutEventQueue<T> {
-	private ArrayList<TimeoutEvent<T>> list = new ArrayList<TimeoutEvent<T>>();
+	private List<TimeoutEvent<T>> list = new ArrayList<>();
 
 	/**
 	 * Create a new timeout event and add it to the internal list of events
@@ -39,7 +40,7 @@ public class TimeoutEventQueue<T> {
 	 * @return a timeout event object that is in a reset state
 	 */
 	public TimeoutEvent<T> create() {
-		TimeoutEvent<T> event = new TimeoutEvent<T>();
+		TimeoutEvent<T> event = new TimeoutEvent<>();
 		synchronized (list) {
 			list.add(event);
 		}

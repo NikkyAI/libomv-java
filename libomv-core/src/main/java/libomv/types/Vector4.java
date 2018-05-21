@@ -147,15 +147,15 @@ public class Vector4 {
 	 */
 	public void write(OutputStream stream, boolean le) throws IOException {
 		if (le) {
-			stream.write(Helpers.FloatToBytesL(X));
-			stream.write(Helpers.FloatToBytesL(Y));
-			stream.write(Helpers.FloatToBytesL(Z));
-			stream.write(Helpers.FloatToBytesL(S));
+			stream.write(Helpers.floatToBytesL(X));
+			stream.write(Helpers.floatToBytesL(Y));
+			stream.write(Helpers.floatToBytesL(Z));
+			stream.write(Helpers.floatToBytesL(S));
 		} else {
-			stream.write(Helpers.FloatToBytesB(X));
-			stream.write(Helpers.FloatToBytesB(Y));
-			stream.write(Helpers.FloatToBytesB(Z));
-			stream.write(Helpers.FloatToBytesB(S));
+			stream.write(Helpers.floatToBytesB(X));
+			stream.write(Helpers.floatToBytesB(Y));
+			stream.write(Helpers.floatToBytesB(Z));
+			stream.write(Helpers.floatToBytesB(S));
 		}
 	}
 
@@ -263,15 +263,15 @@ public class Vector4 {
 	 */
 	public int toBytes(byte[] dest, int pos, boolean le) {
 		if (le) {
-			pos += Helpers.FloatToBytesL(X, dest, pos);
-			pos += Helpers.FloatToBytesL(Y, dest, pos);
-			pos += Helpers.FloatToBytesL(Z, dest, pos);
-			pos += Helpers.FloatToBytesL(S, dest, pos);
+			pos += Helpers.floatToBytesL(X, dest, pos);
+			pos += Helpers.floatToBytesL(Y, dest, pos);
+			pos += Helpers.floatToBytesL(Z, dest, pos);
+			pos += Helpers.floatToBytesL(S, dest, pos);
 		} else {
-			pos += Helpers.FloatToBytesB(X, dest, pos);
-			pos += Helpers.FloatToBytesB(Y, dest, pos);
-			pos += Helpers.FloatToBytesB(Z, dest, pos);
-			pos += Helpers.FloatToBytesB(S, dest, pos);
+			pos += Helpers.floatToBytesB(X, dest, pos);
+			pos += Helpers.floatToBytesB(Y, dest, pos);
+			pos += Helpers.floatToBytesB(Z, dest, pos);
+			pos += Helpers.floatToBytesB(S, dest, pos);
 		}
 		return 16;
 	}

@@ -39,11 +39,6 @@ import libomv.utils.Helpers;
 public class OSDBinary extends OSD {
 	private byte[] value;
 
-	@Override
-	public OSDType getType() {
-		return OSDType.Binary;
-	}
-
 	public OSDBinary(OSDBinary value) {
 		if (value != null) {
 			this.value = value.value;
@@ -69,7 +64,12 @@ public class OSDBinary extends OSD {
 	}
 
 	@Override
-	public String AsString() {
+	public OSDType getType() {
+		return OSDType.Binary;
+	}
+
+	@Override
+	public String asString() {
 		try {
 			return Helpers.BytesToString(value);
 		} catch (UnsupportedEncodingException e) {
@@ -78,12 +78,12 @@ public class OSDBinary extends OSD {
 	}
 
 	@Override
-	public byte[] AsBinary() {
+	public byte[] asBinary() {
 		return value;
 	}
 
 	@Override
-	public InetAddress AsInetAddress() {
+	public InetAddress asInetAddress() {
 		try {
 			return InetAddress.getByAddress(value);
 		} catch (UnknownHostException e) {
@@ -92,22 +92,22 @@ public class OSDBinary extends OSD {
 	}
 
 	@Override
-	public UUID AsUUID() {
+	public UUID asUUID() {
 		return new UUID(value);
 	}
 
 	@Override
-	public int AsUInteger() {
+	public int asUInteger() {
 		return (int) Helpers.BytesToUInt32B(value);
 	}
 
 	@Override
-	public long AsLong() {
+	public long asLong() {
 		return Helpers.BytesToInt64B(value);
 	}
 
 	@Override
-	public long AsULong() {
+	public long asULong() {
 		return Helpers.BytesToUInt64B(value);
 	}
 

@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -93,10 +93,6 @@ public abstract class AsyncHTTPClient<T> {
 
 	public static final long TIMEOUT_INFINITE = -1;
 
-	public interface ProgressCallback {
-		public void progress(long bytesTransceived, long totalBytes);
-	}
-
 	private HttpAsyncClientBuilder builder = HttpAsyncClientBuilder.create();
 	private CloseableHttpAsyncClient asyncClient;
 	private X509Certificate certificate;
@@ -106,6 +102,18 @@ public abstract class AsyncHTTPClient<T> {
 	private ProgressCallback progressCb;
 
 	protected String name;
+
+	public AsyncHTTPClient(String name) throws IOReactorException {
+		this.name = name;
+		this.asyncClient = HttpAsyncClients.createDefault();
+		this.asyncClient.start();
+	}
+
+	protected abstract T convertContent(InputStream in, String encoding) throws IOException;
+
+	public interface ProgressCallback {
+		public void progress(long bytesTransceived, long totalBytes);
+	}
 
 	public void setProgressCallback(ProgressCallback callback) {
 		progressCb = callback;
@@ -166,15 +174,9 @@ public abstract class AsyncHTTPClient<T> {
 		asyncClient = null;
 	}
 
-	public AsyncHTTPClient(String name) throws IOReactorException {
-		this.name = name;
-		asyncClient = HttpAsyncClients.createDefault();
-		asyncClient.start();
-	}
-
 	/**
 	 * Do a HTTP Get Request from the server without any timeout
-	 * 
+	 *
 	 * @param address
 	 *            The document uri to fetch
 	 * @return A Future that can be used to retrieve the data or cancel the request
@@ -185,7 +187,7 @@ public abstract class AsyncHTTPClient<T> {
 
 	/**
 	 * Do a HTTP Get Request from the server without any timeout
-	 * 
+	 *
 	 * @param address
 	 *            The document uri to fetch
 	 * @param acceptHeader
@@ -201,7 +203,7 @@ public abstract class AsyncHTTPClient<T> {
 
 	/**
 	 * Do a HTTP Get Request from the server
-	 * 
+	 *
 	 * @param address
 	 *            The document uri to fetch
 	 * @param acceptHeader
@@ -223,7 +225,7 @@ public abstract class AsyncHTTPClient<T> {
 
 	/**
 	 * Do a HTTP Post Request from the server from string data
-	 * 
+	 *
 	 * @param address
 	 *            The uri to post
 	 * @param data
@@ -247,7 +249,7 @@ public abstract class AsyncHTTPClient<T> {
 
 	/**
 	 * Do a HTTP Post Request from the server from string data
-	 * 
+	 *
 	 * @param address
 	 *            The uri to post
 	 * @param data
@@ -276,7 +278,7 @@ public abstract class AsyncHTTPClient<T> {
 
 	/**
 	 * Do a HTTP Post Request from the server from binary data
-	 * 
+	 *
 	 * @param address
 	 *            The uri to post
 	 * @param data
@@ -298,7 +300,7 @@ public abstract class AsyncHTTPClient<T> {
 
 	/**
 	 * Do a HTTP Post Request from the server from binary data
-	 * 
+	 *
 	 * @param address
 	 *            The uri to post the data to
 	 * @param data
@@ -326,7 +328,7 @@ public abstract class AsyncHTTPClient<T> {
 
 	/**
 	 * Do a HTTP Put Request from the server from file data
-	 * 
+	 *
 	 * @param address
 	 *            The uri to post the data to
 	 * @param file
@@ -354,7 +356,7 @@ public abstract class AsyncHTTPClient<T> {
 
 	/**
 	 * Do a HTTP Post Request from the server from binary data
-	 * 
+	 *
 	 * @param address
 	 *            The uri to post the data to
 	 * @param entity
@@ -438,7 +440,7 @@ public abstract class AsyncHTTPClient<T> {
 			}
 			return resultFuture;
 		} catch (Exception ex) {
-			BasicFuture<T> failed = new BasicFuture<T>(internalCallback);
+			BasicFuture<T> failed = new BasicFuture<>(internalCallback);
 			failed.failed(ex);
 			return failed;
 		}
@@ -546,8 +548,6 @@ public abstract class AsyncHTTPClient<T> {
 		}
 	}
 
-	protected abstract T convertContent(InputStream in, String encoding) throws IOException;
-
 	private class AsyncHttpResponseConsumer implements HttpAsyncResponseConsumer<T> {
 		private volatile String encoding;
 		private volatile long length;
@@ -586,7 +586,7 @@ public abstract class AsyncHTTPClient<T> {
 		 * {@link IOControl} instance passed as a parameter to the method can be used to
 		 * suspend input events if the entity is temporarily unable to allocate more
 		 * storage to accommodate all incoming content.
-		 * 
+		 *
 		 * @param decoder
 		 *            content decoder.
 		 * @param ioctrl

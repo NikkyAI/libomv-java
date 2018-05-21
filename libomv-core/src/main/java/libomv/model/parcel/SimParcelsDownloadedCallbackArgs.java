@@ -1,6 +1,6 @@
 package libomv.model.parcel;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import libomv.model.Parcel;
 import libomv.model.Simulator;
@@ -10,7 +10,7 @@ import libomv.utils.CallbackArgs;
 // simulator
 public class SimParcelsDownloadedCallbackArgs implements CallbackArgs {
 	private final Simulator simulator;
-	private final HashMap<Integer, Parcel> parcels;
+	private final Map<Integer, Parcel> parcels;
 	private final int[] parcelMap;
 
 	/**
@@ -24,7 +24,7 @@ public class SimParcelsDownloadedCallbackArgs implements CallbackArgs {
 	 *            The multidimensional array containing a x,y grid mapped to each
 	 *            64x64 parcel's LocalID.
 	 */
-	public SimParcelsDownloadedCallbackArgs(Simulator simulator, HashMap<Integer, Parcel> simParcels, int[] is) {
+	public SimParcelsDownloadedCallbackArgs(Simulator simulator, Map<Integer, Parcel> simParcels, int[] is) {
 		this.simulator = simulator;
 		this.parcels = simParcels;
 		this.parcelMap = is;
@@ -37,7 +37,7 @@ public class SimParcelsDownloadedCallbackArgs implements CallbackArgs {
 
 	// A dictionary containing the parcel data where the key correlates to
 	// the ParcelMap entry
-	public final HashMap<Integer, Parcel> getParcels() {
+	public final Map<Integer, Parcel> getParcels() {
 		return parcels;
 	}
 

@@ -36,17 +36,16 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.io.input.SwappedDataInputStream;
-import org.apache.log4j.Logger;
 
 import libomv.types.Vector2;
 import libomv.types.Vector3;
 import libomv.utils.Helpers;
 
 public class LindenMesh extends ReferenceMesh {
-	private static final Logger logger = Logger.getLogger(LindenMesh.class);
 
 	// #region Mesh Structs
 
@@ -101,43 +100,69 @@ public class LindenMesh extends ReferenceMesh {
 	}
 	// #endregion Mesh Structs
 
-	protected String _name;
-
-	public String getName() {
-		return _name;
-	}
-
-	private LindenSkeleton _skeleton;
-
-	public LindenSkeleton getSkeleton() {
-		return _skeleton;
-	}
-
-	protected short _numVertices;
-
 	public FloatBuffer vertices;
-
-	public Vector3 getVerticeCoord(int index) {
-		if (index >= _numVertices)
-			return null;
-		index *= 3;
-		return new Vector3(vertices.get(index), vertices.get(index + 1), vertices.get(index + 2));
-	}
-
-	protected Vector3 _center;
-
-	public Vector3 getCenter() {
-		return _center;
-	}
-
 	public FloatBuffer normals;
 	public FloatBuffer biNormals;
 	public FloatBuffer texCoords;
 	public FloatBuffer detailTexCoords;
 	public FloatBuffer weights;
+	protected String name;
+	protected short numVertices;
+	protected Vector3 center;
+	private LindenSkeleton skeleton;
+
+	// private GridClient _client;
+	protected short numSkinJoints;
+	protected String[] skinJoints;
+	protected Morph[] morphs;
+	protected int numRemaps;
+	protected VertexRemap[] vertexRemaps;
+	protected Map<Integer, ReferenceMesh> meshes;
+
+	public LindenMesh(String name) throws Exception {
+		// this(null, name, null);
+		this(name, null);
+	}
+
+	// public LindenMesh(GridClient client, String name) throws Exception
+	// {
+	// this(client, name, null);
+	// }
+
+	// public LindenMesh(GridClient client, String name, LindenSkeleton skeleton)
+	// throws Exception
+	public LindenMesh(String name, LindenSkeleton skeleton) throws Exception {
+		// this._client = client;
+		this.name = name;
+		this.skeleton = skeleton;
+		this.meshes = new TreeMap<>();
+
+		if (this.skeleton == null) {
+			this.skeleton = LindenSkeleton.load(null);
+		}
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public LindenSkeleton getSkeleton() {
+		return skeleton;
+	}
+
+	public Vector3 getVerticeCoord(int index) {
+		if (index >= numVertices)
+			return null;
+		index *= 3;
+		return new Vector3(vertices.get(index), vertices.get(index + 1), vertices.get(index + 2));
+	}
+
+	public Vector3 getCenter() {
+		return center;
+	}
 
 	public Vertex getVertex(int index) {
-		if (index >= _numVertices)
+		if (index >= numVertices)
 			return null;
 
 		Vertex vertex = new Vertex();
@@ -153,64 +178,28 @@ public class LindenMesh extends ReferenceMesh {
 		return vertex;
 	}
 
-	// private GridClient _client;
-	protected short _numSkinJoints;
-
 	public short getNumSkinJoints() {
-		return _numSkinJoints;
+		return numSkinJoints;
 	}
-
-	protected String[] _skinJoints;
 
 	public String[] getSkinJoints() {
-		return _skinJoints;
+		return skinJoints;
 	}
-
-	protected Morph[] _morphs;
 
 	public Morph[] getMorphs() {
-		return _morphs;
+		return morphs;
 	}
-
-	protected int _numRemaps;
 
 	public int getNumRemaps() {
-		return _numRemaps;
+		return numRemaps;
 	}
-
-	protected VertexRemap[] _vertexRemaps;
 
 	public VertexRemap[] getVertexRemaps() {
-		return _vertexRemaps;
+		return vertexRemaps;
 	}
 
-	protected TreeMap<Integer, ReferenceMesh> _meshes;
-
-	public TreeMap<Integer, ReferenceMesh> getMeshes() {
-		return _meshes;
-	}
-
-	public LindenMesh(String name) throws Exception {
-		// this(null, name, null);
-		this(name, null);
-	}
-
-	// public LindenMesh(GridClient client, String name) throws Exception
-	// {
-	// this(client, name, null);
-	// }
-
-	// public LindenMesh(GridClient client, String name, LindenSkeleton skeleton)
-	// throws Exception
-	public LindenMesh(String name, LindenSkeleton skeleton) throws Exception {
-		// _client = client;
-		_name = name;
-		_skeleton = skeleton;
-		_meshes = new TreeMap<Integer, ReferenceMesh>();
-
-		if (_skeleton == null) {
-			_skeleton = LindenSkeleton.load(null);
-		}
+	public Map<Integer, ReferenceMesh> getMeshes() {
+		return meshes;
 	}
 
 	/**
@@ -234,13 +223,13 @@ public class LindenMesh extends ReferenceMesh {
 		SwappedDataInputStream fis = new SwappedDataInputStream(stream);
 		super.load(fis);
 
-		_numVertices = fis.readShort();
+		numVertices = fis.readShort();
 
 		float minX = Float.MAX_VALUE, minY = Float.MAX_VALUE, minZ = Float.MAX_VALUE, val, maxX = Float.MIN_VALUE,
 				maxY = Float.MIN_VALUE, maxZ = Float.MIN_VALUE;
 		// Populate the vertex array
-		vertices = FloatBuffer.allocate(3 * _numVertices);
-		for (int i = 0; i < _numVertices; i++) {
+		vertices = FloatBuffer.allocate(3 * numVertices);
+		for (int i = 0; i < numVertices; i++) {
 			val = fis.readFloat();
 			if (val < minX)
 				minX = val;
@@ -264,39 +253,39 @@ public class LindenMesh extends ReferenceMesh {
 		}
 
 		// Store the Center vector
-		_center = new Vector3((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
+		center = new Vector3((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
 
-		normals = FloatBuffer.allocate(3 * _numVertices);
-		for (int i = 0; i < _numVertices; i++) {
+		normals = FloatBuffer.allocate(3 * numVertices);
+		for (int i = 0; i < numVertices; i++) {
 			normals.put(fis.readFloat());
 			normals.put(fis.readFloat());
 			normals.put(fis.readFloat());
 		}
 
-		biNormals = FloatBuffer.allocate(3 * _numVertices);
-		for (int i = 0; i < _numVertices; i++) {
+		biNormals = FloatBuffer.allocate(3 * numVertices);
+		for (int i = 0; i < numVertices; i++) {
 			biNormals.put(fis.readFloat());
 			biNormals.put(fis.readFloat());
 			biNormals.put(fis.readFloat());
 		}
 
-		texCoords = FloatBuffer.allocate(2 * _numVertices);
-		for (int i = 0; i < _numVertices; i++) {
+		texCoords = FloatBuffer.allocate(2 * numVertices);
+		for (int i = 0; i < numVertices; i++) {
 			texCoords.put(fis.readFloat());
 			texCoords.put(fis.readFloat());
 		}
 
 		if (hasDetailTexCoords) {
-			detailTexCoords = FloatBuffer.allocate(2 * _numVertices);
-			for (int i = 0; i < _numVertices; i++) {
+			detailTexCoords = FloatBuffer.allocate(2 * numVertices);
+			for (int i = 0; i < numVertices; i++) {
 				detailTexCoords.put(fis.readFloat());
 				detailTexCoords.put(fis.readFloat());
 			}
 		}
 
 		if (hasWeights) {
-			weights = FloatBuffer.allocate(_numVertices);
-			for (int i = 0; i < _numVertices; i++) {
+			weights = FloatBuffer.allocate(numVertices);
+			for (int i = 0; i < numVertices; i++) {
 				weights.put(fis.readFloat());
 			}
 		}
@@ -311,19 +300,19 @@ public class LindenMesh extends ReferenceMesh {
 		}
 
 		if (hasWeights) {
-			_numSkinJoints = fis.readShort();
-			_skinJoints = new String[_numSkinJoints];
+			numSkinJoints = fis.readShort();
+			skinJoints = new String[numSkinJoints];
 
-			for (int i = 0; i < _numSkinJoints; i++) {
-				_skinJoints[i] = Helpers.readString(fis, 64);
+			for (int i = 0; i < numSkinJoints; i++) {
+				skinJoints[i] = Helpers.readString(fis, 64);
 			}
 		} else {
-			_numSkinJoints = 0;
-			_skinJoints = new String[0];
+			numSkinJoints = 0;
+			skinJoints = new String[0];
 		}
 
 		// Grab morphs
-		List<Morph> morphs = new ArrayList<Morph>();
+		List<Morph> morphsList = new ArrayList<>();
 		String morphName = Helpers.readString(fis, 64);
 
 		while (!morphName.equals(MORPH_FOOTER)) {
@@ -348,38 +337,38 @@ public class LindenMesh extends ReferenceMesh {
 				morph.vertices[i].texCoord = new Vector2(fis);
 			}
 
-			morphs.add(morph);
+			morphsList.add(morph);
 
 			// Grab the next name
 			morphName = Helpers.readString(fis, 64);
 		}
 
-		_morphs = morphs.toArray(_morphs);
+		morphs = morphsList.toArray(morphs);
 
 		// Check if there are remaps or if we're at the end of the file
 		try {
-			_numRemaps = fis.readInt();
-			_vertexRemaps = new VertexRemap[_numRemaps];
+			numRemaps = fis.readInt();
+			vertexRemaps = new VertexRemap[numRemaps];
 
-			for (int i = 0; i < _numRemaps; i++) {
-				_vertexRemaps[i].remapSource = fis.readInt();
-				_vertexRemaps[i].remapDestination = fis.readInt();
+			for (int i = 0; i < numRemaps; i++) {
+				vertexRemaps[i].remapSource = fis.readInt();
+				vertexRemaps[i].remapDestination = fis.readInt();
 			}
 		} catch (IOException ex) {
-			_numRemaps = 0;
-			_vertexRemaps = new VertexRemap[0];
+			numRemaps = 0;
+			vertexRemaps = new VertexRemap[0];
 		}
 
 		// uncompress the skin weights
-		if (_skeleton != null) {
+		if (skeleton != null) {
 			// some meshes aren't weighted, which doesn't make much sense. We check for
 			// left and right eyeballs, and assign them a 100% to their respective bone.
-			List<String> expandedJointList = _skeleton.buildExpandedJointList(_skinJoints);
+			List<String> expandedJointList = skeleton.buildExpandedJointList(skinJoints);
 			if (expandedJointList.size() == 0) {
-				if (_name.equals("eyeBallLeftMesh")) {
+				if (name.equals("eyeBallLeftMesh")) {
 					expandedJointList.add("mEyeLeft");
 					expandedJointList.add("mSkull");
-				} else if (_name.equals("eyeBallRightMesh")) {
+				} else if (name.equals("eyeBallRightMesh")) {
 					expandedJointList.add("mEyeRight");
 					expandedJointList.add("mSkull");
 				}
@@ -398,7 +387,7 @@ public class LindenMesh extends ReferenceMesh {
 			mesh = new LindenMesh("");
 		}
 		mesh.load(filename);
-		_meshes.put(level, mesh);
+		meshes.put(level, mesh);
 		return mesh;
 	}
 
@@ -415,7 +404,7 @@ public class LindenMesh extends ReferenceMesh {
 	}
 
 	// List of skinweights, in the same order as the mesh vertices
-	public List<SkinWeightElement> skinWeights = new ArrayList<SkinWeightElement>();
+	public List<SkinWeightElement> skinWeights = new ArrayList<>();
 
 	/**
 	 * Decompress the skinweights
@@ -425,7 +414,7 @@ public class LindenMesh extends ReferenceMesh {
 	 *            the vertex
 	 */
 	private void expandCompressedSkinWeights(List<String> expandedJointList) {
-		for (int i = 0; i < _numVertices; i++) {
+		for (int i = 0; i < numVertices; i++) {
 			int boneIndex = (int) Math.floor(weights.get(i)); // Whole number part is the index
 			float boneWeight = (weights.get(i) - boneIndex); // fractional part is the weight
 			SkinWeightElement elm = new SkinWeightElement();

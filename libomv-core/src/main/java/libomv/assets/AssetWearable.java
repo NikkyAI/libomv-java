@@ -30,6 +30,7 @@
 package libomv.assets;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
@@ -167,10 +168,10 @@ public abstract class AssetWearable extends AssetItem {
 	// The Permissions mask of the asset
 	public Permissions permissions;
 	// A Dictionary containing Key/Value pairs of the objects parameters
-	public HashMap<Integer, Float> params;
+	public Map<Integer, Float> params;
 	// A Dictionary containing Key/Value pairs where the Key is the textures
 	// Index and the Value is the Textures {@link UUID}
-	public HashMap<AvatarTextureIndex, UUID> textures;
+	public Map<AvatarTextureIndex, UUID> textures;
 
 	/**
 	 * Initializes a new instance of an AssetWearable object with parameters
@@ -230,7 +231,7 @@ public abstract class AssetWearable extends AssetItem {
 						fields = line.split(" ");
 						if (fields[0].equals("parameters")) {
 							if (params == null)
-								params = new HashMap<Integer, Float>();
+								params = new HashMap<>();
 
 							int count = Integer.parseInt(fields[1]) + stri;
 							for (; stri < count;) {
@@ -255,7 +256,7 @@ public abstract class AssetWearable extends AssetItem {
 							}
 						} else if (fields[0].equals("textures")) {
 							if (textures == null)
-								textures = new HashMap<AvatarTextureIndex, UUID>();
+								textures = new HashMap<>();
 
 							int count = Integer.parseInt(fields[1]) + stri;
 							for (; stri < count;) {
@@ -345,7 +346,7 @@ public abstract class AssetWearable extends AssetItem {
 
 		data.append("parameters " + params.size() + "\n");
 		for (Entry<Integer, Float> param : params.entrySet()) {
-			data.append(param.getKey() + " " + Helpers.FloatToTerseString(param.getValue()) + "\n");
+			data.append(param.getKey() + " " + Helpers.floatToTerseString(param.getValue()) + "\n");
 		}
 
 		data.append("textures " + textures.size() + "\n");
@@ -353,6 +354,6 @@ public abstract class AssetWearable extends AssetItem {
 			data.append(texture.getKey().getValue() + " " + texture.getValue().toString() + "\n");
 		}
 
-		assetData = Helpers.StringToBytes(data.toString());
+		assetData = Helpers.stringToBytes(data.toString());
 	}
 }

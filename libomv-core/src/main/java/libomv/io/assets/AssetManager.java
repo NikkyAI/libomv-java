@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -118,46 +119,54 @@ import libomv.utils.TimeoutEvent;
 public class AssetManager implements PacketCallback {
 	private static final Logger logger = Logger.getLogger(AssetManager.class);
 
-	public CallbackHandler<XferDownload> OnXferReceived = new CallbackHandler<XferDownload>();
+	private class MeshDownloadCallback implements Callback<DownloadResult> {
+		private MeshDownload download;
 
-	private CallbackHandler<AssetUpload> OnAssetUploaded = new CallbackHandler<AssetUpload>();
-	private CallbackHandler<AssetUpload> OnUploadProgress = new CallbackHandler<AssetUpload>();
+		public MeshDownloadCallback(MeshDownload download) {
+			this.download = download;
+		}
 
-	private CallbackHandler<InitiateDownloadCallbackArgs> OnInitiateDownload = new CallbackHandler<InitiateDownloadCallbackArgs>();
-
-	private CallbackHandler<ImageReceiveProgressCallbackArgs> OnImageReceiveProgress = new CallbackHandler<ImageReceiveProgressCallbackArgs>();
-
-	// #endregion Events
-
-	// Texture download cache
-	private AssetCache _Cache;
-
-	public AssetCache getCache() {
-		return _Cache;
+		@Override
+		public boolean callback(DownloadResult result) {
+			if (result.finished) {
+				if (result.data != null) // success
+				{
+					download.assetData = result.data;
+				}
+				download.callbacks.dispatch(download);
+			}
+			return result.finished;
+		}
 	}
 
-	private TexturePipeline _TexDownloads;
+	public CallbackHandler<XferDownload> onXferReceived = new CallbackHandler<>();
+	private CallbackHandler<AssetUpload> onAssetUploaded = new CallbackHandler<>();
+	private CallbackHandler<AssetUpload> onUploadProgress = new CallbackHandler<>();
+	private CallbackHandler<InitiateDownloadCallbackArgs> onInitiateDownload = new CallbackHandler<>();
+	private CallbackHandler<ImageReceiveProgressCallbackArgs> onImageReceiveProgress = new CallbackHandler<>();
 
-	private DownloadManager _HttpDownloads;
-
-	private GridClient _Client;
+	private TexturePipeline texDownloads;
+	private DownloadManager httpDownloads;
+	private GridClient client;
 
 	/*
 	 * Transfers based on the asset ID to maintain an overview of currently active
 	 * transfers
 	 */
-	private HashMap<UUID, Transfer> _ActiveDownloads;
+	private Map<UUID, Transfer> activeDownloads;
 
 	/* Transfers based on the transaction ID used by the old transfer system */
-	private HashMap<UUID, Transfer> _AssetTransfers;
+	private Map<UUID, Transfer> assetTransfers;
 
 	/* Transfers based on the transaction ID used by the even older xfer system */
-	private HashMap<Long, Transfer> _XferTransfers;
+	private Map<Long, Transfer> xferTransfers;
 
-	private ExecutorService _ThreadPool;
-	private Future<?> _ThreadResult = null;
+	private ExecutorService threadPool;
+	private Future<?> threadResult = null;
+	private BlockingQueue<AssetUpload> pendingUpload;
 
-	private BlockingQueue<AssetUpload> _PendingUpload;
+	// Texture download cache
+	private AssetCache cache;
 
 	/*
 	 * Default constructor
@@ -165,104 +174,108 @@ public class AssetManager implements PacketCallback {
 	 * @param client A reference to the GridClient object
 	 */
 	public AssetManager(GridClient client) {
-		_Client = client;
-		_Cache = new AssetCache(client);
+		this.client = client;
+		cache = new AssetCache(client);
 
-		_XferTransfers = new HashMap<Long, Transfer>();
-		_PendingUpload = new ArrayBlockingQueue<AssetUpload>(1);
+		xferTransfers = new HashMap<>();
+		pendingUpload = new ArrayBlockingQueue<>(1);
 
-		_AssetTransfers = new HashMap<UUID, Transfer>();
-		_ActiveDownloads = new HashMap<UUID, Transfer>();
+		assetTransfers = new HashMap<>();
+		activeDownloads = new HashMap<>();
 
-		_TexDownloads = new TexturePipeline(client, _Cache);
+		texDownloads = new TexturePipeline(client, cache);
 
-		_ThreadPool = Executors.newSingleThreadExecutor();
+		threadPool = Executors.newSingleThreadExecutor();
 
-		_HttpDownloads = new DownloadManager();
+		httpDownloads = new DownloadManager();
 
 		// Transfer packets for downloading large assets
-		_Client.Network.RegisterCallback(PacketType.TransferInfo, this);
-		_Client.Network.RegisterCallback(PacketType.TransferPacket, this);
+		client.network.registerCallback(PacketType.TransferInfo, this);
+		client.network.registerCallback(PacketType.TransferPacket, this);
 
 		// Xfer packets for uploading large assets
-		_Client.Network.RegisterCallback(PacketType.RequestXfer, this);
-		_Client.Network.RegisterCallback(PacketType.ConfirmXferPacket, this);
-		_Client.Network.RegisterCallback(PacketType.AssetUploadComplete, this);
+		client.network.registerCallback(PacketType.RequestXfer, this);
+		client.network.registerCallback(PacketType.ConfirmXferPacket, this);
+		client.network.registerCallback(PacketType.AssetUploadComplete, this);
 
 		// Xfer packets for downloading misc assets
-		_Client.Network.RegisterCallback(PacketType.SendXferPacket, this);
-		_Client.Network.RegisterCallback(PacketType.AbortXfer, this);
+		client.network.registerCallback(PacketType.SendXferPacket, this);
+		client.network.registerCallback(PacketType.AbortXfer, this);
 
 		// Simulator is responding to a request to download a file
-		_Client.Network.RegisterCallback(PacketType.InitiateDownload, this);
+		client.network.registerCallback(PacketType.InitiateDownload, this);
 	}
 
 	@Override
 	protected void finalize() {
-		_Client.Network.UnregisterCallback(PacketType.TransferInfo, this);
-		_Client.Network.UnregisterCallback(PacketType.TransferPacket, this);
+		client.network.unregisterCallback(PacketType.TransferInfo, this);
+		client.network.unregisterCallback(PacketType.TransferPacket, this);
 
 		// Xfer packets for uploading large assets
-		_Client.Network.UnregisterCallback(PacketType.RequestXfer, this);
-		_Client.Network.UnregisterCallback(PacketType.ConfirmXferPacket, this);
-		_Client.Network.UnregisterCallback(PacketType.AssetUploadComplete, this);
+		client.network.unregisterCallback(PacketType.RequestXfer, this);
+		client.network.unregisterCallback(PacketType.ConfirmXferPacket, this);
+		client.network.unregisterCallback(PacketType.AssetUploadComplete, this);
 
 		// Xfer packets for downloading misc assets
-		_Client.Network.UnregisterCallback(PacketType.SendXferPacket, this);
-		_Client.Network.UnregisterCallback(PacketType.AbortXfer, this);
+		client.network.unregisterCallback(PacketType.SendXferPacket, this);
+		client.network.unregisterCallback(PacketType.AbortXfer, this);
 
 		// Simulator is responding to a request to download a file
-		_Client.Network.UnregisterCallback(PacketType.InitiateDownload, this);
+		client.network.unregisterCallback(PacketType.InitiateDownload, this);
 
-		_TexDownloads.shutdown();
-		_TexDownloads = null;
+		texDownloads.shutdown();
+		texDownloads = null;
 
-		_ActiveDownloads = null;
-		_AssetTransfers = null;
-		_PendingUpload = null;
-		_XferTransfers = null;
+		activeDownloads = null;
+		assetTransfers = null;
+		pendingUpload = null;
+		xferTransfers = null;
 
-		if (_ThreadResult != null)
-			_ThreadResult.cancel(true);
-		_ThreadPool.shutdownNow();
+		if (threadResult != null)
+			threadResult.cancel(true);
+		threadPool.shutdownNow();
 
-		_HttpDownloads.shutdown();
+		httpDownloads.shutdown();
 
 		// Transfer packets for downloading large assets
-		_Client = null;
-		_Cache = null;
+		client = null;
+		cache = null;
 	}
 
 	@Override
 	public void packetCallback(Packet packet, Simulator simulator) throws Exception {
 		switch (packet.getType()) {
 		case TransferInfo:
-			HandleTransferInfo(packet, simulator);
+			handleTransferInfo(packet, simulator);
 			break;
 		case TransferPacket:
-			HandleTransferPacket(packet, simulator);
+			handleTransferPacket(packet, simulator);
 			break;
 		case RequestXfer:
-			HandleRequestXfer(packet, simulator);
+			handleRequestXfer(packet, simulator);
 			break;
 		case ConfirmXferPacket:
-			HandleConfirmXferPacket(packet, simulator);
+			handleConfirmXferPacket(packet, simulator);
 			break;
 		case AssetUploadComplete:
-			HandleAssetUploadComplete(packet, simulator);
+			handleAssetUploadComplete(packet, simulator);
 			break;
 		case SendXferPacket:
-			HandleSendXferPacket(packet, simulator);
+			handleSendXferPacket(packet, simulator);
 			break;
 		case AbortXfer:
-			HandleAbortXfer(packet, simulator);
+			handleAbortXfer(packet, simulator);
 			break;
 		case InitiateDownload:
-			HandleInitiateDownloadPacket(packet, simulator);
+			handleInitiateDownloadPacket(packet, simulator);
 			break;
 		default:
 			break;
 		}
+	}
+
+	public AssetCache getCache() {
+		return cache;
 	}
 
 	/**
@@ -286,7 +299,7 @@ public class AssetManager implements PacketCallback {
 	 * @return The transaction ID that this Asset download identifies
 	 * @throws Exception
 	 */
-	public long RequestAssetXfer(String filename, boolean deleteOnCompletion, boolean useBigPackets, UUID vFileID,
+	public long requestAssetXfer(String filename, boolean deleteOnCompletion, boolean useBigPackets, UUID vFileID,
 			AssetType vFileType, boolean fromCache) throws Exception {
 		XferDownload transfer = new XferDownload();
 		transfer.xferID = new UUID().AsLong();
@@ -295,20 +308,20 @@ public class AssetManager implements PacketCallback {
 		transfer.assetType = vFileType;
 
 		// Add this transfer to the dictionary
-		synchronized (_XferTransfers) {
-			_XferTransfers.put(transfer.xferID, transfer);
+		synchronized (xferTransfers) {
+			xferTransfers.put(transfer.xferID, transfer);
 		}
 
 		RequestXferPacket request = new RequestXferPacket();
 		request.XferID.ID = transfer.xferID;
-		request.XferID.setFilename(Helpers.StringToBytes(filename));
+		request.XferID.setFilename(Helpers.stringToBytes(filename));
 		request.XferID.FilePath = fromCache ? (byte) 4 : (byte) 0;
 		request.XferID.DeleteOnCompletion = deleteOnCompletion;
 		request.XferID.UseBigPackets = useBigPackets;
 		request.XferID.VFileID = vFileID;
 		request.XferID.VFileType = vFileType.getValue();
 
-		_Client.Network.sendPacket(request);
+		client.network.sendPacket(request);
 
 		return transfer.xferID;
 	}
@@ -328,9 +341,9 @@ public class AssetManager implements PacketCallback {
 	 * @return The transaction ID that this asset download identifies
 	 * @throws Exception
 	 */
-	public UUID RequestAsset(UUID assetID, AssetType type, boolean priority, Callback<AssetDownload> callback)
+	public UUID requestAsset(UUID assetID, AssetType type, boolean priority, Callback<AssetDownload> callback)
 			throws Exception {
-		return RequestAsset(assetID, type, priority, SourceType.Asset, callback);
+		return requestAsset(assetID, type, priority, SourceType.Asset, callback);
 	}
 
 	/**
@@ -351,9 +364,9 @@ public class AssetManager implements PacketCallback {
 	 *
 	 * @throws Exception
 	 */
-	public UUID RequestAsset(UUID assetID, AssetType type, boolean priority, SourceType sourceType,
+	public UUID requestAsset(UUID assetID, AssetType type, boolean priority, SourceType sourceType,
 			Callback<AssetDownload> callback) throws Exception {
-		return RequestAsset(assetID, UUID.Zero, UUID.Zero, type, priority, sourceType, null, callback);
+		return requestAsset(assetID, UUID.Zero, UUID.Zero, type, priority, sourceType, null, callback);
 	}
 
 	/**
@@ -376,12 +389,12 @@ public class AssetManager implements PacketCallback {
 	 *
 	 * @throws Exception
 	 */
-	public UUID RequestAsset(UUID assetID, UUID itemID, UUID taskID, AssetType type, boolean priority,
+	public UUID requestAsset(UUID assetID, UUID itemID, UUID taskID, AssetType type, boolean priority,
 			SourceType sourceType, UUID transactionID, Callback<AssetDownload> callback) throws Exception {
-		Simulator simulator = _Client.Network.getCurrentSim();
+		Simulator simulator = client.network.getCurrentSim();
 
 		// Build the request packet and send it
-		TransferRequestPacket request = CheckAssetCache(assetID, type, transactionID, priority, sourceType, simulator,
+		TransferRequestPacket request = checkAssetCache(assetID, type, transactionID, priority, sourceType, simulator,
 				callback, "asset");
 		if (request != null) {
 			byte[] paramField = UUID.isZeroOrNull(taskID) ? new byte[20] : new byte[96];
@@ -408,12 +421,12 @@ public class AssetManager implements PacketCallback {
 	 *
 	 * @throws Exception
 	 */
-	public boolean AbortAssetTransfer(UUID transactionID) throws Exception {
+	public boolean abortAssetTransfer(UUID transactionID) throws Exception {
 		AssetDownload download;
-		synchronized (_ActiveDownloads) {
-			download = (AssetDownload) _AssetTransfers.remove(transactionID);
+		synchronized (activeDownloads) {
+			download = (AssetDownload) assetTransfers.remove(transactionID);
 			if (download != null)
-				_ActiveDownloads.remove(download.itemID);
+				activeDownloads.remove(download.itemID);
 		}
 
 		if (download != null) {
@@ -449,9 +462,9 @@ public class AssetManager implements PacketCallback {
 	 * @return The transaction ID that this asset download identifies
 	 * @throws Exception
 	 */
-	public UUID RequestInventoryAsset(InventoryItem item, boolean priority, Callback<AssetDownload> callback)
+	public UUID requestInventoryAsset(InventoryItem item, boolean priority, Callback<AssetDownload> callback)
 			throws Exception {
-		return RequestInventoryAsset(item.assetID, item.itemID, UUID.Zero, item.getOwnerID(), item.assetType, priority,
+		return requestInventoryAsset(item.assetID, item.itemID, UUID.Zero, item.getOwnerID(), item.assetType, priority,
 				callback);
 	}
 
@@ -478,17 +491,17 @@ public class AssetManager implements PacketCallback {
 	 * @return The transaction ID that this asset download identifies
 	 * @throws Exception
 	 */
-	public UUID RequestInventoryAsset(UUID assetID, UUID itemID, UUID taskID, UUID ownerID, AssetType type,
+	public UUID requestInventoryAsset(UUID assetID, UUID itemID, UUID taskID, UUID ownerID, AssetType type,
 			boolean priority, Callback<AssetDownload> callback) throws Exception {
-		Simulator simulator = _Client.Network.getCurrentSim();
+		Simulator simulator = client.network.getCurrentSim();
 
 		// Build the request packet and send it
-		TransferRequestPacket request = CheckAssetCache(assetID, type, null, priority, SourceType.SimInventoryItem,
+		TransferRequestPacket request = checkAssetCache(assetID, type, null, priority, SourceType.SimInventoryItem,
 				simulator, callback, "asset");
 		if (request != null) {
 			byte[] paramField = new byte[100];
-			_Client.Self.getAgentID().toBytes(paramField, 0);
-			_Client.Self.getSessionID().toBytes(paramField, 16);
+			client.agent.getAgentID().toBytes(paramField, 0);
+			client.agent.getSessionID().toBytes(paramField, 16);
 			ownerID.toBytes(paramField, 32);
 			taskID.toBytes(paramField, 48);
 			itemID.toBytes(paramField, 64);
@@ -518,17 +531,17 @@ public class AssetManager implements PacketCallback {
 	 * @return The transaction ID that this asset download identifies
 	 * @throws Exception
 	 */
-	public UUID RequestEstateAsset(UUID assetID, AssetType type, boolean priority, Callback<AssetDownload> callback)
+	public UUID requestEstateAsset(UUID assetID, AssetType type, boolean priority, Callback<AssetDownload> callback)
 			throws Exception {
-		Simulator simulator = _Client.Network.getCurrentSim();
+		Simulator simulator = client.network.getCurrentSim();
 
 		// Build the request packet and send it
-		TransferRequestPacket request = CheckAssetCache(assetID, type, null, priority, SourceType.SimEstate, simulator,
+		TransferRequestPacket request = checkAssetCache(assetID, type, null, priority, SourceType.SimEstate, simulator,
 				callback, "asset");
 		if (request != null) {
 			byte[] paramField = new byte[36];
-			_Client.Self.getAgentID().toBytes(paramField, 0);
-			_Client.Self.getSessionID().toBytes(paramField, 16);
+			client.agent.getAgentID().toBytes(paramField, 0);
+			client.agent.getSessionID().toBytes(paramField, 16);
 			Helpers.Int32ToBytesL(type.getValue(), paramField, 32);
 			request.TransferInfo.setParams(paramField);
 
@@ -538,11 +551,11 @@ public class AssetManager implements PacketCallback {
 		return null;
 	}
 
-	private TransferRequestPacket CheckAssetCache(UUID assetID, AssetType type, UUID transactionID, boolean priority,
+	private TransferRequestPacket checkAssetCache(UUID assetID, AssetType type, UUID transactionID, boolean priority,
 			SourceType sourceType, Simulator simulator, Callback<AssetDownload> callback, String suffix) {
 		AssetDownload transfer;
 		// Check asset cache first
-		byte[] data = _Cache.get(assetID, suffix);
+		byte[] data = cache.get(assetID, suffix);
 		if (data != null) {
 			// Is caller interested to get a callback?
 			if (callback != null) {
@@ -556,7 +569,7 @@ public class AssetManager implements PacketCallback {
 				try {
 					callback.callback(transfer);
 				} catch (Throwable ex) {
-					logger.error(GridClient.Log(ex.getMessage(), _Client), ex);
+					logger.error(GridClient.Log(ex.getMessage(), client), ex);
 				}
 			}
 			return null;
@@ -566,8 +579,8 @@ public class AssetManager implements PacketCallback {
 		 * If we already have this asset requested and in the download queue just add
 		 * the new callback to this request
 		 */
-		synchronized (_ActiveDownloads) {
-			transfer = (AssetDownload) _ActiveDownloads.get(assetID);
+		synchronized (activeDownloads) {
+			transfer = (AssetDownload) activeDownloads.get(assetID);
 		}
 		if (transfer != null) {
 			transfer.callbacks.add(callback);
@@ -584,12 +597,12 @@ public class AssetManager implements PacketCallback {
 		transfer.source = sourceType;
 		transfer.simulator = simulator;
 		transfer.suffix = suffix;
-		transfer.callbacks = new CallbackHandler<AssetDownload>();
+		transfer.callbacks = new CallbackHandler<>();
 		transfer.callbacks.add(callback);
 
-		synchronized (_ActiveDownloads) {
-			_AssetTransfers.put(transfer.transactionID, transfer);
-			_ActiveDownloads.put(assetID, transfer);
+		synchronized (activeDownloads) {
+			assetTransfers.put(transfer.transactionID, transfer);
+			activeDownloads.put(assetID, transfer);
 		}
 
 		// Build the request packet and send it
@@ -613,11 +626,11 @@ public class AssetManager implements PacketCallback {
 	 * @return The transaction ID that this asset upload identifies
 	 * @throws Exception
 	 */
-	public UUID RequestUpload(AssetItem asset, boolean storeLocal) throws Exception {
+	public UUID requestUpload(AssetItem asset, boolean storeLocal) throws Exception {
 		if (asset.assetData == null) {
 			throw new IllegalArgumentException("Can't upload an asset with no data (did you forget to call Encode?)");
 		}
-		return RequestUpload(null, asset.getAssetType(), asset.assetData, storeLocal, new UUID());
+		return requestUpload(null, asset.getAssetType(), asset.assetData, storeLocal, new UUID());
 	}
 
 	/**
@@ -634,8 +647,8 @@ public class AssetManager implements PacketCallback {
 	 * @return The transaction ID that this asset download identifies
 	 * @throws Exception
 	 */
-	public UUID RequestUpload(AssetType type, byte[] data, boolean storeLocal) throws Exception {
-		return RequestUpload(null, type, data, storeLocal, new UUID());
+	public UUID requestUpload(AssetType type, byte[] data, boolean storeLocal) throws Exception {
+		return requestUpload(null, type, data, storeLocal, new UUID());
 	}
 
 	/**
@@ -653,9 +666,9 @@ public class AssetManager implements PacketCallback {
 	 * @return The transaction ID that this asset download identifies
 	 * @throws Exception
 	 */
-	public UUID RequestUpload(RefObject<UUID> assetID, AssetType type, byte[] data, boolean storeLocal)
+	public UUID requestUpload(RefObject<UUID> assetID, AssetType type, byte[] data, boolean storeLocal)
 			throws Exception {
-		return RequestUpload(assetID, type, data, storeLocal, new UUID());
+		return requestUpload(assetID, type, data, storeLocal, new UUID());
 	}
 
 	/**
@@ -675,11 +688,11 @@ public class AssetManager implements PacketCallback {
 	 * @return The transaction ID that this asset download identifies
 	 * @throws Exception
 	 */
-	private UUID RequestUpload(RefObject<UUID> assetID, AssetType type, byte[] data, boolean storeLocal,
+	private UUID requestUpload(RefObject<UUID> assetID, AssetType type, byte[] data, boolean storeLocal,
 			UUID transactionID) throws Exception {
 		AssetUpload upload = new AssetUpload();
 		/* Create a new asset ID for this asset */
-		upload.assetID = UUID.Combine(transactionID, _Client.Self.getSecureSessionID());
+		upload.assetID = UUID.Combine(transactionID, client.agent.getSecureSessionID());
 		if (assetID != null)
 			assetID.argvalue = upload.assetID;
 		upload.assetData = data;
@@ -698,10 +711,10 @@ public class AssetManager implements PacketCallback {
 		if (data.length + 100 < LibSettings.MAX_PACKET_SIZE) {
 			logger.info(GridClient
 					.Log(String.format("Beginning asset upload [Single Packet], ID: %s, AssetID: %s, Size: %d",
-							upload.transactionID, upload.assetID, upload.size), _Client));
+							upload.transactionID, upload.assetID, upload.size), client));
 
-			synchronized (_ActiveDownloads) {
-				_AssetTransfers.put(transactionID, upload);
+			synchronized (activeDownloads) {
+				assetTransfers.put(transactionID, upload);
 			}
 
 			// The whole asset will fit in this packet, makes things easy
@@ -710,34 +723,34 @@ public class AssetManager implements PacketCallback {
 		} else {
 			logger.info(GridClient
 					.Log(String.format("Beginning asset upload [Multiple Packets], ID: %s, AssetID: %s, Size: %d",
-							upload.transactionID, upload.assetID, upload.size), _Client));
+							upload.transactionID, upload.assetID, upload.size), client));
 
 			// Asset is too big, send in multiple packets
 			request.AssetBlock.setAssetData(Helpers.EmptyBytes);
 
 			// Wait for the previous upload to receive a RequestXferPacket
 			final int UPLOAD_CONFIRM_TIMEOUT = 20 * 1000;
-			if (!_PendingUpload.offer(upload, UPLOAD_CONFIRM_TIMEOUT, TimeUnit.MILLISECONDS)) {
+			if (!pendingUpload.offer(upload, UPLOAD_CONFIRM_TIMEOUT, TimeUnit.MILLISECONDS)) {
 				throw new Exception("Timeout waiting for previous asset upload to begin");
 			}
 		}
 
-		_Client.Network.sendPacket(request);
+		client.network.sendPacket(request);
 		return upload.transactionID;
 	}
 
-	public void RequestUploadBakedTexture(final byte[] textureData, final BakedTextureUploadedCallback callback)
+	public void requestUploadBakedTexture(final byte[] textureData, final BakedTextureUploadedCallback callback)
 			throws IOException {
-		URI url = _Client.Network.getCapabilityURI(CapsEventType.UploadBakedTexture.toString());
+		URI url = client.network.getCapabilityURI(CapsEventType.UploadBakedTexture.toString());
 		if (url != null) {
 			// Fetch the uploader capability
-			CapsClient request = new CapsClient(_Client, CapsEventType.UploadBakedTexture.toString());
+			CapsClient request = new CapsClient(client, CapsEventType.UploadBakedTexture.toString());
 
 			class RequestUploadBakedTextureComplete implements FutureCallback<OSD> {
 				@Override
 				public void completed(OSD result) {
 					if (result instanceof OSDMap) {
-						UploadBakedTextureMessage message = _Client.Messages.new UploadBakedTextureMessage();
+						UploadBakedTextureMessage message = client.messages.new UploadBakedTextureMessage();
 						message.deserialize((OSDMap) result);
 						if (message.request.state.equals("complete")) {
 							callback.callback(((UploaderRequestComplete) message.request).assetID);
@@ -747,44 +760,44 @@ public class AssetManager implements PacketCallback {
 							if (uploadUrl != null) {
 								try {
 									// POST the asset data
-									CapsClient upload = new CapsClient(_Client,
+									CapsClient upload = new CapsClient(client,
 											CapsEventType.UploadBakedTexture.toString());
 									upload.executeHttpPost(uploadUrl, textureData, "application/octet-stream", null,
-											new RequestUploadBakedTextureComplete(), _Client.Settings.CAPS_TIMEOUT);
+											new RequestUploadBakedTextureComplete(), client.settings.CAPS_TIMEOUT);
 								} catch (IOException ex) {
-									logger.warn(GridClient.Log("Bake upload failed", _Client));
+									logger.warn(GridClient.Log("Bake upload failed", client));
 									callback.callback(UUID.Zero);
 								}
 							}
 							return;
 						}
 					}
-					logger.warn(GridClient.Log("Bake upload failed", _Client));
+					logger.warn(GridClient.Log("Bake upload failed", client));
 					callback.callback(UUID.Zero);
 				}
 
 				@Override
 				public void cancelled() {
-					logger.warn(GridClient.Log("Bake upload canelled", _Client));
+					logger.warn(GridClient.Log("Bake upload canelled", client));
 					callback.callback(UUID.Zero);
 				}
 
 				@Override
 				public void failed(Exception ex) {
-					logger.warn(GridClient.Log("Bake upload failed", _Client), ex);
+					logger.warn(GridClient.Log("Bake upload failed", client), ex);
 					callback.callback(UUID.Zero);
 				}
 			}
 			request.executeHttpPost(url, new OSDMap(), OSDFormat.Xml, new RequestUploadBakedTextureComplete(),
-					_Client.Settings.CAPS_TIMEOUT);
+					client.settings.CAPS_TIMEOUT);
 		} else {
-			logger.info(GridClient.Log("UploadBakedTexture not available, falling back to UDP method", _Client));
+			logger.info(GridClient.Log("UploadBakedTexture not available, falling back to UDP method", client));
 
-			_ThreadResult = _ThreadPool.submit(new Runnable() {
+			threadResult = threadPool.submit(new Runnable() {
 				@Override
 				public void run() {
 					final UUID transactionID = new UUID();
-					final TimeoutEvent<Boolean> uploadEvent = new TimeoutEvent<Boolean>();
+					final TimeoutEvent<Boolean> uploadEvent = new TimeoutEvent<>();
 
 					Callback<AssetUpload> udpCallback = new Callback<AssetUpload>() {
 						@Override
@@ -797,15 +810,15 @@ public class AssetManager implements PacketCallback {
 						}
 					};
 
-					OnAssetUploaded.add(udpCallback);
+					onAssetUploaded.add(udpCallback);
 					Boolean success;
 					try {
-						RequestUpload(null, AssetType.Texture, textureData, true, transactionID);
-						success = uploadEvent.waitOne(_Client.Settings.TRANSFER_TIMEOUT);
+						requestUpload(null, AssetType.Texture, textureData, true, transactionID);
+						success = uploadEvent.waitOne(client.settings.TRANSFER_TIMEOUT);
 					} catch (Exception t) {
 						success = false;
 					}
-					OnAssetUploaded.remove(udpCallback);
+					onAssetUploaded.remove(udpCallback);
 					if (success == null || !success) {
 						callback.callback(UUID.Zero);
 					}
@@ -852,7 +865,7 @@ public class AssetManager implements PacketCallback {
 	 * @returns true if the request could be satisfied from cache or sent
 	 *          successfully
 	 */
-	public boolean RequestImage(UUID textureID, ImageType imageType, float priority, int discardLevel, int packetStart,
+	public boolean requestImage(UUID textureID, ImageType imageType, float priority, int discardLevel, int packetStart,
 			Callback<ImageDownload> callback, boolean progress) {
 		if (UUID.isZeroOrNull(textureID) || callback == null)
 			return false;
@@ -860,7 +873,7 @@ public class AssetManager implements PacketCallback {
 		ImageDownload download = null;
 
 		/* Check if we have it already in our cache */
-		byte[] assetData = _Cache.get(textureID, "tex");
+		byte[] assetData = cache.get(textureID, "tex");
 		if (assetData != null) {
 			if (callback != null) {
 				download = new ImageDownload();
@@ -871,12 +884,12 @@ public class AssetManager implements PacketCallback {
 				callback.callback(download);
 			}
 			if (progress)
-				_Client.Assets.FireImageProgressEvent(textureID, assetData.length, assetData.length);
+				client.assets.fireImageProgressEvent(textureID, assetData.length, assetData.length);
 			return true;
 		}
 
-		synchronized (_ActiveDownloads) {
-			download = (ImageDownload) _ActiveDownloads.get(textureID);
+		synchronized (activeDownloads) {
+			download = (ImageDownload) activeDownloads.get(textureID);
 			if (download != null) {
 				download.callbacks.add(callback);
 				return true;
@@ -890,19 +903,19 @@ public class AssetManager implements PacketCallback {
 			download.discardLevel = discardLevel;
 			download.reportProgress = progress;
 			download.suffix = "tex";
-			download.callbacks = new CallbackHandler<ImageDownload>();
+			download.callbacks = new CallbackHandler<>();
 			download.callbacks.add(callback);
-			_ActiveDownloads.put(textureID, download);
+			activeDownloads.put(textureID, download);
 		}
 
 		boolean sent = false;
-		if (_Client.Settings.getBool(LibSettings.USE_HTTP_TEXTURES)
-				&& _Client.Network.getCapabilityURI("GetTexture") != null) {
-			sent = HttpRequestTexture(download);
+		if (client.settings.getBool(LibSettings.USE_HTTP_TEXTURES)
+				&& client.network.getCapabilityURI("GetTexture") != null) {
+			sent = httpRequestTexture(download);
 		}
 
 		if (!sent) {
-			sent = _TexDownloads.RequestTexture(download);
+			sent = texDownloads.requestTexture(download);
 		}
 		return sent;
 	}
@@ -919,8 +932,8 @@ public class AssetManager implements PacketCallback {
 	 *            the image is retrieved. The callback will contain the result of
 	 *            the request and the texture asset data
 	 */
-	public boolean RequestImage(UUID textureID, Callback<ImageDownload> callback) {
-		return RequestImage(textureID, ImageType.Normal, 101300.0f, 0, 0, callback, false);
+	public boolean requestImage(UUID textureID, Callback<ImageDownload> callback) {
+		return requestImage(textureID, ImageType.Normal, 101300.0f, 0, 0, callback, false);
 	}
 
 	/**
@@ -939,8 +952,8 @@ public class AssetManager implements PacketCallback {
 	 *            the image is retrieved. The callback will contain the result of
 	 *            the request and the texture asset data
 	 */
-	public boolean RequestImage(UUID textureID, ImageType imageType, Callback<ImageDownload> callback) {
-		return RequestImage(textureID, imageType, 101300.0f, 0, 0, callback, false);
+	public boolean requestImage(UUID textureID, ImageType imageType, Callback<ImageDownload> callback) {
+		return requestImage(textureID, imageType, 101300.0f, 0, 0, callback, false);
 	}
 
 	/**
@@ -964,9 +977,9 @@ public class AssetManager implements PacketCallback {
 	 *            previously received chunks of the texture asset starting from the
 	 *            beginning of the request
 	 */
-	public boolean RequestImage(UUID textureID, ImageType imageType, Callback<ImageDownload> callback,
+	public boolean requestImage(UUID textureID, ImageType imageType, Callback<ImageDownload> callback,
 			boolean progress) {
-		return RequestImage(textureID, imageType, 101300.0f, 0, 0, callback, progress);
+		return requestImage(textureID, imageType, 101300.0f, 0, 0, callback, progress);
 	}
 
 	/**
@@ -976,31 +989,11 @@ public class AssetManager implements PacketCallback {
 	 *            The texture assets <see cref="UUID"/>
 	 * @throws Exception
 	 */
-	public void RequestImageCancel(UUID textureID) throws Exception {
-		synchronized (_ActiveDownloads) {
-			_ActiveDownloads.remove(textureID);
+	public void requestImageCancel(UUID textureID) throws Exception {
+		synchronized (activeDownloads) {
+			activeDownloads.remove(textureID);
 		}
-		_TexDownloads.AbortTextureRequest(textureID);
-	}
-
-	private class MeshDownloadCallback implements Callback<DownloadResult> {
-		private MeshDownload download;
-
-		public MeshDownloadCallback(MeshDownload download) {
-			this.download = download;
-		}
-
-		@Override
-		public boolean callback(DownloadResult result) {
-			if (result.finished) {
-				if (result.data != null) // success
-				{
-					download.assetData = result.data;
-				}
-				download.callbacks.dispatch(download);
-			}
-			return result.finished;
-		}
+		texDownloads.abortTextureRequest(textureID);
 	}
 
 	/**
@@ -1011,14 +1004,14 @@ public class AssetManager implements PacketCallback {
 	 * @param callback
 	 *            Callback when the request completes
 	 */
-	public boolean RequestMesh(final UUID meshID, Callback<MeshDownload> callback) {
+	public boolean requestMesh(final UUID meshID, Callback<MeshDownload> callback) {
 		if (UUID.isZeroOrNull(meshID) || callback == null)
 			return false;
 
 		MeshDownload download = null;
 
 		// Do we have this mesh asset in the cache?
-		byte[] data = _Cache.get(meshID, "mesh");
+		byte[] data = cache.get(meshID, "mesh");
 		if (data != null) {
 			download = new MeshDownload();
 			download.itemID = meshID;
@@ -1028,10 +1021,10 @@ public class AssetManager implements PacketCallback {
 			return true;
 		}
 
-		URI url = _Client.Network.getCapabilityURI("GetMesh");
+		URI url = client.network.getCapabilityURI("GetMesh");
 		if (url != null) {
-			synchronized (_ActiveDownloads) {
-				download = (MeshDownload) _ActiveDownloads.get(meshID);
+			synchronized (activeDownloads) {
+				download = (MeshDownload) activeDownloads.get(meshID);
 				if (download != null) {
 					download.callbacks.add(callback);
 					return true;
@@ -1039,24 +1032,24 @@ public class AssetManager implements PacketCallback {
 				download = new MeshDownload();
 				download.itemID = meshID;
 				download.suffix = "mesh";
-				download.callbacks = new CallbackHandler<MeshDownload>();
+				download.callbacks = new CallbackHandler<>();
 				download.callbacks.add(callback);
-				_ActiveDownloads.put(meshID, download);
+				activeDownloads.put(meshID, download);
 			}
 
 			try {
 				url = new URI(String.format("%s/?mesh_id=%s", url, meshID));
 
 				Callback<DownloadResult> downloadCallback = new MeshDownloadCallback(download);
-				_HttpDownloads.enque(url, _Client.Settings.CAPS_TIMEOUT, null,
-						_Cache.cachedAssetFile(download.itemID, download.suffix), downloadCallback);
+				httpDownloads.enque(url, client.settings.CAPS_TIMEOUT, null,
+						cache.cachedAssetFile(download.itemID, download.suffix), downloadCallback);
 				return true;
 			} catch (URISyntaxException ex) {
-				logger.warn(GridClient.Log("Failed to fetch mesh asset {c}: " + ex.getMessage(), _Client));
+				logger.warn(GridClient.Log("Failed to fetch mesh asset {c}: " + ex.getMessage(), client));
 				callback.callback(null);
 			}
 		} else {
-			logger.error(GridClient.Log("GetMesh capability not available", _Client));
+			logger.error(GridClient.Log("GetMesh capability not available", client));
 			callback.callback(null);
 		}
 		return false;
@@ -1077,7 +1070,7 @@ public class AssetManager implements PacketCallback {
 	 * @return true if image could be retrieved from the cache or the texture
 	 *         request could be successfully sent
 	 */
-	public boolean RequestServerBakedImage(UUID avatarID, final UUID textureID, String bakeName,
+	public boolean requestServerBakedImage(UUID avatarID, final UUID textureID, String bakeName,
 			final Callback<ImageDownload> callback) throws URISyntaxException {
 		if (UUID.isZeroOrNull(avatarID) || UUID.isZeroOrNull(textureID) || callback == null)
 			return false;
@@ -1088,18 +1081,18 @@ public class AssetManager implements PacketCallback {
 		download.imageType = ImageType.ServerBaked;
 		download.suffix = "tex";
 
-		byte[] assetData = _Cache.get(textureID, download.suffix);
+		byte[] assetData = cache.get(textureID, download.suffix);
 		// Do we have this image in the cache?
 		if (assetData != null) {
 			download.state = TextureRequestState.Finished;
 			download.assetData = assetData;
 			callback.callback(download);
 
-			FireImageProgressEvent(textureID, assetData.length, assetData.length);
+			fireImageProgressEvent(textureID, assetData.length, assetData.length);
 			return true;
 		}
 
-		String appearenceUri = _Client.Network.getAgentAppearanceServiceURL();
+		String appearenceUri = client.network.getAgentAppearanceServiceURL();
 		if (appearenceUri == null || appearenceUri.isEmpty()) {
 			download.state = TextureRequestState.NotFound;
 			callback.callback(download);
@@ -1116,23 +1109,23 @@ public class AssetManager implements PacketCallback {
 						download.assetData = result.data;
 						callback.callback(download);
 
-						FireImageProgressEvent(textureID, result.data.length, result.data.length);
+						fireImageProgressEvent(textureID, result.data.length, result.data.length);
 					} else {
 						download.state = TextureRequestState.Timeout;
 						download.assetData = result.data;
 						callback.callback(download);
 						logger.warn(
-								GridClient.Log("Failed to fetch server bake {" + textureID + "}: empty data", _Client));
+								GridClient.Log("Failed to fetch server bake {" + textureID + "}: empty data", client));
 					}
 				} else {
-					FireImageProgressEvent(textureID, result.current, result.full);
+					fireImageProgressEvent(textureID, result.current, result.full);
 				}
 				return result.finished;
 			}
 
 		};
-		_HttpDownloads.enque(url, _Client.Settings.CAPS_TIMEOUT, "image/x-j2c",
-				_Cache.cachedAssetFile(download.itemID, download.suffix), downloadCallback);
+		httpDownloads.enque(url, client.settings.CAPS_TIMEOUT, "image/x-j2c",
+				cache.cachedAssetFile(download.itemID, download.suffix), downloadCallback);
 		return true;
 	}
 
@@ -1146,12 +1139,12 @@ public class AssetManager implements PacketCallback {
 	 * @param totalBytes
 	 *            The total number of bytes expected
 	 */
-	public final void FireImageProgressEvent(UUID texureID, long transferredBytes, long totalBytes) {
+	public final void fireImageProgressEvent(UUID texureID, long transferredBytes, long totalBytes) {
 		try {
-			OnImageReceiveProgress
+			onImageReceiveProgress
 					.dispatch(new ImageReceiveProgressCallbackArgs(texureID, transferredBytes, totalBytes));
 		} catch (Throwable ex) {
-			logger.error(GridClient.Log(ex.getMessage(), _Client), ex);
+			logger.error(GridClient.Log(ex.getMessage(), client), ex);
 		}
 	}
 
@@ -1169,18 +1162,18 @@ public class AssetManager implements PacketCallback {
 	 * @param callback
 	 * @param progress
 	 */
-	private boolean HttpRequestTexture(final ImageDownload download) {
+	private boolean httpRequestTexture(final ImageDownload download) {
 		try {
-			URI url = new URI(String.format("%s/?texture_id=%s", _Client.Network.getCapabilityURI("GetTexture"),
-					download.itemID));
+			URI url = new URI(
+					String.format("%s/?texture_id=%s", client.network.getCapabilityURI("GetTexture"), download.itemID));
 			Callback<DownloadResult> downloadCallback = new Callback<DownloadResult>() {
 				@Override
 				public boolean callback(DownloadResult result) {
 					if (result.finished) {
 						if (result.data != null) // success
 						{
-							synchronized (_ActiveDownloads) {
-								_ActiveDownloads.remove(download.itemID);
+							synchronized (activeDownloads) {
+								activeDownloads.remove(download.itemID);
 							}
 
 							download.codec = ImageCodec.J2K;
@@ -1188,24 +1181,24 @@ public class AssetManager implements PacketCallback {
 							download.assetData = result.data;
 							download.callbacks.dispatch(download);
 
-							FireImageProgressEvent(download.itemID, result.data.length, result.data.length);
+							fireImageProgressEvent(download.itemID, result.data.length, result.data.length);
 						} else {
 							download.state = TextureRequestState.Pending;
 							download.callbacks.dispatch(download);
 							logger.warn(GridClient
 									.Log(String.format("Failed to fetch texture {%s} over HTTP, falling back to UDP",
-											download.itemID), _Client));
-							_TexDownloads.RequestTexture(download);
+											download.itemID), client));
+							texDownloads.requestTexture(download);
 						}
 					} else {
-						FireImageProgressEvent(download.itemID, result.current, result.full);
+						fireImageProgressEvent(download.itemID, result.current, result.full);
 					}
 					return result.finished;
 				}
 
 			};
-			_HttpDownloads.enque(url, _Client.Settings.CAPS_TIMEOUT, "image/x-j2c",
-					_Cache.cachedAssetFile(download.itemID, download.suffix), downloadCallback);
+			httpDownloads.enque(url, client.settings.CAPS_TIMEOUT, "image/x-j2c",
+					cache.cachedAssetFile(download.itemID, download.suffix), downloadCallback);
 			return true;
 
 		} catch (URISyntaxException ex) {
@@ -1213,13 +1206,13 @@ public class AssetManager implements PacketCallback {
 			download.callbacks.dispatch(download);
 			logger.warn(
 					GridClient.Log(String.format("Failed to fetch texture {%s} over HTTP, falling back to UDP: {%s}",
-							download.itemID, ex.getMessage()), _Client));
+							download.itemID, ex.getMessage()), client));
 		}
 		return false;
 	}
 
 	// #region Helpers
-	public static AssetItem CreateAssetItem(AssetType type, UUID assetID, byte[] assetData) {
+	public static AssetItem createAssetItem(AssetType type, UUID assetID, byte[] assetData) {
 		try {
 			switch (type) {
 			case Animation:
@@ -1271,21 +1264,21 @@ public class AssetManager implements PacketCallback {
 			}
 
 			if (download.status != StatusCode.OK) {
-				synchronized (_ActiveDownloads) {
-					_AssetTransfers.remove(download.transactionID);
-					_ActiveDownloads.remove(download.itemID);
+				synchronized (activeDownloads) {
+					assetTransfers.remove(download.transactionID);
+					activeDownloads.remove(download.itemID);
 				}
 				download.delayed.clear();
 
 				download.success = download.status == StatusCode.Done;
 				if (download.success) {
 					logger.debug(
-							GridClient.Log("Transfer for asset " + download.itemID.toString() + " completed", _Client));
+							GridClient.Log("Transfer for asset " + download.itemID.toString() + " completed", client));
 
 					// Cache successful asset download
-					_Cache.put(download.itemID, download.assetData, download.suffix);
+					cache.put(download.itemID, download.assetData, download.suffix);
 				} else {
-					logger.warn(GridClient.Log("Transfer failed with status code " + download.status, _Client));
+					logger.warn(GridClient.Log("Transfer failed with status code " + download.status, client));
 				}
 
 				download.callbacks.dispatch(download);
@@ -1302,16 +1295,16 @@ public class AssetManager implements PacketCallback {
 	 *
 	 * @throws Exception
 	 */
-	private void HandleTransferInfo(Packet packet, Simulator simulator) throws Exception {
+	private void handleTransferInfo(Packet packet, Simulator simulator) throws Exception {
 		TransferInfoPacket info = (TransferInfoPacket) packet;
 
 		AssetDownload download = null;
-		synchronized (_ActiveDownloads) {
-			download = (AssetDownload) _AssetTransfers.get(info.TransferInfo.TransferID);
+		synchronized (activeDownloads) {
+			download = (AssetDownload) assetTransfers.get(info.TransferInfo.TransferID);
 		}
 		if (download == null) {
 			logger.warn(GridClient.Log("Received a TransferInfo packet for an asset we didn't request, TransferID: "
-					+ info.TransferInfo.TransferID, _Client));
+					+ info.TransferInfo.TransferID, client));
 			return;
 		}
 
@@ -1321,11 +1314,11 @@ public class AssetManager implements PacketCallback {
 		download.size = info.TransferInfo.Size;
 
 		if (download.status != StatusCode.OK) {
-			logger.warn(GridClient.Log("Transfer failed with status code " + download.status, _Client));
+			logger.warn(GridClient.Log("Transfer failed with status code " + download.status, client));
 
-			synchronized (_ActiveDownloads) {
-				_AssetTransfers.remove(download.transactionID);
-				_ActiveDownloads.remove(download.itemID);
+			synchronized (activeDownloads) {
+				assetTransfers.remove(download.transactionID);
+				activeDownloads.remove(download.itemID);
 			}
 			download.delayed.clear();
 
@@ -1360,7 +1353,7 @@ public class AssetManager implements PacketCallback {
 			} else {
 				logger.warn(GridClient.Log(String.format(
 						"Received a TransferInfo packet with a SourceType of %s and a Params field length of %d",
-						download.source, data.length), _Client));
+						download.source, data.length), client));
 			}
 			processDelayedData(download, download.delayed.remove(download.packetNum));
 		}
@@ -1371,12 +1364,12 @@ public class AssetManager implements PacketCallback {
 	 *
 	 * @throws Exception
 	 */
-	private void HandleTransferPacket(Packet packet, Simulator simulator) throws Exception {
+	private void handleTransferPacket(Packet packet, Simulator simulator) throws Exception {
 		TransferPacketPacket asset = (TransferPacketPacket) packet;
 
 		AssetDownload download = null;
-		synchronized (_ActiveDownloads) {
-			download = (AssetDownload) _AssetTransfers.get(asset.TransferData.TransferID);
+		synchronized (activeDownloads) {
+			download = (AssetDownload) assetTransfers.get(asset.TransferData.TransferID);
 		}
 		if (download != null) {
 			StatusCode status = StatusCode.setValue(asset.TransferData.Status);
@@ -1401,18 +1394,18 @@ public class AssetManager implements PacketCallback {
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	private void HandleInitiateDownloadPacket(Packet packet, Simulator simulator) {
+	private void handleInitiateDownloadPacket(Packet packet, Simulator simulator) {
 		InitiateDownloadPacket request = (InitiateDownloadPacket) packet;
 		try {
-			OnInitiateDownload
+			onInitiateDownload
 					.dispatch(new InitiateDownloadCallbackArgs(Helpers.BytesToString(request.FileData.getSimFilename()),
 							Helpers.BytesToString(request.FileData.getViewerFilename())));
 		} catch (Exception ex) {
-			logger.error(GridClient.Log(ex.getMessage(), _Client), ex);
+			logger.error(GridClient.Log(ex.getMessage(), client), ex);
 		}
 	}
 
-	private void SendNextUploadPacket(AssetUpload upload) throws Exception {
+	private void sendNextUploadPacket(AssetUpload upload) throws Exception {
 		SendXferPacketPacket send = new SendXferPacketPacket();
 
 		send.XferID.ID = upload.xferID;
@@ -1435,15 +1428,15 @@ public class AssetManager implements PacketCallback {
 		upload.transferred += len;
 
 		send.DataPacket.setData(data);
-		_Client.Network.sendPacket(send);
+		client.network.sendPacket(send);
 	}
 
-	private void SendConfirmXferPacket(long xferID, int packetNum) throws Exception {
+	private void sendConfirmXferPacket(long xferID, int packetNum) throws Exception {
 		ConfirmXferPacketPacket confirm = new ConfirmXferPacketPacket();
 		confirm.XferID.ID = xferID;
 		confirm.XferID.Packet = packetNum;
 
-		_Client.Network.sendPacket(confirm);
+		client.network.sendPacket(confirm);
 	}
 
 	/**
@@ -1451,22 +1444,22 @@ public class AssetManager implements PacketCallback {
 	 *
 	 * @throws Exception
 	 */
-	private void HandleRequestXfer(Packet packet, Simulator simulator) throws Exception {
+	private void handleRequestXfer(Packet packet, Simulator simulator) throws Exception {
 		RequestXferPacket request = (RequestXferPacket) packet;
-		AssetUpload upload = _PendingUpload.poll();
+		AssetUpload upload = pendingUpload.poll();
 		if (upload == null) {
-			logger.warn(GridClient.Log("Received a RequestXferPacket for an unknown asset upload", _Client));
+			logger.warn(GridClient.Log("Received a RequestXferPacket for an unknown asset upload", client));
 			return;
 		}
 
 		upload.xferID = request.XferID.ID;
 		upload.assetType = AssetType.setValue(request.XferID.VFileType);
 
-		synchronized (_XferTransfers) {
-			_XferTransfers.put(upload.xferID, upload);
+		synchronized (xferTransfers) {
+			xferTransfers.put(upload.xferID, upload);
 		}
 		// Send the first packet containing actual asset data
-		SendNextUploadPacket(upload);
+		sendNextUploadPacket(upload);
 	}
 
 	/**
@@ -1474,38 +1467,38 @@ public class AssetManager implements PacketCallback {
 	 *
 	 * @throws Exception
 	 */
-	private void HandleConfirmXferPacket(Packet packet, Simulator simulator) throws Exception {
+	private void handleConfirmXferPacket(Packet packet, Simulator simulator) throws Exception {
 		ConfirmXferPacketPacket confirm = (ConfirmXferPacketPacket) packet;
 
 		AssetUpload upload = null;
-		synchronized (_XferTransfers) {
-			upload = (AssetUpload) _XferTransfers.get(confirm.XferID.ID);
+		synchronized (xferTransfers) {
+			upload = (AssetUpload) xferTransfers.get(confirm.XferID.ID);
 		}
 		logger.debug(String.format("ACK for upload %s of asset type %s (%d/%d)", upload.assetID, upload.assetType,
 				upload.transferred, upload.size));
 
-		OnUploadProgress.dispatch(upload);
+		onUploadProgress.dispatch(upload);
 
 		if (upload.transferred < upload.size) {
-			SendNextUploadPacket(upload);
+			sendNextUploadPacket(upload);
 		}
 	}
 
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	private void HandleAssetUploadComplete(Packet packet, Simulator simulator) {
+	private void handleAssetUploadComplete(Packet packet, Simulator simulator) {
 		AssetUploadCompletePacket complete = (AssetUploadCompletePacket) packet;
 
 		AssetUpload upload = null;
-		synchronized (_ActiveDownloads) {
-			upload = (AssetUpload) _AssetTransfers.remove(complete.AssetBlock.UUID);
+		synchronized (activeDownloads) {
+			upload = (AssetUpload) assetTransfers.remove(complete.AssetBlock.UUID);
 		}
 		if (upload != null) {
-			synchronized (_XferTransfers) {
-				_XferTransfers.remove(upload.xferID);
+			synchronized (xferTransfers) {
+				xferTransfers.remove(upload.xferID);
 			}
-			OnAssetUploaded.dispatch(upload);
+			onAssetUploaded.dispatch(upload);
 		} else {
 			logger.debug(String.format(
 					"Got an AssetUploadComplete on an unrecognized asset, AssetID: %s, Type: %s, Success: %s",
@@ -1519,11 +1512,12 @@ public class AssetManager implements PacketCallback {
 	 *
 	 * @throws Exception
 	 */
-	private void HandleSendXferPacket(Packet packet, Simulator simulator) throws Exception {
+	@SuppressWarnings("unlikely-arg-type")
+	private void handleSendXferPacket(Packet packet, Simulator simulator) throws Exception {
 		SendXferPacketPacket xfer = (SendXferPacketPacket) packet;
 		XferDownload download = null;
-		synchronized (_XferTransfers) {
-			download = (XferDownload) _XferTransfers.get(xfer.XferID.ID);
+		synchronized (xferTransfers) {
+			download = (XferDownload) xferTransfers.get(xfer.XferID.ID);
 		}
 		if (download != null) {
 			// Apply a mask to get rid of the "end of transfer" bit
@@ -1533,13 +1527,13 @@ public class AssetManager implements PacketCallback {
 			if (packetNum != download.packetNum) {
 				if (packetNum == download.packetNum - 1) {
 					logger.debug(
-							GridClient.Log("Resending Xfer download confirmation for packet " + packetNum, _Client));
-					SendConfirmXferPacket(download.xferID, packetNum);
+							GridClient.Log("Resending Xfer download confirmation for packet " + packetNum, client));
+					sendConfirmXferPacket(download.xferID, packetNum);
 				} else {
 					logger.warn(GridClient.Log("Out of order Xfer packet in a download, got " + packetNum
-							+ " expecting " + download.packetNum, _Client));
+							+ " expecting " + download.packetNum, client));
 					// Re-confirm the last packet we actually received
-					SendConfirmXferPacket(download.xferID, download.packetNum - 1);
+					sendConfirmXferPacket(download.xferID, download.packetNum - 1);
 				}
 				return;
 			}
@@ -1565,23 +1559,22 @@ public class AssetManager implements PacketCallback {
 			download.packetNum++;
 
 			// Confirm receiving this packet
-			SendConfirmXferPacket(download.xferID, packetNum);
+			sendConfirmXferPacket(download.xferID, packetNum);
 
 			if ((xfer.XferID.Packet & 0x80000000) != 0) {
 				// This is the last packet in the transfer
 				if (!Helpers.isEmpty(download.filename)) {
-					logger.debug(
-							GridClient.Log("Xfer download for asset " + download.filename + " completed", _Client));
+					logger.debug(GridClient.Log("Xfer download for asset " + download.filename + " completed", client));
 				} else {
 					logger.debug(GridClient.Log("Xfer download for asset " + download.itemID.toString() + " completed",
-							_Client));
+							client));
 				}
 
 				download.success = true;
-				synchronized (_XferTransfers) {
-					_XferTransfers.remove(download.transactionID);
+				synchronized (xferTransfers) {
+					xferTransfers.remove(download.transactionID);
 				}
-				OnXferReceived.dispatch(download);
+				onXferReceived.dispatch(download);
 			}
 		}
 	}
@@ -1589,19 +1582,19 @@ public class AssetManager implements PacketCallback {
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
-	private void HandleAbortXfer(Packet packet, Simulator simulator) {
+	private void handleAbortXfer(Packet packet, Simulator simulator) {
 		AbortXferPacket abort = (AbortXferPacket) packet;
 		XferDownload download = null;
 
-		synchronized (_XferTransfers) {
-			download = (XferDownload) _XferTransfers.remove(abort.XferID.ID);
+		synchronized (xferTransfers) {
+			download = (XferDownload) xferTransfers.remove(abort.XferID.ID);
 		}
 
-		if (download != null && OnXferReceived.count() > 0) {
+		if (download != null && onXferReceived.count() > 0) {
 			download.success = false;
 			download.error = TransferError.setValue(abort.XferID.Result);
 
-			OnXferReceived.dispatch(download);
+			onXferReceived.dispatch(download);
 		}
 	}
 	// #endregion Xfer Callbacks

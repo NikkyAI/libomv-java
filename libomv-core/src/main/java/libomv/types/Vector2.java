@@ -174,11 +174,11 @@ public final class Vector2 {
 	 */
 	public void write(OutputStream stream, boolean le) throws IOException {
 		if (le) {
-			stream.write(Helpers.FloatToBytesL(X));
-			stream.write(Helpers.FloatToBytesL(Y));
+			stream.write(Helpers.floatToBytesL(X));
+			stream.write(Helpers.floatToBytesL(Y));
 		} else {
-			stream.write(Helpers.FloatToBytesB(X));
-			stream.write(Helpers.FloatToBytesB(Y));
+			stream.write(Helpers.floatToBytesB(X));
+			stream.write(Helpers.floatToBytesB(Y));
 		}
 	}
 
@@ -277,11 +277,11 @@ public final class Vector2 {
 	 */
 	public void toBytes(byte[] dest, int pos, boolean le) {
 		if (le) {
-			Helpers.FloatToBytesL(X, dest, pos + 0);
-			Helpers.FloatToBytesL(Y, dest, pos + 4);
+			Helpers.floatToBytesL(X, dest, pos + 0);
+			Helpers.floatToBytesL(Y, dest, pos + 4);
 		} else {
-			Helpers.FloatToBytesB(X, dest, pos + 0);
-			Helpers.FloatToBytesB(Y, dest, pos + 4);
+			Helpers.floatToBytesB(X, dest, pos + 0);
+			Helpers.floatToBytesB(Y, dest, pos + 4);
 		}
 	}
 
@@ -325,7 +325,7 @@ public final class Vector2 {
 
 	/** Test if this vector is composed of all finite numbers */
 	public boolean isFinite() {
-		return Helpers.IsFinite(X) && Helpers.IsFinite(Y);
+		return Helpers.isFinite(X) && Helpers.isFinite(Y);
 	}
 
 	public boolean isZero() {
@@ -345,7 +345,7 @@ public final class Vector2 {
 	}
 
 	public static Vector2 clamp(Vector2 value1, Vector2 min, Vector2 max) {
-		return new Vector2(Helpers.Clamp(value1.X, min.X, max.X), Helpers.Clamp(value1.Y, min.Y, max.Y));
+		return new Vector2(Helpers.clamp(value1.X, min.X, max.X), Helpers.clamp(value1.Y, min.Y, max.Y));
 	}
 
 	public static float distance(Vector2 value1, Vector2 value2) {
@@ -361,7 +361,7 @@ public final class Vector2 {
 	}
 
 	public static Vector2 lerp(Vector2 value1, Vector2 value2, float amount) {
-		return new Vector2(Helpers.Lerp(value1.X, value2.X, amount), Helpers.Lerp(value1.Y, value2.Y, amount));
+		return new Vector2(Helpers.lerp(value1.X, value2.X, amount), Helpers.lerp(value1.Y, value2.Y, amount));
 	}
 
 	public static Vector2 max(Vector2 value1, Vector2 value2) {
@@ -378,8 +378,8 @@ public final class Vector2 {
 
 	/** Interpolates between two vectors using a cubic equation */
 	public static Vector2 smoothStep(Vector2 value1, Vector2 value2, float amount) {
-		return new Vector2(Helpers.SmoothStep(value1.X, value2.X, amount),
-				Helpers.SmoothStep(value1.Y, value2.Y, amount));
+		return new Vector2(Helpers.smoothStep(value1.X, value2.X, amount),
+				Helpers.smoothStep(value1.Y, value2.Y, amount));
 	}
 
 	public static Vector2 transform(Vector2 position, Matrix4 matrix) {

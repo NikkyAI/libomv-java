@@ -38,14 +38,14 @@ public class AgentDisplayName {
 		AgentDisplayName ret = new AgentDisplayName();
 
 		OSDMap map = (OSDMap) data;
-		ret.id = map.get("id").AsUUID();
-		ret.userName = map.get("username").AsString();
-		ret.displayName = map.get("display_name").AsString();
-		ret.legacyFirstName = map.get("legacy_first_name").AsString();
-		ret.legacyLastName = map.get("legacy_last_name").AsString();
-		ret.isDefaultDisplayName = map.get("is_display_name_default").AsBoolean();
-		ret.nextUpdate = map.get("display_name_next_update").AsDate();
-		ret.updated = map.get("last_updated").AsDate();
+		ret.id = map.get("id").asUUID();
+		ret.userName = map.get("username").asString();
+		ret.displayName = map.get("display_name").asString();
+		ret.legacyFirstName = map.get("legacy_first_name").asString();
+		ret.legacyLastName = map.get("legacy_last_name").asString();
+		ret.isDefaultDisplayName = map.get("is_display_name_default").asBoolean();
+		ret.nextUpdate = map.get("display_name_next_update").asDate();
+		ret.updated = map.get("last_updated").asDate();
 		return ret;
 	}
 
@@ -61,20 +61,20 @@ public class AgentDisplayName {
 	public OSD toOSD() {
 		OSDMap map = new OSDMap();
 
-		map.put("id", OSD.FromUUID(id));
-		map.put("username", OSD.FromString(userName));
-		map.put("display_name", OSD.FromString(displayName));
-		map.put("legacy_first_name", OSD.FromString(legacyFirstName));
-		map.put("legacy_last_name", OSD.FromString(legacyLastName));
-		map.put("is_display_name_default", OSD.FromBoolean(isDefaultDisplayName));
-		map.put("display_name_next_update", OSD.FromDate(nextUpdate));
-		map.put("last_updated", OSD.FromDate(updated));
+		map.put("id", OSD.fromUUID(id));
+		map.put("username", OSD.fromString(userName));
+		map.put("display_name", OSD.fromString(displayName));
+		map.put("legacy_first_name", OSD.fromString(legacyFirstName));
+		map.put("legacy_last_name", OSD.fromString(legacyLastName));
+		map.put("is_display_name_default", OSD.fromBoolean(isDefaultDisplayName));
+		map.put("display_name_next_update", OSD.fromDate(nextUpdate));
+		map.put("last_updated", OSD.fromDate(updated));
 
 		return map;
 	}
 
 	@Override
 	public String toString() {
-		return Helpers.StructToString(this);
+		return Helpers.structToString(this);
 	}
 }

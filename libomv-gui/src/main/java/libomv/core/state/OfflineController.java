@@ -74,13 +74,13 @@ public class OfflineController implements StateController {
 		if (e.getActionCommand().equals(MainControl.cmdLogin)) {
 			try {
 				_Main.setControlPane(new ProgressPane(_Main));
-				_Client.Login.RequestLogin(_Client.Login.new LoginParams(_Client), new LoginProgressHandler());
+				_Client.login.requestLogin(_Client.login.new LoginParams(_Client), new LoginProgressHandler());
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		}
 		if (e.getActionCommand().equals(MainControl.cmdCancel)) {
-			_Client.Login.AbortLogin();
+			_Client.login.abortLogin();
 			_Main.setControlPane(new LoginPane(_Main, getJBrowser()));
 		} else {
 			_Main.actionPerformed(e);

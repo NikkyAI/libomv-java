@@ -210,12 +210,12 @@ public final class LLSDJson extends OSDParser {
 			break;
 		case 'f':
 			if (BufferCharactersEqual(reader, falseNotationValue, 1) == falseNotationValue.length) {
-				return OSD.FromBoolean(false);
+				return OSD.fromBoolean(false);
 			}
 			break;
 		case 't':
 			if (BufferCharactersEqual(reader, trueNotationValue, 1) == trueNotationValue.length) {
-				return OSD.FromBoolean(true);
+				return OSD.fromBoolean(true);
 			}
 			break;
 		case '-':
@@ -263,18 +263,18 @@ public final class LLSDJson extends OSDParser {
 			reader.unread(character);
 		}
 		if (isReal)
-			return OSD.FromReal(new Double(s.toString()));
-		return OSD.FromInteger(new Integer(s.toString()));
+			return OSD.fromReal(new Double(s.toString()));
+		return OSD.fromInteger(new Integer(s.toString()));
 
 	}
 
 	private static OSD parseString(PushbackReader reader) throws IOException, ParseException {
 		String string = getStringDelimitedBy(reader, doubleQuotesNotationMarker);
-		OSD osd = OSD.FromUUID(string);
+		OSD osd = OSD.fromUUID(string);
 		if (string.length() > 16) {
-			Date date = osd.AsDate();
+			Date date = osd.asDate();
 			if (!date.equals(Helpers.Epoch))
-				return OSD.FromDate(date);
+				return OSD.fromDate(date);
 		}
 		return osd;
 	}
@@ -325,30 +325,30 @@ public final class LLSDJson extends OSDParser {
 			writer.write(nullNotationValue);
 			break;
 		case Boolean:
-			if (osd.AsBoolean()) {
+			if (osd.asBoolean()) {
 				writer.write(trueNotationValue);
 			} else {
 				writer.write(falseNotationValue);
 			}
 			break;
 		case Real:
-			if (Double.isNaN(osd.AsReal()) || Double.isInfinite(osd.AsReal())) {
+			if (Double.isNaN(osd.asReal()) || Double.isInfinite(osd.asReal())) {
 				writer.write(nullNotationValue);
 			} else {
-				String str = osd.AsString();
+				String str = osd.asString();
 				writer.write(str);
 				if (str.indexOf('.') == -1 && str.indexOf('E') == -1)
 					writer.write(".0");
 			}
 			break;
 		case Integer:
-			writer.write(osd.AsString());
+			writer.write(osd.asString());
 			break;
 		case String:
 		case UUID:
 		case Date:
 		case URI:
-			serializeString(writer, osd.AsString());
+			serializeString(writer, osd.asString());
 			break;
 		case Binary:
 			serializeBinary(writer, (OSDBinary) osd);
@@ -416,7 +416,7 @@ public final class LLSDJson extends OSDParser {
 
 	private static void serializeBinary(Writer writer, OSDBinary osdBinary) throws IOException {
 		writer.write(arrayBeginNotationMarker);
-		byte[] bytes = osdBinary.AsBinary();
+		byte[] bytes = osdBinary.asBinary();
 		int lastIndex = bytes.length;
 
 		for (int idx = 0; idx < lastIndex; idx++) {
@@ -464,7 +464,7 @@ public final class LLSDJson extends OSDParser {
 			writer.write(nullNotationValue);
 			break;
 		case Boolean:
-			if (osd.AsBoolean()) {
+			if (osd.asBoolean()) {
 				writer.write(trueNotationValue);
 			} else {
 				writer.write(falseNotationValue);
@@ -472,13 +472,13 @@ public final class LLSDJson extends OSDParser {
 			break;
 		case Integer:
 		case Real:
-			writer.write(osd.AsString());
+			writer.write(osd.asString());
 			break;
 		case String:
 		case UUID:
 		case Date:
 		case URI:
-			serializeString(writer, osd.AsString());
+			serializeString(writer, osd.asString());
 			break;
 		case Binary:
 			serializeBinary(writer, (OSDBinary) osd);

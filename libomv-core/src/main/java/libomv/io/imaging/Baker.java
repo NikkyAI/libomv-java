@@ -54,7 +54,43 @@ import libomv.utils.Helpers;
 public class Baker {
 	private static final Logger logger = Logger.getLogger(Baker.class);
 
-	// #region Properties
+	// Final baked texture
+	private ManagedImage bakedTexture;
+	// Component layers
+	private List<TextureData> textures = new ArrayList<>();
+	// Width of the final baked image and scratchpad
+	private int bakeWidth;
+	// Height of the final baked image and scratchpad
+	private int bakeHeight;
+	// Bake type
+	private BakeType bakeType;
+	// Directory from where to load static resource layers
+	private File charDir;
+
+	private GridClient client;
+
+	/**
+	 * Default constructor
+	 *
+	 * @param bakeType
+	 *            Bake type
+	 * @throws URISyntaxException
+	 */
+	public Baker(GridClient client, BakeType bakeType) throws URISyntaxException {
+		this.client = client;
+		this.bakeType = bakeType;
+		this.charDir = new File(Helpers.getBaseDirectory(this.getClass()),
+				client.settings.getString(LibSettings.CHARACTER_DIR));
+
+		if (bakeType == BakeType.Eyes) {
+			bakeWidth = 128;
+			bakeHeight = 128;
+		} else {
+			bakeWidth = 512;
+			bakeHeight = 512;
+		}
+	}
+
 	// Final baked texture
 	public ManagedImage getBakedTexture() {
 		return bakedTexture;
@@ -79,76 +115,33 @@ public class Baker {
 	public BakeType getBakeType() {
 		return bakeType;
 	}
-	// #endregion
 
-	// #region Private fields
-	// Final baked texture
-	private ManagedImage bakedTexture;
-	// Component layers
-	private List<TextureData> textures = new ArrayList<TextureData>();
-	// Width of the final baked image and scratchpad
-	private int bakeWidth;
-	// Height of the final baked image and scratchpad
-	private int bakeHeight;
-	// Bake type
-	private BakeType bakeType;
-	// Directory from where to load static resource layers
-	private File charDir;
-
-	private GridClient _client;
-	// #endregion
-
-	// #region Constructor
-	/**
-	 * Default constructor
-	 *
-	 * @param bakeType
-	 *            Bake type
-	 * @throws URISyntaxException
-	 */
-	public Baker(GridClient client, BakeType bakeType) throws URISyntaxException {
-		_client = client;
-		this.bakeType = bakeType;
-		this.charDir = new File(Helpers.getBaseDirectory(this.getClass()),
-				client.Settings.getString(LibSettings.CHARACTER_DIR));
-
-		if (bakeType == BakeType.Eyes) {
-			bakeWidth = 128;
-			bakeHeight = 128;
-		} else {
-			bakeWidth = 512;
-			bakeHeight = 512;
-		}
-	}
-	// #endregion
-
-	// #region Public methods
 	/**
 	 * Adds layer for baking
 	 *
 	 * @param tdata
 	 *            TexturaData struct that contains texture and its params
 	 */
-	public void AddTexture(TextureData tdata) {
+	public void addTexture(TextureData tdata) {
 		synchronized (textures) {
 			textures.add(tdata);
 		}
 	}
 
-	public void Bake() throws CloneNotSupportedException {
+	public void bake() throws CloneNotSupportedException {
 		bakedTexture = new ManagedImage(bakeWidth, bakeHeight,
 				(byte) (ImageChannels.Color | ImageChannels.Alpha | ImageChannels.Bump));
 
 		// These are for head baking, they get special treatment
 		TextureData skinTexture = new TextureData();
-		List<TextureData> tattooTextures = new ArrayList<TextureData>();
-		List<ManagedImage> alphaWearableTextures = new ArrayList<ManagedImage>();
+		List<TextureData> tattooTextures = new ArrayList<>();
+		List<ManagedImage> alphaWearableTextures = new ArrayList<>();
 
 		// Base color for eye bake is white, color of layer0 for others
 		if (bakeType == BakeType.Eyes) {
-			InitBakedLayerColor(Color4.White);
+			initBakedLayerColor(Color4.White);
 		} else if (textures.size() > 0) {
-			InitBakedLayerColor(textures.get(0).color);
+			initBakedLayerColor(textures.get(0).color);
 		}
 
 		// Sort out the special layers we need for head baking and alpha
@@ -174,17 +167,17 @@ public class Baker {
 		}
 
 		if (bakeType == BakeType.Head) {
-			DrawLayer(LoadResourceLayer("head_color.tga"), false);
-			AddAlpha(bakedTexture, LoadResourceLayer("head_alpha.tga"));
-			MultiplyLayerFromAlpha(bakedTexture, LoadResourceLayer("head_skingrain.tga"));
+			drawLayer(loadResourceLayer("head_color.tga"), false);
+			addAlpha(bakedTexture, loadResourceLayer("head_alpha.tga"));
+			multiplyLayerFromAlpha(bakedTexture, loadResourceLayer("head_skingrain.tga"));
 		}
 
 		if (skinTexture.texture == null) {
 			if (bakeType == BakeType.UpperBody)
-				DrawLayer(LoadResourceLayer("upperbody_color.tga"), false);
+				drawLayer(loadResourceLayer("upperbody_color.tga"), false);
 
 			if (bakeType == BakeType.LowerBody)
-				DrawLayer(LoadResourceLayer("lowerbody_color.tga"), false);
+				drawLayer(loadResourceLayer("lowerbody_color.tga"), false);
 		}
 
 		// Layer each texture on top of one other, applying alpha masks as we go
@@ -229,7 +222,7 @@ public class Baker {
 					for (int j = 0; j < texture.getAlpha().length; j++)
 						texture.setAlpha(j, (byte) 0xFF);
 				}
-				MultiplyLayerFromAlpha(texture, LoadResourceLayer("head_hair.tga"));
+				multiplyLayerFromAlpha(texture, loadResourceLayer("head_hair.tga"));
 			}
 
 			// Apply tint and alpha masks except for skin that has a texture
@@ -237,7 +230,7 @@ public class Baker {
 			if (!(textures.get(i).textureIndex.compareTo(AvatarTextureIndex.HeadBodypaint) == 0
 					|| textures.get(i).textureIndex.compareTo(AvatarTextureIndex.UpperBodypaint) == 0
 					|| textures.get(i).textureIndex.compareTo(AvatarTextureIndex.LowerBodypaint) == 0)) {
-				ApplyTint(texture, tex.color);
+				applyTint(texture, tex.color);
 
 				// For hair bake, we skip all alpha masks
 				// and use one from the texture, for both
@@ -259,11 +252,11 @@ public class Baker {
 
 					// First add mask in normal blend mode
 					for (Entry<VisualAlphaParam, Float> kvp : tex.alphaMasks.entrySet()) {
-						if (!MaskBelongsToBake(kvp.getKey().tgaFile))
+						if (!maskBelongsToBake(kvp.getKey().tgaFile))
 							continue;
 
 						if (kvp.getKey().multiplyBlend == false && (kvp.getValue() > 0f || !kvp.getKey().skipIfZero)) {
-							ApplyAlpha(combinedMask, kvp.getKey(), kvp.getValue());
+							applyAlpha(combinedMask, kvp.getKey(), kvp.getValue());
 							// File.WriteAllBytes(bakeType + "-layer-" + i + "-mask-" + addedMasks + ".tga",
 							// combinedMask.ExportTGA());
 							addedMasks++;
@@ -277,30 +270,30 @@ public class Baker {
 
 					// Add masks in multiply blend mode
 					for (Entry<VisualAlphaParam, Float> kvp : tex.alphaMasks.entrySet()) {
-						if (!MaskBelongsToBake(kvp.getKey().tgaFile))
+						if (!maskBelongsToBake(kvp.getKey().tgaFile))
 							continue;
 
 						if (kvp.getKey().multiplyBlend == true && (kvp.getValue() > 0f || !kvp.getKey().skipIfZero)) {
-							ApplyAlpha(combinedMask, kvp.getKey(), kvp.getValue());
+							applyAlpha(combinedMask, kvp.getKey(), kvp.getValue());
 							addedMasks++;
 						}
 					}
 
 					if (addedMasks > 0) {
 						// Apply combined alpha mask to the cloned texture
-						AddAlpha(texture, combinedMask);
+						addAlpha(texture, combinedMask);
 					}
 
 					// Is this layer used for morph mask? If it is, use its
 					// alpha as the morph for the whole bake
-					if (tex.textureIndex == AppearanceManager.MorphLayerForBakeType(bakeType)) {
+					if (tex.textureIndex == AppearanceManager.morphLayerForBakeType(bakeType)) {
 						bakedTexture.setBump(combinedMask.getAlpha());
 					}
 				}
 			}
 
 			boolean useAlpha = i == 0 && (bakeType == BakeType.Skirt || bakeType == BakeType.Hair);
-			DrawLayer(texture, useAlpha);
+			drawLayer(texture, useAlpha);
 		}
 
 		// For head and tattoo, we add skin last
@@ -315,7 +308,7 @@ public class Baker {
 					} catch (Exception ex) {
 					}
 				}
-				DrawLayer(texture, false);
+				drawLayer(texture, false);
 			}
 
 			for (TextureData tex : tattooTextures) {
@@ -328,18 +321,18 @@ public class Baker {
 						} catch (Exception ex) {
 						}
 					}
-					DrawLayer(texture, false);
+					drawLayer(texture, false);
 				}
 			}
 		}
 
 		// Apply any alpha wearable textures to make parts of the avatar disappear
 		for (ManagedImage img : alphaWearableTextures) {
-			AddAlpha(bakedTexture, img);
+			addAlpha(bakedTexture, img);
 		}
 	}
 
-	public ManagedImage LoadResourceLayer(String fileName) {
+	public ManagedImage loadResourceLayer(String fileName) {
 		try {
 			return ManagedImage.decode(new File(charDir, fileName));
 		} catch (Exception ex) {
@@ -353,7 +346,7 @@ public class Baker {
 	///
 	/// <param name="index">Face number (AvatarTextureIndex)</param>
 	/// <returns>BakeType, layer to which this texture belongs to</returns>
-	public static BakeType BakeTypeFor(AvatarTextureIndex index) {
+	public static BakeType bakeTypeFor(AvatarTextureIndex index) {
 		switch (index) {
 		case HeadBodypaint:
 		case HeadTattoo:
@@ -397,11 +390,10 @@ public class Baker {
 			return BakeType.Unknown;
 		}
 	}
-	// #endregion
 
 	// #region Private layer compositing methods
 
-	private boolean MaskBelongsToBake(String mask) {
+	private boolean maskBelongsToBake(String mask) {
 		if ((bakeType == BakeType.LowerBody && mask.contains("upper"))
 				|| (bakeType == BakeType.LowerBody && mask.contains("shirt"))
 				|| (bakeType == BakeType.UpperBody && mask.contains("lower"))) {
@@ -410,7 +402,7 @@ public class Baker {
 		return true;
 	}
 
-	private boolean DrawLayer(ManagedImage source, boolean addSourceAlpha) {
+	private boolean drawLayer(ManagedImage source, boolean addSourceAlpha) {
 		if (source == null)
 			return false;
 
@@ -478,7 +470,7 @@ public class Baker {
 	 *            Source image
 	 * @returns Sanitization was succefull
 	 */
-	private boolean SanitizeLayers(ManagedImage dest, ManagedImage src) {
+	private boolean sanitizeLayers(ManagedImage dest, ManagedImage src) {
 		if (dest == null || src == null)
 			return false;
 
@@ -497,8 +489,8 @@ public class Baker {
 		return true;
 	}
 
-	private void ApplyAlpha(ManagedImage dest, VisualAlphaParam param, float val) {
-		ManagedImage src = LoadResourceLayer(param.tgaFile);
+	private void applyAlpha(ManagedImage dest, VisualAlphaParam param, float val) {
+		ManagedImage src = loadResourceLayer(param.tgaFile);
 
 		if (dest == null || src == null || src.getAlpha() == null)
 			return;
@@ -528,8 +520,8 @@ public class Baker {
 		}
 	}
 
-	private void AddAlpha(ManagedImage dest, ManagedImage src) {
-		if (!SanitizeLayers(dest, src))
+	private void addAlpha(ManagedImage dest, ManagedImage src) {
+		if (!sanitizeLayers(dest, src))
 			return;
 
 		for (int i = 0; i < dest.getAlpha().length; i++) {
@@ -539,8 +531,8 @@ public class Baker {
 		}
 	}
 
-	private void MultiplyLayerFromAlpha(ManagedImage dest, ManagedImage src) {
-		if (!SanitizeLayers(dest, src))
+	private void multiplyLayerFromAlpha(ManagedImage dest, ManagedImage src) {
+		if (!sanitizeLayers(dest, src))
 			return;
 
 		for (int i = 0; i < dest.getRed().length; i++) {
@@ -550,14 +542,14 @@ public class Baker {
 		}
 	}
 
-	private void ApplyTint(ManagedImage dest, Color4 src) {
+	private void applyTint(ManagedImage dest, Color4 src) {
 		if (dest == null)
 			return;
 
 		for (int i = 0; i < dest.getRed().length; i++) {
-			dest.setRed(i, (byte) ((dest.getRed(i) * Helpers.FloatToByte(src.R, 0f, 1f)) >> 8));
-			dest.setGreen(i, (byte) ((dest.getGreen(i) * Helpers.FloatToByte(src.G, 0f, 1f)) >> 8));
-			dest.setBlue(i, (byte) ((dest.getBlue(i) * Helpers.FloatToByte(src.B, 0f, 1f)) >> 8));
+			dest.setRed(i, (byte) ((dest.getRed(i) * Helpers.floatToByte(src.R, 0f, 1f)) >> 8));
+			dest.setGreen(i, (byte) ((dest.getGreen(i) * Helpers.floatToByte(src.G, 0f, 1f)) >> 8));
+			dest.setBlue(i, (byte) ((dest.getBlue(i) * Helpers.floatToByte(src.B, 0f, 1f)) >> 8));
 		}
 	}
 
@@ -568,8 +560,8 @@ public class Baker {
 	/// the image is a pure solid color
 	///
 	/// <param name="color">Color of the base of this layer</param>
-	private void InitBakedLayerColor(Color4 color) {
-		InitBakedLayerColor(color.R, color.G, color.B);
+	private void initBakedLayerColor(Color4 color) {
+		initBakedLayerColor(color.R, color.G, color.B);
 	}
 
 	//
@@ -581,10 +573,10 @@ public class Baker {
 	/// <param name="r">Red value</param>
 	/// <param name="g">Green value</param>
 	/// <param name="b">Blue value</param>
-	private void InitBakedLayerColor(float r, float g, float b) {
-		byte rByte = Helpers.FloatToByte(r, 0f, 1f);
-		byte gByte = Helpers.FloatToByte(g, 0f, 1f);
-		byte bByte = Helpers.FloatToByte(b, 0f, 1f);
+	private void initBakedLayerColor(float r, float g, float b) {
+		byte rByte = Helpers.floatToByte(r, 0f, 1f);
+		byte gByte = Helpers.floatToByte(g, 0f, 1f);
+		byte bByte = Helpers.floatToByte(b, 0f, 1f);
 
 		byte rAlt, gAlt, bAlt;
 

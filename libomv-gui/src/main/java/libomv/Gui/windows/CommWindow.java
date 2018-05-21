@@ -108,17 +108,17 @@ public class CommWindow extends JFrame {
 		channels = new HashMap<UUID, AbstractChannel>();
 
 		// Triggered when a local chat message is received
-		_Client.Self.OnChat.add(chatCallback);
+		_Client.agent.onChat.add(chatCallback);
 		// Triggered when an alert message is received
-		_Client.Self.OnAlertMessage.add(alertCallback);
+		_Client.agent.onAlertMessage.add(alertCallback);
 		// Triggered when an IM is received
-		_Client.Self.OnInstantMessage.add(instantCallback);
+		_Client.agent.onInstantMessage.add(instantCallback);
 		// Triggered when the online status of a friend has changed
-		_Client.Friends.OnFriendNotification.add(friendNotificationCallback);
+		_Client.friends.onFriendNotification.add(friendNotificationCallback);
 		// Triggered when someone has accepted or rejected our friendship request
-		_Client.Friends.OnFriendshipResponse.add(friendshipResponseCallback);
+		_Client.friends.onFriendshipResponse.add(friendshipResponseCallback);
 		// Triggered when someone has terminated friendship with us
-		_Client.Friends.OnFriendshipTerminated.add(friendshipTerminatedCallback);
+		_Client.friends.onFriendshipTerminated.add(friendshipTerminatedCallback);
 
 		// Choose a sensible minimum size.
 		setPreferredSize(new Dimension(360, 440));
@@ -131,12 +131,12 @@ public class CommWindow extends JFrame {
 	}
 
 	protected void finalize() throws Throwable {
-		_Client.Self.OnChat.remove(chatCallback);
-		_Client.Self.OnAlertMessage.remove(alertCallback);
-		_Client.Self.OnInstantMessage.remove(instantCallback);
-		_Client.Friends.OnFriendNotification.remove(friendNotificationCallback);
-		_Client.Friends.OnFriendshipResponse.remove(friendshipResponseCallback);
-		_Client.Friends.OnFriendshipTerminated.remove(friendshipTerminatedCallback);
+		_Client.agent.onChat.remove(chatCallback);
+		_Client.agent.onAlertMessage.remove(alertCallback);
+		_Client.agent.onInstantMessage.remove(instantCallback);
+		_Client.friends.onFriendNotification.remove(friendNotificationCallback);
+		_Client.friends.onFriendshipResponse.remove(friendshipResponseCallback);
+		_Client.friends.onFriendshipTerminated.remove(friendshipTerminatedCallback);
 
 		super.finalize();
 	}
@@ -318,7 +318,7 @@ public class CommWindow extends JFrame {
 			switch (params.getSourceType()) {
 			case Agent:
 				// Check if the sender agent is muted
-				muted = _Client.Self.findMuteEntry(new Predicate<MuteEntry>() {
+				muted = _Client.agent.findMuteEntry(new Predicate<MuteEntry>() {
 					public boolean evaluate(MuteEntry me) {
 						return (me.type == MuteType.Resident && me.id.equals(params.getSourceID()));
 					}
@@ -326,7 +326,7 @@ public class CommWindow extends JFrame {
 				break;
 			case Object:
 				// Check if sender object is muted
-				muted = _Client.Self.findMuteEntry(new Predicate<MuteEntry>() {
+				muted = _Client.agent.findMuteEntry(new Predicate<MuteEntry>() {
 					public boolean evaluate(MuteEntry me) {
 						return ((me.type == MuteType.Resident && me.id.equals(params.getOwnerID())) || // Owner muted
 						(me.type == MuteType.Object && me.id.equals(params.getSourceID())) || // Object muted by ID
@@ -356,7 +356,7 @@ public class CommWindow extends JFrame {
 
 					String fromName = null;
 					if (sourceType == ChatSourceType.Agent) {
-						fromName = _Client.Avatars.LocalAvatarNameLookup(sourceID);
+						fromName = _Client.avatars.localAvatarNameLookup(sourceID);
 					}
 					if (fromName == null || fromName.isEmpty())
 						fromName = params.getFromName();
@@ -435,7 +435,7 @@ public class CommWindow extends JFrame {
 			final InstantMessage message = params.getIM();
 
 			// Message from someone we muted?
-			if (_Client.Self.findMuteEntry(new Predicate<MuteEntry>() {
+			if (_Client.agent.findMuteEntry(new Predicate<MuteEntry>() {
 				public boolean evaluate(MuteEntry me) {
 					return (me.type == MuteType.Resident && me.id.equals(message.fromAgentID));
 				}
@@ -449,7 +449,7 @@ public class CommWindow extends JFrame {
 					try {
 						switch (message.dialog) {
 						case SessionSend:
-							if (_Client.Groups.GroupList.containsKey(message.imSessionID)) {
+							if (_Client.groups.groupList.containsKey(message.imSessionID)) {
 								handleIM(message, true);
 							} else {
 								handleConferenceIM(message);
@@ -458,7 +458,7 @@ public class CommWindow extends JFrame {
 						case MessageFromAgent:
 							if (message.fromAgentName.equals("Second Life")) {
 								handleIMFromObject(message);
-							} else if (message.groupIM || _Client.Groups.GroupList.containsKey(message.imSessionID)) {
+							} else if (message.groupIM || _Client.groups.groupList.containsKey(message.imSessionID)) {
 								handleIM(message, true);
 							} else if (message.binaryBucket.length > 1) { // conference
 								handleConferenceIM(message);
@@ -481,7 +481,7 @@ public class CommWindow extends JFrame {
 							if (_Main.getStateControl().RLV.autoAcceptTP(message.fromAgentID)) {
 								displayInLocalChat("", "Auto accepting teleport from " + message.fromAgentName,
 										AbstractChannel.STYLE_REGULAR, true);
-								_Client.Self.TeleportLureRespond(message.fromAgentID, message.imSessionID, true);
+								_Client.agent.teleportLureRespond(message.fromAgentID, message.imSessionID, true);
 							} else {
 								answerTeleportLure(message);
 							}
@@ -506,7 +506,7 @@ public class CommWindow extends JFrame {
 							break;
 						case GroupNotice:
 							// Is this group muted?
-							if (!_Client.Self.findMuteEntry(new Predicate<MuteEntry>() {
+							if (!_Client.agent.findMuteEntry(new Predicate<MuteEntry>() {
 								public boolean evaluate(MuteEntry me) {
 									return (me.type == MuteType.Group && me.id.equals(message.fromAgentID));
 								}
@@ -521,7 +521,7 @@ public class CommWindow extends JFrame {
 							break;
 						case TaskInventoryOffered:
 							// Is the object muted by name?
-							if (!_Client.Self.findMuteEntry(new Predicate<MuteEntry>() {
+							if (!_Client.agent.findMuteEntry(new Predicate<MuteEntry>() {
 								public boolean evaluate(MuteEntry me) {
 									return (me.type == MuteType.ByName && me.name.equals(message.fromAgentName));
 								}
@@ -550,7 +550,7 @@ public class CommWindow extends JFrame {
 
 	private void handleIMFromObject(final InstantMessage message) throws BadLocationException {
 		// Is the object or the owner muted?
-		if (!_Client.Self.findMuteEntry(new Predicate<MuteEntry>() {
+		if (!_Client.agent.findMuteEntry(new Predicate<MuteEntry>() {
 			public boolean evaluate(MuteEntry me) {
 				return ((me.type == MuteType.Object && me.id.equals(message.imSessionID)) || // muted object by id
 				(me.type == MuteType.ByName && me.name.equals(message.fromAgentName)) || // object muted by name
@@ -564,7 +564,7 @@ public class CommWindow extends JFrame {
 	private void handleIM(final InstantMessage message, boolean group) throws Exception {
 		if (group) {
 			// Ignore group IM from a muted group
-			if (_Client.Self.findMuteEntry(new Predicate<MuteEntry>() {
+			if (_Client.agent.findMuteEntry(new Predicate<MuteEntry>() {
 				public boolean evaluate(MuteEntry me) {
 					return (me.type == MuteType.Group
 							&& (me.id.equals(message.imSessionID) || me.id.equals(message.fromAgentID)));
@@ -597,7 +597,7 @@ public class CommWindow extends JFrame {
 
 		if (_Main.getStateControl().RLV.restrictionActive("recvchat", message.fromAgentID)) {
 			localMessage = "*** IM blocked by your viewer";
-			_Client.Self.InstantMessage(_Client.Self.getName(), message.fromAgentID,
+			_Client.agent.instantMessage(_Client.agent.getName(), message.fromAgentID,
 					"***  The Resident you messaged is prevented from reading your instant messages at the moment, please try again later.",
 					message.imSessionID, InstantMessageDialog.BusyAutoResponse, InstantMessageOnline.Offline);
 
@@ -647,7 +647,7 @@ public class CommWindow extends JFrame {
 				"Teleportation Offer", JOptionPane.YES_NO_OPTION);
 		// Accept or decline the request
 		try {
-			_Client.Self.TeleportLureRespond(message.fromAgentID, message.imSessionID, result == JOptionPane.OK_OPTION);
+			_Client.agent.teleportLureRespond(message.fromAgentID, message.imSessionID, result == JOptionPane.OK_OPTION);
 		} catch (Exception ex) {
 			logger.error(GridClient.Log("Response to teleportation invite failed", _Client), ex);
 		}
@@ -660,9 +660,9 @@ public class CommWindow extends JFrame {
 				JOptionPane.YES_NO_OPTION);
 		try {
 			if (result == JOptionPane.OK_OPTION) {
-				_Client.Friends.AcceptFriendship(message.fromAgentID, message.imSessionID);
+				_Client.friends.acceptFriendship(message.fromAgentID, message.imSessionID);
 			} else {
-				_Client.Friends.DeclineFriendship(message.fromAgentID, message.imSessionID);
+				_Client.friends.declineFriendship(message.fromAgentID, message.imSessionID);
 			}
 		} catch (Exception ex) {
 			logger.error(GridClient.Log("Failed to answer to friendship offer", _Client), ex);
@@ -675,7 +675,7 @@ public class CommWindow extends JFrame {
 						+ message.message + "'. Do you accept this offer?",
 				"Group Invitation", JOptionPane.YES_NO_OPTION);
 		try {
-			_Client.Self.GroupInviteRespond(message.fromAgentID, message.imSessionID, result == JOptionPane.OK_OPTION);
+			_Client.agent.groupInviteRespond(message.fromAgentID, message.imSessionID, result == JOptionPane.OK_OPTION);
 		} catch (Exception ex) {
 			logger.error(GridClient.Log("Exception when trying to respond to group invitation", _Client), ex);
 		}
@@ -693,7 +693,7 @@ public class CommWindow extends JFrame {
 					AbstractChannel channel = getChannel(null);
 					String message = e.getOnline() ? " is online" : " is offline";
 					for (UUID uuid : e.getAgentID()) {
-						FriendInfo info = _Client.Friends.getFriendList().get(uuid);
+						FriendInfo info = _Client.friends.getFriendList().get(uuid);
 						try {
 							channel.receiveMessage(null, uuid, info.getName(), message,
 									AbstractChannel.STYLE_INFORMATIONAL);

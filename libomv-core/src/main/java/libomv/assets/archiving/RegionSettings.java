@@ -45,38 +45,38 @@ import libomv.types.UUID;
 import libomv.utils.Helpers;
 
 public class RegionSettings {
-	public boolean AllowDamage;
-	public boolean AllowLandResell;
-	public boolean AllowLandJoinDivide;
-	public boolean BlockFly;
-	public boolean BlockLandShowInSearch;
-	public boolean BlockTerraform;
-	public boolean DisableCollisions;
-	public boolean DisablePhysics;
-	public boolean DisableScripts;
-	public int MaturityRating;
-	public boolean RestrictPushing;
-	public int AgentLimit;
-	public float ObjectBonus;
+	public boolean allowDamage;
+	public boolean allowLandResell;
+	public boolean allowLandJoinDivide;
+	public boolean blockFly;
+	public boolean blockLandShowInSearch;
+	public boolean blockTerraform;
+	public boolean disableCollisions;
+	public boolean disablePhysics;
+	public boolean disableScripts;
+	public int maturityRating;
+	public boolean restrictPushing;
+	public int agentLimit;
+	public float objectBonus;
 
-	public UUID TerrainDetail0;
-	public UUID TerrainDetail1;
-	public UUID TerrainDetail2;
-	public UUID TerrainDetail3;
-	public float TerrainHeightRange00;
-	public float TerrainHeightRange01;
-	public float TerrainHeightRange10;
-	public float TerrainHeightRange11;
-	public float TerrainStartHeight00;
-	public float TerrainStartHeight01;
-	public float TerrainStartHeight10;
-	public float TerrainStartHeight11;
+	public UUID terrainDetail0;
+	public UUID terrainDetail1;
+	public UUID terrainDetail2;
+	public UUID terrainDetail3;
+	public float terrainHeightRange00;
+	public float terrainHeightRange01;
+	public float terrainHeightRange10;
+	public float terrainHeightRange11;
+	public float terrainStartHeight00;
+	public float terrainStartHeight01;
+	public float terrainStartHeight10;
+	public float terrainStartHeight11;
 
-	public float WaterHeight;
-	public float TerrainRaiseLimit;
-	public float TerrainLowerLimit;
-	public boolean UseEstateSun;
-	public boolean FixedSun;
+	public float waterHeight;
+	public float terrainRaiseLimit;
+	public float terrainLowerLimit;
+	public boolean useEstateSun;
+	public boolean fixedSun;
 
 	public static RegionSettings fromReader(Reader reader) throws XmlPullParserException, IOException {
 		XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
@@ -104,75 +104,75 @@ public class RegionSettings {
 				while (parser.nextTag() == XmlPullParser.START_TAG) {
 					name = parser.getName();
 					if (name.equals("AllowDamage"))
-						settings.AllowDamage = Helpers.TryParseBoolean(parser.nextText().trim());
+						settings.allowDamage = Helpers.TryParseBoolean(parser.nextText().trim());
 					else if (name.equals("AllowLandResell"))
-						settings.AllowLandResell = Helpers.TryParseBoolean(parser.nextText().trim());
+						settings.allowLandResell = Helpers.TryParseBoolean(parser.nextText().trim());
 					else if (name.equals("AllowLandJoinDivide"))
-						settings.AllowLandJoinDivide = Helpers.TryParseBoolean(parser.nextText().trim());
+						settings.allowLandJoinDivide = Helpers.TryParseBoolean(parser.nextText().trim());
 					else if (name.equals("BlockFly"))
-						settings.BlockFly = Helpers.TryParseBoolean(parser.nextText().trim());
+						settings.blockFly = Helpers.TryParseBoolean(parser.nextText().trim());
 					else if (name.equals("BlockLandShowInSearch"))
-						settings.BlockLandShowInSearch = Helpers.TryParseBoolean(parser.nextText().trim());
+						settings.blockLandShowInSearch = Helpers.TryParseBoolean(parser.nextText().trim());
 					else if (name.equals("BlockTerraform"))
-						settings.BlockTerraform = Helpers.TryParseBoolean(parser.nextText().trim());
+						settings.blockTerraform = Helpers.TryParseBoolean(parser.nextText().trim());
 					else if (name.equals("DisableCollisions"))
-						settings.DisableCollisions = Helpers.TryParseBoolean(parser.nextText().trim());
+						settings.disableCollisions = Helpers.TryParseBoolean(parser.nextText().trim());
 					else if (name.equals("DisablePhysics"))
-						settings.DisablePhysics = Helpers.TryParseBoolean(parser.nextText().trim());
+						settings.disablePhysics = Helpers.TryParseBoolean(parser.nextText().trim());
 					else if (name.equals("DisableScripts"))
-						settings.DisableScripts = Helpers.TryParseBoolean(parser.nextText().trim());
+						settings.disableScripts = Helpers.TryParseBoolean(parser.nextText().trim());
 					else if (name.equals("MaturityRating"))
-						settings.MaturityRating = Helpers.TryParseInt(parser.nextText().trim());
+						settings.maturityRating = Helpers.TryParseInt(parser.nextText().trim());
 					else if (name.equals("RestrictPushing"))
-						settings.RestrictPushing = Helpers.TryParseBoolean(parser.nextText().trim());
+						settings.restrictPushing = Helpers.TryParseBoolean(parser.nextText().trim());
 					else if (name.equals("AgentLimit"))
-						settings.AgentLimit = Helpers.TryParseInt(parser.nextText().trim());
+						settings.agentLimit = Helpers.TryParseInt(parser.nextText().trim());
 					else if (name.equals("ObjectBonus"))
-						settings.ObjectBonus = Helpers.TryParseFloat(parser.nextText());
+						settings.objectBonus = Helpers.TryParseFloat(parser.nextText());
 				}
 				// at </General>
 			} else if (name.equals("GroundTextures")) {
 				while (parser.nextTag() == XmlPullParser.START_TAG) {
 					name = parser.getName();
 					if (name.equals("Texture1"))
-						settings.TerrainDetail0 = new UUID(parser);
+						settings.terrainDetail0 = new UUID(parser);
 					else if (name.equals("Texture2"))
-						settings.TerrainDetail1 = new UUID(parser);
+						settings.terrainDetail1 = new UUID(parser);
 					else if (name.equals("Texture3"))
-						settings.TerrainDetail2 = new UUID(parser);
+						settings.terrainDetail2 = new UUID(parser);
 					else if (name.equals("Texture4"))
-						settings.TerrainDetail3 = new UUID(parser);
+						settings.terrainDetail3 = new UUID(parser);
 					else if (name.equals("ElevationLowSW"))
-						settings.TerrainStartHeight00 = Helpers.TryParseFloat(parser.nextText());
+						settings.terrainStartHeight00 = Helpers.TryParseFloat(parser.nextText());
 					else if (name.equals("ElevationLowNW"))
-						settings.TerrainStartHeight01 = Helpers.TryParseFloat(parser.nextText());
+						settings.terrainStartHeight01 = Helpers.TryParseFloat(parser.nextText());
 					else if (name.equals("ElevationLowSE"))
-						settings.TerrainStartHeight10 = Helpers.TryParseFloat(parser.nextText());
+						settings.terrainStartHeight10 = Helpers.TryParseFloat(parser.nextText());
 					else if (name.equals("ElevationLowNE"))
-						settings.TerrainStartHeight11 = Helpers.TryParseFloat(parser.nextText());
+						settings.terrainStartHeight11 = Helpers.TryParseFloat(parser.nextText());
 					else if (name.equals("ElevationHighSW"))
-						settings.TerrainHeightRange00 = Helpers.TryParseFloat(parser.nextText());
+						settings.terrainHeightRange00 = Helpers.TryParseFloat(parser.nextText());
 					else if (name.equals("ElevationHighNW"))
-						settings.TerrainHeightRange01 = Helpers.TryParseFloat(parser.nextText());
+						settings.terrainHeightRange01 = Helpers.TryParseFloat(parser.nextText());
 					else if (name.equals("ElevationHighSE"))
-						settings.TerrainHeightRange10 = Helpers.TryParseFloat(parser.nextText());
+						settings.terrainHeightRange10 = Helpers.TryParseFloat(parser.nextText());
 					else if (name.equals("ElevationHighNE"))
-						settings.TerrainHeightRange11 = Helpers.TryParseFloat(parser.nextText());
+						settings.terrainHeightRange11 = Helpers.TryParseFloat(parser.nextText());
 				}
 				// </GroundTextures>
 			} else if (name.equals("Terrain")) {
 				while (parser.nextTag() == XmlPullParser.START_TAG) {
 					name = parser.getName();
 					if (name.equals("WaterHeight"))
-						settings.WaterHeight = Helpers.TryParseFloat(parser.nextText());
+						settings.waterHeight = Helpers.TryParseFloat(parser.nextText());
 					else if (name.equals("TerrainRaiseLimit"))
-						settings.TerrainRaiseLimit = Helpers.TryParseFloat(parser.nextText());
+						settings.terrainRaiseLimit = Helpers.TryParseFloat(parser.nextText());
 					else if (name.equals("TerrainLowerLimit"))
-						settings.TerrainLowerLimit = Helpers.TryParseFloat(parser.nextText());
+						settings.terrainLowerLimit = Helpers.TryParseFloat(parser.nextText());
 					else if (name.equals("UseEstateSun"))
-						settings.UseEstateSun = Helpers.TryParseBoolean(parser.nextText());
+						settings.useEstateSun = Helpers.TryParseBoolean(parser.nextText());
 					else if (name.equals("FixedSun"))
-						settings.FixedSun = Helpers.TryParseBoolean(parser.nextText());
+						settings.fixedSun = Helpers.TryParseBoolean(parser.nextText());
 				}
 				// at </Terrain>
 			}
@@ -190,42 +190,42 @@ public class RegionSettings {
 		writer.startTag(null, "RegionSettings");
 
 		writer.startTag(null, "General");
-		writeBoolean(writer, "AllowDamage", AllowDamage);
-		writeBoolean(writer, "AllowLandResell", AllowLandResell);
-		writeBoolean(writer, "AllowLandJoinDivide", AllowLandJoinDivide);
-		writeBoolean(writer, "BlockFly", BlockFly);
-		writeBoolean(writer, "BlockLandShowInSearch", BlockLandShowInSearch);
-		writeBoolean(writer, "BlockTerraform", BlockTerraform);
-		writeBoolean(writer, "DisableCollisions", DisableCollisions);
-		writeBoolean(writer, "DisablePhysics", DisablePhysics);
-		writeBoolean(writer, "DisableScripts", DisableScripts);
-		writeInteger(writer, "MaturityRating", MaturityRating);
-		writeBoolean(writer, "RestrictPushing", RestrictPushing);
-		writeInteger(writer, "AgentLimit", AgentLimit);
-		writeFloat(writer, "ObjectBonus", ObjectBonus);
+		writeBoolean(writer, "AllowDamage", allowDamage);
+		writeBoolean(writer, "AllowLandResell", allowLandResell);
+		writeBoolean(writer, "AllowLandJoinDivide", allowLandJoinDivide);
+		writeBoolean(writer, "BlockFly", blockFly);
+		writeBoolean(writer, "BlockLandShowInSearch", blockLandShowInSearch);
+		writeBoolean(writer, "BlockTerraform", blockTerraform);
+		writeBoolean(writer, "DisableCollisions", disableCollisions);
+		writeBoolean(writer, "DisablePhysics", disablePhysics);
+		writeBoolean(writer, "DisableScripts", disableScripts);
+		writeInteger(writer, "MaturityRating", maturityRating);
+		writeBoolean(writer, "RestrictPushing", restrictPushing);
+		writeInteger(writer, "AgentLimit", agentLimit);
+		writeFloat(writer, "ObjectBonus", objectBonus);
 		writer.endTag(null, "General");
 
 		writer.startTag(null, "GroundTextures");
-		writeString(writer, "Texture1", TerrainDetail0.toString());
-		writeString(writer, "Texture2", TerrainDetail1.toString());
-		writeString(writer, "Texture3", TerrainDetail2.toString());
-		writeString(writer, "Texture4", TerrainDetail3.toString());
-		writeFloat(writer, "ElevationLowSW", TerrainStartHeight00);
-		writeFloat(writer, "ElevationLowNW", TerrainStartHeight01);
-		writeFloat(writer, "ElevationLowSE", TerrainStartHeight10);
-		writeFloat(writer, "ElevationLowNE", TerrainStartHeight11);
-		writeFloat(writer, "ElevationHighSW", TerrainHeightRange00);
-		writeFloat(writer, "ElevationHighNW", TerrainHeightRange01);
-		writeFloat(writer, "ElevationHighSE", TerrainHeightRange10);
-		writeFloat(writer, "ElevationHighNE", TerrainHeightRange11);
+		writeString(writer, "Texture1", terrainDetail0.toString());
+		writeString(writer, "Texture2", terrainDetail1.toString());
+		writeString(writer, "Texture3", terrainDetail2.toString());
+		writeString(writer, "Texture4", terrainDetail3.toString());
+		writeFloat(writer, "ElevationLowSW", terrainStartHeight00);
+		writeFloat(writer, "ElevationLowNW", terrainStartHeight01);
+		writeFloat(writer, "ElevationLowSE", terrainStartHeight10);
+		writeFloat(writer, "ElevationLowNE", terrainStartHeight11);
+		writeFloat(writer, "ElevationHighSW", terrainHeightRange00);
+		writeFloat(writer, "ElevationHighNW", terrainHeightRange01);
+		writeFloat(writer, "ElevationHighSE", terrainHeightRange10);
+		writeFloat(writer, "ElevationHighNE", terrainHeightRange11);
 		writer.endTag(null, "GroundTextures");
 
 		writer.startTag(null, "Terrain");
-		writeFloat(writer, "WaterHeight", WaterHeight);
-		writeFloat(writer, "TerrainRaiseLimit", TerrainRaiseLimit);
-		writeFloat(writer, "TerrainLowerLimit", TerrainLowerLimit);
-		writeBoolean(writer, "UseEstateSun", UseEstateSun);
-		writeBoolean(writer, "FixedSun", FixedSun);
+		writeFloat(writer, "WaterHeight", waterHeight);
+		writeFloat(writer, "TerrainRaiseLimit", terrainRaiseLimit);
+		writeFloat(writer, "TerrainLowerLimit", terrainLowerLimit);
+		writeBoolean(writer, "UseEstateSun", useEstateSun);
+		writeBoolean(writer, "FixedSun", fixedSun);
 		writer.endTag(null, "Terrain");
 
 		writer.endTag(null, "RegionSettings");

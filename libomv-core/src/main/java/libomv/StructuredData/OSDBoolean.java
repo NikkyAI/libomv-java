@@ -30,42 +30,43 @@
 package libomv.StructuredData;
 
 public class OSDBoolean extends OSD {
-	private boolean value;
 
 	private static byte[] trueBinary = { 0x31 };
 	private static byte[] falseBinary = { 0x30 };
 
-	@Override
-	public OSDType getType() {
-		return OSDType.Boolean;
-	}
+	private boolean value;
 
 	public OSDBoolean(boolean value) {
 		this.value = value;
 	}
 
 	@Override
-	public boolean AsBoolean() {
+	public OSDType getType() {
+		return OSDType.Boolean;
+	}
+
+	@Override
+	public boolean asBoolean() {
 		return value;
 	}
 
 	@Override
-	public int AsInteger() {
+	public int asInteger() {
 		return value ? 1 : 0;
 	}
 
 	@Override
-	public double AsReal() {
+	public double asReal() {
 		return value ? 1d : 0d;
 	}
 
 	@Override
-	public String AsString() {
+	public String asString() {
 		return value ? "1" : "0";
 	}
 
 	@Override
-	public byte[] AsBinary() {
+	public byte[] asBinary() {
 		return value ? trueBinary : falseBinary;
 	}
 
@@ -80,11 +81,11 @@ public class OSDBoolean extends OSD {
 	}
 
 	public boolean equals(OSD osd) {
-		return osd != null && osd.AsBoolean() == value;
+		return osd != null && osd.asBoolean() == value;
 	}
 
 	@Override
 	public String toString() {
-		return AsString();
+		return asString();
 	}
 }

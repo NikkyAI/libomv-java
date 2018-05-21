@@ -76,7 +76,7 @@ public class BufferSound extends MediaObject {
 				logger.debug("Opening sound " + transfer.itemID.toString());
 
 				// Decode the Ogg Vorbis buffer.
-				AssetSound s = (AssetSound) AssetManager.CreateAssetItem(AssetType.Sound, transfer.itemID,
+				AssetSound s = (AssetSound) AssetManager.createAssetItem(AssetType.Sound, transfer.itemID,
 						transfer.assetData);
 
 				try {

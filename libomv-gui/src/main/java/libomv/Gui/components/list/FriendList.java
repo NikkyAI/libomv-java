@@ -130,14 +130,14 @@ public class FriendList extends JPanel implements ActionListener {
 		_Main = main;
 		_Comm = comm;
 		_Client = _Main.getGridClient();
-		_Friends = _Client.Friends;
+		_Friends = _Client.friends;
 
 		// The rights in respect to a friend have changed
-		_Friends.OnFriendRights.add(friendRightsCallback);
+		_Friends.onFriendRights.add(friendRightsCallback);
 		// The online status of a friend has changed
-		_Friends.OnFriendNotification.add(friendNotificationCallback);
+		_Friends.onFriendNotification.add(friendNotificationCallback);
 		// Someone has termintaed friendship with us
-		_Friends.OnFriendListChanged.add(friendListChangedCallback);
+		_Friends.onFriendListChanged.add(friendListChangedCallback);
 
 		empty = null;
 		offline = Resources.loadIcon(Resources.ICON_OFFLINE);
@@ -172,9 +172,9 @@ public class FriendList extends JPanel implements ActionListener {
 	}
 
 	protected void finalize() throws Throwable {
-		_Friends.OnFriendRights.remove(friendRightsCallback);
-		_Friends.OnFriendNotification.remove(friendNotificationCallback);
-		_Friends.OnFriendListChanged.remove(friendListChangedCallback);
+		_Friends.onFriendRights.remove(friendRightsCallback);
+		_Friends.onFriendNotification.remove(friendNotificationCallback);
+		_Friends.onFriendListChanged.remove(friendListChangedCallback);
 
 		super.finalize();
 	}
@@ -264,7 +264,7 @@ public class FriendList extends JPanel implements ActionListener {
 		}
 
 		public Object getValueAt(int row, int col) {
-			FriendInfo info = _Main.getGridClient().Friends.getFriend(row);
+			FriendInfo info = _Main.getGridClient().friends.getFriend(row);
 			if (info != null) {
 				switch (col) {
 				case 0:
@@ -315,7 +315,7 @@ public class FriendList extends JPanel implements ActionListener {
 
 		private void updateRights(FriendInfo info, int row, int col) {
 			try {
-				_Friends.GrantRights(info);
+				_Friends.grantRights(info);
 				fireTableCellUpdated(row, col);
 			} catch (Exception ex) {
 				logger.error(GridClient.Log("Exception sending friend rights update", _Client), ex);
@@ -501,7 +501,7 @@ public class FriendList extends JPanel implements ActionListener {
 						if (!enable) {
 							jBtnTpOffer.setEnabled(false);
 						} else {
-							enable = _Client.Network.getCurrentSim().getAvatarPositions().containsKey(info.getID());
+							enable = _Client.network.getCurrentSim().getAvatarPositions().containsKey(info.getID());
 						}
 						if (!enable) {
 							jBtnTeleportTo.setEnabled(false);
@@ -603,7 +603,7 @@ public class FriendList extends JPanel implements ActionListener {
 			if (info.getIsOnline()) {
 				// Offer teleport.
 				add(getJmiOfferTeleport());
-				if (_Client.Network.getCurrentSim().getAvatarPositions().containsKey(_Info.getID())) {
+				if (_Client.network.getCurrentSim().getAvatarPositions().containsKey(_Info.getID())) {
 					add(new JPopupMenu.Separator());
 					// Allow teleporting to the agent
 					add(getJmiTeleportTo());
@@ -745,7 +745,7 @@ public class FriendList extends JPanel implements ActionListener {
 						JOptionPane.YES_NO_OPTION);
 				if (result == JOptionPane.OK_OPTION) {
 					try {
-						_Friends.TerminateFriendship(info.getID());
+						_Friends.terminateFriendship(info.getID());
 					} catch (Exception ex) {
 						logger.error(GridClient.Log("TerminateFriendship failed", _Client), ex);
 					}
@@ -753,7 +753,7 @@ public class FriendList extends JPanel implements ActionListener {
 			} else if (e.getActionCommand().equals(cmdTeleportAsk)) {
 				try {
 					for (int selection : getJFriendsList().getSelectedColumns()) {
-						_Client.Self.SendTeleportLure(
+						_Client.agent.sendTeleportLure(
 								_Friends.getFriend(getJFriendsList().convertRowIndexToModel(selection)).getID());
 					}
 				} catch (Exception ex) {
@@ -761,15 +761,15 @@ public class FriendList extends JPanel implements ActionListener {
 				}
 			} else if (e.getActionCommand().equals(cmdTeleportTo)) {
 				try {
-					Vector3 pos = _Client.Network.getCurrentSim().getAvatarPositions().get(info.getID());
-					_Client.Self.Teleport(_Client.Network.getCurrentSim().getName(), pos);
+					Vector3 pos = _Client.network.getCurrentSim().getAvatarPositions().get(info.getID());
+					_Client.agent.teleport(_Client.network.getCurrentSim().getName(), pos);
 				} catch (Exception ex) {
 					logger.error(GridClient.Log("Teleporting to " + info.getName() + " failed", _Client), ex);
 				}
 			} else if (e.getActionCommand().equals(cmdAutopilotTo)) {
 				try {
-					Vector3 pos = _Client.Network.getCurrentSim().getAvatarPositions().get(info.getID());
-					_Client.Self.AutoPilotLocal((int) pos.X, (int) pos.Y, pos.Y);
+					Vector3 pos = _Client.network.getCurrentSim().getAvatarPositions().get(info.getID());
+					_Client.agent.autoPilotLocal((int) pos.X, (int) pos.Y, pos.Y);
 				} catch (Exception ex) {
 					logger.error(GridClient.Log("Autopiloting to " + info.getName() + " failed", _Client), ex);
 				}

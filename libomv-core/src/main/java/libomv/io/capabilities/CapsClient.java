@@ -66,9 +66,9 @@ public class CapsClient extends AsyncHTTPClient<OSD> {
 		public boolean callback(SettingsUpdateCallbackArgs params) {
 			String key = params.getName();
 			if (key == null) {
-				trackUtilization = _Client.Settings.getBool(LibSettings.TRACK_UTILIZATION);
+				trackUtilization = _Client.settings.getBool(LibSettings.TRACK_UTILIZATION);
 			} else if (key.equals(LibSettings.TRACK_UTILIZATION)) {
-				trackUtilization = params.getValue().AsBoolean();
+				trackUtilization = params.getValue().asBoolean();
 			}
 			return false;
 		}
@@ -79,8 +79,8 @@ public class CapsClient extends AsyncHTTPClient<OSD> {
 		_Client = client;
 
 		if (client != null) {
-			client.Settings.onSettingsUpdate.add(new SettingsUpdate());
-			trackUtilization = client.Settings.getBool(LibSettings.TRACK_UTILIZATION);
+			client.settings.onSettingsUpdate.add(new SettingsUpdate());
+			trackUtilization = client.settings.getBool(LibSettings.TRACK_UTILIZATION);
 		}
 	}
 
@@ -286,7 +286,7 @@ public class CapsClient extends AsyncHTTPClient<OSD> {
 
 		// #region Stats Tracking
 		if (_Client != null && trackUtilization) {
-			_Client.Stats.updateNetStats(name, Type.Message, entity.getContentLength(), 0);
+			_Client.stats.updateNetStats(name, Type.Message, entity.getContentLength(), 0);
 		}
 		// #endregion
 		return executeHttpPost(address, entity, callback, timeout);

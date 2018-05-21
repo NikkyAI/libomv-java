@@ -34,6 +34,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.nio.reactor.IOReactorException;
@@ -59,15 +60,18 @@ public class ModelUploader {
 	private static final Logger logger = Logger.getLogger(ModelUploader.class);
 
 	/* Inlcude stub convex hull physics, required for uploading to Second Life */
-	public boolean IncludePhysicsStub;
+	public boolean includePhysicsStub;
 
 	/* Use the same mesh used for geometry as the physical mesh upload */
-	public boolean UseModelAsPhysics;
+	public boolean useModelAsPhysics;
 
-	private GridClient _Client;
-	private List<ModelPrim> _Prims;
+	private GridClient client;
+	private List<ModelPrim> prims;
 
-	String InvName, InvDescription;
+	String invName;
+	String invDescription;
+	List<byte[]> images;
+	Map<String, Integer> imgIndex;
 
 	/**
 	 * Creates instance of the mesh uploader
@@ -82,20 +86,17 @@ public class ModelUploader {
 	 *            Inventory description for newly upload object
 	 */
 	public ModelUploader(GridClient client, List<ModelPrim> prims, String newInvName, String newInvDesc) {
-		this._Client = client;
-		this._Prims = prims;
-		this.InvName = newInvName;
-		this.InvDescription = newInvDesc;
+		this.client = client;
+		this.prims = prims;
+		this.invName = newInvName;
+		this.invDescription = newInvDesc;
 	}
 
-	List<byte[]> Images;
-	Hashtable<String, Integer> ImgIndex;
-
-	OSD AssetResources(boolean upload) {
+	OSD assetResources(boolean upload) {
 		OSDArray instanceList = new OSDArray();
-		List<byte[]> meshes = new ArrayList<byte[]>();
+		List<byte[]> meshes = new ArrayList<>();
 
-		for (ModelPrim prim : _Prims) {
+		for (ModelPrim prim : prims) {
 			OSDMap primMap = new OSDMap();
 
 			OSDArray faceList = new OSDArray();
@@ -103,24 +104,24 @@ public class ModelUploader {
 			for (ModelFace face : prim.faces) {
 				OSDMap faceMap = new OSDMap();
 
-				faceMap.put("diffuse_color", OSD.FromColor4(face.material.diffuseColor));
-				faceMap.put("fullbright", OSD.FromBoolean(false));
+				faceMap.put("diffuse_color", OSD.fromColor4(face.material.diffuseColor));
+				faceMap.put("fullbright", OSD.fromBoolean(false));
 
 				if (face.material.textureData != null) {
 					int index;
-					if (ImgIndex.containsKey(face.material.texture)) {
-						index = ImgIndex.get(face.material.texture);
+					if (imgIndex.containsKey(face.material.texture)) {
+						index = imgIndex.get(face.material.texture);
 					} else {
-						index = Images.size();
-						Images.add(face.material.textureData);
-						ImgIndex.put(face.material.texture, index);
+						index = images.size();
+						images.add(face.material.textureData);
+						imgIndex.put(face.material.texture, index);
 					}
-					faceMap.put("image", OSD.FromInteger(index));
-					faceMap.put("scales", OSD.FromReal(1.0f));
-					faceMap.put("scalet", OSD.FromReal(1.0f));
-					faceMap.put("offsets", OSD.FromReal(0.0f));
-					faceMap.put("offsett", OSD.FromReal(0.0f));
-					faceMap.put("imagerot", OSD.FromReal(0.0f));
+					faceMap.put("image", OSD.fromInteger(index));
+					faceMap.put("scales", OSD.fromReal(1.0f));
+					faceMap.put("scalet", OSD.fromReal(1.0f));
+					faceMap.put("offsets", OSD.fromReal(0.0f));
+					faceMap.put("offsett", OSD.fromReal(0.0f));
+					faceMap.put("imagerot", OSD.fromReal(0.0f));
 				}
 
 				faceList.add(faceMap);
@@ -128,13 +129,13 @@ public class ModelUploader {
 
 			primMap.put("face_list", faceList);
 
-			primMap.put("position", OSD.FromVector3(prim.position));
-			primMap.put("rotation", OSD.FromQuaternion(prim.rotation));
-			primMap.put("scale", OSD.FromVector3(prim.scale));
+			primMap.put("position", OSD.fromVector3(prim.position));
+			primMap.put("rotation", OSD.fromQuaternion(prim.rotation));
+			primMap.put("scale", OSD.fromVector3(prim.scale));
 
-			primMap.put("material", OSD.FromInteger(3)); // always sent as "wood" material
-			primMap.put("physics_shape_type", OSD.FromInteger(2)); // always sent as "convex hull";
-			primMap.put("mesh", OSD.FromInteger(meshes.size()));
+			primMap.put("material", OSD.fromInteger(3)); // always sent as "wood" material
+			primMap.put("physics_shape_type", OSD.fromInteger(2)); // always sent as "convex hull";
+			primMap.put("mesh", OSD.fromInteger(meshes.size()));
 			meshes.add(prim.asset);
 
 			instanceList.add(primMap);
@@ -145,22 +146,22 @@ public class ModelUploader {
 
 		OSDArray meshList = new OSDArray();
 		for (byte[] mesh : meshes) {
-			meshList.add(OSD.FromBinary(mesh));
+			meshList.add(OSD.fromBinary(mesh));
 		}
 		resources.put("mesh_list", meshList);
 
 		OSDArray textureList = new OSDArray();
-		for (int i = 0; i < Images.size(); i++) {
+		for (int i = 0; i < images.size(); i++) {
 			if (upload) {
-				textureList.add(OSD.FromBinary(Images.get(i)));
+				textureList.add(OSD.fromBinary(images.get(i)));
 			} else {
-				textureList.add(OSD.FromBinary(Helpers.EmptyBytes));
+				textureList.add(OSD.fromBinary(Helpers.EmptyBytes));
 			}
 		}
 
 		resources.put("texture_list", textureList);
 
-		resources.put("metric", OSD.FromString("MUT_Unspecified"));
+		resources.put("metric", OSD.fromString("MUT_Unspecified"));
 
 		return resources;
 	}
@@ -168,8 +169,8 @@ public class ModelUploader {
 	/**
 	 * Performs model upload in one go, without first checking for the price
 	 */
-	public void Upload() throws IOReactorException, InventoryException {
-		Upload(null);
+	public void upload() throws IOReactorException, InventoryException {
+		upload(null);
 	}
 
 	/**
@@ -179,7 +180,7 @@ public class ModelUploader {
 	 *            Callback that will be invoked upon completion of the upload. Null
 	 *            is sent on request failure
 	 */
-	public void Upload(Callback<OSD> callback) throws IOReactorException, InventoryException {
+	public void upload(Callback<OSD> callback) throws IOReactorException, InventoryException {
 		class InternalUploadCallback implements Callback<OSD> {
 			private Callback<OSD> callback;
 			private boolean prepare;
@@ -194,9 +195,9 @@ public class ModelUploader {
 				if (prepare) {
 					if (result instanceof OSDMap) {
 						OSDMap res = (OSDMap) result;
-						URI uploader = res.get("uploader").AsUri();
+						URI uploader = res.get("uploader").asUri();
 						try {
-							PerformUpload(uploader, new InternalUploadCallback(callback, false));
+							performUpload(uploader, new InternalUploadCallback(callback, false));
 						} catch (IOReactorException ex) {
 							logger.error("Error performing upload", ex);
 						}
@@ -207,8 +208,8 @@ public class ModelUploader {
 						if (reply.containsKey("new_inventory_item") && reply.containsKey("new_asset")) {
 							// Request full update on the item in order to update the local store
 							try {
-								_Client.Inventory.RequestFetchInventory(reply.get("new_inventory_item").AsUUID(),
-										_Client.Self.getAgentID());
+								client.inventory.requestFetchInventory(reply.get("new_inventory_item").asUUID(),
+										client.agent.getAgentID());
 							} catch (Exception ex) {
 								logger.warn("Error requesting inventory item", ex);
 							}
@@ -220,7 +221,7 @@ public class ModelUploader {
 				return true;
 			}
 		}
-		PrepareUpload(new InternalUploadCallback(callback, true));
+		prepareUpload(new InternalUploadCallback(callback, true));
 	}
 
 	private class UploadCallback implements FutureCallback<OSD> {
@@ -268,8 +269,8 @@ public class ModelUploader {
 	 *            Callback that will be invoke upon completion of the upload. Null
 	 *            is sent on request failure
 	 */
-	public void PrepareUpload(Callback<OSD> callback) throws IOReactorException, InventoryException {
-		URI url = _Client.Network.getCapabilityURI("NewFileAgentInventory");
+	public void prepareUpload(Callback<OSD> callback) throws IOReactorException, InventoryException {
+		URI url = client.network.getCapabilityURI("NewFileAgentInventory");
 		if (url == null) {
 			logger.warn("Cannot upload mesh, no connection or NewFileAgentInventory not available");
 			if (callback != null)
@@ -277,25 +278,25 @@ public class ModelUploader {
 			return;
 		}
 
-		Images = new ArrayList<byte[]>();
-		ImgIndex = new Hashtable<String, Integer>();
+		images = new ArrayList<>();
+		imgIndex = new Hashtable<>();
 
 		OSDMap req = new OSDMap();
-		req.put("name", OSD.FromString(InvName));
-		req.put("description", OSD.FromString(InvDescription));
+		req.put("name", OSD.fromString(invName));
+		req.put("description", OSD.fromString(invDescription));
 
-		req.put("asset_resources", AssetResources(false));
-		req.put("asset_type", OSD.FromString("mesh"));
-		req.put("inventory_type", OSD.FromString("object"));
+		req.put("asset_resources", assetResources(false));
+		req.put("asset_type", OSD.fromString("mesh"));
+		req.put("inventory_type", OSD.fromString("object"));
 
-		req.put("folder_id", OSD.FromUUID(_Client.Inventory.FindFolderForType(FolderType.Object).itemID));
-		req.put("texture_folder_id", OSD.FromUUID(_Client.Inventory.FindFolderForType(FolderType.Texture).itemID));
+		req.put("folder_id", OSD.fromUUID(client.inventory.findFolderForType(FolderType.Object).itemID));
+		req.put("texture_folder_id", OSD.fromUUID(client.inventory.findFolderForType(FolderType.Texture).itemID));
 
-		req.put("everyone_mask", OSD.FromInteger(PermissionMask.setValue(PermissionMask.All)));
-		req.put("group_mask", OSD.FromInteger(PermissionMask.setValue(PermissionMask.All)));
-		req.put("next_owner_mask", OSD.FromInteger(PermissionMask.setValue(PermissionMask.All)));
+		req.put("everyone_mask", OSD.fromInteger(PermissionMask.setValue(PermissionMask.All)));
+		req.put("group_mask", OSD.fromInteger(PermissionMask.setValue(PermissionMask.All)));
+		req.put("next_owner_mask", OSD.fromInteger(PermissionMask.setValue(PermissionMask.All)));
 
-		CapsClient request = new CapsClient(_Client, "ModelUploader.PrepareUpload");
+		CapsClient request = new CapsClient(client, "ModelUploader.PrepareUpload");
 		request.executeHttpPost(url, req, OSDFormat.Xml, new UploadCallback(callback), 3 * 60 * 1000);
 	}
 
@@ -308,8 +309,8 @@ public class ModelUploader {
 	 *            Callback that will be invoke upon completion of the upload. Null
 	 *            is sent on request failure
 	 */
-	public void PerformUpload(URI uploader, Callback<OSD> callback) throws IOReactorException {
-		CapsClient request = new CapsClient(_Client, "ModelUploader.DoUpload");
-		request.executeHttpPost(uploader, AssetResources(true), OSDFormat.Xml, new UploadCallback(callback), 60 * 1000);
+	public void performUpload(URI uploader, Callback<OSD> callback) throws IOReactorException {
+		CapsClient request = new CapsClient(client, "ModelUploader.DoUpload");
+		request.executeHttpPost(uploader, assetResources(true), OSDFormat.Xml, new UploadCallback(callback), 60 * 1000);
 	}
 }

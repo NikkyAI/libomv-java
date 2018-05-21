@@ -38,6 +38,7 @@ import java.io.Writer;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map.Entry;
 
 import libomv.StructuredData.OSD;
@@ -45,8 +46,6 @@ import libomv.StructuredData.OSD.OSDFormat;
 import libomv.StructuredData.OSD.OSDType;
 import libomv.StructuredData.OSDMap;
 import libomv.StructuredData.OSDParser;
-import libomv.utils.CallbackArgs;
-import libomv.utils.CallbackHandler;
 
 public class Settings {
 	public class DefaultSetting {
@@ -81,7 +80,7 @@ public class Settings {
 	private OSDMap settings;
 	private OSDMap defaults;
 
-	public CallbackHandler<SettingsUpdateCallbackArgs> onSettingsUpdate = new CallbackHandler<SettingsUpdateCallbackArgs>();
+	public CallbackHandler<SettingsUpdateCallbackArgs> onSettingsUpdate = new CallbackHandler<>();
 
 	public Settings(String settingsPath) {
 		this.settingsPath = new File(System.getProperty("user.home"), settingsPath);
@@ -94,7 +93,7 @@ public class Settings {
 				this.defaults = new OSDMap();
 
 			for (DefaultSetting setting : defaults) {
-				this.defaults.put(setting.key, OSD.FromObject(setting.value));
+				this.defaults.put(setting.key, OSD.fromObject(setting.value));
 			}
 		}
 	}
@@ -147,39 +146,39 @@ public class Settings {
 	}
 
 	public boolean getBool(String name) {
-		return get(name).AsBoolean();
+		return get(name).asBoolean();
 	}
 
 	public int getInt(String name) {
-		return get(name).AsInteger();
+		return get(name).asInteger();
 	}
 
 	public long getLong(String name) {
-		return get(name).AsLong();
+		return get(name).asLong();
 	}
 
 	public String getString(String name) {
-		return get(name).AsString();
+		return get(name).asString();
 	}
 
 	public boolean get(String name, boolean defValue) {
 		OSD osd = get(name);
 		if (osd != null)
-			return osd.AsBoolean();
+			return osd.asBoolean();
 		return putDefault(name, defValue);
 	}
 
 	public int get(String name, int defValue) {
 		OSD osd = get(name);
 		if (osd != null)
-			return osd.AsInteger();
+			return osd.asInteger();
 		return putDefault(name, defValue);
 	}
 
 	public String get(String name, String defValue) {
 		OSD osd = get(name);
 		if (osd != null)
-			return osd.AsString();
+			return osd.asString();
 		return putDefault(name, defValue);
 	}
 
@@ -191,19 +190,19 @@ public class Settings {
 	}
 
 	public boolean putDefault(String name, boolean value) {
-		return putDefault(name, OSD.FromBoolean(value)).AsBoolean();
+		return putDefault(name, OSD.fromBoolean(value)).asBoolean();
 	}
 
 	public int putDefault(String name, int value) {
-		return putDefault(name, OSD.FromInteger(value)).AsInteger();
+		return putDefault(name, OSD.fromInteger(value)).asInteger();
 	}
 
 	public String putDefault(String name, String value) {
-		return putDefault(name, OSD.FromString(value)).AsString();
+		return putDefault(name, OSD.fromString(value)).asString();
 	}
 
 	public OSD putDefault(String name, Object value) {
-		return putDefault(name, OSD.FromObject(value));
+		return putDefault(name, OSD.fromObject(value));
 	}
 
 	private OSD putDefault(String name, OSD value) {
@@ -215,23 +214,23 @@ public class Settings {
 	}
 
 	public boolean put(String name, boolean value) {
-		return put(name, OSD.FromBoolean(value)).AsBoolean();
+		return put(name, OSD.fromBoolean(value)).asBoolean();
 	}
 
 	public int put(String name, int value) {
-		return put(name, OSD.FromInteger(value)).AsInteger();
+		return put(name, OSD.fromInteger(value)).asInteger();
 	}
 
 	public long put(String name, long value) {
-		return put(name, OSD.FromLong(value)).AsLong();
+		return put(name, OSD.fromLong(value)).asLong();
 	}
 
 	public String put(String name, String value) {
-		return put(name, OSD.FromString(value)).AsString();
+		return put(name, OSD.fromString(value)).asString();
 	}
 
 	public OSD put(String name, Object value) {
-		return put(name, OSD.FromObject(value));
+		return put(name, OSD.fromObject(value));
 	}
 
 	private OSD put(String name, OSD value) {
@@ -256,7 +255,7 @@ public class Settings {
 	}
 
 	public Collection<String> keys() {
-		ArrayList<String> values = new ArrayList<String>(defaults.keySet());
+		List<String> values = new ArrayList<>(defaults.keySet());
 		for (String key : settings.keySet()) {
 			if (!defaults.containsKey(key)) {
 				values.add(key);
@@ -266,7 +265,7 @@ public class Settings {
 	}
 
 	public Collection<OSD> values() {
-		ArrayList<OSD> values = new ArrayList<OSD>(defaults.values());
+		List<OSD> values = new ArrayList<>(defaults.values());
 		for (Entry<String, OSD> e : settings.entrySet()) {
 			if (!defaults.containsKey(e.getKey())) {
 				values.add(e.getValue());

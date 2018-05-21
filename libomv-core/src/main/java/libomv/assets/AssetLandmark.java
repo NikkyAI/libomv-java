@@ -31,6 +31,8 @@ package libomv.assets;
 
 import java.io.UnsupportedEncodingException;
 
+import org.apache.log4j.Logger;
+
 import libomv.model.asset.AssetType;
 import libomv.types.UUID;
 import libomv.types.Vector3;
@@ -38,15 +40,7 @@ import libomv.utils.Helpers;
 
 // Represents a Landmark with RegionID and Position vector
 public class AssetLandmark extends AssetItem {
-	@Override
-	public AssetType getAssetType() {
-		return AssetType.Landmark;
-	}
-
-	// UUID of the Landmark target region
-	public UUID getRegionID() {
-		return assetID;
-	}
+	private static final Logger logger = Logger.getLogger(AssetLandmark.class);
 
 	// Local position of the target
 	public Vector3 position = Vector3.Zero;
@@ -76,6 +70,16 @@ public class AssetLandmark extends AssetItem {
 		position = pos;
 	}
 
+	@Override
+	public AssetType getAssetType() {
+		return AssetType.Landmark;
+	}
+
+	// UUID of the Landmark target region
+	public UUID getRegionID() {
+		return assetID;
+	}
+
 	/**
 	 * Encode the raw contents of a string with the specific Landmark format
 	 *
@@ -85,7 +89,7 @@ public class AssetLandmark extends AssetItem {
 		String temp = "Landmark version 2\n";
 		temp += "region_id " + getRegionID() + "\n";
 		temp += String.format("local_pos %f %f %f\n", position.X, position.Y, position.Z);
-		assetData = Helpers.StringToBytes(temp);
+		assetData = Helpers.stringToBytes(temp);
 	}
 
 	/**
@@ -110,6 +114,7 @@ public class AssetLandmark extends AssetItem {
 				}
 			}
 		} catch (UnsupportedEncodingException e) {
+			logger.error(e);
 		}
 		return false;
 	}

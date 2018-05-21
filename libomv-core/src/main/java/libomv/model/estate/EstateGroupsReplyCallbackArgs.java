@@ -1,6 +1,6 @@
 package libomv.model.estate;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import libomv.types.UUID;
 import libomv.utils.CallbackArgs;
@@ -11,7 +11,7 @@ import libomv.utils.CallbackArgs;
 public class EstateGroupsReplyCallbackArgs implements CallbackArgs {
 	private final int estateID;
 	private final int count;
-	private final ArrayList<UUID> allowedGroups;
+	private final List<UUID> allowedGroups;
 
 	/**
 	 * Construct a new instance of the EstateGroupsReplyEventArgs class
@@ -23,7 +23,7 @@ public class EstateGroupsReplyCallbackArgs implements CallbackArgs {
 	 * @param allowedGroups
 	 *            Allowed Groups UUIDs
 	 */
-	public EstateGroupsReplyCallbackArgs(int estateID, int count, ArrayList<UUID> allowedGroups) {
+	public EstateGroupsReplyCallbackArgs(int estateID, int count, List<UUID> allowedGroups) {
 		this.estateID = estateID;
 		this.count = count;
 		this.allowedGroups = allowedGroups;
@@ -40,7 +40,7 @@ public class EstateGroupsReplyCallbackArgs implements CallbackArgs {
 	}
 
 	// List of UUIDs of Allowed Groups
-	public ArrayList<UUID> getAllowedGroups() {
+	public List<UUID> getAllowedGroups() {
 		return allowedGroups;
 	}
 

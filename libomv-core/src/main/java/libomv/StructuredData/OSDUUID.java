@@ -34,32 +34,32 @@ import libomv.types.UUID;
 public class OSDUUID extends OSD {
 	private UUID value;
 
-	@Override
-	public OSDType getType() {
-		return OSDType.UUID;
-	}
-
 	public OSDUUID(UUID value) {
 		this.value = value;
 	}
 
 	@Override
-	public boolean AsBoolean() {
+	public OSDType getType() {
+		return OSDType.UUID;
+	}
+
+	@Override
+	public boolean asBoolean() {
 		return (value == null || value.equals(UUID.Zero)) ? false : true;
 	}
 
 	@Override
-	public String AsString() {
+	public String asString() {
 		return value.toString();
 	}
 
 	@Override
-	public UUID AsUUID() {
+	public UUID asUUID() {
 		return value;
 	}
 
 	@Override
-	public byte[] AsBinary() {
+	public byte[] asBinary() {
 		return value.getBytes();
 	}
 
@@ -74,7 +74,7 @@ public class OSDUUID extends OSD {
 	}
 
 	public boolean equals(OSD osd) {
-		return osd != null && osd.AsUUID().equals(value);
+		return osd != null && osd.asUUID().equals(value);
 	}
 
 	@Override
@@ -86,6 +86,6 @@ public class OSDUUID extends OSD {
 
 	@Override
 	public String toString() {
-		return AsString();
+		return asString();
 	}
 }

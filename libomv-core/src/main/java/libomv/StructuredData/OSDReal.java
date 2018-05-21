@@ -34,22 +34,22 @@ import libomv.utils.Helpers;
 public class OSDReal extends OSD {
 	private double value;
 
-	@Override
-	public OSDType getType() {
-		return OSDType.Real;
-	}
-
 	public OSDReal(double value) {
 		this.value = value;
 	}
 
 	@Override
-	public boolean AsBoolean() {
+	public OSDType getType() {
+		return OSDType.Real;
+	}
+
+	@Override
+	public boolean asBoolean() {
 		return (!Double.isNaN(value) && value != 0d);
 	}
 
 	@Override
-	public int AsInteger() {
+	public int asInteger() {
 		if (Double.isNaN(value)) {
 			return 0;
 		}
@@ -63,7 +63,7 @@ public class OSDReal extends OSD {
 	}
 
 	@Override
-	public int AsUInteger() {
+	public int asUInteger() {
 		if (Double.isNaN(value)) {
 			return 0;
 		}
@@ -77,7 +77,7 @@ public class OSDReal extends OSD {
 	}
 
 	@Override
-	public long AsLong() {
+	public long asLong() {
 		if (Double.isNaN(value)) {
 			return 0;
 		}
@@ -91,7 +91,7 @@ public class OSDReal extends OSD {
 	}
 
 	@Override
-	public long AsULong() {
+	public long asULong() {
 		if (Double.isNaN(value)) {
 			return 0;
 		}
@@ -105,12 +105,12 @@ public class OSDReal extends OSD {
 	}
 
 	@Override
-	public double AsReal() {
+	public double asReal() {
 		return value;
 	}
 
 	@Override
-	public String AsString() {
+	public String asString() {
 		if (Double.isNaN(value)) {
 			return "NaN";
 		} else if (Double.isInfinite(value)) {
@@ -120,8 +120,8 @@ public class OSDReal extends OSD {
 	}
 
 	@Override
-	public byte[] AsBinary() {
-		return Helpers.DoubleToBytesB(value);
+	public byte[] asBinary() {
+		return Helpers.doubleToBytesB(value);
 	}
 
 	@Override
@@ -136,11 +136,11 @@ public class OSDReal extends OSD {
 	}
 
 	public boolean equals(OSD osd) {
-		return osd != null && Double.doubleToLongBits(osd.AsReal()) == Double.doubleToLongBits(value);
+		return osd != null && Double.doubleToLongBits(osd.asReal()) == Double.doubleToLongBits(value);
 	}
 
 	@Override
 	public String toString() {
-		return AsString();
+		return asString();
 	}
 }

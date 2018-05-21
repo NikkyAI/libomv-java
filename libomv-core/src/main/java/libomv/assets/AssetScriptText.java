@@ -31,29 +31,18 @@ package libomv.assets;
 
 import java.io.UnsupportedEncodingException;
 
+import org.apache.log4j.Logger;
+
 import libomv.model.asset.AssetType;
 import libomv.types.UUID;
 import libomv.utils.Helpers;
 
 // Represents an LSL Text object containing a string of UTF encoded characters
 public class AssetScriptText extends AssetItem {
-	// Override the base classes AssetType
-	@Override
-	public AssetType getAssetType() {
-		return AssetType.LSLText;
-	}
+	private static final Logger logger = Logger.getLogger(AssetScriptText.class);
 
 	// A string of characters representing the script contents
 	private String source;
-
-	public String getSource() {
-		return source;
-	}
-
-	public void setParent(String source) {
-		invalidateAssetData();
-		this.source = source;
-	}
 
 	/**
 	 * Initializes a new AssetScriptText object with parameters
@@ -78,13 +67,28 @@ public class AssetScriptText extends AssetItem {
 		this.source = source;
 	}
 
+	// Override the base classes AssetType
+	@Override
+	public AssetType getAssetType() {
+		return AssetType.LSLText;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setParent(String source) {
+		invalidateAssetData();
+		this.source = source;
+	}
+
 	/**
 	 * Encode a string containing the scripts contents into byte encoded AssetData
 	 *
 	 */
 	@Override
 	protected void encode() {
-		assetData = Helpers.StringToBytes(source);
+		assetData = Helpers.stringToBytes(source);
 	}
 
 	/**
@@ -98,6 +102,7 @@ public class AssetScriptText extends AssetItem {
 			source = Helpers.BytesToString(assetData);
 			return true;
 		} catch (UnsupportedEncodingException e) {
+			logger.error(e);
 		}
 		return false;
 	}

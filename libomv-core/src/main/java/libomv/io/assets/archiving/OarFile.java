@@ -131,7 +131,7 @@ public class OarFile {
 	}
 	// #region Archive Loading
 
-	public static void UnpackageArchive(File filename, Callback<AssetLoadedData> assetCallback,
+	public static void unpackageArchive(File filename, Callback<AssetLoadedData> assetCallback,
 			Callback<TerrainLoadedData> terrainCallback, Callback<SceneObjectLoadedData> objectCallback,
 			Callback<SettingsLoadedData> settingsCallback) throws FileNotFoundException {
 		int successfulAssetRestores = 0;
@@ -152,14 +152,14 @@ public class OarFile {
 					TarArchiveReader.TarHeader header = archive.new TarHeader();
 					byte[] data;
 
-					while ((data = archive.ReadEntry(header)) != null) {
+					while ((data = archive.readEntry(header)) != null) {
 						if (header.FilePath.startsWith(ArchiveConstants.OBJECTS_PATH)) {
 							// Deserialize the XML bytes
 							if (objectCallback != null)
-								LoadObjects(data, objectCallback, pushStream.getBytePosition(), fileLength);
+								loadObjects(data, objectCallback, pushStream.getBytePosition(), fileLength);
 						} else if (header.FilePath.startsWith(ArchiveConstants.ASSETS_PATH)) {
 							if (assetCallback != null) {
-								if (LoadAsset(header.FilePath, data, assetCallback, pushStream.getBytePosition(),
+								if (loadAsset(header.FilePath, data, assetCallback, pushStream.getBytePosition(),
 										fileLength))
 									successfulAssetRestores++;
 								else
@@ -167,11 +167,11 @@ public class OarFile {
 							}
 						} else if (header.FilePath.startsWith(ArchiveConstants.TERRAINS_PATH)) {
 							if (terrainCallback != null)
-								LoadTerrain(header.FilePath, data, terrainCallback, pushStream.getBytePosition(),
+								loadTerrain(header.FilePath, data, terrainCallback, pushStream.getBytePosition(),
 										fileLength);
 						} else if (header.FilePath.startsWith(ArchiveConstants.SETTINGS_PATH)) {
 							if (settingsCallback != null)
-								LoadRegionSettings(header.FilePath, data, settingsCallback);
+								loadRegionSettings(header.FilePath, data, settingsCallback);
 						}
 					}
 				}
@@ -198,7 +198,7 @@ public class OarFile {
 			logger.warn(String.format("[OarFile]: Failed to load " + failedAssetRestores + " assets"));
 	}
 
-	private static boolean LoadAsset(String assetPath, byte[] data, Callback<AssetLoadedData> assetCallback,
+	private static boolean loadAsset(String assetPath, byte[] data, Callback<AssetLoadedData> assetCallback,
 			long bytesRead, long totalBytes) {
 		// Right now we're nastily obtaining the UUID from the filename
 		if (!assetPath.startsWith(ArchiveConstants.ASSETS_PATH))
@@ -214,11 +214,11 @@ public class OarFile {
 			return false;
 		}
 
-		RefObject<UUID> uuid = new RefObject<UUID>(null);
+		RefObject<UUID> uuid = new RefObject<>(null);
 		UUID.TryParse(fileName, uuid);
 		AssetType assetType = ArchiveConstants.getAssetTypeForExtenstion(extension);
 		if (assetType != null) {
-			AssetItem asset = AssetManager.CreateAssetItem(assetType, uuid.argvalue, data);
+			AssetItem asset = AssetManager.createAssetItem(assetType, uuid.argvalue, data);
 			if (asset != null) {
 				assetCallback.callback(new OarFile().new AssetLoadedData(asset, bytesRead, totalBytes));
 				return true;
@@ -228,7 +228,7 @@ public class OarFile {
 		return false;
 	}
 
-	private static boolean LoadRegionSettings(String filePath, byte[] data,
+	private static boolean loadRegionSettings(String filePath, byte[] data,
 			Callback<SettingsLoadedData> settingsCallback) {
 		RegionSettings settings = null;
 		boolean loaded = false;
@@ -249,7 +249,7 @@ public class OarFile {
 		return loaded;
 	}
 
-	private static boolean LoadTerrain(String filePath, byte[] data, Callback<TerrainLoadedData> terrainCallback,
+	private static boolean loadTerrain(String filePath, byte[] data, Callback<TerrainLoadedData> terrainCallback,
 			long bytesRead, long totalBytes) {
 		float[][] terrain = new float[256][256];
 		boolean loaded = false;
@@ -261,7 +261,7 @@ public class OarFile {
 				int pos = 0;
 				for (int y = 0; y < 256; y++) {
 					for (int x = 0; x < 256; x++) {
-						terrain[y][x] = Helpers.Clamp(Helpers.BytesToFloatL(data, pos), 0.0f, 255.0f);
+						terrain[y][x] = Helpers.clamp(Helpers.BytesToFloatL(data, pos), 0.0f, 255.0f);
 						pos += 4;
 					}
 				}
@@ -294,7 +294,7 @@ public class OarFile {
 		return loaded;
 	}
 
-	public static void LoadObjects(byte[] objectData, Callback<SceneObjectLoadedData> objectCallback, long bytesRead,
+	public static void loadObjects(byte[] objectData, Callback<SceneObjectLoadedData> objectCallback, long bytesRead,
 			long totalBytes) throws XmlPullParserException, IOException {
 		InputStream stream = new ByteArrayInputStream(objectData);
 		XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
@@ -326,7 +326,7 @@ public class OarFile {
 
 	// #region Archive Saving
 
-	public static void PackageArchive(File directoryName, File fileName) throws IOException {
+	public static void packageArchive(File directoryName, File fileName) throws IOException {
 		final String ARCHIVE_XML = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\n<archive major_version=\"0\" minor_version=\"1\" />";
 
 		TarArchiveWriter archive = new TarArchiveWriter(new GZIPOutputStream(new FileOutputStream(fileName)));
@@ -372,28 +372,28 @@ public class OarFile {
 		archive.close();
 	}
 
-	public static void SaveTerrain(SimulatorManager sim, File terrainPath) throws IOException, InterruptedException {
+	public static void saveTerrain(SimulatorManager sim, File terrainPath) throws IOException, InterruptedException {
 		if (terrainPath.exists())
 			FileUtils.deleteDirectory(terrainPath);
 		Thread.sleep(100);
 		terrainPath.mkdir();
 		Thread.sleep(100);
 		OutputStream stream = new FileOutputStream(new File(terrainPath, sim.getName() + ".r32"));
-		SaveTerrainStream(stream, sim);
+		saveTerrainStream(stream, sim);
 		stream.close();
 	}
 
-	private static void SaveTerrainStream(OutputStream stream, SimulatorManager sim) throws IOException {
+	private static void saveTerrainStream(OutputStream stream, SimulatorManager sim) throws IOException {
 		int x, y;
 		for (y = 0; y < 256; y++) {
 			for (x = 0; x < 256; x++) {
-				float height = sim.TerrainHeightAtPoint(x, y);
-				stream.write(Helpers.FloatToBytesL(height));
+				float height = sim.terrainHeightAtPoint(x, y);
+				stream.write(Helpers.floatToBytesL(height));
 			}
 		}
 	}
 
-	public static void SaveParcels(SimulatorManager sim, File parcelPath) throws IOException, InterruptedException,
+	public static void saveParcels(SimulatorManager sim, File parcelPath) throws IOException, InterruptedException,
 			IllegalArgumentException, IllegalStateException, XmlPullParserException {
 		if (parcelPath.exists())
 			FileUtils.deleteDirectory(parcelPath);
@@ -401,13 +401,13 @@ public class OarFile {
 		parcelPath.mkdir();
 		Thread.sleep(100);
 
-		for (Parcel parcel : sim.Parcels.values()) {
+		for (Parcel parcel : sim.parcels.values()) {
 			UUID globalID = UUID.GenerateUUID();
-			SerializeParcel(parcel, globalID, new File(parcelPath, globalID + ".xml"));
+			serializeParcel(parcel, globalID, new File(parcelPath, globalID + ".xml"));
 		}
 	}
 
-	private static void SerializeParcel(Parcel parcel, UUID globalID, File fileName)
+	private static void serializeParcel(Parcel parcel, UUID globalID, File fileName)
 			throws IllegalArgumentException, IllegalStateException, IOException, XmlPullParserException {
 
 		Writer fileWriter = new FileWriter(fileName);
@@ -421,7 +421,7 @@ public class OarFile {
 		writeInt(writer, "AuctionID", parcel.auctionID);
 		parcel.authBuyerID.serializeXml(writer, null, "AuthBuyerID");
 		writeInt(writer, "Category", parcel.category.getValue());
-		writeLong(writer, "ClaimDate", (long) Helpers.DateTimeToUnixTime(parcel.claimDate));
+		writeLong(writer, "ClaimDate", (long) Helpers.dateTimeToUnixTime(parcel.claimDate));
 		writeInt(writer, "ClaimPrice", parcel.claimPrice);
 		globalID.serializeXml(writer, null, "GlobalID");
 		parcel.groupID.serializeXml(writer, null, "GroupID");
@@ -471,7 +471,7 @@ public class OarFile {
 		fileWriter.close();
 	}
 
-	public static void SaveRegionSettings(SimulatorManager sim, File settingsPath)
+	public static void saveRegionSettings(SimulatorManager sim, File settingsPath)
 			throws IOException, InterruptedException, XmlPullParserException {
 		if (settingsPath.exists())
 			FileUtils.deleteDirectory(settingsPath);
@@ -481,40 +481,40 @@ public class OarFile {
 
 		RegionSettings settings = new RegionSettings();
 		// settings.AgentLimit;
-		settings.AllowDamage = (sim.Flags & RegionFlags.AllowDamage) == RegionFlags.AllowDamage;
+		settings.allowDamage = (sim.flags & RegionFlags.AllowDamage) == RegionFlags.AllowDamage;
 		// settings.AllowLandJoinDivide;
-		settings.AllowLandResell = (sim.Flags & RegionFlags.BlockLandResell) != RegionFlags.BlockLandResell;
-		settings.BlockFly = (sim.Flags & RegionFlags.NoFly) == RegionFlags.NoFly;
-		settings.BlockLandShowInSearch = (sim.Flags & RegionFlags.BlockParcelSearch) == RegionFlags.BlockParcelSearch;
-		settings.BlockTerraform = (sim.Flags & RegionFlags.BlockTerraform) == RegionFlags.BlockTerraform;
-		settings.DisableCollisions = (sim.Flags & RegionFlags.SkipCollisions) == RegionFlags.SkipCollisions;
-		settings.DisablePhysics = (sim.Flags & RegionFlags.SkipPhysics) == RegionFlags.SkipPhysics;
-		settings.DisableScripts = (sim.Flags & RegionFlags.SkipScripts) == RegionFlags.SkipScripts;
-		settings.FixedSun = (sim.Flags & RegionFlags.SunFixed) == RegionFlags.SunFixed;
-		settings.MaturityRating = sim.Access.getValue();
+		settings.allowLandResell = (sim.flags & RegionFlags.BlockLandResell) != RegionFlags.BlockLandResell;
+		settings.blockFly = (sim.flags & RegionFlags.NoFly) == RegionFlags.NoFly;
+		settings.blockLandShowInSearch = (sim.flags & RegionFlags.BlockParcelSearch) == RegionFlags.BlockParcelSearch;
+		settings.blockTerraform = (sim.flags & RegionFlags.BlockTerraform) == RegionFlags.BlockTerraform;
+		settings.disableCollisions = (sim.flags & RegionFlags.SkipCollisions) == RegionFlags.SkipCollisions;
+		settings.disablePhysics = (sim.flags & RegionFlags.SkipPhysics) == RegionFlags.SkipPhysics;
+		settings.disableScripts = (sim.flags & RegionFlags.SkipScripts) == RegionFlags.SkipScripts;
+		settings.fixedSun = (sim.flags & RegionFlags.SunFixed) == RegionFlags.SunFixed;
+		settings.maturityRating = sim.access.getValue();
 		// settings.ObjectBonus;
-		settings.RestrictPushing = (sim.Flags & RegionFlags.RestrictPushObject) == RegionFlags.RestrictPushObject;
-		settings.TerrainDetail0 = sim.TerrainDetail0;
-		settings.TerrainDetail1 = sim.TerrainDetail1;
-		settings.TerrainDetail2 = sim.TerrainDetail2;
-		settings.TerrainDetail3 = sim.TerrainDetail3;
-		settings.TerrainHeightRange00 = sim.TerrainHeightRange00;
-		settings.TerrainHeightRange01 = sim.TerrainHeightRange01;
-		settings.TerrainHeightRange10 = sim.TerrainHeightRange10;
-		settings.TerrainHeightRange11 = sim.TerrainHeightRange11;
-		settings.TerrainStartHeight00 = sim.TerrainStartHeight00;
-		settings.TerrainStartHeight01 = sim.TerrainStartHeight01;
-		settings.TerrainStartHeight10 = sim.TerrainStartHeight10;
-		settings.TerrainStartHeight11 = sim.TerrainStartHeight11;
+		settings.restrictPushing = (sim.flags & RegionFlags.RestrictPushObject) == RegionFlags.RestrictPushObject;
+		settings.terrainDetail0 = sim.terrainDetail0;
+		settings.terrainDetail1 = sim.terrainDetail1;
+		settings.terrainDetail2 = sim.terrainDetail2;
+		settings.terrainDetail3 = sim.terrainDetail3;
+		settings.terrainHeightRange00 = sim.terrainHeightRange00;
+		settings.terrainHeightRange01 = sim.terrainHeightRange01;
+		settings.terrainHeightRange10 = sim.terrainHeightRange10;
+		settings.terrainHeightRange11 = sim.terrainHeightRange11;
+		settings.terrainStartHeight00 = sim.terrainStartHeight00;
+		settings.terrainStartHeight01 = sim.terrainStartHeight01;
+		settings.terrainStartHeight10 = sim.terrainStartHeight10;
+		settings.terrainStartHeight11 = sim.terrainStartHeight11;
 		// settings.UseEstateSun;
-		settings.WaterHeight = sim.WaterHeight;
+		settings.waterHeight = sim.waterHeight;
 
 		settings.toXML(new File(settingsPath, sim.getName() + ".xml"));
 	}
 
-	public static void SavePrims(AssetManager manager, List<AssetPrim> prims, File primsDir, File assetsPath)
+	public static void savePrims(AssetManager manager, List<AssetPrim> prims, File primsDir, File assetsPath)
 			throws InterruptedException {
-		Map<UUID, UUID> textureList = new HashMap<UUID, UUID>();
+		Map<UUID, UUID> textureList = new HashMap<>();
 
 		// Delete all of the old linkset files
 		try {
@@ -533,21 +533,21 @@ public class OarFile {
 		Thread.sleep(100);
 		try {
 			for (AssetPrim assetPrim : prims) {
-				SavePrim(assetPrim, new File(primsDir, "Primitive_" + assetPrim.getParent().id + ".xml"));
+				savePrim(assetPrim, new File(primsDir, "Primitive_" + assetPrim.getParent().id + ".xml"));
 
-				CollectTextures(assetPrim.getParent(), textureList);
+				collectTextures(assetPrim.getParent(), textureList);
 				List<PrimObject> children = assetPrim.getChildren();
 				if (children != null) {
 					for (PrimObject child : children)
-						CollectTextures(child, textureList);
+						collectTextures(child, textureList);
 				}
 			}
-			SaveAssets(manager, AssetType.Texture, textureList.keySet(), assetsPath);
+			saveAssets(manager, AssetType.Texture, textureList.keySet(), assetsPath);
 		} catch (Exception ex) {
 		}
 	}
 
-	static void CollectTextures(PrimObject prim, Map<UUID, UUID> textureList) {
+	static void collectTextures(PrimObject prim, Map<UUID, UUID> textureList) {
 		if (prim.textures != null) {
 			// Add all of the textures on this prim to the save list
 			if (prim.textures.defaultTexture != null)
@@ -566,7 +566,7 @@ public class OarFile {
 		}
 	}
 
-	public static void ClearAssetFolder(File directory) throws InterruptedException {
+	public static void clearAssetFolder(File directory) throws InterruptedException {
 		// Delete the assets folder
 		try {
 
@@ -585,15 +585,15 @@ public class OarFile {
 		Thread.sleep(100);
 	}
 
-	public static void SaveAssets(AssetManager assetManager, AssetType assetType, Set<UUID> assets, File assetsPath)
+	public static void saveAssets(AssetManager assetManager, AssetType assetType, Set<UUID> assets, File assetsPath)
 			throws Exception {
-		List<UUID> remainingTextures = new ArrayList<UUID>(assets);
-		TimeoutEvent<Boolean> allReceived = new TimeoutEvent<Boolean>();
+		List<UUID> remainingTextures = new ArrayList<>(assets);
+		TimeoutEvent<Boolean> allReceived = new TimeoutEvent<>();
 		assets.forEach(new Consumer<UUID>() {
 			@Override
 			public void accept(UUID texture) {
 				if (assetType.equals(AssetType.Texture)) {
-					assetManager.RequestImage(texture, new Callback<ImageDownload>() {
+					assetManager.requestImage(texture, new Callback<ImageDownload>() {
 						@Override
 						public boolean callback(ImageDownload transfer) {
 							if (transfer.success) {
@@ -618,7 +618,7 @@ public class OarFile {
 					});
 				} else {
 					try {
-						assetManager.RequestAsset(texture, assetType, false, new Callback<AssetDownload>() {
+						assetManager.requestAsset(texture, assetType, false, new Callback<AssetDownload>() {
 							@Override
 							public boolean callback(AssetDownload transfer) {
 								if (transfer.success) {
@@ -660,10 +660,10 @@ public class OarFile {
 		logger.info("Copied " + (assets.size() - remainingTextures.size()) + " textures to the asset archive folder");
 	}
 
-	public static void SaveSimAssets(AssetManager assetManager, AssetType assetType, UUID assetID, UUID itemID,
+	public static void saveSimAssets(AssetManager assetManager, AssetType assetType, UUID assetID, UUID itemID,
 			UUID primID, File assetsPath) throws Exception {
-		TimeoutEvent<Integer> allReceived = new TimeoutEvent<Integer>();
-		assetManager.RequestAsset(assetID, itemID, primID, assetType, false, SourceType.SimInventoryItem,
+		TimeoutEvent<Integer> allReceived = new TimeoutEvent<>();
+		assetManager.requestAsset(assetID, itemID, primID, assetType, false, SourceType.SimInventoryItem,
 				UUID.GenerateUUID(), new Callback<AssetDownload>() {
 					@Override
 					public boolean callback(AssetDownload transfer) {
@@ -692,7 +692,7 @@ public class OarFile {
 			logger.info("Copied " + count + " textures to the asset archive folder");
 	}
 
-	static void SavePrim(AssetPrim prim, File filename) throws IOException {
+	static void savePrim(AssetPrim prim, File filename) throws IOException {
 		Writer writer = new FileWriter(filename);
 		try {
 			prim.writeXml(writer, 4);

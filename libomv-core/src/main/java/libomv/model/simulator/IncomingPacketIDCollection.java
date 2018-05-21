@@ -1,10 +1,11 @@
 package libomv.model.simulator;
 
 import java.util.HashSet;
+import java.util.Set;
 
 public final class IncomingPacketIDCollection {
 	private final int[] items;
-	private HashSet<Integer> hashSet;
+	private Set<Integer> hashSet;
 	private int first = 0;
 	private int next = 0;
 	private int capacity;
@@ -12,7 +13,7 @@ public final class IncomingPacketIDCollection {
 	public IncomingPacketIDCollection(int capacity) {
 		this.capacity = capacity;
 		items = new int[capacity];
-		hashSet = new HashSet<Integer>();
+		hashSet = new HashSet<>();
 	}
 
 	public boolean tryEnqueue(int ack) {
