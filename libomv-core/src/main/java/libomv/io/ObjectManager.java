@@ -741,7 +741,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	 * @throws Exception
 	 */
 	public final void clickObject(Simulator simulator, int localID) throws Exception {
-		clickObject(simulator, localID, Vector3.Zero, Vector3.Zero, 0, Vector3.Zero, Vector3.Zero, Vector3.Zero);
+		clickObject(simulator, localID, Vector3.ZERO, Vector3.ZERO, 0, Vector3.ZERO, Vector3.ZERO, Vector3.ZERO);
 	}
 
 	/**
@@ -773,7 +773,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 		ObjectGrabPacket grab = new ObjectGrabPacket();
 		grab.AgentData.AgentID = client.agent.getAgentID();
 		grab.AgentData.SessionID = client.agent.getSessionID();
-		grab.ObjectData.GrabOffset = Vector3.Zero;
+		grab.ObjectData.GrabOffset = Vector3.ZERO;
 		grab.ObjectData.LocalID = localID;
 		grab.SurfaceInfo = new ObjectGrabPacket.SurfaceInfoBlock[1];
 		grab.SurfaceInfo[0] = grab.new SurfaceInfoBlock();
@@ -900,7 +900,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 		packet.ObjectData.RayStart = position;
 		packet.ObjectData.RayEnd = position;
 		packet.ObjectData.RayEndIsIntersection = 0;
-		packet.ObjectData.RayTargetID = UUID.Zero;
+		packet.ObjectData.RayTargetID = UUID.ZERO;
 		packet.ObjectData.BypassRaycast = 1;
 
 		simulator.sendPacket(packet);
@@ -940,7 +940,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 		add.ObjectData.PCode = newTree ? (byte) PCode.NewTree.getValue() : (byte) PCode.Tree.getValue();
 		add.ObjectData.RayEnd = position;
 		add.ObjectData.RayStart = position;
-		add.ObjectData.RayTargetID = UUID.Zero;
+		add.ObjectData.RayTargetID = UUID.ZERO;
 		add.ObjectData.Rotation = rotation;
 		add.ObjectData.Scale = scale;
 		add.ObjectData.State = (byte) treeType.ordinal();
@@ -980,7 +980,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 		add.ObjectData.PCode = PCode.Grass.getValue();
 		add.ObjectData.RayEnd = position;
 		add.ObjectData.RayStart = position;
-		add.ObjectData.RayTargetID = UUID.Zero;
+		add.ObjectData.RayTargetID = UUID.ZERO;
 		add.ObjectData.Rotation = rotation;
 		add.ObjectData.Scale = scale;
 		add.ObjectData.State = (byte) grassType.ordinal();
@@ -1518,7 +1518,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 		multiObjectUpdate.ObjectData[0] = multiObjectUpdate.new ObjectDataBlock();
 		multiObjectUpdate.ObjectData[0].Type = type;
 		multiObjectUpdate.ObjectData[0].ObjectLocalID = localID;
-		multiObjectUpdate.ObjectData[0].setData(quat.GetBytes());
+		multiObjectUpdate.ObjectData[0].setData(quat.getBytes());
 
 		simulator.sendPacket(multiObjectUpdate);
 	}
@@ -1573,7 +1573,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 		// Can only be use in God mode
 		objDeedPacket.HeaderData.Override = false;
-		objDeedPacket.HeaderData.OwnerID = UUID.Zero;
+		objDeedPacket.HeaderData.OwnerID = UUID.ZERO;
 		objDeedPacket.HeaderData.GroupID = groupOwner;
 
 		objDeedPacket.ObjectLocalID = new int[1];
@@ -1603,7 +1603,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 		// Can only be use in God mode
 		packet.HeaderData.Override = false;
-		packet.HeaderData.OwnerID = UUID.Zero;
+		packet.HeaderData.OwnerID = UUID.ZERO;
 		packet.HeaderData.GroupID = groupOwner;
 
 		packet.ObjectLocalID = new int[localIDs.length];
@@ -1792,7 +1792,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 			boolean attachment = false;
 			String nameValue = Helpers.EmptyString;
 			try {
-				nameValue = Helpers.BytesToString(block.getNameValue());
+				nameValue = Helpers.bytesToString(block.getNameValue());
 			} catch (UnsupportedEncodingException e) {
 			}
 
@@ -1803,7 +1803,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				for (int i = 0; i < lines.length; i++) {
 					if (!Helpers.isEmpty(lines[i])) {
 						NameValue nv = new NameValue(lines[i]);
-						if (nv.Name.equals("AttachItemID")) {
+						if (nv.name.equals("AttachItemID")) {
 							attachment = true;
 						}
 						nameValues[i] = nv;
@@ -1850,63 +1850,63 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				// The bytes is an array of unsigned shorts
 
 				// Position
-				objectupdate.position = new Vector3(Helpers.UInt16ToFloatL(bytes, pos, -0.5f * 256.0f, 1.5f * 256.0f),
-						Helpers.UInt16ToFloatL(bytes, pos + 2, -0.5f * 256.0f, 1.5f * 256.0f),
-						Helpers.UInt16ToFloatL(bytes, pos + 4, -256.0f, 3.0f * 256.0f));
+				objectupdate.position = new Vector3(Helpers.uint16ToFloatL(bytes, pos, -0.5f * 256.0f, 1.5f * 256.0f),
+						Helpers.uint16ToFloatL(bytes, pos + 2, -0.5f * 256.0f, 1.5f * 256.0f),
+						Helpers.uint16ToFloatL(bytes, pos + 4, -256.0f, 3.0f * 256.0f));
 				pos += 6;
 				// Velocity
-				objectupdate.velocity = new Vector3(Helpers.UInt16ToFloatL(bytes, pos, -256.0f, 256.0f),
-						Helpers.UInt16ToFloatL(bytes, pos + 2, -256.0f, 256.0f),
-						Helpers.UInt16ToFloatL(bytes, pos + 4, -256.0f, 256.0f));
+				objectupdate.velocity = new Vector3(Helpers.uint16ToFloatL(bytes, pos, -256.0f, 256.0f),
+						Helpers.uint16ToFloatL(bytes, pos + 2, -256.0f, 256.0f),
+						Helpers.uint16ToFloatL(bytes, pos + 4, -256.0f, 256.0f));
 				pos += 6;
 				// Acceleration
-				objectupdate.acceleration = new Vector3(Helpers.UInt16ToFloatL(bytes, pos, -256.0f, 256.0f),
-						Helpers.UInt16ToFloatL(bytes, pos + 2, -256.0f, 256.0f),
-						Helpers.UInt16ToFloatL(bytes, pos + 4, -256.0f, 256.0f));
+				objectupdate.acceleration = new Vector3(Helpers.uint16ToFloatL(bytes, pos, -256.0f, 256.0f),
+						Helpers.uint16ToFloatL(bytes, pos + 2, -256.0f, 256.0f),
+						Helpers.uint16ToFloatL(bytes, pos + 4, -256.0f, 256.0f));
 				pos += 6;
 				// Rotation (theta)
-				objectupdate.rotation = new Quaternion(Helpers.UInt16ToFloatL(bytes, pos, -1.0f, 1.0f),
-						Helpers.UInt16ToFloatL(bytes, pos + 2, -1.0f, 1.0f),
-						Helpers.UInt16ToFloatL(bytes, pos + 4, -1.0f, 1.0f),
-						Helpers.UInt16ToFloatL(bytes, pos + 6, -1.0f, 1.0f));
+				objectupdate.rotation = new Quaternion(Helpers.uint16ToFloatL(bytes, pos, -1.0f, 1.0f),
+						Helpers.uint16ToFloatL(bytes, pos + 2, -1.0f, 1.0f),
+						Helpers.uint16ToFloatL(bytes, pos + 4, -1.0f, 1.0f),
+						Helpers.uint16ToFloatL(bytes, pos + 6, -1.0f, 1.0f));
 				pos += 8;
 				// Angular velocity (omega)
 				objectupdate.angularVelocity = new Vector3(
-						Helpers.UInt16ToFloatL(block.getObjectData(), pos, -256.0f, 256.0f),
-						Helpers.UInt16ToFloatL(block.getObjectData(), pos + 2, -256.0f, 256.0f),
-						Helpers.UInt16ToFloatL(block.getObjectData(), pos + 4, -256.0f, 256.0f));
+						Helpers.uint16ToFloatL(block.getObjectData(), pos, -256.0f, 256.0f),
+						Helpers.uint16ToFloatL(block.getObjectData(), pos + 2, -256.0f, 256.0f),
+						Helpers.uint16ToFloatL(block.getObjectData(), pos + 4, -256.0f, 256.0f));
 				pos += 6;
 				break;
 			case 16:
 				// The bytes is an array of single bytes (8-bit numbers)
 
 				// Position
-				objectupdate.position = new Vector3(Helpers.ByteToFloat(block.getObjectData(), pos, -256.0f, 256.0f),
-						Helpers.ByteToFloat(block.getObjectData(), pos + 1, -256.0f, 256.0f),
-						Helpers.ByteToFloat(block.getObjectData(), pos + 2, -256.0f, 256.0f));
+				objectupdate.position = new Vector3(Helpers.byteToFloat(block.getObjectData(), pos, -256.0f, 256.0f),
+						Helpers.byteToFloat(block.getObjectData(), pos + 1, -256.0f, 256.0f),
+						Helpers.byteToFloat(block.getObjectData(), pos + 2, -256.0f, 256.0f));
 				pos += 3;
 				// Velocity
-				objectupdate.velocity = new Vector3(Helpers.ByteToFloat(block.getObjectData(), pos, -256.0f, 256.0f),
-						Helpers.ByteToFloat(block.getObjectData(), pos + 1, -256.0f, 256.0f),
-						Helpers.ByteToFloat(block.getObjectData(), pos + 2, -256.0f, 256.0f));
+				objectupdate.velocity = new Vector3(Helpers.byteToFloat(block.getObjectData(), pos, -256.0f, 256.0f),
+						Helpers.byteToFloat(block.getObjectData(), pos + 1, -256.0f, 256.0f),
+						Helpers.byteToFloat(block.getObjectData(), pos + 2, -256.0f, 256.0f));
 				pos += 3;
 				// Accleration
 				objectupdate.acceleration = new Vector3(
-						Helpers.ByteToFloat(block.getObjectData(), pos, -256.0f, 256.0f),
-						Helpers.ByteToFloat(block.getObjectData(), pos + 1, -256.0f, 256.0f),
-						Helpers.ByteToFloat(block.getObjectData(), pos + 2, -256.0f, 256.0f));
+						Helpers.byteToFloat(block.getObjectData(), pos, -256.0f, 256.0f),
+						Helpers.byteToFloat(block.getObjectData(), pos + 1, -256.0f, 256.0f),
+						Helpers.byteToFloat(block.getObjectData(), pos + 2, -256.0f, 256.0f));
 				pos += 3;
 				// Rotation
-				objectupdate.rotation = new Quaternion(Helpers.ByteToFloat(block.getObjectData(), pos, -1.0f, 1.0f),
-						Helpers.ByteToFloat(block.getObjectData(), pos + 1, -1.0f, 1.0f),
-						Helpers.ByteToFloat(block.getObjectData(), pos + 2, -1.0f, 1.0f),
-						Helpers.ByteToFloat(block.getObjectData(), pos + 3, -1.0f, 1.0f));
+				objectupdate.rotation = new Quaternion(Helpers.byteToFloat(block.getObjectData(), pos, -1.0f, 1.0f),
+						Helpers.byteToFloat(block.getObjectData(), pos + 1, -1.0f, 1.0f),
+						Helpers.byteToFloat(block.getObjectData(), pos + 2, -1.0f, 1.0f),
+						Helpers.byteToFloat(block.getObjectData(), pos + 3, -1.0f, 1.0f));
 				pos += 4;
 				// Angular Velocity
 				objectupdate.angularVelocity = new Vector3(
-						Helpers.ByteToFloat(block.getObjectData(), pos, -256.0f, 256.0f),
-						Helpers.ByteToFloat(block.getObjectData(), pos + 1, -256.0f, 256.0f),
-						Helpers.ByteToFloat(block.getObjectData(), pos + 2, -256.0f, 256.0f));
+						Helpers.byteToFloat(block.getObjectData(), pos, -256.0f, 256.0f),
+						Helpers.byteToFloat(block.getObjectData(), pos + 1, -256.0f, 256.0f),
+						Helpers.byteToFloat(block.getObjectData(), pos + 2, -256.0f, 256.0f));
 				pos += 3;
 				break;
 			default:
@@ -1919,7 +1919,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 			// Determine the object type and create the appropriate class
 			ConstructionData data;
-			RefObject<Boolean> isNewObject = new RefObject<Boolean>(false);
+			RefObject<Boolean> isNewObject = new RefObject<>(false);
 			switch (pcode) {
 			// #region Prim and Foliage
 			case Grass:
@@ -1962,8 +1962,8 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				prim.clickAction = ClickAction.setValue(block.ClickAction);
 				prim.ownerID = block.OwnerID;
 				try {
-					prim.mediaURL = Helpers.BytesToString(block.getMediaURL());
-					prim.text = Helpers.BytesToString(block.getText());
+					prim.mediaURL = Helpers.bytesToString(block.getMediaURL());
+					prim.text = Helpers.bytesToString(block.getText());
 				} catch (UnsupportedEncodingException e) {
 					logger.warn("Extracting MediaURL or Text for object properties update failed.", e);
 				}
@@ -2127,7 +2127,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 			try {
 				int pos = 4;
 				byte[] data = block.getData();
-				int localid = Helpers.BytesToInt32L(data, 0);
+				int localid = Helpers.bytesToInt32L(data, 0);
 
 				// Check if we are interested in this update
 				if (!alwaysDecodeObjects && localid != client.agent.getLocalID() && onTerseObjectUpdate.count() > 0) {
@@ -2153,25 +2153,25 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				update.position = new Vector3(data, pos, true);
 				pos += 12;
 				// Velocity
-				update.velocity = new Vector3(Helpers.UInt16ToFloatL(data, pos, -128.0f, 128.0f),
-						Helpers.UInt16ToFloatL(data, pos + 2, -128.0f, 128.0f),
-						Helpers.UInt16ToFloatL(data, pos + 4, -128.0f, 128.0f));
+				update.velocity = new Vector3(Helpers.uint16ToFloatL(data, pos, -128.0f, 128.0f),
+						Helpers.uint16ToFloatL(data, pos + 2, -128.0f, 128.0f),
+						Helpers.uint16ToFloatL(data, pos + 4, -128.0f, 128.0f));
 				pos += 6;
 				// Acceleration
-				update.acceleration = new Vector3(Helpers.UInt16ToFloatL(data, pos, -64.0f, 64.0f),
-						Helpers.UInt16ToFloatL(data, pos + 2, -64.0f, 64.0f),
-						Helpers.UInt16ToFloatL(data, pos + 4, -64.0f, 64.0f));
+				update.acceleration = new Vector3(Helpers.uint16ToFloatL(data, pos, -64.0f, 64.0f),
+						Helpers.uint16ToFloatL(data, pos + 2, -64.0f, 64.0f),
+						Helpers.uint16ToFloatL(data, pos + 4, -64.0f, 64.0f));
 				pos += 6;
 				// Rotation (theta)
-				update.rotation = new Quaternion(Helpers.UInt16ToFloatL(data, pos, -1.0f, 1.0f),
-						Helpers.UInt16ToFloatL(data, pos + 2, -1.0f, 1.0f),
-						Helpers.UInt16ToFloatL(data, pos + 4, -1.0f, 1.0f),
-						Helpers.UInt16ToFloatL(data, pos + 6, -1.0f, 1.0f));
+				update.rotation = new Quaternion(Helpers.uint16ToFloatL(data, pos, -1.0f, 1.0f),
+						Helpers.uint16ToFloatL(data, pos + 2, -1.0f, 1.0f),
+						Helpers.uint16ToFloatL(data, pos + 4, -1.0f, 1.0f),
+						Helpers.uint16ToFloatL(data, pos + 6, -1.0f, 1.0f));
 				pos += 8;
 				// Angular velocity (omega)
-				update.angularVelocity = new Vector3(Helpers.UInt16ToFloatL(data, pos, -64.0f, 64.0f),
-						Helpers.UInt16ToFloatL(data, pos + 2, -64.0f, 64.0f),
-						Helpers.UInt16ToFloatL(data, pos + 4, -64.0f, 64.0f));
+				update.angularVelocity = new Vector3(Helpers.uint16ToFloatL(data, pos, -64.0f, 64.0f),
+						Helpers.uint16ToFloatL(data, pos + 2, -64.0f, 64.0f),
+						Helpers.uint16ToFloatL(data, pos + 4, -64.0f, 64.0f));
 				pos += 6;
 
 				// Textures
@@ -2245,7 +2245,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 			UUID fullID = new UUID(data, i);
 			i += 16;
 			// Local ID
-			int localid = (int) Helpers.BytesToUInt32L(data, i);
+			int localid = (int) Helpers.bytesToUInt32L(data, i);
 			i += 4;
 			// PCode
 			PCode pcode = PCode.setValue(data[i++]);
@@ -2266,7 +2266,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				}
 			}
 			// /#endregion Relevance check
-			RefObject<Boolean> isNewObject = new RefObject<Boolean>(false);
+			RefObject<Boolean> isNewObject = new RefObject<>(false);
 			Primitive prim = getPrimitive(simulator, localid, fullID, isNewObject);
 
 			prim.flags = PrimFlags.setValue(block.UpdateFlags);
@@ -2293,7 +2293,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 			prim.rotation = new Quaternion(data, i, true, true);
 			i += 12;
 			// Compressed flags
-			int flags = (int) Helpers.BytesToUInt32L(data, i);
+			int flags = (int) Helpers.bytesToUInt32L(data, i);
 			i += 4;
 
 			prim.ownerID = new UUID(data, i);
@@ -2307,7 +2307,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 			// Parent ID
 			if ((flags & CompressedFlags.HasParent) != 0) {
-				prim.parentID = (int) Helpers.BytesToUInt32L(data, i);
+				prim.parentID = (int) Helpers.bytesToUInt32L(data, i);
 				i += 4;
 			} else {
 				prim.parentID = 0;
@@ -2323,7 +2323,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				prim.treeSpecies = Tree.setValue((byte) 0);
 
 				if ((flags & CompressedFlags.ScratchPad) != 0) {
-					int size = (int) Helpers.BytesToUInt32L(data, i);
+					int size = (int) Helpers.bytesToUInt32L(data, i);
 					i += 4;
 					prim.scratchPad = new byte[size];
 					System.arraycopy(data, i, prim.scratchPad, 0, size);
@@ -2340,7 +2340,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				}
 				;
 				try {
-					prim.text = Helpers.BytesToString(data, idx, i - idx, Helpers.UTF8_ENCODING);
+					prim.text = Helpers.bytesToString(data, idx, i - idx, Helpers.UTF8_ENCODING);
 				} catch (UnsupportedEncodingException e) {
 				}
 				i++;
@@ -2360,7 +2360,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				}
 				;
 				try {
-					prim.mediaURL = Helpers.BytesToString(data, idx, i - idx, Helpers.UTF8_ENCODING);
+					prim.mediaURL = Helpers.bytesToString(data, idx, i - idx, Helpers.UTF8_ENCODING);
 				} catch (UnsupportedEncodingException e) {
 				}
 				i++;
@@ -2382,10 +2382,10 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				prim.soundID = new UUID(data, i);
 				i += 16;
 
-				prim.soundGain = Helpers.BytesToFloatL(data, i);
+				prim.soundGain = Helpers.bytesToFloatL(data, i);
 				i += 4;
 				prim.soundFlags = SoundFlags.setValue(data[i++]);
-				prim.soundRadius = Helpers.BytesToFloatL(data, i);
+				prim.soundRadius = Helpers.bytesToFloatL(data, i);
 				i += 4;
 			}
 
@@ -2398,7 +2398,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				}
 				;
 				try {
-					text = Helpers.BytesToString(data, idx, i - idx, Helpers.UTF8_ENCODING);
+					text = Helpers.bytesToString(data, idx, i - idx, Helpers.UTF8_ENCODING);
 				} catch (UnsupportedEncodingException e) {
 				}
 				i++;
@@ -2420,9 +2420,9 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 			if (data.length >= i + 23) {
 				prim.primData.pathCurve = PathCurve.setValue(data[i++]);
 
-				prim.primData.pathBegin = Primitive.unpackBeginCut((short) Helpers.BytesToUInt16L(data, i));
+				prim.primData.pathBegin = Primitive.unpackBeginCut((short) Helpers.bytesToUInt16L(data, i));
 				i += 2;
-				prim.primData.pathEnd = Primitive.unpackEndCut((short) Helpers.BytesToUInt16L(data, i));
+				prim.primData.pathEnd = Primitive.unpackEndCut((short) Helpers.bytesToUInt16L(data, i));
 				i += 2;
 				prim.primData.pathScaleX = Primitive.unpackPathScale(data[i++]);
 				prim.primData.pathScaleY = Primitive.unpackPathScale(data[i++]);
@@ -2437,17 +2437,17 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				prim.primData.pathSkew = Primitive.unpackPathTwist(data[i++]);
 
 				prim.primData.profileCurve = ProfileCurve.setValue(data[i++]);
-				prim.primData.profileBegin = Primitive.unpackBeginCut((short) Helpers.BytesToUInt16L(data, i));
+				prim.primData.profileBegin = Primitive.unpackBeginCut((short) Helpers.bytesToUInt16L(data, i));
 				i += 2;
-				prim.primData.profileEnd = Primitive.unpackEndCut((short) Helpers.BytesToUInt16L(data, i));
+				prim.primData.profileEnd = Primitive.unpackEndCut((short) Helpers.bytesToUInt16L(data, i));
 				i += 2;
-				prim.primData.profileHollow = Primitive.unpackProfileHollow((short) Helpers.BytesToUInt16L(data, i));
+				prim.primData.profileHollow = Primitive.unpackProfileHollow((short) Helpers.bytesToUInt16L(data, i));
 				i += 2;
 			}
 
 			if (data.length >= i + 4) {
 				// TextureEntry
-				int textureEntryLength = (int) Helpers.BytesToUInt32L(data, i);
+				int textureEntryLength = (int) Helpers.bytesToUInt32L(data, i);
 				i += 4;
 				prim.textures = new TextureEntry(data, i, textureEntryLength);
 				i += textureEntryLength;
@@ -2455,7 +2455,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 			// int textureAnimLength = (int)Helpers.BytesToUInt32L(data, i);
 			if (data.length >= i + 20 && (flags & CompressedFlags.TextureAnimation) != 0) {
 				// Texture animation
-				int textureAnimationLength = (int) Helpers.BytesToUInt32L(data, i);
+				int textureAnimationLength = (int) Helpers.bytesToUInt32L(data, i);
 				i += 4;
 				prim.textureAnim = prim.textures.new TextureAnimation(data, i, textureAnimationLength);
 				i += textureAnimationLength;
@@ -2605,11 +2605,11 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 					objectData.NextOwnerMask, objectData.OwnerMask);
 
 			try {
-				props.name = Helpers.BytesToString(objectData.getName());
-				props.description = Helpers.BytesToString(objectData.getDescription());
-				props.creationDate = Helpers.UnixTimeToDateTime(objectData.CreationDate);
-				props.sitName = Helpers.BytesToString(objectData.getSitName());
-				props.touchName = Helpers.BytesToString(objectData.getTouchName());
+				props.name = Helpers.bytesToString(objectData.getName());
+				props.description = Helpers.bytesToString(objectData.getDescription());
+				props.creationDate = Helpers.unixTimeToDateTime(objectData.CreationDate);
+				props.sitName = Helpers.bytesToString(objectData.getSitName());
+				props.touchName = Helpers.bytesToString(objectData.getTouchName());
 			} catch (UnsupportedEncodingException e) {
 				logger.warn("Encoding Exception when decoding object properties reply.", e);
 				return;
@@ -2659,8 +2659,8 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				op.ObjectData.GroupID, op.ObjectData.BaseMask, op.ObjectData.EveryoneMask, op.ObjectData.GroupMask,
 				op.ObjectData.NextOwnerMask, op.ObjectData.OwnerMask);
 		try {
-			props.name = Helpers.BytesToString(op.ObjectData.getName());
-			props.description = Helpers.BytesToString(op.ObjectData.getDescription());
+			props.name = Helpers.bytesToString(op.ObjectData.getName());
+			props.description = Helpers.bytesToString(op.ObjectData.getDescription());
 		} catch (UnsupportedEncodingException e) {
 			logger.warn("Encoding Exception when decoding object properties family reply.", e);
 			return;

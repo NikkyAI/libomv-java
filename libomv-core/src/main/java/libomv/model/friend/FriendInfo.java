@@ -22,16 +22,16 @@ public class FriendInfo {
 	 *
 	 * @param id
 	 *            System ID of the avatar being prepesented
-	 * @param buddy_rights_given
+	 * @param buddyRightsGiven
 	 *            Rights the friend has to see you online and to modify your objects
-	 * @param buddy_rights_has
+	 * @param buddyRightsHas
 	 *            Rights you have to see your friend online and to modify their
 	 *            objects
 	 */
-	public FriendInfo(UUID id, int buddy_rights_given, int buddy_rights_has) {
+	public FriendInfo(UUID id, int buddyRightsGiven, int buddyRightsHas) {
 		this.id = id;
-		this.theirRights = (byte) buddy_rights_given;
-		this.myRights = (byte) buddy_rights_has;
+		this.theirRights = (byte) buddyRightsGiven;
+		this.myRights = (byte) buddyRightsHas;
 	}
 
 	/* System ID of the avatar */

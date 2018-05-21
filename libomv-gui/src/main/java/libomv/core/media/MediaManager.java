@@ -200,7 +200,7 @@ public class MediaManager extends MediaObject {
 
 					AgentManager my = _Main.getGridClient().agent;
 					Vector3 newPosition = new Vector3(my.getAgentPosition());
-					float newFace = my.getAgentRotation().W;
+					float newFace = my.getAgentRotation().w;
 
 					// If we are standing still, nothing to update now, but
 					// FMOD needs a 'tick' anyway for callbacks, etc. In looping
@@ -251,7 +251,7 @@ public class MediaManager extends MediaObject {
 	 */
 	private class Sound_SoundTrigger implements Callback<SoundTriggerCallbackArgs> {
 		public boolean callback(SoundTriggerCallbackArgs args) {
-			if (!args.getSoundID().equals(UUID.Zero)) {
+			if (!args.getSoundID().equals(UUID.ZERO)) {
 
 				logger.debug("Trigger sound " + args.getSoundID() + " in object " + args.getObjectID());
 
@@ -293,7 +293,7 @@ public class MediaManager extends MediaObject {
 				return false;
 
 			// We seem to get a lot of these zero sounds.
-			if (args.getSoundID().equals(UUID.Zero))
+			if (args.getSoundID().equals(UUID.ZERO))
 				return false;
 
 			// If this is a child prim, its position is relative to the root.
@@ -326,7 +326,7 @@ public class MediaManager extends MediaObject {
 	 */
 	private class Sound_PreloadSound implements Callback<PreloadSoundCallbackArgs> {
 		public boolean callback(PreloadSoundCallbackArgs args) {
-			if (!args.getSoundID().equals(UUID.Zero)) {
+			if (!args.getSoundID().equals(UUID.ZERO)) {
 				if (!_Main.getGridClient().assets.getCache().containsKey(args.getSoundID(), null))
 					new BufferSound(args.getSoundID());
 			}
@@ -345,7 +345,7 @@ public class MediaManager extends MediaObject {
 	private void HandleObjectSound(Primitive prim, Simulator sim) {
 		SimulatorManager simulator = (SimulatorManager) sim;
 		// Objects without sounds are not interesting.
-		if (prim.soundID == null || prim.soundID.equals(UUID.Zero))
+		if (prim.soundID == null || prim.soundID.equals(UUID.ZERO))
 			return;
 
 		if ((prim.soundFlags & SoundFlags.Stop) == SoundFlags.Stop) {

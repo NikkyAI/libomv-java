@@ -5,8 +5,8 @@
 
 	<parent>
 		<groupId>libomv</groupId>
-		<artifactId>libomv-java</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<artifactId>libomv-parent</artifactId>
+		<version>0.8.0-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 
@@ -15,7 +15,7 @@
 	<packaging>jar</packaging>
 
 	<properties>
-		<libomv-core.version>1.0.0-SNAPSHOT</libomv-core.version>
+		<libomv-core.version>0.8.0-SNAPSHOT</libomv-core.version>
 		<swt.version>4.6.1</swt.version>
 	</properties>
 

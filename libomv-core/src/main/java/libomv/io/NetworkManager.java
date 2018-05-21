@@ -284,7 +284,7 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 	public CallbackHandler<DisconnectedCallbackArgs> onDisconnected = new CallbackHandler<>();
 	public CallbackHandler<PacketSentCallbackArgs> onPacketSent = new CallbackHandler<>();
 	public CallbackHandler<EventQueueRunningCallbackArgs> onEventQueueRunning = new CallbackHandler<>();
-	public CallbackHandler<LoggedOutCallbackArgs> onLoggedOut = new CallbackHandler<LoggedOutCallbackArgs>();
+	public CallbackHandler<LoggedOutCallbackArgs> onLoggedOut = new CallbackHandler<>();
 
 	private Map<PacketType, List<PacketCallback>> simCallbacks;
 	private Map<CapsEventType, List<CapsCallback>> capCallbacks;
@@ -306,7 +306,7 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 
 	// Server side baking service URL
 	private String agentAppearanceServiceURL;
-	private List<AsyncHTTPClient<OSD>> closableClients = new ArrayList<AsyncHTTPClient<OSD>>();
+	private List<AsyncHTTPClient<OSD>> closableClients = new ArrayList<>();
 
 	private List<SimulatorManager> simulators;
 
@@ -339,7 +339,7 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 	// <param name="client"></param>
 	public NetworkManager(GridClient client) throws Exception {
 		this.client = client;
-		simulators = new ArrayList<SimulatorManager>();
+		simulators = new ArrayList<>();
 		simCallbacks = new HashMap<>();
 		capCallbacks = new HashMap<>();
 		logoutTimer = new Timer("LogoutTimer");
@@ -621,7 +621,7 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 		synchronized (capCallbacks) {
 			List<CapsCallback> callbacks = capCallbacks.get(capability);
 			if (callbacks == null) {
-				callbacks = new ArrayList<CapsCallback>();
+				callbacks = new ArrayList<>();
 				capCallbacks.put(capability, callbacks);
 			} else {
 				callbacks.remove(callback);
@@ -660,7 +660,7 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 		synchronized (simCallbacks) {
 			List<PacketCallback> callbacks = simCallbacks.get(type);
 			if (callbacks == null) {
-				callbacks = new ArrayList<PacketCallback>();
+				callbacks = new ArrayList<>();
 				simCallbacks.put(type, callbacks);
 			} else {
 				callbacks.remove(callback);
@@ -876,7 +876,7 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 				}
 				/* Remove ourself from the event dispatcher */
 				onLoggedOut.remove(this);
-				onLoggedOut.dispatch(new LoggedOutCallbackArgs(new Vector<UUID>()));
+				onLoggedOut.dispatch(new LoggedOutCallbackArgs(new Vector<>()));
 			}
 
 			// Executed when the log out resulted in an acknowledgement from the server
@@ -904,7 +904,7 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 	 * expired and the network layer is manually shut down
 	 */
 	public void logout() throws Exception {
-		final TimeoutEvent<Boolean> timeout = new TimeoutEvent<Boolean>();
+		final TimeoutEvent<Boolean> timeout = new TimeoutEvent<>();
 
 		Callback<LoggedOutCallbackArgs> loggedOut = new Callback<LoggedOutCallbackArgs>() {
 			@Override
@@ -1077,7 +1077,7 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 		simulator.id = handshake.RegionInfo.CacheID;
 
 		simulator.isEstateManager = handshake.RegionInfo.IsEstateManager;
-		simulator.setSimName(Helpers.BytesToString(handshake.RegionInfo.getSimName()));
+		simulator.setSimName(Helpers.bytesToString(handshake.RegionInfo.getSimName()));
 		simulator.simOwner = handshake.RegionInfo.SimOwner;
 		simulator.terrainBase0 = handshake.RegionInfo.TerrainBase0;
 		simulator.terrainBase1 = handshake.RegionInfo.TerrainBase1;
@@ -1103,11 +1103,11 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 
 		simulator.regionID = handshake./* RegionInfo2. */RegionID;
 
-		simulator.coLocation = Helpers.BytesToString(handshake.RegionInfo3.getColoName());
+		simulator.coLocation = Helpers.bytesToString(handshake.RegionInfo3.getColoName());
 		simulator.cpuClass = handshake.RegionInfo3.CPUClassID;
 		simulator.cpuRatio = handshake.RegionInfo3.CPURatio;
-		simulator.productName = Helpers.BytesToString(handshake.RegionInfo3.getProductName());
-		simulator.productSku = Helpers.BytesToString(handshake.RegionInfo3.getProductSKU());
+		simulator.productName = Helpers.bytesToString(handshake.RegionInfo3.getProductName());
+		simulator.productSku = Helpers.bytesToString(handshake.RegionInfo3.getProductSKU());
 
 		if (handshake.RegionInfo4 != null && handshake.RegionInfo4.length > 0) {
 			simulator.protocols = RegionProtocols.setValue(handshake.RegionInfo4[0].RegionProtocols);
@@ -1187,7 +1187,7 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 					simulator.statistics.dilation = s.StatValue;
 					break;
 				case SimFPS:
-					simulator.statistics.fps = Helpers.BytesToInt32L(Helpers.floatToBytesL(s.StatValue));
+					simulator.statistics.fps = Helpers.bytesToInt32L(Helpers.floatToBytesL(s.StatValue));
 					break;
 				case PhysicsFPS:
 					simulator.statistics.physicsFPS = s.StatValue;
@@ -1331,7 +1331,7 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 		if (client.settings.getBool(LibSettings.MULTIPLE_SIMS)) {
 			EnableSimulatorPacket msg = (EnableSimulatorPacket) packet;
 
-			InetAddress ip = InetAddress.getByAddress(Helpers.Int32ToBytesB(msg.SimulatorInfo.IP));
+			InetAddress ip = InetAddress.getByAddress(Helpers.int32ToBytesB(msg.SimulatorInfo.IP));
 			InetSocketAddress endPoint = new InetSocketAddress(ip, msg.SimulatorInfo.Port);
 
 			if (findSimulator(endPoint) != null)
@@ -1375,7 +1375,7 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 
 			// Deal with callbacks, if any
 			if (onLoggedOut.count() > 0) {
-				Vector<UUID> itemIDs = new Vector<UUID>();
+				Vector<UUID> itemIDs = new Vector<>();
 
 				for (UUID inventoryID : logout.ItemID) {
 					itemIDs.add(inventoryID);
@@ -1400,7 +1400,7 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 	 *            The packet data
 	 */
 	private void handleKickUser(Packet packet, Simulator simulator) throws Exception {
-		String message = Helpers.BytesToString(((KickUserPacket) packet).UserInfo.getReason());
+		String message = Helpers.bytesToString(((KickUserPacket) packet).UserInfo.getReason());
 
 		// Shutdown the network layer
 		shutdown(DisconnectType.ServerInitiated, message);

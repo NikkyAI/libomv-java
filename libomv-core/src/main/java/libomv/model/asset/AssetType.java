@@ -53,7 +53,7 @@ public enum AssetType {
 	/** Linden mesh format */
 	Mesh(49);
 
-	private static final String[] _AssetTypeNames = new String[] { "texture", // 0
+	private static final String[] ASSET_TYPE_NAMES = new String[] { "texture", // 0
 			"sound", // 1
 			"callcard", // 2
 			"landmark", // 3
@@ -105,6 +105,12 @@ public enum AssetType {
 			"mesh", // 49
 	};
 
+	private final byte value;
+
+	private AssetType(int value) {
+		this.value = (byte) value;
+	}
+
 	/**
 	 * Translate a string name of an AssetType into the proper Type
 	 *
@@ -121,7 +127,7 @@ public enum AssetType {
 			}
 
 			int i = 0;
-			for (String name : _AssetTypeNames) {
+			for (String name : ASSET_TYPE_NAMES) {
 				i++;
 				if (name.compareToIgnoreCase(value) == 0) {
 					return values()[i];
@@ -133,27 +139,22 @@ public enum AssetType {
 
 	public static AssetType setValue(int value) {
 		for (AssetType e : values()) {
-			if (e._value == value)
+			if (e.value == value)
 				return e;
 		}
 		return Unknown;
 	}
 
 	public byte getValue() {
-		return _value;
+		return value;
 	}
 
 	@Override
 	public String toString() {
 		int i = ordinal() - 1;
-		if (i >= 0 && ordinal() < _AssetTypeNames.length)
-			return _AssetTypeNames[i];
+		if (i >= 0 && ordinal() < ASSET_TYPE_NAMES.length)
+			return ASSET_TYPE_NAMES[i];
 		return "unknown";
 	}
 
-	private final byte _value;
-
-	private AssetType(int value) {
-		this._value = (byte) value;
-	}
 }

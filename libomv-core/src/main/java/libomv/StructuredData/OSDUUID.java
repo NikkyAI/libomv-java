@@ -45,7 +45,7 @@ public class OSDUUID extends OSD {
 
 	@Override
 	public boolean asBoolean() {
-		return (value == null || value.equals(UUID.Zero)) ? false : true;
+		return (value == null || value.equals(UUID.ZERO)) ? false : true;
 	}
 
 	@Override

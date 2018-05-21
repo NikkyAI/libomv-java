@@ -175,7 +175,10 @@ public class J2KImageReader extends ImgReader {
 			blk.setData(barr);
 		}
 
-		int i, j, k, mi = blk.uly + blk.h;
+		int i;
+		int j;
+		int k;
+		int mi = blk.uly + blk.h;
 		int levShift = 1 << (image.getBitDepth() - 1);
 		byte buf[] = dataPtrs[c];
 
@@ -242,7 +245,8 @@ public class J2KImageReader extends ImgReader {
 	public final DataBlk getCompData(DataBlk blk, int c) {
 		// NOTE: can not directly call getInternCompData since that returns
 		// internally buffered data.
-		int w, h;
+		int w;
+		int h;
 
 		// Check type of block provided as an argument
 		if (blk.getDataType() != DataBlk.TYPE_INT) {

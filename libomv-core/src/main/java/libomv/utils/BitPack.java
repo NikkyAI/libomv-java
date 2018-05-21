@@ -47,7 +47,7 @@ public class BitPack {
 		return bitPos;
 	}
 
-	private int MAX_BITS = 8;
+	private static final int MAX_BITS = 8;
 	private static byte[] ON = new byte[] { 1 };
 	private static byte[] OFF = new byte[] { 0 };
 
@@ -103,7 +103,7 @@ public class BitPack {
 	 *            integer to pack
 	 */
 	public void packBits(int data, int count) {
-		packBitArray(Helpers.UInt32ToBytesL(data), count);
+		packBitArray(Helpers.uint32ToBytesL(data), count);
 	}
 
 	/**
@@ -181,7 +181,7 @@ public class BitPack {
 	 * @returns Unpacked floating point value
 	 */
 	public float unpackFloat() {
-		return Helpers.BytesToFloatL(unpackBitsArray(32), 0);
+		return Helpers.bytesToFloatL(unpackBitsArray(32), 0);
 	}
 
 	/**
@@ -193,7 +193,7 @@ public class BitPack {
 	 * @remarks This function is only useful up to 32 bits
 	 */
 	public int unpackBits(int totalCount) {
-		return Helpers.BytesToInt32L(unpackBitsArray(totalCount), 0);
+		return Helpers.bytesToInt32L(unpackBitsArray(totalCount), 0);
 	}
 
 	/**
@@ -205,7 +205,7 @@ public class BitPack {
 	 * @remarks This function is only useful up to 32 bits
 	 */
 	public long unpackUBits(int totalCount) {
-		return Helpers.BytesToUInt32L(unpackBitsArray(totalCount), 0);
+		return Helpers.bytesToUInt32L(unpackBitsArray(totalCount), 0);
 	}
 
 	/**
@@ -214,7 +214,7 @@ public class BitPack {
 	 * @returns 16-bit signed integer
 	 */
 	public short unpackShort() {
-		return Helpers.BytesToInt16L(unpackBitsArray(16), 0);
+		return Helpers.bytesToInt16L(unpackBitsArray(16), 0);
 	}
 
 	/**
@@ -223,7 +223,7 @@ public class BitPack {
 	 * @returns 16-bit unsigned integer
 	 */
 	public int unpackUShort() {
-		return Helpers.BytesToUInt16L(unpackBitsArray(16), 0);
+		return Helpers.bytesToUInt16L(unpackBitsArray(16), 0);
 	}
 
 	/**
@@ -232,7 +232,7 @@ public class BitPack {
 	 * @returns 32-bit signed integer
 	 */
 	public int unpackInt() {
-		return Helpers.BytesToInt32L(unpackBitsArray(32), 0);
+		return Helpers.bytesToInt32L(unpackBitsArray(32), 0);
 	}
 
 	/**
@@ -241,7 +241,7 @@ public class BitPack {
 	 * @returns 32-bit unsigned integer
 	 */
 	public long unpackUInt() {
-		return Helpers.BytesToUInt32L(unpackBitsArray(32), 0);
+		return Helpers.bytesToUInt32L(unpackBitsArray(32), 0);
 	}
 
 	public byte unpackByte() {
@@ -255,7 +255,7 @@ public class BitPack {
 			totalBits++;
 		}
 
-		return Helpers.BytesToFixedL(unpackBitsArray(totalBits), 0, signed, intBits, fracBits);
+		return Helpers.bytesToFixedL(unpackBitsArray(totalBits), 0, signed, intBits, fracBits);
 	}
 
 	public String unpackString(int size) throws UnsupportedEncodingException {

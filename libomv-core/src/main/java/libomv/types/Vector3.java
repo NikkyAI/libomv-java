@@ -48,14 +48,26 @@ import libomv.utils.Helpers;
 import libomv.utils.RefObject;
 
 public class Vector3 {
-	public float X;
 
-	public float Y;
+	/** A vector with a value of 0,0,0 */
+	public final static Vector3 ZERO = new Vector3(0f);
+	/** A vector with a value of 1,1,1 */
+	public final static Vector3 ONE = new Vector3(1f, 1f, 1f);
+	/** A unit vector facing forward (X axis), value 1,0,0 */
+	public final static Vector3 UNIT_X = new Vector3(1f, 0f, 0f);
+	/** A unit vector facing left (Y axis), value 0,1,0 */
+	public final static Vector3 UNIT_Y = new Vector3(0f, 1f, 0f);
+	/** A unit vector facing up (Z axis), value 0,0,1 */
+	public final static Vector3 UNIT_Z = new Vector3(0f, 0f, 1f);
 
-	public float Z;
+	public float x;
+
+	public float y;
+
+	public float z;
 
 	public Vector3(float val) {
-		X = Y = Z = val;
+		x = y = z = val;
 	}
 
 	public Vector3(float[] arr) {
@@ -67,21 +79,21 @@ public class Vector3 {
 	}
 
 	public Vector3(Vector3 v) {
-		X = v.X;
-		Y = v.Y;
-		Z = v.Z;
+		x = v.x;
+		y = v.y;
+		z = v.z;
 	}
 
 	public Vector3(Vector3d vector) {
-		X = (float) vector.X;
-		Y = (float) vector.Y;
-		Z = (float) vector.Z;
+		x = (float) vector.x;
+		y = (float) vector.y;
+		z = (float) vector.z;
 	}
 
 	public Vector3(ByteBuffer byteArray) {
-		X = byteArray.getFloat();
-		Y = byteArray.getFloat();
-		Z = byteArray.getFloat();
+		x = byteArray.getFloat();
+		y = byteArray.getFloat();
+		z = byteArray.getFloat();
 	}
 
 	/**
@@ -100,11 +112,11 @@ public class Vector3 {
 		while (parser.nextTag() == XmlPullParser.START_TAG) {
 			String name = parser.getName();
 			if (name.equalsIgnoreCase("X")) {
-				X = Helpers.TryParseFloat(parser.nextText().trim());
+				x = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equalsIgnoreCase("Y")) {
-				Y = Helpers.TryParseFloat(parser.nextText().trim());
+				y = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equalsIgnoreCase("Z")) {
-				Z = Helpers.TryParseFloat(parser.nextText().trim());
+				z = Helpers.tryParseFloat(parser.nextText().trim());
 			} else {
 				Helpers.skipElement(parser);
 			}
@@ -119,12 +131,12 @@ public class Vector3 {
 	 * @throws IOException
 	 */
 	public Vector3(DataInputStream is) throws IOException {
-		X = Y = Z = 0f;
+		x = y = z = 0f;
 		fromBytes(is);
 	}
 
 	public Vector3(SwappedDataInputStream is) throws IOException {
-		X = Y = Z = 0f;
+		x = y = z = 0f;
 		fromBytes(is);
 	}
 
@@ -139,24 +151,24 @@ public class Vector3 {
 	 *            is the byte array in little endian format
 	 */
 	public Vector3(byte[] byteArray, int pos) {
-		X = Y = Z = 0f;
+		x = y = z = 0f;
 		fromBytes(byteArray, pos, false);
 	}
 
 	public Vector3(byte[] byteArray, int pos, boolean le) {
-		X = Y = Z = 0f;
+		x = y = z = 0f;
 		fromBytes(byteArray, pos, le);
 	}
 
 	public Vector3(float x, float y, float z) {
-		X = x;
-		Y = y;
-		Z = z;
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	}
 
 	/*
 	 * public Vector3(String value)
-	 * 
+	 *
 	 * { // TODO Auto-generated constructor stub }
 	 */
 	/**
@@ -180,9 +192,9 @@ public class Vector3 {
 	 * @throws IOException
 	 */
 	public void write(ByteBuffer byteArray) {
-		byteArray.putFloat(X);
-		byteArray.putFloat(Y);
-		byteArray.putFloat(Z);
+		byteArray.putFloat(x);
+		byteArray.putFloat(y);
+		byteArray.putFloat(z);
 	}
 
 	/**
@@ -196,13 +208,13 @@ public class Vector3 {
 	 */
 	public void write(OutputStream stream, boolean le) throws IOException {
 		if (le) {
-			stream.write(Helpers.floatToBytesL(X));
-			stream.write(Helpers.floatToBytesL(Y));
-			stream.write(Helpers.floatToBytesL(Z));
+			stream.write(Helpers.floatToBytesL(x));
+			stream.write(Helpers.floatToBytesL(y));
+			stream.write(Helpers.floatToBytesL(z));
 		} else {
-			stream.write(Helpers.floatToBytesB(X));
-			stream.write(Helpers.floatToBytesB(Y));
-			stream.write(Helpers.floatToBytesB(Z));
+			stream.write(Helpers.floatToBytesB(x));
+			stream.write(Helpers.floatToBytesB(y));
+			stream.write(Helpers.floatToBytesB(z));
 		}
 	}
 
@@ -213,29 +225,29 @@ public class Vector3 {
 	public void serializeXml(XmlSerializer writer, String namespace, String name)
 			throws IllegalArgumentException, IllegalStateException, IOException {
 		writer.startTag(namespace, name);
-		writer.startTag(namespace, "X").text(Float.toString(X)).endTag(namespace, "X");
-		writer.startTag(namespace, "Y").text(Float.toString(Y)).endTag(namespace, "Y");
-		writer.startTag(namespace, "Z").text(Float.toString(Z)).endTag(namespace, "Z");
+		writer.startTag(namespace, "X").text(Float.toString(x)).endTag(namespace, "X");
+		writer.startTag(namespace, "Y").text(Float.toString(y)).endTag(namespace, "Y");
+		writer.startTag(namespace, "Z").text(Float.toString(z)).endTag(namespace, "Z");
 		writer.endTag(namespace, name);
 	}
 
 	public void serializeXml(XmlSerializer writer, String namespace, String name, Locale locale)
 			throws IllegalArgumentException, IllegalStateException, IOException {
 		writer.startTag(namespace, name);
-		writer.startTag(namespace, "X").text(String.format(locale, "%f", X)).endTag(namespace, "X");
-		writer.startTag(namespace, "Y").text(String.format(locale, "%f", Y)).endTag(namespace, "Y");
-		writer.startTag(namespace, "Z").text(String.format(locale, "%f", Z)).endTag(namespace, "Z");
+		writer.startTag(namespace, "X").text(String.format(locale, "%f", x)).endTag(namespace, "X");
+		writer.startTag(namespace, "Y").text(String.format(locale, "%f", y)).endTag(namespace, "Y");
+		writer.startTag(namespace, "Z").text(String.format(locale, "%f", z)).endTag(namespace, "Z");
 		writer.endTag(namespace, name);
 	}
 
 	@Override
 	public String toString() {
-		return String.format(Helpers.EnUsCulture, "<%.3f, %.3f, %.3f>", X, Y, Z);
+		return String.format(Helpers.EnUsCulture, "<%.3f, %.3f, %.3f>", x, y, z);
 	}
 
 	@Override
 	public int hashCode() {
-		return ((Float) X).hashCode() * 31 * 31 + ((Float) Y).hashCode() * 31 + ((Float) Z).hashCode();
+		return ((Float) x).hashCode() * 31 * 31 + ((Float) y).hashCode() * 31 + ((Float) z).hashCode();
 	}
 
 	/**
@@ -250,9 +262,9 @@ public class Vector3 {
 	 */
 	public static Vector3 fromArray(Vector3 vec, float[] arr, int pos) {
 		if (arr.length >= (pos + 3)) {
-			vec.X = arr[pos + 0];
-			vec.Y = arr[pos + 1];
-			vec.Z = arr[pos + 2];
+			vec.x = arr[pos + 0];
+			vec.y = arr[pos + 1];
+			vec.z = arr[pos + 2];
 		}
 		return vec;
 	}
@@ -270,13 +282,13 @@ public class Vector3 {
 	public void fromBytes(byte[] bytes, int pos, boolean le) {
 		if (le) {
 			/* Little endian architecture */
-			X = Helpers.BytesToFloatL(bytes, pos + 0);
-			Y = Helpers.BytesToFloatL(bytes, pos + 4);
-			Z = Helpers.BytesToFloatL(bytes, pos + 8);
+			x = Helpers.bytesToFloatL(bytes, pos + 0);
+			y = Helpers.bytesToFloatL(bytes, pos + 4);
+			z = Helpers.bytesToFloatL(bytes, pos + 8);
 		} else {
-			X = Helpers.BytesToFloatB(bytes, pos + 0);
-			Y = Helpers.BytesToFloatB(bytes, pos + 4);
-			Z = Helpers.BytesToFloatB(bytes, pos + 8);
+			x = Helpers.bytesToFloatB(bytes, pos + 0);
+			y = Helpers.bytesToFloatB(bytes, pos + 4);
+			z = Helpers.bytesToFloatB(bytes, pos + 8);
 		}
 	}
 
@@ -288,15 +300,15 @@ public class Vector3 {
 	 * @throws IOException
 	 */
 	public void fromBytes(DataInputStream is) throws IOException {
-		X = is.readFloat();
-		Y = is.readFloat();
-		Z = is.readFloat();
+		x = is.readFloat();
+		y = is.readFloat();
+		z = is.readFloat();
 	}
 
 	public void fromBytes(SwappedDataInputStream is) throws IOException {
-		X = is.readFloat();
-		Y = is.readFloat();
-		Z = is.readFloat();
+		x = is.readFloat();
+		y = is.readFloat();
+		z = is.readFloat();
 	}
 
 	/**
@@ -314,22 +326,22 @@ public class Vector3 {
 
 	public void toBytes(byte[] dest, int pos, boolean le) {
 		if (le) {
-			Helpers.floatToBytesL(X, dest, pos + 0);
-			Helpers.floatToBytesL(Y, dest, pos + 4);
-			Helpers.floatToBytesL(Z, dest, pos + 8);
+			Helpers.floatToBytesL(x, dest, pos + 0);
+			Helpers.floatToBytesL(y, dest, pos + 4);
+			Helpers.floatToBytesL(z, dest, pos + 8);
 		} else {
-			Helpers.floatToBytesB(X, dest, pos + 0);
-			Helpers.floatToBytesB(Y, dest, pos + 4);
-			Helpers.floatToBytesB(Z, dest, pos + 8);
+			Helpers.floatToBytesB(x, dest, pos + 0);
+			Helpers.floatToBytesB(y, dest, pos + 4);
+			Helpers.floatToBytesB(z, dest, pos + 8);
 		}
 	}
 
 	public float length() {
-		return (float) Math.sqrt(distanceSquared(this, Zero));
+		return (float) Math.sqrt(distanceSquared(this, ZERO));
 	}
 
 	public float lengthSquared() {
-		return distanceSquared(this, Zero);
+		return distanceSquared(this, ZERO);
 	}
 
 	public Vector3 normalize() {
@@ -338,9 +350,9 @@ public class Vector3 {
 		if (length > Helpers.FLOAT_MAG_THRESHOLD) {
 			return divide(length);
 		}
-		X = 0f;
-		Y = 0f;
-		Z = 0f;
+		x = 0f;
+		y = 0f;
+		z = 0f;
 		return this;
 	}
 
@@ -366,36 +378,36 @@ public class Vector3 {
 
 	/** Test if this vector is composed of all finite numbers */
 	public boolean isFinite() {
-		return (Helpers.isFinite(X) && Helpers.isFinite(Y) && Helpers.isFinite(Z));
+		return (Helpers.isFinite(x) && Helpers.isFinite(y) && Helpers.isFinite(z));
 	}
 
 	public boolean isZero() {
-		return equals(Zero);
+		return equals(ZERO);
 	}
 
 	public static boolean isZero(Vector3 v) {
 		if (v != null)
-			return v.equals(Zero);
+			return v.equals(ZERO);
 		return false;
 	}
 
 	public static boolean isZeroOrNull(Vector3 v) {
 		if (v != null)
-			return v.equals(Zero);
+			return v.equals(ZERO);
 		return true;
 	}
 
 	public Vector3 clamp(Vector3 min, Vector3 max) {
-		X = Helpers.clamp(X, min.X, max.X);
-		Y = Helpers.clamp(Y, min.Y, max.Y);
-		Z = Helpers.clamp(Z, min.Z, max.Z);
+		x = Helpers.clamp(x, min.x, max.x);
+		y = Helpers.clamp(y, min.y, max.y);
+		z = Helpers.clamp(z, min.z, max.z);
 		return this;
 	}
 
 	public Vector3 clamp(float min, float max) {
-		X = Helpers.clamp(X, min, max);
-		Y = Helpers.clamp(Y, min, max);
-		Z = Helpers.clamp(Z, min, max);
+		x = Helpers.clamp(x, min, max);
+		y = Helpers.clamp(y, min, max);
+		z = Helpers.clamp(z, min, max);
 		return this;
 	}
 
@@ -412,30 +424,30 @@ public class Vector3 {
 	}
 
 	public static float distanceSquared(Vector3 value1, Vector3 value2) {
-		return (value1.X - value2.X) * (value1.X - value2.X) + (value1.Y - value2.Y) * (value1.Y - value2.Y)
-				+ (value1.Z - value2.Z) * (value1.Z - value2.Z);
+		return (value1.x - value2.x) * (value1.x - value2.x) + (value1.y - value2.y) * (value1.y - value2.y)
+				+ (value1.z - value2.z) * (value1.z - value2.z);
 	}
 
 	public static float dot(Vector3 value1, Vector3 value2) {
-		return value1.X * value2.X + value1.Y * value2.Y + value1.Z * value2.Z;
+		return value1.x * value2.x + value1.y * value2.y + value1.z * value2.z;
 	}
 
 	public static Vector3 lerp(Vector3 value1, Vector3 value2, float amount) {
 
-		return new Vector3(Helpers.lerp(value1.X, value2.X, amount), Helpers.lerp(value1.Y, value2.Y, amount),
-				Helpers.lerp(value1.Z, value2.Z, amount));
+		return new Vector3(Helpers.lerp(value1.x, value2.x, amount), Helpers.lerp(value1.y, value2.y, amount),
+				Helpers.lerp(value1.z, value2.z, amount));
 	}
 
 	public static float mag(Vector3 value) {
-		return (float) Math.sqrt((value.X * value.X) + (value.Y * value.Y) + (value.Z * value.Z));
+		return (float) Math.sqrt((value.x * value.x) + (value.y * value.y) + (value.z * value.z));
 	}
 
 	public static Vector3 max(Vector3 value1, Vector3 value2) {
-		return new Vector3(Math.max(value1.X, value2.X), Math.max(value1.Y, value2.Y), Math.max(value1.Z, value2.Z));
+		return new Vector3(Math.max(value1.x, value2.x), Math.max(value1.y, value2.y), Math.max(value1.z, value2.z));
 	}
 
 	public static Vector3 min(Vector3 value1, Vector3 value2) {
-		return new Vector3(Math.min(value1.X, value2.X), Math.min(value1.Y, value2.Y), Math.min(value1.Z, value2.Z));
+		return new Vector3(Math.min(value1.x, value2.x), Math.min(value1.y, value2.y), Math.min(value1.z, value2.z));
 	}
 
 	public static Vector3 normalize(Vector3 value) {
@@ -466,26 +478,26 @@ public class Vector3 {
 		Vector3 axis = crossProduct.normalize();
 		float s = (float) Math.sin(angle / 2d);
 
-		return new Quaternion(axis.X * s, axis.Y * s, axis.Z * s, (float) Math.cos(angle / 2d));
+		return new Quaternion(axis.x * s, axis.y * s, axis.z * s, (float) Math.cos(angle / 2d));
 	}
 
 	/** Interpolates between two vectors using a cubic equation */
 	public static Vector3 smoothStep(Vector3 value1, Vector3 value2, float amount) {
-		return new Vector3(Helpers.smoothStep(value1.X, value2.X, amount),
-				Helpers.smoothStep(value1.Y, value2.Y, amount), Helpers.smoothStep(value1.Z, value2.Z, amount));
+		return new Vector3(Helpers.smoothStep(value1.x, value2.x, amount),
+				Helpers.smoothStep(value1.y, value2.y, amount), Helpers.smoothStep(value1.z, value2.z, amount));
 	}
 
 	public static Vector3 transform(Vector3 position, Matrix4 matrix) {
 		return new Vector3(
-				(position.X * matrix.M11) + (position.Y * matrix.M21) + (position.Z * matrix.M31) + matrix.M41,
-				(position.X * matrix.M12) + (position.Y * matrix.M22) + (position.Z * matrix.M32) + matrix.M42,
-				(position.X * matrix.M13) + (position.Y * matrix.M23) + (position.Z * matrix.M33) + matrix.M43);
+				(position.x * matrix.M11) + (position.y * matrix.M21) + (position.z * matrix.M31) + matrix.M41,
+				(position.x * matrix.M12) + (position.y * matrix.M22) + (position.z * matrix.M32) + matrix.M42,
+				(position.x * matrix.M13) + (position.y * matrix.M23) + (position.z * matrix.M33) + matrix.M43);
 	}
 
 	public static Vector3 transformNormal(Vector3 position, Matrix4 matrix) {
-		return new Vector3((position.X * matrix.M11) + (position.Y * matrix.M21) + (position.Z * matrix.M31),
-				(position.X * matrix.M12) + (position.Y * matrix.M22) + (position.Z * matrix.M32),
-				(position.X * matrix.M13) + (position.Y * matrix.M23) + (position.Z * matrix.M33));
+		return new Vector3((position.x * matrix.M11) + (position.y * matrix.M21) + (position.z * matrix.M31),
+				(position.x * matrix.M12) + (position.y * matrix.M22) + (position.z * matrix.M32),
+				(position.x * matrix.M13) + (position.y * matrix.M23) + (position.z * matrix.M33));
 	}
 
 	/**
@@ -495,27 +507,27 @@ public class Vector3 {
 	 *            A string representation of a 3D vector, enclosed in arrow brackets
 	 *            and separated by commas
 	 */
-	public static Vector3 Parse(String val) {
+	public static Vector3 parse(String val) {
 		String splitChar = ",";
 		String[] split = val.replace("<", "").replace(">", "").split(splitChar);
 		return new Vector3(Float.parseFloat(split[0].trim()), Float.parseFloat(split[1].trim()),
 				Float.parseFloat(split[2].trim()));
 	}
 
-	public static Vector3 TryParse(String val) {
+	public static Vector3 tryParse(String val) {
 		try {
-			return Parse(val);
+			return parse(val);
 		} catch (Throwable t) {
-			return Vector3.Zero;
+			return Vector3.ZERO;
 		}
 	}
 
-	public static boolean TryParse(String val, RefObject<Vector3> result) {
+	public static boolean tryParse(String val, RefObject<Vector3> result) {
 		try {
-			result.argvalue = Parse(val);
+			result.argvalue = parse(val);
 			return true;
 		} catch (Throwable t) {
-			result.argvalue = Vector3.Zero;
+			result.argvalue = Vector3.ZERO;
 			return false;
 		}
 	}
@@ -527,81 +539,81 @@ public class Vector3 {
 	}
 
 	public boolean equals(Vector3 val) {
-		return val != null && X == val.X && Y == val.Y && Z == val.Z;
+		return val != null && x == val.x && y == val.y && z == val.z;
 	}
 
 	public boolean equals(Vector3d val) {
-		return val != null && X == val.X && Y == val.Y && Z == val.Z;
+		return val != null && x == val.x && y == val.y && z == val.z;
 	}
 
 	public Vector3 negate() {
-		X = -X;
-		Y = -Y;
-		Z = -Z;
+		x = -x;
+		y = -y;
+		z = -z;
 		return this;
 	}
 
 	public Vector3 add(Vector3 val) {
-		X += val.X;
-		Y += val.Y;
-		Z += val.Z;
+		x += val.x;
+		y += val.y;
+		z += val.z;
 		return this;
 	}
 
 	public Vector3 subtract(Vector3 val) {
-		X -= val.X;
-		Y -= val.Y;
-		Z -= val.Z;
+		x -= val.x;
+		y -= val.y;
+		z -= val.z;
 		return this;
 	}
 
 	public Vector3 multiply(float scaleFactor) {
-		X *= scaleFactor;
-		Y *= scaleFactor;
-		Z *= scaleFactor;
+		x *= scaleFactor;
+		y *= scaleFactor;
+		z *= scaleFactor;
 		return this;
 	}
 
 	public Vector3 multiply(Vector3 value) {
-		X *= value.X;
-		Y *= value.Y;
-		Z *= value.Z;
+		x *= value.x;
+		y *= value.y;
+		z *= value.z;
 		return this;
 	}
 
 	public Vector3 multiply(Quaternion rot) {
 		// From
 		// http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/transforms/
-		float x = rot.W * rot.W * X + 2f * rot.Y * rot.W * Z - 2f * rot.Z * rot.W * Y + rot.X * rot.X * X
-				+ 2f * rot.Y * rot.X * Y + 2f * rot.Z * rot.X * Z - rot.Z * rot.Z * X - rot.Y * rot.Y * X;
-		float y = 2f * rot.X * rot.Y * X + rot.Y * rot.Y * Y + 2f * rot.Z * rot.Y * Z + 2f * rot.W * rot.Z * X
-				- rot.Z * rot.Z * Y + rot.W * rot.W * Y - 2f * rot.X * rot.W * Z - rot.X * rot.X * Y;
-		Z = 2f * rot.X * rot.Z * X + 2f * rot.Y * rot.Z * Y + rot.Z * rot.Z * Z - 2f * rot.W * rot.Y * X
-				- rot.Y * rot.Y * Z + 2f * rot.W * rot.X * Y - rot.X * rot.X * Z + rot.W * rot.W * Z;
-		X = x;
-		Y = y;
+		float tx = rot.w * rot.w * x + 2f * rot.y * rot.w * z - 2f * rot.z * rot.w * y + rot.x * rot.x * x
+				+ 2f * rot.y * rot.x * y + 2f * rot.z * rot.x * z - rot.z * rot.z * x - rot.y * rot.y * x;
+		float ty = 2f * rot.x * rot.y * x + rot.y * rot.y * y + 2f * rot.z * rot.y * z + 2f * rot.w * rot.z * x
+				- rot.z * rot.z * y + rot.w * rot.w * y - 2f * rot.x * rot.w * z - rot.x * rot.x * y;
+		z = 2f * rot.x * rot.z * x + 2f * rot.y * rot.z * y + rot.z * rot.z * z - 2f * rot.w * rot.y * x
+				- rot.y * rot.y * z + 2f * rot.w * rot.x * y - rot.x * rot.x * z + rot.w * rot.w * z;
+		x = tx;
+		y = ty;
 		return this;
 	}
 
 	public Vector3 divide(Vector3 value) {
-		X /= value.X;
-		Y /= value.Y;
-		Z /= value.Z;
+		x /= value.x;
+		y /= value.y;
+		z /= value.z;
 		return this;
 	}
 
 	public Vector3 divide(float divider) {
 		float factor = 1f / divider;
-		X *= factor;
-		Y *= factor;
-		Z *= factor;
+		x *= factor;
+		y *= factor;
+		z *= factor;
 		return this;
 	}
 
 	public Vector3 cross(Vector3 value) {
-		X = Y * value.Z - value.Y * Z;
-		Y = Z * value.X - value.Z * X;
-		Z = X * value.Y - value.X * Y;
+		x = y * value.z - value.y * z;
+		y = z * value.x - value.z * x;
+		z = x * value.y - value.x * y;
 		return this;
 	}
 
@@ -641,14 +653,4 @@ public class Vector3 {
 		return new Vector3(value).divide(divider);
 	}
 
-	/** A vector with a value of 0,0,0 */
-	public final static Vector3 Zero = new Vector3(0f);
-	/** A vector with a value of 1,1,1 */
-	public final static Vector3 One = new Vector3(1f, 1f, 1f);
-	/** A unit vector facing forward (X axis), value 1,0,0 */
-	public final static Vector3 UnitX = new Vector3(1f, 0f, 0f);
-	/** A unit vector facing left (Y axis), value 0,1,0 */
-	public final static Vector3 UnitY = new Vector3(0f, 1f, 0f);
-	/** A unit vector facing up (Z axis), value 0,0,1 */
-	public final static Vector3 UnitZ = new Vector3(0f, 0f, 1f);
 }

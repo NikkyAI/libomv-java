@@ -237,7 +237,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 	public final UUID startClassifiedSearch(String searchText, ClassifiedCategories category, byte queryFlags)
 			throws Exception {
 		DirClassifiedQueryPacket query = new DirClassifiedQueryPacket();
-		UUID queryID = UUID.GenerateUUID();
+		UUID queryID = UUID.generateUUID();
 
 		query.AgentData.AgentID = client.agent.getAgentID();
 		query.AgentData.SessionID = client.agent.getSessionID();
@@ -315,7 +315,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 		query.QueryData.Category = (byte) category.ordinal();
 		query.QueryData.QueryFlags = queryFlags;
 
-		query.QueryData.QueryID = UUID.GenerateUUID();
+		query.QueryData.QueryID = UUID.generateUUID();
 		query.QueryData.setQueryText(Helpers.stringToBytes(searchText));
 		query.QueryData.QueryStart = queryStart;
 		query.QueryData.setSimName(Helpers.stringToBytes(Helpers.EmptyString));
@@ -440,7 +440,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 		query.QueryData.QueryStart = queryStart;
 		query.QueryData.SearchType = typeFlags;
 		query.QueryData.QueryFlags = findFlags;
-		query.QueryData.QueryID = UUID.GenerateUUID();
+		query.QueryData.QueryID = UUID.generateUUID();
 
 		client.network.sendPacket(query);
 	}
@@ -481,7 +481,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 		find.AgentData.SessionID = client.agent.getSessionID();
 		find.QueryData.QueryFlags = flags;
 		find.QueryData.setQueryText(Helpers.stringToBytes(searchText));
-		find.QueryData.QueryID = UUID.GenerateUUID();
+		find.QueryData.QueryID = UUID.generateUUID();
 		find.QueryData.QueryStart = queryStart;
 
 		client.network.sendPacket(find);
@@ -500,7 +500,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 	 * @throws Exception
 	 */
 	public final UUID startPeopleSearch(String searchText, int queryStart) throws Exception {
-		UUID uuid = UUID.GenerateUUID();
+		UUID uuid = UUID.generateUUID();
 		startPeopleSearch(searchText, queryStart, uuid);
 		return uuid;
 	}
@@ -535,7 +535,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 	 */
 	public final UUID startPlacesSearch() throws Exception {
 		return startPlacesSearch(DirFindFlags.AgentOwned, ParcelCategory.Any, Helpers.EmptyString, Helpers.EmptyString,
-				UUID.Zero, UUID.GenerateUUID());
+				UUID.ZERO, UUID.generateUUID());
 	}
 
 	/**
@@ -550,7 +550,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 	 */
 	public final UUID startPlacesSearch(UUID groupID) throws Exception {
 		return startPlacesSearch(DirFindFlags.GroupOwned, ParcelCategory.Any, Helpers.EmptyString, Helpers.EmptyString,
-				groupID, UUID.GenerateUUID());
+				groupID, UUID.generateUUID());
 	}
 
 	/**
@@ -566,7 +566,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 	public final UUID startPlacesSearch(String searchText) throws Exception {
 		int flags = DirFindFlags.DwellSort | DirFindFlags.IncludePG | DirFindFlags.IncludeMature
 				| DirFindFlags.IncludeAdult;
-		return startPlacesSearch(flags, ParcelCategory.Any, searchText, Helpers.EmptyString, UUID.Zero, new UUID());
+		return startPlacesSearch(flags, ParcelCategory.Any, searchText, Helpers.EmptyString, UUID.ZERO, new UUID());
 	}
 
 	/**
@@ -660,12 +660,12 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 	// DirFindFlags queryFlags, string eventDay, uint queryStart,
 	// EventCategories category)
 	public final UUID startEventsSearch(String searchText, int queryFlags, String eventDay, int queryStart,
-			EventCategories category) throws Exception, Exception {
+			EventCategories category) throws Exception {
 		DirFindQueryPacket find = new DirFindQueryPacket();
 		find.AgentData.AgentID = client.agent.getAgentID();
 		find.AgentData.SessionID = client.agent.getSessionID();
 
-		find.QueryData.QueryID = UUID.GenerateUUID();
+		find.QueryData.QueryID = UUID.generateUUID();
 		find.QueryData.setQueryText(Helpers.stringToBytes(eventDay + "|" + category.ordinal() + "|" + searchText));
 		find.QueryData.QueryFlags = queryFlags;
 		find.QueryData.QueryStart = queryStart;
@@ -720,7 +720,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 			}
 		}
 
-		DirPeopleCallbackHandler callback = new DirPeopleCallbackHandler(UUID.GenerateUUID());
+		DirPeopleCallbackHandler callback = new DirPeopleCallbackHandler(UUID.generateUUID());
 
 		onDirPeople.add(callback);
 		startPeopleSearch(searchText, queryStart);
@@ -744,16 +744,16 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 	private void handleDirClassifiedReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
 		if (onDirClassifieds.count() > 0) {
 			DirClassifiedReplyPacket reply = (DirClassifiedReplyPacket) packet;
-			ArrayList<Classified> classifieds = new ArrayList<Classified>();
+			List<Classified> classifieds = new ArrayList<>();
 
 			for (DirClassifiedReplyPacket.QueryRepliesBlock block : reply.QueryReplies) {
 				Classified classified = new Classified();
 
-				classified.creationDate = Helpers.UnixTimeToDateTime(block.CreationDate);
-				classified.expirationDate = Helpers.UnixTimeToDateTime(block.ExpirationDate);
+				classified.creationDate = Helpers.unixTimeToDateTime(block.CreationDate);
+				classified.expirationDate = Helpers.unixTimeToDateTime(block.ExpirationDate);
 				classified.flags = ClassifiedFlags.setValue(block.ClassifiedFlags);
 				classified.id = block.ClassifiedID;
-				classified.name = Helpers.BytesToString(block.getName());
+				classified.name = Helpers.bytesToString(block.getName());
 				classified.price = block.PriceForListing;
 
 				classifieds.add(classified);
@@ -773,7 +773,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 	 */
 	private void handleDirLandReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
 		if (onDirLand.count() > 0) {
-			ArrayList<DirectoryParcel> parcelsForSale = new ArrayList<DirectoryParcel>();
+			List<DirectoryParcel> parcelsForSale = new ArrayList<>();
 			DirLandReplyPacket reply = (DirLandReplyPacket) packet;
 
 			for (DirLandReplyPacket.QueryRepliesBlock block : reply.QueryReplies) {
@@ -781,7 +781,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 
 				dirParcel.actualArea = block.ActualArea;
 				dirParcel.id = block.ParcelID;
-				dirParcel.name = Helpers.BytesToString(block.getName());
+				dirParcel.name = Helpers.bytesToString(block.getName());
 				dirParcel.salePrice = block.SalePrice;
 				dirParcel.auction = block.Auction;
 				dirParcel.forSale = block.ForSale;
@@ -803,7 +803,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 	 */
 	private void handleDirLandReply(IMessage message, Simulator simulator) {
 		if (onDirLand.count() > 0) {
-			ArrayList<DirectoryParcel> parcelsForSale = new ArrayList<DirectoryParcel>();
+			List<DirectoryParcel> parcelsForSale = new ArrayList<>();
 			DirLandReplyMessage reply = (DirLandReplyMessage) message;
 			for (DirLandReplyMessage.QueryReply block : reply.queryReplies) {
 				DirectoryParcel dirParcel = new DirectoryParcel();
@@ -834,13 +834,13 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 		if (onDirPeople.count() > 0) {
 			DirPeopleReplyPacket peopleReply = (DirPeopleReplyPacket) ((packet instanceof DirPeopleReplyPacket) ? packet
 					: null);
-			ArrayList<AgentSearchData> matches = new ArrayList<AgentSearchData>(peopleReply.QueryReplies.length);
+			List<AgentSearchData> matches = new ArrayList<>(peopleReply.QueryReplies.length);
 
 			for (DirPeopleReplyPacket.QueryRepliesBlock reply : peopleReply.QueryReplies) {
 				AgentSearchData searchData = new AgentSearchData();
 				searchData.online = reply.Online;
-				searchData.firstName = Helpers.BytesToString(reply.getFirstName());
-				searchData.lastName = Helpers.BytesToString(reply.getLastName());
+				searchData.firstName = Helpers.bytesToString(reply.getFirstName());
+				searchData.lastName = Helpers.bytesToString(reply.getLastName());
 				searchData.agentID = reply.AgentID;
 				matches.add(searchData);
 			}
@@ -860,11 +860,11 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 	private void handleDirGroupsReply(Packet packet, Simulator simulator) throws Exception {
 		if (onDirGroups.count() > 0) {
 			DirGroupsReplyPacket groupsReply = (DirGroupsReplyPacket) packet;
-			ArrayList<GroupSearchData> matches = new ArrayList<GroupSearchData>(groupsReply.QueryReplies.length);
+			List<GroupSearchData> matches = new ArrayList<>(groupsReply.QueryReplies.length);
 			for (DirGroupsReplyPacket.QueryRepliesBlock reply : groupsReply.QueryReplies) {
 				GroupSearchData groupsData = new GroupSearchData();
 				groupsData.groupID = reply.GroupID;
-				groupsData.groupName = Helpers.BytesToString(reply.getGroupName());
+				groupsData.groupName = Helpers.bytesToString(reply.getGroupName());
 				groupsData.members = reply.Members;
 				matches.add(groupsData);
 			}
@@ -883,7 +883,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 	 */
 	private void handlePlacesReply(IMessage message, Simulator simulator) {
 		if (onPlaces.count() > 0) {
-			ArrayList<PlacesSearchData> places = new ArrayList<PlacesSearchData>();
+			List<PlacesSearchData> places = new ArrayList<>();
 			PlacesReplyMessage replyMessage = (PlacesReplyMessage) message;
 			for (PlacesReplyMessage.QueryData block : replyMessage.queryDataBlocks) {
 				PlacesSearchData place = new PlacesSearchData();
@@ -900,7 +900,7 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 				place.price = block.price;
 				place.simName = block.simName;
 				place.snapshotID = block.snapShotID;
-				place.SKU = block.productSku;
+				place.sku = block.productSku;
 				places.add(place);
 			}
 			onPlaces.dispatch(new PlacesReplyCallbackArgs(replyMessage.queryID, places));
@@ -919,20 +919,20 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 	private void handlePlacesReply(Packet packet, Simulator simulator) throws Exception {
 		if (onPlaces.count() > 0) {
 			PlacesReplyPacket placesReply = (PlacesReplyPacket) ((packet instanceof PlacesReplyPacket) ? packet : null);
-			ArrayList<PlacesSearchData> places = new ArrayList<PlacesSearchData>();
+			List<PlacesSearchData> places = new ArrayList<>();
 
 			for (PlacesReplyPacket.QueryDataBlock block : placesReply.QueryData) {
 				PlacesSearchData place = new PlacesSearchData();
 				place.ownerID = block.OwnerID;
-				place.name = Helpers.BytesToString(block.getName());
-				place.desc = Helpers.BytesToString(block.getDesc());
+				place.name = Helpers.bytesToString(block.getName());
+				place.desc = Helpers.bytesToString(block.getDesc());
 				place.actualArea = block.ActualArea;
 				place.billableArea = block.BillableArea;
 				place.flags = PlacesFlags.setValue(block.Flags);
 				place.globalX = block.GlobalX;
 				place.globalY = block.GlobalY;
 				place.globalZ = block.GlobalZ;
-				place.simName = Helpers.BytesToString(block.getSimName());
+				place.simName = Helpers.bytesToString(block.getSimName());
 				place.snapshotID = block.SnapshotID;
 				place.dwell = block.Dwell;
 				place.price = block.Price;
@@ -955,14 +955,14 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 	private void handleEventsReply(Packet packet, Simulator simulator) throws Exception {
 		if (onDirEvents.count() > 0) {
 			DirEventsReplyPacket eventsReply = (DirEventsReplyPacket) packet;
-			ArrayList<EventsSearchData> matches = new ArrayList<EventsSearchData>(eventsReply.QueryReplies.length);
+			List<EventsSearchData> matches = new ArrayList<>(eventsReply.QueryReplies.length);
 
 			for (DirEventsReplyPacket.QueryRepliesBlock reply : eventsReply.QueryReplies) {
 				EventsSearchData eventsData = new EventsSearchData();
 				eventsData.owner = reply.OwnerID;
-				eventsData.name = Helpers.BytesToString(reply.getName());
+				eventsData.name = Helpers.bytesToString(reply.getName());
 				eventsData.id = reply.EventID;
-				eventsData.date = Helpers.BytesToString(reply.getDate());
+				eventsData.date = Helpers.bytesToString(reply.getDate());
 				eventsData.time = reply.UnixTime;
 				eventsData.flags = EventFlags.setValue(reply.EventFlags);
 				matches.add(eventsData);
@@ -985,17 +985,17 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 			EventInfoReplyPacket eventReply = (EventInfoReplyPacket) packet;
 			EventInfo evinfo = new EventInfo();
 			evinfo.id = eventReply.EventData.EventID;
-			evinfo.name = Helpers.BytesToString(eventReply.EventData.getName());
-			evinfo.desc = Helpers.BytesToString(eventReply.EventData.getDesc());
+			evinfo.name = Helpers.bytesToString(eventReply.EventData.getName());
+			evinfo.desc = Helpers.bytesToString(eventReply.EventData.getDesc());
 			evinfo.amount = eventReply.EventData.Amount;
-			evinfo.category = EventCategories.valueOf(Helpers.BytesToString(eventReply.EventData.getCategory()));
+			evinfo.category = EventCategories.valueOf(Helpers.bytesToString(eventReply.EventData.getCategory()));
 			evinfo.cover = eventReply.EventData.Cover;
 			evinfo.creator = new UUID(eventReply.EventData.getCreator());
-			evinfo.date = Helpers.BytesToString(eventReply.EventData.getDate());
+			evinfo.date = Helpers.bytesToString(eventReply.EventData.getDate());
 			evinfo.dateUTC = eventReply.EventData.DateUTC;
 			evinfo.duration = eventReply.EventData.Duration;
 			evinfo.flags = EventFlags.setValue(eventReply.EventData.EventFlags);
-			evinfo.simName = Helpers.BytesToString(eventReply.EventData.getSimName());
+			evinfo.simName = Helpers.bytesToString(eventReply.EventData.getSimName());
 			evinfo.globalPos = eventReply.EventData.GlobalPos;
 
 			onEventInfo.dispatch(new EventInfoReplyCallbackArgs(evinfo));
@@ -1013,13 +1013,13 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 	private void handleDirPlacesReply(Packet packet, Simulator simulator) throws Exception {
 		if (onDirPlaces.count() > 0) {
 			DirPlacesReplyPacket reply = (DirPlacesReplyPacket) packet;
-			ArrayList<DirectoryParcel> result = new ArrayList<DirectoryParcel>();
+			List<DirectoryParcel> result = new ArrayList<>();
 
 			for (QueryRepliesBlock block : reply.QueryReplies) {
 				DirectoryParcel p = new DirectoryParcel();
 
 				p.id = block.ParcelID;
-				p.name = Helpers.BytesToString(block.getName());
+				p.name = Helpers.bytesToString(block.getName());
 				p.dwell = block.Dwell;
 				p.auction = block.Auction;
 				p.forSale = block.ForSale;

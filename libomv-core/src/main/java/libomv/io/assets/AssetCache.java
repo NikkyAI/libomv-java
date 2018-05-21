@@ -58,39 +58,54 @@ public class AssetCache {
 		public File callback(String cacheDir, UUID assetID, String suffix);
 	}
 
-	public ComputeAssetCacheFilenameDelegate ComputeAssetCacheFilename = null;
+	private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs> {
+		@Override
+		public boolean callback(SettingsUpdateCallbackArgs params) {
+			String key = params.getName();
+			if (key == null) {
+				useAssetCache = client.settings.getBool(LibSettings.USE_ASSET_CACHE);
+				cacheAssetMaxSize = client.settings.getLong(LibSettings.ASSET_CACHE_MAX_SIZE);
+				setResourcePath(client.settings.getString(LibSettings.RESOURCE_DIR));
+				setAssetPath(client.settings.getString(LibSettings.ASSET_CACHE_DIR));
+			} else if (key.equals(LibSettings.USE_ASSET_CACHE)) {
+				useAssetCache = params.getValue().asBoolean();
+			} else if (key.equals(LibSettings.USE_ASSET_CACHE)) {
+				cacheAssetMaxSize = params.getValue().asLong();
+			} else if (key.equals(LibSettings.ASSET_CACHE_DIR)) {
+				setAssetPath(params.getValue().asString());
+			} else if (key.equals(LibSettings.RESOURCE_DIR)) {
+				setResourcePath(params.getValue().asString());
+				setAssetPath(null);
+			}
+			return false;
+		}
+	}
 
-	private GridClient _Client;
+	private class Network_LoginProgress implements Callback<LoginProgressCallbackArgs> {
+		@Override
+		public boolean callback(LoginProgressCallbackArgs e) {
+			if (e.getStatus() == LoginStatus.Success) {
+				setupTimer();
+			}
+			return false;
+		}
+	}
+
+	private class Network_Disconnected implements Callback<DisconnectedCallbackArgs> {
+		@Override
+		public boolean callback(DisconnectedCallbackArgs e) {
+			destroyTimer();
+			return false;
+		}
+	}
+
+	public ComputeAssetCacheFilenameDelegate computeAssetCacheFilename;
+
+	private GridClient client;
 	private Thread cleanerThread;
 	private Timer cleanerTimer;
 	private long pruneInterval = 1000 * 60 * 5;
 	private boolean autoPruneEnabled = true;
-
-	// Allows setting weather to periodically prune the cache if it grows too big
-	// Default is enabled, when caching is enabled
-	public final void setAutoPruneEnabled(boolean value) {
-		autoPruneEnabled = value;
-
-		if (autoPruneEnabled) {
-			SetupTimer();
-		} else {
-			DestroyTimer();
-		}
-	}
-
-	public final boolean getAutoPruneEnabled() {
-		return autoPruneEnabled;
-	}
-
-	// How long (in ms) between cache checks (default is 5 min.)
-	public final void setAutoPruneInterval(long value) {
-		pruneInterval = value;
-		SetupTimer();
-	}
-
-	public final long getAutoPruneInterval() {
-		return pruneInterval;
-	}
 
 	/* Checks whether caching is enabled */
 	private boolean useAssetCache;
@@ -103,6 +118,53 @@ public class AssetCache {
 	private File settingsPath;
 	private File cacheAssetPath;
 	private File cacheStaticPath;
+
+	/**
+	 * Default constructor
+	 *
+	 * @param client
+	 *            A reference to the GridClient object
+	 * @param manager
+	 *            A reference to the AssetManager
+	 */
+	public AssetCache(GridClient client) {
+		this.client = client;
+
+		this.client.settings.onSettingsUpdate.add(new SettingsUpdate());
+		this.useAssetCache = client.settings.getBool(LibSettings.USE_ASSET_CACHE);
+		this.cacheAssetMaxSize = client.settings.getLong(LibSettings.ASSET_CACHE_MAX_SIZE);
+		setResourcePath(client.settings.getString(LibSettings.RESOURCE_DIR));
+		setAssetPath(client.settings.getString(LibSettings.ASSET_CACHE_DIR));
+
+		this.client.login.onLoginProgress.add(new Network_LoginProgress(), false);
+		this.client.network.onDisconnected.add(new Network_Disconnected(), true);
+	}
+
+	// Allows setting weather to periodically prune the cache if it grows too big
+	// Default is enabled, when caching is enabled
+	public final void setAutoPruneEnabled(boolean value) {
+		autoPruneEnabled = value;
+
+		if (autoPruneEnabled) {
+			setupTimer();
+		} else {
+			destroyTimer();
+		}
+	}
+
+	public final boolean getAutoPruneEnabled() {
+		return autoPruneEnabled;
+	}
+
+	// How long (in ms) between cache checks (default is 5 min.)
+	public final void setAutoPruneInterval(long value) {
+		pruneInterval = value;
+		setupTimer();
+	}
+
+	public final long getAutoPruneInterval() {
+		return pruneInterval;
+	}
 
 	private void setResourcePath(String path) {
 		resourcePath = new File(path).getAbsoluteFile();
@@ -119,70 +181,8 @@ public class AssetCache {
 		cacheAssetPath.mkdir();
 	}
 
-	private class SettingsUpdate implements Callback<SettingsUpdateCallbackArgs> {
-		@Override
-		public boolean callback(SettingsUpdateCallbackArgs params) {
-			String key = params.getName();
-			if (key == null) {
-				useAssetCache = _Client.settings.getBool(LibSettings.USE_ASSET_CACHE);
-				cacheAssetMaxSize = _Client.settings.getLong(LibSettings.ASSET_CACHE_MAX_SIZE);
-				setResourcePath(_Client.settings.getString(LibSettings.RESOURCE_DIR));
-				setAssetPath(_Client.settings.getString(LibSettings.ASSET_CACHE_DIR));
-			} else if (key.equals(LibSettings.USE_ASSET_CACHE)) {
-				useAssetCache = params.getValue().asBoolean();
-			} else if (key.equals(LibSettings.USE_ASSET_CACHE)) {
-				cacheAssetMaxSize = params.getValue().asLong();
-			} else if (key.equals(LibSettings.ASSET_CACHE_DIR)) {
-				setAssetPath(params.getValue().asString());
-			} else if (key.equals(LibSettings.RESOURCE_DIR)) {
-				setResourcePath(params.getValue().asString());
-				setAssetPath(null);
-			}
-			return false;
-		}
-	}
-
-	/**
-	 * Default constructor
-	 *
-	 * @param client
-	 *            A reference to the GridClient object
-	 * @param manager
-	 *            A reference to the AssetManager
-	 */
-	public AssetCache(GridClient client) {
-		_Client = client;
-
-		_Client.settings.onSettingsUpdate.add(new SettingsUpdate());
-		useAssetCache = _Client.settings.getBool(LibSettings.USE_ASSET_CACHE);
-		cacheAssetMaxSize = _Client.settings.getLong(LibSettings.ASSET_CACHE_MAX_SIZE);
-		setResourcePath(_Client.settings.getString(LibSettings.RESOURCE_DIR));
-		setAssetPath(_Client.settings.getString(LibSettings.ASSET_CACHE_DIR));
-
-		_Client.login.onLoginProgress.add(new Network_LoginProgress(), false);
-		_Client.network.onDisconnected.add(new Network_Disconnected(), true);
-	}
-
-	private class Network_LoginProgress implements Callback<LoginProgressCallbackArgs> {
-		@Override
-		public boolean callback(LoginProgressCallbackArgs e) {
-			if (e.getStatus() == LoginStatus.Success) {
-				SetupTimer();
-			}
-			return false;
-		}
-	}
-
-	private class Network_Disconnected implements Callback<DisconnectedCallbackArgs> {
-		@Override
-		public boolean callback(DisconnectedCallbackArgs e) {
-			DestroyTimer();
-			return false;
-		}
-	}
-
 	// Disposes cleanup timer
-	private void DestroyTimer() {
+	private void destroyTimer() {
 		if (cleanerTimer != null) {
 			cleanerTimer.cancel();
 			cleanerTimer = null;
@@ -190,13 +190,13 @@ public class AssetCache {
 	}
 
 	// Only create timer when needed
-	private void SetupTimer() {
-		if (useAssetCache && autoPruneEnabled && _Client.network.getConnected()) {
+	private void setupTimer() {
+		if (useAssetCache && autoPruneEnabled && client.network.getConnected()) {
 			cleanerTimer = new Timer("AssetCleaner");
 			cleanerTimer.schedule(new TimerTask() {
 				@Override
 				public void run() {
-					BeginPrune();
+					beginPrune();
 				}
 			}, pruneInterval, pruneInterval);
 		}
@@ -218,9 +218,9 @@ public class AssetCache {
 					file = getStaticAssetFile(assetID);
 					exists = file.exists() && file.length() > 0;
 					if (exists)
-						logger.debug(GridClient.Log("Reading " + file + " from static asset cache.", _Client));
+						logger.debug(GridClient.Log("Reading " + file + " from static asset cache.", client));
 				} else {
-					logger.debug(GridClient.Log("Reading " + file + " from asset cache.", _Client));
+					logger.debug(GridClient.Log("Reading " + file + " from asset cache.", client));
 				}
 
 				if (exists) {
@@ -234,7 +234,7 @@ public class AssetCache {
 					return assetData;
 				}
 			} catch (Throwable ex) {
-				logger.warn(GridClient.Log("Failed reading asset from cache (" + ex.getMessage() + ")", _Client), ex);
+				logger.warn(GridClient.Log("Failed reading asset from cache (" + ex.getMessage() + ")", client), ex);
 			}
 		}
 		return null;
@@ -248,8 +248,8 @@ public class AssetCache {
 	 * @return String with the file name of the cached asset
 	 */
 	public File cachedAssetFile(UUID assetID, String suffix) {
-		if (ComputeAssetCacheFilename != null) {
-			return ComputeAssetCacheFilename.callback(cacheAssetDir, assetID, suffix);
+		if (computeAssetCacheFilename != null) {
+			return computeAssetCacheFilename.callback(cacheAssetDir, assetID, suffix);
 		}
 		String filename = assetID.toString();
 		if (suffix != null) {
@@ -282,7 +282,7 @@ public class AssetCache {
 		if (useAssetCache) {
 			try {
 				File file = cachedAssetFile(assetID, suffix);
-				logger.debug(GridClient.Log("Saving " + file + " to asset cache.", _Client));
+				logger.debug(GridClient.Log("Saving " + file + " to asset cache.", client));
 				FileOutputStream fos = new FileOutputStream(file);
 				try {
 					fos.write(assetData);
@@ -291,7 +291,7 @@ public class AssetCache {
 				}
 				return true;
 			} catch (Throwable ex) {
-				logger.warn(GridClient.Log("Failed saving asset to cache (" + ex.getMessage() + ")", _Client), ex);
+				logger.warn(GridClient.Log("Failed saving asset to cache (" + ex.getMessage() + ")", client), ex);
 			}
 		}
 		return false;
@@ -316,7 +316,7 @@ public class AssetCache {
 		return false;
 	}
 
-	private File[] ListCacheFiles() {
+	private File[] listCacheFiles() {
 		if (!cacheAssetPath.exists() || !cacheAssetPath.isDirectory()) {
 			return null;
 		}
@@ -337,14 +337,14 @@ public class AssetCache {
 	 *
 	 */
 	public final void clear() {
-		File[] files = ListCacheFiles();
+		File[] files = listCacheFiles();
 		if (files != null) {
 			int num = 0;
 			for (File file : files) {
 				file.delete();
 				++num;
 			}
-			logger.debug(GridClient.Log("Wiped out " + num + " files from the cache directory.", _Client));
+			logger.debug(GridClient.Log("Wiped out " + num + " files from the cache directory.", client));
 		}
 	}
 
@@ -352,9 +352,9 @@ public class AssetCache {
 	 * Brings cache size to the 90% of the max size
 	 *
 	 */
-	public final void Prune() {
-		File[] files = ListCacheFiles();
-		long size = GetFileSize(files);
+	public final void prune() {
+		File[] files = listCacheFiles();
+		long size = getFileSize(files);
 
 		if (size > cacheAssetMaxSize) {
 			Arrays.sort(files, new SortFilesByModTimeHelper());
@@ -368,10 +368,10 @@ public class AssetCache {
 					break;
 				}
 			}
-			logger.debug(GridClient.Log(num + " files deleted from the cache, cache size now: " + NiceFileSize(size),
-					_Client));
+			logger.debug(GridClient.Log(num + " files deleted from the cache, cache size now: " + niceFileSize(size),
+					client));
 		} else {
-			logger.debug(GridClient.Log("Cache size is " + NiceFileSize(size) + ", file deletion not needed", _Client));
+			logger.debug(GridClient.Log("Cache size is " + niceFileSize(size) + ", file deletion not needed", client));
 		}
 
 	}
@@ -380,7 +380,7 @@ public class AssetCache {
 	 * Asynchronously brings cache size to the 90% of the max size
 	 *
 	 */
-	public final void BeginPrune() {
+	public final void beginPrune() {
 		// Check if the background cache cleaning thread is active first
 		if (cleanerThread != null && cleanerThread.isAlive()) {
 			return;
@@ -390,7 +390,7 @@ public class AssetCache {
 			cleanerThread = new Thread(new Runnable() {
 				@Override
 				public void run() {
-					Prune();
+					prune();
 				}
 			});
 			cleanerThread.setDaemon(true);
@@ -401,7 +401,7 @@ public class AssetCache {
 	/**
 	 * Adds up file sizes passed in a File array
 	 */
-	private long GetFileSize(File[] files) {
+	private long getFileSize(File[] files) {
 		long ret = 0;
 		for (File file : files) {
 			ret += file.length();
@@ -416,7 +416,7 @@ public class AssetCache {
 	 *            Byte size we want to output
 	 * @return String with humanly readable file size
 	 */
-	private String NiceFileSize(long byteCount) {
+	private String niceFileSize(long byteCount) {
 		String size = "0 Bytes";
 		if (byteCount >= 1073741824) {
 			size = String.format("%d", (int) (byteCount / 1073741824)) + " GB";

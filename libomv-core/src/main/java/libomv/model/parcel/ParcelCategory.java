@@ -33,21 +33,22 @@ public enum ParcelCategory {
 	// Not an actual category, only used for queries
 	Any(-1);
 
+	private byte value;
+
+	private ParcelCategory(int value) {
+		this.value = (byte) value;
+	}
+
 	public static ParcelCategory setValue(int value) {
 		for (ParcelCategory e : values()) {
-			if (e._value == value)
+			if (e.value == value)
 				return e;
 		}
 		return None;
 	}
 
 	public byte getValue() {
-		return _value;
+		return value;
 	}
 
-	private byte _value;
-
-	private ParcelCategory(int value) {
-		this._value = (byte) value;
-	}
 }

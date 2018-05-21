@@ -86,58 +86,58 @@ public class OSDMap extends OSD implements Map<String, OSD> {
 
 	@Override
 	public Vector2 asVector2() {
-		Vector2 vec = new Vector2(Vector2.Zero);
+		Vector2 vec = new Vector2(Vector2.ZERO);
 		if (containsKey("X") && containsKey("Y")) {
-			vec.X = (float) get("X").asReal();
-			vec.Y = (float) get("Y").asReal();
+			vec.x = (float) get("X").asReal();
+			vec.y = (float) get("Y").asReal();
 		}
 		return vec;
 	}
 
 	@Override
 	public Vector3 asVector3() {
-		Vector3 vec = new Vector3(Vector3.Zero);
+		Vector3 vec = new Vector3(Vector3.ZERO);
 		if (containsKey("X") && containsKey("Y") && containsKey("Z")) {
-			vec.X = (float) get("X").asReal();
-			vec.Y = (float) get("Y").asReal();
-			vec.Z = (float) get("Z").asReal();
+			vec.x = (float) get("X").asReal();
+			vec.y = (float) get("Y").asReal();
+			vec.z = (float) get("Z").asReal();
 		}
 		return vec;
 	}
 
 	@Override
 	public Vector3d asVector3d() {
-		Vector3d vec = new Vector3d(Vector3d.Zero);
+		Vector3d vec = new Vector3d(Vector3d.ZERO);
 		if (containsKey("X") && containsKey("Y") && containsKey("Z")) {
-			vec.X = get("X").asReal();
-			vec.Y = get("Y").asReal();
-			vec.Z = get("Z").asReal();
+			vec.x = get("X").asReal();
+			vec.y = get("Y").asReal();
+			vec.z = get("Z").asReal();
 		}
 		return vec;
 	}
 
 	@Override
 	public Vector4 asVector4() {
-		Vector4 vector = new Vector4(Vector4.Zero);
+		Vector4 vector = new Vector4(Vector4.ZERO);
 
 		if (this.size() == 4) {
-			vector.X = (float) this.get("X").asReal();
-			vector.Y = (float) this.get("Y").asReal();
-			vector.Z = (float) this.get("Z").asReal();
-			vector.S = (float) this.get("S").asReal();
+			vector.x = (float) this.get("X").asReal();
+			vector.y = (float) this.get("Y").asReal();
+			vector.z = (float) this.get("Z").asReal();
+			vector.s = (float) this.get("S").asReal();
 		}
 		return vector;
 	}
 
 	@Override
 	public Quaternion asQuaternion() {
-		Quaternion quaternion = new Quaternion(Quaternion.Identity);
+		Quaternion quaternion = new Quaternion(Quaternion.IDENTITY);
 
 		if (this.size() == 4) {
-			quaternion.X = (float) this.get("X").asReal();
-			quaternion.Y = (float) this.get("Y").asReal();
-			quaternion.Z = (float) this.get("Z").asReal();
-			quaternion.W = (float) this.get("W").asReal();
+			quaternion.x = (float) this.get("X").asReal();
+			quaternion.y = (float) this.get("Y").asReal();
+			quaternion.z = (float) this.get("Z").asReal();
+			quaternion.w = (float) this.get("W").asReal();
 		}
 		return quaternion;
 	}

@@ -13,9 +13,15 @@ public enum StatusCode {
 	// Unknown status
 	Unknown(-4);
 
+	private final byte value;
+
+	private StatusCode(int value) {
+		this.value = (byte) value;
+	}
+
 	public static StatusCode setValue(int value) {
 		for (StatusCode e : values()) {
-			if (e._value == value)
+			if (e.value == value)
 				return e;
 		}
 		return Unknown;
@@ -24,18 +30,13 @@ public enum StatusCode {
 	public static byte getValue(StatusCode value) {
 		for (StatusCode e : values()) {
 			if (e == value)
-				return e._value;
+				return e.value;
 		}
-		return Unknown._value;
+		return Unknown.value;
 	}
 
 	public byte getValue() {
-		return _value;
+		return value;
 	}
 
-	private final byte _value;
-
-	private StatusCode(int value) {
-		_value = (byte) value;
-	}
 }

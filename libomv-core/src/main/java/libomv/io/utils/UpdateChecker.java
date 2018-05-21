@@ -46,100 +46,100 @@ public class UpdateChecker {
 	private static final Logger logger = Logger.getLogger(UpdateChecker.class);
 
 	public class UpdateInfo {
-		private boolean Error;
-		private String ErrMessage;
-		private String CurrentVersion;
-		private String DownloadSite;
-		private boolean DisplayMOTD;
-		private String MOTD;
-		private boolean UpdateAvailable;
+		private boolean error;
+		private String errMessage;
+		private String currentVersion;
+		private String downloadSite;
+		private boolean displayMOTD;
+		private String motd;
+		private boolean updateAvailable;
 
 		public boolean getError() {
-			return Error;
+			return error;
 		};
 
 		public void setError(boolean value) {
-			Error = value;
+			error = value;
 		};
 
 		public String getErrMessage() {
-			return ErrMessage;
+			return errMessage;
 		};
 
 		public void setErrMessage(String value) {
-			ErrMessage = value;
+			errMessage = value;
 		};
 
 		public String getCurrentVersion() {
-			return CurrentVersion;
+			return currentVersion;
 		};
 
 		public void setCurrentVersion(String value) {
-			CurrentVersion = value;
+			currentVersion = value;
 		};
 
 		public String getDownloadSite() {
-			return DownloadSite;
+			return downloadSite;
 		};
 
 		public void setDownloadSite(String value) {
-			DownloadSite = value;
+			downloadSite = value;
 		};
 
 		public boolean getDisplayMOTD() {
-			return DisplayMOTD;
+			return displayMOTD;
 		};
 
 		public void setDisplayMOTD(boolean value) {
-			DisplayMOTD = value;
+			displayMOTD = value;
 		};
 
 		public String getMOTD() {
-			return MOTD;
+			return motd;
 		};
 
 		public void setMOTD(String value) {
-			MOTD = value;
+			motd = value;
 		};
 
 		public boolean getUpdateAvailable() {
-			return UpdateAvailable;
+			return updateAvailable;
 		};
 
 		public void setUpdateAvailable(boolean value) {
-			UpdateAvailable = value;
+			updateAvailable = value;
 		};
 	}
 
 	public class UpdateCheckerArgs implements CallbackArgs {
-		public boolean Success;
-		public UpdateInfo Info;
+		public boolean success;
+		public UpdateInfo info;
 
 		public boolean getSuccess() {
-			return Success;
+			return success;
 		};
 
 		public void setSuccess(boolean value) {
-			Success = value;
+			success = value;
 		};
 
 		public UpdateInfo getInfo() {
-			return Info;
+			return info;
 		};
 
 		public void setInfo(UpdateInfo value) {
-			Info = value;
+			info = value;
 		};
 	}
 
-	private Package Package;
+	private Package pkg;
 
-	public CallbackHandler<UpdateCheckerArgs> OnUpdateInfoReceived = new CallbackHandler<>();
+	public CallbackHandler<UpdateCheckerArgs> onUpdateInfoReceived = new CallbackHandler<>();
 
 	private CapsClient client;
 
 	public UpdateChecker(Class<?> clazz) {
-		Package = clazz.getPackage();
+		pkg = clazz.getPackage();
 	}
 
 	public void dispose() throws InterruptedException, IOException {
@@ -159,8 +159,9 @@ public class UpdateChecker {
 	 */
 	private boolean isNewerVersion(String version) throws NumberFormatException {
 		String[] verss = version.split("[\\.\\-]");
-		String[] impls = Package.getImplementationVersion().split("[\\.\\-]");
-		int impl, vers;
+		String[] impls = pkg.getImplementationVersion().split("[\\.\\-]");
+		int impl;
+		int vers;
 		for (int i = 0; i < verss.length && i < impls.length; i++) {
 			impl = Integer.parseInt(impls[i].trim());
 			vers = Integer.parseInt(verss[i].trim());
@@ -181,7 +182,7 @@ public class UpdateChecker {
 		@Override
 		public void cancelled() {
 			logger.warn("Failed fetching updatede information");
-			OnUpdateInfoReceived.dispatch(checkArgs);
+			onUpdateInfoReceived.dispatch(checkArgs);
 		}
 
 		@Override
@@ -195,19 +196,19 @@ public class UpdateChecker {
 				inf.setDownloadSite(upd.get("DownloadSite").asString());
 				inf.setDisplayMOTD(upd.get("DisplayMOTD").asBoolean());
 				inf.setMOTD(upd.get("MOTD").asString());
-				inf.UpdateAvailable = isNewerVersion(inf.getCurrentVersion());
-				checkArgs.Success = !inf.Error;
-				checkArgs.Info = inf;
+				inf.updateAvailable = isNewerVersion(inf.getCurrentVersion());
+				checkArgs.success = !inf.error;
+				checkArgs.info = inf;
 			} catch (Exception ex) {
 				logger.warn("Failed decoding updatede information: ", ex);
 			}
-			OnUpdateInfoReceived.dispatch(checkArgs);
+			onUpdateInfoReceived.dispatch(checkArgs);
 		}
 
 		@Override
 		public void failed(Exception ex) {
 			logger.warn("Failed fetching updated information: ", ex);
-			OnUpdateInfoReceived.dispatch(checkArgs);
+			onUpdateInfoReceived.dispatch(checkArgs);
 		}
 	}
 

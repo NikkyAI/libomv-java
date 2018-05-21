@@ -37,12 +37,12 @@ import libomv.rendering.Mesh.Vertex;
 import libomv.utils.Helpers;
 
 public class ModelFace {
-	public List<Vertex> vertices = new ArrayList<Vertex>();
-	public List<Integer> indices = new ArrayList<Integer>();
+	public List<Vertex> vertices = new ArrayList<>();
+	public List<Integer> indices = new ArrayList<>();
 	public String materialID = Helpers.EmptyString;
 	public ModelMaterial material = new ModelMaterial();
 
-	Hashtable<Vertex, Integer> lookUp = new Hashtable<Vertex, Integer>();
+	Hashtable<Vertex, Integer> lookUp = new Hashtable<>();
 
 	public void addVertex(Vertex v) {
 		int index;

@@ -234,7 +234,7 @@ public class AssetPrim extends AssetItem {
 				writeInt(writer, "GroupPermissions", item.permsGroup);
 				writeInt(writer, "InvType", item.inventoryType.getValue());
 				item.id.serializeXml(writer, null, "ItemID");
-				UUID.Zero.serializeXml(writer, null, "OldItemID");
+				UUID.ZERO.serializeXml(writer, null, "OldItemID");
 				item.lastOwnerID.serializeXml(writer, null, "LastOwnerID");
 				writeText(writer, "Name", item.name);
 				writeInt(writer, "NextPermissions", item.permsNextOwner);
@@ -282,12 +282,12 @@ public class AssetPrim extends AssetItem {
 
 		groupPosition.serializeXml(writer, null, "GroupPosition", Helpers.EnUsCulture);
 		if (prim.parentID == 0)
-			Vector3.Zero.serializeXml(writer, null, "OffsetPosition");
+			Vector3.ZERO.serializeXml(writer, null, "OffsetPosition");
 		else
 			prim.position.serializeXml(writer, null, "OffsetPosition");
 		prim.rotation.serializeXml(writer, null, "RotationOffset");
 		prim.velocity.serializeXml(writer, null, "Velocity");
-		Vector3.Zero.serializeXml(writer, null, "RotationalVelocity");
+		Vector3.ZERO.serializeXml(writer, null, "RotationalVelocity");
 		prim.angularVelocity.serializeXml(writer, null, "AngularVelocity");
 		prim.acceleration.serializeXml(writer, null, "Acceleration");
 		writeText(writer, "Description", prim.description);
@@ -339,7 +339,7 @@ public class AssetPrim extends AssetItem {
 
 		prim.scale.serializeXml(writer, null, "Scale"); // FIXME: again?
 		writeInt(writer, "UpdateFlag", 0);
-		Quaternion.Identity.serializeXml(writer, null, "SitTargetOrientation");
+		Quaternion.IDENTITY.serializeXml(writer, null, "SitTargetOrientation");
 		prim.sitOffset.serializeXml(writer, null, "SitTargetPosition");
 		prim.sitOffset.serializeXml(writer, null, "SitTargetPositionLL");
 		prim.sitRotation.serializeXml(writer, null, "SitTargetOrientationLL");
@@ -360,7 +360,7 @@ public class AssetPrim extends AssetItem {
 		writeText(writer, "Flags", "None");
 		prim.collisionSound.serializeXml(writer, null, "CollisionSound");
 		writeFloat(writer, "CollisionSoundVolume", prim.collisionSoundVolume);
-		Vector3.Zero.serializeXml(writer, null, "SitTargetAvatar");
+		Vector3.ZERO.serializeXml(writer, null, "SitTargetAvatar");
 		writer.endTag(null, "SceneObjectPart");
 	}
 
@@ -408,7 +408,8 @@ public class AssetPrim extends AssetItem {
 
 	private PrimObject loadPrim(XmlPullParser parser) throws XmlPullParserException, IOException {
 		PrimObject obj = new PrimObject();
-		Vector3 groupPosition = null, offsetPosition = null;
+		Vector3 groupPosition = null;
+		Vector3 offsetPosition = null;
 		boolean gotExtraPartTag = false;
 
 		obj.inventory = obj.new InventoryBlock();
@@ -429,19 +430,19 @@ public class AssetPrim extends AssetItem {
 		while (parser.nextTag() == XmlPullParser.START_TAG) {
 			String name = parser.getName();
 			if (name.equals("AllowedDrop")) {
-				obj.allowedDrop = Helpers.TryParseBoolean(parser.nextText().trim());
+				obj.allowedDrop = Helpers.tryParseBoolean(parser.nextText().trim());
 			} else if (name.equals("CreatorID")) {
 				obj.creatorID = new UUID(parser);
 			} else if (name.equals("FolderID")) {
 				obj.folderID = new UUID(parser);
 			} else if (name.equals("InventorySerial")) {
-				obj.inventory.serial = Helpers.TryParseInt(parser.nextText().trim());
+				obj.inventory.serial = Helpers.tryParseInt(parser.nextText().trim());
 			} else if (name.equals("TaskInventory")) {
 				// FIXME: Parse TaskInventory obj.Inventory.Items = new
 				// PrimObject.InventoryBlock.ItemBlock[0];
 				Helpers.skipElement(parser);
 			} else if (name.equals("ObjectFlags")) {
-				int flags = Helpers.TryParseInt(parser.nextText().trim());
+				int flags = Helpers.tryParseInt(parser.nextText().trim());
 				obj.usePhysics = (flags & PrimFlags.Physics) != 0;
 				obj.phantom = (flags & PrimFlags.Phantom) != 0;
 				obj.dieAtEdge = (flags & PrimFlags.DieAtEdge) != 0;
@@ -451,17 +452,17 @@ public class AssetPrim extends AssetItem {
 			} else if (name.equals("UUID")) {
 				obj.id = new UUID(parser);
 			} else if (name.equals("LocalId")) {
-				obj.localID = Helpers.TryParseInt(parser.nextText().trim());
+				obj.localID = Helpers.tryParseInt(parser.nextText().trim());
 			} else if (name.equals("Name")) {
 				obj.name = parser.nextText().trim();
 			} else if (name.equals("Material")) {
-				obj.material = Helpers.TryParseInt(parser.nextText().trim());
+				obj.material = Helpers.tryParseInt(parser.nextText().trim());
 			} else if (name.equals("PassTouches")) {
-				obj.passTouches = Helpers.TryParseBoolean(parser.nextText().trim());
+				obj.passTouches = Helpers.tryParseBoolean(parser.nextText().trim());
 			} else if (name.equals("RegionHandle")) {
-				obj.regionHandle = Helpers.TryParseLong(parser.nextText().trim());
+				obj.regionHandle = Helpers.tryParseLong(parser.nextText().trim());
 			} else if (name.equals("ScriptAccessPin")) {
-				obj.remoteScriptAccessPIN = Helpers.TryParseInt(parser.nextText().trim());
+				obj.remoteScriptAccessPIN = Helpers.tryParseInt(parser.nextText().trim());
 			} else if (name.equals("GroupPosition")) {
 				groupPosition = new Vector3(parser);
 			} else if (name.equals("OffsetPosition")) {
@@ -487,9 +488,9 @@ public class AssetPrim extends AssetItem {
 			} else if (name.equals("TouchName")) {
 				obj.touchName = parser.nextText().trim();
 			} else if (name.equals("LinkNum")) {
-				obj.linkNumber = Helpers.TryParseInt(parser.nextText().trim());
+				obj.linkNumber = Helpers.tryParseInt(parser.nextText().trim());
 			} else if (name.equals("ClickAction")) {
-				obj.clickAction = Helpers.TryParseInt(parser.nextText().trim());
+				obj.clickAction = Helpers.tryParseInt(parser.nextText().trim());
 			} else if (name.equals("Shape")) {
 				obj.shape = loadShape(parser, obj);
 			} else if (name.equals("Scale")) {
@@ -505,17 +506,17 @@ public class AssetPrim extends AssetItem {
 			} else if (name.equals("SitTargetOrientationLL")) {
 				obj.sitRotation = new Quaternion(parser);
 			} else if (name.equals("ParentID")) {
-				obj.parentID = Helpers.TryParseInt(parser.nextText().trim());
+				obj.parentID = Helpers.tryParseInt(parser.nextText().trim());
 			} else if (name.equals("CreationDate")) {
-				obj.creationDate = Helpers.UnixTimeToDateTime(Helpers.TryParseInt(parser.nextText().trim()));
+				obj.creationDate = Helpers.unixTimeToDateTime(Helpers.tryParseInt(parser.nextText().trim()));
 			} else if (name.equals("Category")) {
-				Helpers.TryParseInt(parser.nextText().trim());
+				Helpers.tryParseInt(parser.nextText().trim());
 			} else if (name.equals("SalePrice")) {
-				obj.salePrice = Helpers.TryParseInt(parser.nextText().trim());
+				obj.salePrice = Helpers.tryParseInt(parser.nextText().trim());
 			} else if (name.equals("ObjectSaleType")) {
-				obj.saleType = Helpers.TryParseInt(parser.nextText().trim());
+				obj.saleType = Helpers.tryParseInt(parser.nextText().trim());
 			} else if (name.equals("OwnershipCost")) {
-				Helpers.TryParseInt(parser.nextText().trim());
+				Helpers.tryParseInt(parser.nextText().trim());
 			} else if (name.equals("GroupID")) {
 				obj.groupID = new UUID(parser);
 			} else if (name.equals("OwnerID")) {
@@ -523,21 +524,21 @@ public class AssetPrim extends AssetItem {
 			} else if (name.equals("LastOwnerID")) {
 				obj.lastOwnerID = new UUID(parser);
 			} else if (name.equals("BaseMask")) {
-				obj.permsBase = Helpers.TryParseInt(parser.nextText().trim());
+				obj.permsBase = Helpers.tryParseInt(parser.nextText().trim());
 			} else if (name.equals("OwnerMask")) {
-				obj.permsOwner = Helpers.TryParseInt(parser.nextText().trim());
+				obj.permsOwner = Helpers.tryParseInt(parser.nextText().trim());
 			} else if (name.equals("GroupMask")) {
-				obj.permsGroup = Helpers.TryParseInt(parser.nextText().trim());
+				obj.permsGroup = Helpers.tryParseInt(parser.nextText().trim());
 			} else if (name.equals("EveryoneMask")) {
-				obj.permsEveryone = Helpers.TryParseInt(parser.nextText().trim());
+				obj.permsEveryone = Helpers.tryParseInt(parser.nextText().trim());
 			} else if (name.equals("NextOwnerMask")) {
-				obj.permsNextOwner = Helpers.TryParseInt(parser.nextText().trim());
+				obj.permsNextOwner = Helpers.tryParseInt(parser.nextText().trim());
 			} else if (name.equals("Flags")) {
 				parser.nextText();
 			} else if (name.equals("CollisionSound")) {
 				obj.collisionSound = new UUID(parser);
 			} else if (name.equals("CollisionSoundVolume")) {
-				obj.collisionSoundVolume = Helpers.TryParseFloat(parser.nextText().trim());
+				obj.collisionSoundVolume = Helpers.tryParseFloat(parser.nextText().trim());
 			} else {
 				if (parser.isEmptyElementTag())
 					Helpers.skipElement(parser);
@@ -571,64 +572,64 @@ public class AssetPrim extends AssetItem {
 		while (parser.nextTag() == XmlPullParser.START_TAG) {
 			String name = parser.getName();
 			if (name.equals("ProfileCurve")) {
-				obj.shape.profileCurve = Helpers.TryParseInt(parser.nextText().trim());
+				obj.shape.profileCurve = Helpers.tryParseInt(parser.nextText().trim());
 			} else if (name.equals("TextureEntry")) {
 				byte[] teData = Base64.decodeBase64(parser.nextText());
 				obj.textures = new TextureEntry(teData, 0, teData.length);
 			} else if (name.equals("ExtraParams")) {
 				parser.nextText(); // Skip Extra Params
 			} else if (name.equals("PathBegin")) {
-				obj.shape.pathBegin = Primitive.unpackBeginCut((short) Helpers.TryParseInt(parser.nextText().trim()));
+				obj.shape.pathBegin = Primitive.unpackBeginCut((short) Helpers.tryParseInt(parser.nextText().trim()));
 			} else if (name.equals("PathCurve")) {
-				obj.shape.pathCurve = Helpers.TryParseInt(parser.nextText().trim());
+				obj.shape.pathCurve = Helpers.tryParseInt(parser.nextText().trim());
 			} else if (name.equals("PathEnd")) {
-				obj.shape.pathEnd = Primitive.unpackEndCut((short) Helpers.TryParseInt(parser.nextText().trim()));
+				obj.shape.pathEnd = Primitive.unpackEndCut((short) Helpers.tryParseInt(parser.nextText().trim()));
 			} else if (name.equals("PathRadiusOffset")) {
 				obj.shape.pathRadiusOffset = Primitive
-						.unpackPathTwist((byte) Helpers.TryParseInt(parser.nextText().trim()));
+						.unpackPathTwist((byte) Helpers.tryParseInt(parser.nextText().trim()));
 			} else if (name.equals("PathRevolutions")) {
 				obj.shape.pathRevolutions = Primitive
-						.unpackPathRevolutions((byte) Helpers.TryParseInt(parser.nextText().trim()));
+						.unpackPathRevolutions((byte) Helpers.tryParseInt(parser.nextText().trim()));
 			} else if (name.equals("PathScaleX")) {
-				obj.shape.pathScaleX = Primitive.unpackPathScale((byte) Helpers.TryParseInt(parser.nextText().trim()));
+				obj.shape.pathScaleX = Primitive.unpackPathScale((byte) Helpers.tryParseInt(parser.nextText().trim()));
 			} else if (name.equals("PathScaleY")) {
-				obj.shape.pathScaleY = Primitive.unpackPathScale((byte) Helpers.TryParseInt(parser.nextText().trim()));
+				obj.shape.pathScaleY = Primitive.unpackPathScale((byte) Helpers.tryParseInt(parser.nextText().trim()));
 			} else if (name.equals("PathShearX")) {
-				obj.shape.pathShearX = Primitive.unpackPathShear((byte) Helpers.TryParseInt(parser.nextText().trim()));
+				obj.shape.pathShearX = Primitive.unpackPathShear((byte) Helpers.tryParseInt(parser.nextText().trim()));
 			} else if (name.equals("PathShearY")) {
-				obj.shape.pathShearY = Primitive.unpackPathShear((byte) Helpers.TryParseInt(parser.nextText().trim()));
+				obj.shape.pathShearY = Primitive.unpackPathShear((byte) Helpers.tryParseInt(parser.nextText().trim()));
 			} else if (name.equals("PathSkew")) {
-				obj.shape.pathSkew = Primitive.unpackPathTwist((byte) Helpers.TryParseInt(parser.nextText().trim()));
+				obj.shape.pathSkew = Primitive.unpackPathTwist((byte) Helpers.tryParseInt(parser.nextText().trim()));
 			} else if (name.equals("PathTaperX")) {
-				obj.shape.pathTaperX = Primitive.unpackPathTaper((byte) Helpers.TryParseInt(parser.nextText().trim()));
+				obj.shape.pathTaperX = Primitive.unpackPathTaper((byte) Helpers.tryParseInt(parser.nextText().trim()));
 			} else if (name.equals("PathTaperY")) {
-				obj.shape.pathTaperY = Primitive.unpackPathShear((byte) Helpers.TryParseInt(parser.nextText().trim()));
+				obj.shape.pathTaperY = Primitive.unpackPathShear((byte) Helpers.tryParseInt(parser.nextText().trim()));
 			} else if (name.equals("PathTwist")) {
-				obj.shape.pathTwist = Primitive.unpackPathTwist((byte) Helpers.TryParseInt(parser.nextText().trim()));
+				obj.shape.pathTwist = Primitive.unpackPathTwist((byte) Helpers.tryParseInt(parser.nextText().trim()));
 			} else if (name.equals("PathTwistBegin")) {
 				obj.shape.pathTwistBegin = Primitive
-						.unpackPathTwist((byte) Helpers.TryParseInt(parser.nextText().trim()));
+						.unpackPathTwist((byte) Helpers.tryParseInt(parser.nextText().trim()));
 			} else if (name.equals("PCode")) {
-				obj.primCode = Helpers.TryParseInt(parser.nextText().trim());
+				obj.primCode = Helpers.tryParseInt(parser.nextText().trim());
 			} else if (name.equals("ProfileBegin")) {
 				obj.shape.profileBegin = Primitive
-						.unpackBeginCut((short) Helpers.TryParseInt(parser.nextText().trim()));
+						.unpackBeginCut((short) Helpers.tryParseInt(parser.nextText().trim()));
 			} else if (name.equals("ProfileEnd")) {
-				obj.shape.profileEnd = Primitive.unpackEndCut((short) Helpers.TryParseInt(parser.nextText().trim()));
+				obj.shape.profileEnd = Primitive.unpackEndCut((short) Helpers.tryParseInt(parser.nextText().trim()));
 			} else if (name.equals("ProfileHollow")) {
 				obj.shape.profileHollow = Primitive
-						.unpackProfileHollow((short) Helpers.TryParseInt(parser.nextText().trim()));
+						.unpackProfileHollow((short) Helpers.tryParseInt(parser.nextText().trim()));
 			} else if (name.equals("Scale")) {
 				obj.scale = new Vector3(parser);
 			} else if (name.equals("State")) {
-				obj.state = (byte) Helpers.TryParseInt(parser.nextText().trim());
+				obj.state = (byte) Helpers.tryParseInt(parser.nextText().trim());
 			} else if (name.equals("ProfileShape")) {
-				obj.shape.profileCurve |= ProfileCurve.setValue(Helpers.TryParseInt(parser.nextText())).getValue();
+				obj.shape.profileCurve |= ProfileCurve.setValue(Helpers.tryParseInt(parser.nextText())).getValue();
 			} else if (name.equals("HollowShape")) {
-				obj.shape.profileCurve |= HoleType.setValue(Helpers.TryParseInt(parser.nextText())).getValue() << 4;
+				obj.shape.profileCurve |= HoleType.setValue(Helpers.tryParseInt(parser.nextText())).getValue() << 4;
 			} else if (name.equals("SculptTexture")) {
 				UUID sculptTexture = new UUID(parser);
-				if (!sculptTexture.equals(UUID.Zero)) {
+				if (!sculptTexture.equals(UUID.ZERO)) {
 					if (obj.sculpt == null)
 						obj.sculpt = obj.new SculptBlock();
 					obj.sculpt.texture = sculptTexture;
@@ -636,46 +637,46 @@ public class AssetPrim extends AssetItem {
 			} else if (name.equals("SculptType")) {
 				if (obj.sculpt == null)
 					obj.sculpt = obj.new SculptBlock();
-				obj.sculpt.type = SculptType.setValue(Helpers.TryParseInt(parser.nextText())).getValue();
+				obj.sculpt.type = SculptType.setValue(Helpers.tryParseInt(parser.nextText())).getValue();
 			} else if (name.equals("SculptData")) {
 				parser.nextText();
 			} else if (name.equals("FlexiSoftness")) {
-				flexible.softness = Helpers.TryParseInt(parser.nextText().trim());
+				flexible.softness = Helpers.tryParseInt(parser.nextText().trim());
 			} else if (name.equals("FlexiTension")) {
-				flexible.tension = Helpers.TryParseFloat(parser.nextText().trim());
+				flexible.tension = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equals("FlexiDrag")) {
-				flexible.drag = Helpers.TryParseFloat(parser.nextText().trim());
+				flexible.drag = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equals("FlexiGravity")) {
-				flexible.gravity = Helpers.TryParseFloat(parser.nextText().trim());
+				flexible.gravity = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equals("FlexiWind")) {
-				flexible.wind = Helpers.TryParseFloat(parser.nextText().trim());
+				flexible.wind = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equals("FlexiForceX")) {
-				flexible.force.X = Helpers.TryParseFloat(parser.nextText().trim());
+				flexible.force.x = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equals("FlexiForceY")) {
-				flexible.force.Y = Helpers.TryParseFloat(parser.nextText().trim());
+				flexible.force.y = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equals("FlexiForceZ")) {
-				flexible.force.Z = Helpers.TryParseFloat(parser.nextText().trim());
+				flexible.force.z = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equals("LightColorR")) {
-				light.color.R = Helpers.TryParseFloat(parser.nextText().trim());
+				light.color.r = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equals("LightColorG")) {
-				light.color.G = Helpers.TryParseFloat(parser.nextText().trim());
+				light.color.g = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equals("LightColorB")) {
-				light.color.B = Helpers.TryParseFloat(parser.nextText().trim());
+				light.color.b = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equals("LightColorA")) {
-				light.color.A = Helpers.TryParseFloat(parser.nextText().trim());
+				light.color.a = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equals("LightRadius")) {
-				light.radius = Helpers.TryParseFloat(parser.nextText().trim());
+				light.radius = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equals("LightCutoff")) {
-				light.cutoff = Helpers.TryParseFloat(parser.nextText().trim());
+				light.cutoff = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equals("LightFalloff")) {
-				light.falloff = Helpers.TryParseFloat(parser.nextText().trim());
+				light.falloff = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equals("LightIntensity")) {
-				light.intensity = Helpers.TryParseFloat(parser.nextText().trim());
+				light.intensity = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equals("FlexiEntry")) {
-				if (Helpers.TryParseBoolean(parser.nextText().trim()))
+				if (Helpers.tryParseBoolean(parser.nextText().trim()))
 					obj.flexible = flexible;
 			} else if (name.equals("LightEntry")) {
-				if (Helpers.TryParseBoolean(parser.nextText().trim()))
+				if (Helpers.tryParseBoolean(parser.nextText().trim()))
 					obj.light = light;
 			} else if (name.equals("SculptEntry")) {
 				parser.nextText(); // Skip
@@ -940,12 +941,12 @@ public class AssetPrim extends AssetItem {
 					lastOwnerID = item.permissions.lastOwnerID;
 					name = item.name;
 					ownerID = item.getOwnerID();
-					permsBase = item.permissions.BaseMask;
-					permsEveryone = item.permissions.EveryoneMask;
-					permsGroup = item.permissions.GroupMask;
-					permsNextOwner = item.permissions.NextOwnerMask;
-					permsOwner = item.permissions.OwnerMask;
-					permsGranterID = UUID.Zero;
+					permsBase = item.permissions.baseMask;
+					permsEveryone = item.permissions.everyoneMask;
+					permsGroup = item.permissions.groupMask;
+					permsNextOwner = item.permissions.nextOwnerMask;
+					permsOwner = item.permissions.ownerMask;
+					permsGranterID = UUID.ZERO;
 					assetType = item.assetType;
 				}
 
@@ -1181,11 +1182,11 @@ public class AssetPrim extends AssetItem {
 
 			// PassTouches;
 			primCode = obj.primData.primCode.getValue();
-			permsBase = obj.properties.permissions.BaseMask;
-			permsEveryone = obj.properties.permissions.EveryoneMask;
-			permsGroup = obj.properties.permissions.GroupMask;
-			permsNextOwner = obj.properties.permissions.NextOwnerMask;
-			permsOwner = obj.properties.permissions.OwnerMask;
+			permsBase = obj.properties.permissions.baseMask;
+			permsEveryone = obj.properties.permissions.everyoneMask;
+			permsGroup = obj.properties.permissions.groupMask;
+			permsNextOwner = obj.properties.permissions.nextOwnerMask;
+			permsOwner = obj.properties.permissions.ownerMask;
 			phantom = (obj.flags & PrimFlags.Phantom) == PrimFlags.Phantom;
 			position = obj.position;
 			regionHandle = obj.regionHandle;
@@ -1481,12 +1482,12 @@ public class AssetPrim extends AssetItem {
 				prim.particleSys.maxAge = this.particles.maxAge;
 				prim.particleSys.outerAngle = this.particles.outerAngle;
 				prim.particleSys.partEndColor = this.particles.particleEndColor;
-				prim.particleSys.partEndScaleX = this.particles.particleEndScale.X;
-				prim.particleSys.partEndScaleY = this.particles.particleEndScale.Y;
+				prim.particleSys.partEndScaleX = this.particles.particleEndScale.x;
+				prim.particleSys.partEndScaleY = this.particles.particleEndScale.y;
 				prim.particleSys.maxAge = this.particles.particleMaxAge;
 				prim.particleSys.partStartColor = this.particles.particleStartColor;
-				prim.particleSys.partStartScaleX = this.particles.particleStartScale.X;
-				prim.particleSys.partStartScaleY = this.particles.particleStartScale.Y;
+				prim.particleSys.partStartScaleX = this.particles.particleStartScale.x;
+				prim.particleSys.partStartScaleY = this.particles.particleStartScale.y;
 				prim.particleSys.pattern = SourcePattern.setValue(this.particles.pattern);
 				prim.particleSys.startAge = this.particles.startAge;
 				prim.particleSys.target = this.particles.targetID;

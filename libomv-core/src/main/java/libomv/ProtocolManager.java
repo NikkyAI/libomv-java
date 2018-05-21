@@ -30,7 +30,7 @@
  */
 package libomv;
 
-import static libomv.utils.Helpers.BytesToInt16L;
+import static libomv.utils.Helpers.bytesToInt16L;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -265,26 +265,26 @@ public class ProtocolManager {
 			if (data[7] == (byte) 0xFF) {
 				// Low frequency
 				command = (data[8] * 256 + data[9]);
-				return command(command, PacketFrequency.Low);
+				return command(command, PacketFrequency.LOW);
 			}
 
 			// Medium frequency
 			command = data[7];
-			return command(command, PacketFrequency.Medium);
+			return command(command, PacketFrequency.MEDIUM);
 		}
 
 		// High frequency
 		command = data[6];
-		return command(command, PacketFrequency.High);
+		return command(command, PacketFrequency.HIGH);
 	}
 
 	public MapPacket command(int command, int frequency) throws Exception {
 		switch (frequency) {
-		case PacketFrequency.High:
+		case PacketFrequency.HIGH:
 			return highMaps.getMapPacketByCommand(command);
-		case PacketFrequency.Medium:
+		case PacketFrequency.MEDIUM:
 			return mediumMaps.getMapPacketByCommand(command);
-		case PacketFrequency.Low:
+		case PacketFrequency.LOW:
 			return lowMaps.getMapPacketByCommand(command);
 		default:
 			break;
@@ -429,7 +429,7 @@ public class ProtocolManager {
 									int fixedID = (int) (l_fixedID ^ 0xFFFF0000);
 									currentPacket = new MapPacket();
 									currentPacket.id = fixedID;
-									currentPacket.frequency = PacketFrequency.Low;
+									currentPacket.frequency = PacketFrequency.LOW;
 									currentPacket.name = tokens[0];
 									currentPacket.trusted = tokens[3].equals("Trusted");
 									currentPacket.encoded = tokens[4].equals("Zerocoded");
@@ -440,7 +440,7 @@ public class ProtocolManager {
 								} else if (tokens[1].equals("Low")) {
 									currentPacket = new MapPacket();
 									currentPacket.id = low;
-									currentPacket.frequency = PacketFrequency.Low;
+									currentPacket.frequency = PacketFrequency.LOW;
 									currentPacket.name = tokens[0];
 									currentPacket.trusted = tokens[2].equals("Trusted");
 									currentPacket.encoded = tokens[3].equals("Zerocoded");
@@ -452,7 +452,7 @@ public class ProtocolManager {
 								} else if (tokens[1].equals("Medium")) {
 									currentPacket = new MapPacket();
 									currentPacket.id = medium;
-									currentPacket.frequency = PacketFrequency.Medium;
+									currentPacket.frequency = PacketFrequency.MEDIUM;
 									currentPacket.name = tokens[0];
 									currentPacket.trusted = tokens[2].equals("Trusted");
 									currentPacket.encoded = tokens[3].equals("Zerocoded");
@@ -465,7 +465,7 @@ public class ProtocolManager {
 								} else if (tokens[1].equals("High")) {
 									currentPacket = new MapPacket();
 									currentPacket.id = high;
-									currentPacket.frequency = PacketFrequency.High;
+									currentPacket.frequency = PacketFrequency.HIGH;
 									currentPacket.name = tokens[0];
 									currentPacket.trusted = tokens[2].equals("Trusted");
 									currentPacket.encoded = tokens[3].equals("Zerocoded");
@@ -536,12 +536,9 @@ public class ProtocolManager {
 							} else {
 								logger.error("Unknown block frequency");
 							}
-							// #endregion
 						}
 					}
 				}
-
-				// #endregion
 			}
 
 			r.close();
@@ -560,7 +557,8 @@ public class ProtocolManager {
 	}
 
 	public short getBlockNum(MapPacket packet, byte[] message, int blockIndex) throws Exception {
-		short blocks, offset = 0;
+		short blocks;
+		short offset = 0;
 		for (MapBlock block : packet.blocks) {
 			if (block.count >= 0) {
 				blocks = block.count;
@@ -585,7 +583,8 @@ public class ProtocolManager {
 
 	public MapField getFieldOffset(MapPacket packet, byte[] message, int blockIndex, int fieldIndex, short blockNumber)
 			throws Exception {
-		short blocks, offset = 0;
+		short blocks;
+		short offset = 0;
 		for (MapBlock block : packet.blocks) {
 			if (block.count >= 0) {
 				blocks = block.count;
@@ -632,7 +631,7 @@ public class ProtocolManager {
 			else if (field.count == 2)
 				// TODO:FIXME
 				// Kinda awkward, this is the only reason Helpers is included :(
-				return (short) (BytesToInt16L(message, offset) + 2);
+				return (short) (bytesToInt16L(message, offset) + 2);
 			else
 				throw new Exception("Invalid count for variable sized field!");
 		}

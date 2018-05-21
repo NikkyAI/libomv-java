@@ -67,7 +67,7 @@ public class TGAImage extends ManagedImage {
 
 	/**
 	 * Reads the pixmap as RLE encode stream
-	 * 
+	 *
 	 * @param is
 	 *            the DataInputStream in little endian format
 	 * @param byp
@@ -81,7 +81,8 @@ public class TGAImage extends ManagedImage {
 	 */
 	private void decodeRle(SwappedDataInputStream is, int byp, TGAColorMap cd, boolean bottomUp) throws IOException {
 		int vals[] = new int[getWidth() + 128];
-		int x = 0, pixel = bottomUp ? (getHeight() - 1) * getWidth() : 0;
+		int x = 0;
+		int pixel = bottomUp ? (getHeight() - 1) * getWidth() : 0;
 
 		// RLE compressed
 		for (int y = 0; y < getHeight(); y++) {
@@ -117,7 +118,7 @@ public class TGAImage extends ManagedImage {
 
 	/**
 	 * Reads the pixmap as unencoded stream
-	 * 
+	 *
 	 * @param is
 	 *            the DataInputStream in little endian format
 	 * @param byp
@@ -183,7 +184,8 @@ public class TGAImage extends ManagedImage {
 		TGAHeader header = new TGAHeader(image);
 		header.write(os);
 
-		int len = 18, n = image.getWidth() * image.getHeight();
+		int len = 18;
+		int n = image.getWidth() * image.getHeight();
 
 		if ((image.getChannels() & ImageChannels.Alpha) != 0) {
 			if ((image.getChannels() & ImageChannels.Color) != 0) {

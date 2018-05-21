@@ -222,11 +222,11 @@ public class OSDArray extends OSD implements List<OSD> {
 
 	@Override
 	public Vector2 asVector2() {
-		Vector2 vector = new Vector2(Vector2.Zero);
+		Vector2 vector = new Vector2(Vector2.ZERO);
 
 		if (this.size() == 2) {
-			vector.X = (float) this.get(0).asReal();
-			vector.Y = (float) this.get(1).asReal();
+			vector.x = (float) this.get(0).asReal();
+			vector.y = (float) this.get(1).asReal();
 		}
 
 		return vector;
@@ -234,12 +234,12 @@ public class OSDArray extends OSD implements List<OSD> {
 
 	@Override
 	public Vector3 asVector3() {
-		Vector3 vector = new Vector3(Vector3.Zero);
+		Vector3 vector = new Vector3(Vector3.ZERO);
 
 		if (this.size() == 3) {
-			vector.X = (float) this.get(0).asReal();
-			vector.Y = (float) this.get(1).asReal();
-			vector.Z = (float) this.get(2).asReal();
+			vector.x = (float) this.get(0).asReal();
+			vector.y = (float) this.get(1).asReal();
+			vector.z = (float) this.get(2).asReal();
 		}
 
 		return vector;
@@ -247,12 +247,12 @@ public class OSDArray extends OSD implements List<OSD> {
 
 	@Override
 	public Vector3d asVector3d() {
-		Vector3d vector = new Vector3d(Vector3d.Zero);
+		Vector3d vector = new Vector3d(Vector3d.ZERO);
 
 		if (this.size() == 3) {
-			vector.X = this.get(0).asReal();
-			vector.Y = this.get(1).asReal();
-			vector.Z = this.get(2).asReal();
+			vector.x = this.get(0).asReal();
+			vector.y = this.get(1).asReal();
+			vector.z = this.get(2).asReal();
 		}
 
 		return vector;
@@ -260,39 +260,39 @@ public class OSDArray extends OSD implements List<OSD> {
 
 	@Override
 	public Vector4 asVector4() {
-		Vector4 vector = new Vector4(Vector4.Zero);
+		Vector4 vector = new Vector4(Vector4.ZERO);
 
 		if (this.size() == 4) {
-			vector.X = (float) this.get(0).asReal();
-			vector.Y = (float) this.get(1).asReal();
-			vector.Z = (float) this.get(2).asReal();
-			vector.S = (float) this.get(3).asReal();
+			vector.x = (float) this.get(0).asReal();
+			vector.y = (float) this.get(1).asReal();
+			vector.z = (float) this.get(2).asReal();
+			vector.s = (float) this.get(3).asReal();
 		}
 		return vector;
 	}
 
 	@Override
 	public Quaternion asQuaternion() {
-		Quaternion quaternion = new Quaternion(Quaternion.Identity);
+		Quaternion quaternion = new Quaternion(Quaternion.IDENTITY);
 
 		if (this.size() == 4) {
-			quaternion.X = (float) this.get(0).asReal();
-			quaternion.Y = (float) this.get(1).asReal();
-			quaternion.Z = (float) this.get(2).asReal();
-			quaternion.W = (float) this.get(3).asReal();
+			quaternion.x = (float) this.get(0).asReal();
+			quaternion.y = (float) this.get(1).asReal();
+			quaternion.z = (float) this.get(2).asReal();
+			quaternion.w = (float) this.get(3).asReal();
 		}
 		return quaternion;
 	}
 
 	@Override
 	public Color4 asColor4() {
-		Color4 color = new Color4(Color4.Black);
+		Color4 color = new Color4(Color4.BLACK);
 
 		if (this.size() == 4) {
-			color.R = (float) this.get(0).asReal();
-			color.G = (float) this.get(1).asReal();
-			color.B = (float) this.get(2).asReal();
-			color.A = (float) this.get(3).asReal();
+			color.r = (float) this.get(0).asReal();
+			color.g = (float) this.get(1).asReal();
+			color.b = (float) this.get(2).asReal();
+			color.a = (float) this.get(3).asReal();
 		}
 		return color;
 	}

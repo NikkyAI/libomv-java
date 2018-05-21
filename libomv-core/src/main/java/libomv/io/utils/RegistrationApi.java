@@ -58,35 +58,35 @@ import libomv.types.Vector3;
 import libomv.utils.Helpers;
 
 public class RegistrationApi {
-	final int REQUEST_TIMEOUT = 1000 * 100;
+	static final int REQUEST_TIMEOUT = 1000 * 100;
 
 	private class UserInfo {
-		public String FirstName;
-		public String LastName;
-		public String Password;
+		public String firstName;
+		public String lastName;
+		public String password;
 	}
 
 	private class RegistrationCaps {
-		public URI CreateUser;
-		public URI CheckName;
-		public URI GetLastNames;
-		public URI GetErrorCodes;
+		public URI createUser;
+		public URI checkName;
+		public URI getLastNames;
+		public URI getErrorCodes;
 	}
 
 	public class ErrorCode {
-		public int Code;
-		public String Name;
-		public String Description;
+		public int code;
+		public String name;
+		public String description;
 
 		public ErrorCode(int code, String name, String description) {
-			Code = code;
-			Name = name;
-			Description = description;
+			this.code = code;
+			this.name = name;
+			this.description = description;
 		}
 
 		@Override
 		public String toString() {
-			return String.format("Code: %d, Name: %s, Description: %s", Code, Name, Description);
+			return String.format("Code: %d, Name: %s, Description: %s", code, name, description);
 		}
 	}
 
@@ -95,39 +95,39 @@ public class RegistrationApi {
 	// or
 	// https://wiki.secondlife.com/wiki/RegAPIDoc for description
 	public class CreateUserParam {
-		public String FirstName;
-		public int LastNameID;
-		public String Email;
-		public String Password;
-		public Date Birthdate;
+		public String firstName;
+		public int lastNameID;
+		public String email;
+		public String password;
+		public Date birthdate;
 
 		// optional:
-		public Integer LimitedToEstate;
-		public String StartRegionName;
-		public Vector3 StartLocation;
-		public Vector3 StartLookAt;
+		public Integer limitedToEstate;
+		public String startRegionName;
+		public Vector3 startLocation;
+		public Vector3 startLookAt;
 	}
 
-	private UserInfo _userInfo;
-	private RegistrationCaps _caps;
-	private int _initializing;
-	private Map<Integer, ErrorCode> _errors;
-	private Map<String, Integer> _lastNames;
+	private UserInfo userInfo;
+	private RegistrationCaps caps;
+	private int initializing;
+	private Map<Integer, ErrorCode> errors;
+	private Map<String, Integer> lastNames;
 
 	public boolean getInitializing() {
-		return (_initializing < 0);
+		return (initializing < 0);
 	}
 
 	public RegistrationApi(String firstName, String lastName, String password)
 			throws IOReactorException, UnsupportedEncodingException, URISyntaxException, InterruptedException,
 			ExecutionException, TimeoutException {
-		_initializing = -2;
+		initializing = -2;
 
-		_userInfo = new UserInfo();
+		userInfo = new UserInfo();
 
-		_userInfo.FirstName = firstName;
-		_userInfo.LastName = lastName;
-		_userInfo.Password = password;
+		userInfo.firstName = firstName;
+		userInfo.lastName = lastName;
+		userInfo.password = password;
 
 		getCapabilities();
 	}
@@ -144,8 +144,8 @@ public class RegistrationApi {
 	private void getCapabilities() throws URISyntaxException, IOReactorException, UnsupportedEncodingException,
 			InterruptedException, ExecutionException, TimeoutException {
 		// build post data
-		String postData = String.format("first_name=%s&last_name=%s&password=%s", _userInfo.FirstName,
-				_userInfo.LastName, _userInfo.Password);
+		String postData = String.format("first_name=%s&last_name=%s&password=%s", userInfo.firstName, userInfo.lastName,
+				userInfo.password);
 
 		Future<OSD> future = new CapsClient(null, "get_reg_capabilities").executeHttpPost(getRegistrationApiCaps(),
 				postData, "application/x-www-form-urlencoded", Helpers.UTF8_ENCODING);
@@ -153,17 +153,17 @@ public class RegistrationApi {
 		if (response instanceof OSDMap) {
 			OSDMap respTable = (OSDMap) response;
 			// parse
-			_caps = new RegistrationCaps();
+			caps = new RegistrationCaps();
 
-			_caps.CreateUser = respTable.get("create_user").asUri();
-			_caps.CheckName = respTable.get("check_name").asUri();
-			_caps.GetLastNames = respTable.get("get_last_names").asUri();
-			_caps.GetErrorCodes = respTable.get("get_error_codes").asUri();
+			caps.createUser = respTable.get("create_user").asUri();
+			caps.checkName = respTable.get("check_name").asUri();
+			caps.getLastNames = respTable.get("get_last_names").asUri();
+			caps.getErrorCodes = respTable.get("get_error_codes").asUri();
 
 			// finalize
-			_initializing++;
+			initializing++;
 
-			_errors = getErrorCodes(_caps.GetErrorCodes);
+			errors = getErrorCodes(caps.getErrorCodes);
 		}
 	}
 
@@ -193,7 +193,7 @@ public class RegistrationApi {
 			}
 
 			// finalize
-			_initializing++;
+			initializing++;
 		}
 		return errorCodes;
 	}
@@ -228,17 +228,17 @@ public class RegistrationApi {
 	 */
 	public synchronized Map<String, Integer> getLastNames()
 			throws IOReactorException, InterruptedException, ExecutionException, TimeoutException {
-		if (_lastNames.size() <= 0) {
+		if (lastNames.size() <= 0) {
 			if (getInitializing())
 				throw new IllegalStateException("still initializing");
 
-			if (_caps.GetLastNames == null)
+			if (caps.getLastNames == null)
 				throw new UnsupportedOperationException(
 						"access denied: only approved developers have access to the registration api");
 
-			_lastNames = getLastNames(_caps.GetLastNames);
+			lastNames = getLastNames(caps.getLastNames);
 		}
-		return _lastNames;
+		return lastNames;
 	}
 
 	/**
@@ -256,7 +256,7 @@ public class RegistrationApi {
 		if (getInitializing())
 			throw new IllegalStateException("still initializing");
 
-		if (_caps.CheckName == null)
+		if (caps.checkName == null)
 			throw new UnsupportedOperationException(
 					"access denied; only approved developers have access to the registration api");
 
@@ -265,8 +265,7 @@ public class RegistrationApi {
 		query.put("username", OSD.fromString(firstName));
 		query.put("last_name_id", OSD.fromInteger(lastNameID));
 
-		Future<OSD> future = new CapsClient(null, "checkName").executeHttpPost(_caps.GetLastNames, query,
-				OSDFormat.Xml);
+		Future<OSD> future = new CapsClient(null, "checkName").executeHttpPost(caps.getLastNames, query, OSDFormat.Xml);
 		OSD response = future.get(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
 		if (response.getType() != OSDType.Boolean)
 			throw new Exception("check_name did not return a boolean as the only element inside the <llsd> tag.");
@@ -286,38 +285,38 @@ public class RegistrationApi {
 		if (getInitializing())
 			throw new IllegalStateException("still initializing");
 
-		if (_caps.CreateUser == null)
+		if (caps.createUser == null)
 			throw new UnsupportedOperationException(
 					"access denied; only approved developers have access to the registration api");
 
 		// Create the POST data
 		OSDMap query = new OSDMap();
-		query.put("username", OSD.fromString(user.FirstName));
-		query.put("last_name_id", OSD.fromInteger(user.LastNameID));
-		query.put("email", OSD.fromString(user.Email));
-		query.put("password", OSD.fromString(user.Password));
-		query.put("dob", OSD.fromString(new SimpleDateFormat("yyyy-MM-dd").format(user.Birthdate)));
+		query.put("username", OSD.fromString(user.firstName));
+		query.put("last_name_id", OSD.fromInteger(user.lastNameID));
+		query.put("email", OSD.fromString(user.email));
+		query.put("password", OSD.fromString(user.password));
+		query.put("dob", OSD.fromString(new SimpleDateFormat("yyyy-MM-dd").format(user.birthdate)));
 
-		if (user.LimitedToEstate != null)
-			query.put("limited_to_estate", OSD.fromInteger(user.LimitedToEstate));
+		if (user.limitedToEstate != null)
+			query.put("limited_to_estate", OSD.fromInteger(user.limitedToEstate));
 
-		if (user.StartRegionName != null && !user.StartRegionName.isEmpty())
-			query.put("start_region_name", OSD.fromString(user.StartRegionName));
+		if (user.startRegionName != null && !user.startRegionName.isEmpty())
+			query.put("start_region_name", OSD.fromString(user.startRegionName));
 
-		if (user.StartLocation != null) {
-			query.put("start_local_x", OSD.fromReal(user.StartLocation.X));
-			query.put("start_local_y", OSD.fromReal(user.StartLocation.Y));
-			query.put("start_local_z", OSD.fromReal(user.StartLocation.Z));
+		if (user.startLocation != null) {
+			query.put("start_local_x", OSD.fromReal(user.startLocation.x));
+			query.put("start_local_y", OSD.fromReal(user.startLocation.y));
+			query.put("start_local_z", OSD.fromReal(user.startLocation.z));
 		}
 
-		if (user.StartLookAt != null) {
-			query.put("start_look_at_x", OSD.fromReal(user.StartLookAt.X));
-			query.put("start_look_at_y", OSD.fromReal(user.StartLookAt.Y));
-			query.put("start_look_at_z", OSD.fromReal(user.StartLookAt.Z));
+		if (user.startLookAt != null) {
+			query.put("start_look_at_x", OSD.fromReal(user.startLookAt.x));
+			query.put("start_look_at_y", OSD.fromReal(user.startLookAt.y));
+			query.put("start_look_at_z", OSD.fromReal(user.startLookAt.z));
 		}
 
 		// Make the request
-		Future<OSD> future = new CapsClient(null, "createUser").executeHttpPost(_caps.CreateUser, query, OSDFormat.Xml);
+		Future<OSD> future = new CapsClient(null, "createUser").executeHttpPost(caps.createUser, query, OSDFormat.Xml);
 		OSD response = future.get(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
 		if (response instanceof OSDMap) {
 			OSDMap map = (OSDMap) response;
@@ -333,7 +332,7 @@ public class RegistrationApi {
 			if (sb.length() > 0)
 				sb.append("; ");
 
-			sb.append(_errors.get(ec.asInteger()));
+			sb.append(errors.get(ec.asInteger()));
 		}
 		throw new Exception("failed to create user: " + sb.toString());
 	}

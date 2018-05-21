@@ -80,24 +80,28 @@ public class Permissions implements Serializable {
 		private static final byte _mask = All;
 	}
 
+	public static final Permissions NoPermissions = new Permissions();
+	public static final Permissions FullPermissions = new Permissions(null, null, null, null, PermissionMask.All,
+			PermissionMask.All, PermissionMask.All, PermissionMask.All, PermissionMask.All);
+
 	public UUID creatorID;
 	public UUID ownerID;
 	public UUID lastOwnerID;
 	public UUID groupID;
 
 	public boolean isGroupOwned;
-	public int BaseMask;
-	public int OwnerMask;
-	public int GroupMask;
-	public int EveryoneMask;
-	public int NextOwnerMask;
+	public int baseMask;
+	public int ownerMask;
+	public int groupMask;
+	public int everyoneMask;
+	public int nextOwnerMask;
 
 	public Permissions() {
-		BaseMask = 0;
-		EveryoneMask = 0;
-		GroupMask = 0;
-		NextOwnerMask = 0;
-		OwnerMask = 0;
+		baseMask = 0;
+		everyoneMask = 0;
+		groupMask = 0;
+		nextOwnerMask = 0;
+		ownerMask = 0;
 	}
 
 	public Permissions(OSD osd) {
@@ -106,34 +110,34 @@ public class Permissions implements Serializable {
 
 	public Permissions(UUID creator, UUID owner, UUID lastOwner, UUID group, int baseMask, int everyoneMask,
 			int groupMask, int nextOwnerMask, int ownerMask) {
-		creatorID = creator;
-		ownerID = owner;
-		lastOwnerID = lastOwner;
-		groupID = group;
+		this.creatorID = creator;
+		this.ownerID = owner;
+		this.lastOwnerID = lastOwner;
+		this.groupID = group;
 
-		isGroupOwned = ownerID == null && groupID != null;
+		this.isGroupOwned = ownerID == null && groupID != null;
 
-		BaseMask = baseMask;
-		EveryoneMask = everyoneMask;
-		GroupMask = groupMask;
-		NextOwnerMask = nextOwnerMask;
-		OwnerMask = ownerMask;
+		this.baseMask = baseMask;
+		this.everyoneMask = everyoneMask;
+		this.groupMask = groupMask;
+		this.nextOwnerMask = nextOwnerMask;
+		this.ownerMask = ownerMask;
 	}
 
 	public Permissions(UUID creator, UUID owner, UUID lastOwner, UUID group, boolean groupOwned, int baseMask,
 			int everyoneMask, int groupMask, int nextOwnerMask, int ownerMask) {
-		creatorID = creator;
-		ownerID = owner;
-		lastOwnerID = lastOwner;
-		groupID = group;
+		this.creatorID = creator;
+		this.ownerID = owner;
+		this.lastOwnerID = lastOwner;
+		this.groupID = group;
 
-		isGroupOwned = groupOwned;
+		this.isGroupOwned = groupOwned;
 
-		BaseMask = baseMask;
-		EveryoneMask = everyoneMask;
-		GroupMask = groupMask;
-		NextOwnerMask = nextOwnerMask;
-		OwnerMask = ownerMask;
+		this.baseMask = baseMask;
+		this.everyoneMask = everyoneMask;
+		this.groupMask = groupMask;
+		this.nextOwnerMask = nextOwnerMask;
+		this.ownerMask = ownerMask;
 	}
 
 	public Permissions(Permissions perm) {
@@ -144,17 +148,17 @@ public class Permissions implements Serializable {
 
 		isGroupOwned = perm.isGroupOwned;
 
-		OwnerMask = perm.OwnerMask;
-		GroupMask = perm.GroupMask;
-		EveryoneMask = perm.EveryoneMask;
-		NextOwnerMask = perm.NextOwnerMask;
+		ownerMask = perm.ownerMask;
+		groupMask = perm.groupMask;
+		everyoneMask = perm.everyoneMask;
+		nextOwnerMask = perm.nextOwnerMask;
 	}
 
 	public Permissions getNextPermissions(UUID newOwner, UUID group) {
-		int nextMask = NextOwnerMask;
+		int nextMask = nextOwnerMask;
 
-		return new Permissions(creatorID, newOwner, ownerID, group, BaseMask & nextMask, EveryoneMask & nextMask,
-				GroupMask & nextMask, NextOwnerMask, OwnerMask & nextMask);
+		return new Permissions(creatorID, newOwner, ownerID, group, baseMask & nextMask, everyoneMask & nextMask,
+				groupMask & nextMask, nextOwnerMask, ownerMask & nextMask);
 	}
 
 	public OSD serialize() {
@@ -165,11 +169,11 @@ public class Permissions implements Serializable {
 		permissions.put("group_id", OSD.fromUUID(groupID));
 		permissions.put("is_owner_group", OSD.fromBoolean(isGroupOwned));
 
-		permissions.put("base_mask", OSD.fromInteger(BaseMask));
-		permissions.put("owner_mask", OSD.fromInteger(OwnerMask));
-		permissions.put("group_mask", OSD.fromInteger(GroupMask));
-		permissions.put("everyone_mask", OSD.fromInteger(EveryoneMask));
-		permissions.put("next_owner_mask", OSD.fromInteger(NextOwnerMask));
+		permissions.put("base_mask", OSD.fromInteger(baseMask));
+		permissions.put("owner_mask", OSD.fromInteger(ownerMask));
+		permissions.put("group_mask", OSD.fromInteger(groupMask));
+		permissions.put("everyone_mask", OSD.fromInteger(everyoneMask));
+		permissions.put("next_owner_mask", OSD.fromInteger(nextOwnerMask));
 		return permissions;
 	}
 
@@ -184,11 +188,11 @@ public class Permissions implements Serializable {
 			permissions.groupID = map.get("group_id").asUUID();
 			permissions.isGroupOwned = map.get("is_owner_group").asBoolean();
 
-			permissions.BaseMask = map.get("base_mask").asUInteger();
-			permissions.EveryoneMask = map.get("everyone_mask").asUInteger();
-			permissions.GroupMask = map.get("group_mask").asUInteger();
-			permissions.NextOwnerMask = map.get("next_owner_mask").asUInteger();
-			permissions.OwnerMask = map.get("owner_mask").asUInteger();
+			permissions.baseMask = map.get("base_mask").asUInteger();
+			permissions.everyoneMask = map.get("everyone_mask").asUInteger();
+			permissions.groupMask = map.get("group_mask").asUInteger();
+			permissions.nextOwnerMask = map.get("next_owner_mask").asUInteger();
+			permissions.ownerMask = map.get("owner_mask").asUInteger();
 		}
 
 		return permissions;
@@ -196,13 +200,13 @@ public class Permissions implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format("Base: %s, Everyone: %s, Group: %s, NextOwner: %s, Owner: %s", BaseMask, EveryoneMask,
-				GroupMask, NextOwnerMask, OwnerMask);
+		return String.format("Base: %s, Everyone: %s, Group: %s, NextOwner: %s, Owner: %s", baseMask, everyoneMask,
+				groupMask, nextOwnerMask, ownerMask);
 	}
 
 	@Override
 	public int hashCode() {
-		return BaseMask ^ EveryoneMask ^ GroupMask ^ NextOwnerMask ^ OwnerMask;
+		return baseMask ^ everyoneMask ^ groupMask ^ nextOwnerMask ^ ownerMask;
 	}
 
 	@Override
@@ -215,16 +219,13 @@ public class Permissions implements Serializable {
 	}
 
 	public static boolean equals(Permissions lhs, Permissions rhs) {
-		return (lhs.BaseMask == rhs.BaseMask) && (lhs.EveryoneMask == rhs.EveryoneMask)
-				&& (lhs.GroupMask == rhs.GroupMask) && (lhs.NextOwnerMask == rhs.NextOwnerMask)
-				&& (lhs.OwnerMask == rhs.OwnerMask);
+		return (lhs.baseMask == rhs.baseMask) && (lhs.everyoneMask == rhs.everyoneMask)
+				&& (lhs.groupMask == rhs.groupMask) && (lhs.nextOwnerMask == rhs.nextOwnerMask)
+				&& (lhs.ownerMask == rhs.ownerMask);
 	}
 
 	public static boolean hasPermissions(int perms, int checkPerms) {
 		return (perms & checkPerms) == checkPerms;
 	}
 
-	public static final Permissions NoPermissions = new Permissions();
-	public static final Permissions FullPermissions = new Permissions(null, null, null, null, PermissionMask.All,
-			PermissionMask.All, PermissionMask.All, PermissionMask.All, PermissionMask.All);
 }

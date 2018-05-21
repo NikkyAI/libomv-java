@@ -114,7 +114,7 @@ public class InventoryFolder extends InventoryNode {
 		/** Hypergrid Suitcase folder */
 		Suitcase(100);
 
-		private static final String[] _FolderTypeNames = new String[] { "texture", // 0
+		private static final String[] FOLDER_TYPE_NAMES = new String[] { "texture", // 0
 				"sound", // 1
 				"callcard", // 2
 				"landmark", // 3
@@ -171,6 +171,12 @@ public class InventoryFolder extends InventoryNode {
 				"stock", // 54
 		};
 
+		private final byte value;
+
+		private FolderType(int value) {
+			this.value = (byte) value;
+		}
+
 		/**
 		 * Translate a string name of an FolderType into the proper Type
 		 *
@@ -187,7 +193,7 @@ public class InventoryFolder extends InventoryNode {
 				}
 
 				int i = 0;
-				for (String name : _FolderTypeNames) {
+				for (String name : FOLDER_TYPE_NAMES) {
 					i++;
 					if (name.compareToIgnoreCase(value) == 0) {
 						return setValue(i);
@@ -199,21 +205,16 @@ public class InventoryFolder extends InventoryNode {
 
 		public static FolderType setValue(int value) {
 			for (FolderType e : values()) {
-				if (e._value == value)
+				if (e.value == value)
 					return e;
 			}
 			return None;
 		}
 
 		public byte getValue() {
-			return _value;
+			return value;
 		}
 
-		private final byte _value;
-
-		private FolderType(int value) {
-			this._value = (byte) value;
-		}
 	}
 
 	private static final long serialVersionUID = 1L;

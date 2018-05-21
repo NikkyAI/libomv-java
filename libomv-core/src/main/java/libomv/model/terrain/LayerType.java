@@ -10,9 +10,15 @@ public enum LayerType {
 	Cloud(0x38), // '8'
 	CloudExtended(0x3A); // ':'
 
+	private final byte value;
+
+	private LayerType(int value) {
+		this.value = (byte) value;
+	}
+
 	public static LayerType setValue(int value) {
 		for (LayerType e : values()) {
-			if (e._value == value) {
+			if (e.value == value) {
 				return e;
 			}
 		}
@@ -20,12 +26,7 @@ public enum LayerType {
 	}
 
 	public byte getValue() {
-		return _value;
+		return value;
 	}
 
-	private final byte _value;
-
-	private LayerType(int value) {
-		_value = (byte) value;
-	}
 }

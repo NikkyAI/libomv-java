@@ -34,7 +34,7 @@ public class GridInfo implements Cloneable {
 
 	public void setPassword(String password) {
 		if (password.length() != 35 && !password.startsWith("$1$")) {
-			password = Helpers.MD5Password(password);
+			password = Helpers.md5Password(password);
 		}
 		this.password = password;
 	}
@@ -106,8 +106,8 @@ public class GridInfo implements Cloneable {
 				"Nick: %s, Name: %s, Platform: %s, Ver: %d\n"
 						+ "loginuri: %s, loginpage: %s, website: %s, support: %s\n"
 						+ "search: %s, currency: %s, real_currency: %s, directory_fee: %s",
-				gridnick, gridname, platform, version, loginuri, loginpage, website, support, searchurl,
-				currencySym, realCurrencySym, directoryFee);
+				gridnick, gridname, platform, version, loginuri, loginpage, website, support, searchurl, currencySym,
+				realCurrencySym, directoryFee);
 	}
 
 	@Override
@@ -170,7 +170,8 @@ public class GridInfo implements Cloneable {
 	}
 
 	public boolean equals(GridInfo info) {
-		String string1 = null, string2 = null;
+		String string1 = null;
+		String string2 = null;
 		for (int i = 0; i < 13; i++) {
 			switch (i) {
 			case 0:

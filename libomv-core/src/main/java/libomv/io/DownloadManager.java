@@ -42,16 +42,16 @@ import java.net.UnknownServiceException;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 
 import org.apache.log4j.Logger;
-
-import javax.net.ssl.HttpsURLConnection;
 
 import libomv.utils.Callback;
 import libomv.utils.CallbackHandler;
@@ -96,7 +96,7 @@ public class DownloadManager {
 		// any
 		private File cacheFile;
 
-		private CallbackHandler<DownloadResult> callbacks = new CallbackHandler<DownloadResult>();
+		private CallbackHandler<DownloadResult> callbacks = new CallbackHandler<>();
 
 		// Default constructor
 		public ActiveDownload() {
@@ -149,7 +149,8 @@ public class DownloadManager {
 							}
 						}
 						con.connect();
-						int len, total = con.getContentLength();
+						int len;
+						int total = con.getContentLength();
 						ByteArrayOutputStream bos = new ByteArrayOutputStream(total > 0 ? total : 10000);
 						InputStream is = con.getInputStream();
 						byte b[] = new byte[10000];
@@ -196,7 +197,7 @@ public class DownloadManager {
 	}
 
 	private ExecutorService execPool = Executors.newFixedThreadPool(8, new SimpleThreadFactory());
-	private Hashtable<URI, ActiveDownload> requests = new Hashtable<URI, ActiveDownload>();
+	private Map<URI, ActiveDownload> requests = new Hashtable<>();
 
 	// Enqueue a new HTPP download
 	public void enque(URI address, int millisecondsTimeout, String acceptType, File cacheFile,

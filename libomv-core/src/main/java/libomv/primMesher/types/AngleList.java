@@ -34,7 +34,8 @@ import java.util.ArrayList;
 import libomv.types.Vector3;
 
 public class AngleList {
-	private float iX, iY; // intersection point
+	private float iX;
+	private float iY; // intersection point
 
 	private static Angle[] angles3 = new Angle[] { new Angle(0.0f, 1.0f, 0.0f),
 			new Angle(0.33333333333333333f, -0.5f, 0.86602540378443871f),
@@ -75,7 +76,7 @@ public class AngleList {
 
 	private Angle interpolatePoints(float newPoint, Angle p1, Angle p2) {
 		float m = (newPoint - p1.angle) / (p2.angle - p1.angle);
-		return new Angle(newPoint, p1.X + m * (p2.X - p1.X), p1.Y + m * (p2.Y - p1.Y));
+		return new Angle(newPoint, p1.x + m * (p2.x - p1.x), p1.y + m * (p2.y - p1.y));
 	}
 
 	private void intersection(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) { // ref:
@@ -162,16 +163,18 @@ public class AngleList {
 			}
 
 			if (startAngle > angles.get(0).angle) {
-				Angle angle1 = angles.get(0), angle2 = angles.get(1);
-				intersection(angle1.X, angle1.Y, angle2.X, angle2.Y, 0.0f, 0.0f, (float) Math.cos(startAngle),
+				Angle angle1 = angles.get(0);
+				Angle angle2 = angles.get(1);
+				intersection(angle1.x, angle1.y, angle2.x, angle2.y, 0.0f, 0.0f, (float) Math.cos(startAngle),
 						(float) Math.sin(startAngle));
 				angles.set(0, new Angle(startAngle, iX, iY));
 			}
 
 			int index = angles.size() - 1;
 			if (stopAngle < angles.get(index).angle) {
-				Angle angle1 = angles.get(index - 1), angle2 = angles.get(index);
-				intersection(angle1.X, angle1.Y, angle2.X, angle2.Y, 0.0f, 0.0f, (float) Math.cos(stopAngle),
+				Angle angle1 = angles.get(index - 1);
+				Angle angle2 = angles.get(index);
+				intersection(angle1.x, angle1.y, angle2.x, angle2.y, 0.0f, 0.0f, (float) Math.cos(stopAngle),
 						(float) Math.sin(stopAngle));
 				angles.set(index, new Angle(stopAngle, iX, iY));
 			}

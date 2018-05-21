@@ -31,11 +31,11 @@
 package libomv.types;
 
 public interface PacketFrequency {
-	public static final byte Low = 0;
+	public static final byte LOW = 0;
 
-	public static final byte Medium = 1;
+	public static final byte MEDIUM = 1;
 
-	public static final byte High = 2;
+	public static final byte HIGH = 2;
 
-	public static final String[] Names = { "Low", "Medium", "High" };
+	public static final String[] NAMES = { "LOW", "MEDIUM", "HIGH" };
 }

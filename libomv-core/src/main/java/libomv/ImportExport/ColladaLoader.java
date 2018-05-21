@@ -34,6 +34,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -41,8 +42,6 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
-import libomv.ImportExport.ModelMaterial;
-import libomv.ImportExport.ModelPrim;
 import libomv.ImportExport.collada.Asset;
 import libomv.ImportExport.collada.COLLADA;
 import libomv.ImportExport.collada.CommonColorOrTextureType;
@@ -83,10 +82,12 @@ import libomv.utils.RefObject;
 public class ColladaLoader {
 	private static final Logger logger = Logger.getLogger(ColladaLoader.class);
 
+	private static final float DEG_TO_RAD = 0.017453292519943295769236907684886f;
+
 	COLLADA model;
 	List<LoaderNode> nodes;
 	List<ModelMaterial> materials;
-	HashMap<String, String> matSymTarget;
+	Map<String, String> matSymTarget;
 	File file;
 
 	class LoaderNode {
@@ -119,7 +120,7 @@ public class ColladaLoader {
 			return prims;
 		} catch (Exception ex) {
 			logger.error("Failed parsing collada file: " + ex.getMessage(), ex);
-			return new ArrayList<ModelPrim>();
+			return new ArrayList<>();
 		}
 	}
 
@@ -220,24 +221,24 @@ public class ColladaLoader {
 		if (model == null)
 			return;
 
-		materials = new ArrayList<ModelMaterial>();
+		materials = new ArrayList<>();
 
 		// Material -> effect mapping
-		HashMap<String, String> matEffect = new HashMap<String, String>();
-		List<ModelMaterial> tmpEffects = new ArrayList<ModelMaterial>();
+		Map<String, String> matEffect = new HashMap<>();
+		List<ModelMaterial> tmpEffects = new ArrayList<>();
 
 		// Image ID -> filename mapping
-		HashMap<String, String> imgMap = new HashMap<String, String>();
+		Map<String, String> imgMap = new HashMap<>();
 
 		for (Object item : model.getItems()) {
 			if (item instanceof LibraryImages) {
 				LibraryImages images = (LibraryImages) item;
 				if (images.getImage() != null) {
 					for (Image image : images.getImage()) {
-						String ID = image.getId();
+						String id = image.getId();
 						Object imageItem = image.getItem();
 						if (imageItem instanceof String) {
-							imgMap.put(ID, (String) imageItem);
+							imgMap.put(id, (String) imageItem);
 						}
 					}
 				}
@@ -249,9 +250,9 @@ public class ColladaLoader {
 				LibraryMaterials materials = (LibraryMaterials) item;
 				if (materials.getMaterial() != null) {
 					for (Material material : materials.getMaterial()) {
-						String ID = material.getId();
+						String id = material.getId();
 						if (!Helpers.isEmpty(material.getInstanceEffect().getUrl())) {
-							matEffect.put(material.getInstanceEffect().getUrl().substring(1), ID);
+							matEffect.put(material.getInstanceEffect().getUrl().substring(1), id);
 						}
 					}
 				}
@@ -263,7 +264,7 @@ public class ColladaLoader {
 				LibraryEffects effects = (LibraryEffects) item;
 				if (effects.getEffect() != null) {
 					for (Effect effect : effects.getEffect()) {
-						String ID = effect.getId();
+						String id = effect.getId();
 						for (Object effItem : effect.getFxProfileAbstract()) {
 							if (effItem instanceof ProfileCOMMON) {
 								ProfileCOMMON.Technique teq = ((ProfileCOMMON) effItem).getTechnique();
@@ -273,7 +274,7 @@ public class ColladaLoader {
 												.getItem();
 										if (shader.getDiffuse() != null) {
 											ModelMaterial material = extractMaterial(shader.getDiffuse().getItem());
-											material.id = ID;
+											material.id = id;
 											tmpEffects.add(material);
 										}
 									} else if (teq.getItem() instanceof ProfileCOMMON.Technique.Lambert) {
@@ -281,7 +282,7 @@ public class ColladaLoader {
 												.getItem();
 										if (shader.getDiffuse() != null) {
 											ModelMaterial material = extractMaterial(shader.getDiffuse().getItem());
-											material.id = ID;
+											material.id = id;
 											tmpEffects.add(material);
 										}
 									}
@@ -350,11 +351,11 @@ public class ColladaLoader {
 	}
 
 	void parseVisualScene() {
-		nodes = new ArrayList<LoaderNode>();
+		nodes = new ArrayList<>();
 		if (model == null)
 			return;
 
-		matSymTarget = new HashMap<String, String>();
+		matSymTarget = new HashMap<>();
 
 		for (Object item : model.getItems()) {
 			if (item instanceof LibraryVisualScenes) {
@@ -367,14 +368,12 @@ public class ColladaLoader {
 	}
 
 	List<ModelPrim> parse() throws IOException {
-		List<ModelPrim> Prims = new ArrayList<ModelPrim>();
-
-		float DEG_TO_RAD = 0.017453292519943295769236907684886f;
+		List<ModelPrim> prims = new ArrayList<>();
 
 		if (model == null)
-			return Prims;
+			return prims;
 
-		Matrix4 transform = Matrix4.Identity;
+		Matrix4 transform = Matrix4.IDENTITY;
 
 		UpAxisType upAxis = UpAxisType.Y_UP;
 
@@ -389,7 +388,7 @@ public class ColladaLoader {
 			}
 		}
 
-		Matrix4 rotation = Matrix4.Identity;
+		Matrix4 rotation = Matrix4.IDENTITY;
 
 		if (upAxis == UpAxisType.X_UP) {
 			rotation = Matrix4.createFromEulers(0.0f, 90.0f * DEG_TO_RAD, 0.0f);
@@ -412,7 +411,7 @@ public class ColladaLoader {
 						continue;
 
 					// Find all instances of this geometry
-					List<LoaderNode> nodeList = new ArrayList<LoaderNode>();
+					List<LoaderNode> nodeList = new ArrayList<>();
 					for (LoaderNode node : nodes) {
 						if (node.meshID.equals(geo.getId()))
 							nodeList.add(node);
@@ -421,21 +420,21 @@ public class ColladaLoader {
 						ModelPrim firstPrim = null; // The first prim is actually calculated, the others are just copied
 													// from it.
 
-						Vector3 asset_scale = new Vector3(1, 1, 1);
-						Vector3 asset_offset = new Vector3(0, 0, 0); // Scale and offset between Collada and OS asset
-																		// (Which is always in a unit cube)
+						Vector3 assetScale = new Vector3(1, 1, 1);
+						Vector3 assetOffset = new Vector3(0, 0, 0); // Scale and offset between Collada and OS asset
+																	// (Which is always in a unit cube)
 
 						for (LoaderNode node : nodeList) {
 							ModelPrim prim = new ModelPrim();
 							prim.id = node.id;
-							Prims.add(prim);
+							prims.add(prim);
 
 							// First node is used to create the asset. This is as the code to crate the byte
 							// array is somewhat
 							// erroneously placed in the ModelPrim class.
 							if (firstPrim == null) {
 								firstPrim = prim;
-								addPositions(asset_scale, asset_offset, mesh, prim, transform); // transform is used
+								addPositions(assetScale, assetOffset, mesh, prim, transform); // transform is used
 																								// only for inch ->
 																								// meter and up axis
 																								// transform.
@@ -447,7 +446,7 @@ public class ColladaLoader {
 									if (mitem instanceof Polylist)
 										addFacesFromPolyList((Polylist) mitem, mesh, prim, transform);
 								}
-								prim.createAsset(UUID.Zero);
+								prim.createAsset(UUID.ZERO);
 							} else {
 								// Copy the values set by AddPositions and AddFacesFromPolyList as these are the
 								// same as long as the mesh is the same
@@ -462,8 +461,9 @@ public class ColladaLoader {
 							// some problems but it
 							// is unlikely that authoring software can generate such matrices.
 							node.transform.decompose(prim.scale, prim.rotation, prim.position);
-							RefObject<Float> roll = new RefObject<Float>(0.0f), pitch = new RefObject<Float>(0.0f),
-									yaw = new RefObject<Float>(0.0f);
+							RefObject<Float> roll = new RefObject<>(0.0f);
+							RefObject<Float> pitch = new RefObject<>(0.0f);
+							RefObject<Float> yaw = new RefObject<>(0.0f);
 							node.transform.getEulerAngles(roll, pitch, yaw);
 
 							// The offset created when normalizing the mesh vertices into the OS unit cube
@@ -471,7 +471,7 @@ public class ColladaLoader {
 							// before being added to the position part of the Collada transform.
 							Matrix4 rot = Matrix4.createFromQuaternion(prim.rotation); // Convert rotation to matrix for
 																						// for Transform
-							Vector3 offset = Vector3.transform(asset_offset.multiply(prim.scale), rot); // The offset
+							Vector3 offset = Vector3.transform(assetOffset.multiply(prim.scale), rot); // The offset
 																										// must be
 																										// rotated and
 																										// mutiplied by
@@ -488,14 +488,14 @@ public class ColladaLoader {
 																										// the compound
 																										// scale.
 							prim.position.add(offset);
-							prim.scale.multiply(asset_scale); // Modify scale from Collada instance by the rescaling
+							prim.scale.multiply(assetScale); // Modify scale from Collada instance by the rescaling
 																// done in AddPositions()
 						}
 					}
 				}
 			}
 		}
-		return Prims;
+		return prims;
 	}
 
 	Source findSource(List<Source> sources, String id) {
@@ -525,19 +525,19 @@ public class ColladaLoader {
 		prim.boundMax = new Vector3(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
 
 		for (Vector3 pos : prim.positions) {
-			if (pos.X > prim.boundMax.X)
-				prim.boundMax.X = pos.X;
-			if (pos.Y > prim.boundMax.Y)
-				prim.boundMax.Y = pos.Y;
-			if (pos.Z > prim.boundMax.Z)
-				prim.boundMax.Z = pos.Z;
+			if (pos.x > prim.boundMax.x)
+				prim.boundMax.x = pos.x;
+			if (pos.y > prim.boundMax.y)
+				prim.boundMax.y = pos.y;
+			if (pos.z > prim.boundMax.z)
+				prim.boundMax.z = pos.z;
 
-			if (pos.X < prim.boundMin.X)
-				prim.boundMin.X = pos.X;
-			if (pos.Y < prim.boundMin.Y)
-				prim.boundMin.Y = pos.Y;
-			if (pos.Z < prim.boundMin.Z)
-				prim.boundMin.Z = pos.Z;
+			if (pos.x < prim.boundMin.x)
+				prim.boundMin.x = pos.x;
+			if (pos.y < prim.boundMin.y)
+				prim.boundMin.y = pos.y;
+			if (pos.z < prim.boundMin.z)
+				prim.boundMin.z = pos.z;
 		}
 
 		scale = Vector3.subtract(prim.boundMax, prim.boundMin);
@@ -546,9 +546,9 @@ public class ColladaLoader {
 		// Fit vertex positions into identity cube -0.5 .. 0.5
 		for (int i = 0; i < prim.positions.size(); i++) {
 			Vector3 pos = prim.positions.get(i);
-			pos = new Vector3(scale.X == 0 ? 0 : ((pos.X - prim.boundMin.X) / scale.X) - 0.5f,
-					scale.Y == 0 ? 0 : ((pos.Y - prim.boundMin.Y) / scale.Y) - 0.5f,
-					scale.Z == 0 ? 0 : ((pos.Z - prim.boundMin.Z) / scale.Z) - 0.5f);
+			pos = new Vector3(scale.x == 0 ? 0 : ((pos.x - prim.boundMin.x) / scale.x) - 0.5f,
+					scale.y == 0 ? 0 : ((pos.y - prim.boundMin.y) / scale.y) - 0.5f,
+					scale.z == 0 ? 0 : ((pos.z - prim.boundMin.z) / scale.z) - 0.5f);
 			prim.positions.set(i, pos);
 		}
 	}

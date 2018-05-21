@@ -31,9 +31,9 @@
 package libomv.types;
 
 public class Vote {
-	public UUID Candidate;
+	public UUID candidate;
 
-	public String VoteString;
+	public String voteString;
 
-	public int NumVotes;
+	public int numVotes;
 }

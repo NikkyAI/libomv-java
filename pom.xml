@@ -4,8 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>libomv</groupId>
-	<artifactId>libomv-java</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<artifactId>libomv-parent</artifactId>
+	<version>0.8.0-SNAPSHOT</version>
 
 	<name>libomv</name>
 	<description>libomv parent pom project</description>
@@ -44,6 +44,7 @@
 		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
 		<maven-bundle-plugin.version>3.0.1</maven-bundle-plugin.version>
 		<maven-surefire-plugin.version>2.12.4</maven-surefire-plugin.version>
+		<maven-failsafe-plugin.version>2.21.0</maven-failsafe-plugin.version>
 		<maven-jacoco-plugin.version>0.8.1</maven-jacoco-plugin.version>
 		<maven-install-plugin.version>2.4</maven-install-plugin.version>
 		<maven-release-plugin.version>2.3.2</maven-release-plugin.version>
@@ -51,6 +52,7 @@
 		<maven-war-plugin.version>2.6</maven-war-plugin.version>
 		<build-helper-maven-plugin.version>1.10</build-helper-maven-plugin.version>
 		<exec-maven-plugin.version>1.5.0</exec-maven-plugin.version>
+		<jaxb2-maven-plugin.version>2.4</jaxb2-maven-plugin.version>
 
 		<commons-codec.version>1.10</commons-codec.version>
 		<commons-io.version>2.4</commons-io.version>
@@ -174,6 +176,11 @@
 					<version>${maven-surefire-plugin.version}</version>
 				</plugin>
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>${maven-failsafe-plugin.version}</version>
+				</plugin>
+				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
 					<version>${maven-jacoco-plugin.version}</version>
@@ -187,6 +194,14 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
 					<version>${maven-jar-plugin.version}</version>
+					<configuration>
+						<archive>
+							<manifest>
+								<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+								<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+							</manifest>
+						</archive>
+					</configuration>
 					<executions>
 						<execution>
 							<goals>
@@ -208,7 +223,12 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>exec-maven-plugin</artifactId>
-					<version>1.5.0</version>
+					<version>${exec-maven-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>jaxb2-maven-plugin</artifactId>
+					<version>${jaxb2-maven-plugin.version}</version>
 				</plugin>
 
 	<!--This plugin's configuration is used to store Eclipse m2e settings only.
@@ -260,11 +280,10 @@
 		</pluginManagement>
 	</build>
 
-	<modules>
+	<!-- <modules>
 		<module>libomv-jj2k</module>
 		<module>libomv-core</module>
 		<module>libomv-io</module>
 		<module>libomv-gui</module>
-	</modules>
-
+	</modules> -->
 </project>

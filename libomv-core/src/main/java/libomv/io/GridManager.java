@@ -385,21 +385,22 @@ public class GridManager implements PacketCallback {
 		}
 
 		final class OnGridRegionCallback implements Callback<GridRegionCallbackArgs> {
-			private String Name;
+			private String name;
+
+			public OnGridRegionCallback(String name) {
+				this.name = name;
+			}
 
 			@Override
 			public boolean callback(GridRegionCallbackArgs args) {
-				if (args.getRegion().name.equals(Name)) {
-					synchronized (Name) {
-						Name.notifyAll();
+				if (args.getRegion().name.equals(name)) {
+					synchronized (name) {
+						name.notifyAll();
 					}
 				}
 				return false;
 			}
 
-			public OnGridRegionCallback(String name) {
-				Name = name;
-			}
 		}
 
 		Callback<GridRegionCallbackArgs> callback = new OnGridRegionCallback(name);
@@ -471,18 +472,18 @@ public class GridManager implements PacketCallback {
 
 		for (MapBlockReplyPacket.DataBlock block : map.Data) {
 			if (block.X != 0 || block.Y != 0) {
-				GridRegion region = new GridRegion(Helpers.BytesToString(block.getName()));
+				GridRegion region = new GridRegion(Helpers.bytesToString(block.getName()));
 
 				region.x = block.X;
 				region.y = block.Y;
-				region.name = Helpers.BytesToString(block.getName());
+				region.name = Helpers.bytesToString(block.getName());
 				// RegionFlags seems to always be zero here?
 				region.regionFlags = block.RegionFlags;
 				region.waterHeight = block.WaterHeight;
 				region.agents = block.Agents;
 				region.access = block.Access;
 				region.mapImageID = block.MapImageID;
-				region.regionHandle = Helpers.IntsToLong(region.x * 256, region.y * 256);
+				region.regionHandle = Helpers.intsToLong(region.x * 256, region.y * 256);
 
 				synchronized (regions) {
 					if (region.name != null)
@@ -510,10 +511,10 @@ public class GridManager implements PacketCallback {
 		if (onGridItems.count() > 0) {
 			MapItemReplyPacket reply = (MapItemReplyPacket) packet;
 			GridItemType type = GridItemType.convert(reply.ItemType);
-			ArrayList<MapItem> items = new ArrayList<MapItem>();
+			List<MapItem> items = new ArrayList<>();
 
 			for (int i = 0; i < reply.Data.length; i++) {
-				String name = Helpers.BytesToString(reply.Data[i].getName());
+				String name = Helpers.bytesToString(reply.Data[i].getName());
 				MapItem item = new MapItem(reply.Data[i].X & 0xFFFFFFFFL, reply.Data[i].Y & 0xFFFFFFFFL,
 						reply.Data[i].ID, name);
 
@@ -535,7 +536,7 @@ public class GridManager implements PacketCallback {
 				case PgEvent:
 				case MatureEvent:
 				case AdultEvent:
-					item.dateTime = Helpers.UnixTimeToDateTime(reply.Data[i].Extra);
+					item.dateTime = Helpers.unixTimeToDateTime(reply.Data[i].Extra);
 					item.setEvelation(reply.Data[i].Extra2);
 					items.add(item);
 					break;
@@ -589,7 +590,7 @@ public class GridManager implements PacketCallback {
 		SimulatorManager simulator = (SimulatorManager) sim;
 
 		// populate a dictionary from the packet, for local use
-		HashMap<UUID, Vector3> coarseEntries = new HashMap<UUID, Vector3>();
+		Map<UUID, Vector3> coarseEntries = new HashMap<>();
 		for (int i = 0; i < coarse.AgentID.length; i++) {
 			if (coarse.Location.length > i) {
 				coarseEntries.put(coarse.AgentID[i],

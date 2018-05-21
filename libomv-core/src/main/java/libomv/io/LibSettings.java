@@ -53,6 +53,10 @@ import libomv.utils.Settings;
 public class LibSettings extends Settings implements PacketCallback {
 	private static final Logger logger = Logger.getLogger(LibSettings.class);
 
+	static {
+		LIBRARY_VERSION = LibSettings.class.getPackage().getImplementationVersion();
+	}
+
 	/* Main grid login server */
 	public static String AGNI_LOGIN_SERVER = "https://login.agni.lindenlab.com/cgi-bin/login.cgi";
 
@@ -65,7 +69,7 @@ public class LibSettings extends Settings implements PacketCallback {
 	public static final String LIBRARY_NAME = "libomv-java";
 
 	/* Application Version */
-	public static final String LIBRARY_VERSION = "0.7.0 alpha 1";
+	public static final String LIBRARY_VERSION;
 
 	/*
 	 * The relative directory where external avatar resources are kept, default
@@ -372,7 +376,7 @@ public class LibSettings extends Settings implements PacketCallback {
 	public static final String THROTTLE_OUTGOING_PACKETS = "throttleOutgoingPackets";
 
 	/* UUID of a texture used by some viewers to identify type of client used */
-	public UUID CLIENT_IDENTIFICATION_TAG = UUID.Zero;
+	public UUID CLIENT_IDENTIFICATION_TAG = UUID.ZERO;
 
 	// #region Texture Pipeline
 

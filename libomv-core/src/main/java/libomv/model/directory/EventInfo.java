@@ -40,8 +40,8 @@ public final class EventInfo {
 	 */
 	public String toSLurl() {
 		float[] values = new float[2];
-		Helpers.globalPosToRegionHandle((float) this.globalPos.X, (float) this.globalPos.Y, values);
-		return "secondlife://" + this.simName + "/" + values[0] + "/" + values[1] + "/" + this.globalPos.Z;
+		Helpers.globalPosToRegionHandle((float) this.globalPos.x, (float) this.globalPos.y, values);
+		return "secondlife://" + this.simName + "/" + values[0] + "/" + values[1] + "/" + this.globalPos.z;
 	}
 
 	/**

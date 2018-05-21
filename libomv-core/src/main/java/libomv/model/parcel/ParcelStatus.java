@@ -12,21 +12,22 @@ public enum ParcelStatus {
 	// Parcel has been abandoned back to Governor Linden
 	Abandoned(2);
 
+	private byte value;
+
+	private ParcelStatus(int value) {
+		this.value = (byte) value;
+	}
+
 	public static ParcelStatus setValue(int value) {
 		for (ParcelStatus e : values()) {
-			if (e._value == value)
+			if (e.value == value)
 				return e;
 		}
 		return None;
 	}
 
 	public byte getValue() {
-		return _value;
+		return value;
 	}
 
-	private byte _value;
-
-	private ParcelStatus(int value) {
-		this._value = (byte) value;
-	}
 }

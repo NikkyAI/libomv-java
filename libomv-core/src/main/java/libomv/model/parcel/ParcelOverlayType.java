@@ -30,21 +30,22 @@ public enum ParcelOverlayType {
 	// To the south of this area is a parcel border
 	BorderSouth(128);
 
+	private byte value;
+
+	private ParcelOverlayType(int value) {
+		this.value = (byte) value;
+	}
+
 	public static ParcelOverlayType setValue(int value) {
 		for (ParcelOverlayType e : values()) {
-			if (e._value == value)
+			if (e.value == value)
 				return e;
 		}
 		return Public;
 	}
 
 	public byte getValue() {
-		return _value;
+		return value;
 	}
 
-	private byte _value;
-
-	private ParcelOverlayType(int value) {
-		this._value = (byte) value;
-	}
 }

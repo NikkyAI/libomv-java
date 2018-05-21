@@ -56,18 +56,18 @@ public class FacetedMesh extends Mesh {
 	 *            Mesh primitive
 	 * @param meshAsset
 	 *            Asset retrieved from the asset server
-	 * @param LOD
+	 * @param lod
 	 *            Level of detail
 	 * @param mesh
 	 *            Resulting decoded FacetedMesh
 	 * @returns True if mesh asset decoding was successful
 	 */
-	public static FacetedMesh tryDecodeFromAsset(Primitive prim, AssetMesh meshAsset, DetailLevel LOD) {
+	public static FacetedMesh tryDecodeFromAsset(Primitive prim, AssetMesh meshAsset, DetailLevel lod) {
 		try {
 			OSDMap meshData = meshAsset.getMeshData();
 			OSD facesOSD = null;
 
-			switch (LOD) {
+			switch (lod) {
 			default:
 			case Highest:
 				facesOSD = meshData.get("high_lod");
@@ -142,8 +142,8 @@ public class FacetedMesh extends Mesh {
 					}
 
 					// UV texture map
-					Vector2 texPosMax = Vector2.Zero;
-					Vector2 texPosMin = Vector2.Zero;
+					Vector2 texPosMax = Vector2.ZERO;
+					Vector2 texPosMin = Vector2.ZERO;
 					byte[] texBytes = null;
 					osd = subMeshMap.get("TexCoord0");
 					if (osd != null) {
@@ -158,22 +158,22 @@ public class FacetedMesh extends Mesh {
 					for (int i = 0; i < posBytes.length; i += 6) {
 						Vertex vx = mesh.new Vertex();
 
-						vx.position = new Vector3(Helpers.UInt16ToFloatL(posBytes, i, posMin.X, posMax.X),
-								Helpers.UInt16ToFloatL(posBytes, i + 2, posMin.Y, posMax.Y),
-								Helpers.UInt16ToFloatL(posBytes, i + 4, posMin.Z, posMax.Z));
+						vx.position = new Vector3(Helpers.uint16ToFloatL(posBytes, i, posMin.x, posMax.x),
+								Helpers.uint16ToFloatL(posBytes, i + 2, posMin.y, posMax.y),
+								Helpers.uint16ToFloatL(posBytes, i + 4, posMin.z, posMax.z));
 
 						if (norBytes != null && norBytes.length >= i + 6) {
-							vx.normal = new Vector3(Helpers.UInt16ToFloatL(norBytes, i, posMin.X, posMax.X),
-									Helpers.UInt16ToFloatL(norBytes, i + 2, posMin.Y, posMax.Y),
-									Helpers.UInt16ToFloatL(norBytes, i + 4, posMin.Z, posMax.Z));
+							vx.normal = new Vector3(Helpers.uint16ToFloatL(norBytes, i, posMin.x, posMax.x),
+									Helpers.uint16ToFloatL(norBytes, i + 2, posMin.y, posMax.y),
+									Helpers.uint16ToFloatL(norBytes, i + 4, posMin.z, posMax.z));
 						}
 
 						int vertexIndexOffset = oface.vertices.size() * 4;
 
 						if (texBytes != null && texBytes.length >= vertexIndexOffset + 4) {
 							vx.texCoord = new Vector2(
-									Helpers.UInt16ToFloatL(texBytes, vertexIndexOffset, texPosMin.X, texPosMax.X),
-									Helpers.UInt16ToFloatL(texBytes, vertexIndexOffset + 2, texPosMin.Y, texPosMax.Y));
+									Helpers.uint16ToFloatL(texBytes, vertexIndexOffset, texPosMin.x, texPosMax.x),
+									Helpers.uint16ToFloatL(texBytes, vertexIndexOffset + 2, texPosMin.y, texPosMax.y));
 						}
 
 						oface.vertices.add(vx);
@@ -181,9 +181,9 @@ public class FacetedMesh extends Mesh {
 
 					byte[] triangleBytes = subMeshMap.get("TriangleList").asBinary();
 					for (int i = 0; i < triangleBytes.length; i += 6) {
-						oface.indices.add(Helpers.BytesToUInt16L(triangleBytes, i));
-						oface.indices.add(Helpers.BytesToUInt16L(triangleBytes, i + 2));
-						oface.indices.add(Helpers.BytesToUInt16L(triangleBytes, i + 4));
+						oface.indices.add(Helpers.bytesToUInt16L(triangleBytes, i));
+						oface.indices.add(Helpers.bytesToUInt16L(triangleBytes, i + 2));
+						oface.indices.add(Helpers.bytesToUInt16L(triangleBytes, i + 4));
 					}
 
 					mesh.faces.add(oface);

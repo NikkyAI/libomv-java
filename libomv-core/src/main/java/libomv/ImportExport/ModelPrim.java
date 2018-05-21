@@ -51,8 +51,8 @@ public class ModelPrim {
 	public Vector3 boundMax = new Vector3(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
 	public Vector3 position;
 	public Vector3 scale;
-	public Quaternion rotation = Quaternion.Identity;
-	public List<ModelFace> faces = new ArrayList<ModelFace>();
+	public Quaternion rotation = Quaternion.IDENTITY;
+	public List<ModelFace> faces = new ArrayList<>();
 	public String id;
 	public byte[] asset;
 
@@ -73,15 +73,15 @@ public class ModelPrim {
 			Vector2 uvMin = new Vector2(Float.MAX_VALUE, Float.MAX_VALUE);
 			Vector2 uvMax = new Vector2(Float.MIN_VALUE, Float.MIN_VALUE);
 			for (Vertex v : face.vertices) {
-				if (v.texCoord.X < uvMin.X)
-					uvMin.X = v.texCoord.X;
-				if (v.texCoord.Y < uvMin.Y)
-					uvMin.Y = v.texCoord.Y;
+				if (v.texCoord.x < uvMin.x)
+					uvMin.x = v.texCoord.x;
+				if (v.texCoord.y < uvMin.y)
+					uvMin.y = v.texCoord.y;
 
-				if (v.texCoord.X > uvMax.X)
-					uvMax.X = v.texCoord.X;
-				if (v.texCoord.Y > uvMax.Y)
-					uvMax.Y = v.texCoord.Y;
+				if (v.texCoord.x > uvMax.x)
+					uvMax.x = v.texCoord.x;
+				if (v.texCoord.y > uvMax.y)
+					uvMax.y = v.texCoord.y;
 			}
 			OSDMap uvDomain = new OSDMap();
 			uvDomain.put("Min", OSD.fromVector2(uvMin));
@@ -97,25 +97,27 @@ public class ModelPrim {
 			byte[] norBytes = new byte[face.vertices.size() * 2 * 3];
 			byte[] uvBytes = new byte[face.vertices.size() * 2 * 2];
 
-			int offp = 0, offn = 0, offu = 0;
+			int offp = 0;
+			int offn = 0;
+			int offu = 0;
 			for (Vertex v : face.vertices) {
-				Helpers.UInt16ToBytesL(Helpers.floatToUInt16(v.position.X, -0.5f, 0.5f), posBytes, offp);
+				Helpers.uint16ToBytesL(Helpers.floatToUInt16(v.position.x, -0.5f, 0.5f), posBytes, offp);
 				offp += 2;
-				Helpers.UInt16ToBytesL(Helpers.floatToUInt16(v.position.Y, -0.5f, 0.5f), posBytes, offp);
+				Helpers.uint16ToBytesL(Helpers.floatToUInt16(v.position.y, -0.5f, 0.5f), posBytes, offp);
 				offp += 2;
-				Helpers.UInt16ToBytesL(Helpers.floatToUInt16(v.position.Z, -0.5f, 0.5f), posBytes, offp);
+				Helpers.uint16ToBytesL(Helpers.floatToUInt16(v.position.z, -0.5f, 0.5f), posBytes, offp);
 				offp += 2;
 
-				Helpers.UInt16ToBytesL(Helpers.floatToUInt16(v.normal.X, -1f, 1f), norBytes, offn);
+				Helpers.uint16ToBytesL(Helpers.floatToUInt16(v.normal.x, -1f, 1f), norBytes, offn);
 				offn += 2;
-				Helpers.UInt16ToBytesL(Helpers.floatToUInt16(v.normal.Y, -1f, 1f), norBytes, offn);
+				Helpers.uint16ToBytesL(Helpers.floatToUInt16(v.normal.y, -1f, 1f), norBytes, offn);
 				offn += 2;
-				Helpers.UInt16ToBytesL(Helpers.floatToUInt16(v.normal.Z, -1f, 1f), norBytes, offn);
+				Helpers.uint16ToBytesL(Helpers.floatToUInt16(v.normal.z, -1f, 1f), norBytes, offn);
 				offn += 2;
 
-				Helpers.UInt16ToBytesL(Helpers.floatToUInt16(v.texCoord.X, uvMin.X, uvMax.X), uvBytes, offu);
+				Helpers.uint16ToBytesL(Helpers.floatToUInt16(v.texCoord.x, uvMin.x, uvMax.x), uvBytes, offu);
 				offu += 2;
-				Helpers.UInt16ToBytesL(Helpers.floatToUInt16(v.texCoord.Y, uvMin.Y, uvMax.Y), uvBytes, offu);
+				Helpers.uint16ToBytesL(Helpers.floatToUInt16(v.texCoord.y, uvMin.y, uvMax.y), uvBytes, offu);
 				offu += 2;
 			}
 
@@ -126,7 +128,7 @@ public class ModelPrim {
 			int offi = 0;
 			byte[] indexBytes = new byte[face.indices.size() * 2];
 			for (int t : face.indices) {
-				Helpers.UInt16ToBytesL(t, indexBytes, offi);
+				Helpers.uint16ToBytesL(t, indexBytes, offi);
 				offi += 2;
 			}
 			faceMap.put("TriangleList", OSD.fromBinary(indexBytes));
@@ -134,9 +136,9 @@ public class ModelPrim {
 			facesOSD.add(faceMap);
 		}
 
-		byte[] physicStubBytes = Helpers.ZCompressOSD(Model.PhysicsStub());
+		byte[] physicStubBytes = Helpers.zCompressOSD(Model.physicsStub());
 
-		byte[] meshBytes = Helpers.ZCompressOSD(facesOSD);
+		byte[] meshBytes = Helpers.zCompressOSD(facesOSD);
 		int n = 0;
 
 		OSDMap lodParms = new OSDMap();

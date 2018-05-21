@@ -50,14 +50,13 @@ import libomv.utils.RefObject;
 public class UUID implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private byte[] data;
+	/** An UUID with a value of all zeroes */
+	public final static UUID ZERO = new UUID(false);
 
-	private static byte[] makeNewGuid() {
-		SecureRandom rand = new SecureRandom();
-		byte[] guid = new byte[16];
-		rand.nextBytes(guid);
-		return guid;
-	}
+	/** A cache of UUID.Zero as a string to optimize a common path */
+	private static final String ZERO_STRING = ZERO.toString();
+
+	private byte[] data;
 
 	/**
 	 * Constructor that creates a new random UUID representation
@@ -120,9 +119,9 @@ public class UUID implements Serializable {
 	public UUID(long value, boolean le) {
 		data = new byte[16];
 		if (le) {
-			Helpers.UInt64ToBytesL(value, data, 0);
+			Helpers.uint64ToBytesL(value, data, 0);
 		} else {
-			Helpers.UInt64ToBytesB(value, data, 8);
+			Helpers.uint64ToBytesB(value, data, 8);
 		}
 	}
 
@@ -173,6 +172,13 @@ public class UUID implements Serializable {
 	public UUID(UUID val) {
 		data = new byte[16];
 		System.arraycopy(val.data, 0, data, 0, 16);
+	}
+
+	private static byte[] makeNewGuid() {
+		SecureRandom rand = new SecureRandom();
+		byte[] guid = new byte[16];
+		rand.nextBytes(guid);
+		return guid;
 	}
 
 	/**
@@ -257,15 +263,15 @@ public class UUID implements Serializable {
 		return length;
 	}
 
-	public long AsLong() {
-		return AsLong(false);
+	public long asLong() {
+		return asLong(false);
 	}
 
-	public long AsLong(boolean le) {
+	public long asLong(boolean le) {
 		if (le)
-			return Helpers.BytesToUInt64L(data);
+			return Helpers.bytesToUInt64L(data);
 
-		return Helpers.BytesToUInt64B(data);
+		return Helpers.bytesToUInt64B(data);
 	}
 
 	/**
@@ -273,7 +279,7 @@ public class UUID implements Serializable {
 	 *
 	 * @returns The CRC checksum for this UUID
 	 */
-	public long CRC() {
+	public long crc() {
 		long retval = 0;
 
 		retval += ((data[3] << 24) + (data[2] << 16) + (data[1] << 8) + data[0]);
@@ -284,7 +290,7 @@ public class UUID implements Serializable {
 		return retval;
 	}
 
-	public static UUID GenerateUUID() {
+	public static UUID generateUUID() {
 		return new UUID(makeNewGuid());
 	}
 
@@ -363,10 +369,10 @@ public class UUID implements Serializable {
 	 *         <example>UUID.TryParse("11f8aa9c-b071-4242-836b-13b7abe0d489",
 	 *         result)</example>
 	 */
-	public static boolean TryParse(String val, RefObject<UUID> result) {
+	public static boolean tryParse(String val, RefObject<UUID> result) {
 		if (val == null || val.length() == 0 || (val.charAt(0) == '{' && val.length() < 38)
 				|| (val.length() < 36 && val.length() != 32)) {
-			result.argvalue = UUID.Zero;
+			result.argvalue = UUID.ZERO;
 			return false;
 		}
 
@@ -374,7 +380,7 @@ public class UUID implements Serializable {
 			result.argvalue = parse(val);
 			return true;
 		} catch (Throwable t) {
-			result.argvalue = UUID.Zero;
+			result.argvalue = UUID.ZERO;
 			return false;
 		}
 	}
@@ -389,7 +395,7 @@ public class UUID implements Serializable {
 	 *            Second UUID to combine
 	 * @return The UUID product of the combination
 	 */
-	public static UUID Combine(UUID first, UUID second) {
+	public static UUID combine(UUID first, UUID second) {
 		MessageDigest md;
 		try {
 			md = MessageDigest.getInstance("MD5");
@@ -410,16 +416,16 @@ public class UUID implements Serializable {
 	 * @param uuid
 	 *            UUID to combine
 	 */
-	public void XOr(UUID uuid) {
+	public void xor(UUID uuid) {
 		int i = 0;
 		for (byte b : uuid.getBytes()) {
 			data[i++] ^= b;
 		}
 	}
 
-	public static UUID XOr(UUID first, UUID second) {
+	public static UUID xor(UUID first, UUID second) {
 		UUID uuid = new UUID(first);
-		uuid.XOr(second);
+		uuid.xor(second);
 		return uuid;
 	}
 
@@ -432,7 +438,7 @@ public class UUID implements Serializable {
 	@Override
 	public String toString() {
 		if (data == null) {
-			return ZeroString;
+			return ZERO_STRING;
 		}
 
 		StringBuffer uuid = new StringBuffer(36);
@@ -448,24 +454,19 @@ public class UUID implements Serializable {
 	}
 
 	public boolean isZero() {
-		return equals(Zero);
+		return equals(ZERO);
 	}
 
 	public static boolean isZero(UUID uuid) {
 		if (uuid != null)
-			return uuid.equals(Zero);
+			return uuid.equals(ZERO);
 		return false;
 	}
 
 	public static boolean isZeroOrNull(UUID uuid) {
 		if (uuid != null)
-			return uuid.equals(Zero);
+			return uuid.equals(ZERO);
 		return true;
 	}
 
-	/** An UUID with a value of all zeroes */
-	public final static UUID Zero = new UUID(false);
-
-	/** A cache of UUID.Zero as a string to optimize a common path */
-	private static final String ZeroString = Zero.toString();
 }

@@ -330,7 +330,8 @@ public class ManagedImage implements Cloneable {
 
 		float pixScale = 1.0f / 255;
 
-		int rowNdx, colNdx;
+		int rowNdx;
+		int colNdx;
 		int smNdx = 0;
 
 		for (rowNdx = 0; rowNdx < height; rowNdx++) {
@@ -362,9 +363,14 @@ public class ManagedImage implements Cloneable {
 		if (this.width == width && this.height == height)
 			return;
 
-		byte[] red = null, green = null, blue = null, alpha = null, bump = null;
+		byte[] red = null;
+		byte[] green = null;
+		byte[] blue = null;
+		byte[] alpha = null;
+		byte[] bump = null;
 		int n = width * height;
-		int di = 0, si;
+		int di = 0;
+		int si;
 
 		if (this.red != null)
 			red = new byte[n];

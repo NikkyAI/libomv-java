@@ -41,10 +41,10 @@ import libomv.utils.Helpers;
 
 public class TarArchiveWriter {
 	/// Binary writer for the underlying stream
-	protected OutputStream m_bw;
+	protected OutputStream os;
 
-	public TarArchiveWriter(OutputStream s) {
-		m_bw = s;
+	public TarArchiveWriter(OutputStream os) {
+		this.os = os;
 	}
 
 	/// Write a directory entry to the tar archive. We can only handle one path
@@ -95,13 +95,13 @@ public class TarArchiveWriter {
 
 		// Write two consecutive 0 blocks to end the archive
 		byte[] finalZeroPadding = new byte[1024];
-		m_bw.write(finalZeroPadding);
+		os.write(finalZeroPadding);
 
-		m_bw.flush();
-		m_bw.close();
+		os.flush();
+		os.close();
 	}
 
-	public static byte[] ConvertDecimalToPaddedOctalBytes(int d, int padding) {
+	public static byte[] convertDecimalToPaddedOctalBytes(int d, int padding) {
 		char[] oString = new char[padding];
 		int pos = padding - 1;
 
@@ -146,7 +146,7 @@ public class TarArchiveWriter {
 		// Logger.DebugLog(String.format("[TAR ARCHIVE WRITER]: File size of %s is %d",
 		// filePath, fileSize));
 
-		byte[] fileSizeBytes = ConvertDecimalToPaddedOctalBytes(fileSize, 11);
+		byte[] fileSizeBytes = convertDecimalToPaddedOctalBytes(fileSize, 11);
 
 		System.arraycopy(header, 124, fileSizeBytes, 0, 11);
 
@@ -171,16 +171,16 @@ public class TarArchiveWriter {
 		// Logger.DebugLog(String.format("[TAR ARCHIVE WRITER]: Decimal header checksum
 		// is %d", checksum);
 
-		byte[] checkSumBytes = ConvertDecimalToPaddedOctalBytes(checksum, 6);
+		byte[] checkSumBytes = convertDecimalToPaddedOctalBytes(checksum, 6);
 		System.arraycopy(header, 148, checkSumBytes, 0, 6);
 
 		header[154] = 0;
 
 		// Write out header
-		m_bw.write(header);
+		os.write(header);
 
 		// Write out data
-		m_bw.write(data);
+		os.write(data);
 
 		if (data.length % 512 != 0) {
 			int paddingRequired = 512 - (data.length % 512);
@@ -189,7 +189,7 @@ public class TarArchiveWriter {
 			// bytes", paddingRequired);
 
 			byte[] padding = new byte[paddingRequired];
-			m_bw.write(padding);
+			os.write(padding);
 		}
 	}
 

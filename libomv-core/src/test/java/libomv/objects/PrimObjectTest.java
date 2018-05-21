@@ -104,8 +104,8 @@ public class PrimObjectTest extends TestCase {
 		for (int i = -1000; i <= 1000; i++) {
 			float f = (float) i / 1000;
 
-			byte[] offset = Helpers.TEOffsetShort(f);
-			float foffset = Helpers.TEOffsetFloat(offset, 0);
+			byte[] offset = Helpers.teOffsetShort(f);
+			float foffset = Helpers.teOffsetFloat(offset, 0);
 
 			assertTrue(foffset + " is not equal to " + f, foffset - f < 0.0001);
 		}

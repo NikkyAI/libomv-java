@@ -145,11 +145,11 @@ public class AssetNotecard extends AssetItem {
 
 				output.append("\tpermissions 0\n");
 				output.append("\t{\n");
-				output.append("\t\tbase_mask\t" + String.format("08x", item.permissions.BaseMask) + "\n");
-				output.append("\t\towner_mask\t" + String.format("08x", item.permissions.OwnerMask) + "\n");
-				output.append("\t\tgroup_mask\t" + String.format("08x", item.permissions.GroupMask) + "\n");
-				output.append("\t\teveryone_mask\t" + String.format("08x", item.permissions.EveryoneMask) + "\n");
-				output.append("\t\tnext_owner_mask\t" + String.format("08x", item.permissions.NextOwnerMask) + "\n");
+				output.append("\t\tbase_mask\t" + String.format("08x", item.permissions.baseMask) + "\n");
+				output.append("\t\towner_mask\t" + String.format("08x", item.permissions.ownerMask) + "\n");
+				output.append("\t\tgroup_mask\t" + String.format("08x", item.permissions.groupMask) + "\n");
+				output.append("\t\teveryone_mask\t" + String.format("08x", item.permissions.everyoneMask) + "\n");
+				output.append("\t\tnext_owner_mask\t" + String.format("08x", item.permissions.nextOwnerMask) + "\n");
 				output.append("\t\tcreator_id\t" + item.permissions.creatorID.toString() + "\n");
 				output.append("\t\towner_id\t" + item.permissions.ownerID.toString() + "\n");
 				output.append("\t\tlast_owner_id\t" + item.permissions.lastOwnerID.toString() + "\n");
@@ -158,9 +158,9 @@ public class AssetNotecard extends AssetItem {
 					output.append("\t\tgroup_owned\t1\n");
 				output.append("\t}\n");
 
-				if (Permissions.hasPermissions(item.permissions.BaseMask,
+				if (Permissions.hasPermissions(item.permissions.baseMask,
 						PermissionMask.Modify | PermissionMask.Copy | PermissionMask.Transfer)
-						|| item.assetID == UUID.Zero) {
+						|| item.assetID == UUID.ZERO) {
 					output.append("\t\tasset_id\t" + item.assetID + "\n");
 				} else {
 					output.append("\t\tshadow_id\t" + Inventory.encryptAssetID(item.assetID) + "\n");
@@ -216,7 +216,7 @@ public class AssetNotecard extends AssetItem {
 			return false;
 
 		try {
-			String data = Helpers.BytesToString(assetData);
+			String data = Helpers.bytesToString(assetData);
 			String[] lines = data.split("\n");
 			int i = 0;
 			Matcher m;
@@ -224,7 +224,7 @@ public class AssetNotecard extends AssetItem {
 			// Version
 			if (!(m = match(lines[i++], "Linden text version\\s+(\\d+)")).matches())
 				throw new Exception("could not determine version");
-			int version = Helpers.TryParseInt(m.group(1));
+			int version = Helpers.tryParseInt(m.group(1));
 			if (version < 1 || version > 2)
 				throw new Exception("unsupported version");
 			m = match(lines[i++], "^\\s*\\{\\s*$");
@@ -234,7 +234,7 @@ public class AssetNotecard extends AssetItem {
 			// Embedded items header
 			if (!(m = match(lines[i++], "LLEmbeddedItems version\\s+(\\d+)")).matches())
 				throw new Exception("could not determine embedded items version version");
-			version = Helpers.TryParseInt(m.group(1));
+			version = Helpers.tryParseInt(m.group(1));
 			if (version != 1)
 				throw new Exception("unsuported embedded item version");
 			if (!(m = match(lines[i++], "^\\s*\\{\\s*$")).matches())
@@ -243,7 +243,7 @@ public class AssetNotecard extends AssetItem {
 			// Item count
 			if (!(m = match(lines[i++], "count\\s+(\\d+)")).matches())
 				throw new Exception("wrong format");
-			int count = Helpers.TryParseInt(m.group(1));
+			int count = Helpers.tryParseInt(m.group(1));
 
 			// Decode individual items
 			for (int n = 0; n < count; n++) {
@@ -262,16 +262,16 @@ public class AssetNotecard extends AssetItem {
 					throw new Exception("missing inv item");
 
 				// Item itself
-				UUID uuid = UUID.Zero;
-				UUID creatorID = UUID.Zero;
-				UUID ownerID = UUID.Zero;
-				UUID lastOwnerID = UUID.Zero;
-				UUID groupID = UUID.Zero;
+				UUID uuid = UUID.ZERO;
+				UUID creatorID = UUID.ZERO;
+				UUID ownerID = UUID.ZERO;
+				UUID lastOwnerID = UUID.ZERO;
+				UUID groupID = UUID.ZERO;
 				Permissions permissions = Permissions.NoPermissions;
 				int salePrice = 0;
 				SaleType saleType = SaleType.Not;
-				UUID parentID = UUID.Zero;
-				UUID assetID = UUID.Zero;
+				UUID parentID = UUID.ZERO;
+				UUID assetID = UUID.ZERO;
 				AssetType assetType = AssetType.Unknown;
 				InventoryType inventoryType = InventoryType.Unknown;
 				int flags = 0;
@@ -314,15 +314,15 @@ public class AssetNotecard extends AssetItem {
 							} else if (pkey == "group_id") {
 								groupID = new UUID(pval);
 							} else if (pkey == "base_mask") {
-								baseMask = (int) Helpers.TryParseHex(pval);
+								baseMask = (int) Helpers.tryParseHex(pval);
 							} else if (pkey == "owner_mask") {
-								ownerMask = (int) Helpers.TryParseHex(pval);
+								ownerMask = (int) Helpers.tryParseHex(pval);
 							} else if (pkey == "group_mask") {
-								groupMask = (int) Helpers.TryParseHex(pval);
+								groupMask = (int) Helpers.tryParseHex(pval);
 							} else if (pkey == "everyone_mask") {
-								everyoneMask = (int) Helpers.TryParseHex(pval);
+								everyoneMask = (int) Helpers.tryParseHex(pval);
 							} else if (pkey == "next_owner_mask") {
-								nextOwnerMask = (int) Helpers.TryParseHex(pval);
+								nextOwnerMask = (int) Helpers.tryParseHex(pval);
 							}
 						}
 						permissions = new Permissions(creatorID, ownerID, lastOwnerID, groupID, baseMask, everyoneMask,
@@ -339,7 +339,7 @@ public class AssetNotecard extends AssetItem {
 							if (pkey == "}")
 								break;
 							else if (pkey == "sale_price") {
-								salePrice = Helpers.TryParseInt(pval);
+								salePrice = Helpers.tryParseInt(pval);
 							} else if (pkey == "sale_type") {
 								saleType = SaleType.setValue(pval);
 							}
@@ -355,13 +355,13 @@ public class AssetNotecard extends AssetItem {
 					} else if (key == "inv_type") {
 						inventoryType = InventoryType.setValue(val);
 					} else if (key == "flags") {
-						flags = (int) Helpers.TryParseHex(val);
+						flags = (int) Helpers.tryParseHex(val);
 					} else if (key == "name") {
 						name = val.substring(0, val.lastIndexOf("|"));
 					} else if (key == "desc") {
 						description = val.substring(0, val.lastIndexOf("|"));
 					} else if (key == "creation_date") {
-						creationDate = Helpers.UnixTimeToDateTime(Helpers.TryParseInt(val));
+						creationDate = Helpers.unixTimeToDateTime(Helpers.tryParseInt(val));
 					}
 				}
 				InventoryItem finalEmbedded = InventoryItem.create(inventoryType, uuid, parentID, ownerID);

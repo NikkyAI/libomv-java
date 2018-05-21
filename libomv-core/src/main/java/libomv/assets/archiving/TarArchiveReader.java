@@ -45,13 +45,13 @@ public class TarArchiveReader {
 	}
 
 	public class TarHeader {
-		public String FilePath;
-		public int FileSize;
-		public TarArchiveReader.TarEntryType EntryType;
+		public String filePath;
+		public int fileSize;
+		public TarArchiveReader.TarEntryType entryType;
 	}
 
 	/// Binary reader for the underlying stream
-	protected InputStream m_br;
+	protected InputStream is;
 
 	/// Used to trim off null chars
 	protected static final char[] m_nullCharArray = new char[] { '\0' };
@@ -61,17 +61,17 @@ public class TarArchiveReader {
 
 	/// Generate a tar reader which reads from the given stream.
 	/// <param name="s"></param>
-	public TarArchiveReader(InputStream s) {
-		m_br = s;
+	public TarArchiveReader(InputStream is) {
+		this.is = is;
 	}
 
 	public byte[] readEntry(TarHeader header) throws IOException {
 		TarHeader hdr = readHeader();
-		if (hdr != null && hdr.FileSize > 0) {
-			byte[] data = readData(hdr.FileSize);
-			header.EntryType = hdr.EntryType;
-			header.FilePath = hdr.FilePath;
-			header.FileSize = hdr.FileSize;
+		if (hdr != null && hdr.fileSize > 0) {
+			byte[] data = readData(hdr.fileSize);
+			header.entryType = hdr.entryType;
+			header.filePath = hdr.filePath;
+			header.fileSize = hdr.fileSize;
 			return data;
 		}
 		return null;
@@ -96,42 +96,42 @@ public class TarArchiveReader {
 		if (header[156] == (byte) 'L') {
 			int longNameLength = convertOctalBytesToDecimal(header, 124, 11);
 			byte[] nameBytes = readData(longNameLength);
-			tarHeader.FilePath = Helpers.BytesToString(nameBytes, 0, longNameLength, Helpers.ASCII_ENCODING);
+			tarHeader.filePath = Helpers.bytesToString(nameBytes, 0, longNameLength, Helpers.ASCII_ENCODING);
 			// Logger.Log("[TAR ARCHIVE READER]: Got long file name " + tarHeader.FilePath,
 			// Logger.LogLevel.Debug);
 			header = readData(512);
 		} else {
-			tarHeader.FilePath = Helpers.BytesToString(header, 0, 100).trim();
+			tarHeader.filePath = Helpers.bytesToString(header, 0, 100).trim();
 			// Logger.Log("[TAR ARCHIVE READER]: Got short file name " + tarHeader.FilePath,
 			// Logger.LogLevel.Debug);
 		}
-		tarHeader.FileSize = convertOctalBytesToDecimal(header, 124, 11);
+		tarHeader.fileSize = convertOctalBytesToDecimal(header, 124, 11);
 
 		switch (header[156]) {
 		case 0:
 		case (byte) '0':
-			tarHeader.EntryType = TarEntryType.TYPE_NORMAL_FILE;
+			tarHeader.entryType = TarEntryType.TYPE_NORMAL_FILE;
 			break;
 		case (byte) '1':
-			tarHeader.EntryType = TarEntryType.TYPE_HARD_LINK;
+			tarHeader.entryType = TarEntryType.TYPE_HARD_LINK;
 			break;
 		case (byte) '2':
-			tarHeader.EntryType = TarEntryType.TYPE_SYMBOLIC_LINK;
+			tarHeader.entryType = TarEntryType.TYPE_SYMBOLIC_LINK;
 			break;
 		case (byte) '3':
-			tarHeader.EntryType = TarEntryType.TYPE_CHAR_SPECIAL;
+			tarHeader.entryType = TarEntryType.TYPE_CHAR_SPECIAL;
 			break;
 		case (byte) '4':
-			tarHeader.EntryType = TarEntryType.TYPE_BLOCK_SPECIAL;
+			tarHeader.entryType = TarEntryType.TYPE_BLOCK_SPECIAL;
 			break;
 		case (byte) '5':
-			tarHeader.EntryType = TarEntryType.TYPE_DIRECTORY;
+			tarHeader.entryType = TarEntryType.TYPE_DIRECTORY;
 			break;
 		case (byte) '6':
-			tarHeader.EntryType = TarEntryType.TYPE_FIFO;
+			tarHeader.entryType = TarEntryType.TYPE_FIFO;
 			break;
 		case (byte) '7':
-			tarHeader.EntryType = TarEntryType.TYPE_CONTIGUOUS_FILE;
+			tarHeader.entryType = TarEntryType.TYPE_CONTIGUOUS_FILE;
 			break;
 		}
 		return tarHeader;
@@ -141,10 +141,11 @@ public class TarArchiveReader {
 	/// <param name="fileSize"></param>
 	/// <returns></returns>
 	protected byte[] readData(int size) throws IOException {
-		int offset = 0, read = 0;
+		int offset = 0;
+		int read = 0;
 		byte[] data = new byte[size];
 		while (read >= 0 && size > offset) {
-			read = m_br.read(data, offset, size - offset);
+			read = is.read(data, offset, size - offset);
 			if (read >= 0)
 				offset += read;
 		}
@@ -157,7 +158,7 @@ public class TarArchiveReader {
 			// Logger.DebugLog("[TAR ARCHIVE READER]: Reading " + paddingLeft + " padding
 			// bytes");
 			while (read >= 0 && paddingLeft > 0) {
-				read = (int) m_br.skip(paddingLeft);
+				read = (int) is.skip(paddingLeft);
 				if (read >= 0)
 					paddingLeft -= read;
 			}
@@ -168,7 +169,7 @@ public class TarArchiveReader {
 	}
 
 	public void close() throws IOException {
-		m_br = null;
+		is = null;
 	}
 
 	/// Convert octal bytes to a decimal representation
@@ -180,7 +181,7 @@ public class TarArchiveReader {
 			throws UnsupportedEncodingException {
 		// Trim leading white space: ancient tars do that instead
 		// of leading 0s :-( don't ask. really.
-		String oString = Helpers.BytesToString(bytes, startIndex, count, Helpers.ASCII_ENCODING).trim();
+		String oString = Helpers.bytesToString(bytes, startIndex, count, Helpers.ASCII_ENCODING).trim();
 
 		int d = 0;
 

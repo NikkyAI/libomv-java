@@ -46,26 +46,36 @@ import libomv.utils.Helpers;
 import libomv.utils.RefObject;
 
 public class Quaternion {
+
+	public enum Order {
+		XYZ, YZX, ZXY, YXZ, XZY, ZYX;
+	}
+
+	/** A quaternion with a value of 0,0,0,0 */
+	public final static Quaternion ZERO = new Quaternion(0f, 0f, 0f, 0f);
+	/** A quaternion with a value of 0,0,0,1 */
+	public final static Quaternion IDENTITY = new Quaternion(0f, 0f, 0f, 1f);
+
 	private static float DEG_TO_RAD = 0.017453292519943295769236907684886f;
 
-	public float X;
+	public float x;
 
-	public float Y;
+	public float y;
 
-	public float Z;
+	public float z;
 
-	public float W;
+	public float w;
 
 	public Quaternion() {
-		X = Y = Z = 0.0f;
-		W = 1.0f;
+		this.x = this.y = this.z = 0.0f;
+		this.w = 1.0f;
 	}
 
 	public Quaternion(float x, float y, float z, float w) {
-		X = x;
-		Y = y;
-		Z = z;
-		W = w;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.w = w;
 	}
 
 	/**
@@ -79,19 +89,19 @@ public class Quaternion {
 	 *            Z value from -1.0 to 1.0
 	 */
 	public Quaternion(float x, float y, float z) {
-		X = x;
-		Y = y;
-		Z = z;
+		this.x = x;
+		this.y = y;
+		this.z = z;
 
-		float xyzsum = 1 - X * X - Y * Y - Z * Z;
-		W = (xyzsum > 0) ? (float) Math.sqrt(xyzsum) : 0;
+		float xyzsum = 1 - x * x - y * y - z * z;
+		this.w = (xyzsum > 0) ? (float) Math.sqrt(xyzsum) : 0;
 	}
 
 	public Quaternion(Vector3 vectorPart, float scalarPart) {
-		X = vectorPart.X;
-		Y = vectorPart.Y;
-		Z = vectorPart.Z;
-		W = scalarPart;
+		this.x = vectorPart.x;
+		this.y = vectorPart.y;
+		this.z = vectorPart.z;
+		this.w = scalarPart;
 	}
 
 	public Quaternion(Matrix4 mat) {
@@ -110,24 +120,24 @@ public class Quaternion {
 	 *            bytes will be read, otherwise 16 bytes will be read.
 	 */
 	public Quaternion(byte[] byteArray, int pos, boolean normalized) {
-		X = Y = Z = W = 0f;
-		FromBytes(byteArray, pos, normalized, false);
+		this.x = this.y = this.z = this.w = 0f;
+		fromBytes(byteArray, pos, normalized, false);
 	}
 
 	public Quaternion(byte[] byteArray, int pos, boolean normalized, boolean le) {
-		X = Y = Z = W = 0f;
-		FromBytes(byteArray, pos, normalized, le);
+		this.x = this.y = this.z = this.w = 0f;
+		fromBytes(byteArray, pos, normalized, le);
 	}
 
 	public Quaternion(ByteBuffer byteArray, boolean normalized) {
-		X = byteArray.getFloat();
-		Y = byteArray.getFloat();
-		Z = byteArray.getFloat();
+		this.x = byteArray.getFloat();
+		this.y = byteArray.getFloat();
+		this.z = byteArray.getFloat();
 		if (!normalized) {
-			W = byteArray.getFloat();
+			this.w = byteArray.getFloat();
 		} else {
-			float xyzsum = 1f - X * X - Y * Y - Z * Z;
-			W = (xyzsum > 0f) ? (float) Math.sqrt(xyzsum) : 0;
+			float xyzsum = 1f - x * x - y * y - z * z;
+			this.w = (xyzsum > 0f) ? (float) Math.sqrt(xyzsum) : 0;
 		}
 	}
 
@@ -147,13 +157,13 @@ public class Quaternion {
 		while (parser.nextTag() == XmlPullParser.START_TAG) {
 			String name = parser.getName();
 			if (name.equals("X")) {
-				X = Helpers.TryParseFloat(parser.nextText().trim());
+				x = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equals("Y")) {
-				Y = Helpers.TryParseFloat(parser.nextText().trim());
+				y = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equals("Z")) {
-				Z = Helpers.TryParseFloat(parser.nextText().trim());
+				z = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equals("W")) {
-				W = Helpers.TryParseFloat(parser.nextText().trim());
+				w = Helpers.tryParseFloat(parser.nextText().trim());
 			} else {
 				Helpers.skipElement(parser);
 			}
@@ -161,10 +171,10 @@ public class Quaternion {
 	}
 
 	public Quaternion(Quaternion q) {
-		X = q.X;
-		Y = q.Y;
-		Z = q.Z;
-		W = q.W;
+		this.x = q.x;
+		this.y = q.y;
+		this.z = q.z;
+		this.w = q.w;
 	}
 
 	public boolean approxEquals(Quaternion quat, float tolerance) {
@@ -177,7 +187,7 @@ public class Quaternion {
 	}
 
 	public float lengthSquared() {
-		return (X * X + Y * Y + Z * Z + W * W);
+		return (x * x + y * y + z * z + w * w);
 	}
 
 	/** Normalizes the quaternion */
@@ -187,18 +197,18 @@ public class Quaternion {
 		if (mag > Helpers.FLOAT_MAG_THRESHOLD) {
 			return divide(mag);
 		}
-		X = 0f;
-		Y = 0f;
-		Z = 0f;
-		W = 1f;
+		x = 0f;
+		y = 0f;
+		z = 0f;
+		w = 1f;
 		return this;
 	}
 
 	public Vector3 toVector3() {
-		if (W >= 0) {
-			return new Vector3(X, Y, Z);
+		if (w >= 0) {
+			return new Vector3(x, y, z);
 		}
-		return new Vector3(-X, -Y, -Z);
+		return new Vector3(-x, -y, -z);
 	}
 
 	/**
@@ -208,9 +218,9 @@ public class Quaternion {
 	 *         values in order using little endian byte ordering
 	 * @throws Exception
 	 */
-	public byte[] GetBytes() throws Exception {
+	public byte[] getBytes() throws Exception {
 		byte[] bytes = new byte[12];
-		ToBytes(bytes, 0, false);
+		toBytes(bytes, 0, false);
 		return bytes;
 	}
 
@@ -224,26 +234,28 @@ public class Quaternion {
 	 * @throws IOException
 	 */
 	public void write(ByteBuffer bytes) throws Exception {
-		float norm = (float) Math.sqrt(X * X + Y * Y + Z * Z + W * W);
+		float norm = (float) Math.sqrt(x * x + y * y + z * z + w * w);
 
 		if (norm != 0) {
 			norm = 1f / norm;
 
-			float x, y, z;
-			if (W >= 0f) {
-				x = X;
-				y = Y;
-				z = Z;
+			float tx;
+			float ty;
+			float tz;
+			if (w >= 0f) {
+				tx = x;
+				ty = y;
+				tz = z;
 			} else {
-				x = -X;
-				y = -Y;
-				z = -Z;
+				tx = -x;
+				ty = -y;
+				tz = -z;
 			}
-			bytes.putFloat(norm * x);
-			bytes.putFloat(norm * y);
-			bytes.putFloat(norm * z);
+			bytes.putFloat(norm * tx);
+			bytes.putFloat(norm * ty);
+			bytes.putFloat(norm * tz);
 		} else {
-			throw new Exception("Quaternion <" + X + "," + Y + "," + Z + "," + W + "> normalized to zero");
+			throw new Exception("Quaternion <" + x + "," + y + "," + z + "," + w + "> normalized to zero");
 		}
 	}
 
@@ -258,15 +270,15 @@ public class Quaternion {
 	 */
 	public void write(OutputStream stream, boolean le) throws IOException {
 		if (le) {
-			stream.write(Helpers.floatToBytesL(X));
-			stream.write(Helpers.floatToBytesL(Y));
-			stream.write(Helpers.floatToBytesL(Z));
-			stream.write(Helpers.floatToBytesL(W));
+			stream.write(Helpers.floatToBytesL(x));
+			stream.write(Helpers.floatToBytesL(y));
+			stream.write(Helpers.floatToBytesL(z));
+			stream.write(Helpers.floatToBytesL(w));
 		} else {
-			stream.write(Helpers.floatToBytesB(X));
-			stream.write(Helpers.floatToBytesB(Y));
-			stream.write(Helpers.floatToBytesB(Z));
-			stream.write(Helpers.floatToBytesB(W));
+			stream.write(Helpers.floatToBytesB(x));
+			stream.write(Helpers.floatToBytesB(y));
+			stream.write(Helpers.floatToBytesB(z));
+			stream.write(Helpers.floatToBytesB(w));
 		}
 	}
 
@@ -277,20 +289,20 @@ public class Quaternion {
 	public void serializeXml(XmlSerializer writer, String namespace, String name)
 			throws IllegalArgumentException, IllegalStateException, IOException {
 		writer.startTag(namespace, name);
-		writer.startTag(namespace, "X").text(Float.toString(X)).endTag(namespace, "X");
-		writer.startTag(namespace, "Y").text(Float.toString(Y)).endTag(namespace, "Y");
-		writer.startTag(namespace, "Z").text(Float.toString(Z)).endTag(namespace, "Z");
-		writer.startTag(namespace, "W").text(Float.toString(W)).endTag(namespace, "W");
+		writer.startTag(namespace, "X").text(Float.toString(x)).endTag(namespace, "X");
+		writer.startTag(namespace, "Y").text(Float.toString(y)).endTag(namespace, "Y");
+		writer.startTag(namespace, "Z").text(Float.toString(z)).endTag(namespace, "Z");
+		writer.startTag(namespace, "W").text(Float.toString(w)).endTag(namespace, "W");
 		writer.endTag(namespace, name);
 	}
 
 	public void serializeXml(XmlSerializer writer, String namespace, String name, Locale locale)
 			throws IllegalArgumentException, IllegalStateException, IOException {
 		writer.startTag(namespace, name);
-		writer.startTag(namespace, "X").text(String.format(locale, "%f", X)).endTag(namespace, "X");
-		writer.startTag(namespace, "Y").text(String.format(locale, "%f", Y)).endTag(namespace, "Y");
-		writer.startTag(namespace, "Z").text(String.format(locale, "%f", Z)).endTag(namespace, "Z");
-		writer.startTag(namespace, "W").text(String.format(locale, "%f", W)).endTag(namespace, "W");
+		writer.startTag(namespace, "X").text(String.format(locale, "%f", x)).endTag(namespace, "X");
+		writer.startTag(namespace, "Y").text(String.format(locale, "%f", y)).endTag(namespace, "Y");
+		writer.startTag(namespace, "Z").text(String.format(locale, "%f", z)).endTag(namespace, "Z");
+		writer.startTag(namespace, "W").text(String.format(locale, "%f", w)).endTag(namespace, "W");
 		writer.endTag(namespace, name);
 	}
 
@@ -301,15 +313,15 @@ public class Quaternion {
 	 */
 	@Override
 	public String toString() {
-		return String.format(Helpers.EnUsCulture, "<%f, %f, %f, %f>", X, Y, Z, W);
+		return String.format(Helpers.EnUsCulture, "<%f, %f, %f, %f>", x, y, z, w);
 	}
 
 	@Override
 	public int hashCode() {
-		int hashCode = ((Float) X).hashCode();
-		hashCode = hashCode * 31 + ((Float) Y).hashCode();
-		hashCode = hashCode * 31 + ((Float) Z).hashCode();
-		hashCode = hashCode * 31 + ((Float) W).hashCode();
+		int hashCode = ((Float) x).hashCode();
+		hashCode = hashCode * 31 + ((Float) y).hashCode();
+		hashCode = hashCode * 31 + ((Float) z).hashCode();
+		hashCode = hashCode * 31 + ((Float) w).hashCode();
 		return hashCode;
 	}
 
@@ -324,26 +336,26 @@ public class Quaternion {
 	 *            Whether the source data is normalized or not. If this is true 12
 	 *            bytes will be read, otherwise 16 bytes will be read.
 	 */
-	public void FromBytes(byte[] bytes, int pos, boolean normalized, boolean le) {
+	public void fromBytes(byte[] bytes, int pos, boolean normalized, boolean le) {
 		if (le) {
 			/* Little endian architecture */
-			X = Helpers.BytesToFloatL(bytes, pos + 0);
-			Y = Helpers.BytesToFloatL(bytes, pos + 4);
-			Z = Helpers.BytesToFloatL(bytes, pos + 8);
+			x = Helpers.bytesToFloatL(bytes, pos + 0);
+			y = Helpers.bytesToFloatL(bytes, pos + 4);
+			z = Helpers.bytesToFloatL(bytes, pos + 8);
 			if (!normalized) {
-				W = Helpers.BytesToFloatL(bytes, pos + 12);
+				w = Helpers.bytesToFloatL(bytes, pos + 12);
 			}
 		} else {
-			X = Helpers.BytesToFloatB(bytes, pos + 0);
-			Y = Helpers.BytesToFloatB(bytes, pos + 4);
-			Z = Helpers.BytesToFloatB(bytes, pos + 8);
+			x = Helpers.bytesToFloatB(bytes, pos + 0);
+			y = Helpers.bytesToFloatB(bytes, pos + 4);
+			z = Helpers.bytesToFloatB(bytes, pos + 8);
 			if (!normalized) {
-				W = Helpers.BytesToFloatB(bytes, pos + 12);
+				w = Helpers.bytesToFloatB(bytes, pos + 12);
 			}
 		}
 		if (normalized) {
-			float xyzsum = 1f - X * X - Y * Y - Z * Z;
-			W = (xyzsum > 0f) ? (float) Math.sqrt(xyzsum) : 0f;
+			float xyzsum = 1f - x * x - y * y - z * z;
+			w = (xyzsum > 0f) ? (float) Math.sqrt(xyzsum) : 0f;
 		}
 	}
 
@@ -357,31 +369,33 @@ public class Quaternion {
 	 *            least 12 bytes before the end of the array
 	 * @throws Exception
 	 */
-	public void ToBytes(byte[] dest, int pos, boolean le) throws Exception {
-		float norm = X * X + Y * Y + Z * Z + W * W;
+	public void toBytes(byte[] dest, int pos, boolean le) throws Exception {
+		float norm = x * x + y * y + z * z + w * w;
 
 		if (norm >= 0.001f) {
 			norm = (float) (1 / Math.sqrt(norm));
 
-			float x, y, z;
-			if (W >= 0f) {
-				x = X;
-				y = Y;
-				z = Z;
+			float tx;
+			float ty;
+			float tz;
+			if (w >= 0f) {
+				tx = x;
+				ty = y;
+				tz = z;
 			} else {
-				x = -X;
-				y = -Y;
-				z = -Z;
+				tx = -x;
+				ty = -y;
+				tz = -z;
 			}
 
 			if (le) {
-				Helpers.floatToBytesL(norm * x, dest, pos + 0);
-				Helpers.floatToBytesL(norm * y, dest, pos + 4);
-				Helpers.floatToBytesL(norm * z, dest, pos + 8);
+				Helpers.floatToBytesL(norm * tx, dest, pos + 0);
+				Helpers.floatToBytesL(norm * ty, dest, pos + 4);
+				Helpers.floatToBytesL(norm * tz, dest, pos + 8);
 			} else {
-				Helpers.floatToBytesB(norm * x, dest, pos + 0);
-				Helpers.floatToBytesB(norm * y, dest, pos + 4);
-				Helpers.floatToBytesB(norm * z, dest, pos + 8);
+				Helpers.floatToBytesB(norm * tx, dest, pos + 0);
+				Helpers.floatToBytesB(norm * ty, dest, pos + 4);
+				Helpers.floatToBytesB(norm * tz, dest, pos + 8);
 			}
 		} else {
 			throw new Exception(String.format("Quaternion %s normalized to zero", toString()));
@@ -397,27 +411,27 @@ public class Quaternion {
 	 * @return a Vector with the 3 angles roll, pitch, yaw in this order
 	 */
 	public Vector3 toEuler() {
-		float sqx = X * X;
-		float sqy = Y * Y;
-		float sqz = Z * Z;
-		float sqw = W * W;
+		float sqx = x * x;
+		float sqy = y * y;
+		float sqz = z * z;
+		float sqw = w * w;
 
 		// Unit will be a correction factor if the quaternion is not normalized
 		float unit = sqx + sqy + sqz + sqw;
 		if (unit < 0.001)
-			return Vector3.Zero;
-		double test = X * Y + Z * W;
+			return Vector3.ZERO;
+		double test = x * y + z * w;
 
 		if (test > 0.499f * unit) {
 			// Singularity at north pole
-			return new Vector3(0f, (float) (Math.PI / 2.0), 2f * (float) Math.atan2(X, W));
+			return new Vector3(0f, (float) (Math.PI / 2.0), 2f * (float) Math.atan2(x, w));
 		} else if (test < -0.499f * unit) {
 			// Singularity at south pole
-			return new Vector3(0f, -(float) (Math.PI / 2.0), -2f * (float) Math.atan2(X, W));
+			return new Vector3(0f, -(float) (Math.PI / 2.0), -2f * (float) Math.atan2(x, w));
 		}
-		return new Vector3((float) Math.atan2(2f * X * W - 2f * Y * Z, -sqx + sqy - sqz + sqw),
+		return new Vector3((float) Math.atan2(2f * x * w - 2f * y * z, -sqx + sqy - sqz + sqw),
 				(float) Math.asin(2f * test / unit),
-				(float) Math.atan2(2f * Y * W - 2f * X * Z, sqx - sqy - sqz + sqw));
+				(float) Math.atan2(2f * y * w - 2f * x * z, sqx - sqy - sqz + sqw));
 	}
 
 	/**
@@ -430,17 +444,17 @@ public class Quaternion {
 	 */
 	public void getAxisAngle(RefObject<Vector3> axis, RefObject<Float> angle) {
 		Quaternion q = this.normalize();
-		float sin = (float) Math.sqrt(1.0f - q.W * q.W);
+		float sin = (float) Math.sqrt(1.0f - q.w * q.w);
 		if (sin >= 0.001) {
 			float invSin = 1.0f / sin;
-			if (q.W < 0)
+			if (q.w < 0)
 				invSin = -invSin;
-			axis.argvalue = new Vector3(q.X, q.Y, q.Z).multiply(invSin);
-			angle.argvalue = 2.0f * (float) Math.acos(q.W);
+			axis.argvalue = new Vector3(q.x, q.y, q.z).multiply(invSin);
+			angle.argvalue = 2.0f * (float) Math.acos(q.w);
 			if (angle.argvalue > Math.PI)
 				angle.argvalue = 2.0f * (float) Math.PI - angle.argvalue;
 		} else {
-			axis.argvalue = Vector3.UnitX;
+			axis.argvalue = Vector3.UNIT_X;
 			angle.argvalue = 0f;
 		}
 	}
@@ -467,7 +481,7 @@ public class Quaternion {
 		angle *= 0.5;
 		float s = (float) Math.sin(angle);
 
-		return new Quaternion(axis.X * s, axis.Y * s, axis.Z * s, (float) Math.cos(angle)).normalize();
+		return new Quaternion(axis.x * s, axis.y * s, axis.z * s, (float) Math.cos(angle)).normalize();
 	}
 
 	/**
@@ -479,7 +493,7 @@ public class Quaternion {
 	 * @throws Exception
 	 */
 	public static Quaternion createFromEulers(Vector3 eulers) throws Exception {
-		return createFromEulers(eulers.X, eulers.Y, eulers.Z);
+		return createFromEulers(eulers.x, eulers.y, eulers.z);
 	}
 
 	/**
@@ -529,29 +543,29 @@ public class Quaternion {
 		float norm = quaternion.lengthSquared();
 
 		if (norm == 0f) {
-			quaternion.X = quaternion.Y = quaternion.Z = quaternion.W = 0f;
+			quaternion.x = quaternion.y = quaternion.z = quaternion.w = 0f;
 		} else {
 			float oonorm = 1f / norm;
 			quaternion = conjugate(quaternion);
 
-			quaternion.X *= oonorm;
-			quaternion.Y *= oonorm;
-			quaternion.Z *= oonorm;
-			quaternion.W *= oonorm;
+			quaternion.x *= oonorm;
+			quaternion.y *= oonorm;
+			quaternion.z *= oonorm;
+			quaternion.w *= oonorm;
 		}
 		return quaternion;
 	}
 
 	// linear interpolation from identity to q
 	public static Quaternion lerp(Quaternion q, float t) {
-		return new Quaternion(t * q.X, t * q.Y, t * q.Z, t * (q.Z - 1f) + 1f).normalize();
+		return new Quaternion(t * q.x, t * q.y, t * q.z, t * (q.z - 1f) + 1f).normalize();
 	}
 
 	/* linear interpolation between two quaternions */
 	public static Quaternion lerp(Quaternion q1, Quaternion q2, float t) {
 		float inv_t = 1.f - t;
-		return new Quaternion(t * q2.X + inv_t * q1.X, t * q2.Y + inv_t * q1.Y, t * q2.Z + inv_t * q1.Z,
-				t * q2.W + inv_t * q1.W).normalize();
+		return new Quaternion(t * q2.x + inv_t * q1.x, t * q2.y + inv_t * q1.y, t * q2.z + inv_t * q1.z,
+				t * q2.w + inv_t * q1.w).normalize();
 	}
 
 	/** Spherical linear interpolation between two quaternions */
@@ -579,23 +593,23 @@ public class Quaternion {
 				invscale = amount;
 			}
 		} else {
-			q2.X = -q1.Y;
-			q2.Y = q1.X;
-			q2.Z = -q1.W;
-			q2.W = q1.Z;
+			q2.x = -q1.y;
+			q2.y = q1.x;
+			q2.z = -q1.w;
+			q2.w = q1.z;
 
 			scale = (float) Math.sin(Math.PI * (0.5f - amount));
 			invscale = (float) Math.sin(Math.PI * amount);
 		}
-		return new Quaternion(q1.X * scale + q2.X * invscale, q1.Y * scale + q2.Y * invscale,
-				q1.Z * scale + q2.Z * invscale, q1.W * scale + q2.W * invscale);
+		return new Quaternion(q1.x * scale + q2.x * invscale, q1.y * scale + q2.y * invscale,
+				q1.z * scale + q2.z * invscale, q1.w * scale + q2.w * invscale);
 	}
 
 	public static Quaternion normalize(Quaternion quaternion) {
 		return new Quaternion(quaternion).normalize();
 	}
 
-	public static Quaternion Parse(String val) {
+	public static Quaternion parse(String val) {
 		String splitChar = ",";
 		String[] split = val.replace("<", "").replace(">", "").split(splitChar);
 		if (split.length == 3) {
@@ -606,9 +620,9 @@ public class Quaternion {
 				Float.parseFloat(split[2].trim()), Float.parseFloat(split[3].trim()));
 	}
 
-	public static boolean TryParse(String val, RefObject<Quaternion> result) {
+	public static boolean tryParse(String val, RefObject<Quaternion> result) {
 		try {
-			result.argvalue = Parse(val);
+			result.argvalue = parse(val);
 			return true;
 		} catch (Throwable t) {
 			result.argvalue = new Quaternion();
@@ -622,123 +636,123 @@ public class Quaternion {
 	}
 
 	public boolean equals(Quaternion other) {
-		return other != null && W == other.W && X == other.X && Y == other.Y && Z == other.Z;
+		return other != null && w == other.w && x == other.x && y == other.y && z == other.z;
 	}
 
 	public boolean isIdentity() {
-		return (X == 0f && Y == 0f && Z == 0f && W == 1f);
+		return (x == 0f && y == 0f && z == 0f && w == 1f);
 	}
 
 	public boolean isZero() {
-		return equals(Zero);
+		return equals(ZERO);
 	}
 
 	public static boolean isZero(Quaternion q) {
 		if (q != null)
-			return q.equals(Zero);
+			return q.equals(ZERO);
 		return false;
 	}
 
 	public static boolean isZeroOrNull(Quaternion q) {
 		if (q != null)
-			return q.equals(Zero);
+			return q.equals(ZERO);
 		return true;
 	}
 
 	public Quaternion negate() {
-		X = -X;
-		Y = -Y;
-		Z = -Z;
-		W = -W;
+		x = -x;
+		y = -y;
+		z = -z;
+		w = -w;
 		return this;
 	}
 
 	/** Returns the conjugate (spatial inverse) of a quaternion */
 	public Quaternion conjugate() {
-		X = -X;
-		Y = -Y;
-		Z = -Z;
+		x = -x;
+		y = -y;
+		z = -z;
 		return this;
 	}
 
 	public Quaternion add(Quaternion quaternion) {
-		X += quaternion.X;
-		Y += quaternion.Y;
-		Z += quaternion.Z;
-		W += quaternion.W;
+		x += quaternion.x;
+		y += quaternion.y;
+		z += quaternion.z;
+		w += quaternion.w;
 		return this;
 	}
 
 	public Quaternion subtract(Quaternion quaternion) {
-		X -= quaternion.X;
-		Y -= quaternion.Y;
-		Z -= quaternion.Z;
-		W -= quaternion.W;
+		x -= quaternion.x;
+		y -= quaternion.y;
+		z -= quaternion.z;
+		w -= quaternion.w;
 		return this;
 	}
 
 	public Quaternion multiply(float scaleFactor) {
-		X *= scaleFactor;
-		Y *= scaleFactor;
-		Z *= scaleFactor;
-		W *= scaleFactor;
+		x *= scaleFactor;
+		y *= scaleFactor;
+		z *= scaleFactor;
+		w *= scaleFactor;
 		return this;
 	}
 
 	public Quaternion multiply(Quaternion quaternion) {
-		float x = (W * quaternion.X) + (X * quaternion.W) + (Y * quaternion.Z) - (Z * quaternion.Y);
-		float y = (W * quaternion.Y) - (X * quaternion.Z) + (Y * quaternion.W) + (Z * quaternion.X);
-		float z = (W * quaternion.Z) + (X * quaternion.Y) - (Y * quaternion.X) + (Z * quaternion.W);
-		float w = (W * quaternion.W) - (X * quaternion.X) - (Y * quaternion.Y) - (Z * quaternion.Z);
-		X = x;
-		Y = y;
-		Z = z;
-		W = w;
+		float tx = (w * quaternion.x) + (x * quaternion.w) + (y * quaternion.z) - (z * quaternion.y);
+		float ty = (w * quaternion.y) - (x * quaternion.z) + (y * quaternion.w) + (z * quaternion.x);
+		float tz = (w * quaternion.z) + (x * quaternion.y) - (y * quaternion.x) + (z * quaternion.w);
+		float tw = (w * quaternion.w) - (x * quaternion.x) - (y * quaternion.y) - (z * quaternion.z);
+		x = tx;
+		y = ty;
+		z = tz;
+		w = tw;
 		return this;
 	}
 
 	public Vector4 multiply(Vector4 vector) {
-		float rw = -X * vector.X - Y * vector.Y - Z * vector.Z;
-		float rx = W * vector.X + Y * vector.Z - Z * vector.Y;
-		float ry = W * vector.Y + Z * vector.X - X * vector.Z;
-		float rz = W * vector.Z + X * vector.Y - Y * vector.X;
+		float rw = -x * vector.x - y * vector.y - z * vector.z;
+		float rx = w * vector.x + y * vector.z - z * vector.y;
+		float ry = w * vector.y + z * vector.x - x * vector.z;
+		float rz = w * vector.z + x * vector.y - y * vector.x;
 
-		float nx = -rw * X + rx * W - ry * Z + rz * Y;
-		float ny = -rw * Y + ry * W - rz * X + rx * Z;
-		float nz = -rw * Z + rz * W - rx * Y + ry * X;
-		return new Vector4(nx, ny, nz, vector.S);
+		float nx = -rw * x + rx * w - ry * z + rz * y;
+		float ny = -rw * y + ry * w - rz * x + rx * z;
+		float nz = -rw * z + rz * w - rx * y + ry * x;
+		return new Vector4(nx, ny, nz, vector.s);
 	}
 
 	public Vector3 multiply(Vector3 vector) {
-		float rw = -X * vector.X - Y * vector.Y - Z * vector.Z;
-		float rx = W * vector.X + Y * vector.Z - Z * vector.Y;
-		float ry = W * vector.Y + Z * vector.X - X * vector.Z;
-		float rz = W * vector.Z + X * vector.Y - Y * vector.X;
+		float rw = -x * vector.x - y * vector.y - z * vector.z;
+		float rx = w * vector.x + y * vector.z - z * vector.y;
+		float ry = w * vector.y + z * vector.x - x * vector.z;
+		float rz = w * vector.z + x * vector.y - y * vector.x;
 
-		float nx = -rw * X + rx * W - ry * Z + rz * Y;
-		float ny = -rw * Y + ry * W - rz * X + rx * Z;
-		float nz = -rw * Z + rz * W - rx * Y + ry * X;
+		float nx = -rw * x + rx * w - ry * z + rz * y;
+		float ny = -rw * y + ry * w - rz * x + rx * z;
+		float nz = -rw * z + rz * w - rx * y + ry * x;
 		return new Vector3(nx, ny, nz);
 	}
 
 	public Vector3d multiply(Vector3d vector) {
-		double rw = -X * vector.X - Y * vector.Y - Z * vector.Z;
-		double rx = W * vector.X + Y * vector.Z - Z * vector.Y;
-		double ry = W * vector.Y + Z * vector.X - X * vector.Z;
-		double rz = W * vector.Z + X * vector.Y - Y * vector.X;
+		double rw = -x * vector.x - y * vector.y - z * vector.z;
+		double rx = w * vector.x + y * vector.z - z * vector.y;
+		double ry = w * vector.y + z * vector.x - x * vector.z;
+		double rz = w * vector.z + x * vector.y - y * vector.x;
 
-		double nx = -rw * X + rx * W - ry * Z + rz * Y;
-		double ny = -rw * Y + ry * W - rz * X + rx * Z;
-		double nz = -rw * Z + rz * W - rx * Y + ry * X;
+		double nx = -rw * x + rx * w - ry * z + rz * y;
+		double ny = -rw * y + ry * w - rz * x + rx * z;
+		double nz = -rw * z + rz * w - rx * y + ry * x;
 		return new Vector3d(nx, ny, nz);
 	}
 
 	public Quaternion divide(float divider) {
 		divider = 1f / divider;
-		X *= divider;
-		Y *= divider;
-		Z *= divider;
-		W *= divider;
+		x *= divider;
+		y *= divider;
+		z *= divider;
+		w *= divider;
 		return this;
 	}
 
@@ -747,14 +761,14 @@ public class Quaternion {
 	}
 
 	public float dot(Quaternion quaternion) {
-		return (X * quaternion.X) + (Y * quaternion.Y) + (Z * quaternion.Z) + (W * quaternion.W);
+		return (x * quaternion.x) + (y * quaternion.y) + (z * quaternion.z) + (w * quaternion.w);
 	}
 
 	public Quaternion inverse() {
 		float norm = lengthSquared();
 
 		if (norm == 0f) {
-			X = Y = Z = W = 0f;
+			x = y = z = w = 0f;
 		} else {
 			conjugate().divide(norm);
 		}
@@ -765,32 +779,32 @@ public class Quaternion {
 		float num = (matrix.M11 + matrix.M22) + matrix.M33;
 		if (num > 0f) {
 			num = (float) Math.sqrt(num + 1f);
-			W = num * 0.5f;
+			w = num * 0.5f;
 			num = 0.5f / num;
-			X = (matrix.M23 - matrix.M32) * num;
-			Y = (matrix.M31 - matrix.M13) * num;
-			Z = (matrix.M12 - matrix.M21) * num;
+			x = (matrix.M23 - matrix.M32) * num;
+			y = (matrix.M31 - matrix.M13) * num;
+			z = (matrix.M12 - matrix.M21) * num;
 		} else if ((matrix.M11 >= matrix.M22) && (matrix.M11 >= matrix.M33)) {
 			num = (float) Math.sqrt(1f + matrix.M11 - matrix.M22 - matrix.M33);
-			X = 0.5f * num;
+			x = 0.5f * num;
 			num = 0.5f / num;
-			Y = (matrix.M12 + matrix.M21) * num;
-			Z = (matrix.M13 + matrix.M31) * num;
-			W = (matrix.M23 - matrix.M32) * num;
+			y = (matrix.M12 + matrix.M21) * num;
+			z = (matrix.M13 + matrix.M31) * num;
+			w = (matrix.M23 - matrix.M32) * num;
 		} else if (matrix.M22 > matrix.M33) {
 			num = (float) Math.sqrt(1f + matrix.M22 - matrix.M11 - matrix.M33);
-			Y = 0.5f * num;
+			y = 0.5f * num;
 			num = 0.5f / num;
-			X = (matrix.M21 + matrix.M12) * num;
-			Z = (matrix.M32 + matrix.M23) * num;
-			W = (matrix.M31 - matrix.M13) * num;
+			x = (matrix.M21 + matrix.M12) * num;
+			z = (matrix.M32 + matrix.M23) * num;
+			w = (matrix.M31 - matrix.M13) * num;
 		} else {
 			num = (float) Math.sqrt(1f + matrix.M33 - matrix.M11 - matrix.M22);
-			Z = 0.5f * num;
+			z = 0.5f * num;
 			num = 0.5f / num;
-			X = (matrix.M31 + matrix.M13) * num;
-			Y = (matrix.M32 + matrix.M23) * num;
-			W = (matrix.M12 - matrix.M21) * num;
+			x = (matrix.M31 + matrix.M13) * num;
+			y = (matrix.M32 + matrix.M23) * num;
+			w = (matrix.M12 - matrix.M21) * num;
 		}
 	}
 
@@ -849,7 +863,7 @@ public class Quaternion {
 		if (vec_a_mag < Helpers.FLOAT_MAG_THRESHOLD || vec_b_mag < Helpers.FLOAT_MAG_THRESHOLD) {
 			// Can't calculate a rotation from this.
 			// Just return ZERO_ROTATION instead.
-			return Identity;
+			return IDENTITY;
 		}
 
 		// Create an axis to rotate around, and the cos of the angle to rotate.
@@ -860,15 +874,15 @@ public class Quaternion {
 		// anti-parallel.
 		if (cos_theta > 1.0 - Helpers.FLOAT_MAG_THRESHOLD) {
 			// a and b are parallel. No rotation is necessary.
-			return Identity;
+			return IDENTITY;
 		} else if (cos_theta < -1.0 + Helpers.FLOAT_MAG_THRESHOLD) {
 			// a and b are anti-parallel.
 			// Rotate 180 degrees around some orthogonal axis.
 			// Find the projection of the x-axis onto a, and try
 			// using the vector between the projection and the x-axis
 			// as the orthogonal axis.
-			Vector3 proj = vec_a.multiply(vec_a.X / cos_theta);
-			Vector3 ortho_axis = Vector3.subtract(Vector3.UnitX, proj);
+			Vector3 proj = vec_a.multiply(vec_a.x / cos_theta);
+			Vector3 ortho_axis = Vector3.subtract(Vector3.UNIT_X, proj);
 
 			// Turn this into an orthonormal axis.
 			float ortho_length = ortho_axis.normalize().length();
@@ -876,20 +890,16 @@ public class Quaternion {
 			// was wrong (a is parallel to the x-axis).
 			if (ortho_length < Helpers.FLOAT_MAG_THRESHOLD) {
 				// Use the z-axis instead.
-				ortho_axis = Vector3.UnitZ;
+				ortho_axis = Vector3.UNIT_Z;
 			}
 
 			// Construct a quaternion from this orthonormal axis.
-			return new Quaternion(ortho_axis.X, ortho_axis.Y, ortho_axis.Z, 0f);
+			return new Quaternion(ortho_axis.x, ortho_axis.y, ortho_axis.z, 0f);
 		} else {
 			// a and b are NOT parallel or anti-parallel.
 			// Return the rotation between these vectors.
 			return createFromAxisAngle(axis, (float) Math.acos(cos_theta));
 		}
-	}
-
-	public enum Order {
-		XYZ, YZX, ZXY, YXZ, XZY, ZYX;
 	}
 
 	/**
@@ -940,7 +950,7 @@ public class Quaternion {
 		return mayaQ(arr[pos], arr[pos + 1], arr[pos + 2], order);
 	}
 
-	public static String OrderToString(Order order) {
+	public static String orderToString(Order order) {
 		String p;
 		switch (order) {
 		default:
@@ -966,7 +976,7 @@ public class Quaternion {
 		return p;
 	}
 
-	public static Order StringToOrder(String str) {
+	public static Order stringToOrder(String str) {
 		if (str.compareToIgnoreCase("XYZ") == 0)
 			return Order.XYZ;
 
@@ -988,13 +998,8 @@ public class Quaternion {
 		return Order.XYZ;
 	}
 
-	public static Order StringToOrderRev(String str) {
-		return Order.values()[5 - StringToOrder(str).ordinal()];
+	public static Order stringToOrderRev(String str) {
+		return Order.values()[5 - stringToOrder(str).ordinal()];
 	}
 
-	/** A quaternion with a value of 0,0,0,1 */
-	public final static Quaternion Identity = new Quaternion(0f, 0f, 0f, 1f);
-
-	/** A quaternion with a value of 0,0,0,0 */
-	public final static Quaternion Zero = new Quaternion(0f, 0f, 0f, 0f);
 }

@@ -83,7 +83,7 @@ public class TerrainCompressor {
 		// Should be enough to fit even the most poorly packed data
 		byte[] data = new byte[patches.length * 16 * 16 * 2];
 		BitPack bitpack = new BitPack(data, 0);
-		bitpack.packBits(Helpers.UInt16ToBytesL(header.stride), 16);
+		bitpack.packBits(Helpers.uint16ToBytesL(header.stride), 16);
 		bitpack.packBits(header.patchSize, 8);
 		bitpack.packBits(header.type.getValue(), 8);
 
@@ -121,7 +121,7 @@ public class TerrainCompressor {
 
 		byte[] data = new byte[1536];
 		BitPack bitpack = new BitPack(data, 0);
-		bitpack.packBits(Helpers.UInt16ToBytesL(header.stride), 16);
+		bitpack.packBits(Helpers.uint16ToBytesL(header.stride), 16);
 		bitpack.packBits(header.patchSize, 8);
 		bitpack.packBits(header.type.getValue(), 8);
 
@@ -145,7 +145,7 @@ public class TerrainCompressor {
 
 		byte[] data = new byte[1536];
 		BitPack bitpack = new BitPack(data, 0);
-		bitpack.packBits(Helpers.UInt16ToBytesL(header.stride), 16);
+		bitpack.packBits(Helpers.uint16ToBytesL(header.stride), 16);
 		bitpack.packBits(header.patchSize, 8);
 		bitpack.packBits(header.type.getValue(), 8);
 
@@ -311,7 +311,7 @@ public class TerrainCompressor {
 		return wbits;
 	}
 
-	private static void IDCTColumn16(float[] linein, float[] lineout, int column) {
+	private static void idctColumn16(float[] linein, float[] lineout, int column) {
 		float total;
 		int usize;
 
@@ -327,7 +327,7 @@ public class TerrainCompressor {
 		}
 	}
 
-	private static void IDCTLine16(float[] linein, float[] lineout, int line) {
+	private static void idctLine16(float[] linein, float[] lineout, int line) {
 		float oosob = 2.0f / 16.0f;
 		int lineSize = line * 16;
 		float total;
@@ -343,7 +343,7 @@ public class TerrainCompressor {
 		}
 	}
 
-	private static void DCTLine16(float[] linein, float[] lineout, int line) {
+	private static void dctLine16(float[] linein, float[] lineout, int line) {
 		float total = 0.0f;
 		int lineSize = line * 16;
 
@@ -364,7 +364,7 @@ public class TerrainCompressor {
 		}
 	}
 
-	private static void DCTColumn16(float[] linein, int[] lineout, int column) {
+	private static void dctColumn16(float[] linein, int[] lineout, int column) {
 		float total = 0.0f;
 		float oosob = 2.0f / 16.0f;
 
@@ -487,9 +487,9 @@ public class TerrainCompressor {
 			float[] ftemp = new float[16 * 16];
 
 			for (int o = 0; o < 16; o++)
-				IDCTColumn16(block, ftemp, o);
+				idctColumn16(block, ftemp, o);
 			for (int o = 0; o < 16; o++)
-				IDCTLine16(ftemp, block, o);
+				idctLine16(ftemp, block, o);
 		} else {
 			for (int n = 0; n < 32 * 32; n++) {
 				block[n] = patches[CopyMatrix32[n]] * DequantizeTable32[n];
@@ -526,9 +526,9 @@ public class TerrainCompressor {
 		int[] itemp = new int[16 * 16];
 
 		for (int o = 0; o < 16; o++)
-			DCTLine16(block, ftemp, o);
+			dctLine16(block, ftemp, o);
 		for (int o = 0; o < 16; o++)
-			DCTColumn16(ftemp, itemp, o);
+			dctColumn16(ftemp, itemp, o);
 
 		return itemp;
 	}
@@ -554,9 +554,9 @@ public class TerrainCompressor {
 		int[] itemp = new int[16 * 16];
 
 		for (int o = 0; o < 16; o++)
-			DCTLine16(block, ftemp, o);
+			dctLine16(block, ftemp, o);
 		for (int o = 0; o < 16; o++)
-			DCTColumn16(ftemp, itemp, o);
+			dctColumn16(ftemp, itemp, o);
 
 		return itemp;
 	}

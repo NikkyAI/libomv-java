@@ -62,7 +62,7 @@ public class Statistics {
 		statistics = new HashMap<>();
 	}
 
-	public void updateNetStats(String key, Type Type, long txBytes, long rxBytes) {
+	public void updateNetStats(String key, Type type, long txBytes, long rxBytes) {
 		synchronized (statistics) {
 			Stat stat = statistics.get(key);
 			if (stat != null) {
@@ -78,9 +78,9 @@ public class Statistics {
 
 			} else {
 				if (txBytes > 0)
-					stat = new Stat(Type, 1, 0, txBytes, 0);
+					stat = new Stat(type, 1, 0, txBytes, 0);
 				else
-					stat = new Stat(Type, 0, 1, 0, rxBytes);
+					stat = new Stat(type, 0, 1, 0, rxBytes);
 
 				statistics.put(key, stat);
 			}

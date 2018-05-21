@@ -40,12 +40,12 @@ public class MapItem {
 
 	/* Get the Local X position of the item */
 	public final float getLocalX() {
-		return globalPos.X % 256;
+		return globalPos.x % 256;
 	}
 
 	/* Get the Local Y position of the item */
 	public final float getLocalY() {
-		return globalPos.Y % 256;
+		return globalPos.y % 256;
 	}
 
 	public final Vector3 getGlobalPosition() {
@@ -53,12 +53,12 @@ public class MapItem {
 	}
 
 	public final void setEvelation(float z) {
-		globalPos.Z = z;
+		globalPos.z = z;
 	}
 
 	/* Get the Handle of the region */
 	public final long getRegionHandle() {
-		return Helpers.IntsToLong((int) (globalPos.X - (globalPos.X % 256)), (int) (globalPos.Y - (globalPos.Y % 256)));
+		return Helpers.intsToLong((int) (globalPos.x - (globalPos.x % 256)), (int) (globalPos.y - (globalPos.y % 256)));
 	}
 
 }

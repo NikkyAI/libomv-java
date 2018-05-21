@@ -106,11 +106,12 @@ public class AssetMesh extends AssetItem {
 				OSD value = header.get(partName);
 				if (value.getType() == OSDType.Map) {
 					OSDMap partInfo = (OSDMap) value;
-					int offset = partInfo.get("offset").asInteger(), size = partInfo.get("size").asInteger();
+					int offset = partInfo.get("offset").asInteger();
+					int size = partInfo.get("size").asInteger();
 					if (offset >= 0 && size > 0) {
 						data.reset();
 						data.skip(offset);
-						value = Helpers.ZDecompressOSD(data);
+						value = Helpers.zDecompressOSD(data);
 					}
 				}
 				meshData.put(partName, value);

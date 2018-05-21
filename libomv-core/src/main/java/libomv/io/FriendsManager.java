@@ -31,6 +31,7 @@ package libomv.io;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -405,10 +406,10 @@ public class FriendsManager implements PacketCallback {
 		GenericMessagePacket gmp = new GenericMessagePacket();
 		gmp.AgentData.AgentID = client.agent.getAgentID();
 		gmp.AgentData.SessionID = client.agent.getSessionID();
-		gmp.AgentData.TransactionID = UUID.Zero;
+		gmp.AgentData.TransactionID = UUID.ZERO;
 
 		gmp.MethodData.setMethod(Helpers.stringToBytes("requestonlinenotification"));
-		gmp.MethodData.Invoice = UUID.Zero;
+		gmp.MethodData.Invoice = UUID.ZERO;
 		gmp.ParamList = new GenericMessagePacket.ParamListBlock[1];
 		gmp.ParamList[0] = gmp.new ParamListBlock();
 		gmp.ParamList[0].setParameter(Helpers.stringToBytes(friendID.toString()));
@@ -425,7 +426,7 @@ public class FriendsManager implements PacketCallback {
 	 *            The simulator for which the even the packet data is
 	 */
 	private void handleFriendNotification(Packet packet, Simulator simulator) throws Exception {
-		ArrayList<UUID> requestids = new ArrayList<UUID>();
+		List<UUID> requestids = new ArrayList<>();
 		FriendInfo friend = null;
 		UUID[] agentIDs = null;
 		boolean doNotify = false;
@@ -547,8 +548,8 @@ public class FriendsManager implements PacketCallback {
 		for (UUIDNameReplyPacket.UUIDNameBlockBlock block : reply.UUIDNameBlock) {
 			synchronized (friendList) {
 				if (friendList.containsKey(block.ID)) {
-					friendList.get(block.ID).setName(Helpers.BytesToString(block.getFirstName()) + " "
-							+ Helpers.BytesToString(block.getLastName()));
+					friendList.get(block.ID).setName(Helpers.bytesToString(block.getFirstName()) + " "
+							+ Helpers.bytesToString(block.getLastName()));
 				}
 			}
 		}
@@ -606,7 +607,7 @@ public class FriendsManager implements PacketCallback {
 						}
 					}
 				}
-				ArrayList<UUID> request = new ArrayList<UUID>();
+				List<UUID> request = new ArrayList<>();
 
 				synchronized (friendList) {
 					if (friendList.size() > 0) {

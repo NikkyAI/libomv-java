@@ -252,7 +252,7 @@ public class InventoryItem extends InventoryNode {
 	 *
 	 * @return True if inventory item is a link to another inventory item
 	 */
-	public final boolean IsLink() {
+	public final boolean isLink() {
 		return assetType == AssetType.Link || assetType == AssetType.LinkFolder;
 	}
 
@@ -290,7 +290,7 @@ public class InventoryItem extends InventoryNode {
 		item.description = map.get("desc").asString();
 		item.assetID = map.get("asset_id").asUUID();
 		item.assetType = AssetType.setValue(map.get("type").asInteger());
-		item.creationDate = Helpers.UnixTimeToDateTime(map.get("created_at").asReal());
+		item.creationDate = Helpers.unixTimeToDateTime(map.get("created_at").asReal());
 		item.itemFlags = map.get("flags").asUInteger();
 		item.permissions = libomv.types.Permissions.fromOSD(map.get("permissions"));
 

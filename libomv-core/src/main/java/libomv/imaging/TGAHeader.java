@@ -44,8 +44,14 @@ public class TGAHeader {
 		int alphaBits;
 		int colorBits;
 
-		public int rMask, gMask, bMask, aMask;
-		public int rShift, gShift, bShift, aShift;
+		public int rMask;
+		public int gMask;
+		public int bMask;
+		public int aMask;
+		public int rShift;
+		public int gShift;
+		public int bShift;
+		public int aShift;
 
 		byte[] redM;
 		byte[] greenM;

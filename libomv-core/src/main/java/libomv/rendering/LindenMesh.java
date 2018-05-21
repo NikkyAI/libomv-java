@@ -225,8 +225,13 @@ public class LindenMesh extends ReferenceMesh {
 
 		numVertices = fis.readShort();
 
-		float minX = Float.MAX_VALUE, minY = Float.MAX_VALUE, minZ = Float.MAX_VALUE, val, maxX = Float.MIN_VALUE,
-				maxY = Float.MIN_VALUE, maxZ = Float.MIN_VALUE;
+		float minX = Float.MAX_VALUE;
+		float minY = Float.MAX_VALUE;
+		float minZ = Float.MAX_VALUE;
+		float val;
+		float maxX = Float.MIN_VALUE;
+		float maxY = Float.MIN_VALUE;
+		float maxZ = Float.MIN_VALUE;
 		// Populate the vertex array
 		vertices = FloatBuffer.allocate(3 * numVertices);
 		for (int i = 0; i < numVertices; i++) {

@@ -164,12 +164,12 @@ public class Profile {
 			int numHollowAngles = hollowAngles.angles.size();
 			for (int i = 0; i < numHollowAngles; i++) {
 				angle = hollowAngles.angles.get(i);
-				hollowCoords.add(new Vector3(hollow * xScale * angle.X, hollow * yScale * angle.Y, z));
+				hollowCoords.add(new Vector3(hollow * xScale * angle.x, hollow * yScale * angle.y, z));
 				if (this.calcVertexNormals) {
 					if (hollowSides < 5)
 						hollowNormals.add(Vector3.negate(hollowAngles.normals.get(i)));
 					else
-						hollowNormals.add(new Vector3(-angle.X, -angle.Y, 0.0f));
+						hollowNormals.add(new Vector3(-angle.x, -angle.y, 0.0f));
 
 					if (hollowSides == 4)
 						hollowUs.add(angle.angle * hollow * 0.707107f);
@@ -184,9 +184,9 @@ public class Profile {
 		Vector3 newVert = new Vector3(0f);
 		for (int i = 0; i < numAngles; i++) {
 			angle = angles.angles.get(i);
-			newVert.X = angle.X * xScale;
-			newVert.Y = angle.Y * yScale;
-			newVert.Z = z;
+			newVert.x = angle.x * xScale;
+			newVert.y = angle.y * yScale;
+			newVert.z = z;
 			this.coords.add(new Vector3(newVert));
 			if (this.calcVertexNormals) {
 				this.outerCoordIndices.add(this.coords.size() - 1);
@@ -196,16 +196,16 @@ public class Profile {
 					float u = angle.angle;
 					this.us.add(u);
 				} else {
-					this.vertexNormals.add(new Vector3(angle.X, angle.Y, 0.0f));
+					this.vertexNormals.add(new Vector3(angle.x, angle.y, 0.0f));
 					this.us.add(angle.angle);
 				}
 			}
 
 			if (hasHollow) {
 				if (hollowSides == sides) {
-					newVert.X *= hollow;
-					newVert.Y *= hollow;
-					newVert.Z = z;
+					newVert.x *= hollow;
+					newVert.y *= hollow;
+					newVert.z = z;
 					hollowCoords.add(new Vector3(newVert));
 					if (this.calcVertexNormals) {
 						if (sides < 5) {
@@ -213,7 +213,7 @@ public class Profile {
 						}
 
 						else
-							hollowNormals.add(new Vector3(-angle.X, -angle.Y, 0.0f));
+							hollowNormals.add(new Vector3(-angle.x, -angle.y, 0.0f));
 
 						hollowUs.add(angle.angle * hollow);
 					}
@@ -338,12 +338,12 @@ public class Profile {
 				this.cut2CoordIndices.add(lastOuterVertIndex + 1);
 				this.cut2CoordIndices.add(lastOuterVertIndex);
 
-				this.cutNormal1.X = this.coords.get(0).Y - this.coords.get(this.coords.size() - 1).Y;
-				this.cutNormal1.Y = -(this.coords.get(0).X - this.coords.get(this.coords.size() - 1).X);
+				this.cutNormal1.x = this.coords.get(0).y - this.coords.get(this.coords.size() - 1).y;
+				this.cutNormal1.y = -(this.coords.get(0).x - this.coords.get(this.coords.size() - 1).x);
 
-				this.cutNormal2.X = this.coords.get(lastOuterVertIndex + 1).Y - this.coords.get(lastOuterVertIndex).Y;
-				this.cutNormal2.Y = -(this.coords.get(lastOuterVertIndex + 1).X
-						- this.coords.get(lastOuterVertIndex).X);
+				this.cutNormal2.x = this.coords.get(lastOuterVertIndex + 1).y - this.coords.get(lastOuterVertIndex).y;
+				this.cutNormal2.y = -(this.coords.get(lastOuterVertIndex + 1).x
+						- this.coords.get(lastOuterVertIndex).x);
 			}
 
 			else {
@@ -353,11 +353,11 @@ public class Profile {
 				this.cut2CoordIndices.add(lastOuterVertIndex);
 				this.cut2CoordIndices.add(0);
 
-				this.cutNormal1.X = this.vertexNormals.get(1).Y;
-				this.cutNormal1.Y = -this.vertexNormals.get(1).X;
+				this.cutNormal1.x = this.vertexNormals.get(1).y;
+				this.cutNormal1.y = -this.vertexNormals.get(1).x;
 
-				this.cutNormal2.X = -this.vertexNormals.get(this.vertexNormals.size() - 2).Y;
-				this.cutNormal2.Y = this.vertexNormals.get(this.vertexNormals.size() - 2).X;
+				this.cutNormal2.x = -this.vertexNormals.get(this.vertexNormals.size() - 2).y;
+				this.cutNormal2.y = this.vertexNormals.get(this.vertexNormals.size() - 2).x;
 
 			}
 			this.cutNormal1.normalize();
@@ -416,7 +416,7 @@ public class Profile {
 	public void makeFaceUVs() {
 		this.faceUVs = new ArrayList<Vector2>();
 		for (Vector3 c : this.coords)
-			this.faceUVs.add(new Vector2(1.0f - (0.5f + c.X), 1.0f - (0.5f - c.Y)));
+			this.faceUVs.add(new Vector2(1.0f - (0.5f + c.x), 1.0f - (0.5f - c.y)));
 	}
 
 	public Profile copy() {
@@ -451,7 +451,7 @@ public class Profile {
 	}
 
 	public void addPos(Vector3 v) {
-		this.addPos(v.X, v.Y, v.Z);
+		this.addPos(v.x, v.y, v.z);
 	}
 
 	public void addPos(float x, float y, float z) {
@@ -461,9 +461,9 @@ public class Profile {
 
 		for (i = 0; i < numVerts; i++) {
 			vert = this.coords.get(i);
-			vert.X += x;
-			vert.Y += y;
-			vert.Z += z;
+			vert.x += x;
+			vert.y += y;
+			vert.z += z;
 			this.coords.set(i, vert);
 		}
 	}
@@ -486,15 +486,15 @@ public class Profile {
 		}
 	}
 
-	public void Scale(float x, float y) {
+	public void scale(float x, float y) {
 		int i;
 		int numVerts = this.coords.size();
 		Vector3 vert;
 
 		for (i = 0; i < numVerts; i++) {
 			vert = this.coords.get(i);
-			vert.X *= x;
-			vert.Y *= y;
+			vert.x *= x;
+			vert.y *= y;
 			this.coords.set(i, vert);
 		}
 	}
@@ -521,19 +521,19 @@ public class Profile {
 			int normalCount = this.vertexNormals.size();
 			if (normalCount > 0) {
 				Vector3 n = this.vertexNormals.get(normalCount - 1);
-				n.Z = -n.Z;
+				n.z = -n.z;
 				this.vertexNormals.set(normalCount - 1, n);
 			}
 		}
 
-		this.faceNormal.X = -this.faceNormal.X;
-		this.faceNormal.Y = -this.faceNormal.Y;
-		this.faceNormal.Z = -this.faceNormal.Z;
+		this.faceNormal.x = -this.faceNormal.x;
+		this.faceNormal.y = -this.faceNormal.y;
+		this.faceNormal.z = -this.faceNormal.z;
 
 		int numfaceUVs = this.faceUVs.size();
 		for (i = 0; i < numfaceUVs; i++) {
 			Vector2 uv = this.faceUVs.get(i);
-			uv.Y = 1.0f - uv.Y;
+			uv.y = 1.0f - uv.y;
 			this.faceUVs.set(i, uv);
 		}
 	}

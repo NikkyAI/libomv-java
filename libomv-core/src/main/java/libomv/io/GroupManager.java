@@ -209,7 +209,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 				int fee = -1;
 				UUID roleID = null;
 				if (bucket.length == 20) {
-					fee = Helpers.BytesToInt32B(bucket);
+					fee = Helpers.bytesToInt32B(bucket);
 					roleID = new UUID(bucket, 4);
 				}
 
@@ -242,7 +242,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 				UUID groupID = res.get("group_id").asUUID();
 				long defaultPowers = ((OSDMap) res.get("defaults")).get("default_powers").asULong();
 				OSDMap membersOSD = (OSDMap) res.get("members");
-				HashMap<UUID, GroupMember> groupMembers = new HashMap<UUID, GroupMember>(membersOSD.size());
+				Map<UUID, GroupMember> groupMembers = new HashMap<>(membersOSD.size());
 				for (String memberID : membersOSD.keySet()) {
 					OSDMap member = (OSDMap) membersOSD.get(memberID);
 
@@ -417,7 +417,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		// making a request
 		synchronized (groupNames) {
 			if (groupNames.containsKey(groupID)) {
-				HashMap<UUID, String> groupNamesList = new HashMap<UUID, String>();
+				Map<UUID, String> groupNamesList = new HashMap<>();
 				groupNamesList.put(groupID, groupNames.get(groupID));
 
 				onGroupNamesReply.dispatch(new GroupNamesCallbackArgs(groupNamesList));
@@ -1012,8 +1012,8 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	 * @throws Exception
 	 */
 	public final void sendGroupNotice(UUID group, GroupNotice notice) throws Exception {
-		client.agent.instantMessage(client.agent.getName(), group, notice.subject + "|" + notice.message, UUID.Zero,
-				InstantMessageDialog.GroupNotice, InstantMessageOnline.Online, Vector3.Zero, UUID.Zero, 0,
+		client.agent.instantMessage(client.agent.getName(), group, notice.subject + "|" + notice.message, UUID.ZERO,
+				InstantMessageDialog.GroupNotice, InstantMessageOnline.Online, Vector3.ZERO, UUID.ZERO, 0,
 				notice.serializeAttachment());
 	}
 
@@ -1112,7 +1112,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 			public void completed(OSD result) {
 				UUID gid = ((OSDMap) result).get("group_id").asUUID();
 				OSDMap banList = (OSDMap) ((OSDMap) result).get("ban_list");
-				HashMap<UUID, Date> bannedAgents = new HashMap<UUID, Date>(banList.size());
+				Map<UUID, Date> bannedAgents = new HashMap<>(banList.size());
 
 				for (String id : banList.keySet()) {
 					UUID uid = new UUID(id);
@@ -1233,7 +1233,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	}
 
 	private final void handleAgentGroupDataUpdate(IMessage message, Simulator simulator) {
-		HashMap<UUID, Group> currentGroups = onCurrentGroups.count() > 0 ? new HashMap<UUID, Group>() : null;
+		Map<UUID, Group> currentGroups = onCurrentGroups.count() > 0 ? new HashMap<>() : null;
 		AgentGroupDataUpdateMessage msg = (AgentGroupDataUpdateMessage) message;
 
 		for (int i = 0; i < msg.groupDataBlock.length; i++) {
@@ -1261,14 +1261,14 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	}
 
 	private final void handleAgentGroupDataUpdate(Packet packet, Simulator simulator) throws Exception {
-		HashMap<UUID, Group> currentGroups = onCurrentGroups.count() > 0 ? new HashMap<UUID, Group>() : null;
+		Map<UUID, Group> currentGroups = onCurrentGroups.count() > 0 ? new HashMap<>() : null;
 		AgentGroupDataUpdatePacket update = (AgentGroupDataUpdatePacket) packet;
 
 		for (AgentGroupDataUpdatePacket.GroupDataBlock block : update.GroupData) {
 			Group group = new Group(block.GroupID);
 
 			group.insigniaID = block.GroupInsigniaID;
-			group.name = Helpers.BytesToString(block.getGroupName());
+			group.name = Helpers.bytesToString(block.getGroupName());
 			group.powers = block.GroupPowers;
 			group.contribution = block.Contribution;
 			group.acceptNotices = block.AcceptNotices;
@@ -1324,16 +1324,16 @@ public class GroupManager implements PacketCallback, CapsCallback {
 			Group group = new Group(profile.GroupData.GroupID);
 
 			group.allowPublish = profile.GroupData.AllowPublish;
-			group.charter = Helpers.BytesToString(profile.GroupData.getCharter());
+			group.charter = Helpers.bytesToString(profile.GroupData.getCharter());
 			group.founderID = profile.GroupData.FounderID;
 			group.groupMembershipCount = profile.GroupData.GroupMembershipCount;
 			group.groupRolesCount = profile.GroupData.GroupRolesCount;
 			group.insigniaID = profile.GroupData.InsigniaID;
 			group.maturePublish = profile.GroupData.MaturePublish;
 			group.membershipFee = profile.GroupData.MembershipFee;
-			group.memberTitle = Helpers.BytesToString(profile.GroupData.getMemberTitle());
+			group.memberTitle = Helpers.bytesToString(profile.GroupData.getMemberTitle());
 			group.money = profile.GroupData.Money;
-			group.name = Helpers.BytesToString(profile.GroupData.getName());
+			group.name = Helpers.bytesToString(profile.GroupData.getName());
 			group.openEnrollment = profile.GroupData.OpenEnrollment;
 			group.ownerRole = profile.GroupData.OwnerRole;
 			group.powers = profile.GroupData.PowersMask;
@@ -1361,8 +1361,8 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 			for (GroupNoticesListReplyPacket.DataBlock entry : reply.Data) {
 				GroupNoticesListEntry notice = new GroupNoticesListEntry();
-				notice.fromName = Helpers.BytesToString(entry.getFromName());
-				notice.subject = Helpers.BytesToString(entry.getSubject());
+				notice.fromName = Helpers.bytesToString(entry.getFromName());
+				notice.subject = Helpers.bytesToString(entry.getSubject());
 				notice.noticeID = entry.NoticeID;
 				notice.timestamp = entry.Timestamp;
 				notice.hasAttachment = entry.HasAttachment;
@@ -1393,7 +1393,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 				groupTitle.groupID = titles.AgentData.GroupID;
 				groupTitle.roleID = block.RoleID;
-				groupTitle.title = Helpers.BytesToString(block.getTitle());
+				groupTitle.title = Helpers.bytesToString(block.getTitle());
 				groupTitle.selected = block.Selected;
 
 				groupTitleCache.put(block.RoleID, groupTitle);
@@ -1432,9 +1432,9 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 						groupMember.contribution = block.Contribution;
 						groupMember.isOwner = block.IsOwner;
-						groupMember.onlineStatus = Helpers.BytesToString(block.getOnlineStatus());
+						groupMember.onlineStatus = Helpers.bytesToString(block.getOnlineStatus());
 						groupMember.powers = block.AgentPowers;
-						groupMember.title = Helpers.BytesToString(block.getTitle());
+						groupMember.title = Helpers.bytesToString(block.getTitle());
 
 						groupMemberCache.put(block.AgentID, groupMember);
 					}
@@ -1482,10 +1482,10 @@ public class GroupManager implements PacketCallback, CapsCallback {
 						GroupRole groupRole = new GroupRole(roles.GroupData.GroupID);
 
 						groupRole.id = block.RoleID;
-						groupRole.description = Helpers.BytesToString(block.getDescription());
-						groupRole.name = Helpers.BytesToString(block.getName());
+						groupRole.description = Helpers.bytesToString(block.getDescription());
+						groupRole.name = Helpers.bytesToString(block.getName());
 						groupRole.powers = block.Powers;
-						groupRole.title = Helpers.BytesToString(block.getTitle());
+						groupRole.title = Helpers.bytesToString(block.getTitle());
 
 						groupRoleCache.put(block.RoleID, groupRole);
 					}
@@ -1528,8 +1528,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 					}
 
 					for (GroupRoleMembersReplyPacket.MemberDataBlock block : members.MemberData) {
-						Entry<UUID, UUID> rolemember = new AbstractMap.SimpleEntry<UUID, UUID>(block.RoleID,
-								block.MemberID);
+						Entry<UUID, UUID> rolemember = new AbstractMap.SimpleEntry<>(block.RoleID, block.MemberID);
 
 						groupRoleMemberCache.add(rolemember);
 					}
@@ -1569,14 +1568,14 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 			p.voteID = block.VoteID;
 			p.voteInitiator = block.VoteInitiator;
-			p.terseDateID = Helpers.BytesToString(block.getTerseDateID());
-			p.startDateTime = Helpers.stringToDate(Helpers.BytesToString(block.getStartDateTime()));
-			p.endDateTime = Helpers.stringToDate(Helpers.BytesToString(block.getEndDateTime()));
+			p.terseDateID = Helpers.bytesToString(block.getTerseDateID());
+			p.startDateTime = Helpers.stringToDate(Helpers.bytesToString(block.getStartDateTime()));
+			p.endDateTime = Helpers.stringToDate(Helpers.bytesToString(block.getEndDateTime()));
 			p.alreadyVoted = block.AlreadyVoted;
-			p.voteCast = Helpers.BytesToString(block.getVoteCast());
+			p.voteCast = Helpers.bytesToString(block.getVoteCast());
 			p.majority = block.Majority;
 			p.quorum = block.Quorum;
-			p.proposalText = Helpers.BytesToString(block.getProposalText());
+			p.proposalText = Helpers.bytesToString(block.getProposalText());
 
 			array.add(p);
 		}
@@ -1632,7 +1631,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 			account.intervalDays = summary.MoneyData.IntervalDays;
 			account.landTaxCurrent = summary.MoneyData.LandTaxCurrent;
 			account.landTaxEstimate = summary.MoneyData.LandTaxEstimate;
-			account.lastTaxDate = Helpers.BytesToString(summary.MoneyData.getLastTaxDate());
+			account.lastTaxDate = Helpers.bytesToString(summary.MoneyData.getLastTaxDate());
 			account.lightTaxCurrent = summary.MoneyData.LightTaxCurrent;
 			account.lightTaxEstimate = summary.MoneyData.LightTaxEstimate;
 			account.nonExemptMembers = summary.MoneyData.NonExemptMembers;
@@ -1640,8 +1639,8 @@ public class GroupManager implements PacketCallback, CapsCallback {
 			account.objectTaxEstimate = summary.MoneyData.ObjectTaxEstimate;
 			account.parcelDirFeeCurrent = summary.MoneyData.ParcelDirFeeCurrent;
 			account.parcelDirFeeEstimate = summary.MoneyData.ParcelDirFeeEstimate;
-			account.startDate = Helpers.BytesToString(summary.MoneyData.getStartDate());
-			account.taxDate = Helpers.BytesToString(summary.MoneyData.getTaxDate());
+			account.startDate = Helpers.bytesToString(summary.MoneyData.getStartDate());
+			account.taxDate = Helpers.bytesToString(summary.MoneyData.getTaxDate());
 			account.totalCredits = summary.MoneyData.TotalCredits;
 			account.totalDebits = summary.MoneyData.TotalDebits;
 
@@ -1661,7 +1660,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 	 */
 	private final void handleCreateGroupReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
 		CreateGroupReplyPacket reply = (CreateGroupReplyPacket) packet;
-		String message = Helpers.BytesToString(reply.ReplyData.getMessage());
+		String message = Helpers.bytesToString(reply.ReplyData.getMessage());
 
 		onGroupCreatedReply
 				.dispatch(new GroupCreatedReplyCallbackArgs(reply.ReplyData.GroupID, reply.ReplyData.Success, message));
@@ -1711,7 +1710,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		Map<UUID, String> groupNamesList = new HashMap<>();
 
 		for (UUIDGroupNameReplyPacket.UUIDNameBlockBlock block : blocks) {
-			String name = Helpers.BytesToString(block.getGroupName());
+			String name = Helpers.bytesToString(block.getGroupName());
 			groupNamesList.put(block.ID, name);
 			synchronized (groupNames) {
 				groupNames.put(block.ID, name);
@@ -1752,13 +1751,13 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 			account.currentInterval = details.MoneyData.CurrentInterval;
 			account.intervalDays = details.MoneyData.IntervalDays;
-			account.startDate = Helpers.BytesToString(details.MoneyData.getStartDate());
+			account.startDate = Helpers.bytesToString(details.MoneyData.getStartDate());
 
-			account.historyItems = new HashMapInt<String>();
+			account.historyItems = new HashMapInt<>();
 
 			for (int i = 0; i < details.HistoryData.length; i++) {
 				GroupAccountDetailsReplyPacket.HistoryDataBlock block = details.HistoryData[i];
-				account.historyItems.put(Helpers.BytesToString(block.getDescription()), block.Amount);
+				account.historyItems.put(Helpers.bytesToString(block.getDescription()), block.Amount);
 			}
 			onGroupAccountDetailsCallbacks.get(details.AgentData.GroupID).callback(account);
 		}
@@ -1772,7 +1771,7 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 			account.currentInterval = transactions.MoneyData.CurrentInterval;
 			account.intervalDays = transactions.MoneyData.IntervalDays;
-			account.startDate = Helpers.BytesToString(transactions.MoneyData.getStartDate());
+			account.startDate = Helpers.bytesToString(transactions.MoneyData.getStartDate());
 
 			account.transactions = new TransactionEntry[transactions.HistoryData.length];
 			for (int i = 0; i < transactions.HistoryData.length; i++) {
@@ -1781,9 +1780,9 @@ public class GroupManager implements PacketCallback, CapsCallback {
 
 				entry.type = block.Type;
 				entry.amount = block.Amount;
-				entry.item = Helpers.BytesToString(block.getItem());
-				entry.user = Helpers.BytesToString(block.getUser());
-				entry.time = Helpers.BytesToString(block.getTime());
+				entry.item = Helpers.bytesToString(block.getItem());
+				entry.user = Helpers.bytesToString(block.getUser());
+				entry.time = Helpers.bytesToString(block.getTime());
 				account.transactions[i] = entry;
 			}
 			onGroupAccountTransactionsCallbacks.get(transactions.AgentData.GroupID).callback(account);

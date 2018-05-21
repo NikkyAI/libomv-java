@@ -59,7 +59,7 @@ public class LocalChannel extends AbstractChannel {
 	 * This is the default constructor
 	 */
 	public LocalChannel(MainControl main) {
-		super(main, "Local Chat", UUID.Zero, UUID.Zero);
+		super(main, "Local Chat", UUID.ZERO, UUID.ZERO);
 
 		JPanel panelNorth = new JPanel();
 		panelNorth.setLayout(new BoxLayout(panelNorth, BoxLayout.X_AXIS));

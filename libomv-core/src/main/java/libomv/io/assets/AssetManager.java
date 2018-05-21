@@ -119,6 +119,8 @@ import libomv.utils.TimeoutEvent;
 public class AssetManager implements PacketCallback {
 	private static final Logger logger = Logger.getLogger(AssetManager.class);
 
+	private static final int UPLOAD_CONFIRM_TIMEOUT = 20 * 1000;
+
 	private class MeshDownloadCallback implements Callback<DownloadResult> {
 		private MeshDownload download;
 
@@ -302,7 +304,7 @@ public class AssetManager implements PacketCallback {
 	public long requestAssetXfer(String filename, boolean deleteOnCompletion, boolean useBigPackets, UUID vFileID,
 			AssetType vFileType, boolean fromCache) throws Exception {
 		XferDownload transfer = new XferDownload();
-		transfer.xferID = new UUID().AsLong();
+		transfer.xferID = new UUID().asLong();
 		transfer.filename = filename;
 		transfer.itemID = vFileID;
 		transfer.assetType = vFileType;
@@ -366,7 +368,7 @@ public class AssetManager implements PacketCallback {
 	 */
 	public UUID requestAsset(UUID assetID, AssetType type, boolean priority, SourceType sourceType,
 			Callback<AssetDownload> callback) throws Exception {
-		return requestAsset(assetID, UUID.Zero, UUID.Zero, type, priority, sourceType, null, callback);
+		return requestAsset(assetID, UUID.ZERO, UUID.ZERO, type, priority, sourceType, null, callback);
 	}
 
 	/**
@@ -399,7 +401,7 @@ public class AssetManager implements PacketCallback {
 		if (request != null) {
 			byte[] paramField = UUID.isZeroOrNull(taskID) ? new byte[20] : new byte[96];
 			assetID.toBytes(paramField, 0);
-			System.arraycopy(Helpers.Int32ToBytesL(type.getValue()), 0, paramField, 16, 4);
+			System.arraycopy(Helpers.int32ToBytesL(type.getValue()), 0, paramField, 16, 4);
 			if (!UUID.isZeroOrNull(taskID)) {
 				taskID.toBytes(paramField, 48);
 				itemID.toBytes(paramField, 64);
@@ -464,7 +466,7 @@ public class AssetManager implements PacketCallback {
 	 */
 	public UUID requestInventoryAsset(InventoryItem item, boolean priority, Callback<AssetDownload> callback)
 			throws Exception {
-		return requestInventoryAsset(item.assetID, item.itemID, UUID.Zero, item.getOwnerID(), item.assetType, priority,
+		return requestInventoryAsset(item.assetID, item.itemID, UUID.ZERO, item.getOwnerID(), item.assetType, priority,
 				callback);
 	}
 
@@ -506,7 +508,7 @@ public class AssetManager implements PacketCallback {
 			taskID.toBytes(paramField, 48);
 			itemID.toBytes(paramField, 64);
 			assetID.toBytes(paramField, 80);
-			Helpers.Int32ToBytesL(type.getValue(), paramField, 96);
+			Helpers.int32ToBytesL(type.getValue(), paramField, 96);
 			request.TransferInfo.setParams(paramField);
 
 			simulator.sendPacket(request);
@@ -542,7 +544,7 @@ public class AssetManager implements PacketCallback {
 			byte[] paramField = new byte[36];
 			client.agent.getAgentID().toBytes(paramField, 0);
 			client.agent.getSessionID().toBytes(paramField, 16);
-			Helpers.Int32ToBytesL(type.getValue(), paramField, 32);
+			Helpers.int32ToBytesL(type.getValue(), paramField, 32);
 			request.TransferInfo.setParams(paramField);
 
 			simulator.sendPacket(request);
@@ -692,7 +694,7 @@ public class AssetManager implements PacketCallback {
 			UUID transactionID) throws Exception {
 		AssetUpload upload = new AssetUpload();
 		/* Create a new asset ID for this asset */
-		upload.assetID = UUID.Combine(transactionID, client.agent.getSecureSessionID());
+		upload.assetID = UUID.combine(transactionID, client.agent.getSecureSessionID());
 		if (assetID != null)
 			assetID.argvalue = upload.assetID;
 		upload.assetData = data;
@@ -729,7 +731,6 @@ public class AssetManager implements PacketCallback {
 			request.AssetBlock.setAssetData(Helpers.EmptyBytes);
 
 			// Wait for the previous upload to receive a RequestXferPacket
-			final int UPLOAD_CONFIRM_TIMEOUT = 20 * 1000;
 			if (!pendingUpload.offer(upload, UPLOAD_CONFIRM_TIMEOUT, TimeUnit.MILLISECONDS)) {
 				throw new Exception("Timeout waiting for previous asset upload to begin");
 			}
@@ -766,26 +767,26 @@ public class AssetManager implements PacketCallback {
 											new RequestUploadBakedTextureComplete(), client.settings.CAPS_TIMEOUT);
 								} catch (IOException ex) {
 									logger.warn(GridClient.Log("Bake upload failed", client));
-									callback.callback(UUID.Zero);
+									callback.callback(UUID.ZERO);
 								}
 							}
 							return;
 						}
 					}
 					logger.warn(GridClient.Log("Bake upload failed", client));
-					callback.callback(UUID.Zero);
+					callback.callback(UUID.ZERO);
 				}
 
 				@Override
 				public void cancelled() {
 					logger.warn(GridClient.Log("Bake upload canelled", client));
-					callback.callback(UUID.Zero);
+					callback.callback(UUID.ZERO);
 				}
 
 				@Override
 				public void failed(Exception ex) {
 					logger.warn(GridClient.Log("Bake upload failed", client), ex);
-					callback.callback(UUID.Zero);
+					callback.callback(UUID.ZERO);
 				}
 			}
 			request.executeHttpPost(url, new OSDMap(), OSDFormat.Xml, new RequestUploadBakedTextureComplete(),
@@ -804,7 +805,7 @@ public class AssetManager implements PacketCallback {
 						public boolean callback(AssetUpload e) {
 							if (transactionID.equals(e.transactionID)) {
 								uploadEvent.set(true);
-								callback.callback(e.success ? e.assetID : UUID.Zero);
+								callback.callback(e.success ? e.assetID : UUID.ZERO);
 							}
 							return false;
 						}
@@ -820,7 +821,7 @@ public class AssetManager implements PacketCallback {
 					}
 					onAssetUploaded.remove(udpCallback);
 					if (success == null || !success) {
-						callback.callback(UUID.Zero);
+						callback.callback(UUID.ZERO);
 					}
 				}
 			});
@@ -1333,7 +1334,7 @@ public class AssetManager implements PacketCallback {
 
 			if (download.source == SourceType.Asset && data.length == 20) {
 				download.itemID = new UUID(data, 0);
-				download.assetType = AssetType.setValue(Helpers.BytesToInt32L(data, 16));
+				download.assetType = AssetType.setValue(Helpers.bytesToInt32L(data, 16));
 
 				logger.debug(String.format("TransferInfo packet received. AssetID: %s Type: %s", download.itemID,
 						download.assetType));
@@ -1345,7 +1346,7 @@ public class AssetManager implements PacketCallback {
 				UUID taskID = new UUID(data, 48);
 				UUID itemID = new UUID(data, 64);
 				download.itemID = new UUID(data, 80);
-				download.assetType = AssetType.setValue(Helpers.BytesToInt32L(data, 96));
+				download.assetType = AssetType.setValue(Helpers.bytesToInt32L(data, 96));
 
 				logger.debug(String.format(
 						"TransferInfo packet received. AgentID: %s SessionID: %s OwnerID: %s TaskID: %s ItemID: %s AssetID: %s Type: %s",
@@ -1398,8 +1399,8 @@ public class AssetManager implements PacketCallback {
 		InitiateDownloadPacket request = (InitiateDownloadPacket) packet;
 		try {
 			onInitiateDownload
-					.dispatch(new InitiateDownloadCallbackArgs(Helpers.BytesToString(request.FileData.getSimFilename()),
-							Helpers.BytesToString(request.FileData.getViewerFilename())));
+					.dispatch(new InitiateDownloadCallbackArgs(Helpers.bytesToString(request.FileData.getSimFilename()),
+							Helpers.bytesToString(request.FileData.getViewerFilename())));
 		} catch (Exception ex) {
 			logger.error(GridClient.Log(ex.getMessage(), client), ex);
 		}
@@ -1413,7 +1414,8 @@ public class AssetManager implements PacketCallback {
 
 		// The first packet reserves the first four bytes of the data for the
 		// total length of the asset and appends 1000 bytes of data after that
-		int off = send.XferID.Packet == 0 ? 4 : 0, len = 1000;
+		int off = send.XferID.Packet == 0 ? 4 : 0;
+		int len = 1000;
 		if (upload.transferred + len >= upload.size) {
 			// Last packet
 			len = upload.size - upload.transferred;
@@ -1422,7 +1424,7 @@ public class AssetManager implements PacketCallback {
 
 		byte[] data = new byte[off + len];
 		if (send.XferID.Packet == 0)
-			Helpers.Int32ToBytesL(upload.size, data, 0);
+			Helpers.int32ToBytesL(upload.size, data, 0);
 		System.arraycopy(upload.assetData, upload.transferred, data, off, len);
 		send.DataPacket.setData(data);
 		upload.transferred += len;
@@ -1543,7 +1545,7 @@ public class AssetManager implements PacketCallback {
 				// This is the first packet received in the download, the first
 				// four bytes are a size integer
 				// in little endian ordering
-				download.size = Helpers.BytesToInt32L(bytes);
+				download.size = Helpers.bytesToInt32L(bytes);
 				download.assetData = new byte[download.size];
 
 				logger.debug("Received first packet in an Xfer download of size " + download.size);

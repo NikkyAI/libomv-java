@@ -4044,7 +4044,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "translate")
 	public JAXBElement<TargetableFloat3> createTranslate(TargetableFloat3 value) {
-		return new JAXBElement<TargetableFloat3>(_Translate_QNAME, TargetableFloat3.class, null, value);
+		return new JAXBElement<>(_Translate_QNAME, TargetableFloat3.class, null, value);
 	}
 
 	/**
@@ -4054,7 +4054,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "scale")
 	public JAXBElement<TargetableFloat3> createScale(TargetableFloat3 value) {
-		return new JAXBElement<TargetableFloat3>(_Scale_QNAME, TargetableFloat3.class, null, value);
+		return new JAXBElement<>(_Scale_QNAME, TargetableFloat3.class, null, value);
 	}
 
 	/**
@@ -4064,7 +4064,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "profile_GLSL", substitutionHeadNamespace = "http://www.collada.org/2005/11/COLLADASchema", substitutionHeadName = "fx_profile_abstract")
 	public JAXBElement<ProfileGLSL> createProfileGLSL(ProfileGLSL value) {
-		return new JAXBElement<ProfileGLSL>(_ProfileGLSL_QNAME, ProfileGLSL.class, null, value);
+		return new JAXBElement<>(_ProfileGLSL_QNAME, ProfileGLSL.class, null, value);
 	}
 
 	/**
@@ -4074,7 +4074,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "instance_physics_material")
 	public JAXBElement<InstanceWithExtra> createInstancePhysicsMaterial(InstanceWithExtra value) {
-		return new JAXBElement<InstanceWithExtra>(_InstancePhysicsMaterial_QNAME, InstanceWithExtra.class, null, value);
+		return new JAXBElement<>(_InstancePhysicsMaterial_QNAME, InstanceWithExtra.class, null, value);
 	}
 
 	/**
@@ -4084,7 +4084,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "profile_GLES", substitutionHeadNamespace = "http://www.collada.org/2005/11/COLLADASchema", substitutionHeadName = "fx_profile_abstract")
 	public JAXBElement<ProfileGLES> createProfileGLES(ProfileGLES value) {
-		return new JAXBElement<ProfileGLES>(_ProfileGLES_QNAME, ProfileGLES.class, null, value);
+		return new JAXBElement<>(_ProfileGLES_QNAME, ProfileGLES.class, null, value);
 	}
 
 	/**
@@ -4094,7 +4094,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "p")
 	public JAXBElement<List<BigInteger>> createP(List<BigInteger> value) {
-		return new JAXBElement<List<BigInteger>>(_P_QNAME, ((Class) List.class), null, ((List<BigInteger>) value));
+		return new JAXBElement<>(_P_QNAME, ((Class) List.class), null, ((List<BigInteger>) value));
 	}
 
 	/**
@@ -4103,7 +4103,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fx_profile_abstract")
 	public JAXBElement<Object> createFxProfileAbstract(Object value) {
-		return new JAXBElement<Object>(_FxProfileAbstract_QNAME, Object.class, null, value);
+		return new JAXBElement<>(_FxProfileAbstract_QNAME, Object.class, null, value);
 	}
 
 	/**
@@ -4113,7 +4113,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "instance_force_field")
 	public JAXBElement<InstanceWithExtra> createInstanceForceField(InstanceWithExtra value) {
-		return new JAXBElement<InstanceWithExtra>(_InstanceForceField_QNAME, InstanceWithExtra.class, null, value);
+		return new JAXBElement<>(_InstanceForceField_QNAME, InstanceWithExtra.class, null, value);
 	}
 
 	/**
@@ -4123,7 +4123,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "instance_camera")
 	public JAXBElement<InstanceWithExtra> createInstanceCamera(InstanceWithExtra value) {
-		return new JAXBElement<InstanceWithExtra>(_InstanceCamera_QNAME, InstanceWithExtra.class, null, value);
+		return new JAXBElement<>(_InstanceCamera_QNAME, InstanceWithExtra.class, null, value);
 	}
 
 	/**
@@ -4133,7 +4133,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "profile_CG", substitutionHeadNamespace = "http://www.collada.org/2005/11/COLLADASchema", substitutionHeadName = "fx_profile_abstract")
 	public JAXBElement<ProfileCG> createProfileCG(ProfileCG value) {
-		return new JAXBElement<ProfileCG>(_ProfileCG_QNAME, ProfileCG.class, null, value);
+		return new JAXBElement<>(_ProfileCG_QNAME, ProfileCG.class, null, value);
 	}
 
 	/**
@@ -4142,7 +4142,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "gl_hook_abstract")
 	public JAXBElement<Object> createGlHookAbstract(Object value) {
-		return new JAXBElement<Object>(_GlHookAbstract_QNAME, Object.class, null, value);
+		return new JAXBElement<>(_GlHookAbstract_QNAME, Object.class, null, value);
 	}
 
 	/**
@@ -4152,7 +4152,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "profile_COMMON", substitutionHeadNamespace = "http://www.collada.org/2005/11/COLLADASchema", substitutionHeadName = "fx_profile_abstract")
 	public JAXBElement<ProfileCOMMON> createProfileCOMMON(ProfileCOMMON value) {
-		return new JAXBElement<ProfileCOMMON>(_ProfileCOMMON_QNAME, ProfileCOMMON.class, null, value);
+		return new JAXBElement<>(_ProfileCOMMON_QNAME, ProfileCOMMON.class, null, value);
 	}
 
 	/**
@@ -4162,7 +4162,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "instance_node")
 	public JAXBElement<InstanceWithExtra> createInstanceNode(InstanceWithExtra value) {
-		return new JAXBElement<InstanceWithExtra>(_InstanceNode_QNAME, InstanceWithExtra.class, null, value);
+		return new JAXBElement<>(_InstanceNode_QNAME, InstanceWithExtra.class, null, value);
 	}
 
 	/**
@@ -4172,7 +4172,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "instance_light")
 	public JAXBElement<InstanceWithExtra> createInstanceLight(InstanceWithExtra value) {
-		return new JAXBElement<InstanceWithExtra>(_InstanceLight_QNAME, InstanceWithExtra.class, null, value);
+		return new JAXBElement<>(_InstanceLight_QNAME, InstanceWithExtra.class, null, value);
 	}
 
 	/**
@@ -4182,7 +4182,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "h", scope = Polygons.Ph.class)
 	public JAXBElement<List<BigInteger>> createPolygonsPhH(List<BigInteger> value) {
-		return new JAXBElement<List<BigInteger>>(_PolygonsPhH_QNAME, ((Class) List.class), Polygons.Ph.class,
+		return new JAXBElement<>(_PolygonsPhH_QNAME, ((Class) List.class), Polygons.Ph.class,
 				((List<BigInteger>) value));
 	}
 
@@ -4193,8 +4193,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "zfar", scope = Camera.Optics.TechniqueCommon.Perspective.class)
 	public JAXBElement<TargetableFloat> createCameraOpticsTechniqueCommonPerspectiveZfar(TargetableFloat value) {
-		return new JAXBElement<TargetableFloat>(_CameraOpticsTechniqueCommonPerspectiveZfar_QNAME,
-				TargetableFloat.class, Camera.Optics.TechniqueCommon.Perspective.class, value);
+		return new JAXBElement<>(_CameraOpticsTechniqueCommonPerspectiveZfar_QNAME, TargetableFloat.class,
+				Camera.Optics.TechniqueCommon.Perspective.class, value);
 	}
 
 	/**
@@ -4204,8 +4204,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "aspect_ratio", scope = Camera.Optics.TechniqueCommon.Perspective.class)
 	public JAXBElement<TargetableFloat> createCameraOpticsTechniqueCommonPerspectiveAspectRatio(TargetableFloat value) {
-		return new JAXBElement<TargetableFloat>(_CameraOpticsTechniqueCommonPerspectiveAspectRatio_QNAME,
-				TargetableFloat.class, Camera.Optics.TechniqueCommon.Perspective.class, value);
+		return new JAXBElement<>(_CameraOpticsTechniqueCommonPerspectiveAspectRatio_QNAME, TargetableFloat.class,
+				Camera.Optics.TechniqueCommon.Perspective.class, value);
 	}
 
 	/**
@@ -4215,8 +4215,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "yfov", scope = Camera.Optics.TechniqueCommon.Perspective.class)
 	public JAXBElement<TargetableFloat> createCameraOpticsTechniqueCommonPerspectiveYfov(TargetableFloat value) {
-		return new JAXBElement<TargetableFloat>(_CameraOpticsTechniqueCommonPerspectiveYfov_QNAME,
-				TargetableFloat.class, Camera.Optics.TechniqueCommon.Perspective.class, value);
+		return new JAXBElement<>(_CameraOpticsTechniqueCommonPerspectiveYfov_QNAME, TargetableFloat.class,
+				Camera.Optics.TechniqueCommon.Perspective.class, value);
 	}
 
 	/**
@@ -4226,8 +4226,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "xfov", scope = Camera.Optics.TechniqueCommon.Perspective.class)
 	public JAXBElement<TargetableFloat> createCameraOpticsTechniqueCommonPerspectiveXfov(TargetableFloat value) {
-		return new JAXBElement<TargetableFloat>(_CameraOpticsTechniqueCommonPerspectiveXfov_QNAME,
-				TargetableFloat.class, Camera.Optics.TechniqueCommon.Perspective.class, value);
+		return new JAXBElement<>(_CameraOpticsTechniqueCommonPerspectiveXfov_QNAME, TargetableFloat.class,
+				Camera.Optics.TechniqueCommon.Perspective.class, value);
 	}
 
 	/**
@@ -4237,8 +4237,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "znear", scope = Camera.Optics.TechniqueCommon.Perspective.class)
 	public JAXBElement<TargetableFloat> createCameraOpticsTechniqueCommonPerspectiveZnear(TargetableFloat value) {
-		return new JAXBElement<TargetableFloat>(_CameraOpticsTechniqueCommonPerspectiveZnear_QNAME,
-				TargetableFloat.class, Camera.Optics.TechniqueCommon.Perspective.class, value);
+		return new JAXBElement<>(_CameraOpticsTechniqueCommonPerspectiveZnear_QNAME, TargetableFloat.class,
+				Camera.Optics.TechniqueCommon.Perspective.class, value);
 	}
 
 	/**
@@ -4247,7 +4247,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool", scope = GlslNewarrayType.class)
 	public JAXBElement<Boolean> createGlslNewarrayTypeBool(Boolean value) {
-		return new JAXBElement<Boolean>(_GlslNewarrayTypeBool_QNAME, Boolean.class, GlslNewarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeBool_QNAME, Boolean.class, GlslNewarrayType.class, value);
 	}
 
 	/**
@@ -4257,8 +4257,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "surface", scope = GlslNewarrayType.class)
 	public JAXBElement<GlslSurfaceType> createGlslNewarrayTypeSurface(GlslSurfaceType value) {
-		return new JAXBElement<GlslSurfaceType>(_GlslNewarrayTypeSurface_QNAME, GlslSurfaceType.class,
-				GlslNewarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeSurface_QNAME, GlslSurfaceType.class, GlslNewarrayType.class, value);
 	}
 
 	/**
@@ -4268,8 +4267,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float2", scope = GlslNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createGlslNewarrayTypeFloat2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat2_QNAME, ((Class) List.class),
-				GlslNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat2_QNAME, ((Class) List.class), GlslNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4279,8 +4278,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float3", scope = GlslNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createGlslNewarrayTypeFloat3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat3_QNAME, ((Class) List.class),
-				GlslNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat3_QNAME, ((Class) List.class), GlslNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4290,8 +4289,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float", scope = GlslNewarrayType.class)
 	public JAXBElement<java.lang.Float> createGlslNewarrayTypeFloat(java.lang.Float value) {
-		return new JAXBElement<java.lang.Float>(_GlslNewarrayTypeFloat_QNAME, java.lang.Float.class,
-				GlslNewarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeFloat_QNAME, java.lang.Float.class, GlslNewarrayType.class, value);
 	}
 
 	/**
@@ -4301,8 +4299,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float4", scope = GlslNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createGlslNewarrayTypeFloat4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat4_QNAME, ((Class) List.class),
-				GlslNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat4_QNAME, ((Class) List.class), GlslNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4312,8 +4310,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "sampler1D", scope = GlslNewarrayType.class)
 	public JAXBElement<GlSampler1D> createGlslNewarrayTypeSampler1D(GlSampler1D value) {
-		return new JAXBElement<GlSampler1D>(_GlslNewarrayTypeSampler1D_QNAME, GlSampler1D.class, GlslNewarrayType.class,
-				value);
+		return new JAXBElement<>(_GlslNewarrayTypeSampler1D_QNAME, GlSampler1D.class, GlslNewarrayType.class, value);
 	}
 
 	/**
@@ -4323,8 +4320,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "sampler2D", scope = GlslNewarrayType.class)
 	public JAXBElement<GlSampler2D> createGlslNewarrayTypeSampler2D(GlSampler2D value) {
-		return new JAXBElement<GlSampler2D>(_GlslNewarrayTypeSampler2D_QNAME, GlSampler2D.class, GlslNewarrayType.class,
-				value);
+		return new JAXBElement<>(_GlslNewarrayTypeSampler2D_QNAME, GlSampler2D.class, GlslNewarrayType.class, value);
 	}
 
 	/**
@@ -4333,7 +4329,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int", scope = GlslNewarrayType.class)
 	public JAXBElement<Integer> createGlslNewarrayTypeInt(Integer value) {
-		return new JAXBElement<Integer>(_GlslNewarrayTypeInt_QNAME, Integer.class, GlslNewarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeInt_QNAME, Integer.class, GlslNewarrayType.class, value);
 	}
 
 	/**
@@ -4343,8 +4339,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "sampler3D", scope = GlslNewarrayType.class)
 	public JAXBElement<GlSampler3D> createGlslNewarrayTypeSampler3D(GlSampler3D value) {
-		return new JAXBElement<GlSampler3D>(_GlslNewarrayTypeSampler3D_QNAME, GlSampler3D.class, GlslNewarrayType.class,
-				value);
+		return new JAXBElement<>(_GlslNewarrayTypeSampler3D_QNAME, GlSampler3D.class, GlslNewarrayType.class, value);
 	}
 
 	/**
@@ -4353,7 +4348,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "enum", scope = GlslNewarrayType.class)
 	public JAXBElement<String> createGlslNewarrayTypeEnum(String value) {
-		return new JAXBElement<String>(_GlslNewarrayTypeEnum_QNAME, String.class, GlslNewarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeEnum_QNAME, String.class, GlslNewarrayType.class, value);
 	}
 
 	/**
@@ -4363,8 +4358,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "samplerCUBE", scope = GlslNewarrayType.class)
 	public JAXBElement<GlSamplerCUBE> createGlslNewarrayTypeSamplerCUBE(GlSamplerCUBE value) {
-		return new JAXBElement<GlSamplerCUBE>(_GlslNewarrayTypeSamplerCUBE_QNAME, GlSamplerCUBE.class,
-				GlslNewarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeSamplerCUBE_QNAME, GlSamplerCUBE.class, GlslNewarrayType.class,
+				value);
 	}
 
 	/**
@@ -4374,7 +4369,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int4", scope = GlslNewarrayType.class)
 	public JAXBElement<List<Integer>> createGlslNewarrayTypeInt4(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_GlslNewarrayTypeInt4_QNAME, ((Class) List.class), GlslNewarrayType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeInt4_QNAME, ((Class) List.class), GlslNewarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -4385,7 +4380,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int3", scope = GlslNewarrayType.class)
 	public JAXBElement<List<Integer>> createGlslNewarrayTypeInt3(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_GlslNewarrayTypeInt3_QNAME, ((Class) List.class), GlslNewarrayType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeInt3_QNAME, ((Class) List.class), GlslNewarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -4396,8 +4391,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "array", scope = GlslNewarrayType.class)
 	public JAXBElement<GlslNewarrayType> createGlslNewarrayTypeArray(GlslNewarrayType value) {
-		return new JAXBElement<GlslNewarrayType>(_GlslNewarrayTypeArray_QNAME, GlslNewarrayType.class,
-				GlslNewarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeArray_QNAME, GlslNewarrayType.class, GlslNewarrayType.class, value);
 	}
 
 	/**
@@ -4407,8 +4401,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool3", scope = GlslNewarrayType.class)
 	public JAXBElement<List<Boolean>> createGlslNewarrayTypeBool3(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_GlslNewarrayTypeBool3_QNAME, ((Class) List.class),
-				GlslNewarrayType.class, ((List<Boolean>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeBool3_QNAME, ((Class) List.class), GlslNewarrayType.class,
+				((List<Boolean>) value));
 	}
 
 	/**
@@ -4418,8 +4412,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool2", scope = GlslNewarrayType.class)
 	public JAXBElement<List<Boolean>> createGlslNewarrayTypeBool2(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_GlslNewarrayTypeBool2_QNAME, ((Class) List.class),
-				GlslNewarrayType.class, ((List<Boolean>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeBool2_QNAME, ((Class) List.class), GlslNewarrayType.class,
+				((List<Boolean>) value));
 	}
 
 	/**
@@ -4429,7 +4423,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int2", scope = GlslNewarrayType.class)
 	public JAXBElement<List<Integer>> createGlslNewarrayTypeInt2(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_GlslNewarrayTypeInt2_QNAME, ((Class) List.class), GlslNewarrayType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeInt2_QNAME, ((Class) List.class), GlslNewarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -4440,8 +4434,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "samplerRECT", scope = GlslNewarrayType.class)
 	public JAXBElement<GlSamplerRECT> createGlslNewarrayTypeSamplerRECT(GlSamplerRECT value) {
-		return new JAXBElement<GlSamplerRECT>(_GlslNewarrayTypeSamplerRECT_QNAME, GlSamplerRECT.class,
-				GlslNewarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeSamplerRECT_QNAME, GlSamplerRECT.class, GlslNewarrayType.class,
+				value);
 	}
 
 	/**
@@ -4451,8 +4445,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool4", scope = GlslNewarrayType.class)
 	public JAXBElement<List<Boolean>> createGlslNewarrayTypeBool4(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_GlslNewarrayTypeBool4_QNAME, ((Class) List.class),
-				GlslNewarrayType.class, ((List<Boolean>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeBool4_QNAME, ((Class) List.class), GlslNewarrayType.class,
+				((List<Boolean>) value));
 	}
 
 	/**
@@ -4462,8 +4456,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float3x3", scope = GlslNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createGlslNewarrayTypeFloat3X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat3X3_QNAME, ((Class) List.class),
-				GlslNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat3X3_QNAME, ((Class) List.class), GlslNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4473,8 +4467,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "samplerDEPTH", scope = GlslNewarrayType.class)
 	public JAXBElement<GlSamplerDEPTH> createGlslNewarrayTypeSamplerDEPTH(GlSamplerDEPTH value) {
-		return new JAXBElement<GlSamplerDEPTH>(_GlslNewarrayTypeSamplerDEPTH_QNAME, GlSamplerDEPTH.class,
-				GlslNewarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeSamplerDEPTH_QNAME, GlSamplerDEPTH.class, GlslNewarrayType.class,
+				value);
 	}
 
 	/**
@@ -4484,8 +4478,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float2x2", scope = GlslNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createGlslNewarrayTypeFloat2X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat2X2_QNAME, ((Class) List.class),
-				GlslNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat2X2_QNAME, ((Class) List.class), GlslNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4495,8 +4489,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float4x4", scope = GlslNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createGlslNewarrayTypeFloat4X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat4X4_QNAME, ((Class) List.class),
-				GlslNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat4X4_QNAME, ((Class) List.class), GlslNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4506,7 +4500,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int3x1", scope = CgNewarrayType.class)
 	public JAXBElement<List<Integer>> createCgNewarrayTypeInt3X1(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt3X1_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt3X1_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -4517,7 +4511,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int3x2", scope = CgNewarrayType.class)
 	public JAXBElement<List<Integer>> createCgNewarrayTypeInt3X2(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt3X2_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt3X2_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -4528,7 +4522,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int3x3", scope = CgNewarrayType.class)
 	public JAXBElement<List<Integer>> createCgNewarrayTypeInt3X3(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt3X3_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt3X3_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -4539,8 +4533,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "usertype", scope = CgNewarrayType.class)
 	public JAXBElement<CgSetuserType> createCgNewarrayTypeUsertype(CgSetuserType value) {
-		return new JAXBElement<CgSetuserType>(_CgNewarrayTypeUsertype_QNAME, CgSetuserType.class, CgNewarrayType.class,
-				value);
+		return new JAXBElement<>(_CgNewarrayTypeUsertype_QNAME, CgSetuserType.class, CgNewarrayType.class, value);
 	}
 
 	/**
@@ -4550,8 +4543,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half1x4", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeHalf1X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf1X4_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf1X4_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4561,8 +4554,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half1x3", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeHalf1X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf1X3_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf1X3_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4572,8 +4565,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half1x2", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeHalf1X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf1X2_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf1X2_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4583,8 +4576,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half2", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeHalf2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf2_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf2_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4594,8 +4587,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half1x1", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeHalf1X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf1X1_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf1X1_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4605,8 +4598,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half1", scope = CgNewarrayType.class)
 	public JAXBElement<java.lang.Float> createCgNewarrayTypeHalf1(java.lang.Float value) {
-		return new JAXBElement<java.lang.Float>(_CgNewarrayTypeHalf1_QNAME, java.lang.Float.class, CgNewarrayType.class,
-				value);
+		return new JAXBElement<>(_CgNewarrayTypeHalf1_QNAME, java.lang.Float.class, CgNewarrayType.class, value);
 	}
 
 	/**
@@ -4616,8 +4608,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed", scope = CgNewarrayType.class)
 	public JAXBElement<java.lang.Float> createCgNewarrayTypeFixed(java.lang.Float value) {
-		return new JAXBElement<java.lang.Float>(_CgNewarrayTypeFixed_QNAME, java.lang.Float.class, CgNewarrayType.class,
-				value);
+		return new JAXBElement<>(_CgNewarrayTypeFixed_QNAME, java.lang.Float.class, CgNewarrayType.class, value);
 	}
 
 	/**
@@ -4627,8 +4618,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half4", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeHalf4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf4_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf4_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4638,8 +4629,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half3", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeHalf3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf3_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf3_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4649,8 +4640,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float", scope = CgNewarrayType.class)
 	public JAXBElement<java.lang.Float> createCgNewarrayTypeFloat(java.lang.Float value) {
-		return new JAXBElement<java.lang.Float>(_GlslNewarrayTypeFloat_QNAME, java.lang.Float.class,
-				CgNewarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeFloat_QNAME, java.lang.Float.class, CgNewarrayType.class, value);
 	}
 
 	/**
@@ -4660,7 +4650,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int3x4", scope = CgNewarrayType.class)
 	public JAXBElement<List<Integer>> createCgNewarrayTypeInt3X4(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt3X4_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt3X4_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -4671,8 +4661,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed3x2", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFixed3X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed3X2_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed3X2_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4682,8 +4672,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed3x1", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFixed3X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed3X1_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed3X1_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4693,8 +4683,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed3x4", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFixed3X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed3X4_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed3X4_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4704,8 +4694,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed3x3", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFixed3X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed3X3_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed3X3_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4715,8 +4705,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float3x4", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFloat3X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat3X4_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat3X4_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4726,8 +4716,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float3x3", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFloat3X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat3X3_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat3X3_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4737,7 +4727,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool2x4", scope = CgNewarrayType.class)
 	public JAXBElement<List<Boolean>> createCgNewarrayTypeBool2X4(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool2X4_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool2X4_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -4748,8 +4738,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float3x2", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFloat3X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat3X2_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat3X2_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4759,8 +4749,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float3x1", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFloat3X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat3X1_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat3X1_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4770,7 +4760,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool2x2", scope = CgNewarrayType.class)
 	public JAXBElement<List<Boolean>> createCgNewarrayTypeBool2X2(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool2X2_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool2X2_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -4781,7 +4771,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool2x3", scope = CgNewarrayType.class)
 	public JAXBElement<List<Boolean>> createCgNewarrayTypeBool2X3(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool2X3_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool2X3_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -4792,8 +4782,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "connect_param", scope = CgNewarrayType.class)
 	public JAXBElement<CgConnectParam> createCgNewarrayTypeConnectParam(CgConnectParam value) {
-		return new JAXBElement<CgConnectParam>(_CgNewarrayTypeConnectParam_QNAME, CgConnectParam.class,
-				CgNewarrayType.class, value);
+		return new JAXBElement<>(_CgNewarrayTypeConnectParam_QNAME, CgConnectParam.class, CgNewarrayType.class, value);
 	}
 
 	/**
@@ -4803,7 +4792,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool2x1", scope = CgNewarrayType.class)
 	public JAXBElement<List<Boolean>> createCgNewarrayTypeBool2X1(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool2X1_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool2X1_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -4813,7 +4802,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int", scope = CgNewarrayType.class)
 	public JAXBElement<Integer> createCgNewarrayTypeInt(Integer value) {
-		return new JAXBElement<Integer>(_GlslNewarrayTypeInt_QNAME, Integer.class, CgNewarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeInt_QNAME, Integer.class, CgNewarrayType.class, value);
 	}
 
 	/**
@@ -4823,7 +4812,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int4x1", scope = CgNewarrayType.class)
 	public JAXBElement<List<Integer>> createCgNewarrayTypeInt4X1(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt4X1_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt4X1_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -4834,7 +4823,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int4x2", scope = CgNewarrayType.class)
 	public JAXBElement<List<Integer>> createCgNewarrayTypeInt4X2(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt4X2_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt4X2_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -4845,8 +4834,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half4x2", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeHalf4X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf4X2_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf4X2_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4856,8 +4845,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half4x1", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeHalf4X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf4X1_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf4X1_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4867,8 +4856,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half4x4", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeHalf4X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf4X4_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf4X4_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4878,8 +4867,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "samplerRECT", scope = CgNewarrayType.class)
 	public JAXBElement<CgSamplerRECT> createCgNewarrayTypeSamplerRECT(CgSamplerRECT value) {
-		return new JAXBElement<CgSamplerRECT>(_GlslNewarrayTypeSamplerRECT_QNAME, CgSamplerRECT.class,
-				CgNewarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeSamplerRECT_QNAME, CgSamplerRECT.class, CgNewarrayType.class, value);
 	}
 
 	/**
@@ -4889,8 +4877,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half4x3", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeHalf4X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf4X3_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf4X3_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4899,7 +4887,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool", scope = CgNewarrayType.class)
 	public JAXBElement<Boolean> createCgNewarrayTypeBool(Boolean value) {
-		return new JAXBElement<Boolean>(_GlslNewarrayTypeBool_QNAME, Boolean.class, CgNewarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeBool_QNAME, Boolean.class, CgNewarrayType.class, value);
 	}
 
 	/**
@@ -4908,7 +4896,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "string", scope = CgNewarrayType.class)
 	public JAXBElement<String> createCgNewarrayTypeString(String value) {
-		return new JAXBElement<String>(_CgNewarrayTypeString_QNAME, String.class, CgNewarrayType.class, value);
+		return new JAXBElement<>(_CgNewarrayTypeString_QNAME, String.class, CgNewarrayType.class, value);
 	}
 
 	/**
@@ -4918,8 +4906,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "array", scope = CgNewarrayType.class)
 	public JAXBElement<CgNewarrayType> createCgNewarrayTypeArray(CgNewarrayType value) {
-		return new JAXBElement<CgNewarrayType>(_GlslNewarrayTypeArray_QNAME, CgNewarrayType.class, CgNewarrayType.class,
-				value);
+		return new JAXBElement<>(_GlslNewarrayTypeArray_QNAME, CgNewarrayType.class, CgNewarrayType.class, value);
 	}
 
 	/**
@@ -4929,7 +4916,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int4x3", scope = CgNewarrayType.class)
 	public JAXBElement<List<Integer>> createCgNewarrayTypeInt4X3(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt4X3_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt4X3_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -4940,8 +4927,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed2x3", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFixed2X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed2X3_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed2X3_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4951,7 +4938,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int4x4", scope = CgNewarrayType.class)
 	public JAXBElement<List<Integer>> createCgNewarrayTypeInt4X4(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt4X4_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt4X4_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -4962,8 +4949,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed2x2", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFixed2X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed2X2_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed2X2_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4973,8 +4960,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed2x4", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFixed2X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed2X4_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed2X4_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4984,8 +4971,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float4x3", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFloat4X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat4X3_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat4X3_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -4995,8 +4982,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float4x2", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFloat4X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat4X2_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat4X2_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5006,7 +4993,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool3x3", scope = CgNewarrayType.class)
 	public JAXBElement<List<Boolean>> createCgNewarrayTypeBool3X3(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool3X3_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool3X3_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -5017,8 +5004,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float4x1", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFloat4X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat4X1_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat4X1_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5028,8 +5015,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed2x1", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFixed2X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed2X1_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed2X1_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5039,7 +5026,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool3x4", scope = CgNewarrayType.class)
 	public JAXBElement<List<Boolean>> createCgNewarrayTypeBool3X4(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool3X4_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool3X4_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -5050,7 +5037,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool3x1", scope = CgNewarrayType.class)
 	public JAXBElement<List<Boolean>> createCgNewarrayTypeBool3X1(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool3X1_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool3X1_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -5061,7 +5048,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool3x2", scope = CgNewarrayType.class)
 	public JAXBElement<List<Boolean>> createCgNewarrayTypeBool3X2(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool3X2_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool3X2_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -5072,8 +5059,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float4x4", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFloat4X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat4X4_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat4X4_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5083,8 +5070,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "surface", scope = CgNewarrayType.class)
 	public JAXBElement<CgSurfaceType> createCgNewarrayTypeSurface(CgSurfaceType value) {
-		return new JAXBElement<CgSurfaceType>(_GlslNewarrayTypeSurface_QNAME, CgSurfaceType.class, CgNewarrayType.class,
-				value);
+		return new JAXBElement<>(_GlslNewarrayTypeSurface_QNAME, CgSurfaceType.class, CgNewarrayType.class, value);
 	}
 
 	/**
@@ -5094,7 +5080,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int1x2", scope = CgNewarrayType.class)
 	public JAXBElement<List<Integer>> createCgNewarrayTypeInt1X2(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt1X2_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt1X2_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -5105,7 +5091,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int1x3", scope = CgNewarrayType.class)
 	public JAXBElement<List<Integer>> createCgNewarrayTypeInt1X3(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt1X3_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt1X3_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -5116,7 +5102,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int1x4", scope = CgNewarrayType.class)
 	public JAXBElement<List<Integer>> createCgNewarrayTypeInt1X4(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt1X4_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt1X4_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -5127,8 +5113,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "sampler3D", scope = CgNewarrayType.class)
 	public JAXBElement<CgSampler3D> createCgNewarrayTypeSampler3D(CgSampler3D value) {
-		return new JAXBElement<CgSampler3D>(_GlslNewarrayTypeSampler3D_QNAME, CgSampler3D.class, CgNewarrayType.class,
-				value);
+		return new JAXBElement<>(_GlslNewarrayTypeSampler3D_QNAME, CgSampler3D.class, CgNewarrayType.class, value);
 	}
 
 	/**
@@ -5137,7 +5122,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "enum", scope = CgNewarrayType.class)
 	public JAXBElement<String> createCgNewarrayTypeEnum(String value) {
-		return new JAXBElement<String>(_GlslNewarrayTypeEnum_QNAME, String.class, CgNewarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeEnum_QNAME, String.class, CgNewarrayType.class, value);
 	}
 
 	/**
@@ -5147,8 +5132,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "samplerCUBE", scope = CgNewarrayType.class)
 	public JAXBElement<CgSamplerCUBE> createCgNewarrayTypeSamplerCUBE(CgSamplerCUBE value) {
-		return new JAXBElement<CgSamplerCUBE>(_GlslNewarrayTypeSamplerCUBE_QNAME, CgSamplerCUBE.class,
-				CgNewarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeSamplerCUBE_QNAME, CgSamplerCUBE.class, CgNewarrayType.class, value);
 	}
 
 	/**
@@ -5158,7 +5142,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int1x1", scope = CgNewarrayType.class)
 	public JAXBElement<List<Integer>> createCgNewarrayTypeInt1X1(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt1X1_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt1X1_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -5169,8 +5153,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half3x3", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeHalf3X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf3X3_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf3X3_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5180,8 +5164,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half3x2", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeHalf3X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf3X2_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf3X2_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5191,8 +5175,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half3x1", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeHalf3X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf3X1_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf3X1_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5202,8 +5186,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed2", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFixed2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed2_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed2_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5213,8 +5197,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed3", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFixed3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed3_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed3_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5224,8 +5208,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half3x4", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeHalf3X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf3X4_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf3X4_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5235,8 +5219,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed1", scope = CgNewarrayType.class)
 	public JAXBElement<java.lang.Float> createCgNewarrayTypeFixed1(java.lang.Float value) {
-		return new JAXBElement<java.lang.Float>(_CgNewarrayTypeFixed1_QNAME, java.lang.Float.class,
-				CgNewarrayType.class, value);
+		return new JAXBElement<>(_CgNewarrayTypeFixed1_QNAME, java.lang.Float.class, CgNewarrayType.class, value);
 	}
 
 	/**
@@ -5246,8 +5229,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float1x2", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFloat1X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat1X2_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat1X2_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5257,8 +5240,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float1x1", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFloat1X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat1X1_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat1X1_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5268,8 +5251,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half", scope = CgNewarrayType.class)
 	public JAXBElement<java.lang.Float> createCgNewarrayTypeHalf(java.lang.Float value) {
-		return new JAXBElement<java.lang.Float>(_CgNewarrayTypeHalf_QNAME, java.lang.Float.class, CgNewarrayType.class,
-				value);
+		return new JAXBElement<>(_CgNewarrayTypeHalf_QNAME, java.lang.Float.class, CgNewarrayType.class, value);
 	}
 
 	/**
@@ -5279,8 +5261,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "sampler2D", scope = CgNewarrayType.class)
 	public JAXBElement<CgSampler2D> createCgNewarrayTypeSampler2D(CgSampler2D value) {
-		return new JAXBElement<CgSampler2D>(_GlslNewarrayTypeSampler2D_QNAME, CgSampler2D.class, CgNewarrayType.class,
-				value);
+		return new JAXBElement<>(_GlslNewarrayTypeSampler2D_QNAME, CgSampler2D.class, CgNewarrayType.class, value);
 	}
 
 	/**
@@ -5290,7 +5271,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int4", scope = CgNewarrayType.class)
 	public JAXBElement<List<Integer>> createCgNewarrayTypeInt4(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_GlslNewarrayTypeInt4_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeInt4_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -5301,7 +5282,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int3", scope = CgNewarrayType.class)
 	public JAXBElement<List<Integer>> createCgNewarrayTypeInt3(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_GlslNewarrayTypeInt3_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeInt3_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -5312,7 +5293,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool3", scope = CgNewarrayType.class)
 	public JAXBElement<List<Boolean>> createCgNewarrayTypeBool3(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_GlslNewarrayTypeBool3_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeBool3_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -5323,8 +5304,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed1x4", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFixed1X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed1X4_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed1X4_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5334,7 +5315,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool2", scope = CgNewarrayType.class)
 	public JAXBElement<List<Boolean>> createCgNewarrayTypeBool2(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_GlslNewarrayTypeBool2_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeBool2_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -5345,8 +5326,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed1x3", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFixed1X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed1X3_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed1X3_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5356,7 +5337,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int2", scope = CgNewarrayType.class)
 	public JAXBElement<List<Integer>> createCgNewarrayTypeInt2(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_GlslNewarrayTypeInt2_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeInt2_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -5367,7 +5348,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool4", scope = CgNewarrayType.class)
 	public JAXBElement<List<Boolean>> createCgNewarrayTypeBool4(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_GlslNewarrayTypeBool4_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeBool4_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -5377,7 +5358,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int1", scope = CgNewarrayType.class)
 	public JAXBElement<Integer> createCgNewarrayTypeInt1(Integer value) {
-		return new JAXBElement<Integer>(_CgNewarrayTypeInt1_QNAME, Integer.class, CgNewarrayType.class, value);
+		return new JAXBElement<>(_CgNewarrayTypeInt1_QNAME, Integer.class, CgNewarrayType.class, value);
 	}
 
 	/**
@@ -5387,7 +5368,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool4x4", scope = CgNewarrayType.class)
 	public JAXBElement<List<Boolean>> createCgNewarrayTypeBool4X4(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool4X4_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool4X4_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -5397,7 +5378,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool1", scope = CgNewarrayType.class)
 	public JAXBElement<Boolean> createCgNewarrayTypeBool1(Boolean value) {
-		return new JAXBElement<Boolean>(_CgNewarrayTypeBool1_QNAME, Boolean.class, CgNewarrayType.class, value);
+		return new JAXBElement<>(_CgNewarrayTypeBool1_QNAME, Boolean.class, CgNewarrayType.class, value);
 	}
 
 	/**
@@ -5407,7 +5388,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool4x2", scope = CgNewarrayType.class)
 	public JAXBElement<List<Boolean>> createCgNewarrayTypeBool4X2(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool4X2_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool4X2_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -5418,8 +5399,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float1x4", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFloat1X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat1X4_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat1X4_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5429,8 +5410,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed1x2", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFixed1X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed1X2_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed1X2_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5440,7 +5421,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool4x3", scope = CgNewarrayType.class)
 	public JAXBElement<List<Boolean>> createCgNewarrayTypeBool4X3(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool4X3_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool4X3_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -5451,8 +5432,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float1x3", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFloat1X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat1X3_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat1X3_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5462,8 +5443,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed1x1", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFixed1X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed1X1_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed1X1_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5473,7 +5454,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool4x1", scope = CgNewarrayType.class)
 	public JAXBElement<List<Boolean>> createCgNewarrayTypeBool4X1(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool4X1_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool4X1_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -5484,8 +5465,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float1", scope = CgNewarrayType.class)
 	public JAXBElement<java.lang.Float> createCgNewarrayTypeFloat1(java.lang.Float value) {
-		return new JAXBElement<java.lang.Float>(_CgNewarrayTypeFloat1_QNAME, java.lang.Float.class,
-				CgNewarrayType.class, value);
+		return new JAXBElement<>(_CgNewarrayTypeFloat1_QNAME, java.lang.Float.class, CgNewarrayType.class, value);
 	}
 
 	/**
@@ -5495,8 +5475,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float2", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFloat2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat2_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat2_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5506,8 +5486,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float3", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFloat3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat3_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat3_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5517,8 +5497,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float4", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFloat4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat4_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat4_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5528,7 +5508,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int2x1", scope = CgNewarrayType.class)
 	public JAXBElement<List<Integer>> createCgNewarrayTypeInt2X1(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt2X1_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt2X1_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -5539,8 +5519,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "sampler1D", scope = CgNewarrayType.class)
 	public JAXBElement<CgSampler1D> createCgNewarrayTypeSampler1D(CgSampler1D value) {
-		return new JAXBElement<CgSampler1D>(_GlslNewarrayTypeSampler1D_QNAME, CgSampler1D.class, CgNewarrayType.class,
-				value);
+		return new JAXBElement<>(_GlslNewarrayTypeSampler1D_QNAME, CgSampler1D.class, CgNewarrayType.class, value);
 	}
 
 	/**
@@ -5550,7 +5529,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int2x2", scope = CgNewarrayType.class)
 	public JAXBElement<List<Integer>> createCgNewarrayTypeInt2X2(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt2X2_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt2X2_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -5561,7 +5540,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int2x3", scope = CgNewarrayType.class)
 	public JAXBElement<List<Integer>> createCgNewarrayTypeInt2X3(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt2X3_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt2X3_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -5572,7 +5551,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int2x4", scope = CgNewarrayType.class)
 	public JAXBElement<List<Integer>> createCgNewarrayTypeInt2X4(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt2X4_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt2X4_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -5583,8 +5562,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half2x4", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeHalf2X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf2X4_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf2X4_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5594,8 +5573,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half2x3", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeHalf2X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf2X3_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf2X3_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5605,8 +5584,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half2x2", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeHalf2X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf2X2_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf2X2_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5616,8 +5595,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half2x1", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeHalf2X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf2X1_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf2X1_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5627,8 +5606,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "samplerDEPTH", scope = CgNewarrayType.class)
 	public JAXBElement<CgSamplerDEPTH> createCgNewarrayTypeSamplerDEPTH(CgSamplerDEPTH value) {
-		return new JAXBElement<CgSamplerDEPTH>(_GlslNewarrayTypeSamplerDEPTH_QNAME, CgSamplerDEPTH.class,
-				CgNewarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeSamplerDEPTH_QNAME, CgSamplerDEPTH.class, CgNewarrayType.class,
+				value);
 	}
 
 	/**
@@ -5638,8 +5617,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float2x1", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFloat2X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat2X1_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat2X1_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5649,8 +5628,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed4", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFixed4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed4_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed4_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5660,8 +5639,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed4x4", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFixed4X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed4X4_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed4X4_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5671,8 +5650,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed4x1", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFixed4X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed4X1_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed4X1_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5682,8 +5661,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed4x3", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFixed4X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed4X3_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed4X3_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5693,8 +5672,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed4x2", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFixed4X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed4X2_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed4X2_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5704,8 +5683,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float2x4", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFloat2X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat2X4_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat2X4_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5715,8 +5694,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float2x3", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFloat2X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat2X3_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat2X3_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5726,8 +5705,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float2x2", scope = CgNewarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgNewarrayTypeFloat2X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat2X2_QNAME, ((Class) List.class),
-				CgNewarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat2X2_QNAME, ((Class) List.class), CgNewarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5737,7 +5716,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool1x3", scope = CgNewarrayType.class)
 	public JAXBElement<List<Boolean>> createCgNewarrayTypeBool1X3(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool1X3_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool1X3_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -5748,7 +5727,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool1x4", scope = CgNewarrayType.class)
 	public JAXBElement<List<Boolean>> createCgNewarrayTypeBool1X4(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool1X4_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool1X4_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -5759,7 +5738,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool1x1", scope = CgNewarrayType.class)
 	public JAXBElement<List<Boolean>> createCgNewarrayTypeBool1X1(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool1X1_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool1X1_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -5770,7 +5749,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool1x2", scope = CgNewarrayType.class)
 	public JAXBElement<List<Boolean>> createCgNewarrayTypeBool1X2(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool1X2_QNAME, ((Class) List.class), CgNewarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool1X2_QNAME, ((Class) List.class), CgNewarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -5781,7 +5760,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "ph", scope = Polygons.class)
 	public JAXBElement<Polygons.Ph> createPolygonsPh(Polygons.Ph value) {
-		return new JAXBElement<Polygons.Ph>(_PolygonsPh_QNAME, Polygons.Ph.class, Polygons.class, value);
+		return new JAXBElement<>(_PolygonsPh_QNAME, Polygons.Ph.class, Polygons.class, value);
 	}
 
 	/**
@@ -5791,7 +5770,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int3x1", scope = CgSetarrayType.class)
 	public JAXBElement<List<Integer>> createCgSetarrayTypeInt3X1(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt3X1_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt3X1_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -5802,7 +5781,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int3x2", scope = CgSetarrayType.class)
 	public JAXBElement<List<Integer>> createCgSetarrayTypeInt3X2(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt3X2_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt3X2_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -5813,7 +5792,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int3x3", scope = CgSetarrayType.class)
 	public JAXBElement<List<Integer>> createCgSetarrayTypeInt3X3(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt3X3_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt3X3_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -5824,8 +5803,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "usertype", scope = CgSetarrayType.class)
 	public JAXBElement<CgSetuserType> createCgSetarrayTypeUsertype(CgSetuserType value) {
-		return new JAXBElement<CgSetuserType>(_CgNewarrayTypeUsertype_QNAME, CgSetuserType.class, CgSetarrayType.class,
-				value);
+		return new JAXBElement<>(_CgNewarrayTypeUsertype_QNAME, CgSetuserType.class, CgSetarrayType.class, value);
 	}
 
 	/**
@@ -5835,8 +5813,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half1x4", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeHalf1X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf1X4_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf1X4_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5846,8 +5824,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half1x3", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeHalf1X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf1X3_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf1X3_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5857,8 +5835,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half1x2", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeHalf1X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf1X2_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf1X2_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5868,8 +5846,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half2", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeHalf2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf2_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf2_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5879,8 +5857,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half1x1", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeHalf1X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf1X1_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf1X1_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5890,8 +5868,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half1", scope = CgSetarrayType.class)
 	public JAXBElement<java.lang.Float> createCgSetarrayTypeHalf1(java.lang.Float value) {
-		return new JAXBElement<java.lang.Float>(_CgNewarrayTypeHalf1_QNAME, java.lang.Float.class, CgSetarrayType.class,
-				value);
+		return new JAXBElement<>(_CgNewarrayTypeHalf1_QNAME, java.lang.Float.class, CgSetarrayType.class, value);
 	}
 
 	/**
@@ -5901,8 +5878,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed", scope = CgSetarrayType.class)
 	public JAXBElement<java.lang.Float> createCgSetarrayTypeFixed(java.lang.Float value) {
-		return new JAXBElement<java.lang.Float>(_CgNewarrayTypeFixed_QNAME, java.lang.Float.class, CgSetarrayType.class,
-				value);
+		return new JAXBElement<>(_CgNewarrayTypeFixed_QNAME, java.lang.Float.class, CgSetarrayType.class, value);
 	}
 
 	/**
@@ -5912,8 +5888,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half4", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeHalf4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf4_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf4_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5923,8 +5899,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half3", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeHalf3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf3_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf3_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5934,8 +5910,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float", scope = CgSetarrayType.class)
 	public JAXBElement<java.lang.Float> createCgSetarrayTypeFloat(java.lang.Float value) {
-		return new JAXBElement<java.lang.Float>(_GlslNewarrayTypeFloat_QNAME, java.lang.Float.class,
-				CgSetarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeFloat_QNAME, java.lang.Float.class, CgSetarrayType.class, value);
 	}
 
 	/**
@@ -5945,7 +5920,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int3x4", scope = CgSetarrayType.class)
 	public JAXBElement<List<Integer>> createCgSetarrayTypeInt3X4(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt3X4_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt3X4_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -5956,8 +5931,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed3x2", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFixed3X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed3X2_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed3X2_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5967,8 +5942,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed3x1", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFixed3X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed3X1_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed3X1_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5978,8 +5953,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed3x4", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFixed3X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed3X4_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed3X4_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -5989,8 +5964,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed3x3", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFixed3X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed3X3_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed3X3_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6000,8 +5975,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float3x4", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFloat3X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat3X4_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat3X4_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6011,8 +5986,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float3x3", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFloat3X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat3X3_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat3X3_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6022,7 +5997,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool2x4", scope = CgSetarrayType.class)
 	public JAXBElement<List<Boolean>> createCgSetarrayTypeBool2X4(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool2X4_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool2X4_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -6033,8 +6008,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float3x2", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFloat3X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat3X2_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat3X2_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6044,8 +6019,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float3x1", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFloat3X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat3X1_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat3X1_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6055,7 +6030,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool2x2", scope = CgSetarrayType.class)
 	public JAXBElement<List<Boolean>> createCgSetarrayTypeBool2X2(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool2X2_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool2X2_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -6066,7 +6041,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool2x3", scope = CgSetarrayType.class)
 	public JAXBElement<List<Boolean>> createCgSetarrayTypeBool2X3(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool2X3_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool2X3_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -6077,7 +6052,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool2x1", scope = CgSetarrayType.class)
 	public JAXBElement<List<Boolean>> createCgSetarrayTypeBool2X1(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool2X1_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool2X1_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -6087,7 +6062,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int", scope = CgSetarrayType.class)
 	public JAXBElement<Integer> createCgSetarrayTypeInt(Integer value) {
-		return new JAXBElement<Integer>(_GlslNewarrayTypeInt_QNAME, Integer.class, CgSetarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeInt_QNAME, Integer.class, CgSetarrayType.class, value);
 	}
 
 	/**
@@ -6097,7 +6072,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int4x1", scope = CgSetarrayType.class)
 	public JAXBElement<List<Integer>> createCgSetarrayTypeInt4X1(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt4X1_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt4X1_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -6108,7 +6083,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int4x2", scope = CgSetarrayType.class)
 	public JAXBElement<List<Integer>> createCgSetarrayTypeInt4X2(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt4X2_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt4X2_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -6119,8 +6094,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half4x2", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeHalf4X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf4X2_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf4X2_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6130,8 +6105,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half4x1", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeHalf4X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf4X1_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf4X1_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6141,8 +6116,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half4x4", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeHalf4X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf4X4_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf4X4_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6152,8 +6127,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "samplerRECT", scope = CgSetarrayType.class)
 	public JAXBElement<CgSamplerRECT> createCgSetarrayTypeSamplerRECT(CgSamplerRECT value) {
-		return new JAXBElement<CgSamplerRECT>(_GlslNewarrayTypeSamplerRECT_QNAME, CgSamplerRECT.class,
-				CgSetarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeSamplerRECT_QNAME, CgSamplerRECT.class, CgSetarrayType.class, value);
 	}
 
 	/**
@@ -6163,8 +6137,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half4x3", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeHalf4X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf4X3_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf4X3_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6173,7 +6147,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool", scope = CgSetarrayType.class)
 	public JAXBElement<Boolean> createCgSetarrayTypeBool(Boolean value) {
-		return new JAXBElement<Boolean>(_GlslNewarrayTypeBool_QNAME, Boolean.class, CgSetarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeBool_QNAME, Boolean.class, CgSetarrayType.class, value);
 	}
 
 	/**
@@ -6182,7 +6156,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "string", scope = CgSetarrayType.class)
 	public JAXBElement<String> createCgSetarrayTypeString(String value) {
-		return new JAXBElement<String>(_CgNewarrayTypeString_QNAME, String.class, CgSetarrayType.class, value);
+		return new JAXBElement<>(_CgNewarrayTypeString_QNAME, String.class, CgSetarrayType.class, value);
 	}
 
 	/**
@@ -6192,8 +6166,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "array", scope = CgSetarrayType.class)
 	public JAXBElement<CgSetarrayType> createCgSetarrayTypeArray(CgSetarrayType value) {
-		return new JAXBElement<CgSetarrayType>(_GlslNewarrayTypeArray_QNAME, CgSetarrayType.class, CgSetarrayType.class,
-				value);
+		return new JAXBElement<>(_GlslNewarrayTypeArray_QNAME, CgSetarrayType.class, CgSetarrayType.class, value);
 	}
 
 	/**
@@ -6203,7 +6176,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int4x3", scope = CgSetarrayType.class)
 	public JAXBElement<List<Integer>> createCgSetarrayTypeInt4X3(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt4X3_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt4X3_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -6214,8 +6187,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed2x3", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFixed2X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed2X3_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed2X3_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6225,7 +6198,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int4x4", scope = CgSetarrayType.class)
 	public JAXBElement<List<Integer>> createCgSetarrayTypeInt4X4(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt4X4_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt4X4_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -6236,8 +6209,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed2x2", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFixed2X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed2X2_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed2X2_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6247,8 +6220,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed2x4", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFixed2X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed2X4_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed2X4_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6258,8 +6231,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float4x3", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFloat4X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat4X3_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat4X3_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6269,8 +6242,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float4x2", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFloat4X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat4X2_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat4X2_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6280,7 +6253,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool3x3", scope = CgSetarrayType.class)
 	public JAXBElement<List<Boolean>> createCgSetarrayTypeBool3X3(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool3X3_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool3X3_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -6291,8 +6264,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float4x1", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFloat4X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat4X1_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat4X1_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6302,8 +6275,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed2x1", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFixed2X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed2X1_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed2X1_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6313,7 +6286,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool3x4", scope = CgSetarrayType.class)
 	public JAXBElement<List<Boolean>> createCgSetarrayTypeBool3X4(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool3X4_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool3X4_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -6324,7 +6297,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool3x1", scope = CgSetarrayType.class)
 	public JAXBElement<List<Boolean>> createCgSetarrayTypeBool3X1(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool3X1_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool3X1_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -6335,7 +6308,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool3x2", scope = CgSetarrayType.class)
 	public JAXBElement<List<Boolean>> createCgSetarrayTypeBool3X2(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool3X2_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool3X2_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -6346,8 +6319,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float4x4", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFloat4X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat4X4_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat4X4_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6357,8 +6330,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "surface", scope = CgSetarrayType.class)
 	public JAXBElement<CgSurfaceType> createCgSetarrayTypeSurface(CgSurfaceType value) {
-		return new JAXBElement<CgSurfaceType>(_GlslNewarrayTypeSurface_QNAME, CgSurfaceType.class, CgSetarrayType.class,
-				value);
+		return new JAXBElement<>(_GlslNewarrayTypeSurface_QNAME, CgSurfaceType.class, CgSetarrayType.class, value);
 	}
 
 	/**
@@ -6368,7 +6340,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int1x2", scope = CgSetarrayType.class)
 	public JAXBElement<List<Integer>> createCgSetarrayTypeInt1X2(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt1X2_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt1X2_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -6379,7 +6351,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int1x3", scope = CgSetarrayType.class)
 	public JAXBElement<List<Integer>> createCgSetarrayTypeInt1X3(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt1X3_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt1X3_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -6390,7 +6362,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int1x4", scope = CgSetarrayType.class)
 	public JAXBElement<List<Integer>> createCgSetarrayTypeInt1X4(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt1X4_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt1X4_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -6401,8 +6373,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "sampler3D", scope = CgSetarrayType.class)
 	public JAXBElement<CgSampler3D> createCgSetarrayTypeSampler3D(CgSampler3D value) {
-		return new JAXBElement<CgSampler3D>(_GlslNewarrayTypeSampler3D_QNAME, CgSampler3D.class, CgSetarrayType.class,
-				value);
+		return new JAXBElement<>(_GlslNewarrayTypeSampler3D_QNAME, CgSampler3D.class, CgSetarrayType.class, value);
 	}
 
 	/**
@@ -6411,7 +6382,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "enum", scope = CgSetarrayType.class)
 	public JAXBElement<String> createCgSetarrayTypeEnum(String value) {
-		return new JAXBElement<String>(_GlslNewarrayTypeEnum_QNAME, String.class, CgSetarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeEnum_QNAME, String.class, CgSetarrayType.class, value);
 	}
 
 	/**
@@ -6421,8 +6392,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "samplerCUBE", scope = CgSetarrayType.class)
 	public JAXBElement<CgSamplerCUBE> createCgSetarrayTypeSamplerCUBE(CgSamplerCUBE value) {
-		return new JAXBElement<CgSamplerCUBE>(_GlslNewarrayTypeSamplerCUBE_QNAME, CgSamplerCUBE.class,
-				CgSetarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeSamplerCUBE_QNAME, CgSamplerCUBE.class, CgSetarrayType.class, value);
 	}
 
 	/**
@@ -6432,7 +6402,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int1x1", scope = CgSetarrayType.class)
 	public JAXBElement<List<Integer>> createCgSetarrayTypeInt1X1(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt1X1_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt1X1_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -6443,8 +6413,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half3x3", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeHalf3X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf3X3_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf3X3_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6454,8 +6424,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half3x2", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeHalf3X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf3X2_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf3X2_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6465,8 +6435,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half3x1", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeHalf3X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf3X1_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf3X1_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6476,8 +6446,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed2", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFixed2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed2_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed2_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6487,8 +6457,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed3", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFixed3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed3_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed3_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6498,8 +6468,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half3x4", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeHalf3X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf3X4_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf3X4_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6509,8 +6479,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed1", scope = CgSetarrayType.class)
 	public JAXBElement<java.lang.Float> createCgSetarrayTypeFixed1(java.lang.Float value) {
-		return new JAXBElement<java.lang.Float>(_CgNewarrayTypeFixed1_QNAME, java.lang.Float.class,
-				CgSetarrayType.class, value);
+		return new JAXBElement<>(_CgNewarrayTypeFixed1_QNAME, java.lang.Float.class, CgSetarrayType.class, value);
 	}
 
 	/**
@@ -6520,8 +6489,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float1x2", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFloat1X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat1X2_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat1X2_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6531,8 +6500,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float1x1", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFloat1X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat1X1_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat1X1_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6542,8 +6511,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half", scope = CgSetarrayType.class)
 	public JAXBElement<java.lang.Float> createCgSetarrayTypeHalf(java.lang.Float value) {
-		return new JAXBElement<java.lang.Float>(_CgNewarrayTypeHalf_QNAME, java.lang.Float.class, CgSetarrayType.class,
-				value);
+		return new JAXBElement<>(_CgNewarrayTypeHalf_QNAME, java.lang.Float.class, CgSetarrayType.class, value);
 	}
 
 	/**
@@ -6553,8 +6521,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "sampler2D", scope = CgSetarrayType.class)
 	public JAXBElement<CgSampler2D> createCgSetarrayTypeSampler2D(CgSampler2D value) {
-		return new JAXBElement<CgSampler2D>(_GlslNewarrayTypeSampler2D_QNAME, CgSampler2D.class, CgSetarrayType.class,
-				value);
+		return new JAXBElement<>(_GlslNewarrayTypeSampler2D_QNAME, CgSampler2D.class, CgSetarrayType.class, value);
 	}
 
 	/**
@@ -6564,7 +6531,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int4", scope = CgSetarrayType.class)
 	public JAXBElement<List<Integer>> createCgSetarrayTypeInt4(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_GlslNewarrayTypeInt4_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeInt4_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -6575,7 +6542,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int3", scope = CgSetarrayType.class)
 	public JAXBElement<List<Integer>> createCgSetarrayTypeInt3(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_GlslNewarrayTypeInt3_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeInt3_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -6586,7 +6553,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool3", scope = CgSetarrayType.class)
 	public JAXBElement<List<Boolean>> createCgSetarrayTypeBool3(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_GlslNewarrayTypeBool3_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeBool3_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -6597,8 +6564,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed1x4", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFixed1X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed1X4_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed1X4_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6608,7 +6575,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool2", scope = CgSetarrayType.class)
 	public JAXBElement<List<Boolean>> createCgSetarrayTypeBool2(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_GlslNewarrayTypeBool2_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeBool2_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -6619,8 +6586,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed1x3", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFixed1X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed1X3_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed1X3_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6630,7 +6597,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int2", scope = CgSetarrayType.class)
 	public JAXBElement<List<Integer>> createCgSetarrayTypeInt2(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_GlslNewarrayTypeInt2_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeInt2_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -6641,7 +6608,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool4", scope = CgSetarrayType.class)
 	public JAXBElement<List<Boolean>> createCgSetarrayTypeBool4(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_GlslNewarrayTypeBool4_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeBool4_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -6651,7 +6618,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int1", scope = CgSetarrayType.class)
 	public JAXBElement<Integer> createCgSetarrayTypeInt1(Integer value) {
-		return new JAXBElement<Integer>(_CgNewarrayTypeInt1_QNAME, Integer.class, CgSetarrayType.class, value);
+		return new JAXBElement<>(_CgNewarrayTypeInt1_QNAME, Integer.class, CgSetarrayType.class, value);
 	}
 
 	/**
@@ -6661,7 +6628,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool4x4", scope = CgSetarrayType.class)
 	public JAXBElement<List<Boolean>> createCgSetarrayTypeBool4X4(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool4X4_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool4X4_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -6671,7 +6638,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool1", scope = CgSetarrayType.class)
 	public JAXBElement<Boolean> createCgSetarrayTypeBool1(Boolean value) {
-		return new JAXBElement<Boolean>(_CgNewarrayTypeBool1_QNAME, Boolean.class, CgSetarrayType.class, value);
+		return new JAXBElement<>(_CgNewarrayTypeBool1_QNAME, Boolean.class, CgSetarrayType.class, value);
 	}
 
 	/**
@@ -6681,7 +6648,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool4x2", scope = CgSetarrayType.class)
 	public JAXBElement<List<Boolean>> createCgSetarrayTypeBool4X2(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool4X2_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool4X2_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -6692,8 +6659,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float1x4", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFloat1X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat1X4_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat1X4_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6703,8 +6670,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed1x2", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFixed1X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed1X2_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed1X2_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6714,7 +6681,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool4x3", scope = CgSetarrayType.class)
 	public JAXBElement<List<Boolean>> createCgSetarrayTypeBool4X3(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool4X3_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool4X3_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -6725,8 +6692,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float1x3", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFloat1X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat1X3_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat1X3_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6736,8 +6703,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed1x1", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFixed1X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed1X1_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed1X1_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6747,7 +6714,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool4x1", scope = CgSetarrayType.class)
 	public JAXBElement<List<Boolean>> createCgSetarrayTypeBool4X1(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool4X1_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool4X1_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -6758,8 +6725,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float1", scope = CgSetarrayType.class)
 	public JAXBElement<java.lang.Float> createCgSetarrayTypeFloat1(java.lang.Float value) {
-		return new JAXBElement<java.lang.Float>(_CgNewarrayTypeFloat1_QNAME, java.lang.Float.class,
-				CgSetarrayType.class, value);
+		return new JAXBElement<>(_CgNewarrayTypeFloat1_QNAME, java.lang.Float.class, CgSetarrayType.class, value);
 	}
 
 	/**
@@ -6769,8 +6735,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float2", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFloat2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat2_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat2_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6780,8 +6746,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float3", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFloat3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat3_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat3_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6791,8 +6757,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float4", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFloat4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat4_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat4_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6802,7 +6768,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int2x1", scope = CgSetarrayType.class)
 	public JAXBElement<List<Integer>> createCgSetarrayTypeInt2X1(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt2X1_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt2X1_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -6813,8 +6779,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "sampler1D", scope = CgSetarrayType.class)
 	public JAXBElement<CgSampler1D> createCgSetarrayTypeSampler1D(CgSampler1D value) {
-		return new JAXBElement<CgSampler1D>(_GlslNewarrayTypeSampler1D_QNAME, CgSampler1D.class, CgSetarrayType.class,
-				value);
+		return new JAXBElement<>(_GlslNewarrayTypeSampler1D_QNAME, CgSampler1D.class, CgSetarrayType.class, value);
 	}
 
 	/**
@@ -6824,7 +6789,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int2x2", scope = CgSetarrayType.class)
 	public JAXBElement<List<Integer>> createCgSetarrayTypeInt2X2(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt2X2_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt2X2_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -6835,7 +6800,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int2x3", scope = CgSetarrayType.class)
 	public JAXBElement<List<Integer>> createCgSetarrayTypeInt2X3(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt2X3_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt2X3_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -6846,7 +6811,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int2x4", scope = CgSetarrayType.class)
 	public JAXBElement<List<Integer>> createCgSetarrayTypeInt2X4(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt2X4_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt2X4_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -6857,8 +6822,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half2x4", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeHalf2X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf2X4_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf2X4_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6868,8 +6833,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half2x3", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeHalf2X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf2X3_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf2X3_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6879,8 +6844,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half2x2", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeHalf2X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf2X2_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf2X2_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6890,8 +6855,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half2x1", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeHalf2X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf2X1_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf2X1_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6901,8 +6866,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "samplerDEPTH", scope = CgSetarrayType.class)
 	public JAXBElement<CgSamplerDEPTH> createCgSetarrayTypeSamplerDEPTH(CgSamplerDEPTH value) {
-		return new JAXBElement<CgSamplerDEPTH>(_GlslNewarrayTypeSamplerDEPTH_QNAME, CgSamplerDEPTH.class,
-				CgSetarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeSamplerDEPTH_QNAME, CgSamplerDEPTH.class, CgSetarrayType.class,
+				value);
 	}
 
 	/**
@@ -6912,8 +6877,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float2x1", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFloat2X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat2X1_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat2X1_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6923,8 +6888,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed4", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFixed4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed4_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed4_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6934,8 +6899,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed4x4", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFixed4X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed4X4_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed4X4_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6945,8 +6910,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed4x1", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFixed4X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed4X1_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed4X1_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6956,8 +6921,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed4x3", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFixed4X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed4X3_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed4X3_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6967,8 +6932,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed4x2", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFixed4X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed4X2_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed4X2_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6978,8 +6943,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float2x4", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFloat2X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat2X4_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat2X4_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -6989,8 +6954,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float2x3", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFloat2X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat2X3_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat2X3_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7000,8 +6965,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float2x2", scope = CgSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetarrayTypeFloat2X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat2X2_QNAME, ((Class) List.class),
-				CgSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat2X2_QNAME, ((Class) List.class), CgSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7011,7 +6976,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool1x3", scope = CgSetarrayType.class)
 	public JAXBElement<List<Boolean>> createCgSetarrayTypeBool1X3(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool1X3_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool1X3_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -7022,7 +6987,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool1x4", scope = CgSetarrayType.class)
 	public JAXBElement<List<Boolean>> createCgSetarrayTypeBool1X4(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool1X4_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool1X4_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -7033,7 +6998,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool1x1", scope = CgSetarrayType.class)
 	public JAXBElement<List<Boolean>> createCgSetarrayTypeBool1X1(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool1X1_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool1X1_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -7044,7 +7009,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool1x2", scope = CgSetarrayType.class)
 	public JAXBElement<List<Boolean>> createCgSetarrayTypeBool1X2(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool1X2_QNAME, ((Class) List.class), CgSetarrayType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool1X2_QNAME, ((Class) List.class), CgSetarrayType.class,
 				((List<Boolean>) value));
 	}
 
@@ -7055,7 +7020,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int3x1", scope = CgSetuserType.class)
 	public JAXBElement<List<Integer>> createCgSetuserTypeInt3X1(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt3X1_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt3X1_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Integer>) value));
 	}
 
@@ -7066,7 +7031,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int3x2", scope = CgSetuserType.class)
 	public JAXBElement<List<Integer>> createCgSetuserTypeInt3X2(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt3X2_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt3X2_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Integer>) value));
 	}
 
@@ -7077,7 +7042,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int3x3", scope = CgSetuserType.class)
 	public JAXBElement<List<Integer>> createCgSetuserTypeInt3X3(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt3X3_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt3X3_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Integer>) value));
 	}
 
@@ -7088,8 +7053,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "usertype", scope = CgSetuserType.class)
 	public JAXBElement<CgSetuserType> createCgSetuserTypeUsertype(CgSetuserType value) {
-		return new JAXBElement<CgSetuserType>(_CgNewarrayTypeUsertype_QNAME, CgSetuserType.class, CgSetuserType.class,
-				value);
+		return new JAXBElement<>(_CgNewarrayTypeUsertype_QNAME, CgSetuserType.class, CgSetuserType.class, value);
 	}
 
 	/**
@@ -7099,8 +7063,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half1x4", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeHalf1X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf1X4_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf1X4_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7110,8 +7074,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half1x3", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeHalf1X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf1X3_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf1X3_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7121,8 +7085,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half1x2", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeHalf1X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf1X2_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf1X2_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7132,8 +7096,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half2", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeHalf2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf2_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf2_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7143,8 +7107,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half1x1", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeHalf1X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf1X1_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf1X1_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7154,8 +7118,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half1", scope = CgSetuserType.class)
 	public JAXBElement<java.lang.Float> createCgSetuserTypeHalf1(java.lang.Float value) {
-		return new JAXBElement<java.lang.Float>(_CgNewarrayTypeHalf1_QNAME, java.lang.Float.class, CgSetuserType.class,
-				value);
+		return new JAXBElement<>(_CgNewarrayTypeHalf1_QNAME, java.lang.Float.class, CgSetuserType.class, value);
 	}
 
 	/**
@@ -7165,8 +7128,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed", scope = CgSetuserType.class)
 	public JAXBElement<java.lang.Float> createCgSetuserTypeFixed(java.lang.Float value) {
-		return new JAXBElement<java.lang.Float>(_CgNewarrayTypeFixed_QNAME, java.lang.Float.class, CgSetuserType.class,
-				value);
+		return new JAXBElement<>(_CgNewarrayTypeFixed_QNAME, java.lang.Float.class, CgSetuserType.class, value);
 	}
 
 	/**
@@ -7176,8 +7138,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half4", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeHalf4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf4_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf4_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7187,8 +7149,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half3", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeHalf3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf3_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf3_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7198,8 +7160,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float", scope = CgSetuserType.class)
 	public JAXBElement<java.lang.Float> createCgSetuserTypeFloat(java.lang.Float value) {
-		return new JAXBElement<java.lang.Float>(_GlslNewarrayTypeFloat_QNAME, java.lang.Float.class,
-				CgSetuserType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeFloat_QNAME, java.lang.Float.class, CgSetuserType.class, value);
 	}
 
 	/**
@@ -7209,7 +7170,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int3x4", scope = CgSetuserType.class)
 	public JAXBElement<List<Integer>> createCgSetuserTypeInt3X4(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt3X4_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt3X4_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Integer>) value));
 	}
 
@@ -7220,8 +7181,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed3x2", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFixed3X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed3X2_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed3X2_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7231,8 +7192,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed3x1", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFixed3X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed3X1_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed3X1_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7242,8 +7203,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed3x4", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFixed3X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed3X4_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed3X4_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7253,8 +7214,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed3x3", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFixed3X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed3X3_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed3X3_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7264,8 +7225,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float3x4", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFloat3X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat3X4_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat3X4_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7275,8 +7236,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float3x3", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFloat3X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat3X3_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat3X3_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7286,7 +7247,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool2x4", scope = CgSetuserType.class)
 	public JAXBElement<List<Boolean>> createCgSetuserTypeBool2X4(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool2X4_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool2X4_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Boolean>) value));
 	}
 
@@ -7297,8 +7258,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float3x2", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFloat3X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat3X2_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat3X2_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7308,8 +7269,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float3x1", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFloat3X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat3X1_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat3X1_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7319,7 +7280,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool2x2", scope = CgSetuserType.class)
 	public JAXBElement<List<Boolean>> createCgSetuserTypeBool2X2(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool2X2_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool2X2_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Boolean>) value));
 	}
 
@@ -7330,7 +7291,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool2x3", scope = CgSetuserType.class)
 	public JAXBElement<List<Boolean>> createCgSetuserTypeBool2X3(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool2X3_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool2X3_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Boolean>) value));
 	}
 
@@ -7341,8 +7302,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "connect_param", scope = CgSetuserType.class)
 	public JAXBElement<CgConnectParam> createCgSetuserTypeConnectParam(CgConnectParam value) {
-		return new JAXBElement<CgConnectParam>(_CgNewarrayTypeConnectParam_QNAME, CgConnectParam.class,
-				CgSetuserType.class, value);
+		return new JAXBElement<>(_CgNewarrayTypeConnectParam_QNAME, CgConnectParam.class, CgSetuserType.class, value);
 	}
 
 	/**
@@ -7352,7 +7312,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool2x1", scope = CgSetuserType.class)
 	public JAXBElement<List<Boolean>> createCgSetuserTypeBool2X1(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool2X1_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool2X1_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Boolean>) value));
 	}
 
@@ -7362,7 +7322,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int", scope = CgSetuserType.class)
 	public JAXBElement<Integer> createCgSetuserTypeInt(Integer value) {
-		return new JAXBElement<Integer>(_GlslNewarrayTypeInt_QNAME, Integer.class, CgSetuserType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeInt_QNAME, Integer.class, CgSetuserType.class, value);
 	}
 
 	/**
@@ -7372,7 +7332,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int4x1", scope = CgSetuserType.class)
 	public JAXBElement<List<Integer>> createCgSetuserTypeInt4X1(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt4X1_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt4X1_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Integer>) value));
 	}
 
@@ -7383,7 +7343,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int4x2", scope = CgSetuserType.class)
 	public JAXBElement<List<Integer>> createCgSetuserTypeInt4X2(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt4X2_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt4X2_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Integer>) value));
 	}
 
@@ -7394,8 +7354,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half4x2", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeHalf4X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf4X2_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf4X2_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7405,8 +7365,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half4x1", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeHalf4X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf4X1_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf4X1_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7416,8 +7376,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half4x4", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeHalf4X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf4X4_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf4X4_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7427,8 +7387,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "samplerRECT", scope = CgSetuserType.class)
 	public JAXBElement<CgSamplerRECT> createCgSetuserTypeSamplerRECT(CgSamplerRECT value) {
-		return new JAXBElement<CgSamplerRECT>(_GlslNewarrayTypeSamplerRECT_QNAME, CgSamplerRECT.class,
-				CgSetuserType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeSamplerRECT_QNAME, CgSamplerRECT.class, CgSetuserType.class, value);
 	}
 
 	/**
@@ -7438,8 +7397,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half4x3", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeHalf4X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf4X3_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf4X3_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7448,7 +7407,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool", scope = CgSetuserType.class)
 	public JAXBElement<Boolean> createCgSetuserTypeBool(Boolean value) {
-		return new JAXBElement<Boolean>(_GlslNewarrayTypeBool_QNAME, Boolean.class, CgSetuserType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeBool_QNAME, Boolean.class, CgSetuserType.class, value);
 	}
 
 	/**
@@ -7457,7 +7416,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "string", scope = CgSetuserType.class)
 	public JAXBElement<String> createCgSetuserTypeString(String value) {
-		return new JAXBElement<String>(_CgNewarrayTypeString_QNAME, String.class, CgSetuserType.class, value);
+		return new JAXBElement<>(_CgNewarrayTypeString_QNAME, String.class, CgSetuserType.class, value);
 	}
 
 	/**
@@ -7467,8 +7426,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "array", scope = CgSetuserType.class)
 	public JAXBElement<CgSetarrayType> createCgSetuserTypeArray(CgSetarrayType value) {
-		return new JAXBElement<CgSetarrayType>(_GlslNewarrayTypeArray_QNAME, CgSetarrayType.class, CgSetuserType.class,
-				value);
+		return new JAXBElement<>(_GlslNewarrayTypeArray_QNAME, CgSetarrayType.class, CgSetuserType.class, value);
 	}
 
 	/**
@@ -7478,7 +7436,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int4x3", scope = CgSetuserType.class)
 	public JAXBElement<List<Integer>> createCgSetuserTypeInt4X3(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt4X3_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt4X3_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Integer>) value));
 	}
 
@@ -7489,8 +7447,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed2x3", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFixed2X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed2X3_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed2X3_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7500,7 +7458,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int4x4", scope = CgSetuserType.class)
 	public JAXBElement<List<Integer>> createCgSetuserTypeInt4X4(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt4X4_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt4X4_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Integer>) value));
 	}
 
@@ -7511,8 +7469,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed2x2", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFixed2X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed2X2_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed2X2_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7522,8 +7480,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed2x4", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFixed2X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed2X4_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed2X4_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7533,8 +7491,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float4x3", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFloat4X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat4X3_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat4X3_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7544,8 +7502,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float4x2", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFloat4X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat4X2_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat4X2_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7555,7 +7513,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool3x3", scope = CgSetuserType.class)
 	public JAXBElement<List<Boolean>> createCgSetuserTypeBool3X3(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool3X3_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool3X3_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Boolean>) value));
 	}
 
@@ -7566,8 +7524,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float4x1", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFloat4X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat4X1_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat4X1_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7577,8 +7535,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed2x1", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFixed2X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed2X1_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed2X1_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7588,7 +7546,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool3x4", scope = CgSetuserType.class)
 	public JAXBElement<List<Boolean>> createCgSetuserTypeBool3X4(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool3X4_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool3X4_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Boolean>) value));
 	}
 
@@ -7599,7 +7557,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool3x1", scope = CgSetuserType.class)
 	public JAXBElement<List<Boolean>> createCgSetuserTypeBool3X1(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool3X1_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool3X1_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Boolean>) value));
 	}
 
@@ -7610,7 +7568,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool3x2", scope = CgSetuserType.class)
 	public JAXBElement<List<Boolean>> createCgSetuserTypeBool3X2(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool3X2_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool3X2_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Boolean>) value));
 	}
 
@@ -7621,8 +7579,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float4x4", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFloat4X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat4X4_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat4X4_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7632,8 +7590,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "surface", scope = CgSetuserType.class)
 	public JAXBElement<CgSurfaceType> createCgSetuserTypeSurface(CgSurfaceType value) {
-		return new JAXBElement<CgSurfaceType>(_GlslNewarrayTypeSurface_QNAME, CgSurfaceType.class, CgSetuserType.class,
-				value);
+		return new JAXBElement<>(_GlslNewarrayTypeSurface_QNAME, CgSurfaceType.class, CgSetuserType.class, value);
 	}
 
 	/**
@@ -7643,7 +7600,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int1x2", scope = CgSetuserType.class)
 	public JAXBElement<List<Integer>> createCgSetuserTypeInt1X2(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt1X2_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt1X2_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Integer>) value));
 	}
 
@@ -7654,7 +7611,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int1x3", scope = CgSetuserType.class)
 	public JAXBElement<List<Integer>> createCgSetuserTypeInt1X3(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt1X3_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt1X3_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Integer>) value));
 	}
 
@@ -7665,7 +7622,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int1x4", scope = CgSetuserType.class)
 	public JAXBElement<List<Integer>> createCgSetuserTypeInt1X4(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt1X4_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt1X4_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Integer>) value));
 	}
 
@@ -7676,8 +7633,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "sampler3D", scope = CgSetuserType.class)
 	public JAXBElement<CgSampler3D> createCgSetuserTypeSampler3D(CgSampler3D value) {
-		return new JAXBElement<CgSampler3D>(_GlslNewarrayTypeSampler3D_QNAME, CgSampler3D.class, CgSetuserType.class,
-				value);
+		return new JAXBElement<>(_GlslNewarrayTypeSampler3D_QNAME, CgSampler3D.class, CgSetuserType.class, value);
 	}
 
 	/**
@@ -7686,7 +7642,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "enum", scope = CgSetuserType.class)
 	public JAXBElement<String> createCgSetuserTypeEnum(String value) {
-		return new JAXBElement<String>(_GlslNewarrayTypeEnum_QNAME, String.class, CgSetuserType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeEnum_QNAME, String.class, CgSetuserType.class, value);
 	}
 
 	/**
@@ -7696,8 +7652,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "samplerCUBE", scope = CgSetuserType.class)
 	public JAXBElement<CgSamplerCUBE> createCgSetuserTypeSamplerCUBE(CgSamplerCUBE value) {
-		return new JAXBElement<CgSamplerCUBE>(_GlslNewarrayTypeSamplerCUBE_QNAME, CgSamplerCUBE.class,
-				CgSetuserType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeSamplerCUBE_QNAME, CgSamplerCUBE.class, CgSetuserType.class, value);
 	}
 
 	/**
@@ -7707,7 +7662,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int1x1", scope = CgSetuserType.class)
 	public JAXBElement<List<Integer>> createCgSetuserTypeInt1X1(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt1X1_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt1X1_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Integer>) value));
 	}
 
@@ -7718,8 +7673,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half3x3", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeHalf3X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf3X3_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf3X3_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7729,8 +7684,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half3x2", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeHalf3X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf3X2_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf3X2_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7740,8 +7695,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half3x1", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeHalf3X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf3X1_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf3X1_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7751,8 +7706,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed2", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFixed2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed2_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed2_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7762,8 +7717,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed3", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFixed3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed3_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed3_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7773,8 +7728,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half3x4", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeHalf3X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf3X4_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf3X4_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7784,8 +7739,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed1", scope = CgSetuserType.class)
 	public JAXBElement<java.lang.Float> createCgSetuserTypeFixed1(java.lang.Float value) {
-		return new JAXBElement<java.lang.Float>(_CgNewarrayTypeFixed1_QNAME, java.lang.Float.class, CgSetuserType.class,
-				value);
+		return new JAXBElement<>(_CgNewarrayTypeFixed1_QNAME, java.lang.Float.class, CgSetuserType.class, value);
 	}
 
 	/**
@@ -7795,8 +7749,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float1x2", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFloat1X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat1X2_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat1X2_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7806,8 +7760,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float1x1", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFloat1X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat1X1_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat1X1_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7817,8 +7771,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half", scope = CgSetuserType.class)
 	public JAXBElement<java.lang.Float> createCgSetuserTypeHalf(java.lang.Float value) {
-		return new JAXBElement<java.lang.Float>(_CgNewarrayTypeHalf_QNAME, java.lang.Float.class, CgSetuserType.class,
-				value);
+		return new JAXBElement<>(_CgNewarrayTypeHalf_QNAME, java.lang.Float.class, CgSetuserType.class, value);
 	}
 
 	/**
@@ -7828,8 +7781,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "sampler2D", scope = CgSetuserType.class)
 	public JAXBElement<CgSampler2D> createCgSetuserTypeSampler2D(CgSampler2D value) {
-		return new JAXBElement<CgSampler2D>(_GlslNewarrayTypeSampler2D_QNAME, CgSampler2D.class, CgSetuserType.class,
-				value);
+		return new JAXBElement<>(_GlslNewarrayTypeSampler2D_QNAME, CgSampler2D.class, CgSetuserType.class, value);
 	}
 
 	/**
@@ -7839,7 +7791,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int4", scope = CgSetuserType.class)
 	public JAXBElement<List<Integer>> createCgSetuserTypeInt4(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_GlslNewarrayTypeInt4_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeInt4_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Integer>) value));
 	}
 
@@ -7850,7 +7802,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int3", scope = CgSetuserType.class)
 	public JAXBElement<List<Integer>> createCgSetuserTypeInt3(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_GlslNewarrayTypeInt3_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeInt3_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Integer>) value));
 	}
 
@@ -7861,7 +7813,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool3", scope = CgSetuserType.class)
 	public JAXBElement<List<Boolean>> createCgSetuserTypeBool3(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_GlslNewarrayTypeBool3_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeBool3_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Boolean>) value));
 	}
 
@@ -7872,8 +7824,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed1x4", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFixed1X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed1X4_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed1X4_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7883,7 +7835,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool2", scope = CgSetuserType.class)
 	public JAXBElement<List<Boolean>> createCgSetuserTypeBool2(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_GlslNewarrayTypeBool2_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeBool2_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Boolean>) value));
 	}
 
@@ -7894,8 +7846,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed1x3", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFixed1X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed1X3_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed1X3_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7905,7 +7857,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int2", scope = CgSetuserType.class)
 	public JAXBElement<List<Integer>> createCgSetuserTypeInt2(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_GlslNewarrayTypeInt2_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeInt2_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Integer>) value));
 	}
 
@@ -7916,7 +7868,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool4", scope = CgSetuserType.class)
 	public JAXBElement<List<Boolean>> createCgSetuserTypeBool4(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_GlslNewarrayTypeBool4_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeBool4_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Boolean>) value));
 	}
 
@@ -7926,7 +7878,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int1", scope = CgSetuserType.class)
 	public JAXBElement<Integer> createCgSetuserTypeInt1(Integer value) {
-		return new JAXBElement<Integer>(_CgNewarrayTypeInt1_QNAME, Integer.class, CgSetuserType.class, value);
+		return new JAXBElement<>(_CgNewarrayTypeInt1_QNAME, Integer.class, CgSetuserType.class, value);
 	}
 
 	/**
@@ -7936,7 +7888,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool4x4", scope = CgSetuserType.class)
 	public JAXBElement<List<Boolean>> createCgSetuserTypeBool4X4(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool4X4_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool4X4_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Boolean>) value));
 	}
 
@@ -7946,7 +7898,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool1", scope = CgSetuserType.class)
 	public JAXBElement<Boolean> createCgSetuserTypeBool1(Boolean value) {
-		return new JAXBElement<Boolean>(_CgNewarrayTypeBool1_QNAME, Boolean.class, CgSetuserType.class, value);
+		return new JAXBElement<>(_CgNewarrayTypeBool1_QNAME, Boolean.class, CgSetuserType.class, value);
 	}
 
 	/**
@@ -7956,7 +7908,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool4x2", scope = CgSetuserType.class)
 	public JAXBElement<List<Boolean>> createCgSetuserTypeBool4X2(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool4X2_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool4X2_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Boolean>) value));
 	}
 
@@ -7967,8 +7919,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float1x4", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFloat1X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat1X4_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat1X4_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7978,8 +7930,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed1x2", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFixed1X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed1X2_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed1X2_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -7989,7 +7941,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool4x3", scope = CgSetuserType.class)
 	public JAXBElement<List<Boolean>> createCgSetuserTypeBool4X3(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool4X3_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool4X3_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Boolean>) value));
 	}
 
@@ -8000,8 +7952,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float1x3", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFloat1X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat1X3_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat1X3_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8011,8 +7963,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed1x1", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFixed1X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed1X1_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed1X1_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8022,7 +7974,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool4x1", scope = CgSetuserType.class)
 	public JAXBElement<List<Boolean>> createCgSetuserTypeBool4X1(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool4X1_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool4X1_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Boolean>) value));
 	}
 
@@ -8033,8 +7985,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float1", scope = CgSetuserType.class)
 	public JAXBElement<java.lang.Float> createCgSetuserTypeFloat1(java.lang.Float value) {
-		return new JAXBElement<java.lang.Float>(_CgNewarrayTypeFloat1_QNAME, java.lang.Float.class, CgSetuserType.class,
-				value);
+		return new JAXBElement<>(_CgNewarrayTypeFloat1_QNAME, java.lang.Float.class, CgSetuserType.class, value);
 	}
 
 	/**
@@ -8044,8 +7995,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float2", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFloat2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat2_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat2_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8055,8 +8006,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float3", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFloat3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat3_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat3_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8066,8 +8017,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float4", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFloat4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat4_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat4_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8077,7 +8028,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int2x1", scope = CgSetuserType.class)
 	public JAXBElement<List<Integer>> createCgSetuserTypeInt2X1(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt2X1_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt2X1_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Integer>) value));
 	}
 
@@ -8088,8 +8039,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "sampler1D", scope = CgSetuserType.class)
 	public JAXBElement<CgSampler1D> createCgSetuserTypeSampler1D(CgSampler1D value) {
-		return new JAXBElement<CgSampler1D>(_GlslNewarrayTypeSampler1D_QNAME, CgSampler1D.class, CgSetuserType.class,
-				value);
+		return new JAXBElement<>(_GlslNewarrayTypeSampler1D_QNAME, CgSampler1D.class, CgSetuserType.class, value);
 	}
 
 	/**
@@ -8099,7 +8049,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int2x2", scope = CgSetuserType.class)
 	public JAXBElement<List<Integer>> createCgSetuserTypeInt2X2(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt2X2_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt2X2_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Integer>) value));
 	}
 
@@ -8110,7 +8060,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int2x3", scope = CgSetuserType.class)
 	public JAXBElement<List<Integer>> createCgSetuserTypeInt2X3(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt2X3_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt2X3_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Integer>) value));
 	}
 
@@ -8121,7 +8071,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int2x4", scope = CgSetuserType.class)
 	public JAXBElement<List<Integer>> createCgSetuserTypeInt2X4(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_CgNewarrayTypeInt2X4_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeInt2X4_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Integer>) value));
 	}
 
@@ -8132,8 +8082,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half2x4", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeHalf2X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf2X4_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf2X4_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8143,8 +8093,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half2x3", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeHalf2X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf2X3_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf2X3_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8154,8 +8104,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half2x2", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeHalf2X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf2X2_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf2X2_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8165,8 +8115,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "half2x1", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeHalf2X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeHalf2X1_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeHalf2X1_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8176,8 +8126,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "samplerDEPTH", scope = CgSetuserType.class)
 	public JAXBElement<CgSamplerDEPTH> createCgSetuserTypeSamplerDEPTH(CgSamplerDEPTH value) {
-		return new JAXBElement<CgSamplerDEPTH>(_GlslNewarrayTypeSamplerDEPTH_QNAME, CgSamplerDEPTH.class,
-				CgSetuserType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeSamplerDEPTH_QNAME, CgSamplerDEPTH.class, CgSetuserType.class, value);
 	}
 
 	/**
@@ -8187,8 +8136,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float2x1", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFloat2X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat2X1_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat2X1_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8198,8 +8147,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed4", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFixed4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed4_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed4_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8209,8 +8158,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed4x4", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFixed4X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed4X4_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed4X4_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8220,8 +8169,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed4x1", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFixed4X1(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed4X1_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed4X1_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8231,8 +8180,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed4x3", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFixed4X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed4X3_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed4X3_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8242,8 +8191,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "fixed4x2", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFixed4X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFixed4X2_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFixed4X2_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8253,8 +8202,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float2x4", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFloat2X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat2X4_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat2X4_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8264,8 +8213,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float2x3", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFloat2X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_CgNewarrayTypeFloat2X3_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_CgNewarrayTypeFloat2X3_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8275,8 +8224,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float2x2", scope = CgSetuserType.class)
 	public JAXBElement<List<java.lang.Float>> createCgSetuserTypeFloat2X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat2X2_QNAME, ((Class) List.class),
-				CgSetuserType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat2X2_QNAME, ((Class) List.class), CgSetuserType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8286,7 +8235,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool1x3", scope = CgSetuserType.class)
 	public JAXBElement<List<Boolean>> createCgSetuserTypeBool1X3(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool1X3_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool1X3_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Boolean>) value));
 	}
 
@@ -8297,7 +8246,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool1x4", scope = CgSetuserType.class)
 	public JAXBElement<List<Boolean>> createCgSetuserTypeBool1X4(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool1X4_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool1X4_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Boolean>) value));
 	}
 
@@ -8308,7 +8257,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool1x1", scope = CgSetuserType.class)
 	public JAXBElement<List<Boolean>> createCgSetuserTypeBool1X1(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool1X1_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool1X1_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Boolean>) value));
 	}
 
@@ -8319,7 +8268,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool1x2", scope = CgSetuserType.class)
 	public JAXBElement<List<Boolean>> createCgSetuserTypeBool1X2(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_CgNewarrayTypeBool1X2_QNAME, ((Class) List.class), CgSetuserType.class,
+		return new JAXBElement<>(_CgNewarrayTypeBool1X2_QNAME, ((Class) List.class), CgSetuserType.class,
 				((List<Boolean>) value));
 	}
 
@@ -8330,8 +8279,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "zfar", scope = Camera.Optics.TechniqueCommon.Orthographic.class)
 	public JAXBElement<TargetableFloat> createCameraOpticsTechniqueCommonOrthographicZfar(TargetableFloat value) {
-		return new JAXBElement<TargetableFloat>(_CameraOpticsTechniqueCommonPerspectiveZfar_QNAME,
-				TargetableFloat.class, Camera.Optics.TechniqueCommon.Orthographic.class, value);
+		return new JAXBElement<>(_CameraOpticsTechniqueCommonPerspectiveZfar_QNAME, TargetableFloat.class,
+				Camera.Optics.TechniqueCommon.Orthographic.class, value);
 	}
 
 	/**
@@ -8342,8 +8291,8 @@ public class ObjectFactory {
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "aspect_ratio", scope = Camera.Optics.TechniqueCommon.Orthographic.class)
 	public JAXBElement<TargetableFloat> createCameraOpticsTechniqueCommonOrthographicAspectRatio(
 			TargetableFloat value) {
-		return new JAXBElement<TargetableFloat>(_CameraOpticsTechniqueCommonPerspectiveAspectRatio_QNAME,
-				TargetableFloat.class, Camera.Optics.TechniqueCommon.Orthographic.class, value);
+		return new JAXBElement<>(_CameraOpticsTechniqueCommonPerspectiveAspectRatio_QNAME, TargetableFloat.class,
+				Camera.Optics.TechniqueCommon.Orthographic.class, value);
 	}
 
 	/**
@@ -8353,8 +8302,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "ymag", scope = Camera.Optics.TechniqueCommon.Orthographic.class)
 	public JAXBElement<TargetableFloat> createCameraOpticsTechniqueCommonOrthographicYmag(TargetableFloat value) {
-		return new JAXBElement<TargetableFloat>(_CameraOpticsTechniqueCommonOrthographicYmag_QNAME,
-				TargetableFloat.class, Camera.Optics.TechniqueCommon.Orthographic.class, value);
+		return new JAXBElement<>(_CameraOpticsTechniqueCommonOrthographicYmag_QNAME, TargetableFloat.class,
+				Camera.Optics.TechniqueCommon.Orthographic.class, value);
 	}
 
 	/**
@@ -8364,8 +8313,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "xmag", scope = Camera.Optics.TechniqueCommon.Orthographic.class)
 	public JAXBElement<TargetableFloat> createCameraOpticsTechniqueCommonOrthographicXmag(TargetableFloat value) {
-		return new JAXBElement<TargetableFloat>(_CameraOpticsTechniqueCommonOrthographicXmag_QNAME,
-				TargetableFloat.class, Camera.Optics.TechniqueCommon.Orthographic.class, value);
+		return new JAXBElement<>(_CameraOpticsTechniqueCommonOrthographicXmag_QNAME, TargetableFloat.class,
+				Camera.Optics.TechniqueCommon.Orthographic.class, value);
 	}
 
 	/**
@@ -8375,8 +8324,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "znear", scope = Camera.Optics.TechniqueCommon.Orthographic.class)
 	public JAXBElement<TargetableFloat> createCameraOpticsTechniqueCommonOrthographicZnear(TargetableFloat value) {
-		return new JAXBElement<TargetableFloat>(_CameraOpticsTechniqueCommonPerspectiveZnear_QNAME,
-				TargetableFloat.class, Camera.Optics.TechniqueCommon.Orthographic.class, value);
+		return new JAXBElement<>(_CameraOpticsTechniqueCommonPerspectiveZnear_QNAME, TargetableFloat.class,
+				Camera.Optics.TechniqueCommon.Orthographic.class, value);
 	}
 
 	/**
@@ -8385,7 +8334,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool", scope = GlslSetarrayType.class)
 	public JAXBElement<Boolean> createGlslSetarrayTypeBool(Boolean value) {
-		return new JAXBElement<Boolean>(_GlslNewarrayTypeBool_QNAME, Boolean.class, GlslSetarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeBool_QNAME, Boolean.class, GlslSetarrayType.class, value);
 	}
 
 	/**
@@ -8395,8 +8344,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "surface", scope = GlslSetarrayType.class)
 	public JAXBElement<GlslSurfaceType> createGlslSetarrayTypeSurface(GlslSurfaceType value) {
-		return new JAXBElement<GlslSurfaceType>(_GlslNewarrayTypeSurface_QNAME, GlslSurfaceType.class,
-				GlslSetarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeSurface_QNAME, GlslSurfaceType.class, GlslSetarrayType.class, value);
 	}
 
 	/**
@@ -8406,8 +8354,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float2", scope = GlslSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createGlslSetarrayTypeFloat2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat2_QNAME, ((Class) List.class),
-				GlslSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat2_QNAME, ((Class) List.class), GlslSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8417,8 +8365,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float3", scope = GlslSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createGlslSetarrayTypeFloat3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat3_QNAME, ((Class) List.class),
-				GlslSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat3_QNAME, ((Class) List.class), GlslSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8428,8 +8376,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float", scope = GlslSetarrayType.class)
 	public JAXBElement<java.lang.Float> createGlslSetarrayTypeFloat(java.lang.Float value) {
-		return new JAXBElement<java.lang.Float>(_GlslNewarrayTypeFloat_QNAME, java.lang.Float.class,
-				GlslSetarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeFloat_QNAME, java.lang.Float.class, GlslSetarrayType.class, value);
 	}
 
 	/**
@@ -8439,8 +8386,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float4", scope = GlslSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createGlslSetarrayTypeFloat4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat4_QNAME, ((Class) List.class),
-				GlslSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat4_QNAME, ((Class) List.class), GlslSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8450,8 +8397,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "sampler1D", scope = GlslSetarrayType.class)
 	public JAXBElement<GlSampler1D> createGlslSetarrayTypeSampler1D(GlSampler1D value) {
-		return new JAXBElement<GlSampler1D>(_GlslNewarrayTypeSampler1D_QNAME, GlSampler1D.class, GlslSetarrayType.class,
-				value);
+		return new JAXBElement<>(_GlslNewarrayTypeSampler1D_QNAME, GlSampler1D.class, GlslSetarrayType.class, value);
 	}
 
 	/**
@@ -8461,8 +8407,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "sampler2D", scope = GlslSetarrayType.class)
 	public JAXBElement<GlSampler2D> createGlslSetarrayTypeSampler2D(GlSampler2D value) {
-		return new JAXBElement<GlSampler2D>(_GlslNewarrayTypeSampler2D_QNAME, GlSampler2D.class, GlslSetarrayType.class,
-				value);
+		return new JAXBElement<>(_GlslNewarrayTypeSampler2D_QNAME, GlSampler2D.class, GlslSetarrayType.class, value);
 	}
 
 	/**
@@ -8471,7 +8416,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int", scope = GlslSetarrayType.class)
 	public JAXBElement<Integer> createGlslSetarrayTypeInt(Integer value) {
-		return new JAXBElement<Integer>(_GlslNewarrayTypeInt_QNAME, Integer.class, GlslSetarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeInt_QNAME, Integer.class, GlslSetarrayType.class, value);
 	}
 
 	/**
@@ -8481,8 +8426,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "sampler3D", scope = GlslSetarrayType.class)
 	public JAXBElement<GlSampler3D> createGlslSetarrayTypeSampler3D(GlSampler3D value) {
-		return new JAXBElement<GlSampler3D>(_GlslNewarrayTypeSampler3D_QNAME, GlSampler3D.class, GlslSetarrayType.class,
-				value);
+		return new JAXBElement<>(_GlslNewarrayTypeSampler3D_QNAME, GlSampler3D.class, GlslSetarrayType.class, value);
 	}
 
 	/**
@@ -8491,7 +8435,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "enum", scope = GlslSetarrayType.class)
 	public JAXBElement<String> createGlslSetarrayTypeEnum(String value) {
-		return new JAXBElement<String>(_GlslNewarrayTypeEnum_QNAME, String.class, GlslSetarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeEnum_QNAME, String.class, GlslSetarrayType.class, value);
 	}
 
 	/**
@@ -8501,8 +8445,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "samplerCUBE", scope = GlslSetarrayType.class)
 	public JAXBElement<GlSamplerCUBE> createGlslSetarrayTypeSamplerCUBE(GlSamplerCUBE value) {
-		return new JAXBElement<GlSamplerCUBE>(_GlslNewarrayTypeSamplerCUBE_QNAME, GlSamplerCUBE.class,
-				GlslSetarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeSamplerCUBE_QNAME, GlSamplerCUBE.class, GlslSetarrayType.class,
+				value);
 	}
 
 	/**
@@ -8512,7 +8456,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int4", scope = GlslSetarrayType.class)
 	public JAXBElement<List<Integer>> createGlslSetarrayTypeInt4(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_GlslNewarrayTypeInt4_QNAME, ((Class) List.class), GlslSetarrayType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeInt4_QNAME, ((Class) List.class), GlslSetarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -8523,7 +8467,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int3", scope = GlslSetarrayType.class)
 	public JAXBElement<List<Integer>> createGlslSetarrayTypeInt3(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_GlslNewarrayTypeInt3_QNAME, ((Class) List.class), GlslSetarrayType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeInt3_QNAME, ((Class) List.class), GlslSetarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -8534,8 +8478,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "array", scope = GlslSetarrayType.class)
 	public JAXBElement<GlslSetarrayType> createGlslSetarrayTypeArray(GlslSetarrayType value) {
-		return new JAXBElement<GlslSetarrayType>(_GlslNewarrayTypeArray_QNAME, GlslSetarrayType.class,
-				GlslSetarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeArray_QNAME, GlslSetarrayType.class, GlslSetarrayType.class, value);
 	}
 
 	/**
@@ -8545,8 +8488,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool3", scope = GlslSetarrayType.class)
 	public JAXBElement<List<Boolean>> createGlslSetarrayTypeBool3(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_GlslNewarrayTypeBool3_QNAME, ((Class) List.class),
-				GlslSetarrayType.class, ((List<Boolean>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeBool3_QNAME, ((Class) List.class), GlslSetarrayType.class,
+				((List<Boolean>) value));
 	}
 
 	/**
@@ -8556,8 +8499,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool2", scope = GlslSetarrayType.class)
 	public JAXBElement<List<Boolean>> createGlslSetarrayTypeBool2(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_GlslNewarrayTypeBool2_QNAME, ((Class) List.class),
-				GlslSetarrayType.class, ((List<Boolean>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeBool2_QNAME, ((Class) List.class), GlslSetarrayType.class,
+				((List<Boolean>) value));
 	}
 
 	/**
@@ -8567,7 +8510,7 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "int2", scope = GlslSetarrayType.class)
 	public JAXBElement<List<Integer>> createGlslSetarrayTypeInt2(List<Integer> value) {
-		return new JAXBElement<List<Integer>>(_GlslNewarrayTypeInt2_QNAME, ((Class) List.class), GlslSetarrayType.class,
+		return new JAXBElement<>(_GlslNewarrayTypeInt2_QNAME, ((Class) List.class), GlslSetarrayType.class,
 				((List<Integer>) value));
 	}
 
@@ -8578,8 +8521,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "samplerRECT", scope = GlslSetarrayType.class)
 	public JAXBElement<GlSamplerRECT> createGlslSetarrayTypeSamplerRECT(GlSamplerRECT value) {
-		return new JAXBElement<GlSamplerRECT>(_GlslNewarrayTypeSamplerRECT_QNAME, GlSamplerRECT.class,
-				GlslSetarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeSamplerRECT_QNAME, GlSamplerRECT.class, GlslSetarrayType.class,
+				value);
 	}
 
 	/**
@@ -8589,8 +8532,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "bool4", scope = GlslSetarrayType.class)
 	public JAXBElement<List<Boolean>> createGlslSetarrayTypeBool4(List<Boolean> value) {
-		return new JAXBElement<List<Boolean>>(_GlslNewarrayTypeBool4_QNAME, ((Class) List.class),
-				GlslSetarrayType.class, ((List<Boolean>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeBool4_QNAME, ((Class) List.class), GlslSetarrayType.class,
+				((List<Boolean>) value));
 	}
 
 	/**
@@ -8600,8 +8543,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float3x3", scope = GlslSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createGlslSetarrayTypeFloat3X3(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat3X3_QNAME, ((Class) List.class),
-				GlslSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat3X3_QNAME, ((Class) List.class), GlslSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8611,8 +8554,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "samplerDEPTH", scope = GlslSetarrayType.class)
 	public JAXBElement<GlSamplerDEPTH> createGlslSetarrayTypeSamplerDEPTH(GlSamplerDEPTH value) {
-		return new JAXBElement<GlSamplerDEPTH>(_GlslNewarrayTypeSamplerDEPTH_QNAME, GlSamplerDEPTH.class,
-				GlslSetarrayType.class, value);
+		return new JAXBElement<>(_GlslNewarrayTypeSamplerDEPTH_QNAME, GlSamplerDEPTH.class, GlslSetarrayType.class,
+				value);
 	}
 
 	/**
@@ -8622,8 +8565,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float2x2", scope = GlslSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createGlslSetarrayTypeFloat2X2(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat2X2_QNAME, ((Class) List.class),
-				GlslSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat2X2_QNAME, ((Class) List.class), GlslSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 	/**
@@ -8633,8 +8576,8 @@ public class ObjectFactory {
 	 */
 	@XmlElementDecl(namespace = "http://www.collada.org/2005/11/COLLADASchema", name = "float4x4", scope = GlslSetarrayType.class)
 	public JAXBElement<List<java.lang.Float>> createGlslSetarrayTypeFloat4X4(List<java.lang.Float> value) {
-		return new JAXBElement<List<java.lang.Float>>(_GlslNewarrayTypeFloat4X4_QNAME, ((Class) List.class),
-				GlslSetarrayType.class, ((List<java.lang.Float>) value));
+		return new JAXBElement<>(_GlslNewarrayTypeFloat4X4_QNAME, ((Class) List.class), GlslSetarrayType.class,
+				((List<java.lang.Float>) value));
 	}
 
 }

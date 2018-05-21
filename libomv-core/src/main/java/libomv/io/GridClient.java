@@ -426,8 +426,7 @@ public class GridClient {
 		return info;
 	}
 
-	private void initializeGridList() throws IOException, IllegalStateException, URISyntaxException,
-			IllegalArgumentException, IllegalAccessException {
+	private void initializeGridList() throws IOException, IllegalArgumentException, IllegalAccessException {
 		boolean modified = setList(loadSettings(), false);
 		modified |= setList(loadDefaults(), true);
 		modified |= setList(downloadList(), true);
@@ -477,7 +476,7 @@ public class GridClient {
 		saveList(true);
 	}
 
-	protected void saveList(boolean sendEvent) throws IllegalArgumentException, IllegalAccessException, IOException {
+	protected void saveList(boolean sendEvent) throws IOException, IllegalArgumentException, IllegalAccessException {
 		Preferences prefs = Preferences.userNodeForPackage(this.getClass());
 		prefs.putInt(DEFAULT_GRIDS_VERSION, listversion);
 		prefs.put(DEFAULT_GRID, defaultGrid);
@@ -530,11 +529,12 @@ public class GridClient {
 		return osd;
 	}
 
-	private OSD downloadList() throws IOException, IllegalStateException, URISyntaxException {
+	private OSD downloadList() throws IOException {
 		OSD osd = null;
 		HttpClient client = getDefaultHttpClient();
-		HttpGet getMethod = new HttpGet(new URI(listUri));
+		HttpGet getMethod = new HttpGet();
 		try {
+			getMethod.setURI(new URI(listUri));
 			HttpResponse response = client.execute(getMethod);
 			if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
 				throw new HttpResponseException(response.getStatusLine().getStatusCode(),
@@ -559,7 +559,7 @@ public class GridClient {
 				}
 				osd = OSDParser.deserialize(stream, OSDFormat.Xml, charset);
 			}
-		} catch (ParseException ex) {
+		} catch (ParseException | URISyntaxException ex) {
 		} finally {
 			getMethod.abort();
 		}

@@ -56,7 +56,7 @@ public class CapsToPacket {
 	private static final Logger logger = Logger.getLogger(CapsToPacket.class);
 
 	// #region Serialization/Deserialization
-	public static String ToXmlString(Packet packet)
+	public static String toXmlString(Packet packet)
 			throws IOException, IllegalArgumentException, IllegalAccessException {
 		return OSDParser.serializeToString(getLLSD(packet), OSDFormat.Xml);
 	}
@@ -173,12 +173,12 @@ public class CapsToPacket {
 				if (fieldType == long.class) {
 					// ulongs come in as a byte array, convert it manually here
 					byte[] bytes = blockData.get(field.getName()).asBinary();
-					long value = Helpers.BytesToUInt64B(bytes);
+					long value = Helpers.bytesToUInt64B(bytes);
 					field.set(block, value);
 				} else if (fieldType == int.class) {
 					// uints come in as a byte array, convert it manually here
 					byte[] bytes = blockData.get(field.getName()).asBinary();
-					long value = Helpers.BytesToUInt32B(bytes);
+					long value = Helpers.bytesToUInt32B(bytes);
 					field.set(block, (int) value);
 				} else if (fieldType == short.class) {
 					field.set(block, (short) blockData.get(field.getName()).asInteger());

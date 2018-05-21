@@ -38,29 +38,29 @@ import libomv.types.Vector2;
 import libomv.types.Vector3;
 
 public abstract class Mesh {
-	// #region Enums
 
 	public enum FaceType {
 		PathBegin(1 << 0), PathEnd(1 << 1), InnerSide(1 << 2), ProfileBegin(1 << 3), ProfileEnd(1 << 4), OuterSide0(
 				1 << 5), OuterSide1(1 << 6), OuterSide2(1 << 7), OuterSide3(1 << 8);
 
+		private short value;
+
+		private FaceType(int value) {
+			this.value = (short) value;
+		}
+
 		public static FaceType setValue(int value) {
 			for (FaceType e : values()) {
-				if (e._value == value)
+				if (e.value == value)
 					return e;
 			}
 			return null;
 		}
 
 		public short getValue() {
-			return _value;
+			return value;
 		}
 
-		private short _value;
-
-		private FaceType(int value) {
-			_value = (short) value;
-		}
 	}
 
 	// [Flags]
@@ -68,23 +68,24 @@ public abstract class Mesh {
 		Single(1 << 0), Cap(1 << 1), End(1 << 2), Side(1 << 3), Inner(1 << 4), Outer(1 << 5), Hollow(1 << 6), Open(
 				1 << 7), Flat(1 << 8), Top(1 << 9), Bottom(1 << 10);
 
+		private short value;
+
+		private FaceMask(int value) {
+			this.value = (short) value;
+		}
+
 		public static FaceMask setValue(int value) {
 			for (FaceMask e : values()) {
-				if (e._value == value)
+				if (e.value == value)
 					return e;
 			}
 			return null;
 		}
 
 		public short getValue() {
-			return _value;
+			return value;
 		}
 
-		private short _value;
-
-		private FaceMask(int value) {
-			_value = (short) value;
-		}
 	}
 
 	public enum DetailLevel {

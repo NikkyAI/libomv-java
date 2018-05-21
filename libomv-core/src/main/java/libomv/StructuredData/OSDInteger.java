@@ -80,7 +80,7 @@ public class OSDInteger extends OSD {
 
 	@Override
 	public byte[] asBinary() {
-		return Helpers.Int32ToBytesB(value);
+		return Helpers.int32ToBytesB(value);
 	}
 
 	@Override

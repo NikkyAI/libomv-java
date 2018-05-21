@@ -7,20 +7,21 @@ public enum PlacesFlags {
 	// Parcel is For Sale
 	ForSale(128);
 
+	private final byte value;
+
+	PlacesFlags(int value) {
+		this.value = (byte) value;
+	}
+
 	public static PlacesFlags setValue(int value) {
 		for (PlacesFlags e : values())
-			if (e._value == value)
+			if (e.value == value)
 				return e;
 		return NotForSale;
 	}
 
 	public byte getValue() {
-		return _value;
+		return value;
 	}
 
-	private final byte _value;
-
-	PlacesFlags(int value) {
-		this._value = (byte) value;
-	}
 }

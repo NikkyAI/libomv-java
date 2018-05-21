@@ -449,7 +449,8 @@ public abstract class OSDParser {
 	}
 
 	protected static boolean isHeader(Reader reader, String string, int ending) throws IOException {
-		int ch, pos = 0;
+		int ch;
+		int pos = 0;
 		while (((ch = reader.read())) >= 0 && ch != ending) {
 			if (pos < string.length()) {
 				if (ch == string.charAt(pos)) {
@@ -474,7 +475,8 @@ public abstract class OSDParser {
 	}
 
 	protected static boolean isHeader(InputStream stream, byte[] data, int ending) throws IOException {
-		int ch, pos = 0;
+		int ch;
+		int pos = 0;
 		while (((ch = stream.read())) >= 0 && ch != ending) {
 			if (pos < data.length) {
 				if (ch == data[pos]) {
@@ -499,7 +501,8 @@ public abstract class OSDParser {
 	}
 
 	protected static boolean isHeader(String input, String string, int ending) {
-		int pos = 0, off = 0;
+		int pos = 0;
+		int off = 0;
 		while (input.length() > off && input.charAt(off) != ending) {
 			if (pos < string.length()) {
 				if (input.charAt(off) == string.charAt(pos)) {
@@ -525,7 +528,8 @@ public abstract class OSDParser {
 	}
 
 	protected static boolean isHeader(byte[] input, byte[] data, int ending) {
-		int pos = 0, off = 0;
+		int pos = 0;
+		int off = 0;
 		while (input.length > off && input[off] != ending) {
 			if (pos < data.length) {
 				if (input[off] == data[pos]) {

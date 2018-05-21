@@ -56,7 +56,9 @@ public class J2KImage extends ManagedImage {
 	}
 
 	private class PixelScale {
-		int ls, mv, fb;
+		int ls;
+		int mv;
+		int fb;
 	}
 
 	private class ImgReaderMI extends ImgReader {
@@ -223,7 +225,10 @@ public class J2KImage extends ManagedImage {
 				blk.setData(barr);
 			}
 
-			int i, j, k, mi = blk.uly + blk.h;
+			int i;
+			int j;
+			int k;
+			int mi = blk.uly + blk.h;
 			int levShift = 1 << (getBitDepth() - 1);
 			byte buf[] = ptrs[c];
 
@@ -290,7 +295,8 @@ public class J2KImage extends ManagedImage {
 		public final DataBlk getCompData(DataBlk blk, int c) {
 			// NOTE: can not directly call getInternCompData since that returns
 			// internally buffered data.
-			int w, h;
+			int w;
+			int h;
 
 			// Check type of block provided as an argument
 			if (blk.getDataType() != DataBlk.TYPE_INT) {
@@ -396,7 +402,7 @@ public class J2KImage extends ManagedImage {
 
 	/**
 	 * Encode a <seealso cref="ManagedImage"/> object into a byte array
-	 * 
+	 *
 	 * @param os
 	 *            The <seealso cref="OutputStream"/> to encode the image into
 	 * @param image
@@ -424,7 +430,8 @@ public class J2KImage extends ManagedImage {
 			components++;
 
 		// Initialize default parameters
-		ParameterList pl, defpl = new ParameterList();
+		ParameterList pl;
+		ParameterList defpl = new ParameterList();
 		String[][] param = ImgEncoder.getAllParameters();
 
 		for (int i = param.length - 1; i >= 0; i--) {
@@ -494,9 +501,13 @@ public class J2KImage extends ManagedImage {
 
 		J2KImage image = new J2KImage(height, width, channels);
 
-		int tOffx, tOffy; // Active tile offset
+		int tOffx;
+		int tOffy; // Active tile offset
 		int tIdx = 0; // index of the current tile
-		int off, l, x, y;
+		int off;
+		int l;
+		int x;
+		int y;
 		Coord nT = dataSrc.getNumTiles(null);
 		DataBlkInt block = new DataBlkInt();
 		block.ulx = 0;

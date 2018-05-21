@@ -223,7 +223,7 @@ public final class LLSDBinary extends OSDParser {
 		case Binary:
 			stream.write(binaryBinaryMarker);
 			byte[] bytes = osd.asBinary();
-			stream.write(Helpers.Int32ToBytesB(bytes.length));
+			stream.write(Helpers.int32ToBytesB(bytes.length));
 			stream.write(bytes, 0, bytes.length);
 			break;
 		case Date:
@@ -247,13 +247,13 @@ public final class LLSDBinary extends OSDParser {
 
 	private static void serializeString(OutputStream stream, String string, String encoding) throws IOException {
 		byte[] bytes = string.getBytes(encoding);
-		stream.write(Helpers.Int32ToBytesB(bytes.length));
+		stream.write(Helpers.int32ToBytesB(bytes.length));
 		stream.write(bytes, 0, bytes.length);
 	}
 
 	private static void serializeArray(OutputStream stream, OSDArray osdArray, String encoding) throws IOException {
 		stream.write(arrayBeginBinaryMarker);
-		stream.write(Helpers.Int32ToBytesB(osdArray.size()));
+		stream.write(Helpers.int32ToBytesB(osdArray.size()));
 
 		for (OSD osd : osdArray) {
 			serializeElement(stream, osd, encoding);
@@ -263,7 +263,7 @@ public final class LLSDBinary extends OSDParser {
 
 	private static void serializeMap(OutputStream stream, OSDMap osdMap, String encoding) throws IOException {
 		stream.write(mapBeginBinaryMarker);
-		stream.write(Helpers.Int32ToBytesB(osdMap.size()));
+		stream.write(Helpers.int32ToBytesB(osdMap.size()));
 
 		for (Entry<String, OSD> kvp : osdMap.entrySet()) {
 			stream.write(keyBinaryMarker);
@@ -291,18 +291,18 @@ public final class LLSDBinary extends OSDParser {
 			osd = OSD.fromBoolean(false);
 			break;
 		case integerBinaryMarker:
-			int integer = Helpers.BytesToInt32B(consumeBytes(stream, int32Length));
+			int integer = Helpers.bytesToInt32B(consumeBytes(stream, int32Length));
 			osd = OSD.fromInteger(integer);
 			break;
 		case realBinaryMarker:
-			double dbl = Helpers.BytesToDoubleB(consumeBytes(stream, doubleLength), 0);
+			double dbl = Helpers.bytesToDoubleB(consumeBytes(stream, doubleLength), 0);
 			osd = OSD.fromReal(dbl);
 			break;
 		case uuidBinaryMarker:
 			osd = OSD.fromUUID(new UUID(consumeBytes(stream, 16)));
 			break;
 		case binaryBinaryMarker:
-			int binaryLength = Helpers.BytesToInt32B(consumeBytes(stream, int32Length));
+			int binaryLength = Helpers.bytesToInt32B(consumeBytes(stream, int32Length));
 			osd = OSD.fromBinary(consumeBytes(stream, binaryLength));
 			break;
 		case doubleQuotesNotationMarker:
@@ -310,11 +310,11 @@ public final class LLSDBinary extends OSDParser {
 			throw new ParseException("Binary LLSD parsing: LLSD Notation Format strings are not yet supported",
 					(int) stream.getBytePosition());
 		case stringBinaryMarker:
-			int stringLength = Helpers.BytesToInt32B(consumeBytes(stream, int32Length));
+			int stringLength = Helpers.bytesToInt32B(consumeBytes(stream, int32Length));
 			osd = OSD.fromString(new String(consumeBytes(stream, stringLength), encoding));
 			break;
 		case uriBinaryMarker:
-			int uriLength = Helpers.BytesToInt32B(consumeBytes(stream, int32Length));
+			int uriLength = Helpers.bytesToInt32B(consumeBytes(stream, int32Length));
 			URI uri;
 			try {
 				uri = new URI(new String(consumeBytes(stream, uriLength), encoding));
@@ -330,8 +330,8 @@ public final class LLSDBinary extends OSDParser {
 			 * numbers but Openmetaverse as well as the LLSDBinaryParser::doParse in
 			 * llsdserialize.cpp clearly do not do any byteswapping.
 			 */
-			double timestamp = Helpers.BytesToDoubleL(consumeBytes(stream, doubleLength), 0);
-			osd = OSD.fromDate(Helpers.UnixTimeToDateTime(timestamp));
+			double timestamp = Helpers.bytesToDoubleL(consumeBytes(stream, doubleLength), 0);
+			osd = OSD.fromDate(Helpers.unixTimeToDateTime(timestamp));
 			break;
 		case arrayBeginBinaryMarker:
 			osd = parseArray(stream, encoding);
@@ -346,7 +346,7 @@ public final class LLSDBinary extends OSDParser {
 	}
 
 	private static OSD parseArray(PushbackInputStream stream, String encoding) throws IOException, ParseException {
-		int numElements = Helpers.BytesToInt32B(consumeBytes(stream, int32Length));
+		int numElements = Helpers.bytesToInt32B(consumeBytes(stream, int32Length));
 		int crrElement = 0;
 		OSDArray osdArray = new OSDArray();
 		while (crrElement < numElements) {
@@ -362,7 +362,7 @@ public final class LLSDBinary extends OSDParser {
 	}
 
 	private static OSD parseMap(PushbackInputStream stream, String encoding) throws IOException, ParseException {
-		int numElements = Helpers.BytesToInt32B(consumeBytes(stream, int32Length));
+		int numElements = Helpers.bytesToInt32B(consumeBytes(stream, int32Length));
 		int crrElement = 0;
 		OSDMap osdMap = new OSDMap();
 		while (crrElement < numElements) {
@@ -370,7 +370,7 @@ public final class LLSDBinary extends OSDParser {
 				throw new ParseException("Binary LLSD parsing: Missing key marker in map.",
 						(int) stream.getBytePosition());
 			}
-			int keyLength = Helpers.BytesToInt32B(consumeBytes(stream, int32Length));
+			int keyLength = Helpers.bytesToInt32B(consumeBytes(stream, int32Length));
 			String key = new String(consumeBytes(stream, keyLength), encoding);
 			osdMap.put(key, parseElement(stream, encoding));
 			crrElement++;

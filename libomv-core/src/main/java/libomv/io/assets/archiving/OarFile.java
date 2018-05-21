@@ -84,6 +84,8 @@ import libomv.utils.TimeoutEvent;
 public class OarFile {
 	private static final Logger logger = Logger.getLogger(OarFile.class);
 
+	private static final String ARCHIVE_XML = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\n<archive major_version=\"0\" minor_version=\"1\" />";
+
 	public class AssetLoadedData {
 		public AssetItem asset;
 		public long bytesRead;
@@ -153,25 +155,25 @@ public class OarFile {
 					byte[] data;
 
 					while ((data = archive.readEntry(header)) != null) {
-						if (header.FilePath.startsWith(ArchiveConstants.OBJECTS_PATH)) {
+						if (header.filePath.startsWith(ArchiveConstants.OBJECTS_PATH)) {
 							// Deserialize the XML bytes
 							if (objectCallback != null)
 								loadObjects(data, objectCallback, pushStream.getBytePosition(), fileLength);
-						} else if (header.FilePath.startsWith(ArchiveConstants.ASSETS_PATH)) {
+						} else if (header.filePath.startsWith(ArchiveConstants.ASSETS_PATH)) {
 							if (assetCallback != null) {
-								if (loadAsset(header.FilePath, data, assetCallback, pushStream.getBytePosition(),
+								if (loadAsset(header.filePath, data, assetCallback, pushStream.getBytePosition(),
 										fileLength))
 									successfulAssetRestores++;
 								else
 									failedAssetRestores++;
 							}
-						} else if (header.FilePath.startsWith(ArchiveConstants.TERRAINS_PATH)) {
+						} else if (header.filePath.startsWith(ArchiveConstants.TERRAINS_PATH)) {
 							if (terrainCallback != null)
-								loadTerrain(header.FilePath, data, terrainCallback, pushStream.getBytePosition(),
+								loadTerrain(header.filePath, data, terrainCallback, pushStream.getBytePosition(),
 										fileLength);
-						} else if (header.FilePath.startsWith(ArchiveConstants.SETTINGS_PATH)) {
+						} else if (header.filePath.startsWith(ArchiveConstants.SETTINGS_PATH)) {
 							if (settingsCallback != null)
-								loadRegionSettings(header.FilePath, data, settingsCallback);
+								loadRegionSettings(header.filePath, data, settingsCallback);
 						}
 					}
 				}
@@ -215,7 +217,7 @@ public class OarFile {
 		}
 
 		RefObject<UUID> uuid = new RefObject<>(null);
-		UUID.TryParse(fileName, uuid);
+		UUID.tryParse(fileName, uuid);
 		AssetType assetType = ArchiveConstants.getAssetTypeForExtenstion(extension);
 		if (assetType != null) {
 			AssetItem asset = AssetManager.createAssetItem(assetType, uuid.argvalue, data);
@@ -261,7 +263,7 @@ public class OarFile {
 				int pos = 0;
 				for (int y = 0; y < 256; y++) {
 					for (int x = 0; x < 256; x++) {
-						terrain[y][x] = Helpers.clamp(Helpers.BytesToFloatL(data, pos), 0.0f, 255.0f);
+						terrain[y][x] = Helpers.clamp(Helpers.bytesToFloatL(data, pos), 0.0f, 255.0f);
 						pos += 4;
 					}
 				}
@@ -322,12 +324,7 @@ public class OarFile {
 		stream.close();
 	}
 
-	// #endregion Archive Loading
-
-	// #region Archive Saving
-
 	public static void packageArchive(File directoryName, File fileName) throws IOException {
-		final String ARCHIVE_XML = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\n<archive major_version=\"0\" minor_version=\"1\" />";
 
 		TarArchiveWriter archive = new TarArchiveWriter(new GZIPOutputStream(new FileOutputStream(fileName)));
 
@@ -384,7 +381,8 @@ public class OarFile {
 	}
 
 	private static void saveTerrainStream(OutputStream stream, SimulatorManager sim) throws IOException {
-		int x, y;
+		int x;
+		int y;
 		for (y = 0; y < 256; y++) {
 			for (x = 0; x < 256; x++) {
 				float height = sim.terrainHeightAtPoint(x, y);
@@ -402,7 +400,7 @@ public class OarFile {
 		Thread.sleep(100);
 
 		for (Parcel parcel : sim.parcels.values()) {
-			UUID globalID = UUID.GenerateUUID();
+			UUID globalID = UUID.generateUUID();
 			serializeParcel(parcel, globalID, new File(parcelPath, globalID + ".xml"));
 		}
 	}
@@ -561,7 +559,7 @@ public class OarFile {
 						textureList.put(face.getTextureID(), face.getTextureID());
 				}
 			}
-			if (prim.sculpt != null && !prim.sculpt.texture.equals(UUID.Zero))
+			if (prim.sculpt != null && !prim.sculpt.texture.equals(UUID.ZERO))
 				textureList.put(prim.sculpt.texture, prim.sculpt.texture);
 		}
 	}
@@ -664,7 +662,7 @@ public class OarFile {
 			UUID primID, File assetsPath) throws Exception {
 		TimeoutEvent<Integer> allReceived = new TimeoutEvent<>();
 		assetManager.requestAsset(assetID, itemID, primID, assetType, false, SourceType.SimInventoryItem,
-				UUID.GenerateUUID(), new Callback<AssetDownload>() {
+				UUID.generateUUID(), new Callback<AssetDownload>() {
 					@Override
 					public boolean callback(AssetDownload transfer) {
 						if (transfer.success) {

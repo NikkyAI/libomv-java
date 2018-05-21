@@ -419,9 +419,9 @@ public class AgentManager implements PacketCallback, CapsCallback {
 			public final void lookDirection(Vector3 at, Vector3 upDirection) {
 				// The two parameters cannot be parallel
 				Vector3 left = Vector3.cross(upDirection, at);
-				if (left == Vector3.Zero) {
+				if (left == Vector3.ZERO) {
 					// Prevent left from being zero
-					at.X += 0.01f;
+					at.x += 0.01f;
 					at.normalize();
 					left = Vector3.cross(upDirection, at);
 				}
@@ -440,10 +440,10 @@ public class AgentManager implements PacketCallback, CapsCallback {
 			 *            Absolute rotation around the Z axis in radians
 			 */
 			public final void lookDirection(double heading) {
-				yAxis.X = (float) Math.cos(heading);
-				yAxis.Y = (float) Math.sin(heading);
-				xAxis.X = (float) -Math.sin(heading);
-				xAxis.Y = (float) Math.cos(heading);
+				yAxis.x = (float) Math.cos(heading);
+				yAxis.y = (float) Math.sin(heading);
+				xAxis.x = (float) -Math.sin(heading);
+				xAxis.y = (float) Math.cos(heading);
 			}
 
 			public final void lookAt(Vector3 origin, Vector3 target) {
@@ -821,8 +821,8 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		public AgentFlags flags = AgentFlags.None;
 		// Action state of the avatar, which can currently be typing and editing
 		public byte state;
-		public Quaternion bodyRotation = Quaternion.Identity;
-		public Quaternion headRotation = Quaternion.Identity;
+		public Quaternion bodyRotation = Quaternion.IDENTITY;
+		public Quaternion headRotation = Quaternion.IDENTITY;
 
 		// /#region Change tracking
 		private Quaternion lastBodyRotation;
@@ -902,8 +902,8 @@ public class AgentManager implements PacketCallback, CapsCallback {
 			camera.setPosition(getAgentPosition());
 			camera.lookDirection(heading);
 
-			bodyRotation.Z = (float) Math.sin(heading / 2.0d);
-			bodyRotation.W = (float) Math.cos(heading / 2.0d);
+			bodyRotation.z = (float) Math.sin(heading / 2.0d);
+			bodyRotation.w = (float) Math.cos(heading / 2.0d);
 			headRotation = bodyRotation;
 
 			sendUpdate(reliable, client.network.getCurrentSim());
@@ -936,7 +936,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		@SuppressWarnings("unlikely-arg-type")
 		public boolean turnToward(Vector3 target, boolean sendUpdate) throws Exception {
 			if (sendAgentUpdates) {
-				Quaternion parentRot = Quaternion.Identity;
+				Quaternion parentRot = Quaternion.IDENTITY;
 
 				if (client.agent.sittingOn > 0) {
 					synchronized (client.network.getCurrentSim().getObjectsPrimitives()) {
@@ -950,9 +950,9 @@ public class AgentManager implements PacketCallback, CapsCallback {
 					}
 				}
 
-				Quaternion between = Vector3.rotationBetween(Vector3.UnitX,
+				Quaternion between = Vector3.rotationBetween(Vector3.UNIT_X,
 						Vector3.normalize(target.subtract(getAgentPosition())));
-				Quaternion rot = Quaternion.multiply(between, Quaternion.divide(Quaternion.Identity, parentRot));
+				Quaternion rot = Quaternion.multiply(between, Quaternion.divide(Quaternion.IDENTITY, parentRot));
 
 				bodyRotation = rot;
 				headRotation = rot;
@@ -1398,7 +1398,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 	// Current position of avatar
 	private Vector3 relativePosition;
 	// Current rotation of avatar
-	private Quaternion relativeRotation = Quaternion.Identity;
+	private Quaternion relativeRotation = Quaternion.IDENTITY;
 	private Vector4 collisionPlane;
 	private Vector3 velocity;
 	private Vector3 acceleration;
@@ -1442,7 +1442,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		this.sendAgentUpdates = client.settings.getBool(LibSettings.SEND_AGENT_UPDATES);
 
 		this.movement = new AgentMovement(client);
-		this.teleportTimeout = new TimeoutEvent<TeleportStatus>();
+		this.teleportTimeout = new TimeoutEvent<>();
 		this.threadPool = Executors.newCachedThreadPool();
 
 		this.homePosition = null;
@@ -1733,7 +1733,8 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		}
 
 		// a bit more complicatated, agent sitting on a prim
-		Primitive p, t;
+		Primitive p;
+		Primitive t;
 		Vector3 fullPosition = relativePosition;
 
 		SimulatorManager sim = client.network.getCurrentSim();
@@ -1806,7 +1807,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		if (client.network.getCurrentSim() != null) {
 			return Helpers.regionHandleToGlobalPos(client.getCurrentRegionHandle(), getAgentPosition());
 		}
-		return Vector3d.Zero;
+		return Vector3d.ZERO;
 	}
 
 	public AgentMovement getMovement() {
@@ -1982,7 +1983,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 	 *            A <see cref="string"/> containing the message to send
 	 */
 	public void instantMessage(UUID target, String message) throws Exception {
-		instantMessage(getName(), target, message, UUID.Zero, InstantMessageDialog.MessageFromAgent,
+		instantMessage(getName(), target, message, UUID.ZERO, InstantMessageDialog.MessageFromAgent,
 				InstantMessageOnline.Online, null, null, 0, null);
 	}
 
@@ -2067,11 +2068,11 @@ public class AgentManager implements PacketCallback, CapsCallback {
 	public final void instantMessage(String fromName, UUID target, String message, UUID imSessionID,
 			InstantMessageDialog dialog, InstantMessageOnline offline, Vector3 position, UUID regionID, long timestamp,
 			byte[] binaryBucket) throws Exception {
-		if (!target.equals(UUID.Zero)) {
+		if (!target.equals(UUID.ZERO)) {
 			ImprovedInstantMessagePacket im = new ImprovedInstantMessagePacket();
 
-			if (imSessionID == null || imSessionID.equals(UUID.Zero) || imSessionID.equals(getAgentID())) {
-				imSessionID = getAgentID().equals(target) ? getAgentID() : UUID.XOr(target, getAgentID());
+			if (imSessionID == null || imSessionID.equals(UUID.ZERO) || imSessionID.equals(getAgentID())) {
+				imSessionID = getAgentID().equals(target) ? getAgentID() : UUID.xor(target, getAgentID());
 			}
 
 			im.AgentData.AgentID = getAgentID();
@@ -2123,7 +2124,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 	 * @throws Exception
 	 * @throws UnsupportedEncodingException
 	 */
-	public final void instantMessageGroup(UUID groupID, String message) throws UnsupportedEncodingException, Exception {
+	public final void instantMessageGroup(UUID groupID, String message) throws Exception {
 		instantMessageGroup(getName(), groupID, message);
 	}
 
@@ -2230,21 +2231,21 @@ public class AgentManager implements PacketCallback, CapsCallback {
 	/**
 	 * Accept invite for a chatterbox session
 	 *
-	 * @param session_id
+	 * @param sessionID
 	 *            {@link UUID} of session to accept invite to
 	 * @throws Exception
 	 */
-	public final void chatterBoxAcceptInvite(UUID session_id) throws Exception {
+	public final void chatterBoxAcceptInvite(UUID sessionID) throws Exception {
 		URI uri = client.network.getCapabilityURI(CapsEventType.ChatSessionRequest.toString());
 		if (uri != null) {
 			ChatSessionAcceptInvitation acceptInvite = client.messages.new ChatSessionAcceptInvitation();
-			acceptInvite.sessionID = session_id;
+			acceptInvite.sessionID = sessionID;
 			new CapsClient(client, CapsEventType.ChatSessionAcceptInvitation.toString()).executeHttpPost(uri,
 					acceptInvite, null, client.settings.CAPS_TIMEOUT);
 
 			synchronized (groupChatSessions) {
-				if (!groupChatSessions.containsKey(session_id)) {
-					groupChatSessions.put(session_id, new ArrayList<>());
+				if (!groupChatSessions.containsKey(sessionID)) {
+					groupChatSessions.put(sessionID, new ArrayList<>());
 				}
 			}
 		} else {
@@ -2258,12 +2259,12 @@ public class AgentManager implements PacketCallback, CapsCallback {
 	 *
 	 * @param participants
 	 *            {@link UUID} List of UUIDs to start a conference with
-	 * @param tmp_session_id
+	 * @param tmpSessionID
 	 *            the temporary session ID returned in the {see
 	 *            cref="OnJoinedGroupChat" callback
 	 * @throws Exception
 	 */
-	public final void startIMConference(UUID[] participants, UUID tmp_session_id) throws Exception {
+	public final void startIMConference(UUID[] participants, UUID tmpSessionID) throws Exception {
 		URI url = client.network.getCapabilityURI(CapsEventType.ChatSessionRequest.toString());
 		if (url != null) {
 			ChatSessionRequestStartConference startConference = client.messages.new ChatSessionRequestStartConference();
@@ -2272,7 +2273,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 			for (int i = 0; i < participants.length; i++) {
 				startConference.agentsBlock[i] = participants[i];
 			}
-			startConference.sessionID = tmp_session_id;
+			startConference.sessionID = tmpSessionID;
 			new CapsClient(client, CapsEventType.ChatSessionRequestStartConference.toString()).executeHttpPost(url,
 					startConference, null, client.settings.CAPS_TIMEOUT);
 		} else {
@@ -2314,10 +2315,10 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		effect.Effect[0].Type = EffectType.PointAt.getValue();
 
 		byte[] typeData = new byte[57];
-		if (!sourceAvatar.equals(UUID.Zero)) {
+		if (!sourceAvatar.equals(UUID.ZERO)) {
 			sourceAvatar.toBytes(typeData, 0);
 		}
-		if (!targetObject.equals(UUID.Zero)) {
+		if (!targetObject.equals(UUID.ZERO)) {
 			targetObject.toBytes(typeData, 16);
 		}
 		globalOffset.toBytes(typeData, 32);
@@ -2473,8 +2474,8 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		effect.Effect[0].Type = EffectType.Sphere.getValue();
 
 		byte[] typeData = new byte[56];
-		UUID.Zero.toBytes(typeData, 0);
-		UUID.Zero.toBytes(typeData, 16);
+		UUID.ZERO.toBytes(typeData, 0);
+		UUID.ZERO.toBytes(typeData, 16);
 		globalOffset.toBytes(typeData, 32);
 
 		effect.Effect[0].setTypeData(typeData);
@@ -2602,8 +2603,8 @@ public class AgentManager implements PacketCallback, CapsCallback {
 
 		autopilot.AgentData.AgentID = client.agent.getAgentID();
 		autopilot.AgentData.SessionID = client.agent.getSessionID();
-		autopilot.AgentData.TransactionID = UUID.Zero;
-		autopilot.MethodData.Invoice = UUID.Zero;
+		autopilot.AgentData.TransactionID = UUID.ZERO;
+		autopilot.MethodData.Invoice = UUID.ZERO;
 		autopilot.MethodData.setMethod(Helpers.stringToBytes("autopilot"));
 		autopilot.ParamList = new GenericMessagePacket.ParamListBlock[3];
 		autopilot.ParamList[0] = autopilot.new ParamListBlock();
@@ -2634,8 +2635,8 @@ public class AgentManager implements PacketCallback, CapsCallback {
 
 		autopilot.AgentData.AgentID = client.agent.getAgentID();
 		autopilot.AgentData.SessionID = client.agent.getSessionID();
-		autopilot.AgentData.TransactionID = UUID.Zero;
-		autopilot.MethodData.Invoice = UUID.Zero;
+		autopilot.AgentData.TransactionID = UUID.ZERO;
+		autopilot.MethodData.Invoice = UUID.ZERO;
 		autopilot.MethodData.setMethod(Helpers.stringToBytes("autopilot"));
 		autopilot.ParamList = new GenericMessagePacket.ParamListBlock[3];
 		autopilot.ParamList[0] = autopilot.new ParamListBlock();
@@ -2700,7 +2701,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 	 * @throws Exception
 	 */
 	public void grab(int objectLocalID) throws Exception {
-		grab(objectLocalID, Vector3.Zero, Vector3.Zero, Vector3.Zero, 0, Vector3.Zero, Vector3.Zero, Vector3.Zero);
+		grab(objectLocalID, Vector3.ZERO, Vector3.ZERO, Vector3.ZERO, 0, Vector3.ZERO, Vector3.ZERO, Vector3.ZERO);
 	}
 
 	/**
@@ -2758,8 +2759,8 @@ public class AgentManager implements PacketCallback, CapsCallback {
 	 * @throws Exception
 	 */
 	public void grabUpdate(UUID objectID, Vector3 grabPosition) throws Exception {
-		grabUpdate(objectID, grabPosition, Vector3.Zero, Vector3.Zero, Vector3.Zero, 0, Vector3.Zero, Vector3.Zero,
-				Vector3.Zero);
+		grabUpdate(objectID, grabPosition, Vector3.ZERO, Vector3.ZERO, Vector3.ZERO, 0, Vector3.ZERO, Vector3.ZERO,
+				Vector3.ZERO);
 	}
 
 	/**
@@ -2821,7 +2822,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 	 * @throws Exception
 	 */
 	public void deGrab(int objectLocalID) throws Exception {
-		deGrab(objectLocalID, Vector3.Zero, Vector3.Zero, 0, Vector3.Zero, Vector3.Zero, Vector3.Zero);
+		deGrab(objectLocalID, Vector3.ZERO, Vector3.ZERO, 0, Vector3.ZERO, Vector3.ZERO, Vector3.ZERO);
 	}
 
 	/**
@@ -2955,7 +2956,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		MoneyBalanceRequestPacket money = new MoneyBalanceRequestPacket();
 		money.AgentData.AgentID = this.agentID;
 		money.AgentData.SessionID = this.sessionID;
-		money.TransactionID = UUID.Zero;
+		money.TransactionID = UUID.ZERO;
 
 		client.network.sendPacket(money);
 	}
@@ -3039,7 +3040,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 	 *
 	 */
 	public final void payUploadFee() throws Exception {
-		giveMoney(UUID.Zero, client.settings.getUploadPrice(), Helpers.EmptyString, MoneyTransactionType.UploadCharge,
+		giveMoney(UUID.ZERO, client.settings.getUploadPrice(), Helpers.EmptyString, MoneyTransactionType.UploadCharge,
 				TransactionFlags.None);
 	}
 
@@ -3051,7 +3052,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 	 * @throws Exception
 	 */
 	public final void payUploadFee(String description) throws Exception {
-		giveMoney(UUID.Zero, client.settings.getUploadPrice(), description, MoneyTransactionType.UploadCharge,
+		giveMoney(UUID.ZERO, client.settings.getUploadPrice(), description, MoneyTransactionType.UploadCharge,
 				TransactionFlags.None);
 	}
 
@@ -3115,7 +3116,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 				}
 
 				if (gesture == null) {
-					final TimeoutEvent<AssetGesture> gotAsset = new TimeoutEvent<AssetGesture>();
+					final TimeoutEvent<AssetGesture> gotAsset = new TimeoutEvent<>();
 
 					class AssetDownloadCallback implements Callback<AssetDownload> {
 						@Override
@@ -3346,7 +3347,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 	 * @throws Exception
 	 */
 	public final boolean goHome() throws Exception {
-		return teleport(UUID.Zero, client.settings.TELEPORT_TIMEOUT);
+		return teleport(UUID.ZERO, client.settings.TELEPORT_TIMEOUT);
 	}
 
 	/**
@@ -3425,7 +3426,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 	 */
 	public TimeoutEvent<TeleportStatus> beginTeleport(long regionHandle, Vector3 position,
 			Callback<TeleportCallbackArgs> tc) throws Exception {
-		return beginTeleport(regionHandle, position, new Vector3(position.X + 1.0f, position.Y, position.Z), tc);
+		return beginTeleport(regionHandle, position, new Vector3(position.x + 1.0f, position.y, position.z), tc);
 	}
 
 	/**
@@ -3466,7 +3467,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 	 * @throws Exception
 	 */
 	public final void requestTeleport(long regionHandle, Vector3 position) throws Exception {
-		requestTeleport(regionHandle, position, Vector3.UnitY);
+		requestTeleport(regionHandle, position, Vector3.UNIT_Y);
 	}
 
 	/**
@@ -3510,7 +3511,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 	 * @return true on success, false on failure
 	 */
 	public boolean teleport(long regionHandle, Vector3 position) throws Exception {
-		return teleport(regionHandle, position, Vector3.UnitY, client.settings.TELEPORT_TIMEOUT);
+		return teleport(regionHandle, position, Vector3.UNIT_Y, client.settings.TELEPORT_TIMEOUT);
 	}
 
 	/**
@@ -3525,7 +3526,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 	 * @return true on success, false on failure
 	 */
 	public boolean teleport(long regionHandle, Vector3 position, long timeout) throws Exception {
-		return teleport(regionHandle, position, Vector3.UnitY, timeout);
+		return teleport(regionHandle, position, Vector3.UNIT_Y, timeout);
 	}
 
 	/**
@@ -3565,7 +3566,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 	 * @return True if the lookup and teleport were successful, otherwise
 	 */
 	public boolean teleport(String simName, Vector3 position) throws Exception {
-		return teleport(simName, position, Vector3.UnitY, client.settings.TELEPORT_TIMEOUT);
+		return teleport(simName, position, Vector3.UNIT_Y, client.settings.TELEPORT_TIMEOUT);
 	}
 
 	/**
@@ -3936,11 +3937,11 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		request.Requester.Range = range;
 		request.Requester.RegionHandle = simulator.getHandle();
 		request.Requester.RequestID = requestID;
-		request.Requester.SearchDir = Quaternion.Identity; // TODO: this needs
+		request.Requester.SearchDir = Quaternion.IDENTITY; // TODO: this needs
 															// to be tested
 		request.Requester.SearchID = searchID;
 		request.Requester.setSearchName(Helpers.stringToBytes(name));
-		request.Requester.SearchPos = Vector3.Zero;
+		request.Requester.SearchPos = Vector3.ZERO;
 		request.Requester.SearchRegions = 0; // TODO: ?
 		request.Requester.SourceID = client.agent.getAgentID();
 		request.Requester.Type = type;
@@ -4032,7 +4033,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		classified.Data.ClassifiedID = classifiedID;
 		classified.Data.Category = ClassifiedCategories.getValue(category);
 
-		classified.Data.ParcelID = UUID.Zero;
+		classified.Data.ParcelID = UUID.ZERO;
 		// TODO: verify/fix ^
 		classified.Data.ParentEstate = 0;
 		// TODO: verify/fix ^
@@ -4307,8 +4308,8 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		SimulatorManager simulator = (SimulatorManager) sim;
 
 		InstantMessageDialog dialog = InstantMessageDialog.setValue(im.MessageBlock.Dialog);
-		String fromName = Helpers.BytesToString(im.MessageBlock.getFromAgentName());
-		String message = Helpers.BytesToString(im.MessageBlock.getMessage());
+		String fromName = Helpers.bytesToString(im.MessageBlock.getFromAgentName());
+		String message = Helpers.bytesToString(im.MessageBlock.getMessage());
 		boolean isMuted = muteList.containsKey(String.format("%s|%s", im.AgentData.AgentID, fromName)); // MuteFlags.TextChat
 		UUID sessionID = computeSessionID(dialog, im.AgentData.AgentID);
 
@@ -4319,7 +4320,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 			} else if (isBusy) {
 				// busyMessage(im.AgentData.AgentID);
 			} else if (onTeleportLure.count() > 0) {
-				String[] strings = Helpers.BytesToString(im.MessageBlock.getBinaryBucket()).split("|");
+				String[] strings = Helpers.bytesToString(im.MessageBlock.getBinaryBucket()).split("|");
 				LureLocation info = new LureLocation();
 				info.regionHandle = Helpers.globalPosToRegionHandle(Float.valueOf(strings[0]),
 						Float.valueOf(strings[1]), null);
@@ -4356,7 +4357,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		}
 		if (dialog == InstantMessageDialog.GotoUrl) {
 			/* An URL sent form the system, not a script */
-			String url = Helpers.BytesToString(im.MessageBlock.getBinaryBucket());
+			String url = Helpers.bytesToString(im.MessageBlock.getBinaryBucket());
 			if (url.length() <= 0)
 				logger.warn(GridClient.Log("No URL in binary bucket for GotoURL IM", client));
 			return;
@@ -4392,8 +4393,8 @@ public class AgentManager implements PacketCallback, CapsCallback {
 	private void handleChat(Packet packet, Simulator simulator) throws Exception {
 		ChatFromSimulatorPacket chat = (ChatFromSimulatorPacket) packet;
 		try {
-			String message = Helpers.BytesToString(chat.ChatData.getMessage());
-			String from = Helpers.BytesToString(chat.ChatData.getFromName());
+			String message = Helpers.bytesToString(chat.ChatData.getMessage());
+			String from = Helpers.bytesToString(chat.ChatData.getFromName());
 			logger.debug(GridClient.Log("ChatFromSimulator: Type: " + ChatType.setValue(chat.ChatData.ChatType)
 					+ " From: " + from + " Message: " + message, client));
 
@@ -4412,7 +4413,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		relativePosition = movementPacket.Data.Position;
 		movement.camera.lookDirection(movementPacket.Data.LookAt);
 		simulator.setHandle(movementPacket.Data.RegionHandle);
-		simulator.simVersion = Helpers.BytesToString(movementPacket.SimData.getChannelVersion());
+		simulator.simVersion = Helpers.bytesToString(movementPacket.SimData.getChannelVersion());
 		simulator.agentMovementComplete = true;
 	}
 
@@ -4438,7 +4439,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 			TeleportProgressPacket progress = (TeleportProgressPacket) packet;
 
 			teleportStatus = TeleportStatus.Progress;
-			teleportMessage = Helpers.BytesToString(progress.Info.getMessage());
+			teleportMessage = Helpers.bytesToString(progress.Info.getMessage());
 			flags = progress.Info.TeleportFlags;
 
 			logger.debug(GridClient.Log("TeleportProgress received, Message: " + teleportMessage + ", Flags: " + flags,
@@ -4446,7 +4447,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		} else if (packet.getType() == PacketType.TeleportFailed) {
 			TeleportFailedPacket failed = (TeleportFailedPacket) packet;
 
-			teleportMessage = Helpers.BytesToString(failed.Info.getReason());
+			teleportMessage = Helpers.bytesToString(failed.Info.getReason());
 			teleportStatus = TeleportStatus.Failed;
 			finished = true;
 
@@ -4463,7 +4464,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 			TeleportFinishPacket finish = (TeleportFinishPacket) packet;
 
 			flags = finish.Info.TeleportFlags;
-			String seedcaps = Helpers.BytesToString(finish.Info.getSeedCapability());
+			String seedcaps = Helpers.bytesToString(finish.Info.getSeedCapability());
 			finished = true;
 
 			logger.debug(GridClient.Log("TeleportFinish received, Flags: " + flags, client));
@@ -4476,7 +4477,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 
 			// Connect to the new sim
 			client.network.getCurrentSim().agentMovementComplete = false; // we're not there anymore
-			InetAddress addr = InetAddress.getByAddress(Helpers.Int32ToBytesB(finish.Info.SimIP));
+			InetAddress addr = InetAddress.getByAddress(Helpers.int32ToBytesB(finish.Info.SimIP));
 			SimulatorManager newSimulator = client.network.connect(addr, finish.Info.SimPort, finish.Info.RegionHandle,
 					true, seedcaps);
 
@@ -4579,14 +4580,14 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		SimulatorManager simulator = (SimulatorManager) sim;
 
 		if (p.AgentData.AgentID.equals(simulator.getClient().agent.getAgentID())) {
-			firstName = Helpers.BytesToString(p.AgentData.getFirstName());
-			lastName = Helpers.BytesToString(p.AgentData.getLastName());
+			firstName = Helpers.bytesToString(p.AgentData.getFirstName());
+			lastName = Helpers.bytesToString(p.AgentData.getLastName());
 			activeGroup = p.AgentData.ActiveGroupID;
 			activeGroupPowers = GroupPowers.setValue(p.AgentData.GroupPowers);
 
 			if (onAgentData.count() > 0) {
-				String groupTitle = Helpers.BytesToString(p.AgentData.getGroupTitle());
-				String groupName = Helpers.BytesToString(p.AgentData.getGroupName());
+				String groupTitle = Helpers.bytesToString(p.AgentData.getGroupTitle());
+				String groupName = Helpers.bytesToString(p.AgentData.getGroupName());
 
 				onAgentData.dispatch(new AgentDataReplyCallbackArgs(firstName, lastName, activeGroup, groupTitle,
 						activeGroupPowers, groupName));
@@ -4623,12 +4624,12 @@ public class AgentManager implements PacketCallback, CapsCallback {
 				transactionInfo.destID = reply.TransactionInfo.DestID;
 				transactionInfo.isDestGroup = reply.TransactionInfo.IsDestGroup;
 				transactionInfo.amount = reply.TransactionInfo.Amount;
-				transactionInfo.itemDescription = Helpers.BytesToString(reply.TransactionInfo.getItemDescription());
+				transactionInfo.itemDescription = Helpers.bytesToString(reply.TransactionInfo.getItemDescription());
 
 				onMoneyBalanceReply.dispatch(new MoneyBalanceReplyCallbackArgs(reply.MoneyData.TransactionID,
 						reply.MoneyData.TransactionSuccess, reply.MoneyData.MoneyBalance,
 						reply.MoneyData.SquareMetersCredit, reply.MoneyData.SquareMetersCommitted,
-						Helpers.BytesToString(reply.MoneyData.getDescription()), transactionInfo));
+						Helpers.bytesToString(reply.MoneyData.getDescription()), transactionInfo));
 			}
 		}
 	}
@@ -4700,7 +4701,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 			for (int i = 0; i < collision.MeanCollision.length; i++) {
 				MeanCollisionAlertPacket.MeanCollisionBlock block = collision.MeanCollision[i];
 
-				Date time = Helpers.UnixTimeToDateTime(block.Time);
+				Date time = Helpers.unixTimeToDateTime(block.Time);
 				MeanCollisionType type = MeanCollisionType.setValue(block.Type);
 
 				onMeanCollision
@@ -4729,10 +4730,10 @@ public class AgentManager implements PacketCallback, CapsCallback {
 	private void handleCrossedRegion(Packet packet, Simulator simulator) throws Exception {
 		CrossedRegionPacket crossing = (CrossedRegionPacket) packet;
 		InetSocketAddress endPoint = new InetSocketAddress(
-				InetAddress.getByAddress(Helpers.Int32ToBytesB(crossing.RegionData.SimIP)),
+				InetAddress.getByAddress(Helpers.int32ToBytesB(crossing.RegionData.SimIP)),
 				crossing.RegionData.SimPort);
 		handleCrossedRegion(endPoint, crossing.RegionData.RegionHandle,
-				Helpers.BytesToString(crossing.RegionData.getSeedCapability()));
+				Helpers.bytesToString(crossing.RegionData.getSeedCapability()));
 	}
 
 	private void handleCrossedRegion(InetSocketAddress endPoint, long regionHandle, String seedCap) throws Exception {
@@ -4826,7 +4827,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 
 			if (msg.updates[i].transition != null) {
 				if (msg.updates[i].transition.equals("ENTER")) {
-					if (fndMbr == null || fndMbr.avatarKey.equals(UUID.Zero)) {
+					if (fndMbr == null || fndMbr.avatarKey.equals(UUID.ZERO)) {
 						fndMbr = new ChatSessionMember();
 						fndMbr.avatarKey = msg.updates[i].agentID;
 
@@ -4837,7 +4838,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 								new ChatSessionMemberCallbackArgs(msg.sessionID, msg.updates[i].agentID, true));
 					}
 				} else if (msg.updates[i].transition.equals("LEAVE")) {
-					if (fndMbr != null && !fndMbr.avatarKey.equals(UUID.Zero)) {
+					if (fndMbr != null && !fndMbr.avatarKey.equals(UUID.ZERO)) {
 						synchronized (groupChatSessions) {
 							groupChatSessions.get(msg.sessionID).remove(fndMbr);
 						}
@@ -4937,14 +4938,14 @@ public class AgentManager implements PacketCallback, CapsCallback {
 
 	private void handleAlertMessage(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
 		AlertMessagePacket alert = (AlertMessagePacket) packet;
-		onAlertMessage.dispatch(new AlertMessageCallbackArgs(Helpers.BytesToString(alert.AlertData.getMessage())));
+		onAlertMessage.dispatch(new AlertMessageCallbackArgs(Helpers.bytesToString(alert.AlertData.getMessage())));
 	}
 
 	private void handleGenericMessage(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
 		GenericMessagePacket message = (GenericMessagePacket) packet;
 
 		if (message.AgentData.AgentID.equals(agentID)) {
-			String method = Helpers.BytesToString(message.MethodData.getMethod());
+			String method = Helpers.bytesToString(message.MethodData.getMethod());
 			if (method.equals("emptymutelist")) {
 				synchronized (muteList) {
 					muteList.clear();
@@ -4955,10 +4956,10 @@ public class AgentManager implements PacketCallback, CapsCallback {
 
 				List<String> parameters = new ArrayList<>(message.ParamList.length);
 				for (GenericMessagePacket.ParamListBlock block : message.ParamList) {
-					parameters.add(Helpers.BytesToString(block.getParameter()));
+					parameters.add(Helpers.bytesToString(block.getParameter()));
 				}
 				onGenericMessage.dispatch(new GenericMessageCallbackArgs(message.AgentData.SessionID,
-						message.AgentData.TransactionID, Helpers.BytesToString(message.MethodData.getMethod()),
+						message.AgentData.TransactionID, Helpers.bytesToString(message.MethodData.getMethod()),
 						message.MethodData.Invoice, parameters));
 			}
 		}
@@ -4992,7 +4993,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 				ScriptSensorReplyPacket.SensedDataBlock block = reply.SensedData[i];
 
 				onScriptSensorReply.dispatch(new ScriptSensorReplyCallbackArgs(reply.SourceID, block.GroupID,
-						Helpers.BytesToString(block.getName()), block.ObjectID, block.OwnerID, block.Position,
+						Helpers.bytesToString(block.getName()), block.ObjectID, block.OwnerID, block.Position,
 						block.Range, block.Rotation, ScriptSensorTypeFlags.setValue(block.Type), block.Velocity));
 			}
 		}
@@ -5014,8 +5015,8 @@ public class AgentManager implements PacketCallback, CapsCallback {
 			return;
 		}
 
-		String fileName = Helpers.BytesToString(data.MuteData.getFilename());
-		final TimeoutEvent<byte[]> gotMuteList = new TimeoutEvent<byte[]>();
+		String fileName = Helpers.bytesToString(data.MuteData.getFilename());
+		final TimeoutEvent<byte[]> gotMuteList = new TimeoutEvent<>();
 		final AtomicLong xferID = new AtomicLong();
 
 		Callback<XferDownload> xferCallback = new Callback<XferDownload>() {
@@ -5029,11 +5030,11 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		};
 
 		client.assets.onXferReceived.add(xferCallback, true);
-		xferID.set(client.assets.requestAssetXfer(fileName, true, false, UUID.Zero, AssetType.Unknown, true));
+		xferID.set(client.assets.requestAssetXfer(fileName, true, false, UUID.ZERO, AssetType.Unknown, true));
 
 		byte[] assetData = gotMuteList.waitOne(60 * 1000);
 		if (assetData != null) {
-			String muteStr = Helpers.BytesToString(assetData);
+			String muteStr = Helpers.bytesToString(assetData);
 
 			synchronized (muteList) {
 				muteList.clear();
@@ -5050,7 +5051,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 							me.type = MuteType.setValue(Integer.valueOf(m.group(1)));
 							me.id = new UUID(m.group(2));
 							me.name = m.group(3);
-							me.flags = MuteFlags.setValue(Helpers.TryParseInt(m.group(4)));
+							me.flags = MuteFlags.setValue(Helpers.tryParseInt(m.group(4)));
 							muteList.put(String.format("%s|%s", me.id, me.name), me);
 						} else {
 							throw new IllegalArgumentException("Invalid mutelist entry line");

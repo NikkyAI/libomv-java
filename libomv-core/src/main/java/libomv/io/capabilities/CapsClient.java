@@ -57,7 +57,7 @@ import libomv.utils.Settings.SettingsUpdateCallbackArgs;
 
 public class CapsClient extends AsyncHTTPClient<OSD> {
 	private static final Logger logger = Logger.getLogger(CapsClient.class);
-	private GridClient _Client;
+	private GridClient client;
 
 	private boolean trackUtilization;
 
@@ -66,7 +66,7 @@ public class CapsClient extends AsyncHTTPClient<OSD> {
 		public boolean callback(SettingsUpdateCallbackArgs params) {
 			String key = params.getName();
 			if (key == null) {
-				trackUtilization = _Client.settings.getBool(LibSettings.TRACK_UTILIZATION);
+				trackUtilization = client.settings.getBool(LibSettings.TRACK_UTILIZATION);
 			} else if (key.equals(LibSettings.TRACK_UTILIZATION)) {
 				trackUtilization = params.getValue().asBoolean();
 			}
@@ -76,7 +76,7 @@ public class CapsClient extends AsyncHTTPClient<OSD> {
 
 	public CapsClient(GridClient client, String name) throws IOReactorException {
 		super(name);
-		_Client = client;
+		this.client = client;
 
 		if (client != null) {
 			client.settings.onSettingsUpdate.add(new SettingsUpdate());
@@ -285,8 +285,8 @@ public class CapsClient extends AsyncHTTPClient<OSD> {
 			entity.setContentEncoding(encoding);
 
 		// #region Stats Tracking
-		if (_Client != null && trackUtilization) {
-			_Client.stats.updateNetStats(name, Type.Message, entity.getContentLength(), 0);
+		if (client != null && trackUtilization) {
+			client.stats.updateNetStats(name, Type.Message, entity.getContentLength(), 0);
 		}
 		// #endregion
 		return executeHttpPost(address, entity, callback, timeout);

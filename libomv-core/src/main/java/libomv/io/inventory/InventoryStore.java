@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
@@ -82,83 +83,83 @@ public class InventoryStore extends InventoryFolder {
 
 	// #region CallbackArgs classes
 	public class InventoryObjectUpdatedCallbackArgs implements CallbackArgs {
-		private final InventoryNode m_OldObject;
-		private final InventoryNode m_NewObject;
+		private final InventoryNode oldObject;
+		private final InventoryNode newObject;
 
 		public final InventoryNode getOldObject() {
-			return m_OldObject;
+			return oldObject;
 		}
 
 		public final InventoryNode getNewObject() {
-			return m_NewObject;
+			return newObject;
 		}
 
 		public InventoryObjectUpdatedCallbackArgs(InventoryNode oldObject, InventoryNode newObject) {
-			this.m_OldObject = oldObject;
-			this.m_NewObject = newObject;
+			this.oldObject = oldObject;
+			this.newObject = newObject;
 		}
 	}
 
 	public class InventoryObjectRemovedCallbackArgs implements CallbackArgs {
-		private final InventoryNode m_Obj;
+		private final InventoryNode obj;
 
 		public final InventoryNode getObj() {
-			return m_Obj;
+			return obj;
 		}
 
 		public InventoryObjectRemovedCallbackArgs(InventoryNode obj) {
-			this.m_Obj = obj;
+			this.obj = obj;
 		}
 	}
 
 	public class InventoryObjectAddedCallbackArgs implements CallbackArgs {
-		private final InventoryNode m_Obj;
+		private final InventoryNode obj;
 
 		public final InventoryNode getObj() {
-			return m_Obj;
+			return obj;
 		}
 
 		public InventoryObjectAddedCallbackArgs(InventoryNode obj) {
-			this.m_Obj = obj;
+			this.obj = obj;
 		}
 	}
 
 	// #endregion CallbackArgs classes
 
-	public CallbackHandler<InventoryObjectUpdatedCallbackArgs> OnInventoryObjectUpdated = new CallbackHandler<InventoryObjectUpdatedCallbackArgs>();
+	public CallbackHandler<InventoryObjectUpdatedCallbackArgs> onInventoryObjectUpdated = new CallbackHandler<>();
 
-	public CallbackHandler<InventoryObjectRemovedCallbackArgs> OnInventoryObjectRemoved = new CallbackHandler<InventoryObjectRemovedCallbackArgs>();
+	public CallbackHandler<InventoryObjectRemovedCallbackArgs> onInventoryObjectRemoved = new CallbackHandler<>();
 
-	public CallbackHandler<InventoryObjectAddedCallbackArgs> OnInventoryObjectAdded = new CallbackHandler<InventoryObjectAddedCallbackArgs>();
+	public CallbackHandler<InventoryObjectAddedCallbackArgs> onInventoryObjectAdded = new CallbackHandler<>();
 
-	private GridClient _Client;
+	private GridClient client;
 
-	private HashMap<UUID, InventoryItem> _Items;
-	private HashMap<UUID, InventoryFolder> _Folders;
-	private MultiMap<UUID, InventoryNode> _Unresolved;
+	private Map<UUID, InventoryItem> items;
+	private Map<UUID, InventoryFolder> folders;
+	private MultiMap<UUID, InventoryNode> unresolved;
 
-	private UUID _InventoryID;
-	private UUID _LibraryID;
+	private UUID inventoryID;
+	private UUID libraryID;
 
 	public InventoryStore(GridClient client) {
 		this(client, client.agent.getAgentID());
 	}
 
 	public InventoryStore(GridClient client, UUID owner) {
-		super(UUID.Zero, UUID.Zero, owner);
-		_Client = client;
+		super(UUID.ZERO, UUID.ZERO, owner);
+		this.client = client;
 
-		if (owner == null || owner.equals(UUID.Zero)) {
-			logger.warn(GridClient.Log("Inventory owned by nobody!", _Client));
+		if (owner == null || owner.equals(UUID.ZERO)) {
+			logger.warn(GridClient.Log("Inventory owned by nobody!", client));
 		}
-		_Items = new HashMap<UUID, InventoryItem>();
-		_Folders = new HashMap<UUID, InventoryFolder>();
-		_Unresolved = new MultiMap<UUID, InventoryNode>();
+		this.items = new HashMap<>();
+		this.folders = new HashMap<>();
+		this.unresolved = new MultiMap<>();
 
-		_Folders.put(UUID.Zero, this);
+		this.folders.put(UUID.ZERO, this);
 
-		name = "Root";
-		preferredType = FolderType.Root;
+		this.name = "Root";
+		this.preferredType = FolderType.Root;
 	}
 
 	// The root folder of the avatars inventory
@@ -167,7 +168,7 @@ public class InventoryStore extends InventoryFolder {
 			Iterator<InventoryNode> iter = children.iterator();
 			while (iter.hasNext()) {
 				InventoryFolder node = (InventoryFolder) iter.next();
-				if (node.itemID.equals(_InventoryID))
+				if (node.itemID.equals(inventoryID))
 					return node;
 			}
 		}
@@ -175,7 +176,7 @@ public class InventoryStore extends InventoryFolder {
 	}
 
 	public final void setInventoryFolder(UUID folderID) {
-		_InventoryID = folderID;
+		inventoryID = folderID;
 	}
 
 	// The root folder of the default shared library
@@ -184,7 +185,7 @@ public class InventoryStore extends InventoryFolder {
 			Iterator<InventoryNode> iter = children.iterator();
 			while (iter.hasNext()) {
 				InventoryFolder node = (InventoryFolder) iter.next();
-				if (node.itemID.equals(_LibraryID))
+				if (node.itemID.equals(libraryID))
 					return node;
 			}
 		}
@@ -192,7 +193,7 @@ public class InventoryStore extends InventoryFolder {
 	}
 
 	public final void setLibraryFolder(UUID folderID, UUID ownerID) {
-		_LibraryID = folderID;
+		libraryID = folderID;
 	}
 
 	/**
@@ -204,7 +205,7 @@ public class InventoryStore extends InventoryFolder {
 	 * @return true if inventory contains an item with uuid, false otherwise
 	 */
 	public final boolean containsItem(UUID uuid) {
-		return _Items.containsKey(uuid);
+		return items.containsKey(uuid);
 	}
 
 	/**
@@ -216,14 +217,14 @@ public class InventoryStore extends InventoryFolder {
 	 * @return true if inventory contains an item with uuid, false otherwise
 	 */
 	public final boolean containsFolder(UUID uuid) {
-		return _Folders.containsKey(uuid);
+		return folders.containsKey(uuid);
 	}
 
 	public final boolean contains(InventoryNode node) {
 		if (node.getType() == InventoryType.Folder) {
-			return _Folders.containsKey(node.itemID);
+			return folders.containsKey(node.itemID);
 		}
-		return _Items.containsKey(node.itemID);
+		return items.containsKey(node.itemID);
 	}
 
 	/**
@@ -234,7 +235,7 @@ public class InventoryStore extends InventoryFolder {
 	 * @return The InventoryItem corresponding to <code>uuid</code>.
 	 */
 	public InventoryItem getItem(UUID uuid) {
-		return _Items.get(uuid);
+		return items.get(uuid);
 	}
 
 	/**
@@ -245,7 +246,7 @@ public class InventoryStore extends InventoryFolder {
 	 * @return The InventoryFolder corresponding to <code>uuid</code>.
 	 */
 	protected InventoryFolder getFolder(UUID uuid) {
-		return _Folders.get(uuid);
+		return folders.get(uuid);
 	}
 
 	/**
@@ -256,9 +257,9 @@ public class InventoryStore extends InventoryFolder {
 	 * @return The InventoryNode corresponding to <code>uuid</code>.
 	 */
 	protected final InventoryNode getNode(UUID uuid) {
-		if (_Folders.containsKey(uuid))
-			return _Folders.get(uuid);
-		return _Items.get(uuid);
+		if (folders.containsKey(uuid))
+			return folders.get(uuid);
+		return items.get(uuid);
 	}
 
 	/**
@@ -271,16 +272,16 @@ public class InventoryStore extends InventoryFolder {
 	 *            The node whose parentID to return
 	 */
 	protected final void add(InventoryNode node) {
-		synchronized (_Folders) {
+		synchronized (folders) {
 			// Check if there are any unresolved nodes referring to us
-			if (node.getType() == InventoryType.Folder && _Unresolved.containsKey(node.itemID)) {
+			if (node.getType() == InventoryType.Folder && unresolved.containsKey(node.itemID)) {
 				InventoryFolder parent = (InventoryFolder) node;
-				Iterator<InventoryNode> iter = _Unresolved.iterator(node.itemID);
+				Iterator<InventoryNode> iter = unresolved.iterator(node.itemID);
 				while (iter.hasNext()) {
 					InventoryNode n = iter.next();
 					n.parent = parent;
 					if (parent.children == null)
-						parent.children = new ArrayList<InventoryNode>(1);
+						parent.children = new ArrayList<>(1);
 					parent.children.add(n);
 					iter.remove();
 				}
@@ -297,22 +298,22 @@ public class InventoryStore extends InventoryFolder {
 			if (node.parent == null) {
 				// Link this node to its parent if it already exists, otherwise put it in the
 				// unresolved list
-				if (_Folders.containsKey(node.parentID)) {
-					node.parent = _Folders.get(node.parentID);
+				if (folders.containsKey(node.parentID)) {
+					node.parent = folders.get(node.parentID);
 					if (node.parent.children == null)
-						node.parent.children = new ArrayList<InventoryNode>(1);
+						node.parent.children = new ArrayList<>(1);
 
 					if (!node.parent.children.contains(node)) {
 						node.parent.children.add(node);
 					}
 
 					if (node.getType() == InventoryType.Folder) {
-						_Folders.put(node.itemID, (InventoryFolder) node);
+						folders.put(node.itemID, (InventoryFolder) node);
 					} else {
-						_Items.put(node.itemID, (InventoryItem) node);
+						items.put(node.itemID, (InventoryItem) node);
 					}
 				} else {
-					_Unresolved.put(node.parentID, node);
+					unresolved.put(node.parentID, node);
 				}
 			}
 		}
@@ -338,7 +339,7 @@ public class InventoryStore extends InventoryFolder {
 	 *            The InventoryNode to remove.
 	 */
 	protected final void remove(InventoryNode node) {
-		synchronized (_Folders) {
+		synchronized (folders) {
 			if (node.getType() == InventoryType.Folder) {
 				InventoryFolder folder = (InventoryFolder) node;
 				if (folder.children != null) {
@@ -346,9 +347,9 @@ public class InventoryStore extends InventoryFolder {
 					while (iter.hasNext())
 						remove(iter.next());
 				}
-				_Folders.remove(node.itemID);
+				folders.remove(node.itemID);
 			} else {
-				_Items.remove(node.itemID);
+				items.remove(node.itemID);
 			}
 
 			if (node.parent != null && node.parent.children != null)
@@ -366,32 +367,32 @@ public class InventoryStore extends InventoryFolder {
 	 *                When <code>folder</code> does not exist in the inventory
 	 */
 	protected final List<InventoryNode> getContents(UUID folder) throws InventoryException {
-		synchronized (_Folders) {
-			if (!_Folders.containsKey(folder)) {
+		synchronized (folders) {
+			if (!folders.containsKey(folder)) {
 				throw new InventoryException("Unknown folder: " + folder);
 			}
-			return _Folders.get(folder).getContents();
+			return folders.get(folder).getContents();
 		}
 	}
 
 	protected final void printUnresolved() {
-		if (_Unresolved.valueCount() > 0)
-			System.out.println(_Unresolved.toString());
+		if (unresolved.valueCount() > 0)
+			System.out.println(unresolved.toString());
 	}
 
 	protected final void resolveList() {
-		synchronized (_Folders) {
-			Set<Entry<UUID, List<InventoryNode>>> set = _Unresolved.entrySet();
+		synchronized (folders) {
+			Set<Entry<UUID, List<InventoryNode>>> set = unresolved.entrySet();
 			while (set.iterator().hasNext()) {
 				Entry<UUID, List<InventoryNode>> e = set.iterator().next();
-				if (_Folders.containsKey(e.getKey())) {
-					InventoryFolder parent = _Folders.get(e.getKey());
-					Iterator<InventoryNode> iter = _Unresolved.get(e.getKey()).iterator();
+				if (folders.containsKey(e.getKey())) {
+					InventoryFolder parent = folders.get(e.getKey());
+					Iterator<InventoryNode> iter = unresolved.get(e.getKey()).iterator();
 					while (iter.hasNext()) {
 						InventoryNode n = iter.next();
 						n.parent = parent;
 						if (parent.children == null)
-							parent.children = new ArrayList<InventoryNode>(1);
+							parent.children = new ArrayList<>(1);
 						parent.children.add(n);
 						iter.remove();
 					}
@@ -420,7 +421,7 @@ public class InventoryStore extends InventoryFolder {
 				out.close();
 			}
 		} catch (Throwable ex) {
-			logger.error(GridClient.Log("Error saving inventory cache to disk :" + ex.getMessage(), _Client), ex);
+			logger.error(GridClient.Log("Error saving inventory cache to disk :" + ex.getMessage(), client), ex);
 		} finally {
 			fos.close();
 		}
@@ -436,9 +437,9 @@ public class InventoryStore extends InventoryFolder {
 	 *         inventory node tree
 	 */
 	public final int restoreFromDisk(String filename) throws IOException {
-		_Items.clear();
-		_Folders.clear();
-		_Unresolved.clear();
+		items.clear();
+		folders.clear();
+		unresolved.clear();
 
 		FileInputStream fis = new FileInputStream(filename);
 		try {
@@ -452,15 +453,16 @@ public class InventoryStore extends InventoryFolder {
 				in.close();
 			}
 		} catch (Throwable ex) {
-			logger.error(GridClient.Log("Error accessing inventory cache file :" + ex.getMessage(), _Client), ex);
+			logger.error(GridClient.Log("Error accessing inventory cache file :" + ex.getMessage(), client), ex);
 		} finally {
 			fis.close();
 		}
 
-		Stack<InventoryFolder> stack = new Stack<InventoryFolder>();
+		Stack<InventoryFolder> stack = new Stack<>();
 		stack.push(this);
 
-		int folder_count = 0, item_count = 0;
+		int folderCount = 0;
+		int itemCount = 0;
 		while (stack.size() > 0) {
 			InventoryFolder folder = stack.pop();
 			Iterator<InventoryNode> iter = folder.children.iterator();
@@ -468,16 +470,16 @@ public class InventoryStore extends InventoryFolder {
 				InventoryNode node = iter.next();
 				if (node.getType() == InventoryType.Folder) {
 					stack.push((InventoryFolder) node);
-					_Folders.put(node.itemID, (InventoryFolder) node);
-					folder_count++;
+					folders.put(node.itemID, (InventoryFolder) node);
+					folderCount++;
 				} else {
-					_Items.put(node.itemID, (InventoryItem) node);
-					item_count++;
+					items.put(node.itemID, (InventoryItem) node);
+					itemCount++;
 				}
 			}
 		}
-		logger.info(GridClient.Log(
-				"Read " + folder_count + " folders and " + item_count + " items from inventory cache file", _Client));
-		return item_count;
+		logger.info(GridClient
+				.Log("Read " + folderCount + " folders and " + itemCount + " items from inventory cache file", client));
+		return itemCount;
 	}
 }

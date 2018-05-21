@@ -96,8 +96,8 @@ public class Face {
 		Vector3 c2 = coordList.get(this.v2);
 		Vector3 c3 = coordList.get(this.v3);
 
-		Vector3 edge1 = new Vector3(c2.X - c1.X, c2.Y - c1.Y, c2.Z - c1.Z);
-		Vector3 edge2 = new Vector3(c3.X - c1.X, c3.Y - c1.Y, c3.Z - c1.Z);
+		Vector3 edge1 = new Vector3(c2.x - c1.x, c2.y - c1.y, c2.z - c1.z);
+		Vector3 edge2 = new Vector3(c3.x - c1.x, c3.y - c1.y, c3.z - c1.z);
 
 		return edge1.cross(edge2).normalize();
 	}

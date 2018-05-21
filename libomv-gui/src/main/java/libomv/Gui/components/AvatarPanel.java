@@ -265,11 +265,11 @@ public class AvatarPanel extends JFrame implements ActionListener, MouseListener
 
 					// gl.glTranslatef(mesh.Position.X, mesh.Position.Y, mesh.Position.Z);
 
-					gl.glRotatef(mesh.getRotationAngles().X, 1f, 0f, 0f);
-					gl.glRotatef(mesh.getRotationAngles().Y, 0f, 1f, 0f);
-					gl.glRotatef(mesh.getRotationAngles().Z, 0f, 0f, 1f);
+					gl.glRotatef(mesh.getRotationAngles().x, 1f, 0f, 0f);
+					gl.glRotatef(mesh.getRotationAngles().y, 0f, 1f, 0f);
+					gl.glRotatef(mesh.getRotationAngles().z, 0f, 0f, 1f);
 
-					gl.glScalef(mesh.getScale().X, mesh.getScale().Y, mesh.getScale().Z);
+					gl.glScalef(mesh.getScale().x, mesh.getScale().y, mesh.getScale().z);
 
 					// TODO: Texturing
 
@@ -306,14 +306,14 @@ public class AvatarPanel extends JFrame implements ActionListener, MouseListener
 
 			glu.gluPerspective(50.0, aspect, 0.001, 50);
 
-			Vector3 center = Vector3.Zero;
+			Vector3 center = Vector3.ZERO;
 			if (_meshes.containsKey("headMesh") && _meshes.containsKey("lowerBodyMesh")) {
 				LindenMesh head = _meshes.get("headMesh"), lowerBody = _meshes.get("lowerBodyMesh");
 				center = Vector3.divide(Vector3.add(head.getCenter(), lowerBody.getCenter()), 2f);
 			}
 
-			double value = getJSldZoom().getValue() * 0.1d + center.Y;
-			glu.gluLookAt(center.X, value, center.Z, center.X, value + 1d, center.Z, 0d, 0d, 1d);
+			double value = getJSldZoom().getValue() * 0.1d + center.y;
+			glu.gluLookAt(center.x, value, center.z, center.x, value + 1d, center.z, 0d, 0d, 1d);
 
 			gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
 		}

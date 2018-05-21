@@ -83,7 +83,9 @@ public class VertexIndexer {
 
 		// populate the index lists
 		for (ViewerFace vf : primMesh.viewerFaces) {
-			int v1, v2, v3;
+			int v1;
+			int v2;
+			int v3;
 
 			int[] vertIndices = viewerVertIndices[vf.primFaceNumber];
 			List<ViewerVertex> viewerVerts = viewerVertices.get(vf.primFaceNumber);

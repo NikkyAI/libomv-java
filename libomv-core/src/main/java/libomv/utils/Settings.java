@@ -234,7 +234,8 @@ public class Settings {
 	}
 
 	private OSD put(String name, OSD value) {
-		OSD def = null, osd = null;
+		OSD def = null;
+		OSD osd = null;
 		if (defaults != null) {
 			/*
 			 * if the default value is equal to the new value, remove a possible settings

@@ -15,7 +15,7 @@ public class OutgoingPacket {
 	/** Packet that needs to be sent */
 	public final ByteBuffer buffer;
 	/** PacketType */
-	public PacketType Type;
+	public PacketType type;
 	/** Sequence number of the wrapped packet */
 	public int sequenceNumber;
 	/** Number of times this packet has been resent */
@@ -25,7 +25,7 @@ public class OutgoingPacket {
 
 	public OutgoingPacket(Simulator simulator, PacketType type, ByteBuffer buffer) {
 		this.simulator = simulator;
-		this.Type = type;
+		this.type = type;
 		this.buffer = buffer;
 	}
 }

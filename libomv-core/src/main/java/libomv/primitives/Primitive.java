@@ -76,23 +76,24 @@ public class Primitive {
 		/* A Linden true */
 		Tree(255);
 
+		private byte value;
+
+		private PCode(int value) {
+			this.value = (byte) value;
+		}
+
 		public static PCode setValue(int value) {
 			for (PCode e : values()) {
-				if (e._value == value)
+				if (e.value == value)
 					return e;
 			}
 			return null;
 		}
 
 		public byte getValue() {
-			return _value;
+			return value;
 		}
 
-		private byte _value;
-
-		private PCode(int value) {
-			_value = (byte) value;
-		}
 	}
 
 	// Primary parameters for primitives such as Physics Enabled or Phantom
@@ -145,15 +146,16 @@ public class Primitive {
 		public static final int Temporary = 0x40000000;
 		public static final int ZlibCompressed = 0x80000000;
 
+		private static int MASK = 0xFFFFFFFF;
+
 		public static int setValue(int value) {
-			return value & _mask;
+			return value & MASK;
 		}
 
 		public static int getValue(int value) {
-			return value & _mask;
+			return value & MASK;
 		}
 
-		private static int _mask = 0xFFFFFFFF;
 	}
 
 	// Sound flags for sounds attached to primitives
@@ -167,15 +169,16 @@ public class Primitive {
 		public static final byte LinkedList = 0x10;
 		public static final byte Stop = 0x20;
 
+		private static byte MASK = (byte) 0xFF;
+
 		public static byte setValue(int value) {
-			return (byte) (value & _mask);
+			return (byte) (value & MASK);
 		}
 
 		public static byte getValue(byte value) {
-			return (byte) (value & _mask);
+			return (byte) (value & MASK);
 		}
 
-		private static byte _mask = (byte) 0xFF;
 	}
 
 	public enum ProfileCurve {
@@ -196,45 +199,47 @@ public class Primitive {
 	public enum HoleType {
 		Same(0x00), Circle(0x10), Square(0x20), Triangle(0x30);
 
+		private byte value;
+
+		private HoleType(int value) {
+			this.value = (byte) value;
+		}
+
 		public static HoleType setValue(int value) {
 			for (HoleType e : values()) {
-				if (e._value == value)
+				if (e.value == value)
 					return e;
 			}
 			return null;
 		}
 
 		public byte getValue() {
-			return _value;
+			return value;
 		}
 
-		private byte _value;
-
-		private HoleType(int value) {
-			_value = (byte) value;
-		}
 	}
 
 	public enum PathCurve {
 		Line(0x10), Circle(0x20), Circle2(0x30), Test(0x40), Flexible(0x80);
 
+		private byte value;
+
+		private PathCurve(int value) {
+			this.value = (byte) value;
+		}
+
 		public static PathCurve setValue(int value) {
 			for (PathCurve e : values()) {
-				if (e._value == value)
+				if (e.value == value)
 					return e;
 			}
 			return null;
 		}
 
 		public byte getValue() {
-			return _value;
+			return value;
 		}
 
-		private byte _value;
-
-		private PathCurve(int value) {
-			_value = (byte) value;
-		}
 	}
 
 	// Material type for a primitive
@@ -281,9 +286,15 @@ public class Primitive {
 		// Whether this object is a mesh
 		Mesh(0x60);
 
+		private byte value;
+
+		private ExtraParamType(int value) {
+			this.value = (byte) value;
+		}
+
 		public static ExtraParamType setValue(int value) {
 			for (ExtraParamType e : values()) {
-				if (e._value == value)
+				if (e.value == value)
 					return e;
 			}
 			logger.warn(String.format("Unknown ExtraParamType value %x", value));
@@ -291,14 +302,9 @@ public class Primitive {
 		}
 
 		public byte getValue() {
-			return _value;
+			return value;
 		}
 
-		private byte _value;
-
-		private ExtraParamType(int value) {
-			_value = (byte) value;
-		}
 	}
 
 	public enum JointType {
@@ -324,9 +330,15 @@ public class Primitive {
 	public enum SculptType {
 		None(0), Sphere(1), Torus(2), Plane(3), Cylinder(4), Mesh(5), Invert(64), Mirror(128);
 
+		private byte value;
+
+		private SculptType(int value) {
+			this.value = (byte) value;
+		}
+
 		public static SculptType setValue(int value) {
 			for (SculptType e : values()) {
-				if (e._value == value)
+				if (e.value == value)
 					return e;
 			}
 			logger.warn(String.format("Unknown SculptType value %x", value));
@@ -334,22 +346,23 @@ public class Primitive {
 		}
 
 		public byte getValue() {
-			return _value;
+			return value;
 		}
 
-		private byte _value;
-
-		private SculptType(int value) {
-			_value = (byte) value;
-		}
 	}
 
 	public enum ObjectCategory {
 		Invalid(-1), None(0), Owner(1), Group(2), Other(3), Selected(4), Temporary(5);
 
+		private byte value;
+
+		private ObjectCategory(int value) {
+			this.value = (byte) value;
+		}
+
 		public static ObjectCategory setValue(int value) {
 			for (ObjectCategory e : values()) {
-				if (e._value == value)
+				if (e.value == value)
 					return e;
 			}
 			logger.warn(String.format("Unknown ObjectCategory value %x", value));
@@ -357,14 +370,9 @@ public class Primitive {
 		}
 
 		public byte getValue() {
-			return _value;
+			return value;
 		}
 
-		private byte _value;
-
-		private ObjectCategory(int value) {
-			_value = (byte) value;
-		}
 	}
 
 	/**
@@ -487,7 +495,7 @@ public class Primitive {
 		/** Right Hind Foot */
 		RightHindFoot;
 
-		private static String[] strings = { "Default", "Chest", "Head", "Left Shoulder", "Right Shoulder", "Left Hand",
+		private static String[] STRINGS = { "Default", "Chest", "Head", "Left Shoulder", "Right Shoulder", "Left Hand",
 				"Right Hand", "Left Foot", "Right Foot", "Back", "Pelvis", "Mouth", "Chin", "Left Ear", "Right Ear",
 				"Left Eye", "Right Eye", "Nose", "Right Upper Arm", "Right Lower Arm", "Left Upper Arm",
 				"Left Lower Arm", "Right Hip", "Right Upper Leg", "Right Lower Leg", "Left Hip", "Left Upper Leg",
@@ -499,7 +507,7 @@ public class Primitive {
 
 		public static AttachmentPoint setValue(String value) {
 			for (int i = 0; i < values().length; i++) {
-				if (value.equals(strings[i])) {
+				if (value.equals(STRINGS[i])) {
 					return values()[i];
 				}
 			}
@@ -533,7 +541,7 @@ public class Primitive {
 		}
 
 		public static String toString(AttachmentPoint point) {
-			return strings[point.ordinal()];
+			return STRINGS[point.ordinal()];
 		}
 	}
 
@@ -852,18 +860,18 @@ public class Primitive {
 		public Vector2 getPathBeginScale() {
 			Vector2 begin = new Vector2(1f, 1f);
 			if (pathScaleX > 1f)
-				begin.X = 2f - pathScaleX;
+				begin.x = 2f - pathScaleX;
 			if (pathScaleY > 1f)
-				begin.Y = 2f - pathScaleY;
+				begin.y = 2f - pathScaleY;
 			return begin;
 		}
 
 		public Vector2 getPathEndScale() {
 			Vector2 end = new Vector2(1f, 1f);
 			if (pathScaleX < 1f)
-				end.X = pathScaleX;
+				end.x = pathScaleX;
 			if (pathScaleY < 1f)
-				end.Y = pathScaleY;
+				end.y = pathScaleY;
 			return end;
 		}
 
@@ -989,7 +997,7 @@ public class Primitive {
 			drag = 2.0f;
 			wind = 0.0f;
 			tension = 1.0f;
-			force = Vector3.Zero;
+			force = Vector3.ZERO;
 		}
 
 		public FlexibleData(OSD osd) {
@@ -1036,7 +1044,7 @@ public class Primitive {
 			return data;
 		}
 
-		public OSD Serialize() {
+		public OSD serialize() {
 			OSDMap map = new OSDMap();
 
 			map.put("simulate_lod", OSD.fromInteger(softness));
@@ -1089,7 +1097,7 @@ public class Primitive {
 
 		// Default constructor
 		public LightData() {
-			color = Color4.White;
+			color = Color4.WHITE;
 			radius = 10.0f;
 			cutoff = 0.0f;
 			falloff = 0.75f;
@@ -1104,13 +1112,13 @@ public class Primitive {
 			this();
 			if (length >= 16 && data.length >= 16 + pos) {
 				color = new Color4(data, pos, false);
-				radius = Helpers.BytesToFloatL(data, pos + 4);
-				cutoff = Helpers.BytesToFloatL(data, pos + 8);
-				falloff = Helpers.BytesToFloatL(data, pos + 12);
+				radius = Helpers.bytesToFloatL(data, pos + 4);
+				cutoff = Helpers.bytesToFloatL(data, pos + 8);
+				falloff = Helpers.bytesToFloatL(data, pos + 12);
 
 				// Alpha in color is actually intensity
-				intensity = color.A;
-				color.A = 1f;
+				intensity = color.a;
+				color.a = 1f;
 			}
 		}
 
@@ -1127,7 +1135,7 @@ public class Primitive {
 
 			// Alpha channel in color is intensity
 			Color4 tmpColor = color;
-			tmpColor.A = intensity;
+			tmpColor.a = intensity;
 			tmpColor.toBytes(data, 0);
 			Helpers.floatToBytesL(radius, data, 4);
 			Helpers.floatToBytesL(cutoff, data, 8);
@@ -1224,7 +1232,7 @@ public class Primitive {
 				sculptTexture = new UUID(data, pos);
 				type = data[pos + 16];
 			} else {
-				sculptTexture = UUID.Zero;
+				sculptTexture = UUID.ZERO;
 				type = SculptType.None.getValue();
 			}
 		}
@@ -1295,7 +1303,7 @@ public class Primitive {
 				lightTexture = new UUID(data, pos);
 				params = new Vector3(data, pos + 16, true);
 			} else {
-				lightTexture = UUID.Zero;
+				lightTexture = UUID.ZERO;
 				params = new Vector3(Helpers.PI_OVER_TWO, 0.f, 0.f);
 			}
 		}
@@ -1332,7 +1340,7 @@ public class Primitive {
 		}
 
 		public boolean isLightSpotlight() {
-			return lightTexture != null && !lightTexture.equals(UUID.Zero);
+			return lightTexture != null && !lightTexture.equals(UUID.ZERO);
 		}
 
 		@Override
@@ -1375,7 +1383,7 @@ public class Primitive {
 	// Location of Object (x,y,z probably)
 	public Vector3 position;
 	// Rotational Position of Object
-	public Quaternion rotation = Quaternion.Identity;
+	public Quaternion rotation = Quaternion.IDENTITY;
 	public Vector3 scale;
 	public Vector3 velocity;
 	public Vector3 angularVelocity;
@@ -1427,7 +1435,7 @@ public class Primitive {
 
 	// Uses basic heuristics to estimate the primitive shape
 	public PrimType getType() {
-		if (sculpt != null && sculpt.getType() != SculptType.None && !sculpt.sculptTexture.equals(UUID.Zero)) {
+		if (sculpt != null && sculpt.getType() != SculptType.None && !sculpt.sculptTexture.equals(UUID.ZERO)) {
 			if (sculpt.getType() == SculptType.Mesh)
 				return PrimType.Mesh;
 			return PrimType.Sculpt;
@@ -1583,7 +1591,7 @@ public class Primitive {
 			prim.put("light_image", lightMap.serialize());
 
 		if (flexible != null)
-			prim.put("flex", flexible.Serialize());
+			prim.put("flex", flexible.serialize());
 
 		if (sculpt != null)
 			prim.put("sculpt", sculpt.serialize());
@@ -1646,10 +1654,10 @@ public class Primitive {
 		byte extraParamCount = data[i++];
 
 		for (int k = 0; k < extraParamCount; k++) {
-			ExtraParamType type = ExtraParamType.setValue(Helpers.BytesToUInt16L(data, i));
+			ExtraParamType type = ExtraParamType.setValue(Helpers.bytesToUInt16L(data, i));
 			i += 2;
 
-			int paramLength = (int) Helpers.BytesToUInt32L(data, i);
+			int paramLength = (int) Helpers.bytesToUInt32L(data, i);
 			i += 4;
 
 			switch (type) {
@@ -1682,37 +1690,37 @@ public class Primitive {
 
 		data.write(0);
 		if (flexible != null) {
-			data.write(Helpers.UInt16ToBytesL(ExtraParamType.Flexible.getValue()));
+			data.write(Helpers.uint16ToBytesL(ExtraParamType.Flexible.getValue()));
 			buffer = flexible.getBytes();
-			data.write(Helpers.UInt32ToBytesL(buffer.length));
+			data.write(Helpers.uint32ToBytesL(buffer.length));
 			data.write(buffer);
 			++count;
 		}
 
 		if (light != null) {
-			data.write(Helpers.UInt16ToBytesL(ExtraParamType.Flexible.getValue()));
+			data.write(Helpers.uint16ToBytesL(ExtraParamType.Flexible.getValue()));
 			buffer = light.getBytes();
-			data.write(Helpers.UInt32ToBytesL(buffer.length));
+			data.write(Helpers.uint32ToBytesL(buffer.length));
 			data.write(buffer);
 			++count;
 		}
 
 		if (lightMap != null) {
-			data.write(Helpers.UInt16ToBytesL(ExtraParamType.LightImage.getValue()));
+			data.write(Helpers.uint16ToBytesL(ExtraParamType.LightImage.getValue()));
 			buffer = lightMap.getBytes();
-			data.write(Helpers.UInt32ToBytesL(buffer.length));
+			data.write(Helpers.uint32ToBytesL(buffer.length));
 			data.write(buffer);
 			++count;
 		}
 
 		if (sculpt != null) {
 			if (sculpt.getType() == SculptType.Mesh) {
-				data.write(Helpers.UInt16ToBytesL(ExtraParamType.Mesh.getValue()));
+				data.write(Helpers.uint16ToBytesL(ExtraParamType.Mesh.getValue()));
 			} else {
-				data.write(Helpers.UInt16ToBytesL(ExtraParamType.Sculpt.getValue()));
+				data.write(Helpers.uint16ToBytesL(ExtraParamType.Sculpt.getValue()));
 			}
 			buffer = sculpt.getBytes();
-			data.write(Helpers.UInt32ToBytesL(buffer.length));
+			data.write(Helpers.uint32ToBytesL(buffer.length));
 			data.write(buffer);
 			++count;
 		}

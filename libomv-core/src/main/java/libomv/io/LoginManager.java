@@ -454,7 +454,7 @@ public class LoginManager {
 
 		// Convert the password to MD5 if it isn't already
 		if (loginParams.password.length() != 35 && !loginParams.password.startsWith("$1$"))
-			loginParams.password = Helpers.MD5Password(loginParams.password);
+			loginParams.password = Helpers.md5Password(loginParams.password);
 
 		if (loginParams.viewerDigest == null)
 			loginParams.viewerDigest = Helpers.EmptyString;

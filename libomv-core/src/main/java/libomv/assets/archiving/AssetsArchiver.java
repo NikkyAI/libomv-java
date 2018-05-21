@@ -49,10 +49,10 @@ public class AssetsArchiver {
 	// static int LOG_ASSET_LOAD_NOTIFICATION_INTERVAL = 50;
 
 	/// Archive assets
-	protected Map<UUID, AssetItem> m_assets;
+	protected Map<UUID, AssetItem> assets;
 
 	public AssetsArchiver(Map<UUID, AssetItem> assets) {
-		m_assets = assets;
+		this.assets = assets;
 	}
 
 	/// Archive the assets given to this archiver to the given archive.
@@ -73,8 +73,8 @@ public class AssetsArchiver {
 		writer.startDocument(Helpers.ASCII_ENCODING, null);
 		writer.startTag(null, "assets");
 
-		for (UUID uuid : m_assets.keySet()) {
-			AssetItem asset = m_assets.get(uuid);
+		for (UUID uuid : assets.keySet()) {
+			AssetItem asset = assets.get(uuid);
 
 			if (asset != null) {
 				writer.startTag(null, "asset");
@@ -103,8 +103,8 @@ public class AssetsArchiver {
 		// It appears that gtar, at least, doesn't need the intermediate directory
 		// entries in the tar
 		// archive.AddDir("assets");
-		for (UUID uuid : m_assets.keySet()) {
-			AssetItem asset = m_assets.get(uuid);
+		for (UUID uuid : assets.keySet()) {
+			AssetItem asset = assets.get(uuid);
 
 			String extension = ArchiveConstants.getExtensionForType(asset.getAssetType());
 			if (extension == null)

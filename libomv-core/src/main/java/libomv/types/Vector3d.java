@@ -42,48 +42,60 @@ import org.xmlpull.v1.XmlSerializer;
 import libomv.utils.Helpers;
 
 public class Vector3d {
-	public double X;
 
-	public double Y;
+	/** A vector with a value of 0,0,0 */
+	public final static Vector3d ZERO = new Vector3d(0f);
+	/** A vector with a value of 1,1,1 */
+	public final static Vector3d ONE = new Vector3d(1d, 1d, 1d);
+	/** A unit vector facing forward (X axis), value 1,0,0 */
+	public final static Vector3d UNIT_X = new Vector3d(1d, 0d, 0d);
+	/** A unit vector facing left (Y axis), value 0,1,0 */
+	public final static Vector3d UNIT_Y = new Vector3d(0d, 1d, 0d);
+	/** A unit vector facing up (Z axis), value 0,0,1 */
+	public final static Vector3d UNIT_Z = new Vector3d(0d, 0d, 1d);
 
-	public double Z;
+	public double x;
+
+	public double y;
+
+	public double z;
 
 	public Vector3d(double val) {
-		X = Y = Z = val;
+		x = y = z = val;
 	}
 
 	public Vector3d(Vector3 vec) {
-		X = vec.X;
-		Y = vec.Y;
-		Z = vec.Z;
+		x = vec.x;
+		y = vec.y;
+		z = vec.z;
 	}
 
 	public Vector3d(Vector3d vec) {
-		X = vec.X;
-		Y = vec.Y;
-		Z = vec.Z;
+		x = vec.x;
+		y = vec.y;
+		z = vec.z;
 	}
 
 	public Vector3d(double x, double y, double z) {
-		X = x;
-		Y = y;
-		Z = z;
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	}
 
 	public Vector3d(byte[] bytes, int offset) {
-		X = Y = Z = 0f;
+		x = y = z = 0f;
 		fromBytes(bytes, offset, false);
 	}
 
 	public Vector3d(byte[] bytes, int offset, boolean le) {
-		X = Y = Z = 0f;
+		x = y = z = 0f;
 		fromBytes(bytes, offset, le);
 	}
 
 	public Vector3d(ByteBuffer byteArray) {
-		X = byteArray.getDouble();
-		Y = byteArray.getDouble();
-		Z = byteArray.getDouble();
+		x = byteArray.getDouble();
+		y = byteArray.getDouble();
+		z = byteArray.getDouble();
 	}
 
 	/**
@@ -102,11 +114,11 @@ public class Vector3d {
 		while (parser.nextTag() == XmlPullParser.START_TAG) {
 			String name = parser.getName();
 			if (name.equalsIgnoreCase("X")) {
-				X = Helpers.TryParseDouble(parser.nextText().trim());
+				x = Helpers.tryParseDouble(parser.nextText().trim());
 			} else if (name.equalsIgnoreCase("Y")) {
-				Y = Helpers.TryParseDouble(parser.nextText().trim());
+				y = Helpers.tryParseDouble(parser.nextText().trim());
 			} else if (name.equalsIgnoreCase("Z")) {
-				Z = Helpers.TryParseDouble(parser.nextText().trim());
+				z = Helpers.tryParseDouble(parser.nextText().trim());
 			} else {
 				Helpers.skipElement(parser);
 			}
@@ -123,9 +135,9 @@ public class Vector3d {
 	 * @throws IOException
 	 */
 	public void write(ByteBuffer byteArray) {
-		byteArray.putDouble(X);
-		byteArray.putDouble(Y);
-		byteArray.putDouble(Z);
+		byteArray.putDouble(x);
+		byteArray.putDouble(y);
+		byteArray.putDouble(z);
 	}
 
 	/**
@@ -139,13 +151,13 @@ public class Vector3d {
 	 */
 	public void write(OutputStream stream, boolean le) throws IOException {
 		if (le) {
-			stream.write(Helpers.doubleToBytesL(X));
-			stream.write(Helpers.doubleToBytesL(Y));
-			stream.write(Helpers.doubleToBytesL(Z));
+			stream.write(Helpers.doubleToBytesL(x));
+			stream.write(Helpers.doubleToBytesL(y));
+			stream.write(Helpers.doubleToBytesL(z));
 		} else {
-			stream.write(Helpers.doubleToBytesB(X));
-			stream.write(Helpers.doubleToBytesB(Y));
-			stream.write(Helpers.doubleToBytesB(Z));
+			stream.write(Helpers.doubleToBytesB(x));
+			stream.write(Helpers.doubleToBytesB(y));
+			stream.write(Helpers.doubleToBytesB(z));
 		}
 	}
 
@@ -154,8 +166,8 @@ public class Vector3d {
 	}
 
 	public static double distanceSquared(Vector3d value1, Vector3d value2) {
-		return (value1.X - value2.X) * (value1.X - value2.X) + (value1.Y - value2.Y) * (value1.Y - value2.Y)
-				+ (value1.Z - value2.Z) * (value1.Z - value2.Z);
+		return (value1.x - value2.x) * (value1.x - value2.x) + (value1.y - value2.y) * (value1.y - value2.y)
+				+ (value1.z - value2.z) * (value1.z - value2.z);
 	}
 
 	public static Vector3d normalize(Vector3d value) {
@@ -163,11 +175,11 @@ public class Vector3d {
 	}
 
 	public double length() {
-		return Math.sqrt(distanceSquared(this, Zero));
+		return Math.sqrt(distanceSquared(this, ZERO));
 	}
 
 	public double lengthSquared() {
-		return distanceSquared(this, Zero);
+		return distanceSquared(this, ZERO);
 	}
 
 	public Vector3d normalize() {
@@ -175,9 +187,9 @@ public class Vector3d {
 		if (length > Helpers.FLOAT_MAG_THRESHOLD) {
 			return divide(length);
 		}
-		X = 0f;
-		Y = 0f;
-		Z = 0f;
+		x = 0f;
+		y = 0f;
+		z = 0f;
 		return this;
 	}
 
@@ -194,13 +206,13 @@ public class Vector3d {
 	public void fromBytes(byte[] bytes, int pos, boolean le) {
 		if (le) {
 			/* Little endian architecture */
-			X = Helpers.BytesToDoubleL(bytes, pos + 0);
-			Y = Helpers.BytesToDoubleL(bytes, pos + 8);
-			Z = Helpers.BytesToDoubleL(bytes, pos + 16);
+			x = Helpers.bytesToDoubleL(bytes, pos + 0);
+			y = Helpers.bytesToDoubleL(bytes, pos + 8);
+			z = Helpers.bytesToDoubleL(bytes, pos + 16);
 		} else {
-			X = Helpers.BytesToDoubleB(bytes, pos + 0);
-			Y = Helpers.BytesToDoubleB(bytes, pos + 8);
-			Z = Helpers.BytesToDoubleB(bytes, pos + 16);
+			x = Helpers.bytesToDoubleB(bytes, pos + 0);
+			y = Helpers.bytesToDoubleB(bytes, pos + 8);
+			z = Helpers.bytesToDoubleB(bytes, pos + 16);
 		}
 	}
 
@@ -219,13 +231,13 @@ public class Vector3d {
 
 	public int toBytes(byte[] dest, int pos, boolean le) {
 		if (le) {
-			Helpers.doubleToBytesL(X, dest, pos + 0);
-			Helpers.doubleToBytesL(Y, dest, pos + 4);
-			Helpers.doubleToBytesL(Z, dest, pos + 8);
+			Helpers.doubleToBytesL(x, dest, pos + 0);
+			Helpers.doubleToBytesL(y, dest, pos + 4);
+			Helpers.doubleToBytesL(z, dest, pos + 8);
 		} else {
-			Helpers.doubleToBytesB(X, dest, pos + 0);
-			Helpers.doubleToBytesB(Y, dest, pos + 4);
-			Helpers.doubleToBytesB(Z, dest, pos + 8);
+			Helpers.doubleToBytesB(x, dest, pos + 0);
+			Helpers.doubleToBytesB(y, dest, pos + 4);
+			Helpers.doubleToBytesB(z, dest, pos + 8);
 		}
 		return 24;
 	}
@@ -237,24 +249,24 @@ public class Vector3d {
 	public void serializeXml(XmlSerializer writer, String namespace, String name)
 			throws IllegalArgumentException, IllegalStateException, IOException {
 		writer.startTag(namespace, name);
-		writer.startTag(namespace, "X").text(Double.toString(X)).endTag(namespace, "X");
-		writer.startTag(namespace, "Y").text(Double.toString(Y)).endTag(namespace, "Y");
-		writer.startTag(namespace, "Z").text(Double.toString(Z)).endTag(namespace, "Z");
+		writer.startTag(namespace, "X").text(Double.toString(x)).endTag(namespace, "X");
+		writer.startTag(namespace, "Y").text(Double.toString(y)).endTag(namespace, "Y");
+		writer.startTag(namespace, "Z").text(Double.toString(z)).endTag(namespace, "Z");
 		writer.endTag(namespace, name);
 	}
 
 	public void serializeXml(XmlSerializer writer, String namespace, String name, Locale locale)
 			throws IllegalArgumentException, IllegalStateException, IOException {
 		writer.startTag(namespace, name);
-		writer.startTag(namespace, "X").text(String.format(locale, "%f", X)).endTag(namespace, "X");
-		writer.startTag(namespace, "Y").text(String.format(locale, "%f", Y)).endTag(namespace, "Y");
-		writer.startTag(namespace, "Z").text(String.format(locale, "%f", Z)).endTag(namespace, "Z");
+		writer.startTag(namespace, "X").text(String.format(locale, "%f", x)).endTag(namespace, "X");
+		writer.startTag(namespace, "Y").text(String.format(locale, "%f", y)).endTag(namespace, "Y");
+		writer.startTag(namespace, "Z").text(String.format(locale, "%f", z)).endTag(namespace, "Z");
 		writer.endTag(namespace, name);
 	}
 
 	@Override
 	public String toString() {
-		return String.format(Helpers.EnUsCulture, "<%.3f, %.3f, %.3f>", X, Y, Z);
+		return String.format(Helpers.EnUsCulture, "<%.3f, %.3f, %.3f>", x, y, z);
 	}
 
 	@Override
@@ -264,83 +276,73 @@ public class Vector3d {
 	}
 
 	public boolean equals(Vector3 val) {
-		return val != null && X == val.X && Y == val.Y && Z == val.Z;
+		return val != null && x == val.x && y == val.y && z == val.z;
 	}
 
 	public boolean equals(Vector3d val) {
-		return val != null && X == val.X && Y == val.Y && Z == val.Z;
+		return val != null && x == val.x && y == val.y && z == val.z;
 	}
 
 	@Override
 	public int hashCode() {
-		return ((Double) X).hashCode() * 31 * 31 + ((Double) Y).hashCode() * 31 + ((Double) Z).hashCode();
+		return ((Double) x).hashCode() * 31 * 31 + ((Double) y).hashCode() * 31 + ((Double) z).hashCode();
 	}
 
 	public Vector3d negate() {
-		X = -X;
-		Y = -Y;
-		Z = -Z;
+		x = -x;
+		y = -y;
+		z = -z;
 		return this;
 	}
 
 	public Vector3d add(Vector3d val) {
-		X += val.X;
-		Y += val.Y;
-		Z += val.Z;
+		x += val.x;
+		y += val.y;
+		z += val.z;
 		return this;
 	}
 
 	public Vector3d subtract(Vector3d val) {
-		X -= val.X;
-		Y -= val.Y;
-		Z -= val.Z;
+		x -= val.x;
+		y -= val.y;
+		z -= val.z;
 		return this;
 	}
 
 	public Vector3d multiply(double scaleFactor) {
-		X *= scaleFactor;
-		Y *= scaleFactor;
-		Z *= scaleFactor;
+		x *= scaleFactor;
+		y *= scaleFactor;
+		z *= scaleFactor;
 		return this;
 	}
 
 	public Vector3d multiply(Vector3d value) {
-		X *= value.X;
-		Y *= value.Y;
-		Z *= value.Z;
+		x *= value.x;
+		y *= value.y;
+		z *= value.z;
 		return this;
 	}
 
 	public Vector3d divide(Vector3d value) {
-		X /= value.X;
-		Y /= value.Y;
-		Z /= value.Z;
+		x /= value.x;
+		y /= value.y;
+		z /= value.z;
 		return this;
 	}
 
 	public Vector3d divide(double divider) {
 		double factor = 1d / divider;
-		X *= factor;
-		Y *= factor;
-		Z *= factor;
+		x *= factor;
+		y *= factor;
+		z *= factor;
 		return this;
 	}
 
 	public Vector3d cross(Vector3d value) {
-		X = Y * value.Z - value.Y * Z;
-		Y = Z * value.X - value.Z * X;
-		Z = X * value.Y - value.X * Y;
+		x = y * value.z - value.y * z;
+		y = z * value.x - value.z * x;
+		z = x * value.y - value.x * y;
 		return this;
 	}
 
-	/** A vector with a value of 0,0,0 */
-	public final static Vector3d Zero = new Vector3d(0f);
-	/** A vector with a value of 1,1,1 */
-	public final static Vector3d One = new Vector3d(1d, 1d, 1d);
-	/** A unit vector facing forward (X axis), value 1,0,0 */
-	public final static Vector3d UnitX = new Vector3d(1d, 0d, 0d);
-	/** A unit vector facing left (Y axis), value 0,1,0 */
-	public final static Vector3d UnitY = new Vector3d(0d, 1d, 0d);
-	/** A unit vector facing up (Z axis), value 0,0,1 */
-	public final static Vector3d UnitZ = new Vector3d(0d, 0d, 1d);
 }

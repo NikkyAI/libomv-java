@@ -87,11 +87,11 @@ public class LindenSkeleton {
 
 	public class Joint extends JointBase {
 		float[] pivot;
-		CollisionVolume collision_volume;
+		CollisionVolume collisionVolume;
 		Joint[] bone;
 
 		public CollisionVolume getCollisionVolume() {
-			return this.collision_volume;
+			return this.collisionVolume;
 		}
 
 		public Joint[] getBone() {
@@ -105,8 +105,8 @@ public class LindenSkeleton {
 
 	private float version;
 	private boolean versionSpecified;
-	private int num_bones; // totals in this skeleton
-	private int num_collision_volumes; // totals in this skeleton
+	private int numBones; // totals in this skeleton
+	private int numCollisionVolumes; // totals in this skeleton
 
 	private Joint bone;
 
@@ -127,11 +127,11 @@ public class LindenSkeleton {
 	}
 
 	public int getNumBones() {
-		return this.num_bones;
+		return this.numBones;
 	}
 
 	public int getNumCollisionVolumes() {
-		return this.num_collision_volumes;
+		return this.numCollisionVolumes;
 	}
 
 	private class SkeletonHandler extends DefaultHandler {
@@ -202,7 +202,7 @@ public class LindenSkeleton {
 						collision.scale = createVector(atts.getValue(i));
 					}
 				}
-				joint.collision_volume = collision;
+				joint.collisionVolume = collision;
 			} else if (qName.equalsIgnoreCase("linden_skeleton")) {
 				for (int i = 0; i < atts.getLength(); i++) {
 					String name = atts.getQName(i);
@@ -210,9 +210,9 @@ public class LindenSkeleton {
 						versionSpecified = true;
 						version = Float.parseFloat(atts.getValue(i));
 					} else if (name.equalsIgnoreCase("num_bones")) {
-						num_bones = Integer.parseInt(atts.getValue(i));
+						numBones = Integer.parseInt(atts.getValue(i));
 					} else if (name.equalsIgnoreCase("num_collision_volumes")) {
-						num_collision_volumes = Integer.parseInt(atts.getValue(i));
+						numCollisionVolumes = Integer.parseInt(atts.getValue(i));
 					}
 				}
 			}

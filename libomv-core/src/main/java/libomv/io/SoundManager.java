@@ -167,9 +167,9 @@ public class SoundManager implements PacketCallback {
 		SoundTriggerPacket soundtrigger = new SoundTriggerPacket();
 		soundtrigger.SoundData = soundtrigger.new SoundDataBlock();
 		soundtrigger.SoundData.SoundID = soundID;
-		soundtrigger.SoundData.ObjectID = UUID.Zero;
-		soundtrigger.SoundData.OwnerID = UUID.Zero;
-		soundtrigger.SoundData.ParentID = UUID.Zero;
+		soundtrigger.SoundData.ObjectID = UUID.ZERO;
+		soundtrigger.SoundData.OwnerID = UUID.ZERO;
+		soundtrigger.SoundData.ParentID = UUID.ZERO;
 		soundtrigger.SoundData.Handle = handle;
 		soundtrigger.SoundData.Position = position;
 		soundtrigger.SoundData.Gain = gain;

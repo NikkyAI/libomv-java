@@ -94,7 +94,7 @@ public class AssetCallingCard extends AssetItem {
 			return false;
 
 		try {
-			String text = Helpers.BytesToString(assetData);
+			String text = Helpers.bytesToString(assetData);
 			if (text != null && text.toLowerCase().contains("callingcard version 2")) {
 				assetID = new UUID(text.substring(text.indexOf("avatar_id") + 9, 38).trim());
 				return true;

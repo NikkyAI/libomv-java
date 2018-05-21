@@ -43,6 +43,7 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Timer;
@@ -144,12 +145,12 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 			boolean full = inBytes.isFull();
 			long recv = statistics.recvBytes;
 			long sent = statistics.sentBytes;
-			long old_in = inBytes.offer(recv);
-			long old_out = outBytes.offer(sent);
+			long oldIn = inBytes.offer(recv);
+			long oldOut = outBytes.offer(sent);
 
 			if (full) {
-				statistics.incomingBPS = (int) (recv - old_in) / inBytes.size();
-				statistics.outgoingBPS = (int) (sent - old_out) / outBytes.size();
+				statistics.incomingBPS = (int) (recv - oldIn) / inBytes.size();
+				statistics.outgoingBPS = (int) (sent - oldOut) / outBytes.size();
 				logger.debug(GridClient.Log(getName() + ", Incoming: " + statistics.incomingBPS + " bps, Out: "
 						+ statistics.outgoingBPS + " bps, Lag: " + statistics.lastLag + " ms, Pings: "
 						+ statistics.receivedPongs + "/" + statistics.sentPings, client));
@@ -186,7 +187,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 	}
 
 	/* A Unique Cache identifier for this simulator */
-	public UUID id = UUID.Zero;
+	public UUID id = UUID.ZERO;
 
 	public final TerrainPatch[] terrain;
 
@@ -235,23 +236,23 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 	/*  */
 	public float waterHeight;
 	/*  */
-	public UUID simOwner = UUID.Zero;
+	public UUID simOwner = UUID.ZERO;
 	/*  */
-	public UUID terrainBase0 = UUID.Zero;
+	public UUID terrainBase0 = UUID.ZERO;
 	/*  */
-	public UUID terrainBase1 = UUID.Zero;
+	public UUID terrainBase1 = UUID.ZERO;
 	/*  */
-	public UUID terrainBase2 = UUID.Zero;
+	public UUID terrainBase2 = UUID.ZERO;
 	/*  */
-	public UUID terrainBase3 = UUID.Zero;
+	public UUID terrainBase3 = UUID.ZERO;
 	/*  */
-	public UUID terrainDetail0 = UUID.Zero;
+	public UUID terrainDetail0 = UUID.ZERO;
 	/*  */
-	public UUID terrainDetail1 = UUID.Zero;
+	public UUID terrainDetail1 = UUID.ZERO;
 	/*  */
-	public UUID terrainDetail2 = UUID.Zero;
+	public UUID terrainDetail2 = UUID.ZERO;
 	/*  */
-	public UUID terrainDetail3 = UUID.Zero;
+	public UUID terrainDetail3 = UUID.ZERO;
 	/* true if your agent has Estate Manager rights on this region */
 	public boolean isEstateManager;
 	/*  */
@@ -261,7 +262,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 	/*  */
 	public float billableFactor;
 	/* The regions Unique ID */
-	public UUID regionID = UUID.Zero;
+	public UUID regionID = UUID.ZERO;
 
 	/*
 	 * The physical data center the simulator is located Known values are: Dallas,
@@ -339,7 +340,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 	private Map<UUID, Vector3> avatarPositions = new HashMap<>();
 
 	/* AvatarPositions key representing TrackAgent target */
-	private UUID preyID = UUID.Zero;
+	private UUID preyID = UUID.ZERO;
 
 	// A boolean representing whether there is a working connection to the
 	// simulator or not.
@@ -386,11 +387,11 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 
 		// Initialize the dictionary for reliable packets waiting on ACKs from the
 		// server
-		this.needAck = new TreeMap<Integer, OutgoingPacket>();
+		this.needAck = new TreeMap<>();
 
 		// Initialize the lists of sequence numbers we've received so far
 		this.packetArchive = new IncomingPacketIDCollection(client.settings.getInt(LibSettings.PACKET_ARCHIVE_SIZE));
-		this.pendingAcks = new TreeSet<Integer>();
+		this.pendingAcks = new TreeSet<>();
 
 		if (client.settings.getBool(LibSettings.STORE_LAND_PATCHES)) {
 			this.terrain = new TerrainPatch[16 * 16];
@@ -721,7 +722,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 				CloseCircuitPacket close = new CloseCircuitPacket();
 
 				try {
-					ByteBuffer data = close.ToBytes();
+					ByteBuffer data = close.toBytes();
 					connection.send(new DatagramPacket(data.array(), data.position()));
 					Thread.sleep(50);
 				} catch (IOException ex) {
@@ -841,8 +842,8 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 			logger.error(GridClient.Log("Failed to startup the UDP socket", client));
 			return;
 		}
-		byte[] RecvBuffer = new byte[4096];
-		DatagramPacket p = new DatagramPacket(RecvBuffer, RecvBuffer.length);
+		byte[] recvBuffer = new byte[4096];
+		DatagramPacket p = new DatagramPacket(recvBuffer, recvBuffer.length);
 		boolean logRawPackets = client.settings.getBool(LibSettings.LOG_RAW_PACKET_BYTES);
 		connected = true;
 
@@ -855,8 +856,8 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 				// Update the disconnect flag so this sim doesn't time out
 				disconnectCandidate = false;
 
-				synchronized (RecvBuffer) {
-					byte[] byteBuffer = RecvBuffer;
+				synchronized (recvBuffer) {
+					byte[] byteBuffer = recvBuffer;
 
 					// Retrieve the incoming packet
 					try {
@@ -864,19 +865,19 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 							dumpBuffer(byteBuffer, numBytes, "<=============== Received packet, length = ");
 						}
 
-						if ((RecvBuffer[0] & PacketHeader.MSG_ZEROCODED) != 0) {
+						if ((recvBuffer[0] & PacketHeader.MSG_ZEROCODED) != 0) {
 							int bodylen = numBytes;
-							if ((RecvBuffer[0] & PacketHeader.MSG_APPENDED_ACKS) != 0) {
-								bodylen -= (RecvBuffer[numBytes - 1] * 4 + 1);
+							if ((recvBuffer[0] & PacketHeader.MSG_APPENDED_ACKS) != 0) {
+								bodylen -= (recvBuffer[numBytes - 1] * 4 + 1);
 							}
 							byteBuffer = new byte[numBytes <= 1000 ? 4000 : numBytes * 4];
-							numBytes = zeroDecode(RecvBuffer, numBytes, bodylen, byteBuffer);
+							numBytes = zeroDecode(recvBuffer, numBytes, bodylen, byteBuffer);
 							if (logRawPackets) {
 								dumpBuffer(byteBuffer, numBytes, "<==========Zero-Decoded packet, length=");
 							}
 						}
 
-						packet = Packet.BuildPacket(ByteBuffer.wrap(byteBuffer, 0, numBytes));
+						packet = Packet.buildPacket(ByteBuffer.wrap(byteBuffer, 0, numBytes));
 						if (logRawPackets) {
 							logger.debug(GridClient.Log("Decoded packet " + packet.getClass().getName(), client));
 						}
@@ -895,7 +896,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 				if (packet == null) {
 					// TODO:FIXME
 					// This used to be a warning
-					dumpBuffer(RecvBuffer, numBytes,
+					dumpBuffer(recvBuffer, numBytes,
 							"<=========== Couldn't build a message from the incoming data, length = ");
 					continue;
 				}
@@ -908,9 +909,9 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 				}
 
 				// Handle appended ACKs
-				if (packet.getHeader().getAppendedAcks() && packet.getHeader().AckList != null) {
+				if (packet.getHeader().getAppendedAcks() && packet.getHeader().ackList != null) {
 					synchronized (needAck) {
-						for (int ack : packet.getHeader().AckList) {
+						for (int ack : packet.getHeader().ackList) {
 							if (needAck.remove(ack) == null) {
 								logger.warn(GridClient
 										.Log(String.format("Appended ACK for a packet (%d) we didn't send: %s", ack,
@@ -984,7 +985,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 		if (packet.hasVariableBlocks && packet.getLength() > Packet.MTU) {
 			ByteBuffer[] datas;
 			try {
-				datas = packet.ToBytesMultiple();
+				datas = packet.toBytesMultiple();
 			} catch (NullPointerException ex) {
 				logger.error("Failed to serialize " + packet.getType()
 						+ " packet to one or more payloads due to a missing block or field. StackTrace: "
@@ -1001,7 +1002,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 				sendPacketData(datas[i], packet.getType(), packet.getHeader().getZerocoded());
 			}
 		} else {
-			ByteBuffer data = packet.ToBytes();
+			ByteBuffer data = packet.toBytes();
 			sendPacketData(data, packet.getType(), packet.getHeader().getZerocoded());
 		}
 	}
@@ -1068,11 +1069,11 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 	 */
 	private void resendUnacked() {
 		if (needAck.size() > 0) {
-			ArrayList<OutgoingPacket> array;
+			List<OutgoingPacket> array;
 
 			synchronized (needAck) {
 				// Create a temporary copy of the outgoing packets array to iterate over
-				array = new ArrayList<OutgoingPacket>(needAck.size());
+				array = new ArrayList<>(needAck.size());
 				array.addAll(needAck.values());
 			}
 
@@ -1086,7 +1087,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 					if (outgoing.resendCount < client.settings.MAX_RESEND_COUNT) {
 						if (client.settings.LOG_RESENDS) {
 							logger.debug(GridClient.Log(String.format("Resending %s packet #%d, %d ms have passed",
-									outgoing.Type, outgoing.sequenceNumber, now - outgoing.tickCount), client));
+									outgoing.type, outgoing.sequenceNumber, now - outgoing.tickCount), client));
 						}
 
 						// The TickCount will be set to the current time when
@@ -1132,7 +1133,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 		int ackCount = 0;
 		synchronized (pendingAcks) {
 			while (dataLength + 5 < buffer.capacity() && !pendingAcks.isEmpty()) {
-				dataLength += Helpers.UInt32ToBytesB(pendingAcks.pollFirst(), bytes, dataLength);
+				dataLength += Helpers.uint32ToBytesB(pendingAcks.pollFirst(), bytes, dataLength);
 				++ackCount;
 			}
 		}
@@ -1151,7 +1152,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 		if (!isResend) {
 			// Not a resend, assign a new sequence number
 			outgoingPacket.sequenceNumber = sequence.incrementAndGet();
-			Helpers.UInt32ToBytesB(outgoingPacket.sequenceNumber, bytes, 1);
+			Helpers.uint32ToBytesB(outgoingPacket.sequenceNumber, bytes, 1);
 
 			if (isReliable) {
 				// Add this packet to the list of ACK responses we are waiting
@@ -1195,7 +1196,8 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 	 * @throws Exception
 	 */
 	private static int zeroDecode(byte[] src, int srclen, int bodylen, byte[] dest) throws Exception {
-		int i, destlen = 6 + src[5];
+		int i;
+		int destlen = 6 + src[5];
 
 		/* Copy the first 6 + extra header bytes as they are never compressed */
 		System.arraycopy(src, 0, dest, 0, destlen);

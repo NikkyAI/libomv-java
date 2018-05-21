@@ -39,22 +39,22 @@ import libomv.types.Vector3;
 /** Abstract base for rendering plugins */
 public interface IRendering {
 	public class RendererNameAttribute {
-		private String _name;
+		private String name;
 
 		public RendererNameAttribute(String name) {
 			super();
-			_name = name;
+			this.name = name;
 		}
 
 		@Override
 		public String toString() {
-			return _name;
+			return name;
 		}
 	}
 
 	/**
 	 * Generates a basic mesh structure from a primitive
-	 * 
+	 *
 	 * @param prim
 	 *            Primitive to generate the mesh from
 	 * @param lod
@@ -65,7 +65,7 @@ public interface IRendering {
 
 	/**
 	 * Generates a basic mesh structure from a sculpted primitive and texture
-	 * 
+	 *
 	 * @param prim
 	 *            Sculpted primitive to generate the mesh from
 	 * @param sculptTexture
@@ -79,7 +79,7 @@ public interface IRendering {
 	/**
 	 * <summary> Generates a series of faces, each face containing a mesh and
 	 * metadata
-	 * 
+	 *
 	 * @param prim
 	 *            Primitive to generate the mesh from
 	 * @param lod

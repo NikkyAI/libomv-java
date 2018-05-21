@@ -139,7 +139,7 @@ public class Baker {
 
 		// Base color for eye bake is white, color of layer0 for others
 		if (bakeType == BakeType.Eyes) {
-			initBakedLayerColor(Color4.White);
+			initBakedLayerColor(Color4.WHITE);
 		} else if (textures.size() > 0) {
 			initBakedLayerColor(textures.get(0).color);
 		}
@@ -547,9 +547,9 @@ public class Baker {
 			return;
 
 		for (int i = 0; i < dest.getRed().length; i++) {
-			dest.setRed(i, (byte) ((dest.getRed(i) * Helpers.floatToByte(src.R, 0f, 1f)) >> 8));
-			dest.setGreen(i, (byte) ((dest.getGreen(i) * Helpers.floatToByte(src.G, 0f, 1f)) >> 8));
-			dest.setBlue(i, (byte) ((dest.getBlue(i) * Helpers.floatToByte(src.B, 0f, 1f)) >> 8));
+			dest.setRed(i, (byte) ((dest.getRed(i) * Helpers.floatToByte(src.r, 0f, 1f)) >> 8));
+			dest.setGreen(i, (byte) ((dest.getGreen(i) * Helpers.floatToByte(src.g, 0f, 1f)) >> 8));
+			dest.setBlue(i, (byte) ((dest.getBlue(i) * Helpers.floatToByte(src.b, 0f, 1f)) >> 8));
 		}
 	}
 
@@ -561,7 +561,7 @@ public class Baker {
 	///
 	/// <param name="color">Color of the base of this layer</param>
 	private void initBakedLayerColor(Color4 color) {
-		initBakedLayerColor(color.R, color.G, color.B);
+		initBakedLayerColor(color.r, color.g, color.b);
 	}
 
 	//
@@ -578,11 +578,9 @@ public class Baker {
 		byte gByte = Helpers.floatToByte(g, 0f, 1f);
 		byte bByte = Helpers.floatToByte(b, 0f, 1f);
 
-		byte rAlt, gAlt, bAlt;
-
-		rAlt = rByte;
-		gAlt = gByte;
-		bAlt = bByte;
+		byte rAlt = rByte;
+		byte gAlt = gByte;
+		byte bAlt = bByte;
 
 		if (rByte < (byte) 0xFF)
 			rAlt++;
@@ -622,5 +620,5 @@ public class Baker {
 		}
 
 	}
-	// #endregion
+
 }

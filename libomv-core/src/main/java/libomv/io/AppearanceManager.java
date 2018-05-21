@@ -38,6 +38,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -328,7 +329,7 @@ public class AppearanceManager implements PacketCallback {
 						// Set all of the baked textures to UUID.Zero to force rebaking
 						for (BakeType type : BakeType.values()) {
 							if (type != BakeType.Unknown)
-								textures[bakeTypeToAgentTextureIndex(type).getValue()].textureID = UUID.Zero;
+								textures[bakeTypeToAgentTextureIndex(type).getValue()].textureID = UUID.ZERO;
 						}
 					}
 
@@ -439,7 +440,7 @@ public class AppearanceManager implements PacketCallback {
 	 * @throws Exception
 	 */
 	public void requestCachedBakes() throws Exception {
-		ArrayList<AgentCachedTexturePacket.WearableDataBlock> hashes = new ArrayList<AgentCachedTexturePacket.WearableDataBlock>();
+		List<AgentCachedTexturePacket.WearableDataBlock> hashes = new ArrayList<>();
 		AgentCachedTexturePacket cache = new AgentCachedTexturePacket();
 
 		// Build hashes for each of the bake layers from the individual components
@@ -451,22 +452,22 @@ public class AppearanceManager implements PacketCallback {
 					continue;
 
 				// Build a hash of all the texture asset IDs in this baking layer
-				UUID hash = UUID.Zero;
+				UUID hash = UUID.ZERO;
 				for (int wearableIndex = 0; wearableIndex < WEARABLES_PER_LAYER; wearableIndex++) {
 					WearableType type = WEARABLE_BAKE_MAP[bakeType.getValue()][wearableIndex];
 
 					if (type != WearableType.Invalid) {
 						if (wearables.containsKey(type)) {
 							for (WearableData data : wearables.get(type)) {
-								hash = UUID.XOr(hash, data.assetID);
+								hash = UUID.xor(hash, data.assetID);
 							}
 						}
 					}
 				}
 
-				if (!hash.equals(UUID.Zero)) {
+				if (!hash.equals(UUID.ZERO)) {
 					// Hash with our secret value for this baked layer
-					hash = UUID.XOr(hash, BAKED_TEXTURE_HASH[bakeType.getValue()]);
+					hash = UUID.xor(hash, BAKED_TEXTURE_HASH[bakeType.getValue()]);
 
 					// Add this to the list of hashes to send out
 					AgentCachedTexturePacket.WearableDataBlock block = cache.new WearableDataBlock();
@@ -507,7 +508,7 @@ public class AppearanceManager implements PacketCallback {
 				return wearables.get(type).get(0).assetID;
 			}
 		}
-		return UUID.Zero;
+		return UUID.ZERO;
 	}
 
 	/**
@@ -521,7 +522,7 @@ public class AppearanceManager implements PacketCallback {
 	 *          have not been downloaded yet
 	 */
 	public List<UUID> getWearableAssets(WearableType type) {
-		ArrayList<UUID> list = new ArrayList<UUID>();
+		List<UUID> list = new ArrayList<>();
 		synchronized (wearables) {
 			if (wearables.containsKey(type)) {
 				for (WearableData data : wearables.get(type))
@@ -542,7 +543,7 @@ public class AppearanceManager implements PacketCallback {
 	 * @throws Exception
 	 */
 	public void addToOutfit(InventoryItem wearableItem, boolean replace) throws Exception {
-		List<InventoryItem> wearableItems = new ArrayList<InventoryItem>();
+		List<InventoryItem> wearableItems = new ArrayList<>();
 		wearableItems.add(wearableItem);
 		addToOutfit(wearableItems, replace);
 	}
@@ -569,8 +570,8 @@ public class AppearanceManager implements PacketCallback {
 	 * @throws Exception
 	 */
 	public void addToOutfit(List<InventoryItem> wearableItems, boolean replace) throws Exception {
-		List<InventoryWearable> wearablesList = new ArrayList<InventoryWearable>();
-		List<InventoryItem> attachments = new ArrayList<InventoryItem>();
+		List<InventoryWearable> wearablesList = new ArrayList<>();
+		List<InventoryItem> attachments = new ArrayList<>();
 
 		for (InventoryItem item : wearableItems) {
 			if (item instanceof InventoryWearable)
@@ -612,7 +613,7 @@ public class AppearanceManager implements PacketCallback {
 	 * @throws Exception
 	 */
 	public void removeFromOutfit(InventoryItem wearableItem) throws Exception {
-		List<InventoryItem> wearableItems = new ArrayList<InventoryItem>();
+		List<InventoryItem> wearableItems = new ArrayList<>();
 		wearableItems.add(wearableItem);
 		removeFromOutfit(wearableItems);
 	}
@@ -625,8 +626,8 @@ public class AppearanceManager implements PacketCallback {
 	 * @throws Exception
 	 */
 	public void removeFromOutfit(List<InventoryItem> wearableItems) throws Exception {
-		List<InventoryWearable> wearablesList = new ArrayList<InventoryWearable>();
-		List<InventoryItem> attachments = new ArrayList<InventoryItem>();
+		List<InventoryWearable> wearablesList = new ArrayList<>();
+		List<InventoryItem> attachments = new ArrayList<>();
 
 		for (InventoryItem item : wearableItems) {
 			if (item instanceof InventoryWearable)
@@ -687,8 +688,8 @@ public class AppearanceManager implements PacketCallback {
 	 * @throws Exception
 	 */
 	public void replaceOutfit(List<InventoryItem> wearableItems, boolean safe) throws Exception {
-		List<InventoryWearable> wearablesList = new ArrayList<InventoryWearable>();
-		List<InventoryItem> attachments = new ArrayList<InventoryItem>();
+		List<InventoryWearable> wearablesList = new ArrayList<>();
+		List<InventoryItem> attachments = new ArrayList<>();
 
 		for (int i = 0; i < wearableItems.size(); i++) {
 			InventoryItem item = wearableItems.get(i);
@@ -766,13 +767,13 @@ public class AppearanceManager implements PacketCallback {
 	 */
 	public Collection<WearableData> getWearables() {
 		synchronized (wearables) {
-			return new ArrayList<WearableData>(wearables.values());
+			return new ArrayList<>(wearables.values());
 		}
 	}
 
 	public MultiMap<WearableType, WearableData> getWearablesByType() {
 		synchronized (wearables) {
-			return new MultiMap<WearableType, WearableData>(wearables);
+			return new MultiMap<>(wearables);
 		}
 	}
 
@@ -789,7 +790,7 @@ public class AppearanceManager implements PacketCallback {
 	 * @throws Exception
 	 */
 	public void wearOutfit(List<InventoryItem> wearables, boolean replaceItems) throws Exception {
-		List<InventoryItem> wearableItems = new ArrayList<InventoryItem>(wearables.size());
+		List<InventoryItem> wearableItems = new ArrayList<>(wearables.size());
 		Iterator<InventoryItem> iter = wearables.iterator();
 		while (iter.hasNext()) {
 			wearableItems.add(iter.next());
@@ -847,24 +848,24 @@ public class AppearanceManager implements PacketCallback {
 			if (attachments.get(i) instanceof InventoryAttachment) {
 				attachmentsPacket.ObjectData[i] = attachmentsPacket.new ObjectDataBlock();
 				attachmentsPacket.ObjectData[i].AttachmentPt = attachment.getAttachmentPoint().getValue(replace);
-				attachmentsPacket.ObjectData[i].EveryoneMask = attachment.permissions.EveryoneMask;
-				attachmentsPacket.ObjectData[i].GroupMask = attachment.permissions.GroupMask;
+				attachmentsPacket.ObjectData[i].EveryoneMask = attachment.permissions.everyoneMask;
+				attachmentsPacket.ObjectData[i].GroupMask = attachment.permissions.groupMask;
 				attachmentsPacket.ObjectData[i].ItemFlags = attachment.itemFlags;
 				attachmentsPacket.ObjectData[i].ItemID = attachment.itemID;
 				attachmentsPacket.ObjectData[i].setName(Helpers.stringToBytes(attachment.name));
 				attachmentsPacket.ObjectData[i].setDescription(Helpers.stringToBytes(attachment.description));
-				attachmentsPacket.ObjectData[i].NextOwnerMask = attachment.permissions.NextOwnerMask;
+				attachmentsPacket.ObjectData[i].NextOwnerMask = attachment.permissions.nextOwnerMask;
 				attachmentsPacket.ObjectData[i].OwnerID = attachment.getOwnerID();
 			} else if (attachments.get(i) instanceof InventoryObject) {
 				attachmentsPacket.ObjectData[i] = attachmentsPacket.new ObjectDataBlock();
 				attachmentsPacket.ObjectData[i].AttachmentPt = AttachmentPoint.Default.getValue(replace);
-				attachmentsPacket.ObjectData[i].EveryoneMask = attachment.permissions.EveryoneMask;
-				attachmentsPacket.ObjectData[i].GroupMask = attachment.permissions.GroupMask;
+				attachmentsPacket.ObjectData[i].EveryoneMask = attachment.permissions.everyoneMask;
+				attachmentsPacket.ObjectData[i].GroupMask = attachment.permissions.groupMask;
 				attachmentsPacket.ObjectData[i].ItemFlags = attachment.itemFlags;
 				attachmentsPacket.ObjectData[i].ItemID = attachment.itemID;
 				attachmentsPacket.ObjectData[i].setName(Helpers.stringToBytes(attachment.name));
 				attachmentsPacket.ObjectData[i].setDescription(Helpers.stringToBytes(attachment.description));
-				attachmentsPacket.ObjectData[i].NextOwnerMask = attachment.permissions.NextOwnerMask;
+				attachmentsPacket.ObjectData[i].NextOwnerMask = attachment.permissions.nextOwnerMask;
 				attachmentsPacket.ObjectData[i].OwnerID = attachment.getOwnerID();
 			} else {
 				logger.warn(GridClient.Log("Cannot attach inventory item " + attachment.name, client));
@@ -971,12 +972,12 @@ public class AppearanceManager implements PacketCallback {
 
 		attach.ObjectData.AttachmentPt = attachPoint.getValue(replace);
 		attach.ObjectData.setDescription(Helpers.stringToBytes(description));
-		attach.ObjectData.EveryoneMask = perms.EveryoneMask;
-		attach.ObjectData.GroupMask = perms.GroupMask;
+		attach.ObjectData.EveryoneMask = perms.everyoneMask;
+		attach.ObjectData.GroupMask = perms.groupMask;
 		attach.ObjectData.ItemFlags = itemFlags;
 		attach.ObjectData.ItemID = itemID;
 		attach.ObjectData.setName(Helpers.stringToBytes(name));
-		attach.ObjectData.NextOwnerMask = perms.NextOwnerMask;
+		attach.ObjectData.NextOwnerMask = perms.nextOwnerMask;
 		attach.ObjectData.OwnerID = ownerID;
 
 		client.network.sendPacket(attach);
@@ -1033,7 +1034,7 @@ public class AppearanceManager implements PacketCallback {
 					if (wearables.containsKey(type) && wearables.get(type).get(0) != null)
 						block.ItemID = wearables.get(type).get(0).itemID;
 					else
-						block.ItemID = UUID.Zero;
+						block.ItemID = UUID.ZERO;
 					wearing.WearableData[type.getValue()] = block;
 				}
 			}
@@ -1048,7 +1049,7 @@ public class AppearanceManager implements PacketCallback {
 	 *            Wearable items to replace the Wearables collection with
 	 */
 	private void replaceWearables(List<InventoryWearable> wearableItems) {
-		MultiMap<WearableType, WearableData> newWearables = new MultiMap<WearableType, WearableData>();
+		MultiMap<WearableType, WearableData> newWearables = new MultiMap<>();
 
 		synchronized (wearables) {
 			// Preserve body parts from the previous set of wearables. They may be
@@ -1193,7 +1194,7 @@ public class AppearanceManager implements PacketCallback {
 	 * @throws Exception
 	 */
 	boolean getAgentWearables() throws Exception {
-		final TimeoutEvent<Boolean> wearablesEvent = new TimeoutEvent<Boolean>();
+		final TimeoutEvent<Boolean> wearablesEvent = new TimeoutEvent<>();
 		Callback<AgentWearablesReplyCallbackArgs> wearablesCallback = new Callback<AgentWearablesReplyCallbackArgs>() {
 			@Override
 			public boolean callback(AgentWearablesReplyCallbackArgs e) {
@@ -1220,7 +1221,7 @@ public class AppearanceManager implements PacketCallback {
 	 * @throws Exception
 	 */
 	boolean getCachedBakes() throws Exception {
-		final TimeoutEvent<Boolean> cacheCheckEvent = new TimeoutEvent<Boolean>();
+		final TimeoutEvent<Boolean> cacheCheckEvent = new TimeoutEvent<>();
 		Callback<AgentCachedBakesReplyCallbackArgs> cacheCallback = new Callback<AgentCachedBakesReplyCallbackArgs>() {
 			@Override
 			public boolean callback(AgentCachedBakesReplyCallbackArgs e) {
@@ -1249,8 +1250,8 @@ public class AppearanceManager implements PacketCallback {
 	 *            Texture data
 	 */
 	public void decodeWearableParams(WearableData wearable, TextureData[] textures) {
-		HashMap<VisualAlphaParam, Float> alphaMasks = new HashMap<VisualAlphaParam, Float>();
-		List<ColorParamInfo> colorParams = new ArrayList<ColorParamInfo>();
+		Map<VisualAlphaParam, Float> alphaMasks = new HashMap<>();
+		List<ColorParamInfo> colorParams = new ArrayList<>();
 
 		// Populate collection of alpha masks from visual params
 		// also add color tinting information
@@ -1319,7 +1320,7 @@ public class AppearanceManager implements PacketCallback {
 			}
 		}
 
-		Color4 wearableColor = Color4.White; // Never actually used
+		Color4 wearableColor = Color4.WHITE; // Never actually used
 		if (colorParams.size() > 0) {
 			wearableColor = getColorFromParams(colorParams);
 			logger.debug("Setting tint " + wearableColor + " for " + wearable.wearableType);
@@ -1339,7 +1340,7 @@ public class AppearanceManager implements PacketCallback {
 			if (textures[i].textureID == null || !textures[i].textureID.equals(entry.getValue())) {
 				// Treat DEFAULT_AVATAR_TEXTURE as null
 				if (entry.getValue().equals(DEFAULT_AVATAR_TEXTURE))
-					textures[i].textureID = UUID.Zero;
+					textures[i].textureID = UUID.ZERO;
 				else
 					textures[i].textureID = entry.getValue();
 				logger.debug(GridClient.Log("Set " + entry.getKey() + " to " + textures[i].textureID, client));
@@ -1391,7 +1392,7 @@ public class AppearanceManager implements PacketCallback {
 		// Make a copy of the wearables dictionary to enumerate over
 		MultiMap<WearableType, WearableData> wearablesMap;
 		synchronized (wearables) {
-			wearablesMap = new MultiMap<WearableType, WearableData>(wearables);
+			wearablesMap = new MultiMap<>(wearables);
 		}
 
 		// We will refresh the textures (zero out all non bake textures)
@@ -1459,7 +1460,7 @@ public class AppearanceManager implements PacketCallback {
 	 */
 	private List<UUID> getTextureDownloadList(BakeType bakeType) {
 		List<AvatarTextureIndex> indices = bakeTypeToTextures(bakeType);
-		List<UUID> textures = new ArrayList<UUID>();
+		List<UUID> textures = new ArrayList<>();
 
 		for (AvatarTextureIndex index : indices) {
 			// If this is not the skirt layer or we're wearing a skirt then add it
@@ -1495,7 +1496,7 @@ public class AppearanceManager implements PacketCallback {
 	 *            A list of layers that need baking
 	 */
 	private void downloadTextures(List<BakeType> bakeLayers) {
-		List<UUID> textureIDs = new ArrayList<UUID>();
+		List<UUID> textureIDs = new ArrayList<>();
 
 		for (int i = 0; i < bakeLayers.size(); i++) {
 			List<UUID> layerTextureIDs = getTextureDownloadList(bakeLayers.get(i));
@@ -1548,7 +1549,7 @@ public class AppearanceManager implements PacketCallback {
 	 * @returns True on success, otherwise false
 	 */
 	private boolean createBakes() {
-		List<BakeType> pendingBakes = new ArrayList<BakeType>();
+		List<BakeType> pendingBakes = new ArrayList<>();
 
 		// Check each bake layer in the Textures array for missing bakes
 		for (BakeType type : BakeType.values()) {
@@ -1622,7 +1623,7 @@ public class AppearanceManager implements PacketCallback {
 		oven.bake();
 		logger.debug("Baking " + bakeType + " took " + (System.currentTimeMillis() - start) + "ms");
 
-		UUID newAssetID = UUID.Zero;
+		UUID newAssetID = UUID.ZERO;
 		int retries = UPLOAD_RETRIES;
 
 		do {
@@ -1655,7 +1656,7 @@ public class AppearanceManager implements PacketCallback {
 	 * @throws InterruptedException
 	 */
 	private UUID uploadBake(byte[] textureData) throws IOException, InterruptedException {
-		final TimeoutEvent<UUID> uploadEvent = new TimeoutEvent<UUID>();
+		final TimeoutEvent<UUID> uploadEvent = new TimeoutEvent<>();
 
 		client.assets.requestUploadBakedTexture(textureData, new BakedTextureUploadedCallback() {
 			@Override
@@ -1669,7 +1670,7 @@ public class AppearanceManager implements PacketCallback {
 		// Client.Settings.CAPS_TIMEOUT
 		// depending on which upload method is used.
 		UUID bakeID = uploadEvent.waitOne(UPLOAD_TIMEOUT);
-		return bakeID != null ? bakeID : UUID.Zero;
+		return bakeID != null ? bakeID : UUID.ZERO;
 	}
 
 	/**
@@ -1685,21 +1686,21 @@ public class AppearanceManager implements PacketCallback {
 			return false;
 		}
 
-		InventoryFolder COF = client.inventory.findFolderForType(FolderType.CurrentOutfit);
-		if (COF == null) {
+		InventoryFolder cof = client.inventory.findFolderForType(FolderType.CurrentOutfit);
+		if (cof == null) {
 			client.inventory.folderContents(client.inventory.getRootNode(false).itemID, client.agent.getAgentID(), true,
 					true, InventorySortOrder.ByDate, true, client.settings.CAPS_TIMEOUT);
-			COF = client.inventory.findFolderForType(FolderType.CurrentOutfit);
+			cof = client.inventory.findFolderForType(FolderType.CurrentOutfit);
 		}
 
-		if (COF == null) {
+		if (cof == null) {
 			// TODO: create Current Outfit Folder
 			return false;
 		}
 
 		CapsClient capsRequest = new CapsClient(client, "UpdateAvatarAppearance");
 		OSDMap request = new OSDMap(1);
-		request.put("cof_version", OSD.fromInteger(COF.version));
+		request.put("cof_version", OSD.fromInteger(cof.version));
 
 		String msg = "Setting server side baking failed";
 		OSD res = capsRequest.getResponse(url, request, OSDFormat.Xml, client.settings.CAPS_TIMEOUT * 2);
@@ -1826,11 +1827,11 @@ public class AppearanceManager implements PacketCallback {
 
 			for (int i = 0; i < textures.length; i++) {
 				TextureEntry.TextureEntryFace face = te.createFace(i);
-				if ((i == 0 || i == 5 || i == 6) && !client.settings.CLIENT_IDENTIFICATION_TAG.equals(UUID.Zero)) {
+				if ((i == 0 || i == 5 || i == 6) && !client.settings.CLIENT_IDENTIFICATION_TAG.equals(UUID.ZERO)) {
 					face.setTextureID(client.settings.CLIENT_IDENTIFICATION_TAG);
 					logger.debug(GridClient.Log(
 							"Sending client identification tag: " + client.settings.CLIENT_IDENTIFICATION_TAG, client));
-				} else if (textures[i].textureID != UUID.Zero) {
+				} else if (textures[i].textureID != UUID.ZERO) {
 					face.setTextureID(textures[i].textureID);
 					logger.debug(
 							GridClient.Log("Sending texture entry for " + i + " to " + textures[i].textureID, client));
@@ -1851,21 +1852,21 @@ public class AppearanceManager implements PacketCallback {
 				if (bakeType == BakeType.Unknown)
 					continue;
 
-				UUID hash = UUID.Zero;
+				UUID hash = UUID.ZERO;
 
 				for (int wearableIndex = 0; wearableIndex < WEARABLES_PER_LAYER; wearableIndex++) {
 					WearableType type = WEARABLE_BAKE_MAP[bakeType.getValue()][wearableIndex];
 
 					if (type != WearableType.Invalid && wearables.containsKey(type)) {
 						for (WearableData wearable : wearables.get(type)) {
-							hash = UUID.XOr(hash, wearable.assetID);
+							hash = UUID.xor(hash, wearable.assetID);
 						}
 					}
 				}
 
-				if (!hash.equals(UUID.Zero)) {
+				if (!hash.equals(UUID.ZERO)) {
 					// Hash with our magic value for this baked layer
-					hash = UUID.XOr(hash, BAKED_TEXTURE_HASH[bakeType.getValue()]);
+					hash = UUID.xor(hash, BAKED_TEXTURE_HASH[bakeType.getValue()]);
 				}
 
 				// Tell the server what cached texture assetID to use for each bake layer
@@ -1926,7 +1927,7 @@ public class AppearanceManager implements PacketCallback {
 		UUID folder = client.inventory.findObjectByPath(client.inventory.getRootNode(false).itemID,
 				client.agent.getAgentID(), String.join("/", folderPath), INVENTORY_TIMEOUT);
 
-		if (folder != UUID.Zero) {
+		if (folder != UUID.ZERO) {
 			return getFolderWearables(folder, wearables, attachments);
 		}
 		logger.error(GridClient.Log("Failed to resolve outfit folder path " + folderPath, client));
@@ -1970,7 +1971,7 @@ public class AppearanceManager implements PacketCallback {
 			for (AgentWearablesUpdatePacket.WearableDataBlock block : update.WearableData) {
 				WearableType type = WearableType.setValue(block.WearableType);
 
-				if (!block.AssetID.equals(UUID.Zero)) {
+				if (!block.AssetID.equals(UUID.ZERO)) {
 					if (wearables.containsKey(type)) {
 						boolean match = false;
 						for (WearableData wearable : wearables.get(type)) {
@@ -2006,7 +2007,7 @@ public class AppearanceManager implements PacketCallback {
 				for (int i = 0; i < update.WearableData.length; i++) {
 					AgentWearablesUpdatePacket.WearableDataBlock block = update.WearableData[i];
 
-					if (!block.AssetID.equals(UUID.Zero)) {
+					if (!block.AssetID.equals(UUID.ZERO)) {
 						WearableType type = WearableType.setValue(block.WearableType);
 
 						WearableData data = new WearableData();
@@ -2048,10 +2049,10 @@ public class AppearanceManager implements PacketCallback {
 			logger.debug(GridClient.Log("Cache response for " + index + ", TextureID = " + block.TextureID, client));
 
 			TextureData tex = textures[index.getValue()];
-			if (!block.TextureID.equals(UUID.Zero)) {
+			if (!block.TextureID.equals(UUID.ZERO)) {
 				// A simulator has a cache of this bake layer
 				tex.textureID = block.TextureID;
-				tex.host = Helpers.BytesToString(block.getHostName());
+				tex.host = Helpers.bytesToString(block.getHostName());
 			} else {
 				// TODO:FIXME The server does not have a cache of this bake layer, request
 				// upload
@@ -2197,7 +2198,7 @@ public class AppearanceManager implements PacketCallback {
 	 * @returns A list of texture slots that are inputs for the given bake
 	 */
 	public static List<AvatarTextureIndex> bakeTypeToTextures(BakeType bakeType) {
-		List<AvatarTextureIndex> textures = new ArrayList<AvatarTextureIndex>();
+		List<AvatarTextureIndex> textures = new ArrayList<>();
 
 		switch (bakeType) {
 		case Head:

@@ -81,16 +81,16 @@ public final class NameValue {
 		}
 	}
 
-	public String Name;
-	public ValueType Type;
-	public ClassType Class;
-	public SendtoType Sendto;
-	public Object Value;
+	private static final String[] TYPE_STRINGS = new String[] { "STRING", "F32", "S32", "VEC3", "U32", "ASSET", "U64" };
+	private static final String[] CLASS_STRINGS = new String[] { "R", "RW", "CB" };
+	private static final String[] SENDTO_STRINGS = new String[] { "S", "DS", "SV", "DSV" };
+	private static final char[] SEPARATORS = new char[] { ' ', '\n', '\t', '\r' };
 
-	private static final String[] TypeStrings = new String[] { "STRING", "F32", "S32", "VEC3", "U32", "ASSET", "U64" };
-	private static final String[] ClassStrings = new String[] { "R", "RW", "CB" };
-	private static final String[] SendtoStrings = new String[] { "S", "DS", "SV", "DSV" };
-	private static final char[] Separators = new char[] { ' ', '\n', '\t', '\r' };
+	public String name;
+	public ValueType type;
+	public ClassType classType;
+	public SendtoType sendto;
+	public Object valueObject;
 
 	/**
 	 * Constructor that takes all the fields as parameters
@@ -102,11 +102,11 @@ public final class NameValue {
 	 * @param value
 	 */
 	public NameValue(String name, ValueType valueType, ClassType classType, SendtoType sendtoType, Object value) {
-		Name = name;
-		Type = valueType;
-		Class = classType;
-		Sendto = sendtoType;
-		Value = value;
+		this.name = name;
+		this.type = valueType;
+		this.classType = classType;
+		this.sendto = sendtoType;
+		this.valueObject = value;
 	}
 
 	/**
@@ -118,48 +118,48 @@ public final class NameValue {
 		int i;
 
 		// Name
-		i = Helpers.indexOfAny(data, Separators);
+		i = Helpers.indexOfAny(data, SEPARATORS);
 		if (i < 1) {
-			Name = Helpers.EmptyString;
-			Type = ValueType.Unknown;
-			Class = ClassType.Unknown;
-			Sendto = SendtoType.Unknown;
-			Value = null;
+			name = Helpers.EmptyString;
+			type = ValueType.Unknown;
+			classType = ClassType.Unknown;
+			sendto = SendtoType.Unknown;
+			valueObject = null;
 			return;
 		}
-		Name = data.substring(0, i);
+		name = data.substring(0, i);
 		data = data.substring(i + 1);
 
 		// Type
-		i = Helpers.indexOfAny(data, Separators);
+		i = Helpers.indexOfAny(data, SEPARATORS);
 		if (i > 0) {
-			Type = getValueType(data.substring(0, i));
+			type = getValueType(data.substring(0, i));
 			data = data.substring(i + 1);
 
 			// Class
-			i = Helpers.indexOfAny(data, Separators);
+			i = Helpers.indexOfAny(data, SEPARATORS);
 			if (i > 0) {
-				Class = getClassType(data.substring(0, i));
+				classType = getClassType(data.substring(0, i));
 				data = data.substring(i + 1);
 
 				// Sendto
-				i = Helpers.indexOfAny(data, Separators);
+				i = Helpers.indexOfAny(data, SEPARATORS);
 				if (i > 0) {
-					Sendto = getSendtoType(data.substring(0, 1));
+					sendto = getSendtoType(data.substring(0, 1));
 					data = data.substring(i + 1);
 				}
 			}
 		}
 
 		// Value
-		Type = ValueType.String;
-		Class = ClassType.ReadOnly;
-		Sendto = SendtoType.Sim;
-		Value = null;
+		type = ValueType.String;
+		classType = ClassType.ReadOnly;
+		sendto = SendtoType.Sim;
+		valueObject = null;
 		setValue(data);
 	}
 
-	public static String NameValuesToString(NameValue[] values) {
+	public static String nameValuesToString(NameValue[] values) {
 		if (values == null || values.length == 0) {
 			return "";
 		}
@@ -169,10 +169,10 @@ public final class NameValue {
 		for (int i = 0; i < values.length; i++) {
 			NameValue value = values[i];
 
-			if (value.Value != null) {
+			if (value.valueObject != null) {
 				String newLine = (i < values.length - 1) ? "\n" : "";
-				output.append(String.format("%s %s %s %s %s%s", value.Name, TypeStrings[value.Type.val],
-						ClassStrings[value.Class.val], SendtoStrings[value.Sendto.val], value.Value, newLine));
+				output.append(String.format("%s %s %s %s %s%s", value.name, TYPE_STRINGS[value.type.val],
+						CLASS_STRINGS[value.classType.val], SENDTO_STRINGS[value.sendto.val], value.valueObject, newLine));
 			}
 		}
 
@@ -180,39 +180,39 @@ public final class NameValue {
 	}
 
 	private void setValue(String value) {
-		switch (Type) {
+		switch (type) {
 		case Asset:
 		case String:
-			Value = value;
+			valueObject = value;
 			break;
 		case F32: {
-			float temp = Helpers.TryParseFloat(value);
-			Value = temp;
+			float temp = Helpers.tryParseFloat(value);
+			valueObject = temp;
 			break;
 		}
 		case S32: {
 			int temp;
-			temp = Helpers.TryParseInt(value);
-			Value = temp;
+			temp = Helpers.tryParseInt(value);
+			valueObject = temp;
 			break;
 		}
 		case U32: {
-			int temp = Helpers.TryParseInt(value);
-			Value = temp;
+			int temp = Helpers.tryParseInt(value);
+			valueObject = temp;
 			break;
 		}
 		case U64: {
-			long temp = Helpers.TryParseLong(value);
-			Value = temp;
+			long temp = Helpers.tryParseLong(value);
+			valueObject = temp;
 			break;
 		}
 		case VEC3: {
-			RefObject<Vector3> temp = new RefObject<Vector3>((Vector3) Value);
-			Vector3.TryParse(value, temp);
+			RefObject<Vector3> temp = new RefObject<Vector3>((Vector3) valueObject);
+			Vector3.tryParse(value, temp);
 			break;
 		}
 		default:
-			Value = null;
+			valueObject = null;
 			break;
 		}
 	}
@@ -220,7 +220,7 @@ public final class NameValue {
 	private static ValueType getValueType(String value) {
 		ValueType type = ValueType.Unknown;
 		int i = 1;
-		for (String s : TypeStrings) {
+		for (String s : TYPE_STRINGS) {
 			if (s.equals(value)) {
 				type = ValueType.values()[i];
 			}
@@ -236,7 +236,7 @@ public final class NameValue {
 	private static ClassType getClassType(String value) {
 		ClassType type = ClassType.Unknown;
 		int i = 1;
-		for (String s : ClassStrings) {
+		for (String s : CLASS_STRINGS) {
 			if (s.equals(value)) {
 				type = ClassType.values()[i];
 			}
@@ -252,7 +252,7 @@ public final class NameValue {
 	private static SendtoType getSendtoType(String value) {
 		SendtoType type = SendtoType.Unknown;
 		int i = 1;
-		for (String s : SendtoStrings) {
+		for (String s : SENDTO_STRINGS) {
 			if (s.equals(value)) {
 				type = SendtoType.values()[i];
 			}

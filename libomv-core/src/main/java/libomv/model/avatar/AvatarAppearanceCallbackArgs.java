@@ -14,12 +14,12 @@ public class AvatarAppearanceCallbackArgs implements CallbackArgs {
 	private TextureEntry.TextureEntryFace[] faceTextures;
 	private byte[] parameters;
 	private byte appearanceVersion;
-	private int COFVersion;
+	private int cofVersion;
 	private AppearanceFlags appearanceFlags;
 
 	public AvatarAppearanceCallbackArgs(Simulator simulator, UUID id, boolean isTrial,
 			TextureEntry.TextureEntryFace defaultTexture, TextureEntry.TextureEntryFace[] faceTextures,
-			byte[] parameters, byte appearanceVersion, int COFVersion, AppearanceFlags appearanceFlags) {
+			byte[] parameters, byte appearanceVersion, int cofVersion, AppearanceFlags appearanceFlags) {
 		this.simulator = simulator;
 		this.id = id;
 		this.isTrial = isTrial;
@@ -27,7 +27,7 @@ public class AvatarAppearanceCallbackArgs implements CallbackArgs {
 		this.faceTextures = faceTextures;
 		this.parameters = parameters;
 		this.appearanceVersion = appearanceVersion;
-		this.COFVersion = COFVersion;
+		this.cofVersion = cofVersion;
 		this.appearanceFlags = appearanceFlags;
 	}
 
@@ -60,7 +60,7 @@ public class AvatarAppearanceCallbackArgs implements CallbackArgs {
 	}
 
 	public int getCOFVersion() {
-		return COFVersion;
+		return cofVersion;
 	}
 
 	public AppearanceFlags getAppearanceFlags() {

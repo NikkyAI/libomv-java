@@ -12,77 +12,77 @@ import libomv.utils.Callback;
 public class InventoryAISClient {
 	private static final Logger logger = Logger.getLogger(InventoryAISClient.class);
 
-	private String INVENTORY_CAP_NAME = "InventoryAPIv3";
-	private String LIBRARY_CAP_NAME = "LibraryAPIv3";
+	private static final String INVENTORY_CAP_NAME = "InventoryAPIv3";
+	private static final String LIBRARY_CAP_NAME = "LibraryAPIv3";
 
 	enum CommandType {
 		COPYINVENTORY, SLAMFOLDER, REMOVECATEGORY, REMOVEITEM, PURGEDESCENDENTS, UPDATECATEGORY, UPDATEITEM, COPYLIBRARYCATEGORY
 	}
 
-	private GridClient _Client;
+	private GridClient client;
 
 	public InventoryAISClient(GridClient client) {
-		_Client = client;
+		this.client = client;
 	}
 
-	public boolean IsAvailable() {
-		return _Client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME) != null;
+	public boolean isAvailable() {
+		return client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME) != null;
 	}
 
-	public void CreateInventory(UUID parentUuid, OSD newInventory, Callback<OSD> callback) {
-		URI cap = _Client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
+	public void createInventory(UUID parentUuid, OSD newInventory, Callback<OSD> callback) {
+		URI cap = client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
 		if (cap == null) {
-			logger.warn(GridClient.Log("No AIS3 Capability!", _Client));
+			logger.warn(GridClient.Log("No AIS3 Capability!", client));
 			return;
 		}
 
 		UUID tid = new UUID();
 		String url = String.format("%s/category/%s?tid=%s", cap.toString(), parentUuid.toString(), tid.toString());
-		logger.debug(GridClient.Log("url: " + url, _Client));
+		logger.debug(GridClient.Log("url: " + url, client));
 		// Enqueue
 	}
 
-	public void SlamFolder(UUID folderUuid, OSD newInventory, Callback<OSD> callback) {
-		URI cap = _Client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
+	public void slamFolder(UUID folderUuid, OSD newInventory, Callback<OSD> callback) {
+		URI cap = client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
 		if (cap == null) {
-			logger.warn(GridClient.Log("No AIS3 Capability!", _Client));
+			logger.warn(GridClient.Log("No AIS3 Capability!", client));
 			return;
 		}
 
 		UUID tid = new UUID();
 		String url = String.format("%s/category/%s/links?tid=%s", folderUuid.toString(), tid.toString());
-		logger.debug(GridClient.Log("url: " + url, _Client));
+		logger.debug(GridClient.Log("url: " + url, client));
 		// Enqueue
 	}
 
-	public void RemoveCategory(UUID categoryUuid, Callback<OSD> callback) {
-		URI cap = _Client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
+	public void removeCategory(UUID categoryUuid, Callback<OSD> callback) {
+		URI cap = client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
 		if (cap == null) {
-			logger.warn(GridClient.Log("No AIS3 Capability!", _Client));
+			logger.warn(GridClient.Log("No AIS3 Capability!", client));
 			return;
 		}
 
 		String url = String.format("%s/category/%s", categoryUuid.toString());
-		logger.debug(GridClient.Log("url: " + url, _Client));
+		logger.debug(GridClient.Log("url: " + url, client));
 		// Enqueue
 	}
 
-	public void RemoveItem(UUID itemUuid, Callback<OSD> callback) {
-		URI cap = _Client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
+	public void removeItem(UUID itemUuid, Callback<OSD> callback) {
+		URI cap = client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
 		if (cap == null) {
-			logger.warn(GridClient.Log("No AIS3 Capability!", _Client));
+			logger.warn(GridClient.Log("No AIS3 Capability!", client));
 			return;
 		}
 
 		String url = String.format("%s/item/%s", itemUuid.toString());
-		logger.debug(GridClient.Log("url: " + url, _Client));
+		logger.debug(GridClient.Log("url: " + url, client));
 		// Enqueue
 	}
 
-	public void CopyLibraryCategory(UUID sourceUuid, UUID destUuid, boolean copySubfolders, Callback<OSD> callback) {
-		URI cap = _Client.network.getCurrentSim().getCapabilityURI(LIBRARY_CAP_NAME);
+	public void copyLibraryCategory(UUID sourceUuid, UUID destUuid, boolean copySubfolders, Callback<OSD> callback) {
+		URI cap = client.network.getCurrentSim().getCapabilityURI(LIBRARY_CAP_NAME);
 		if (cap == null) {
-			logger.warn(GridClient.Log("No AIS3 Capability!", _Client));
+			logger.warn(GridClient.Log("No AIS3 Capability!", client));
 			return;
 		}
 
@@ -90,43 +90,43 @@ public class InventoryAISClient {
 		String url = String.format("%s/category/%s?tid=%s", sourceUuid.toString(), tid.toString());
 		if (copySubfolders)
 			url += ",depth=0";
-		logger.debug(GridClient.Log("url: " + url, _Client));
+		logger.debug(GridClient.Log("url: " + url, client));
 		// Enqueue
 	}
 
-	public void PurgeDescendents(UUID categoryUuid, Callback<OSD> callback) {
-		URI cap = _Client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
+	public void purgeDescendents(UUID categoryUuid, Callback<OSD> callback) {
+		URI cap = client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
 		if (cap == null) {
-			logger.warn(GridClient.Log("No AIS3 Capability!", _Client));
+			logger.warn(GridClient.Log("No AIS3 Capability!", client));
 			return;
 		}
 
 		String url = String.format("%s/category/%s/children", categoryUuid.toString());
-		logger.debug(GridClient.Log("url: " + url, _Client));
+		logger.debug(GridClient.Log("url: " + url, client));
 		// Enqueue
 	}
 
-	public void UpdateCategory(UUID categoryUuid, OSD updates, Callback<OSD> callback) {
-		URI cap = _Client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
+	public void updateCategory(UUID categoryUuid, OSD updates, Callback<OSD> callback) {
+		URI cap = client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
 		if (cap == null) {
-			logger.warn(GridClient.Log("No AIS3 Capability!", _Client));
+			logger.warn(GridClient.Log("No AIS3 Capability!", client));
 			return;
 		}
 
 		String url = String.format("%s/category/%s", categoryUuid.toString());
-		logger.debug(GridClient.Log("url: " + url, _Client));
+		logger.debug(GridClient.Log("url: " + url, client));
 		// Enqueue
 	}
 
-	public void UpdateItem(UUID itemUuid, OSD updates, Callback<OSD> callback) {
-		URI cap = _Client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
+	public void updateItem(UUID itemUuid, OSD updates, Callback<OSD> callback) {
+		URI cap = client.network.getCurrentSim().getCapabilityURI(INVENTORY_CAP_NAME);
 		if (cap == null) {
-			logger.warn(GridClient.Log("No AIS3 Capability!", _Client));
+			logger.warn(GridClient.Log("No AIS3 Capability!", client));
 			return;
 		}
 
 		String url = String.format("%s/item/%s", itemUuid.toString());
-		logger.debug(GridClient.Log("url: " + url, _Client));
+		logger.debug(GridClient.Log("url: " + url, client));
 		// Enqueue
 	}
 }

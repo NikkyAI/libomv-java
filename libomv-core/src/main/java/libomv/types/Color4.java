@@ -42,14 +42,23 @@ import libomv.utils.Helpers;
 
 /** An 8-bit color structure including an alpha channel */
 public final class Color4 {
+
+	/** A Color4 with zero RGB values and fully opaque (alpha 1.0) */
+	public static final Color4 BLACK = new Color4(0f, 0f, 0f, 1f);
+
+	/** A Color4 with full RGB values (1.0) and fully opaque (alpha 1.0) */
+	public static final Color4 WHITE = new Color4(1f, 1f, 1f, 1f);
+
+	private static final float HUE_MAX = 360f;
+
 	/** Red */
-	public float R;
+	public float r;
 	/** Green */
-	public float G;
+	public float g;
 	/** Blue */
-	public float B;
+	public float b;
 	/** Alpha */
-	public float A;
+	public float a;
 
 	/**
 	 * Builds a color from four values
@@ -62,10 +71,10 @@ public final class Color4 {
 	public Color4(byte r, byte g, byte b, byte a) {
 		final float quanta = 1.0f / 255.0f;
 
-		R = r * quanta;
-		G = g * quanta;
-		B = b * quanta;
-		A = a * quanta;
+		this.r = r * quanta;
+		this.g = g * quanta;
+		this.b = b * quanta;
+		this.a = a * quanta;
 	}
 
 	/**
@@ -88,10 +97,10 @@ public final class Color4 {
 		}
 
 		// Valid range is from 0.0 to 1.0
-		R = Helpers.clamp(r, 0f, 1f);
-		G = Helpers.clamp(g, 0f, 1f);
-		B = Helpers.clamp(b, 0f, 1f);
-		A = Helpers.clamp(a, 0f, 1f);
+		this.r = Helpers.clamp(r, 0f, 1f);
+		this.g = Helpers.clamp(g, 0f, 1f);
+		this.b = Helpers.clamp(b, 0f, 1f);
+		this.a = Helpers.clamp(a, 0f, 1f);
 	}
 
 	/**
@@ -107,19 +116,19 @@ public final class Color4 {
 			throw new XmlPullParserException("Unexpected Tag event " + eventType + " for tag name " + parser.getName(),
 					parser, null);
 
-		A = 1f;
+		a = 1f;
 		while (parser.nextTag() == XmlPullParser.START_TAG) {
 			String name = parser.getName();
 			if (name.equalsIgnoreCase("R")) {
-				R = Helpers.TryParseFloat(parser.nextText().trim());
+				r = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equalsIgnoreCase("G")) {
-				G = Helpers.TryParseFloat(parser.nextText().trim());
+				g = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equalsIgnoreCase("B")) {
-				B = Helpers.TryParseFloat(parser.nextText().trim());
+				b = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equalsIgnoreCase("A")) {
 				String element = parser.nextText().trim();
 				if (!Helpers.isEmpty(element))
-					A = Helpers.TryParseFloat(element);
+					a = Helpers.tryParseFloat(element);
 			} else {
 				Helpers.skipElement(parser);
 			}
@@ -171,10 +180,10 @@ public final class Color4 {
 	 *            Color to copy
 	 */
 	public Color4(Color4 color) {
-		R = color.R;
-		G = color.G;
-		B = color.B;
-		A = color.A;
+		r = color.r;
+		g = color.g;
+		b = color.b;
+		a = color.a;
 	}
 
 	/**
@@ -189,17 +198,17 @@ public final class Color4 {
 
 		if (thisHue < 0f && thatHue < 0f) {
 			// Both monochromatic
-			if (R == color.R) {
+			if (r == color.r) {
 				// Monochromatic and equal, compare alpha
-				return ((Float) A).compareTo(color.A);
+				return ((Float) a).compareTo(color.a);
 			}
 			// Compare lightness
-			return ((Float) R).compareTo(R);
+			return ((Float) r).compareTo(r);
 		}
 
 		if (thisHue == thatHue) {
 			// RGB is equal, compare alpha
-			return ((Float) A).compareTo(color.A);
+			return ((Float) a).compareTo(color.a);
 		}
 		// Compare hues
 		return ((Float) thisHue).compareTo(thatHue);
@@ -209,15 +218,15 @@ public final class Color4 {
 		final float quanta = 1.0f / 255.0f;
 
 		if (inverted) {
-			R = (255 - (byteArray[pos] & 0xFF)) * quanta;
-			G = (255 - (byteArray[pos + 1] & 0xFF)) * quanta;
-			B = (255 - (byteArray[pos + 2] & 0xFF)) * quanta;
-			A = (255 - (byteArray[pos + 3] & 0xFF)) * quanta;
+			r = (255 - (byteArray[pos] & 0xFF)) * quanta;
+			g = (255 - (byteArray[pos + 1] & 0xFF)) * quanta;
+			b = (255 - (byteArray[pos + 2] & 0xFF)) * quanta;
+			a = (255 - (byteArray[pos + 3] & 0xFF)) * quanta;
 		} else {
-			R = (byteArray[pos] & 0xFF) * quanta;
-			G = (byteArray[pos + 1] & 0xFF) * quanta;
-			B = (byteArray[pos + 2] & 0xFF) * quanta;
-			A = (byteArray[pos + 3] & 0xFF) * quanta;
+			r = (byteArray[pos] & 0xFF) * quanta;
+			g = (byteArray[pos + 1] & 0xFF) * quanta;
+			b = (byteArray[pos + 2] & 0xFF) * quanta;
+			a = (byteArray[pos + 3] & 0xFF) * quanta;
 		}
 	}
 
@@ -242,7 +251,7 @@ public final class Color4 {
 		fromBytes(byteArray, pos, inverted);
 
 		if (alphaInverted) {
-			A = 1.0f - A;
+			a = 1.0f - a;
 		}
 	}
 
@@ -259,21 +268,21 @@ public final class Color4 {
 	}
 
 	public void write(OutputStream stream, boolean inverted) throws IOException {
-		byte R = Helpers.floatToByte(this.R, 0f, 1f);
-		byte G = Helpers.floatToByte(this.G, 0f, 1f);
-		byte B = Helpers.floatToByte(this.B, 0f, 1f);
-		byte A = Helpers.floatToByte(this.A, 0f, 1f);
+		byte r = Helpers.floatToByte(this.r, 0f, 1f);
+		byte g = Helpers.floatToByte(this.g, 0f, 1f);
+		byte b = Helpers.floatToByte(this.b, 0f, 1f);
+		byte a = Helpers.floatToByte(this.a, 0f, 1f);
 
 		if (inverted) {
-			stream.write((byte) (255 - (R & 0xFF)));
-			stream.write((byte) (255 - (G & 0xFF)));
-			stream.write((byte) (255 - (B & 0xFF)));
-			stream.write((byte) (255 - (A & 0xFF)));
+			stream.write((byte) (255 - (r & 0xFF)));
+			stream.write((byte) (255 - (g & 0xFF)));
+			stream.write((byte) (255 - (b & 0xFF)));
+			stream.write((byte) (255 - (a & 0xFF)));
 		} else {
-			stream.write(R);
-			stream.write(G);
-			stream.write(B);
-			stream.write(A);
+			stream.write(r);
+			stream.write(g);
+			stream.write(b);
+			stream.write(a);
 		}
 	}
 
@@ -310,10 +319,10 @@ public final class Color4 {
 	 * @return number of bytes filled to the byte array
 	 */
 	public int toBytes(byte[] dest, int pos, boolean inverted) {
-		dest[pos + 0] = Helpers.floatToByte(R, 0f, 1f);
-		dest[pos + 1] = Helpers.floatToByte(G, 0f, 1f);
-		dest[pos + 2] = Helpers.floatToByte(B, 0f, 1f);
-		dest[pos + 3] = Helpers.floatToByte(A, 0f, 1f);
+		dest[pos + 0] = Helpers.floatToByte(r, 0f, 1f);
+		dest[pos + 1] = Helpers.floatToByte(g, 0f, 1f);
+		dest[pos + 2] = Helpers.floatToByte(b, 0f, 1f);
+		dest[pos + 3] = Helpers.floatToByte(a, 0f, 1f);
 
 		if (inverted) {
 			dest[pos + 0] = (byte) (255 - (dest[pos + 0] & 0xFF));
@@ -335,64 +344,63 @@ public final class Color4 {
 	 * @return number of bytes filled to the byte array
 	 */
 	public int toFloatBytesL(byte[] dest, int pos) {
-		Helpers.floatToBytesL(R, dest, pos + 0);
-		Helpers.floatToBytesL(G, dest, pos + 4);
-		Helpers.floatToBytesL(B, dest, pos + 8);
-		Helpers.floatToBytesL(A, dest, pos + 12);
+		Helpers.floatToBytesL(r, dest, pos + 0);
+		Helpers.floatToBytesL(g, dest, pos + 4);
+		Helpers.floatToBytesL(b, dest, pos + 8);
+		Helpers.floatToBytesL(a, dest, pos + 12);
 		return 4;
 	}
 
 	public float getHue() {
-		final float HUE_MAX = 360f;
 
-		float max = Math.max(Math.max(R, G), B);
-		float min = Math.min(Math.min(R, B), B);
+		float max = Math.max(Math.max(r, g), b);
+		float min = Math.min(Math.min(r, b), b);
 
 		if (max == min) {
 			// Achromatic, hue is undefined
 			return -1f;
-		} else if (R == max) {
-			float bDelta = (((max - B) * (HUE_MAX / 6f)) + ((max - min) / 2f)) / (max - min);
-			float gDelta = (((max - G) * (HUE_MAX / 6f)) + ((max - min) / 2f)) / (max - min);
+		} else if (r == max) {
+			float bDelta = (((max - b) * (HUE_MAX / 6f)) + ((max - min) / 2f)) / (max - min);
+			float gDelta = (((max - g) * (HUE_MAX / 6f)) + ((max - min) / 2f)) / (max - min);
 			return bDelta - gDelta;
-		} else if (G == max) {
-			float rDelta = (((max - R) * (HUE_MAX / 6f)) + ((max - min) / 2f)) / (max - min);
-			float bDelta = (((max - B) * (HUE_MAX / 6f)) + ((max - min) / 2f)) / (max - min);
+		} else if (g == max) {
+			float rDelta = (((max - r) * (HUE_MAX / 6f)) + ((max - min) / 2f)) / (max - min);
+			float bDelta = (((max - b) * (HUE_MAX / 6f)) + ((max - min) / 2f)) / (max - min);
 			return (HUE_MAX / 3f) + rDelta - bDelta;
 		} else
 		// B == max
 		{
-			float gDelta = (((max - G) * (HUE_MAX / 6f)) + ((max - min) / 2f)) / (max - min);
-			float rDelta = (((max - R) * (HUE_MAX / 6f)) + ((max - min) / 2f)) / (max - min);
+			float gDelta = (((max - g) * (HUE_MAX / 6f)) + ((max - min) / 2f)) / (max - min);
+			float rDelta = (((max - r) * (HUE_MAX / 6f)) + ((max - min) / 2f)) / (max - min);
 			return ((2f * HUE_MAX) / 3f) + gDelta - rDelta;
 		}
 	}
 
 	/** Ensures that values are in range 0-1 */
 	public void clampValues() {
-		if (R < 0f) {
-			R = 0f;
+		if (r < 0f) {
+			r = 0f;
 		}
-		if (G < 0f) {
-			G = 0f;
+		if (g < 0f) {
+			g = 0f;
 		}
-		if (B < 0f) {
-			B = 0f;
+		if (b < 0f) {
+			b = 0f;
 		}
-		if (A < 0f) {
-			A = 0f;
+		if (a < 0f) {
+			a = 0f;
 		}
-		if (R > 1f) {
-			R = 1f;
+		if (r > 1f) {
+			r = 1f;
 		}
-		if (G > 1f) {
-			G = 1f;
+		if (g > 1f) {
+			g = 1f;
 		}
-		if (B > 1f) {
-			B = 1f;
+		if (b > 1f) {
+			b = 1f;
 		}
-		if (A > 1f) {
-			A = 1f;
+		if (a > 1f) {
+			a = 1f;
 		}
 	}
 
@@ -496,8 +504,8 @@ public final class Color4 {
 	 * @return The interpolated color
 	 */
 	public static Color4 lerp(Color4 value1, Color4 value2, float amount) {
-		return new Color4(Helpers.lerp(value1.R, value2.R, amount), Helpers.lerp(value1.G, value2.G, amount),
-				Helpers.lerp(value1.B, value2.B, amount), Helpers.lerp(value1.A, value2.A, amount));
+		return new Color4(Helpers.lerp(value1.r, value2.r, amount), Helpers.lerp(value1.g, value2.g, amount),
+				Helpers.lerp(value1.b, value2.b, amount), Helpers.lerp(value1.a, value2.a, amount));
 	}
 
 	static public Color4 parse(XmlPullParser parser) throws XmlPullParserException, IOException {
@@ -507,30 +515,30 @@ public final class Color4 {
 	public void serializeXml(XmlSerializer writer, String namespace, String name)
 			throws IllegalArgumentException, IllegalStateException, IOException {
 		writer.startTag(namespace, name);
-		writer.startTag(namespace, "R").text(Float.toString(R)).endTag(namespace, "R");
-		writer.startTag(namespace, "G").text(Float.toString(G)).endTag(namespace, "G");
-		writer.startTag(namespace, "B").text(Float.toString(B)).endTag(namespace, "B");
-		writer.startTag(namespace, "A").text(Float.toString(A)).endTag(namespace, "A");
+		writer.startTag(namespace, "R").text(Float.toString(r)).endTag(namespace, "R");
+		writer.startTag(namespace, "G").text(Float.toString(g)).endTag(namespace, "G");
+		writer.startTag(namespace, "B").text(Float.toString(b)).endTag(namespace, "B");
+		writer.startTag(namespace, "A").text(Float.toString(a)).endTag(namespace, "A");
 		writer.endTag(namespace, name);
 	}
 
 	public void serializeXml(XmlSerializer writer, String namespace, String name, Locale locale)
 			throws IllegalArgumentException, IllegalStateException, IOException {
 		writer.startTag(namespace, name);
-		writer.startTag(namespace, "R").text(String.format(locale, "%f", R)).endTag(namespace, "R");
-		writer.startTag(namespace, "G").text(String.format(locale, "%f", G)).endTag(namespace, "G");
-		writer.startTag(namespace, "B").text(String.format(locale, "%f", B)).endTag(namespace, "B");
-		writer.startTag(namespace, "A").text(String.format(locale, "%f", A)).endTag(namespace, "A");
+		writer.startTag(namespace, "R").text(String.format(locale, "%f", r)).endTag(namespace, "R");
+		writer.startTag(namespace, "G").text(String.format(locale, "%f", g)).endTag(namespace, "G");
+		writer.startTag(namespace, "B").text(String.format(locale, "%f", b)).endTag(namespace, "B");
+		writer.startTag(namespace, "A").text(String.format(locale, "%f", a)).endTag(namespace, "A");
 		writer.endTag(namespace, name);
 	}
 
 	@Override
 	public String toString() {
-		return String.format(Helpers.EnUsCulture, "<%f, %f, %f, %f>", R, G, B, A);
+		return String.format(Helpers.EnUsCulture, "<%f, %f, %f, %f>", r, g, b, a);
 	}
 
-	public String ToRGBString() {
-		return String.format(Helpers.EnUsCulture, "<%f, %f, %f>", R, G, B);
+	public String toRGBString() {
+		return String.format(Helpers.EnUsCulture, "<%f, %f, %f>", r, g, b);
 	}
 
 	@Override
@@ -539,15 +547,15 @@ public final class Color4 {
 	}
 
 	public boolean equals(Color4 other) {
-		return other != null && R == other.R && G == other.G && B == other.B && A == other.A;
+		return other != null && r == other.r && g == other.g && b == other.b && a == other.a;
 	}
 
 	@Override
 	public int hashCode() {
-		int hashCode = ((Float) R).hashCode();
-		hashCode = hashCode * 31 + ((Float) G).hashCode();
-		hashCode = hashCode * 31 + ((Float) B).hashCode();
-		hashCode = hashCode * 31 + ((Float) A).hashCode();
+		int hashCode = ((Float) r).hashCode();
+		hashCode = hashCode * 31 + ((Float) g).hashCode();
+		hashCode = hashCode * 31 + ((Float) b).hashCode();
+		hashCode = hashCode * 31 + ((Float) a).hashCode();
 		return hashCode;
 	}
 
@@ -556,38 +564,33 @@ public final class Color4 {
 	}
 
 	public static Color4 add(Color4 lhs, Color4 rhs) {
-		lhs.R += rhs.R;
-		lhs.G += rhs.G;
-		lhs.B += rhs.B;
-		lhs.A += rhs.A;
+		lhs.r += rhs.r;
+		lhs.g += rhs.g;
+		lhs.b += rhs.b;
+		lhs.a += rhs.a;
 		lhs.clampValues();
 
 		return lhs;
 	}
 
 	public static Color4 minus(Color4 lhs, Color4 rhs) {
-		lhs.R -= rhs.R;
-		lhs.G -= rhs.G;
-		lhs.B -= rhs.B;
-		lhs.A -= rhs.A;
+		lhs.r -= rhs.r;
+		lhs.g -= rhs.g;
+		lhs.b -= rhs.b;
+		lhs.a -= rhs.a;
 		lhs.clampValues();
 
 		return lhs;
 	}
 
 	public static Color4 multiply(Color4 lhs, Color4 rhs) {
-		lhs.R *= rhs.R;
-		lhs.G *= rhs.G;
-		lhs.B *= rhs.B;
-		lhs.A *= rhs.A;
+		lhs.r *= rhs.r;
+		lhs.g *= rhs.g;
+		lhs.b *= rhs.b;
+		lhs.a *= rhs.a;
 		lhs.clampValues();
 
 		return lhs;
 	}
 
-	/** A Color4 with zero RGB values and fully opaque (alpha 1.0) */
-	public final static Color4 Black = new Color4(0f, 0f, 0f, 1f);
-
-	/** A Color4 with full RGB values (1.0) and fully opaque (alpha 1.0) */
-	public final static Color4 White = new Color4(1f, 1f, 1f, 1f);
 }

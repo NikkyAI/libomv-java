@@ -43,7 +43,7 @@ public class AssetLandmark extends AssetItem {
 	private static final Logger logger = Logger.getLogger(AssetLandmark.class);
 
 	// Local position of the target
-	public Vector3 position = Vector3.Zero;
+	public Vector3 position = Vector3.ZERO;
 
 	/**
 	 * Construct an Asset object of type Landmark
@@ -88,7 +88,7 @@ public class AssetLandmark extends AssetItem {
 	protected void encode() {
 		String temp = "Landmark version 2\n";
 		temp += "region_id " + getRegionID() + "\n";
-		temp += String.format("local_pos %f %f %f\n", position.X, position.Y, position.Z);
+		temp += String.format("local_pos %f %f %f\n", position.x, position.y, position.z);
 		assetData = Helpers.stringToBytes(temp);
 	}
 
@@ -103,13 +103,13 @@ public class AssetLandmark extends AssetItem {
 			return false;
 
 		try {
-			String text = Helpers.BytesToString(assetData);
+			String text = Helpers.bytesToString(assetData);
 			if (text.toLowerCase().contains("landmark version 2")) {
 				assetID = new UUID(text.substring(text.indexOf("region_id") + 10, 36));
 				String[] vecStrings = text.substring(text.indexOf("local_pos") + 10).split(" ");
 				if (vecStrings.length == 3) {
-					position = new Vector3(Helpers.TryParseFloat(vecStrings[0]), Helpers.TryParseFloat(vecStrings[1]),
-							Helpers.TryParseFloat(vecStrings[2]));
+					position = new Vector3(Helpers.tryParseFloat(vecStrings[0]), Helpers.tryParseFloat(vecStrings[1]),
+							Helpers.tryParseFloat(vecStrings[2]));
 					return true;
 				}
 			}

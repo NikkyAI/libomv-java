@@ -217,7 +217,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 			if (onInventoryObjectOffered != null && (e.getIM().dialog == InstantMessageDialog.InventoryOffered
 					|| e.getIM().dialog == InstantMessageDialog.TaskInventoryOffered)) {
 				AssetType type = AssetType.Unknown;
-				UUID objectID = UUID.Zero;
+				UUID objectID = UUID.ZERO;
 				boolean fromTask = false;
 
 				if (e.getIM().dialog == InstantMessageDialog.InventoryOffered) {
@@ -254,7 +254,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 					imp.MessageBlock.setFromAgentName(Helpers.stringToBytes(client.agent.getName()));
 					imp.MessageBlock.setMessage(Helpers.EmptyBytes);
 					imp.MessageBlock.ParentEstateID = 0;
-					imp.MessageBlock.RegionID = UUID.Zero;
+					imp.MessageBlock.RegionID = UUID.ZERO;
 					imp.MessageBlock.Position = client.agent.getAgentPosition();
 
 					InventoryObjectOfferedCallbackArgs args = new InventoryObjectOfferedCallbackArgs(e.getIM(), type,
@@ -362,26 +362,26 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 				} else {
 					if (callback != null)
 						callback.callback(new ItemCreatedFromAssetCallbackArgs(false,
-								"Failed to parse asset and item UUIDs", UUID.Zero, UUID.Zero));
+								"Failed to parse asset and item UUIDs", UUID.ZERO, UUID.ZERO));
 				}
 			} else {
 				// Failure
 				if (callback != null)
-					callback.callback(new ItemCreatedFromAssetCallbackArgs(false, status, UUID.Zero, UUID.Zero));
+					callback.callback(new ItemCreatedFromAssetCallbackArgs(false, status, UUID.ZERO, UUID.ZERO));
 			}
 		}
 
 		@Override
 		public void failed(Exception ex) {
 			if (callback != null)
-				callback.callback(new ItemCreatedFromAssetCallbackArgs(false, ex.getMessage(), UUID.Zero, UUID.Zero));
+				callback.callback(new ItemCreatedFromAssetCallbackArgs(false, ex.getMessage(), UUID.ZERO, UUID.ZERO));
 		}
 
 		@Override
 		public void cancelled() {
 			if (callback != null)
 				callback.callback(
-						new ItemCreatedFromAssetCallbackArgs(false, "Operation canceled", UUID.Zero, UUID.Zero));
+						new ItemCreatedFromAssetCallbackArgs(false, "Operation canceled", UUID.ZERO, UUID.ZERO));
 		}
 	}
 
@@ -447,33 +447,33 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 					} else {
 						if (callback != null)
 							callback.callback(new InventoryUploadedAssetCallbackArgs(false, "Missing uploader URL",
-									UUID.Zero, UUID.Zero));
+									UUID.ZERO, UUID.ZERO));
 					}
 				} else if (status.equals("complete")) {
 					if (contents.containsKey("new_asset")) {
-						UUID new_asset = contents.get("new_asset").asUUID();
+						UUID newAsset = contents.get("new_asset").asUUID();
 						// Request full item update so we keep store in sync
 						try {
-							requestFetchInventory(assetID, new_asset);
+							requestFetchInventory(assetID, newAsset);
 						} catch (Exception ex) {
 						}
 
 						if (callback != null)
 							callback.callback(new InventoryUploadedAssetCallbackArgs(true, Helpers.EmptyString, assetID,
-									new_asset));
+									newAsset));
 					} else {
 						if (callback != null)
 							callback.callback(new InventoryUploadedAssetCallbackArgs(false,
-									"Failed to parse asset and item UUIDs", UUID.Zero, UUID.Zero));
+									"Failed to parse asset and item UUIDs", UUID.ZERO, UUID.ZERO));
 					}
 				} else {
 					if (callback != null)
-						callback.callback(new InventoryUploadedAssetCallbackArgs(false, status, UUID.Zero, UUID.Zero));
+						callback.callback(new InventoryUploadedAssetCallbackArgs(false, status, UUID.ZERO, UUID.ZERO));
 				}
 			} else {
 				if (callback != null)
 					callback.callback(new InventoryUploadedAssetCallbackArgs(false, "Unrecognized or empty response",
-							UUID.Zero, UUID.Zero));
+							UUID.ZERO, UUID.ZERO));
 			}
 		}
 
@@ -487,7 +487,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 				else
 					message = ex.getMessage();
 
-				callback.callback(new InventoryUploadedAssetCallbackArgs(false, message, UUID.Zero, UUID.Zero));
+				callback.callback(new InventoryUploadedAssetCallbackArgs(false, message, UUID.ZERO, UUID.ZERO));
 			}
 		}
 
@@ -495,7 +495,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		public void cancelled() {
 			if (callback != null)
 				callback.callback(
-						new InventoryUploadedAssetCallbackArgs(false, "Operation cancelled", UUID.Zero, UUID.Zero));
+						new InventoryUploadedAssetCallbackArgs(false, "Operation cancelled", UUID.ZERO, UUID.ZERO));
 		}
 	}
 
@@ -528,10 +528,10 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 				}
 			} else if (status.equals("complete")) {
 				if (contents.containsKey("new_asset")) {
-					UUID new_asset = contents.get("new_asset").asUUID();
+					UUID newAsset = contents.get("new_asset").asUUID();
 					// Request full item update so we keep store in sync
 					try {
-						requestFetchInventory(scriptID, new_asset);
+						requestFetchInventory(scriptID, newAsset);
 					} catch (Exception ex) {
 					}
 
@@ -547,11 +547,11 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 					}
 					if (callback != null)
 						callback.callback(new ScriptUpdatedCallbackArgs(true, status,
-								contents.get("compiled").asBoolean(), compileErrors, scriptID, new_asset));
+								contents.get("compiled").asBoolean(), compileErrors, scriptID, newAsset));
 				} else {
 					if (callback != null)
 						callback.callback(new ScriptUpdatedCallbackArgs(false, "Failed to parse asset UUID", false,
-								null, UUID.Zero, UUID.Zero));
+								null, UUID.ZERO, UUID.ZERO));
 				}
 			}
 		}
@@ -560,14 +560,14 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		public void failed(Exception ex) {
 			if (callback != null)
 				callback.callback(
-						new ScriptUpdatedCallbackArgs(false, ex.getMessage(), false, null, UUID.Zero, UUID.Zero));
+						new ScriptUpdatedCallbackArgs(false, ex.getMessage(), false, null, UUID.ZERO, UUID.ZERO));
 		}
 
 		@Override
 		public void cancelled() {
 			if (callback != null)
 				callback.callback(
-						new ScriptUpdatedCallbackArgs(false, "Operation cancelled", false, null, UUID.Zero, UUID.Zero));
+						new ScriptUpdatedCallbackArgs(false, "Operation cancelled", false, null, UUID.ZERO, UUID.ZERO));
 		}
 	}
 
@@ -725,7 +725,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 	 * @throws Exception
 	 */
 	public final InventoryItem fetchItem(final UUID itemID, UUID ownerID, int timeout) throws Exception {
-		final TimeoutEvent<InventoryItem> fetchEvent = new TimeoutEvent<InventoryItem>();
+		final TimeoutEvent<InventoryItem> fetchEvent = new TimeoutEvent<>();
 
 		final class FetchedItemsCallback implements Callback<ItemReceivedCallbackArgs> {
 			@Override
@@ -840,8 +840,8 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		}
 		;
 
-		OSDMap OSDRequest = new OSDMap();
-		OSDRequest.put("agent_id", new OSDUUID(client.agent.getAgentID()));
+		OSDMap osdRequest = new OSDMap();
+		osdRequest.put("agent_id", new OSDUUID(client.agent.getAgentID()));
 
 		OSDArray items = new OSDArray(itemIDs.size());
 		for (int i = 0; i < itemIDs.size(); i++) {
@@ -850,8 +850,8 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 			item.put("owner_id", new OSDUUID(ownerIDs.get(i)));
 			items.add(item);
 		}
-		OSDRequest.put("items", items);
-		request.executeHttpPost(url, OSDRequest, OSDFormat.Xml, new CapsCallback(), client.settings.CAPS_TIMEOUT);
+		osdRequest.put("items", items);
+		request.executeHttpPost(url, osdRequest, OSDFormat.Xml, new CapsCallback(), client.settings.CAPS_TIMEOUT);
 		return true;
 	}
 
@@ -1017,7 +1017,8 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 						if (fetchedFolders != null) {
 							for (int i = 0; i < fetchedFolders.size(); i++) {
 								OSDMap res = (OSDMap) fetchedFolders.get(i);
-								UUID parentID, folderID = res.get("folder_id").asUUID();
+								UUID parentID;
+								UUID folderID = res.get("folder_id").asUUID();
 
 								InventoryFolder fetchedFolder = safeCreateInventoryFolder(folderID,
 										res.get("owner_id").asUUID());
@@ -1171,7 +1172,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 	 */
 	public final UUID findObjectByPath(UUID baseFolder, UUID inventoryOwner, final String path, int timeout)
 			throws Exception {
-		final TimeoutEvent<UUID> findEvent = new TimeoutEvent<UUID>();
+		final TimeoutEvent<UUID> findEvent = new TimeoutEvent<>();
 
 		Callback<FindObjectByPathReplyCallbackArgs> callback = new Callback<FindObjectByPathReplyCallbackArgs>() {
 			@Override
@@ -1188,7 +1189,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		UUID foundItem = findEvent.waitOne(timeout);
 		onFindObjectByPathReply.remove(callback);
 
-		return foundItem == null ? UUID.Zero : foundItem;
+		return foundItem == null ? UUID.ZERO : foundItem;
 	}
 
 	/**
@@ -1588,7 +1589,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		if (items == null || items.isEmpty()) {
 			// To indicate that we want no items removed:
 			rem.ItemID = new UUID[1];
-			rem.ItemID[0] = UUID.Zero;
+			rem.ItemID[0] = UUID.ZERO;
 		} else {
 			synchronized (store) {
 				rem.ItemID = new UUID[items.size()];
@@ -1607,7 +1608,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		if (folders == null || folders.isEmpty()) {
 			// To indicate we want no folders removed:
 			rem.FolderID = new UUID[1];
-			rem.FolderID[0] = UUID.Zero;
+			rem.FolderID[0] = UUID.ZERO;
 		} else {
 			synchronized (store) {
 				rem.FolderID = new UUID[folders.size()];
@@ -1836,9 +1837,9 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 			InventoryType invType, UUID folderID, Callback<ItemCreatedFromAssetCallbackArgs> callback)
 			throws Exception {
 		Permissions permissions = new Permissions();
-		permissions.EveryoneMask = PermissionMask.None;
-		permissions.GroupMask = PermissionMask.None;
-		permissions.NextOwnerMask = PermissionMask.All;
+		permissions.everyoneMask = PermissionMask.None;
+		permissions.groupMask = PermissionMask.None;
+		permissions.nextOwnerMask = PermissionMask.All;
 
 		requestCreateItemFromAsset(data, name, description, assetType, invType, folderID, permissions, callback);
 	}
@@ -1877,9 +1878,9 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 			query.put("inventory_type", OSD.fromString(invType.toString()));
 			query.put("name", OSD.fromString(name));
 			query.put("description", OSD.fromString(description));
-			query.put("everyone_mask", OSD.fromInteger(permissions.EveryoneMask));
-			query.put("group_mask", OSD.fromInteger(permissions.GroupMask));
-			query.put("next_owner_mask", OSD.fromInteger(permissions.NextOwnerMask));
+			query.put("everyone_mask", OSD.fromInteger(permissions.everyoneMask));
+			query.put("group_mask", OSD.fromInteger(permissions.groupMask));
+			query.put("next_owner_mask", OSD.fromInteger(permissions.nextOwnerMask));
 			query.put("expected_upload_cost", OSD.fromInteger(client.settings.getUploadPrice()));
 
 			// Make the request
@@ -2210,23 +2211,23 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 			InventoryItem item = items.get(i);
 
 			UpdateInventoryItemPacket.InventoryDataBlock block = update.new InventoryDataBlock();
-			block.BaseMask = item.permissions.BaseMask;
+			block.BaseMask = item.permissions.baseMask;
 			block.CRC = itemCRC(item);
 			block.CreationDate = (int) Helpers.dateTimeToUnixTime(item.creationDate);
 			block.CreatorID = item.permissions.creatorID;
 			block.setDescription(Helpers.stringToBytes(item.description));
-			block.EveryoneMask = item.permissions.EveryoneMask;
+			block.EveryoneMask = item.permissions.everyoneMask;
 			block.Flags = item.itemFlags;
 			block.FolderID = item.parent.itemID;
 			block.GroupID = item.permissions.groupID;
-			block.GroupMask = item.permissions.GroupMask;
+			block.GroupMask = item.permissions.groupMask;
 			block.GroupOwned = item.permissions.isGroupOwned;
 			block.InvType = item.getType().getValue();
 			block.ItemID = item.itemID;
 			block.setName(Helpers.stringToBytes(item.name));
-			block.NextOwnerMask = item.permissions.NextOwnerMask;
+			block.NextOwnerMask = item.permissions.nextOwnerMask;
 			block.OwnerID = store.getOwnerID();
-			block.OwnerMask = item.permissions.OwnerMask;
+			block.OwnerMask = item.permissions.ownerMask;
 			block.SalePrice = item.salePrice;
 			block.SaleType = item.saleType.getValue();
 			block.TransactionID = transactionID;
@@ -2490,25 +2491,25 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		add.RezData.BypassRaycast = 1;
 		add.RezData.RayStart = position;
 		add.RezData.RayEnd = position;
-		add.RezData.RayTargetID = UUID.Zero;
+		add.RezData.RayTargetID = UUID.ZERO;
 		add.RezData.RayEndIsIntersection = false;
 		add.RezData.RezSelected = rezSelected;
 		add.RezData.RemoveItem = false;
 		add.RezData.ItemFlags = item.itemFlags;
-		add.RezData.GroupMask = item.permissions.GroupMask;
-		add.RezData.EveryoneMask = item.permissions.EveryoneMask;
-		add.RezData.NextOwnerMask = item.permissions.NextOwnerMask;
+		add.RezData.GroupMask = item.permissions.groupMask;
+		add.RezData.EveryoneMask = item.permissions.everyoneMask;
+		add.RezData.NextOwnerMask = item.permissions.nextOwnerMask;
 
 		add.InventoryData.ItemID = item.itemID;
 		add.InventoryData.FolderID = item.parent.itemID;
 		add.InventoryData.CreatorID = item.permissions.creatorID;
 		add.InventoryData.OwnerID = item.permissions.ownerID;
 		add.InventoryData.GroupID = item.permissions.groupID;
-		add.InventoryData.BaseMask = item.permissions.BaseMask;
-		add.InventoryData.OwnerMask = item.permissions.OwnerMask;
-		add.InventoryData.GroupMask = item.permissions.GroupMask;
-		add.InventoryData.EveryoneMask = item.permissions.EveryoneMask;
-		add.InventoryData.NextOwnerMask = item.permissions.NextOwnerMask;
+		add.InventoryData.BaseMask = item.permissions.baseMask;
+		add.InventoryData.OwnerMask = item.permissions.ownerMask;
+		add.InventoryData.GroupMask = item.permissions.groupMask;
+		add.InventoryData.EveryoneMask = item.permissions.everyoneMask;
+		add.InventoryData.NextOwnerMask = item.permissions.nextOwnerMask;
 		add.InventoryData.GroupOwned = item.permissions.isGroupOwned;
 		add.InventoryData.TransactionID = queryID;
 		add.InventoryData.Type = item.getType().getValue();
@@ -2562,7 +2563,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		take.AgentData.AgentID = client.agent.getAgentID();
 		take.AgentData.SessionID = client.agent.getSessionID();
 		take.AgentBlock = take.new AgentBlockBlock();
-		take.AgentBlock.GroupID = UUID.Zero;
+		take.AgentBlock.GroupID = UUID.ZERO;
 		take.AgentBlock.Destination = destType.getValue();
 		take.AgentBlock.DestinationID = destFolder;
 		take.AgentBlock.PacketCount = 1;
@@ -2596,11 +2597,11 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		add.InventoryData.CreatorID = item.permissions.creatorID;
 		add.InventoryData.OwnerID = item.permissions.ownerID;
 		add.InventoryData.GroupID = item.permissions.groupID;
-		add.InventoryData.BaseMask = item.permissions.BaseMask;
-		add.InventoryData.OwnerMask = item.permissions.OwnerMask;
-		add.InventoryData.GroupMask = item.permissions.GroupMask;
-		add.InventoryData.EveryoneMask = item.permissions.EveryoneMask;
-		add.InventoryData.NextOwnerMask = item.permissions.NextOwnerMask;
+		add.InventoryData.BaseMask = item.permissions.baseMask;
+		add.InventoryData.OwnerMask = item.permissions.ownerMask;
+		add.InventoryData.GroupMask = item.permissions.groupMask;
+		add.InventoryData.EveryoneMask = item.permissions.everyoneMask;
+		add.InventoryData.NextOwnerMask = item.permissions.nextOwnerMask;
 		add.InventoryData.GroupOwned = item.permissions.isGroupOwned;
 		add.InventoryData.TransactionID = queryID;
 		add.InventoryData.Type = item.getType().getValue();
@@ -2644,7 +2645,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 				InstantMessageDialog.InventoryOffered, InstantMessageOnline.Online, null, null, 0, bucket);
 
 		if (doEffect) {
-			client.agent.beamEffect(client.agent.getAgentID(), recipient, Vector3d.Zero,
+			client.agent.beamEffect(client.agent.getAgentID(), recipient, Vector3d.ZERO,
 					client.settings.DEFAULT_EFFECT_COLOR, 1f, new UUID());
 		}
 	}
@@ -2689,7 +2690,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 				InstantMessageDialog.InventoryOffered, InstantMessageOnline.Online, null, null, 0, bucket);
 
 		if (doEffect) {
-			client.agent.beamEffect(client.agent.getAgentID(), recipient, Vector3d.Zero,
+			client.agent.beamEffect(client.agent.getAgentID(), recipient, Vector3d.ZERO,
 					client.settings.DEFAULT_EFFECT_COLOR, 1f, new UUID());
 		}
 	}
@@ -2725,11 +2726,11 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		update.InventoryData.CreatorID = item.permissions.creatorID;
 		update.InventoryData.OwnerID = item.permissions.ownerID;
 		update.InventoryData.GroupID = item.permissions.groupID;
-		update.InventoryData.BaseMask = item.permissions.BaseMask;
-		update.InventoryData.OwnerMask = item.permissions.OwnerMask;
-		update.InventoryData.GroupMask = item.permissions.GroupMask;
-		update.InventoryData.EveryoneMask = item.permissions.EveryoneMask;
-		update.InventoryData.NextOwnerMask = item.permissions.NextOwnerMask;
+		update.InventoryData.BaseMask = item.permissions.baseMask;
+		update.InventoryData.OwnerMask = item.permissions.ownerMask;
+		update.InventoryData.GroupMask = item.permissions.groupMask;
+		update.InventoryData.EveryoneMask = item.permissions.everyoneMask;
+		update.InventoryData.NextOwnerMask = item.permissions.nextOwnerMask;
 		update.InventoryData.GroupOwned = item.permissions.isGroupOwned;
 		update.InventoryData.TransactionID = transactionID;
 		update.InventoryData.Type = item.assetType.getValue();
@@ -2769,7 +2770,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		if (client.assets == null)
 			throw new RuntimeException("Can't get task inventory without the asset manager being instantiated.");
 
-		final TimeoutEvent<String> taskReplyEvent = new TimeoutEvent<String>();
+		final TimeoutEvent<String> taskReplyEvent = new TimeoutEvent<>();
 		Callback<TaskInventoryReplyCallbackArgs> callback = new Callback<TaskInventoryReplyCallbackArgs>() {
 			@Override
 			public boolean callback(TaskInventoryReplyCallbackArgs e) {
@@ -2786,7 +2787,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 
 		if (filename != null) {
 			if (!filename.isEmpty()) {
-				final TimeoutEvent<String> taskDownloadEvent = new TimeoutEvent<String>();
+				final TimeoutEvent<String> taskDownloadEvent = new TimeoutEvent<>();
 				final long xferID = 0;
 
 				Callback<XferDownload> xferCallback = new Callback<XferDownload>() {
@@ -2794,7 +2795,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 					public boolean callback(XferDownload download) {
 						if (download.xferID == xferID) {
 							try {
-								taskDownloadEvent.set(Helpers.BytesToString(download.assetData));
+								taskDownloadEvent.set(Helpers.bytesToString(download.assetData));
 							} catch (UnsupportedEncodingException e1) {
 								taskDownloadEvent.set(Helpers.EmptyString);
 							}
@@ -2804,7 +2805,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 				};
 				// Start the actual asset xfer
 				client.assets.onXferReceived.add(xferCallback, true);
-				client.assets.requestAssetXfer(filename, true, false, UUID.Zero, AssetType.Unknown, true);
+				client.assets.requestAssetXfer(filename, true, false, UUID.ZERO, AssetType.Unknown, true);
 				String taskList = taskDownloadEvent.waitOne(timeout);
 				client.assets.onXferReceived.remove(xferCallback);
 				if (taskList != null && !taskList.isEmpty()) {
@@ -2947,11 +2948,11 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		ScriptPacket.InventoryBlock.CreatorID = item.permissions.creatorID;
 		ScriptPacket.InventoryBlock.OwnerID = item.permissions.ownerID;
 		ScriptPacket.InventoryBlock.GroupID = item.permissions.groupID;
-		ScriptPacket.InventoryBlock.BaseMask = item.permissions.BaseMask;
-		ScriptPacket.InventoryBlock.OwnerMask = item.permissions.OwnerMask;
-		ScriptPacket.InventoryBlock.GroupMask = item.permissions.GroupMask;
-		ScriptPacket.InventoryBlock.EveryoneMask = item.permissions.EveryoneMask;
-		ScriptPacket.InventoryBlock.NextOwnerMask = item.permissions.NextOwnerMask;
+		ScriptPacket.InventoryBlock.BaseMask = item.permissions.baseMask;
+		ScriptPacket.InventoryBlock.OwnerMask = item.permissions.ownerMask;
+		ScriptPacket.InventoryBlock.GroupMask = item.permissions.groupMask;
+		ScriptPacket.InventoryBlock.EveryoneMask = item.permissions.everyoneMask;
+		ScriptPacket.InventoryBlock.NextOwnerMask = item.permissions.nextOwnerMask;
 		ScriptPacket.InventoryBlock.GroupOwned = item.permissions.isGroupOwned;
 		ScriptPacket.InventoryBlock.TransactionID = transactionID;
 		ScriptPacket.InventoryBlock.Type = item.assetType.getValue();
@@ -3071,25 +3072,25 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		int CRC = 0;
 
 		// IDs
-		CRC += iitem.assetID.CRC(); // AssetID
-		CRC += iitem.parent.itemID.CRC(); // FolderID
-		CRC += iitem.itemID.CRC(); // ItemID
+		CRC += iitem.assetID.crc(); // AssetID
+		CRC += iitem.parent.itemID.crc(); // FolderID
+		CRC += iitem.itemID.crc(); // ItemID
 
 		// Permission stuff
-		CRC += iitem.permissions.creatorID.CRC(); // CreatorID
-		CRC += iitem.permissions.ownerID.CRC(); // OwnerID
-		CRC += iitem.permissions.groupID.CRC(); // GroupID
+		CRC += iitem.permissions.creatorID.crc(); // CreatorID
+		CRC += iitem.permissions.ownerID.crc(); // OwnerID
+		CRC += iitem.permissions.groupID.crc(); // GroupID
 
 		// CRC += another 4 words which always seem to be zero -- unclear if
 		// this is a UUID or what
-		CRC += iitem.permissions.OwnerMask; // owner_mask; // Either owner_mask
+		CRC += iitem.permissions.ownerMask; // owner_mask; // Either owner_mask
 											// or next_owner_mask may need to be
-		CRC += iitem.permissions.NextOwnerMask; // next_owner_mask; // switched
+		CRC += iitem.permissions.nextOwnerMask; // next_owner_mask; // switched
 												// with base_mask -- 2 values go
 												// here and in my
-		CRC += iitem.permissions.EveryoneMask; // everyone_mask; // study item,
+		CRC += iitem.permissions.everyoneMask; // everyone_mask; // study item,
 												// the three were identical.
-		CRC += iitem.permissions.GroupMask; // group_mask;
+		CRC += iitem.permissions.groupMask; // group_mask;
 
 		// The rest of the CRC fields
 		CRC += iitem.itemFlags; // Flags
@@ -3177,12 +3178,13 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		String[] lines = taskData.replace("\r\n", "\n").split("\n");
 		String key = Helpers.EmptyString;
 		String val = Helpers.EmptyString;
-		RefObject<String> keyref = new RefObject<String>(key), valref = new RefObject<String>(val);
+		RefObject<String> keyref = new RefObject<>(key);
+		RefObject<String> valref = new RefObject<>(val);
 
 		while (lineNum < lines.length) {
 			if (parseLine(lines[lineNum++], keyref, valref)) {
-				UUID itemID = UUID.Zero;
-				UUID parentID = UUID.Zero;
+				UUID itemID = UUID.ZERO;
+				UUID parentID = UUID.ZERO;
 				String name = Helpers.EmptyString;
 
 				if (key.equals("inv_object")) {
@@ -3216,7 +3218,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 
 					// Any inventory item that links to an assetID, has
 					// permissions, etc
-					UUID assetID = UUID.Zero;
+					UUID assetID = UUID.ZERO;
 					String desc = Helpers.EmptyString;
 					InventoryType inventoryType = InventoryType.Unknown;
 					Date creationDate = Helpers.Epoch;
@@ -3243,34 +3245,34 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 										} else if (key.equals("}")) {
 											break;
 										} else if (key.equals("creator_mask")) {
-											int i = (int) Helpers.TryParseHex(val);
+											int i = (int) Helpers.tryParseHex(val);
 											if (i != 0) {
-												perms.BaseMask = i;
+												perms.baseMask = i;
 											}
 										} else if (key.equals("base_mask")) {
-											int i = (int) Helpers.TryParseHex(val);
+											int i = (int) Helpers.tryParseHex(val);
 											if (i != 0) {
-												perms.BaseMask = i;
+												perms.baseMask = i;
 											}
 										} else if (key.equals("owner_mask")) {
-											int i = (int) Helpers.TryParseHex(val);
+											int i = (int) Helpers.tryParseHex(val);
 											if (i != 0) {
-												perms.OwnerMask = i;
+												perms.ownerMask = i;
 											}
 										} else if (key.equals("group_mask")) {
-											int i = (int) Helpers.TryParseHex(val);
+											int i = (int) Helpers.tryParseHex(val);
 											if (i != 0) {
-												perms.GroupMask = i;
+												perms.groupMask = i;
 											}
 										} else if (key.equals("everyone_mask")) {
-											int i = (int) Helpers.TryParseHex(val);
+											int i = (int) Helpers.tryParseHex(val);
 											if (i != 0) {
-												perms.EveryoneMask = i;
+												perms.everyoneMask = i;
 											}
 										} else if (key.equals("next_owner_mask")) {
-											int i = (int) Helpers.TryParseHex(val);
+											int i = (int) Helpers.tryParseHex(val);
 											if (i != 0) {
-												perms.NextOwnerMask = i;
+												perms.nextOwnerMask = i;
 											}
 										} else if (key.equals("creator_id")) {
 											perms.creatorID = new UUID(val);
@@ -3281,7 +3283,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 										} else if (key.equals("group_id")) {
 											perms.groupID = new UUID(val);
 										} else if (key.equals("group_owned")) {
-											long i = Helpers.TryParseLong(val);
+											long i = Helpers.tryParseLong(val);
 											if (i != 0) {
 												perms.isGroupOwned = (i != 0);
 											}
@@ -3298,7 +3300,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 										} else if (key.equals("sale_type")) {
 											saleType = SaleType.setValue(val);
 										} else if (key.equals("sale_price")) {
-											salePrice = Helpers.TryParseInt(val);
+											salePrice = Helpers.tryParseInt(val);
 										}
 									}
 								}
@@ -3311,15 +3313,15 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 							} else if (key.equals("inv_type")) {
 								inventoryType = InventoryType.valueOf(val);
 							} else if (key.equals("flags")) {
-								flags = (int) Helpers.TryParseLong(val);
+								flags = (int) Helpers.tryParseLong(val);
 							} else if (key.equals("name")) {
 								name = val.substring(0, val.indexOf('|'));
 							} else if (key.equals("desc")) {
 								desc = val.substring(0, val.indexOf('|'));
 							} else if (key.equals("creation_date")) {
-								int timestamp = Helpers.TryParseInt(val);
+								int timestamp = Helpers.tryParseInt(val);
 								if (timestamp != 0) {
-									creationDate = Helpers.UnixTimeToDateTime(timestamp);
+									creationDate = Helpers.unixTimeToDateTime(timestamp);
 								} else {
 									logger.warn("Failed to parse creation_date " + val);
 								}
@@ -3369,7 +3371,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 				for (int i = 0; i < reply.FolderData.length; i++) {
 					// InventoryDescendantsReply sends a null folder if the
 					// parent doesnt contain any folders
-					if (reply.FolderData[0].FolderID.equals(UUID.Zero)) {
+					if (reply.FolderData[0].FolderID.equals(UUID.ZERO)) {
 						break;
 					}
 					// If folder already exists then ignore, we assume the version cache
@@ -3377,7 +3379,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 					else if (!store.containsFolder(reply.FolderData[i].FolderID)) {
 						InventoryFolder folder = new InventoryFolder(reply.FolderData[i].FolderID,
 								reply.FolderData[i].ParentID, reply.AgentData.OwnerID);
-						folder.name = Helpers.BytesToString(reply.FolderData[i].getName());
+						folder.name = Helpers.bytesToString(reply.FolderData[i].getName());
 						folder.preferredType = FolderType.setValue(reply.FolderData[i].Type);
 						store.add(folder);
 					}
@@ -3387,7 +3389,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 				for (int i = 0; i < reply.ItemData.length; i++) {
 					// InventoryDescendantsReply sends a null item if the parent
 					// doesnt contain any items.
-					if (reply.ItemData[i].ItemID.equals(UUID.Zero)) {
+					if (reply.ItemData[i].ItemID.equals(UUID.ZERO)) {
 						break;
 					}
 
@@ -3406,11 +3408,11 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 					}
 					InventoryItem item = InventoryItem.create(invType, reply.ItemData[i].ItemID,
 							reply.ItemData[i].FolderID, reply.AgentData.OwnerID);
-					item.name = Helpers.BytesToString(reply.ItemData[i].getName());
+					item.name = Helpers.bytesToString(reply.ItemData[i].getName());
 					item.assetType = AssetType.setValue(reply.ItemData[i].Type);
 					item.assetID = reply.ItemData[i].AssetID;
-					item.creationDate = Helpers.UnixTimeToDateTime(reply.ItemData[i].CreationDate);
-					item.description = Helpers.BytesToString(reply.ItemData[i].getDescription());
+					item.creationDate = Helpers.unixTimeToDateTime(reply.ItemData[i].CreationDate);
+					item.description = Helpers.bytesToString(reply.ItemData[i].getDescription());
 					item.itemFlags = reply.ItemData[i].Flags;
 					item.permissions = new Permissions(reply.ItemData[i].CreatorID, reply.ItemData[i].OwnerID, null,
 							reply.ItemData[i].GroupID, reply.ItemData[i].GroupOwned, reply.ItemData[i].BaseMask,
@@ -3529,11 +3531,11 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 
 			InventoryItem item = InventoryItem.create(InventoryType.setValue(dataBlock.InvType), dataBlock.ItemID,
 					dataBlock.FolderID, dataBlock.OwnerID);
-			item.name = Helpers.BytesToString(dataBlock.getName());
+			item.name = Helpers.bytesToString(dataBlock.getName());
 			item.assetType = AssetType.setValue(dataBlock.Type);
 			item.assetID = dataBlock.AssetID;
-			item.creationDate = Helpers.UnixTimeToDateTime(dataBlock.CreationDate);
-			item.description = Helpers.BytesToString(dataBlock.getDescription());
+			item.creationDate = Helpers.unixTimeToDateTime(dataBlock.CreationDate);
+			item.description = Helpers.bytesToString(dataBlock.getDescription());
 			item.itemFlags = dataBlock.Flags;
 			item.permissions = new Permissions(dataBlock.CreatorID, dataBlock.OwnerID, null, dataBlock.GroupID,
 					dataBlock.GroupOwned, dataBlock.BaseMask, dataBlock.EveryoneMask, dataBlock.GroupMask,
@@ -3547,7 +3549,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 			 * the client to make sure that the item gets a good folder, otherwise it will
 			 * end up inaccessible in inventory.
 			 */
-			if (dataBlock.FolderID.equals(UUID.Zero)) {
+			if (dataBlock.FolderID.equals(UUID.ZERO)) {
 				// assign default folder for type
 				item.parent = findFolderForType(item.assetType);
 
@@ -3604,7 +3606,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		for (MoveInventoryItemPacket.InventoryDataBlock block : move.InventoryData) {
 			InventoryNode node = store.getNode(block.ItemID);
 			if (block.getNewName().length > 0)
-				node.name = Helpers.BytesToString(block.getNewName());
+				node.name = Helpers.bytesToString(block.getNewName());
 			store.add(block.FolderID, node);
 		}
 	}
@@ -3615,7 +3617,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 	private final void handleBulkUpdateInventory(Packet packet, Simulator simulator) throws Exception {
 		BulkUpdateInventoryPacket update = (BulkUpdateInventoryPacket) packet;
 
-		if (update.FolderData.length > 0 && !update.FolderData[0].FolderID.equals(UUID.Zero)) {
+		if (update.FolderData.length > 0 && !update.FolderData[0].FolderID.equals(UUID.ZERO)) {
 			synchronized (store) {
 				for (BulkUpdateInventoryPacket.FolderDataBlock dataBlock : update.FolderData) {
 					InventoryFolder folder;
@@ -3627,27 +3629,27 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 						folder.ownerID = update.AgentData.AgentID;
 					}
 					if (dataBlock.getName() != null)
-						folder.name = Helpers.BytesToString(dataBlock.getName());
+						folder.name = Helpers.bytesToString(dataBlock.getName());
 					folder.preferredType = FolderType.setValue(dataBlock.Type);
 					store.add(folder);
 				}
 			}
 		}
 
-		if (update.ItemData.length > 0 && !update.ItemData[0].ItemID.equals(UUID.Zero)) {
+		if (update.ItemData.length > 0 && !update.ItemData[0].ItemID.equals(UUID.ZERO)) {
 			for (int i = 0; i < update.ItemData.length; i++) {
 				BulkUpdateInventoryPacket.ItemDataBlock dataBlock = update.ItemData[i];
 				InventoryItem item = safeCreateInventoryItem(InventoryType.setValue(dataBlock.InvType),
 						dataBlock.ItemID, dataBlock.FolderID, dataBlock.OwnerID);
 
 				item.assetType = AssetType.setValue(dataBlock.Type);
-				if (!dataBlock.AssetID.equals(UUID.Zero)) {
+				if (!dataBlock.AssetID.equals(UUID.ZERO)) {
 					item.assetID = dataBlock.AssetID;
 				}
-				item.creationDate = Helpers.UnixTimeToDateTime(dataBlock.CreationDate);
-				item.description = Helpers.BytesToString(dataBlock.getDescription());
+				item.creationDate = Helpers.unixTimeToDateTime(dataBlock.CreationDate);
+				item.description = Helpers.bytesToString(dataBlock.getDescription());
 				item.itemFlags = dataBlock.Flags;
-				item.name = Helpers.BytesToString(dataBlock.getName());
+				item.name = Helpers.bytesToString(dataBlock.getName());
 				item.permissions = new Permissions(dataBlock.CreatorID, dataBlock.OwnerID, null, dataBlock.GroupID,
 						dataBlock.GroupOwned, dataBlock.BaseMask, dataBlock.EveryoneMask, dataBlock.GroupMask,
 						dataBlock.NextOwnerMask, dataBlock.OwnerMask);
@@ -3766,10 +3768,10 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 					dataBlock.FolderID, dataBlock.OwnerID);
 			item.assetType = AssetType.setValue(dataBlock.Type);
 			item.assetID = dataBlock.AssetID;
-			item.creationDate = Helpers.UnixTimeToDateTime(dataBlock.CreationDate);
-			item.description = Helpers.BytesToString(dataBlock.getDescription());
+			item.creationDate = Helpers.unixTimeToDateTime(dataBlock.CreationDate);
+			item.description = Helpers.bytesToString(dataBlock.getDescription());
 			item.itemFlags = dataBlock.Flags;
-			item.name = Helpers.BytesToString(dataBlock.getName());
+			item.name = Helpers.bytesToString(dataBlock.getName());
 			item.permissions = new Permissions(dataBlock.CreatorID, dataBlock.OwnerID, null, dataBlock.GroupID,
 					dataBlock.GroupOwned, dataBlock.BaseMask, dataBlock.EveryoneMask, dataBlock.GroupMask,
 					dataBlock.NextOwnerMask, dataBlock.OwnerMask);
@@ -3789,7 +3791,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 	private final void handleReplyTaskInventory(Packet packet, Simulator simulator) throws Exception {
 		ReplyTaskInventoryPacket reply = (ReplyTaskInventoryPacket) packet;
 		onTaskInventoryReply.dispatch(new TaskInventoryReplyCallbackArgs(reply.InventoryData.TaskID,
-				reply.InventoryData.Serial, Helpers.BytesToString(reply.InventoryData.getFilename())));
+				reply.InventoryData.Serial, Helpers.bytesToString(reply.InventoryData.getFilename())));
 	}
 
 	private final void handleScriptRunningReply(IMessage message, Simulator simulator) {

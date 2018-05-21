@@ -150,7 +150,7 @@ public class CommWindow extends JFrame {
 	 * @return the AbstractChannel object to communicate with
 	 */
 	public AbstractChannel getChannel(UUID uuid) {
-		if (uuid == null || uuid.equals(UUID.Zero)) {
+		if (uuid == null || uuid.equals(UUID.ZERO)) {
 			if (localChat == null) {
 				localChat = new LocalChannel(_Main);
 			}

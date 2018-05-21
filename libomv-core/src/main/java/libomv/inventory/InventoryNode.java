@@ -94,10 +94,16 @@ public abstract class InventoryNode implements Serializable {
 		/** */
 		Mesh(22);
 
-		private static final String[] _InventoryTypeNames = new String[] { "texture", "sound", "callcard", "landmark",
+		private static final String[] INVENTORY_TYPE_NAMES = new String[] { "texture", "sound", "callcard", "landmark",
 				"script", "clothing", "object", "notecard", "category", "root", "script", Helpers.EmptyString,
 				Helpers.EmptyString, Helpers.EmptyString, Helpers.EmptyString, "snapshot", Helpers.EmptyString,
 				"attach", "wearable", "animation", "gesture", Helpers.EmptyString, "mesh" };
+
+		private final byte value;
+
+		private InventoryType(int value) {
+			this.value = (byte) value;
+		}
 
 		/**
 		 * Translate a string name of an AssetType into the proper Type
@@ -108,8 +114,8 @@ public abstract class InventoryNode implements Serializable {
 		 *         no match was found
 		 */
 		public static InventoryType setValue(String value) {
-			for (int i = 0; i < _InventoryTypeNames.length; i++) {
-				if (value.compareToIgnoreCase(_InventoryTypeNames[i]) == 0) {
+			for (int i = 0; i < INVENTORY_TYPE_NAMES.length; i++) {
+				if (value.compareToIgnoreCase(INVENTORY_TYPE_NAMES[i]) == 0) {
 					return values()[i + 1];
 				}
 			}
@@ -118,29 +124,24 @@ public abstract class InventoryNode implements Serializable {
 
 		public static InventoryType setValue(int value) {
 			for (InventoryType e : values()) {
-				if (e._value == value)
+				if (e.value == value)
 					return e;
 			}
 			return null;
 		}
 
 		public byte getValue() {
-			return _value;
+			return value;
 		}
 
 		@Override
 		public String toString() {
 			int i = ordinal() - 1;
-			if (i >= 0 && ordinal() < _InventoryTypeNames.length)
-				return _InventoryTypeNames[i];
+			if (i >= 0 && ordinal() < INVENTORY_TYPE_NAMES.length)
+				return INVENTORY_TYPE_NAMES[i];
 			return "unknown";
 		}
 
-		private final byte _value;
-
-		private InventoryType(int value) {
-			this._value = (byte) value;
-		}
 	}
 
 	// {@link libomv.types.UUID} of item/folder

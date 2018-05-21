@@ -123,7 +123,7 @@ public class BufferSound extends MediaObject {
 			return;
 
 		this.prefetchOnly = true;
-		this.containerId = UUID.Zero;
+		this.containerId = UUID.ZERO;
 
 		try {
 			manager.RequestAsset(soundID, AssetType.Sound, false, new Assets_OnSoundReceived());
@@ -146,7 +146,7 @@ public class BufferSound extends MediaObject {
 		this.volumeSetting = volume;
 		this.looping = looping;
 
-		logger.debug(String.format("Playing sound at <%0.0f,%0.0f,%0.0f> ID %s}", position.X, position.Y, position.Z,
+		logger.debug(String.format("Playing sound at <%0.0f,%0.0f,%0.0f> ID %s}", position.x, position.y, position.z,
 				soundID.toString()));
 
 		// Fetch the sound data.

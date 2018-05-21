@@ -171,7 +171,7 @@ public class KeyFrameMotion {
 	}
 
 	public int version; // Always 1
-	public int sub_version; // Always 0
+	public int subVersion; // Always 0
 
 	// Animation Priority
 	public int priority;
@@ -214,7 +214,7 @@ public class KeyFrameMotion {
 
 	public KeyFrameMotion() {
 		version = KEYFRAME_MOTION_VERSION;
-		sub_version = KEYFRAME_MOTION_SUBVERSION;
+		subVersion = KEYFRAME_MOTION_SUBVERSION;
 	}
 
 	/**
@@ -224,34 +224,36 @@ public class KeyFrameMotion {
 	 *            The asset binary data containing the animation
 	 */
 	public KeyFrameMotion(byte[] animationdata) {
-		int i = 0, jointCount, constraintCount;
+		int i = 0;
+		int jointCount;
+		int constraintCount;
 
-		version = Helpers.BytesToUInt16L(animationdata, i);
+		version = Helpers.bytesToUInt16L(animationdata, i);
 		i += 2; // Always 1
-		sub_version = Helpers.BytesToUInt16L(animationdata, i);
+		subVersion = Helpers.bytesToUInt16L(animationdata, i);
 		i += 2; // Always 0
-		priority = Helpers.BytesToInt32L(animationdata, i);
+		priority = Helpers.bytesToInt32L(animationdata, i);
 		i += 4;
-		length = Helpers.BytesToFloatL(animationdata, i);
+		length = Helpers.bytesToFloatL(animationdata, i);
 		i += 4;
 
 		expressionName = readBytesUntilNull(animationdata, i, -1);
 		i += expressionName.length() + 1;
 
-		inPoint = Helpers.BytesToFloatL(animationdata, i);
+		inPoint = Helpers.bytesToFloatL(animationdata, i);
 		i += 4;
-		outPoint = Helpers.BytesToFloatL(animationdata, i);
+		outPoint = Helpers.bytesToFloatL(animationdata, i);
 		i += 4;
-		loop = (Helpers.BytesToInt32L(animationdata, i) != 0);
+		loop = (Helpers.bytesToInt32L(animationdata, i) != 0);
 		i += 4;
-		easeInTime = Helpers.BytesToFloatL(animationdata, i);
+		easeInTime = Helpers.bytesToFloatL(animationdata, i);
 		i += 4;
-		easeOutTime = Helpers.BytesToFloatL(animationdata, i);
+		easeOutTime = Helpers.bytesToFloatL(animationdata, i);
 		i += 4;
-		handPose = (int) Helpers.BytesToUInt32L(animationdata, i);
+		handPose = (int) Helpers.bytesToUInt32L(animationdata, i);
 		i += 4; // Handpose
 
-		jointCount = (int) Helpers.BytesToUInt32L(animationdata, i);
+		jointCount = (int) Helpers.bytesToUInt32L(animationdata, i);
 		i += 4; // Get Joint count
 		joints = new Joint[jointCount];
 
@@ -266,7 +268,7 @@ public class KeyFrameMotion {
 
 		// Read possible constraint records if available
 		if (i < animationdata.length + 4) {
-			constraintCount = (int) Helpers.BytesToUInt32L(animationdata, i);
+			constraintCount = (int) Helpers.bytesToUInt32L(animationdata, i);
 			i += 4;
 			constraints = new Constraint[constraintCount];
 			for (int j = 0; j < constraintCount; i++) {
@@ -303,7 +305,7 @@ public class KeyFrameMotion {
 		// We found the end of the string
 		// convert the bytes from the beginning of the string to the end of the string
 		try {
-			return Helpers.BytesToString(data, startpos, i - startpos);
+			return Helpers.bytesToString(data, startpos, i - startpos);
 		} catch (UnsupportedEncodingException e) {
 			return Helpers.EmptyString;
 		}
@@ -326,7 +328,7 @@ public class KeyFrameMotion {
 		i += pJoint.name.length() + 1;
 
 		// Priority Revisited
-		pJoint.priority = Helpers.BytesToInt32L(data, i);
+		pJoint.priority = Helpers.bytesToInt32L(data, i);
 		i += 4; // Joint Priority override?
 
 		// Read in rotation keyframes
@@ -355,10 +357,12 @@ public class KeyFrameMotion {
 	 * @return an array of JointKey records
 	 */
 	public JointKey[] readKeys(byte[] data, int i, float min, float max) {
-		float x, y, z;
+		float x;
+		float y;
+		float z;
 
 		// int32: number of key frames
-		int keycount = Helpers.BytesToInt32L(data, i);
+		int keycount = Helpers.bytesToInt32L(data, i);
 		i += 4; // How many rotation keyframes
 
 		// Sanity check how many position keys there are
@@ -369,13 +373,13 @@ public class KeyFrameMotion {
 			for (int j = 0; j < keycount; j++) {
 				JointKey pJKey = new JointKey();
 
-				pJKey.time = Helpers.UInt16ToFloatL(data, i, inPoint, outPoint);
+				pJKey.time = Helpers.uint16ToFloatL(data, i, inPoint, outPoint);
 				i += 2;
-				x = Helpers.UInt16ToFloatL(data, i, min, max);
+				x = Helpers.uint16ToFloatL(data, i, min, max);
 				i += 2;
-				y = Helpers.UInt16ToFloatL(data, i, min, max);
+				y = Helpers.uint16ToFloatL(data, i, min, max);
 				i += 2;
-				z = Helpers.UInt16ToFloatL(data, i, min, max);
+				z = Helpers.uint16ToFloatL(data, i, min, max);
 				i += 2;
 				pJKey.keyElement = new Vector3(x, y, z);
 				m_keys[j] = pJKey;
@@ -394,13 +398,13 @@ public class KeyFrameMotion {
 		constraint.targetJointName = readBytesUntilNull(data, i, i += 16);
 		constraint.targetOffset = new Vector3(data, i);
 		i += 12;
-		constraint.easeInStart = Helpers.BytesToFloatL(data, i);
+		constraint.easeInStart = Helpers.bytesToFloatL(data, i);
 		i += 4;
-		constraint.easeInStop = Helpers.BytesToFloatL(data, i);
+		constraint.easeInStop = Helpers.bytesToFloatL(data, i);
 		i += 4;
-		constraint.easeOutStart = Helpers.BytesToFloatL(data, i);
+		constraint.easeOutStart = Helpers.bytesToFloatL(data, i);
 		i += 4;
-		constraint.easeOutStop = Helpers.BytesToFloatL(data, i);
+		constraint.easeOutStop = Helpers.bytesToFloatL(data, i);
 		i += 4;
 		return i;
 	}
@@ -411,7 +415,7 @@ public class KeyFrameMotion {
 	}
 
 	public boolean equals(KeyFrameMotion other) {
-		return other != null && version == other.version && sub_version == other.sub_version && loop == other.loop
+		return other != null && version == other.version && subVersion == other.subVersion && loop == other.loop
 				&& inPoint == other.inPoint && outPoint == other.outPoint && length == other.length
 				&& handPose == other.handPose && easeInTime == other.easeInTime && easeOutTime == other.easeOutTime
 				&& priority == other.priority && Arrays.equals(joints, other.joints)
@@ -420,7 +424,7 @@ public class KeyFrameMotion {
 
 	@Override
 	public int hashCode() {
-		return version ^ sub_version ^ (loop ? 1 : 0) ^ ((Float) inPoint).hashCode() ^ ((Float) outPoint).hashCode()
+		return version ^ subVersion ^ (loop ? 1 : 0) ^ ((Float) inPoint).hashCode() ^ ((Float) outPoint).hashCode()
 				^ ((Float) easeInTime).hashCode() ^ ((Float) easeOutTime).hashCode() ^ ((Float) length).hashCode()
 				^ handPose ^ priority ^ Arrays.hashCode(joints) ^ Arrays.hashCode(constraints);
 	}

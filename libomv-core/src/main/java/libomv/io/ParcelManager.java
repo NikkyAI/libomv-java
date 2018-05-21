@@ -33,6 +33,7 @@ package libomv.io;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.log4j.Logger;
@@ -110,6 +111,8 @@ import libomv.utils.TimeoutEvent;
 public class ParcelManager implements PacketCallback, CapsCallback {
 	private static final Logger logger = Logger.getLogger(ParcelManager.class);
 
+	private static final int PARCEL_OVERLAY_COUNT = 4;
+
 	public interface LandResourcesInfoCallback {
 		public void callback(boolean success, LandResourcesInfo info);
 	}
@@ -131,8 +134,8 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 				}
 				LandResourcesMessage response = client.messages.new LandResourcesMessage();
 				response.deserialize((OSDMap) result);
-				OSD osd = new CapsClient(client, CapsEventType.LandResources.toString()).getResponse(
-						response.scriptResourceSummary, Helpers.EmptyString, client.settings.CAPS_TIMEOUT);
+				OSD osd = new CapsClient(client, CapsEventType.LandResources.toString())
+						.getResponse(response.scriptResourceSummary, Helpers.EmptyString, client.settings.CAPS_TIMEOUT);
 
 				LandResourcesInfo info = client.messages.new LandResourcesInfo();
 				info.deserialize((OSDMap) osd);
@@ -376,7 +379,7 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 			return;
 		}
 		simulator.setDownloadingParcelMap(true);
-		waitForSimParcel = new TimeoutEvent<Boolean>();
+		waitForSimParcel = new TimeoutEvent<>();
 
 		if (refresh) {
 			simulator.clearParcelMap();
@@ -391,7 +394,10 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 					return;
 				}
 
-				int count = 0, timeouts = 0, y, x;
+				int count = 0;
+				int timeouts = 0;
+				int y;
+				int x;
 				for (y = 0; y < 64; y++) {
 					for (x = 0; x < 64; x++) {
 
@@ -432,7 +438,7 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 		request.AgentData.AgentID = client.agent.getAgentID();
 		request.AgentData.SessionID = client.agent.getSessionID();
 		request.Data.LocalID = localID;
-		request.Data.ParcelID = UUID.Zero; // Not used by clients
+		request.Data.ParcelID = UUID.ZERO; // Not used by clients
 
 		simulator.sendPacket(request);
 	}
@@ -560,7 +566,7 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 
 		// A single null TaskID is (not) used for parcel object returns
 		request.TaskID = new UUID[1];
-		request.TaskID[0] = UUID.Zero;
+		request.TaskID[0] = UUID.ZERO;
 
 		// Convert the list of owner UUIDs to packet blocks if a list is given
 		if (ownerIDs != null) {
@@ -634,14 +640,14 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 	 *         and dictionary.
 	 */
 	public final int getParcelLocalID(SimulatorManager simulator, Vector3 position) {
-		int value = simulator.getParcelMap((int) position.X / 4, (int) position.Y / 4);
+		int value = simulator.getParcelMap((int) position.x / 4, (int) position.y / 4);
 		if (value > 0) {
 			return value;
 		}
 
 		logger.warn(String.format(
 				"ParcelMap returned an default/invalid value for location %d/%d Did you use RequestAllSimParcels() to populate the dictionaries?",
-				(int) position.X / 4, (int) position.Y / 4));
+				(int) position.x / 4, (int) position.y / 4));
 		return 0;
 	}
 
@@ -722,7 +728,8 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 	public final boolean terraform(SimulatorManager simulator, int localID, float west, float south, float east,
 			float north, TerraformAction action, float brushSize, int seconds) throws Exception {
 		float height = 0f;
-		int x, y;
+		int x;
+		int y;
 		if (localID == -1) {
 			x = (int) east - (int) west / 2;
 			y = (int) north - (int) south / 2;
@@ -734,10 +741,10 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 				return false;
 			}
 			p = simulator.getParcels().get(localID);
-			x = (int) p.aabbMax.X - (int) p.aabbMin.X / 2;
-			y = (int) p.aabbMax.Y - (int) p.aabbMin.Y / 2;
+			x = (int) p.aabbMax.x - (int) p.aabbMin.x / 2;
+			y = (int) p.aabbMax.y - (int) p.aabbMin.y / 2;
 		}
-		RefObject<Float> ref = new RefObject<Float>(height);
+		RefObject<Float> ref = new RefObject<>(height);
 		if (Float.isNaN(simulator.terrainHeightAtPoint(x, y))) {
 			logger.warn(GridClient.Log("Land Patch not stored for location", client));
 			return false;
@@ -914,7 +921,7 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 			}
 		}
 
-		return UUID.Zero;
+		return UUID.ZERO;
 
 	}
 
@@ -1027,7 +1034,10 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 				}
 
 				boolean set = false;
-				int y, x, index, bit;
+				int y;
+				int x;
+				int index;
+				int bit;
 				for (y = 0; y < 64; y++) {
 					for (x = 0; x < 64; x++) {
 						index = (y * 64) + x;
@@ -1085,17 +1095,17 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 		parcelInfo.actualArea = info.Data.ActualArea;
 		parcelInfo.auctionID = info.Data.AuctionID;
 		parcelInfo.billableArea = info.Data.BillableArea;
-		parcelInfo.description = Helpers.BytesToString(info.Data.getDesc());
+		parcelInfo.description = Helpers.bytesToString(info.Data.getDesc());
 		parcelInfo.dwell = info.Data.Dwell;
 		parcelInfo.globalX = info.Data.GlobalX;
 		parcelInfo.globalY = info.Data.GlobalY;
 		parcelInfo.globalZ = info.Data.GlobalZ;
 		parcelInfo.id = info.Data.ParcelID;
 		parcelInfo.mature = ((info.Data.Flags & 1) != 0) ? true : false;
-		parcelInfo.name = Helpers.BytesToString(info.Data.getName());
+		parcelInfo.name = Helpers.bytesToString(info.Data.getName());
 		parcelInfo.ownerID = info.Data.OwnerID;
 		parcelInfo.salePrice = info.Data.SalePrice;
-		parcelInfo.simName = Helpers.BytesToString(info.Data.getSimName());
+		parcelInfo.simName = Helpers.bytesToString(info.Data.getSimName());
 		parcelInfo.snapshotID = info.Data.SnapshotID;
 
 		onParcelInfoReply.dispatch(new ParcelInfoReplyCallbackArgs(parcelInfo));
@@ -1110,12 +1120,12 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 		if (onParcelAccessListReply.count() > 0 || client.settings.ALWAYS_REQUEST_PARCEL_ACL) {
 			ParcelAccessListReplyPacket reply = (ParcelAccessListReplyPacket) packet;
 
-			ArrayList<ParcelAccessEntry> accessList = new ArrayList<ParcelAccessEntry>(reply.List.length);
+			List<ParcelAccessEntry> accessList = new ArrayList<>(reply.List.length);
 
 			for (int i = 0; i < reply.List.length; i++) {
 				ParcelAccessEntry pae = new ParcelAccessEntry();
 				pae.agentID = reply.List[i].ID;
-				pae.time = Helpers.UnixTimeToDateTime(reply.List[i].Time);
+				pae.time = Helpers.unixTimeToDateTime(reply.List[i].Time);
 				pae.flags = AccessList.setValue(reply.List[i].Flags);
 
 				accessList.add(pae);
@@ -1140,7 +1150,7 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 
 	private final void handleParcelObjectOwnersReply(Packet packet, Simulator simulator) {
 		if (onParcelObjectOwnersReply.count() > 0) {
-			ArrayList<ParcelPrimOwners> primOwners = new ArrayList<ParcelPrimOwners>();
+			List<ParcelPrimOwners> primOwners = new ArrayList<>();
 
 			ParcelObjectOwnersReplyPacket msg = (ParcelObjectOwnersReplyPacket) packet;
 
@@ -1161,17 +1171,17 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 
 	private final void handleParcelObjectOwnersReply(IMessage message, Simulator simulator) {
 		if (onParcelObjectOwnersReply.count() > 0) {
-			ArrayList<ParcelPrimOwners> primOwners = new ArrayList<ParcelPrimOwners>();
+			List<ParcelPrimOwners> primOwners = new ArrayList<>();
 
 			ParcelObjectOwnersReplyMessage msg = (ParcelObjectOwnersReplyMessage) message;
 
-			for (int i = 0; i < msg.PrimOwnersBlock.length; i++) {
+			for (int i = 0; i < msg.primOwnersBlock.length; i++) {
 				ParcelPrimOwners primOwner = new ParcelPrimOwners();
-				primOwner.ownerID = msg.PrimOwnersBlock[i].ownerID;
-				primOwner.count = msg.PrimOwnersBlock[i].count;
-				primOwner.isGroupOwned = msg.PrimOwnersBlock[i].isGroupOwned;
-				primOwner.onlineStatus = msg.PrimOwnersBlock[i].onlineStatus;
-				primOwner.newestPrim = msg.PrimOwnersBlock[i].timeStamp;
+				primOwner.ownerID = msg.primOwnersBlock[i].ownerID;
+				primOwner.count = msg.primOwnersBlock[i].count;
+				primOwner.isGroupOwned = msg.primOwnersBlock[i].isGroupOwned;
+				primOwner.onlineStatus = msg.primOwnersBlock[i].onlineStatus;
+				primOwner.newestPrim = msg.primOwnersBlock[i].timeStamp;
 
 				primOwners.add(primOwner);
 			}
@@ -1211,30 +1221,29 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 
 			media.mediaAutoScale = (reply.DataBlock.MediaAutoScale == (byte) 0x1) ? true : false;
 			media.mediaID = reply.DataBlock.MediaID;
-			media.mediaDesc = Helpers.BytesToString(reply.DataBlockExtended.getMediaDesc());
+			media.mediaDesc = Helpers.bytesToString(reply.DataBlockExtended.getMediaDesc());
 			media.mediaHeight = reply.DataBlockExtended.MediaHeight;
 			media.mediaLoop = ((reply.DataBlockExtended.MediaLoop & 1) != 0) ? true : false;
-			media.mediaType = Helpers.BytesToString(reply.DataBlockExtended.getMediaType());
+			media.mediaType = Helpers.bytesToString(reply.DataBlockExtended.getMediaType());
 			media.mediaWidth = reply.DataBlockExtended.MediaWidth;
-			media.mediaURL = Helpers.BytesToString(reply.DataBlock.getMediaURL());
+			media.mediaURL = Helpers.bytesToString(reply.DataBlock.getMediaURL());
 
 			onParcelMediaUpdateReply.dispatch(new ParcelMediaUpdateReplyCallbackArgs(simulator, media));
 		}
 	}
 
 	private final void handleParcelOverlay(Packet packet, Simulator sim) {
-		final int OVERLAY_COUNT = 4;
 		ParcelOverlayPacket overlay = (ParcelOverlayPacket) packet;
 		SimulatorManager simulator = (SimulatorManager) sim;
 
-		if (overlay.ParcelData.SequenceID >= 0 && overlay.ParcelData.SequenceID < OVERLAY_COUNT) {
+		if (overlay.ParcelData.SequenceID >= 0 && overlay.ParcelData.SequenceID < PARCEL_OVERLAY_COUNT) {
 			int length = overlay.ParcelData.getData().length;
 
 			System.arraycopy(overlay.ParcelData.getData(), 0, simulator.parcelOverlay,
 					overlay.ParcelData.SequenceID * length, length);
 			simulator.parcelOverlaysReceived++;
 
-			if (simulator.parcelOverlaysReceived >= OVERLAY_COUNT) {
+			if (simulator.parcelOverlaysReceived >= PARCEL_OVERLAY_COUNT) {
 				// TODO: ParcelOverlaysReceived should become internal, and
 				// reset to zero every time it hits four. Also need a callback
 				// here

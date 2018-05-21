@@ -34,7 +34,7 @@ import libomv.StructuredData.OSDMap;
 import libomv.types.Vector3;
 
 public class Model {
-	public static OSD PhysicsStub() {
+	public static OSD physicsStub() {
 		byte[] vertix = { -128, -128, -128, -128, 0, 0, 0, 0, 0, 0, -128, -128, -128, 127, 0, 0, -128, -128, -128, 127,
 				-128, -128, -128, -128, 0, 0, 0, 0, 0, 0, 0, 0, -128, -128, 0, 0, -128, -128, 0, 0, -128, 127, -128,
 				-128, -128, -128, -128, -128, 0, 0, -128, -128, -128, -128, -128, -128, 0, 0, 0, 0, -128, -128, 0, 0,

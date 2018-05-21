@@ -115,7 +115,7 @@ public class OSDString extends OSD {
 
 	@Override
 	public double asReal() {
-		return Helpers.TryParseDouble(value);
+		return Helpers.tryParseDouble(value);
 	}
 
 	@Override
@@ -123,7 +123,7 @@ public class OSDString extends OSD {
 		try {
 			return OSDParser.deserialize(this.value, OSDFormat.Notation).asVector2();
 		} catch (Exception ex) {
-			return Vector2.Zero;
+			return Vector2.ZERO;
 		}
 	}
 
@@ -132,7 +132,7 @@ public class OSDString extends OSD {
 		try {
 			return OSDParser.deserialize(this.value, OSDFormat.Notation).asVector3();
 		} catch (Exception ex) {
-			return Vector3.Zero;
+			return Vector3.ZERO;
 		}
 	}
 
@@ -141,7 +141,7 @@ public class OSDString extends OSD {
 		try {
 			return OSDParser.deserialize(this.value, OSDFormat.Notation).asVector3d();
 		} catch (Exception ex) {
-			return Vector3d.Zero;
+			return Vector3d.ZERO;
 		}
 	}
 
@@ -150,7 +150,7 @@ public class OSDString extends OSD {
 		try {
 			return OSDParser.deserialize(this.value, OSDFormat.Notation).asVector4();
 		} catch (Exception ex) {
-			return Vector4.Zero;
+			return Vector4.ZERO;
 		}
 	}
 
@@ -159,7 +159,7 @@ public class OSDString extends OSD {
 		try {
 			return OSDParser.deserialize(this.value, OSDFormat.Notation).asQuaternion();
 		} catch (Exception ex) {
-			return Quaternion.Identity;
+			return Quaternion.IDENTITY;
 		}
 	}
 
@@ -168,7 +168,7 @@ public class OSDString extends OSD {
 		try {
 			return OSDParser.deserialize(this.value, OSDFormat.Notation).asColor4();
 		} catch (Exception ex) {
-			return Color4.Black;
+			return Color4.BLACK;
 		}
 	}
 

@@ -99,7 +99,7 @@ public class AssetScriptText extends AssetItem {
 	@Override
 	protected boolean decode() {
 		try {
-			source = Helpers.BytesToString(assetData);
+			source = Helpers.bytesToString(assetData);
 			return true;
 		} catch (UnsupportedEncodingException e) {
 			logger.error(e);

@@ -104,31 +104,31 @@ public class RegionSettings {
 				while (parser.nextTag() == XmlPullParser.START_TAG) {
 					name = parser.getName();
 					if (name.equals("AllowDamage"))
-						settings.allowDamage = Helpers.TryParseBoolean(parser.nextText().trim());
+						settings.allowDamage = Helpers.tryParseBoolean(parser.nextText().trim());
 					else if (name.equals("AllowLandResell"))
-						settings.allowLandResell = Helpers.TryParseBoolean(parser.nextText().trim());
+						settings.allowLandResell = Helpers.tryParseBoolean(parser.nextText().trim());
 					else if (name.equals("AllowLandJoinDivide"))
-						settings.allowLandJoinDivide = Helpers.TryParseBoolean(parser.nextText().trim());
+						settings.allowLandJoinDivide = Helpers.tryParseBoolean(parser.nextText().trim());
 					else if (name.equals("BlockFly"))
-						settings.blockFly = Helpers.TryParseBoolean(parser.nextText().trim());
+						settings.blockFly = Helpers.tryParseBoolean(parser.nextText().trim());
 					else if (name.equals("BlockLandShowInSearch"))
-						settings.blockLandShowInSearch = Helpers.TryParseBoolean(parser.nextText().trim());
+						settings.blockLandShowInSearch = Helpers.tryParseBoolean(parser.nextText().trim());
 					else if (name.equals("BlockTerraform"))
-						settings.blockTerraform = Helpers.TryParseBoolean(parser.nextText().trim());
+						settings.blockTerraform = Helpers.tryParseBoolean(parser.nextText().trim());
 					else if (name.equals("DisableCollisions"))
-						settings.disableCollisions = Helpers.TryParseBoolean(parser.nextText().trim());
+						settings.disableCollisions = Helpers.tryParseBoolean(parser.nextText().trim());
 					else if (name.equals("DisablePhysics"))
-						settings.disablePhysics = Helpers.TryParseBoolean(parser.nextText().trim());
+						settings.disablePhysics = Helpers.tryParseBoolean(parser.nextText().trim());
 					else if (name.equals("DisableScripts"))
-						settings.disableScripts = Helpers.TryParseBoolean(parser.nextText().trim());
+						settings.disableScripts = Helpers.tryParseBoolean(parser.nextText().trim());
 					else if (name.equals("MaturityRating"))
-						settings.maturityRating = Helpers.TryParseInt(parser.nextText().trim());
+						settings.maturityRating = Helpers.tryParseInt(parser.nextText().trim());
 					else if (name.equals("RestrictPushing"))
-						settings.restrictPushing = Helpers.TryParseBoolean(parser.nextText().trim());
+						settings.restrictPushing = Helpers.tryParseBoolean(parser.nextText().trim());
 					else if (name.equals("AgentLimit"))
-						settings.agentLimit = Helpers.TryParseInt(parser.nextText().trim());
+						settings.agentLimit = Helpers.tryParseInt(parser.nextText().trim());
 					else if (name.equals("ObjectBonus"))
-						settings.objectBonus = Helpers.TryParseFloat(parser.nextText());
+						settings.objectBonus = Helpers.tryParseFloat(parser.nextText());
 				}
 				// at </General>
 			} else if (name.equals("GroundTextures")) {
@@ -143,36 +143,36 @@ public class RegionSettings {
 					else if (name.equals("Texture4"))
 						settings.terrainDetail3 = new UUID(parser);
 					else if (name.equals("ElevationLowSW"))
-						settings.terrainStartHeight00 = Helpers.TryParseFloat(parser.nextText());
+						settings.terrainStartHeight00 = Helpers.tryParseFloat(parser.nextText());
 					else if (name.equals("ElevationLowNW"))
-						settings.terrainStartHeight01 = Helpers.TryParseFloat(parser.nextText());
+						settings.terrainStartHeight01 = Helpers.tryParseFloat(parser.nextText());
 					else if (name.equals("ElevationLowSE"))
-						settings.terrainStartHeight10 = Helpers.TryParseFloat(parser.nextText());
+						settings.terrainStartHeight10 = Helpers.tryParseFloat(parser.nextText());
 					else if (name.equals("ElevationLowNE"))
-						settings.terrainStartHeight11 = Helpers.TryParseFloat(parser.nextText());
+						settings.terrainStartHeight11 = Helpers.tryParseFloat(parser.nextText());
 					else if (name.equals("ElevationHighSW"))
-						settings.terrainHeightRange00 = Helpers.TryParseFloat(parser.nextText());
+						settings.terrainHeightRange00 = Helpers.tryParseFloat(parser.nextText());
 					else if (name.equals("ElevationHighNW"))
-						settings.terrainHeightRange01 = Helpers.TryParseFloat(parser.nextText());
+						settings.terrainHeightRange01 = Helpers.tryParseFloat(parser.nextText());
 					else if (name.equals("ElevationHighSE"))
-						settings.terrainHeightRange10 = Helpers.TryParseFloat(parser.nextText());
+						settings.terrainHeightRange10 = Helpers.tryParseFloat(parser.nextText());
 					else if (name.equals("ElevationHighNE"))
-						settings.terrainHeightRange11 = Helpers.TryParseFloat(parser.nextText());
+						settings.terrainHeightRange11 = Helpers.tryParseFloat(parser.nextText());
 				}
 				// </GroundTextures>
 			} else if (name.equals("Terrain")) {
 				while (parser.nextTag() == XmlPullParser.START_TAG) {
 					name = parser.getName();
 					if (name.equals("WaterHeight"))
-						settings.waterHeight = Helpers.TryParseFloat(parser.nextText());
+						settings.waterHeight = Helpers.tryParseFloat(parser.nextText());
 					else if (name.equals("TerrainRaiseLimit"))
-						settings.terrainRaiseLimit = Helpers.TryParseFloat(parser.nextText());
+						settings.terrainRaiseLimit = Helpers.tryParseFloat(parser.nextText());
 					else if (name.equals("TerrainLowerLimit"))
-						settings.terrainLowerLimit = Helpers.TryParseFloat(parser.nextText());
+						settings.terrainLowerLimit = Helpers.tryParseFloat(parser.nextText());
 					else if (name.equals("UseEstateSun"))
-						settings.useEstateSun = Helpers.TryParseBoolean(parser.nextText());
+						settings.useEstateSun = Helpers.tryParseBoolean(parser.nextText());
 					else if (name.equals("FixedSun"))
-						settings.fixedSun = Helpers.TryParseBoolean(parser.nextText());
+						settings.fixedSun = Helpers.tryParseBoolean(parser.nextText());
 				}
 				// at </Terrain>
 			}

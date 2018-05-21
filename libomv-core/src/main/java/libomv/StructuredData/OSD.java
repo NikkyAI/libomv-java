@@ -113,7 +113,7 @@ public class OSD implements Cloneable {
 	}
 
 	public UUID asUUID() {
-		return UUID.Zero;
+		return UUID.ZERO;
 	}
 
 	public Date asDate() {
@@ -137,27 +137,27 @@ public class OSD implements Cloneable {
 	}
 
 	public Vector2 asVector2() {
-		return Vector2.Zero;
+		return Vector2.ZERO;
 	}
 
 	public Vector3 asVector3() {
-		return Vector3.Zero;
+		return Vector3.ZERO;
 	}
 
 	public Vector3d asVector3d() {
-		return Vector3d.Zero;
+		return Vector3d.ZERO;
 	}
 
 	public Vector4 asVector4() {
-		return Vector4.Zero;
+		return Vector4.ZERO;
 	}
 
 	public Quaternion asQuaternion() {
-		return Quaternion.Identity;
+		return Quaternion.IDENTITY;
 	}
 
 	public Color4 asColor4() {
-		return Color4.Black;
+		return Color4.BLACK;
 	}
 
 	@Override
@@ -263,51 +263,51 @@ public class OSD implements Cloneable {
 
 	public static OSD fromVector2(Vector2 value) {
 		OSDArray array = new OSDArray();
-		array.add(OSD.fromReal(value.X));
-		array.add(OSD.fromReal(value.Y));
+		array.add(OSD.fromReal(value.x));
+		array.add(OSD.fromReal(value.y));
 		return array;
 	}
 
 	public static OSD fromVector3(Vector3 value) {
 		OSDArray array = new OSDArray();
-		array.add(OSD.fromReal(value.X));
-		array.add(OSD.fromReal(value.Y));
-		array.add(OSD.fromReal(value.Z));
+		array.add(OSD.fromReal(value.x));
+		array.add(OSD.fromReal(value.y));
+		array.add(OSD.fromReal(value.z));
 		return array;
 	}
 
 	public static OSD fromVector3d(Vector3d value) {
 		OSDArray array = new OSDArray();
-		array.add(OSD.fromReal(value.X));
-		array.add(OSD.fromReal(value.Y));
-		array.add(OSD.fromReal(value.Z));
+		array.add(OSD.fromReal(value.x));
+		array.add(OSD.fromReal(value.y));
+		array.add(OSD.fromReal(value.z));
 		return array;
 	}
 
 	public static OSD fromVector4(Vector4 value) {
 		OSDArray array = new OSDArray();
-		array.add(OSD.fromReal(value.X));
-		array.add(OSD.fromReal(value.Y));
-		array.add(OSD.fromReal(value.Z));
-		array.add(OSD.fromReal(value.S));
+		array.add(OSD.fromReal(value.x));
+		array.add(OSD.fromReal(value.y));
+		array.add(OSD.fromReal(value.z));
+		array.add(OSD.fromReal(value.s));
 		return array;
 	}
 
 	public static OSD fromQuaternion(Quaternion value) {
 		OSDArray array = new OSDArray();
-		array.add(OSD.fromReal(value.X));
-		array.add(OSD.fromReal(value.Y));
-		array.add(OSD.fromReal(value.Z));
-		array.add(OSD.fromReal(value.W));
+		array.add(OSD.fromReal(value.x));
+		array.add(OSD.fromReal(value.y));
+		array.add(OSD.fromReal(value.z));
+		array.add(OSD.fromReal(value.w));
 		return array;
 	}
 
 	public static OSD fromColor4(Color4 value) {
 		OSDArray array = new OSDArray();
-		array.add(OSD.fromReal(value.R));
-		array.add(OSD.fromReal(value.G));
-		array.add(OSD.fromReal(value.B));
-		array.add(OSD.fromReal(value.A));
+		array.add(OSD.fromReal(value.r));
+		array.add(OSD.fromReal(value.g));
+		array.add(OSD.fromReal(value.b));
+		array.add(OSD.fromReal(value.a));
 		return array;
 	}
 
@@ -405,24 +405,25 @@ public class OSD implements Cloneable {
 			if (value.getType() == OSDType.Array) {
 				return ((OSDArray) value).asVector3();
 			}
-			return Vector3.Zero;
+			return Vector3.ZERO;
 		} else if (type.isAssignableFrom(Vector4.class)) {
 			if (value.getType() == OSDType.Array) {
 				return ((OSDArray) value).asVector4();
 			}
-			return Vector4.Zero;
+			return Vector4.ZERO;
 		} else if (type.isAssignableFrom(Quaternion.class)) {
 			if (value.getType() == OSDType.Array) {
 				return ((OSDArray) value).asQuaternion();
 			}
-			return Quaternion.Identity;
+			return Quaternion.IDENTITY;
 		} else if (type.isAssignableFrom(OSDArray.class)) {
 			OSDArray newArray = new OSDArray();
 			for (OSD o : (OSDArray) value)
 				newArray.add(o);
 			return newArray;
 		} else if (type.isAssignableFrom(OSDMap.class)) {
-			OSDMap old = (OSDMap) value, newMap = new OSDMap();
+			OSDMap old = (OSDMap) value;
+			OSDMap newMap = new OSDMap();
 			for (String key : ((OSDMap) value).keySet())
 				newMap.put(key, old.get(key));
 			return newMap;

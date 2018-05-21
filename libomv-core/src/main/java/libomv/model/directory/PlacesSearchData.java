@@ -55,7 +55,7 @@ public final class PlacesSearchData {
 	 * Homestead</description></item> <item><term>129</term><description>Mainland /
 	 * Homestead (Linden Owned)</description></item> </list>
 	 */
-	public String SKU;
+	public String sku;
 	/** No longer used, will always be 0 */
 	public int price;
 

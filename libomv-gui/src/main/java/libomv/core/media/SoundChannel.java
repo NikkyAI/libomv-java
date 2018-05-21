@@ -37,7 +37,7 @@ public class SoundChannel {
 	public void set3DAttributes(Vector3 pos, Vector3 vel) {
 		this.position = pos;
 		this.velocity = vel;
-		if (vel != null && !vel.equals(Vector3.Zero)) {
+		if (vel != null && !vel.equals(Vector3.ZERO)) {
 			timestamp = System.currentTimeMillis();
 		}
 		updateVolume(true);

@@ -31,27 +31,27 @@ import libomv.types.Quaternion;
 import libomv.types.Vector3;
 
 public class BVHReader extends KeyFrameMotion {
-	private float INCHES_TO_METERS = 0.02540005f;
+	private static float INCHES_TO_METERS = 0.02540005f;
 
-	private float POSITION_KEYFRAME_THRESHOLD = 0.03f;
-	private float ROTATION_KEYFRAME_THRESHOLD = 0.01f;
+	private static float POSITION_KEYFRAME_THRESHOLD = 0.03f;
+	private static float ROTATION_KEYFRAME_THRESHOLD = 0.01f;
 
-	private float POSITION_MOTION_THRESHOLD = 0.001f;
-	private float ROTATION_MOTION_THRESHOLD = 0.001f;
+	private static float POSITION_MOTION_THRESHOLD = 0.001f;
+	private static float ROTATION_MOTION_THRESHOLD = 0.001f;
 
-	private final int HIERARCHY = 0;
-	private final int ROOT = 1;
-	private final int JOINT_OPEN = 2;
-	private final int JOINT_CLOSE = 3;
-	private final int JOINT_INSIDE = 4;
-	private final int ENDSITES_OPEN = 5;
-	private final int ENDSITES_INSIDE = 6;
-	private final int ENDSITES_CLOSE = 7;
+	private static final int HIERARCHY = 0;
+	private static final int ROOT = 1;
+	private static final int JOINT_OPEN = 2;
+	private static final int JOINT_CLOSE = 3;
+	private static final int JOINT_INSIDE = 4;
+	private static final int ENDSITES_OPEN = 5;
+	private static final int ENDSITES_INSIDE = 6;
+	private static final int ENDSITES_CLOSE = 7;
 
-	private final int MOTION = 8;
-	private final int MOTION_FRAMES = 9;
-	private final int MOTION_FRAME_TIME = 10;
-	private final int MOTION_DATA = 11;
+	private static final int MOTION = 8;
+	private static final int MOTION_FRAMES = 9;
+	private static final int MOTION_FRAME_TIME = 10;
+	private static final int MOTION_DATA = 11;
 
 	private int mode;
 	private BVH bvh;
@@ -105,7 +105,8 @@ public class BVHReader extends KeyFrameMotion {
 				}
 
 				int offset = line.indexOf("=");
-				String vals[], token = line.substring(0, offset - 1).trim();
+				String[] vals;
+				String token = line.substring(0, offset - 1).trim();
 				line = line.substring(offset + 1).trim();
 
 				if (loadingGlobals) {
@@ -115,17 +116,17 @@ public class BVHReader extends KeyFrameMotion {
 						priority = Integer.parseInt(line);
 					} else if (token.compareToIgnoreCase("loop") == 0) {
 						vals = line.split(" ");
-						float loop_in = 0.f;
-						float loop_out = 1.f;
+						float loopIn = 0.f;
+						float loopOut = 1.f;
 						if (vals.length >= 2) {
 							loop = true;
-							loop_in = Float.parseFloat(vals[0]);
-							loop_out = Float.parseFloat(vals[1]);
+							loopIn = Float.parseFloat(vals[0]);
+							loopOut = Float.parseFloat(vals[1]);
 						} else if (vals.length == 1) {
 							loop = vals[0].compareToIgnoreCase("true") == 0;
 						}
-						inPoint = loop_in * length;
-						outPoint = loop_out * length;
+						inPoint = loopIn * length;
+						outPoint = loopOut * length;
 					} else if (token.compareToIgnoreCase("easein") == 0) {
 						easeInTime = Float.parseFloat(line);
 					} else if (token.compareToIgnoreCase("easeout") == 0) {
@@ -234,7 +235,8 @@ public class BVHReader extends KeyFrameMotion {
 	}
 
 	private void loadBVHFile(BufferedReader reader) throws InvalidLineException, IOException {
-		int i = 0, rotOffset = 0;
+		int i = 0;
+		int rotOffset = 0;
 		String line;
 		String[] values;
 		while ((line = reader.readLine()) != null) {
@@ -440,19 +442,21 @@ public class BVHReader extends KeyFrameMotion {
 			throw new IOException("No motion frames");
 		}
 
-		float[] first_frame = bvh.getMotion().getFrameAt(0);
-		Vector3 first_frame_pos = new Vector3(first_frame);
+		float[] firstFrame = bvh.getMotion().getFrameAt(0);
+		Vector3 firstFramePos = new Vector3(firstFrame);
 
 		for (BVHNode node : bvh.getNodeList()) {
-			boolean pos_changed = false;
-			boolean rot_changed = false;
+			boolean posChanged = false;
+			boolean rotChanged = false;
 
 			if (!(node.getTranslation().mIgnore)) {
-				int ki = 0, size = bvh.getMotion().size(), rotOffset = node.getChannels().getRotOffset();
+				int ki = 0;
+				int size = bvh.getMotion().size();
+				int rotOffset = node.getChannels().getRotOffset();
 
 				// We need to reverse the channel order, so use the ..Rev function
-				Quaternion.Order order = Quaternion.StringToOrderRev(node.getChannels().getOrder());
-				Quaternion first_frame_rot = Quaternion.mayaQ(first_frame, rotOffset, order);
+				Quaternion.Order order = Quaternion.stringToOrderRev(node.getChannels().getOrder());
+				Quaternion first_frame_rot = Quaternion.mayaQ(firstFrame, rotOffset, order);
 
 				node.ignorePos = new boolean[bvh.getMotion().size()];
 				node.ignoreRot = new boolean[bvh.getMotion().size()];
@@ -460,91 +464,90 @@ public class BVHReader extends KeyFrameMotion {
 				if (size == 1) {
 					// FIXME: use single frame to move pelvis
 					// if we have only one keyframe force output for this joint
-					rot_changed = true;
+					rotChanged = true;
 				} else {
 					// if more than one keyframe, use first frame as reference and skip to second
 					// keyframe
 					ki++;
 				}
 
-				int ki_prev = ki, ki_last_good_pos = ki, ki_last_good_rot = ki;
+				int kiPrev = ki;
+				int kiLastGoodPos = ki;
+				int kiLastGoodRot = ki;
 				int numPosFramesConsidered = 2;
 				int numRotFramesConsidered = 2;
 
-				double diff_max = 0;
-				float rot_threshold = ROTATION_KEYFRAME_THRESHOLD / Math.max(node.getJoints().size() * 0.33f, 1.f);
+				double diffMax = 0;
+				float rotThreshold = ROTATION_KEYFRAME_THRESHOLD / Math.max(node.getJoints().size() * 0.33f, 1.f);
 
 				for (; ki < size; ki++) {
-					if (ki_prev == ki_last_good_pos) {
+					if (kiPrev == kiLastGoodPos) {
 						node.numPosKeys++;
-						if (Vector3.distance(new Vector3(bvh.getMotion().getFrameAt(ki_prev), rotOffset),
-								first_frame_pos) > POSITION_MOTION_THRESHOLD) {
-							pos_changed = true;
+						if (Vector3.distance(new Vector3(bvh.getMotion().getFrameAt(kiPrev), rotOffset),
+								firstFramePos) > POSITION_MOTION_THRESHOLD) {
+							posChanged = true;
 						}
 					} else {
 						// check position for noticeable effect
-						Vector3 test_pos = new Vector3(bvh.getMotion().getFrameAt(ki_prev), rotOffset);
-						Vector3 last_good_pos = new Vector3(bvh.getMotion().getFrameAt(ki_last_good_pos), rotOffset);
-						Vector3 current_pos = new Vector3(bvh.getMotion().getFrameAt(ki), rotOffset);
-						Vector3 interp_pos = Vector3.lerp(current_pos, last_good_pos, 1.f / numPosFramesConsidered);
+						Vector3 testPos = new Vector3(bvh.getMotion().getFrameAt(kiPrev), rotOffset);
+						Vector3 lastGoodPos = new Vector3(bvh.getMotion().getFrameAt(kiLastGoodPos), rotOffset);
+						Vector3 currentPos = new Vector3(bvh.getMotion().getFrameAt(ki), rotOffset);
+						Vector3 interpPos = Vector3.lerp(currentPos, lastGoodPos, 1.f / numPosFramesConsidered);
 
-						if (Vector3.distance(current_pos, first_frame_pos) > POSITION_MOTION_THRESHOLD) {
-							pos_changed = true;
+						if (Vector3.distance(currentPos, firstFramePos) > POSITION_MOTION_THRESHOLD) {
+							posChanged = true;
 						}
 
-						if (Vector3.distance(interp_pos, test_pos) < POSITION_KEYFRAME_THRESHOLD) {
+						if (Vector3.distance(interpPos, testPos) < POSITION_KEYFRAME_THRESHOLD) {
 							node.ignorePos[ki] = true;
 							numPosFramesConsidered++;
 						} else {
 							numPosFramesConsidered = 2;
-							ki_last_good_pos = ki_prev;
+							kiLastGoodPos = kiPrev;
 							node.numPosKeys++;
 						}
 					}
 
-					Quaternion test_rot = Quaternion.mayaQ(bvh.getMotion().getFrameAt(ki_prev), rotOffset, order);
-					float x_delta = Vector3.distance(first_frame_rot.multiply(Vector3.UnitX),
-							test_rot.multiply(Vector3.UnitX));
-					float y_delta = Vector3.distance(first_frame_rot.multiply(Vector3.UnitY),
-							test_rot.multiply(Vector3.UnitY));
-					float rot_test = x_delta + y_delta;
+					Quaternion testRot = Quaternion.mayaQ(bvh.getMotion().getFrameAt(kiPrev), rotOffset, order);
+					float dx = Vector3.distance(first_frame_rot.multiply(Vector3.UNIT_X),
+							testRot.multiply(Vector3.UNIT_X));
+					float dy = Vector3.distance(first_frame_rot.multiply(Vector3.UNIT_Y),
+							testRot.multiply(Vector3.UNIT_Y));
+					float rotTest = dx + dy;
 
-					if (ki_prev == ki_last_good_rot) {
+					if (kiPrev == kiLastGoodRot) {
 						node.numRotKeys++;
 
-						if (rot_test > ROTATION_MOTION_THRESHOLD) {
-							rot_changed = true;
+						if (rotTest > ROTATION_MOTION_THRESHOLD) {
+							rotChanged = true;
 						}
 					} else {
 						// check rotation for noticeable effect
-						Quaternion last_good_rot = Quaternion.mayaQ(bvh.getMotion().getFrameAt(ki_last_good_rot),
-								rotOffset, order);
-						Quaternion current_rot = Quaternion.mayaQ(bvh.getMotion().getFrameAt(ki), rotOffset, order);
-						Quaternion interp_rot = Quaternion.lerp(current_rot, last_good_rot,
-								1f / numRotFramesConsidered);
+						Quaternion lastGoodRot = Quaternion.mayaQ(bvh.getMotion().getFrameAt(kiLastGoodRot), rotOffset,
+								order);
+						Quaternion currentRot = Quaternion.mayaQ(bvh.getMotion().getFrameAt(ki), rotOffset, order);
+						Quaternion interpRot = Quaternion.lerp(currentRot, lastGoodRot, 1f / numRotFramesConsidered);
 
 						// Test if the rotation has changed significantly since the very first frame. If
 						// false
 						// for all frames, then we'll just throw out this joint's rotation entirely.
-						if (rot_test > ROTATION_MOTION_THRESHOLD) {
-							rot_changed = true;
+						if (rotTest > ROTATION_MOTION_THRESHOLD) {
+							rotChanged = true;
 						}
-						x_delta = Vector3.distance(interp_rot.multiply(Vector3.UnitX),
-								test_rot.multiply(Vector3.UnitX));
-						y_delta = Vector3.distance(interp_rot.multiply(Vector3.UnitY),
-								test_rot.multiply(Vector3.UnitY));
-						rot_test = x_delta + y_delta;
+						dx = Vector3.distance(interpRot.multiply(Vector3.UNIT_X), testRot.multiply(Vector3.UNIT_X));
+						dy = Vector3.distance(interpRot.multiply(Vector3.UNIT_Y), testRot.multiply(Vector3.UNIT_Y));
+						rotTest = dx + dy;
 
 						// Draw a line between the last good keyframe and current. Test the distance
 						// between the last
 						// frame (current - 1, i.e. ki_prev) and the line. If it's greater than some
 						// threshold, then it
 						// represents a significant frame and we want to include it.
-						if (rot_test >= rot_threshold || (ki + 1 == size && numRotFramesConsidered > 2)) {
+						if (rotTest >= rotThreshold || (ki + 1 == size && numRotFramesConsidered > 2)) {
 							// Add the current test keyframe (which is technically the previous key, i.e.
 							// ki_prev).
 							numRotFramesConsidered = 2;
-							ki_last_good_rot = ki_prev;
+							kiLastGoodRot = kiPrev;
 							node.numRotKeys++;
 
 							// Add another keyframe between the last good keyframe and current, at whatever
@@ -556,12 +559,12 @@ public class BVHReader extends KeyFrameMotion {
 							// line between the last good keyframe and current, but we're settling for this
 							// other method
 							// because it's significantly faster.
-							if (diff_max > 0) {
+							if (diffMax > 0) {
 								if (node.ignoreRot[ki] == true) {
 									node.ignoreRot[ki] = false;
 									node.numRotKeys++;
 								}
-								diff_max = 0;
+								diffMax = 0;
 							}
 						} else {
 							// This keyframe isn't significant enough, throw it away.
@@ -569,17 +572,17 @@ public class BVHReader extends KeyFrameMotion {
 							numRotFramesConsidered++;
 							// Store away the keyframe that has the largest deviation from the interpolated
 							// line, for insertion later.
-							if (rot_test > diff_max) {
-								diff_max = rot_test;
+							if (rotTest > diffMax) {
+								diffMax = rotTest;
 							}
 						}
 					}
-					ki_prev = ki;
+					kiPrev = ki;
 				}
 			}
 
 			// don't output joints with no motion
-			if (!(pos_changed || rot_changed)) {
+			if (!(posChanged || rotChanged)) {
 				node.getTranslation().mIgnore = true;
 			}
 		}
@@ -588,7 +591,8 @@ public class BVHReader extends KeyFrameMotion {
 	// converts BVH contents to our KeyFrameMotion format
 	protected void translate() {
 		// count number of non-ignored joints
-		int j = 0, numJoints = 0;
+		int j = 0;
+		int numJoints = 0;
 		for (BVHNode node : bvh.getNodeList()) {
 			if (!node.getTranslation().mIgnore)
 				numJoints++;
@@ -597,7 +601,7 @@ public class BVHReader extends KeyFrameMotion {
 		// fill in header
 		joints = new Joint[numJoints];
 
-		Quaternion first_frame_rot = new Quaternion();
+		Quaternion firstFrameRot = new Quaternion();
 
 		for (BVHNode node : bvh.getNodeList()) {
 			if (node.getTranslation().mIgnore)
@@ -615,8 +619,10 @@ public class BVHReader extends KeyFrameMotion {
 			Quaternion offsetRot = new Quaternion(node.getTranslation().mOffsetMatrix);
 
 			// find mergechild and mergeparent nodes, if specified
-			Quaternion mergeParentRot, mergeChildRot;
-			BVHNode mergeParent = null, mergeChild = null;
+			Quaternion mergeParentRot;
+			Quaternion mergeChildRot;
+			BVHNode mergeParent = null;
+			BVHNode mergeChild = null;
 
 			for (BVHNode mnode : bvh.getNodeList()) {
 				String name = mnode.getTranslation().mMergeParentName;
@@ -631,11 +637,12 @@ public class BVHReader extends KeyFrameMotion {
 
 			joint.rotationkeys = new KeyFrameMotion.JointKey[node.numRotKeys];
 
-			Quaternion.Order order = Quaternion.StringToOrderRev(node.getChannels().getOrder());
-			int frame = 0, rotOffset = node.getChannels().getRotOffset();
+			Quaternion.Order order = Quaternion.stringToOrderRev(node.getChannels().getOrder());
+			int frame = 0;
+			int rotOffset = node.getChannels().getRotOffset();
 			for (float[] keyFrame : bvh.getMotion().getMotions()) {
 				if (frame == 0 && node.getTranslation().mRelativeRotationKey) {
-					first_frame_rot = Quaternion.mayaQ(keyFrame, rotOffset, order);
+					firstFrameRot = Quaternion.mayaQ(keyFrame, rotOffset, order);
 				}
 
 				if (node.ignoreRot[frame]) {
@@ -645,29 +652,29 @@ public class BVHReader extends KeyFrameMotion {
 
 				if (mergeParent != null) {
 					mergeParentRot = Quaternion.mayaQ(keyFrame, mergeParent.getChannels().getRotOffset(),
-							Quaternion.StringToOrderRev(mergeParent.getChannels().getOrder()));
+							Quaternion.stringToOrderRev(mergeParent.getChannels().getOrder()));
 					Quaternion parentFrameRot = new Quaternion(mergeParent.getTranslation().mFrameMatrix);
 					Quaternion parentOffsetRot = new Quaternion(mergeParent.getTranslation().mOffsetMatrix);
 					mergeParentRot = parentFrameRot.inverse().multiply(mergeParentRot).multiply(parentFrameRot)
 							.multiply(parentOffsetRot);
 				} else {
-					mergeParentRot = Quaternion.Identity;
+					mergeParentRot = Quaternion.IDENTITY;
 				}
 
 				if (mergeChild != null) {
 					mergeChildRot = Quaternion.mayaQ(keyFrame, mergeChild.getChannels().getRotOffset(),
-							Quaternion.StringToOrderRev(mergeChild.getChannels().getOrder()));
+							Quaternion.stringToOrderRev(mergeChild.getChannels().getOrder()));
 					Quaternion childFrameRot = new Quaternion(mergeChild.getTranslation().mFrameMatrix);
 					Quaternion childOffsetRot = new Quaternion(mergeChild.getTranslation().mOffsetMatrix);
 					mergeChildRot = childFrameRot.inverse().multiply(mergeChildRot).multiply(childFrameRot)
 							.multiply(childOffsetRot);
 				} else {
-					mergeChildRot = Quaternion.Identity;
+					mergeChildRot = Quaternion.IDENTITY;
 				}
 
 				Quaternion inRot = Quaternion.mayaQ(keyFrame, rotOffset, order);
 				Quaternion outRot = frameRotInv.multiply(mergeChildRot).multiply(inRot).multiply(mergeParentRot)
-						.multiply(first_frame_rot.inverse()).multiply(frameRot).multiply(offsetRot);
+						.multiply(firstFrameRot.inverse()).multiply(frameRot).multiply(offsetRot);
 
 				joint.rotationkeys[frame] = new JointKey();
 				joint.rotationkeys[frame].time = (frame + 1) * bvh.getMotion().getFrameTime();
@@ -681,7 +688,7 @@ public class BVHReader extends KeyFrameMotion {
 				joint.positionkeys = new KeyFrameMotion.JointKey[node.numPosKeys];
 
 				Vector3 relPos = node.getTranslation().mRelativePosition;
-				Vector3 relKey = Vector3.Zero;
+				Vector3 relKey = Vector3.ZERO;
 
 				frame = 0;
 				for (float[] keyFrame : bvh.getMotion().getMotions()) {
@@ -694,7 +701,7 @@ public class BVHReader extends KeyFrameMotion {
 						continue;
 					}
 
-					Vector3 inPos = new Vector3(keyFrame, 0).subtract(relKey).multiply(first_frame_rot.inverse());
+					Vector3 inPos = new Vector3(keyFrame, 0).subtract(relKey).multiply(firstFrameRot.inverse());
 					Vector3 outPos = inPos.multiply(frameRot).multiply(offsetRot);
 
 					outPos = outPos.multiply(INCHES_TO_METERS).subtract(relPos);

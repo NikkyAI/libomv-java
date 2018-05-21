@@ -116,7 +116,7 @@ public class Helpers {
 	 *            The password to hash
 	 * @return An MD5 hash in string format, with $1$ prepended
 	 */
-	public static String MD5Password(String password) {
+	public static String md5Password(String password) {
 		StringBuilder digest = new StringBuilder(32);
 		try {
 			MessageDigest md = MessageDigest.getInstance("MD5");
@@ -244,7 +244,12 @@ public class Helpers {
 		// All transformed to double not to lose precision
 		// Otherwise, for high numbers of param:amount the result is NaN instead
 		// of Infinity
-		double v1 = value1, v2 = value2, t1 = tangent1, t2 = tangent2, s = amount, result;
+		double v1 = value1;
+		double v2 = value2;
+		double t1 = tangent1;
+		double t2 = tangent2;
+		double s = amount;
+		double result;
 		double sCubed = s * s * s;
 		double sSquared = s * s;
 
@@ -263,7 +268,12 @@ public class Helpers {
 		// All transformed to double not to lose precision
 		// Otherwise, for high numbers of param:amount the result is NaN instead
 		// of Infinity
-		double v1 = value1, v2 = value2, t1 = tangent1, t2 = tangent2, s = amount, result;
+		double v1 = value1;
+		double v2 = value2;
+		double t1 = tangent1;
+		double t2 = tangent2;
+		double s = amount;
+		double result;
 		double sCubed = s * s * s;
 		double sSquared = s * s;
 
@@ -302,14 +312,14 @@ public class Helpers {
 		return hermite(value1, 0f, value2, 0f, result);
 	}
 
-	public static float ToDegrees(float radians) {
+	public static float toDegrees(float radians) {
 		// This method uses double precission internally,
 		// though it returns single float
 		// Factor = 180 / pi
 		return (float) (radians * 57.295779513082320876798154814105);
 	}
 
-	public static float ToRadians(float degrees) {
+	public static float toRadians(float degrees) {
 		// This method uses double precission internally,
 		// though it returns single float
 		// Factor = pi / 180
@@ -322,7 +332,7 @@ public class Helpers {
 	// <param name="b">The right-hand (or Y) value</param>
 	// <returns>A 64-bit integer containing the two 32-bit input
 	// values</returns>
-	public static long IntsToLong(int a, int b) {
+	public static long intsToLong(int a, int b) {
 		return (((long) a << 32) + b);
 	}
 
@@ -504,7 +514,7 @@ public class Helpers {
 		return date.getTime() / 1000.0;
 	}
 
-	public static Date UnixTimeToDateTime(double time) {
+	public static Date unixTimeToDateTime(double time) {
 		return new Date(Math.round(time * 1000.0));
 	}
 
@@ -541,13 +551,13 @@ public class Helpers {
 		int y = ((int) globalY >> 8) << 8;
 		locals[0] = globalX - x;
 		locals[1] = globalY - y;
-		return IntsToLong(x, y);
+		return intsToLong(x, y);
 	}
 
 	public static Vector3d regionHandleToGlobalPos(long regionHandle, Vector3 local) {
 		int[] globals = new int[2];
 		longToUInts(regionHandle, globals);
-		return new Vector3d(globals[0] + local.X, globals[1] + local.Y, local.Z);
+		return new Vector3d(globals[0] + local.x, globals[1] + local.y, local.z);
 	}
 
 	// Calculates the CRC (cyclic redundancy check) needed to upload inventory.
@@ -575,14 +585,14 @@ public class Helpers {
 		int CRC = 0;
 
 		// IDs
-		CRC += assetID.CRC(); // AssetID
-		CRC += folderID.CRC(); // FolderID
-		CRC += itemID.CRC(); // ItemID
+		CRC += assetID.crc(); // AssetID
+		CRC += folderID.crc(); // FolderID
+		CRC += itemID.crc(); // ItemID
 
 		// Permission stuff
-		CRC += creatorID.CRC(); // CreatorID
-		CRC += ownerID.CRC(); // OwnerID
-		CRC += groupID.CRC(); // GroupID
+		CRC += creatorID.crc(); // CreatorID
+		CRC += ownerID.crc(); // OwnerID
+		CRC += groupID.crc(); // GroupID
 
 		// CRC += another 4 words which always seem to be zero -- unclear if
 		// this is a LLUUID or what
@@ -677,8 +687,8 @@ public class Helpers {
 	 * @return A signed short integer, will be zero if a short can't be read at the
 	 *         given position
 	 */
-	public static short BytesToInt16L(byte[] bytes) {
-		return BytesToInt16L(bytes, 0);
+	public static short bytesToInt16L(byte[] bytes) {
+		return bytesToInt16L(bytes, 0);
 	}
 
 	/**
@@ -692,18 +702,18 @@ public class Helpers {
 	 * @return A signed short integer, will be zero if a short can't be read at the
 	 *         given position
 	 */
-	public static short BytesToInt16L(byte[] bytes, int pos) {
+	public static short bytesToInt16L(byte[] bytes, int pos) {
 		if (bytes.length < pos + 2) {
 			return 0;
 		}
 		return (short) (((bytes[pos + 0] & 0xff) << 0) + ((bytes[pos + 1] & 0xff) << 8));
 	}
 
-	public static short BytesToInt16B(byte[] bytes) {
-		return BytesToInt16B(bytes, 0);
+	public static short bytesToInt16B(byte[] bytes) {
+		return bytesToInt16B(bytes, 0);
 	}
 
-	public static short BytesToInt16B(byte[] bytes, int pos) {
+	public static short bytesToInt16B(byte[] bytes, int pos) {
 		if (bytes.length < pos + 2) {
 			return 0;
 		}
@@ -719,8 +729,8 @@ public class Helpers {
 	 * @return A signed integer, will be zero if the array contains less than four
 	 *         bytes
 	 */
-	public static int BytesToInt32L(byte[] bytes) {
-		return BytesToInt32L(bytes, 0);
+	public static int bytesToInt32L(byte[] bytes) {
+		return bytesToInt32L(bytes, 0);
 	}
 
 	/**
@@ -734,7 +744,7 @@ public class Helpers {
 	 * @return A signed integer, will be zero if an int can't be read at the given
 	 *         position
 	 */
-	public static int BytesToInt32L(byte[] bytes, int pos) {
+	public static int bytesToInt32L(byte[] bytes, int pos) {
 		if (bytes.length < pos + 4) {
 			return 0;
 		}
@@ -742,11 +752,11 @@ public class Helpers {
 				+ ((bytes[pos + 3] & 0xff) << 24));
 	}
 
-	public static int BytesToInt32B(byte[] bytes) {
-		return BytesToInt32B(bytes, 0);
+	public static int bytesToInt32B(byte[] bytes) {
+		return bytesToInt32B(bytes, 0);
 	}
 
-	public static int BytesToInt32B(byte[] bytes, int pos) {
+	public static int bytesToInt32B(byte[] bytes, int pos) {
 		if (bytes.length < pos + 4) {
 			return 0;
 		}
@@ -763,8 +773,8 @@ public class Helpers {
 	 * @return A signed long integer, will be zero if the array contains less than
 	 *         eight bytes
 	 */
-	public static long BytesToInt64L(byte[] bytes) {
-		return BytesToInt64L(bytes, 0);
+	public static long bytesToInt64L(byte[] bytes) {
+		return bytesToInt64L(bytes, 0);
 	}
 
 	/**
@@ -778,7 +788,7 @@ public class Helpers {
 	 * @return A signed long integer, will be zero if a long can't be read at the
 	 *         given position
 	 */
-	public static long BytesToInt64L(byte[] bytes, int pos) {
+	public static long bytesToInt64L(byte[] bytes, int pos) {
 		if (bytes.length < 8) {
 			return 0;
 		}
@@ -789,11 +799,11 @@ public class Helpers {
 		return (high << 32) + (low & 0xffffffffL);
 	}
 
-	public static long BytesToInt64B(byte[] bytes) {
-		return BytesToInt64B(bytes, 0);
+	public static long bytesToInt64B(byte[] bytes) {
+		return bytesToInt64B(bytes, 0);
 	}
 
-	public static long BytesToInt64B(byte[] bytes, int pos) {
+	public static long bytesToInt64B(byte[] bytes, int pos) {
 		if (bytes.length < 8) {
 			return 0;
 		}
@@ -811,8 +821,8 @@ public class Helpers {
 	 *            Byte array containing the ushort
 	 * @return An int, will be zero if a ushort can't be read
 	 */
-	public static int BytesToUInt16L(byte[] bytes) {
-		return BytesToUInt16L(bytes, 0);
+	public static int bytesToUInt16L(byte[] bytes) {
+		return bytesToUInt16L(bytes, 0);
 	}
 
 	/**
@@ -825,18 +835,18 @@ public class Helpers {
 	 *            Position to start reading the ushort from
 	 * @return An int, will be zero if a ushort can't be read at the given position
 	 */
-	public static int BytesToUInt16L(byte[] bytes, int pos) {
+	public static int bytesToUInt16L(byte[] bytes, int pos) {
 		if (bytes.length < pos + 2) {
 			return 0;
 		}
 		return ((bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8));
 	}
 
-	public static int BytesToUInt16B(byte[] bytes) {
-		return BytesToUInt16B(bytes, 0);
+	public static int bytesToUInt16B(byte[] bytes) {
+		return bytesToUInt16B(bytes, 0);
 	}
 
-	public static int BytesToUInt16B(byte[] bytes, int pos) {
+	public static int bytesToUInt16B(byte[] bytes, int pos) {
 		if (bytes.length < pos + 2) {
 			return 0;
 		}
@@ -852,8 +862,8 @@ public class Helpers {
 	 * @return An unsigned integer, will be zero if the array contains less than
 	 *         four bytes
 	 */
-	public static long BytesToUInt32L(byte[] bytes) {
-		return BytesToUInt32L(bytes, 0);
+	public static long bytesToUInt32L(byte[] bytes) {
+		return bytesToUInt32L(bytes, 0);
 	}
 
 	/**
@@ -867,7 +877,7 @@ public class Helpers {
 	 * @return An unsigned integer, will be zero if a uint can't be read at the
 	 *         given position
 	 */
-	public static long BytesToUInt32L(byte[] bytes, int pos) {
+	public static long bytesToUInt32L(byte[] bytes, int pos) {
 		if (bytes.length < pos + 4) {
 			return 0;
 		}
@@ -876,11 +886,11 @@ public class Helpers {
 		return (high << 24) + (0xffffffffL & low);
 	}
 
-	public static long BytesToUInt32B(byte[] bytes) {
-		return BytesToUInt32B(bytes, 0);
+	public static long bytesToUInt32B(byte[] bytes) {
+		return bytesToUInt32B(bytes, 0);
 	}
 
-	public static long BytesToUInt32B(byte[] bytes, int pos) {
+	public static long bytesToUInt32B(byte[] bytes, int pos) {
 		if (bytes.length < pos + 4) {
 			return 0;
 		}
@@ -898,8 +908,8 @@ public class Helpers {
 	 * @return An unsigned 64-bit integer, will be zero if the array contains less
 	 *         than eight bytes
 	 */
-	public static long BytesToUInt64L(byte[] bytes) {
-		return BytesToUInt64L(bytes, 0);
+	public static long bytesToUInt64L(byte[] bytes) {
+		return bytesToUInt64L(bytes, 0);
 	}
 
 	/**
@@ -912,7 +922,7 @@ public class Helpers {
 	 *         bytes and 0x7fffffff if the resulting value would exceed the positive
 	 *         limit of a long
 	 */
-	public static long BytesToUInt64L(byte[] bytes, int pos) {
+	public static long bytesToUInt64L(byte[] bytes, int pos) {
 		if (bytes.length < 8) {
 			return 0;
 		}
@@ -927,11 +937,11 @@ public class Helpers {
 		return (high << 32) + (low & 0xffffffff);
 	}
 
-	public static long BytesToUInt64B(byte[] bytes) {
-		return BytesToUInt64B(bytes, 0);
+	public static long bytesToUInt64B(byte[] bytes) {
+		return bytesToUInt64B(bytes, 0);
 	}
 
-	public static long BytesToUInt64B(byte[] bytes, int pos) {
+	public static long bytesToUInt64B(byte[] bytes, int pos) {
 		if (bytes.length < 8) {
 			return 0;
 		}
@@ -956,12 +966,12 @@ public class Helpers {
 	 *            Starting position of the floating point value in the byte array
 	 * @return Single precision value
 	 */
-	public static float BytesToFloatL(byte[] bytes, int pos) {
-		return Float.intBitsToFloat(BytesToInt32L(bytes, pos));
+	public static float bytesToFloatL(byte[] bytes, int pos) {
+		return Float.intBitsToFloat(bytesToInt32L(bytes, pos));
 	}
 
-	public static float BytesToFloatB(byte[] bytes, int pos) {
-		return Float.intBitsToFloat(BytesToInt32B(bytes, pos));
+	public static float bytesToFloatB(byte[] bytes, int pos) {
+		return Float.intBitsToFloat(bytesToInt32B(bytes, pos));
 	}
 
 	/**
@@ -975,12 +985,12 @@ public class Helpers {
 	 *            array
 	 * @return Double precision value
 	 */
-	public static double BytesToDoubleL(byte[] bytes, int pos) {
-		return Double.longBitsToDouble(BytesToInt64L(bytes, pos));
+	public static double bytesToDoubleL(byte[] bytes, int pos) {
+		return Double.longBitsToDouble(bytesToInt64L(bytes, pos));
 	}
 
-	public static double BytesToDoubleB(byte[] bytes, int pos) {
-		return Double.longBitsToDouble(BytesToInt64B(bytes, pos));
+	public static double bytesToDoubleB(byte[] bytes, int pos) {
+		return Double.longBitsToDouble(bytesToInt64B(bytes, pos));
 	}
 
 	/**
@@ -1010,9 +1020,10 @@ public class Helpers {
 		return (float) floatVal;
 	}
 
-	public static float BytesToFixedL(byte[] bytes, int pos, boolean signed, int intBits, int fracBits) {
+	public static float bytesToFixedL(byte[] bytes, int pos, boolean signed, int intBits, int fracBits) {
 		int totalBits = intBits + fracBits;
-		long fixedVal, mask;
+		long fixedVal;
+		long mask;
 
 		if (signed) {
 			totalBits++;
@@ -1022,18 +1033,19 @@ public class Helpers {
 		if (totalBits <= 8) {
 			fixedVal = bytes[pos] & mask;
 		} else if (totalBits <= 16) {
-			fixedVal = BytesToUInt16L(bytes, pos) & mask;
+			fixedVal = bytesToUInt16L(bytes, pos) & mask;
 		} else if (totalBits <= 32) {
-			fixedVal = BytesToUInt32L(bytes, pos) & mask;
+			fixedVal = bytesToUInt32L(bytes, pos) & mask;
 		} else {
 			return 0.0f;
 		}
 		return fixedToFloat(fixedVal, signed, intBits, fracBits);
 	}
 
-	public static float BytesToFixedB(byte[] bytes, int pos, boolean signed, int intBits, int fracBits) {
+	public static float bytesToFixedB(byte[] bytes, int pos, boolean signed, int intBits, int fracBits) {
 		int totalBits = intBits + fracBits;
-		long fixedVal, mask;
+		long fixedVal;
+		long mask;
 
 		if (signed) {
 			totalBits++;
@@ -1043,21 +1055,21 @@ public class Helpers {
 		if (totalBits <= 8) {
 			fixedVal = bytes[pos] & mask;
 		} else if (totalBits <= 16) {
-			fixedVal = BytesToUInt16B(bytes, pos) & mask;
+			fixedVal = bytesToUInt16B(bytes, pos) & mask;
 		} else if (totalBits <= 32) {
-			fixedVal = BytesToUInt32B(bytes, pos) & mask;
+			fixedVal = bytesToUInt32B(bytes, pos) & mask;
 		} else {
 			return 0.0f;
 		}
 		return fixedToFloat(fixedVal, signed, intBits, fracBits);
 	}
 
-	public static int Int8ToBytes(byte value, byte[] dest, int pos) {
+	public static int int8ToBytes(byte value, byte[] dest, int pos) {
 		dest[pos + 0] = value;
 		return 1;
 	}
 
-	public static int UInt8ToBytes(byte value, byte[] dest, int pos) {
+	public static int uint8ToBytes(byte value, byte[] dest, int pos) {
 		dest[pos + 0] = value;
 		return 1;
 	}
@@ -1069,49 +1081,49 @@ public class Helpers {
 	 *            The short to convert
 	 * @return A four byte little endian array
 	 */
-	public static byte[] Int16ToBytesL(short value) {
+	public static byte[] int16ToBytesL(short value) {
 		byte[] bytes = new byte[2];
-		Int16ToBytesL(value, bytes, 0);
+		int16ToBytesL(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int Int16ToBytesL(short value, byte[] dest, int pos) {
+	public static int int16ToBytesL(short value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 0) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 8) & 0xff);
 		return 2;
 	}
 
-	public static byte[] Int16ToBytesB(short value) {
+	public static byte[] int16ToBytesB(short value) {
 		byte[] bytes = new byte[2];
-		Int16ToBytesB(value, bytes, 0);
+		int16ToBytesB(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int Int16ToBytesB(short value, byte[] dest, int pos) {
+	public static int int16ToBytesB(short value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 8) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 0) & 0xff);
 		return 2;
 	}
 
-	public static byte[] UInt16ToBytesL(int value) {
+	public static byte[] uint16ToBytesL(int value) {
 		byte[] bytes = new byte[2];
-		UInt16ToBytesL(value, bytes, 0);
+		uint16ToBytesL(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int UInt16ToBytesL(int value, byte[] dest, int pos) {
+	public static int uint16ToBytesL(int value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 0) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 8) & 0xff);
 		return 2;
 	}
 
-	public static byte[] UInt16ToBytesB(int value) {
+	public static byte[] uint16ToBytesB(int value) {
 		byte[] bytes = new byte[2];
-		UInt16ToBytesB(value, bytes, 0);
+		uint16ToBytesB(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int UInt16ToBytesB(int value, byte[] dest, int pos) {
+	public static int uint16ToBytesB(int value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 8) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 0) & 0xff);
 		return 2;
@@ -1124,13 +1136,13 @@ public class Helpers {
 	 *            The integer to convert
 	 * @return A four byte little endian array
 	 */
-	public static byte[] Int32ToBytesL(int value) {
+	public static byte[] int32ToBytesL(int value) {
 		byte[] bytes = new byte[4];
-		Int32ToBytesL(value, bytes, 0);
+		int32ToBytesL(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int Int32ToBytesL(int value, byte[] dest, int pos) {
+	public static int int32ToBytesL(int value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 0) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 8) & 0xff);
 		dest[pos + 2] = (byte) ((value >> 16) & 0xff);
@@ -1138,13 +1150,13 @@ public class Helpers {
 		return 4;
 	}
 
-	public static byte[] Int32ToBytesB(int value) {
+	public static byte[] int32ToBytesB(int value) {
 		byte[] bytes = new byte[4];
-		Int32ToBytesB(value, bytes, 0);
+		int32ToBytesB(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int Int32ToBytesB(int value, byte[] dest, int pos) {
+	public static int int32ToBytesB(int value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 24) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 16) & 0xff);
 		dest[pos + 2] = (byte) ((value >> 8) & 0xff);
@@ -1152,13 +1164,13 @@ public class Helpers {
 		return 4;
 	}
 
-	public static byte[] UInt32ToBytesL(long value) {
+	public static byte[] uint32ToBytesL(long value) {
 		byte[] bytes = new byte[4];
-		UInt32ToBytesL(value, bytes, 0);
+		uint32ToBytesL(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int UInt32ToBytesL(long value, byte[] dest, int pos) {
+	public static int uint32ToBytesL(long value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 0) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 8) & 0xff);
 		dest[pos + 2] = (byte) ((value >> 16) & 0xff);
@@ -1166,13 +1178,13 @@ public class Helpers {
 		return 4;
 	}
 
-	public static byte[] UInt32ToBytesB(long value) {
+	public static byte[] uint32ToBytesB(long value) {
 		byte[] bytes = new byte[4];
-		UInt32ToBytesB(value, bytes, 0);
+		uint32ToBytesB(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int UInt32ToBytesB(long value, byte[] dest, int pos) {
+	public static int uint32ToBytesB(long value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 24) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 16) & 0xff);
 		dest[pos + 2] = (byte) ((value >> 8) & 0xff);
@@ -1187,13 +1199,13 @@ public class Helpers {
 	 *            The value to convert
 	 * @return An 8 byte little endian array
 	 */
-	public static byte[] Int64ToBytesL(long value) {
+	public static byte[] int64ToBytesL(long value) {
 		byte[] bytes = new byte[8];
-		Int64ToBytesL(value, bytes, 0);
+		int64ToBytesL(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int Int64ToBytesL(long value, byte[] dest, int pos) {
+	public static int int64ToBytesL(long value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 0) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 8) & 0xff);
 		dest[pos + 2] = (byte) ((value >> 16) & 0xff);
@@ -1205,13 +1217,13 @@ public class Helpers {
 		return 8;
 	}
 
-	public static byte[] Int64ToBytesB(long value) {
+	public static byte[] int64ToBytesB(long value) {
 		byte[] bytes = new byte[8];
-		Int64ToBytesB(value, bytes, 0);
+		int64ToBytesB(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int Int64ToBytesB(long value, byte[] dest, int pos) {
+	public static int int64ToBytesB(long value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 56) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 48) & 0xff);
 		dest[pos + 2] = (byte) ((value >> 40) & 0xff);
@@ -1230,13 +1242,13 @@ public class Helpers {
 	 *            The value to convert
 	 * @return An 8 byte little endian array
 	 */
-	public static byte[] UInt64ToBytesL(long value) {
+	public static byte[] uint64ToBytesL(long value) {
 		byte[] bytes = new byte[8];
-		UInt64ToBytesL(value, bytes, 0);
+		uint64ToBytesL(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int UInt64ToBytesL(long value, byte[] dest, int pos) {
+	public static int uint64ToBytesL(long value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 0) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 8) & 0xff);
 		dest[pos + 2] = (byte) ((value >> 16) & 0xff);
@@ -1248,13 +1260,13 @@ public class Helpers {
 		return 8;
 	}
 
-	public static byte[] UInt64ToBytesB(long value) {
+	public static byte[] uint64ToBytesB(long value) {
 		byte[] bytes = new byte[8];
-		UInt64ToBytesB(value, bytes, 0);
+		uint64ToBytesB(value, bytes, 0);
 		return bytes;
 	}
 
-	public static int UInt64ToBytesB(long value, byte[] dest, int pos) {
+	public static int uint64ToBytesB(long value, byte[] dest, int pos) {
 		dest[pos + 0] = (byte) ((value >> 56) & 0xff);
 		dest[pos + 1] = (byte) ((value >> 48) & 0xff);
 		dest[pos + 2] = (byte) ((value >> 40) & 0xff);
@@ -1275,46 +1287,47 @@ public class Helpers {
 	 */
 	public static byte[] floatToBytesL(float value) {
 		byte[] bytes = new byte[4];
-		Int32ToBytesL(Float.floatToIntBits(value), bytes, 0);
+		int32ToBytesL(Float.floatToIntBits(value), bytes, 0);
 		return bytes;
 	}
 
 	public static int floatToBytesL(float value, byte[] dest, int pos) {
-		return Int32ToBytesL(Float.floatToIntBits(value), dest, pos);
+		return int32ToBytesL(Float.floatToIntBits(value), dest, pos);
 	}
 
 	public static byte[] floatToBytesB(float value) {
 		byte[] bytes = new byte[4];
-		Int32ToBytesB(Float.floatToIntBits(value), bytes, 0);
+		int32ToBytesB(Float.floatToIntBits(value), bytes, 0);
 		return bytes;
 	}
 
 	public static int floatToBytesB(float value, byte[] dest, int pos) {
-		return Int32ToBytesB(Float.floatToIntBits(value), dest, pos);
+		return int32ToBytesB(Float.floatToIntBits(value), dest, pos);
 	}
 
 	public static byte[] doubleToBytesL(double value) {
 		byte[] bytes = new byte[8];
-		Int64ToBytesL(Double.doubleToLongBits(value), bytes, 0);
+		int64ToBytesL(Double.doubleToLongBits(value), bytes, 0);
 		return bytes;
 	}
 
 	public static int doubleToBytesL(double value, byte[] dest, int pos) {
-		return Int64ToBytesL(Double.doubleToLongBits(value), dest, pos);
+		return int64ToBytesL(Double.doubleToLongBits(value), dest, pos);
 	}
 
 	public static byte[] doubleToBytesB(double value) {
 		byte[] bytes = new byte[8];
-		Int64ToBytesB(Double.doubleToLongBits(value), bytes, 0);
+		int64ToBytesB(Double.doubleToLongBits(value), bytes, 0);
 		return bytes;
 	}
 
 	public static int doubleToBytesB(double value, byte[] dest, int pos) {
-		return Int64ToBytesB(Double.doubleToLongBits(value), dest, pos);
+		return int64ToBytesB(Double.doubleToLongBits(value), dest, pos);
 	}
 
 	private static float floatToFixed(float data, boolean isSigned, int intBits, int fracBits) {
-		int min, max = 1 << intBits;
+		int min;
+		int max = 1 << intBits;
 
 		if (isSigned) {
 			min = 1 << intBits;
@@ -1341,13 +1354,13 @@ public class Helpers {
 			dest[pos] = (byte) floatToFixed(data, isSigned, intBits, fracBits);
 			return 1;
 		} else if (totalBits <= 16) {
-			UInt16ToBytesL((int) floatToFixed(data, isSigned, intBits, fracBits), dest, pos);
+			uint16ToBytesL((int) floatToFixed(data, isSigned, intBits, fracBits), dest, pos);
 			return 2;
 		} else if (totalBits <= 31) {
-			UInt32ToBytesL((long) floatToFixed(data, isSigned, intBits, fracBits), dest, pos);
+			uint32ToBytesL((long) floatToFixed(data, isSigned, intBits, fracBits), dest, pos);
 			return 4;
 		} else {
-			UInt64ToBytesL((long) floatToFixed(data, isSigned, intBits, fracBits), dest, pos);
+			uint64ToBytesL((long) floatToFixed(data, isSigned, intBits, fracBits), dest, pos);
 			return 8;
 		}
 	}
@@ -1362,13 +1375,13 @@ public class Helpers {
 			dest[pos] = (byte) floatToFixed(data, isSigned, intBits, fracBits);
 			return 1;
 		} else if (totalBits <= 16) {
-			UInt16ToBytesB((int) floatToFixed(data, isSigned, intBits, fracBits), dest, pos);
+			uint16ToBytesB((int) floatToFixed(data, isSigned, intBits, fracBits), dest, pos);
 			return 2;
 		} else if (totalBits <= 31) {
-			UInt32ToBytesB((long) floatToFixed(data, isSigned, intBits, fracBits), dest, pos);
+			uint32ToBytesB((long) floatToFixed(data, isSigned, intBits, fracBits), dest, pos);
 			return 4;
 		} else {
-			UInt64ToBytesB((long) floatToFixed(data, isSigned, intBits, fracBits), dest, pos);
+			uint64ToBytesB((long) floatToFixed(data, isSigned, intBits, fracBits), dest, pos);
 			return 8;
 		}
 	}
@@ -1382,7 +1395,7 @@ public class Helpers {
 	 *            The right-hand (or Y) value
 	 * @return A 64-bit integer containing the two 32-bit input values
 	 */
-	public static long UIntsToLong(int a, int b) {
+	public static long uintsToLong(int a, int b) {
 		return ((long) a << 32) | b;
 	}
 
@@ -1419,7 +1432,7 @@ public class Helpers {
 	 *            An unsigned integer to convert to a string
 	 * @return A hexadecimal string 10 characters long <example>0x7fffffff</example>
 	 */
-	public static String UInt32ToHexString(long i) {
+	public static String uint32ToHexString(long i) {
 		return String.format("%#08x", i);
 	}
 
@@ -1438,7 +1451,7 @@ public class Helpers {
 	public static String readString(InputStream is, int len) throws IOException {
 		byte[] bytes = new byte[len];
 		is.read(bytes);
-		return BytesToString(bytes, 0, len, UTF8_ENCODING);
+		return bytesToString(bytes, 0, len, UTF8_ENCODING);
 	}
 
 	/**
@@ -1449,8 +1462,8 @@ public class Helpers {
 	 * @return The decoded string
 	 * @throws UnsupportedEncodingException
 	 */
-	public static String BytesToString(byte[] bytes) throws UnsupportedEncodingException {
-		return BytesToString(bytes, 0, bytes.length, UTF8_ENCODING);
+	public static String bytesToString(byte[] bytes) throws UnsupportedEncodingException {
+		return bytesToString(bytes, 0, bytes.length, UTF8_ENCODING);
 	}
 
 	/**
@@ -1466,11 +1479,11 @@ public class Helpers {
 	 * @return The decoded string
 	 * @throws UnsupportedEncodingException
 	 */
-	public static String BytesToString(byte[] bytes, int offset, int length) throws UnsupportedEncodingException {
-		return BytesToString(bytes, offset, length, UTF8_ENCODING);
+	public static String bytesToString(byte[] bytes, int offset, int length) throws UnsupportedEncodingException {
+		return bytesToString(bytes, offset, length, UTF8_ENCODING);
 	}
 
-	public static String BytesToString(byte[] bytes, int offset, int length, String encoding)
+	public static String bytesToString(byte[] bytes, int offset, int length, String encoding)
 			throws UnsupportedEncodingException {
 		if (bytes != null) {
 			if (length < 0) {
@@ -1501,8 +1514,8 @@ public class Helpers {
 	 * @return A string containing hexadecimal characters on multiple lines. Each
 	 *         line is prepended with the field name
 	 */
-	public static String BytesToHexString(byte[] bytes, String fieldName) {
-		return BytesToHexString(bytes, 0, bytes.length, fieldName);
+	public static String bytesToHexString(byte[] bytes, String fieldName) {
+		return bytesToHexString(bytes, 0, bytes.length, fieldName);
 	}
 
 	/**
@@ -1519,7 +1532,7 @@ public class Helpers {
 	 * @return A string containing hexadecimal characters on multiple lines. Each
 	 *         line is prepended with the field name
 	 */
-	public static String BytesToHexString(byte[] bytes, int offset, int length, String fieldName) {
+	public static String bytesToHexString(byte[] bytes, int offset, int length, String fieldName) {
 		StringBuilder output = new StringBuilder();
 
 		for (int i = 0; i < length; i += 16) {
@@ -1677,11 +1690,11 @@ public class Helpers {
 	 *            Maximum value range
 	 * @return A float value inclusively between lower and upper
 	 */
-	public static float ByteToFloat(byte[] bytes, int pos, float lower, float upper) {
+	public static float byteToFloat(byte[] bytes, int pos, float lower, float upper) {
 		if (bytes.length <= pos) {
 			return 0;
 		}
-		return ByteToFloat(bytes[pos] & 0xFF, lower, upper);
+		return byteToFloat(bytes[pos] & 0xFF, lower, upper);
 	}
 
 	/**
@@ -1695,7 +1708,7 @@ public class Helpers {
 	 *            Maximum value range
 	 * @return A float value inclusively between lower and upper
 	 */
-	public static float ByteToFloat(int val, float lower, float upper) {
+	public static float byteToFloat(int val, float lower, float upper) {
 		float fval = val / 255.0f;
 		float delta = (upper - lower);
 		fval *= delta;
@@ -1721,9 +1734,9 @@ public class Helpers {
 	 *            Maximum value range
 	 * @return A float value inclusively between lower and upper
 	 */
-	public static float UInt16ToFloatL(byte[] bytes, int pos, float lower, float upper) {
-		int val = BytesToUInt16L(bytes, pos);
-		return UInt16ToFloat(val, lower, upper);
+	public static float uint16ToFloatL(byte[] bytes, int pos, float lower, float upper) {
+		int val = bytesToUInt16L(bytes, pos);
+		return uint16ToFloat(val, lower, upper);
 	}
 
 	/**
@@ -1737,7 +1750,7 @@ public class Helpers {
 	 *            Maximum value range
 	 * @return A float value inclusively between lower and upper
 	 */
-	public static float UInt16ToFloat(int val, float lower, float upper) {
+	public static float uint16ToFloat(int val, float lower, float upper) {
 		float fval = val / 65535.0f;
 		float delta = upper - lower;
 		fval *= delta;
@@ -1759,34 +1772,34 @@ public class Helpers {
 		return (int) value;
 	}
 
-	public static byte[] TEOffsetShort(float offset) {
+	public static byte[] teOffsetShort(float offset) {
 		offset = Helpers.clamp(offset, -1.0f, 1.0f);
 		offset *= 32767.0f;
-		return Int16ToBytesL((short) roundFromZero(offset));
+		return int16ToBytesL((short) roundFromZero(offset));
 	}
 
-	public static float TEOffsetFloat(byte[] bytes, int pos) {
-		float offset = BytesToInt16L(bytes, pos);
+	public static float teOffsetFloat(byte[] bytes, int pos) {
+		float offset = bytesToInt16L(bytes, pos);
 		return offset / 32767.0f;
 	}
 
-	public static byte[] TERotationShort(float rotation) {
+	public static byte[] teRotationShort(float rotation) {
 		final double TWO_PI = 6.283185307179586476925286766559d;
 		double remainder = Math.IEEEremainder(rotation, TWO_PI);
-		return Int16ToBytesL((short) roundFromZero((remainder / TWO_PI) * 32767.0f));
+		return int16ToBytesL((short) roundFromZero((remainder / TWO_PI) * 32767.0f));
 	}
 
-	public static float TERotationFloat(byte[] bytes, int pos) {
+	public static float teRotationFloat(byte[] bytes, int pos) {
 		final float TWO_PI = 6.283185307179586476925286766559f;
-		int tmp = BytesToInt16L(bytes, pos);
+		int tmp = bytesToInt16L(bytes, pos);
 		return tmp * TWO_PI / 32767.0f;
 	}
 
-	public static byte TEGlowByte(float glow) {
+	public static byte teGlowByte(float glow) {
 		return (byte) (glow * 255.0f);
 	}
 
-	public static float TEGlowFloat(byte[] bytes, int pos) {
+	public static float teGlowFloat(byte[] bytes, int pos) {
 		return bytes[pos] / 255.0f;
 	}
 
@@ -1802,7 +1815,7 @@ public class Helpers {
 		} while (depth > 0);
 	}
 
-	public static boolean TryParseBoolean(String s) {
+	public static boolean tryParseBoolean(String s) {
 		if (s != null && !s.isEmpty()) {
 			try {
 				return Boolean.parseBoolean(s);
@@ -1812,7 +1825,7 @@ public class Helpers {
 		return false;
 	}
 
-	public static int TryParseInt(String s) {
+	public static int tryParseInt(String s) {
 		if (s != null && !s.isEmpty()) {
 			try {
 				return Integer.parseInt(s);
@@ -1822,7 +1835,7 @@ public class Helpers {
 		return 0;
 	}
 
-	public static float TryParseFloat(String s) {
+	public static float tryParseFloat(String s) {
 		if (s != null && !s.isEmpty()) {
 			try {
 				return Float.parseFloat(s);
@@ -1839,7 +1852,7 @@ public class Helpers {
 		return 0.0f;
 	}
 
-	public static double TryParseDouble(String s) {
+	public static double tryParseDouble(String s) {
 		if (s != null && !s.isEmpty()) {
 			try {
 				return Double.parseDouble(s);
@@ -1865,7 +1878,7 @@ public class Helpers {
 	 *            Resulting integer
 	 * @return True if the parse was successful, otherwise false
 	 */
-	public static long TryParseHex(String s) {
+	public static long tryParseHex(String s) {
 		if (s != null && !s.isEmpty()) {
 			try {
 				return Long.parseLong(s, 16);
@@ -1875,7 +1888,7 @@ public class Helpers {
 		return 0L;
 	}
 
-	public static long TryParseLong(String s) {
+	public static long tryParseLong(String s) {
 		if (s != null && !s.isEmpty()) {
 			try {
 				return Long.parseLong(s, 10);
@@ -2054,7 +2067,7 @@ public class Helpers {
 		return System.getProperty("os.version");
 	}
 
-	public static OSD ZDecompressOSD(InputStream in) throws IOException, ParseException {
+	public static OSD zDecompressOSD(InputStream in) throws IOException, ParseException {
 		InflaterInputStream inflate = new InflaterInputStream(in);
 		try {
 			return OSDParser.deserialize(inflate);
@@ -2063,7 +2076,7 @@ public class Helpers {
 		}
 	}
 
-	public static byte[] ZCompressOSD(OSD osd) throws IOException {
+	public static byte[] zCompressOSD(OSD osd) throws IOException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		DeflaterOutputStream deflate = new DeflaterOutputStream(out);
 		try {

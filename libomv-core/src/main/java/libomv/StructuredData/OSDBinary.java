@@ -56,11 +56,11 @@ public class OSDBinary extends OSD {
 	}
 
 	public OSDBinary(int value) {
-		this.value = Helpers.Int32ToBytesB(value);
+		this.value = Helpers.int32ToBytesB(value);
 	}
 
 	public OSDBinary(long value) {
-		this.value = Helpers.Int64ToBytesB(value);
+		this.value = Helpers.int64ToBytesB(value);
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public class OSDBinary extends OSD {
 	@Override
 	public String asString() {
 		try {
-			return Helpers.BytesToString(value);
+			return Helpers.bytesToString(value);
 		} catch (UnsupportedEncodingException e) {
 		}
 		return null;
@@ -98,17 +98,17 @@ public class OSDBinary extends OSD {
 
 	@Override
 	public int asUInteger() {
-		return (int) Helpers.BytesToUInt32B(value);
+		return (int) Helpers.bytesToUInt32B(value);
 	}
 
 	@Override
 	public long asLong() {
-		return Helpers.BytesToInt64B(value);
+		return Helpers.bytesToInt64B(value);
 	}
 
 	@Override
 	public long asULong() {
-		return Helpers.BytesToUInt64B(value);
+		return Helpers.bytesToUInt64B(value);
 	}
 
 	@Override
@@ -135,6 +135,6 @@ public class OSDBinary extends OSD {
 
 	@Override
 	public String toString() {
-		return Helpers.BytesToHexString(value, null);
+		return Helpers.bytesToHexString(value, null);
 	}
 }

@@ -44,34 +44,47 @@ import org.xmlpull.v1.XmlSerializer;
 import libomv.utils.Helpers;
 
 public class Vector4 {
-	public float X;
+	/** A vector with a value of 0,0,0,0 */
+	public final static Vector4 ZERO = new Vector4(0f);
+	/** A vector with a value of 1,1,1 */
+	public final static Vector4 ONE = new Vector4(1f, 1f, 1f, 1f);
+	/** A unit vector facing forward (X axis), value 1,0,0,0 */
+	public final static Vector4 UNIT_X = new Vector4(1f, 0f, 0f, 0f);
+	/** A unit vector facing left (Y axis), value 0,1,0,0 */
+	public final static Vector4 UNIT_Y = new Vector4(0f, 1f, 0f, 0f);
+	/** A unit vector facing up (Z axis), value 0,0,1,0 */
+	public final static Vector4 UNIT_Z = new Vector4(0f, 0f, 1f, 0f);
+	/** A unit vector facing up (S axis), value 0,0,0,1 */
+	public final static Vector4 UNIT_S = new Vector4(0f, 0f, 0f, 1f);
 
-	public float Y;
+	public float x;
 
-	public float Z;
+	public float y;
 
-	public float S;
+	public float z;
+
+	public float s;
 
 	public Vector4() {
-		X = Y = Z = S = 0;
+		x = y = z = s = 0;
 	}
 
 	public Vector4(float val) {
-		X = Y = Z = S = val;
+		x = y = z = s = val;
 	}
 
 	public Vector4(ByteBuffer byteArray) {
-		X = byteArray.getFloat();
-		Y = byteArray.getFloat();
-		Z = byteArray.getFloat();
-		S = byteArray.getFloat();
+		x = byteArray.getFloat();
+		y = byteArray.getFloat();
+		z = byteArray.getFloat();
+		s = byteArray.getFloat();
 	}
 
 	public Vector4(float x, float y, float z, float s) {
-		X = x;
-		Y = y;
-		Z = z;
-		S = s;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.s = s;
 	}
 
 	/**
@@ -90,13 +103,13 @@ public class Vector4 {
 		while (parser.nextTag() == XmlPullParser.START_TAG) {
 			String name = parser.getName();
 			if (name.equalsIgnoreCase("X")) {
-				X = Helpers.TryParseFloat(parser.nextText().trim());
+				x = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equalsIgnoreCase("Y")) {
-				Y = Helpers.TryParseFloat(parser.nextText().trim());
+				y = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equalsIgnoreCase("Z")) {
-				Z = Helpers.TryParseFloat(parser.nextText().trim());
+				z = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equalsIgnoreCase("S")) {
-				S = Helpers.TryParseFloat(parser.nextText().trim());
+				s = Helpers.tryParseFloat(parser.nextText().trim());
 			} else {
 				Helpers.skipElement(parser);
 			}
@@ -104,20 +117,20 @@ public class Vector4 {
 	}
 
 	public Vector4(byte[] dest, int pos) {
-		X = Y = Z = S = 0;
+		x = y = z = s = 0;
 		fromBytes(dest, pos, false);
 	}
 
 	public Vector4(byte[] dest, int pos, boolean le) {
-		X = Y = Z = S = 0;
+		x = y = z = s = 0;
 		fromBytes(dest, pos, le);
 	}
 
 	public Vector4(Vector4 v) {
-		X = v.X;
-		Y = v.Y;
-		Z = v.Z;
-		S = v.S;
+		x = v.x;
+		y = v.y;
+		z = v.z;
+		s = v.s;
 	}
 
 	/**
@@ -130,10 +143,10 @@ public class Vector4 {
 	 * @throws IOException
 	 */
 	public void write(ByteBuffer byteArray) {
-		byteArray.putFloat(X);
-		byteArray.putFloat(Y);
-		byteArray.putFloat(Z);
-		byteArray.putFloat(S);
+		byteArray.putFloat(x);
+		byteArray.putFloat(y);
+		byteArray.putFloat(z);
+		byteArray.putFloat(s);
 	}
 
 	/**
@@ -147,15 +160,15 @@ public class Vector4 {
 	 */
 	public void write(OutputStream stream, boolean le) throws IOException {
 		if (le) {
-			stream.write(Helpers.floatToBytesL(X));
-			stream.write(Helpers.floatToBytesL(Y));
-			stream.write(Helpers.floatToBytesL(Z));
-			stream.write(Helpers.floatToBytesL(S));
+			stream.write(Helpers.floatToBytesL(x));
+			stream.write(Helpers.floatToBytesL(y));
+			stream.write(Helpers.floatToBytesL(z));
+			stream.write(Helpers.floatToBytesL(s));
 		} else {
-			stream.write(Helpers.floatToBytesB(X));
-			stream.write(Helpers.floatToBytesB(Y));
-			stream.write(Helpers.floatToBytesB(Z));
-			stream.write(Helpers.floatToBytesB(S));
+			stream.write(Helpers.floatToBytesB(x));
+			stream.write(Helpers.floatToBytesB(y));
+			stream.write(Helpers.floatToBytesB(z));
+			stream.write(Helpers.floatToBytesB(s));
 		}
 	}
 
@@ -171,10 +184,10 @@ public class Vector4 {
 	 */
 	public static Vector4 fromArray(Vector4 vec, float[] arr, int pos) {
 		if (arr.length >= (pos + 4)) {
-			vec.X = arr[pos + 0];
-			vec.Y = arr[pos + 1];
-			vec.Z = arr[pos + 2];
-			vec.S = arr[pos + 3];
+			vec.x = arr[pos + 0];
+			vec.y = arr[pos + 1];
+			vec.z = arr[pos + 2];
+			vec.s = arr[pos + 3];
 		}
 		return vec;
 	}
@@ -192,15 +205,15 @@ public class Vector4 {
 	public void fromBytes(byte[] bytes, int pos, boolean le) {
 		if (le) {
 			/* Little endian architecture */
-			X = Helpers.BytesToFloatL(bytes, pos + 0);
-			Y = Helpers.BytesToFloatL(bytes, pos + 4);
-			Z = Helpers.BytesToFloatL(bytes, pos + 8);
-			S = Helpers.BytesToFloatL(bytes, pos + 12);
+			x = Helpers.bytesToFloatL(bytes, pos + 0);
+			y = Helpers.bytesToFloatL(bytes, pos + 4);
+			z = Helpers.bytesToFloatL(bytes, pos + 8);
+			s = Helpers.bytesToFloatL(bytes, pos + 12);
 		} else {
-			X = Helpers.BytesToFloatB(bytes, pos + 0);
-			Y = Helpers.BytesToFloatB(bytes, pos + 4);
-			Z = Helpers.BytesToFloatB(bytes, pos + 8);
-			S = Helpers.BytesToFloatB(bytes, pos + 12);
+			x = Helpers.bytesToFloatB(bytes, pos + 0);
+			y = Helpers.bytesToFloatB(bytes, pos + 4);
+			z = Helpers.bytesToFloatB(bytes, pos + 8);
+			s = Helpers.bytesToFloatB(bytes, pos + 12);
 		}
 	}
 
@@ -212,15 +225,15 @@ public class Vector4 {
 	 * @throws IOException
 	 */
 	public void fromBytes(DataInputStream is) throws IOException {
-		X = is.readFloat();
-		Y = is.readFloat();
-		Z = is.readFloat();
+		x = is.readFloat();
+		y = is.readFloat();
+		z = is.readFloat();
 	}
 
 	public void fromBytes(SwappedDataInputStream is) throws IOException {
-		X = is.readFloat();
-		Y = is.readFloat();
-		Z = is.readFloat();
+		x = is.readFloat();
+		y = is.readFloat();
+		z = is.readFloat();
 	}
 
 	/**
@@ -263,15 +276,15 @@ public class Vector4 {
 	 */
 	public int toBytes(byte[] dest, int pos, boolean le) {
 		if (le) {
-			pos += Helpers.floatToBytesL(X, dest, pos);
-			pos += Helpers.floatToBytesL(Y, dest, pos);
-			pos += Helpers.floatToBytesL(Z, dest, pos);
-			pos += Helpers.floatToBytesL(S, dest, pos);
+			pos += Helpers.floatToBytesL(x, dest, pos);
+			pos += Helpers.floatToBytesL(y, dest, pos);
+			pos += Helpers.floatToBytesL(z, dest, pos);
+			pos += Helpers.floatToBytesL(s, dest, pos);
 		} else {
-			pos += Helpers.floatToBytesB(X, dest, pos);
-			pos += Helpers.floatToBytesB(Y, dest, pos);
-			pos += Helpers.floatToBytesB(Z, dest, pos);
-			pos += Helpers.floatToBytesB(S, dest, pos);
+			pos += Helpers.floatToBytesB(x, dest, pos);
+			pos += Helpers.floatToBytesB(y, dest, pos);
+			pos += Helpers.floatToBytesB(z, dest, pos);
+			pos += Helpers.floatToBytesB(s, dest, pos);
 		}
 		return 16;
 	}
@@ -283,30 +296,30 @@ public class Vector4 {
 	public void serializeXml(XmlSerializer writer, String namespace, String name)
 			throws IllegalArgumentException, IllegalStateException, IOException {
 		writer.startTag(namespace, name);
-		writer.startTag(namespace, "X").text(Float.toString(X)).endTag(namespace, "X");
-		writer.startTag(namespace, "Y").text(Float.toString(Y)).endTag(namespace, "Y");
-		writer.startTag(namespace, "Z").text(Float.toString(Z)).endTag(namespace, "Z");
-		writer.startTag(namespace, "S").text(Float.toString(S)).endTag(namespace, "S");
+		writer.startTag(namespace, "X").text(Float.toString(x)).endTag(namespace, "X");
+		writer.startTag(namespace, "Y").text(Float.toString(y)).endTag(namespace, "Y");
+		writer.startTag(namespace, "Z").text(Float.toString(z)).endTag(namespace, "Z");
+		writer.startTag(namespace, "S").text(Float.toString(s)).endTag(namespace, "S");
 		writer.startTag(namespace, name);
 	}
 
 	public void serializeXml(XmlSerializer writer, String namespace, String name, Locale locale)
 			throws IllegalArgumentException, IllegalStateException, IOException {
 		writer.startTag(namespace, name);
-		writer.startTag(namespace, "X").text(String.format(locale, "%f", X)).endTag(namespace, "X");
-		writer.startTag(namespace, "Y").text(String.format(locale, "%f", Y)).endTag(namespace, "Y");
-		writer.startTag(namespace, "Z").text(String.format(locale, "%f", Z)).endTag(namespace, "Z");
-		writer.startTag(namespace, "S").text(String.format(locale, "%f", S)).endTag(namespace, "S");
+		writer.startTag(namespace, "X").text(String.format(locale, "%f", x)).endTag(namespace, "X");
+		writer.startTag(namespace, "Y").text(String.format(locale, "%f", y)).endTag(namespace, "Y");
+		writer.startTag(namespace, "Z").text(String.format(locale, "%f", z)).endTag(namespace, "Z");
+		writer.startTag(namespace, "S").text(String.format(locale, "%f", s)).endTag(namespace, "S");
 		writer.startTag(namespace, name);
 	}
 
 	@Override
 	public String toString() {
-		return String.format(Helpers.EnUsCulture, "<%.3f, %.3f, %.3f, %.3f>", X, Y, Z, S);
+		return String.format(Helpers.EnUsCulture, "<%.3f, %.3f, %.3f, %.3f>", x, y, z, s);
 	}
 
 	public boolean equals(Vector4 val) {
-		return val != null && X == val.X && Y == val.Y && Z == val.Z && S == val.S;
+		return val != null && x == val.x && y == val.y && z == val.z && s == val.s;
 	}
 
 	@Override
@@ -316,23 +329,11 @@ public class Vector4 {
 
 	@Override
 	public int hashCode() {
-		int hashCode = ((Float) X).hashCode();
-		hashCode = hashCode * 31 + ((Float) Y).hashCode();
-		hashCode = hashCode * 31 + ((Float) Z).hashCode();
-		hashCode = hashCode * 31 + ((Float) S).hashCode();
+		int hashCode = ((Float) x).hashCode();
+		hashCode = hashCode * 31 + ((Float) y).hashCode();
+		hashCode = hashCode * 31 + ((Float) z).hashCode();
+		hashCode = hashCode * 31 + ((Float) s).hashCode();
 		return hashCode;
 	}
 
-	/** A vector with a value of 0,0,0,0 */
-	public final static Vector4 Zero = new Vector4(0f);
-	/** A vector with a value of 1,1,1 */
-	public final static Vector4 One = new Vector4(1f, 1f, 1f, 1f);
-	/** A unit vector facing forward (X axis), value 1,0,0,0 */
-	public final static Vector4 UnitX = new Vector4(1f, 0f, 0f, 0f);
-	/** A unit vector facing left (Y axis), value 0,1,0,0 */
-	public final static Vector4 UnitY = new Vector4(0f, 1f, 0f, 0f);
-	/** A unit vector facing up (Z axis), value 0,0,1,0 */
-	public final static Vector4 UnitZ = new Vector4(0f, 0f, 1f, 0f);
-	/** A unit vector facing up (S axis), value 0,0,0,1 */
-	public final static Vector4 UnitS = new Vector4(0f, 0f, 0f, 1f);
 }

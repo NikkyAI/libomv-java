@@ -9,21 +9,22 @@ public enum ParcelResult {
 	// Request matched multiple parcels
 	Multiple(1);
 
+	private byte value;
+
+	private ParcelResult(int value) {
+		this.value = (byte) value;
+	}
+
 	public static ParcelResult setValue(int value) {
 		for (ParcelResult e : values()) {
-			if (e._value == value)
+			if (e.value == value)
 				return e;
 		}
 		return NoData;
 	}
 
 	public byte getValue() {
-		return _value;
+		return value;
 	}
 
-	private byte _value;
-
-	private ParcelResult(int value) {
-		this._value = (byte) value;
-	}
 }

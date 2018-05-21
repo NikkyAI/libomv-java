@@ -69,8 +69,10 @@ public class SculptMesh implements Cloneable {
 	 * @param viewerMode
 	 */
 	public SculptMesh(float[][] zMap, float xBegin, float xEnd, float yBegin, float yEnd, boolean viewerMode) {
-		float xStep, yStep;
-		float uStep, vStep;
+		float xStep;
+		float yStep;
+		float uStep;
+		float vStep;
 
 		int numYElements = zMap.length;
 		int numXElements = zMap[0].length;
@@ -92,10 +94,15 @@ public class SculptMesh implements Cloneable {
 
 		viewerFaces = new ArrayList<>();
 
-		int p1, p2, p3, p4;
+		int p1;
+		int p2;
+		int p3;
+		int p4;
 
-		int x, y;
-		int xStart = 0, yStart = 0;
+		int x;
+		int y;
+		int xStart = 0;
+		int yStart = 0;
 
 		for (y = yStart; y < numYElements; y++) {
 			int rowOffset = y * numXElements;
@@ -119,7 +126,8 @@ public class SculptMesh implements Cloneable {
 				}
 
 				if (y > 0 && x > 0) {
-					Face f1, f2;
+					Face f1;
+					Face f2;
 
 					if (viewerMode) {
 						f1 = new Face(p1, p4, p3, p1, p4, p3);
@@ -148,13 +156,6 @@ public class SculptMesh implements Cloneable {
 
 	public SculptMesh(List<List<Vector3>> rows, SculptType sculptType, boolean viewerMode, boolean mirror,
 			boolean invert) {
-		_SculptMesh(rows, sculptType, viewerMode, mirror, invert);
-	}
-
-	// TODO:FIXME
-	// What the ...
-	void _SculptMesh(List<List<Vector3>> rows, SculptType sculptType, boolean viewerMode, boolean mirror,
-			boolean invert) {
 		coords = new ArrayList<>();
 		faces = new ArrayList<>();
 		normals = new ArrayList<>();
@@ -168,9 +169,13 @@ public class SculptMesh implements Cloneable {
 		int height = rows.size();
 		int width = rows.get(0).size();
 
-		int p1, p2, p3, p4;
+		int p1;
+		int p2;
+		int p3;
+		int p4;
 
-		int imageX, imageY;
+		int imageX;
+		int imageY;
 
 		if (sculptType != SculptType.plane) {
 			if (height % 2 == 0) {
@@ -238,7 +243,8 @@ public class SculptMesh implements Cloneable {
 				}
 
 				if (imageY > 0 && imageX > 0) {
-					Face f1, f2;
+					Face f1;
+					Face f2;
 
 					if (viewerMode) {
 						if (invert) {
@@ -362,9 +368,9 @@ public class SculptMesh implements Cloneable {
 
 		for (i = 0; i < numVerts; i++) {
 			vert = this.coords.get(i);
-			vert.X += x;
-			vert.Y += y;
-			vert.Z += z;
+			vert.x += x;
+			vert.y += y;
+			vert.z += z;
 			this.coords.set(i, vert);
 		}
 

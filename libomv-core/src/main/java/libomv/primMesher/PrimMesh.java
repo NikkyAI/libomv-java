@@ -131,7 +131,7 @@ public class PrimMesh {
 
 					float twist = twistBegin + twistTotal * percentOfPath;
 
-					newNode.rotation = new Quaternion(Vector3.UnitZ, twist);
+					newNode.rotation = new Quaternion(Vector3.UNIT_Z, twist);
 					newNode.position = new Vector3(xOffset, yOffset, zOffset);
 					newNode.percentOfPath = percentOfPath;
 
@@ -241,11 +241,11 @@ public class PrimMesh {
 					// adding taperY to the angle used to generate the quat appears to approximate
 					// the viewer
 
-					newNode.rotation = new Quaternion(Vector3.UnitX, angle + this.topShearY);
+					newNode.rotation = new Quaternion(Vector3.UNIT_X, angle + this.topShearY);
 
 					// next apply twist rotation to the profile layer
 					if (twistTotal != 0.0f || twistBegin != 0.0f)
-						newNode.rotation = Quaternion.multiply(newNode.rotation, new Quaternion(Vector3.UnitZ, twist));
+						newNode.rotation = Quaternion.multiply(newNode.rotation, new Quaternion(Vector3.UNIT_Z, twist));
 
 					newNode.percentOfPath = percentOfPath;
 
@@ -515,7 +515,7 @@ public class PrimMesh {
 		}
 
 		if (initialProfileRot != 0.0f) {
-			profile.addRot(new Quaternion(Vector3.UnitZ, initialProfileRot));
+			profile.addRot(new Quaternion(Vector3.UNIT_Z, initialProfileRot));
 			if (viewerMode)
 				profile.makeFaceUVs();
 		}
@@ -548,7 +548,7 @@ public class PrimMesh {
 		for (int nodeIndex = 0; nodeIndex < path.pathNodes.size(); nodeIndex++) {
 			PathNode node = path.pathNodes.get(nodeIndex);
 			Profile newLayer = profile.copy();
-			newLayer.Scale(node.xScale, node.yScale);
+			newLayer.scale(node.xScale, node.yScale);
 
 			newLayer.addRot(node.rotation);
 			newLayer.addPos(node.position);
@@ -698,21 +698,21 @@ public class PrimMesh {
 							}
 						}
 
-						newViewerFace1.uv1.X = u1;
-						newViewerFace1.uv2.X = u1;
-						newViewerFace1.uv3.X = u2;
+						newViewerFace1.uv1.x = u1;
+						newViewerFace1.uv2.x = u1;
+						newViewerFace1.uv3.x = u2;
 
-						newViewerFace1.uv1.Y = thisV;
-						newViewerFace1.uv2.Y = lastV;
-						newViewerFace1.uv3.Y = thisV;
+						newViewerFace1.uv1.y = thisV;
+						newViewerFace1.uv2.y = lastV;
+						newViewerFace1.uv3.y = thisV;
 
-						newViewerFace2.uv1.X = u2;
-						newViewerFace2.uv2.X = u1;
-						newViewerFace2.uv3.X = u2;
+						newViewerFace2.uv1.x = u2;
+						newViewerFace2.uv2.x = u1;
+						newViewerFace2.uv3.x = u2;
 
-						newViewerFace2.uv1.Y = thisV;
-						newViewerFace2.uv2.Y = lastV;
-						newViewerFace2.uv3.Y = lastV;
+						newViewerFace2.uv1.y = thisV;
+						newViewerFace2.uv2.y = lastV;
+						newViewerFace2.uv3.y = lastV;
 
 						newViewerFace1.v1 = this.coords.get(newFace1.v1);
 						newViewerFace1.v2 = this.coords.get(newFace1.v2);
@@ -952,9 +952,9 @@ public class PrimMesh {
 
 		for (i = 0; i < numVerts; i++) {
 			vert = this.coords.get(i);
-			vert.X += x;
-			vert.Y += y;
-			vert.Z += z;
+			vert.x += x;
+			vert.y += y;
+			vert.z += z;
 			this.coords.set(i, vert);
 		}
 

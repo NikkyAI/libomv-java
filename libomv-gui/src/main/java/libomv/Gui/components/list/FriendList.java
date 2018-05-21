@@ -769,7 +769,7 @@ public class FriendList extends JPanel implements ActionListener {
 			} else if (e.getActionCommand().equals(cmdAutopilotTo)) {
 				try {
 					Vector3 pos = _Client.network.getCurrentSim().getAvatarPositions().get(info.getID());
-					_Client.agent.autoPilotLocal((int) pos.X, (int) pos.Y, pos.Y);
+					_Client.agent.autoPilotLocal((int) pos.x, (int) pos.y, pos.y);
 				} catch (Exception ex) {
 					logger.error(GridClient.Log("Autopiloting to " + info.getName() + " failed", _Client), ex);
 				}

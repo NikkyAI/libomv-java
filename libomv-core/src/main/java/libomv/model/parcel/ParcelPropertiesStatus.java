@@ -17,21 +17,22 @@ public enum ParcelPropertiesStatus {
 	// Response to hovering over a parcel
 	HoveredOverParcel(-50000);
 
+	private int value;
+
+	ParcelPropertiesStatus(int value) {
+		this.value = value;
+	}
+
 	public static ParcelPropertiesStatus setValue(int value) {
 		for (ParcelPropertiesStatus e : values()) {
-			if (e._value == value)
+			if (e.value == value)
 				return e;
 		}
 		return None;
 	}
 
 	public int getValue() {
-		return _value;
+		return value;
 	}
 
-	private int _value;
-
-	ParcelPropertiesStatus(int value) {
-		this._value = value;
-	}
 }

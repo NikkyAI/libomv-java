@@ -19,14 +19,19 @@
 package libomv.character;
 
 public class Channels {
-	private boolean Xrotation, Yrotation, Zrotation, Xposition, Yposition, Zposition;
-
 	public static final int XPOSITION = 0;
 	public static final int YPOSITION = 1;
 	public static final int ZPOSITION = 2;
 	public static final int XROTATION = 3;
 	public static final int YROTATION = 4;
 	public static final int ZROTATION = 5;
+
+	private boolean xRotation;
+	private boolean yRotation;
+	private boolean zRotation;
+	private boolean xPosition;
+	private boolean yPosition;
+	private boolean zPosition;
 
 	private int rotOffset;
 
@@ -50,89 +55,89 @@ public class Channels {
 	}
 
 	public boolean isXrotation() {
-		return Xrotation;
+		return xRotation;
 	}
 
 	public void setXrotation(boolean xrotation) {
 		if (rotOffset < 1)
 			rotOffset = -rotOffset;
-		Xrotation = xrotation;
+		xRotation = xrotation;
 		text += "Xrotation ";
 	}
 
 	public boolean isYrotation() {
-		return Yrotation;
+		return yRotation;
 	}
 
 	public void setYrotation(boolean yrotation) {
 		if (rotOffset < 1)
 			rotOffset = -rotOffset;
-		Yrotation = yrotation;
+		yRotation = yrotation;
 		text += "Yrotation ";
 	}
 
 	public boolean isZrotation() {
-		return Zrotation;
+		return zRotation;
 	}
 
 	public void setZrotation(boolean zrotation) {
 		if (rotOffset < 1)
 			rotOffset = -rotOffset;
-		Zrotation = zrotation;
+		zRotation = zrotation;
 		text += "Zrotation ";
 	}
 
 	public boolean isXposition() {
-		return Xposition;
+		return xPosition;
 	}
 
 	public void setXposition(boolean xposition) {
 		if (rotOffset < 1)
 			rotOffset--;
-		Xposition = xposition;
+		xPosition = xposition;
 		text += "Xposition ";
 	}
 
 	public boolean isYposition() {
-		return Yposition;
+		return yPosition;
 	}
 
 	public void setYposition(boolean yposition) {
 		if (rotOffset < 1)
 			rotOffset--;
-		Yposition = yposition;
+		yPosition = yposition;
 		text += "Yposition ";
 	}
 
 	public boolean isZposition() {
-		return Zposition;
+		return zPosition;
 	}
 
 	public void setZposition(boolean zposition) {
 		if (rotOffset < 1)
 			rotOffset--;
-		Zposition = zposition;
+		zPosition = zposition;
 		text += "Zposition ";
 	}
 
 	public int getNumChannels() {
 		int size = 0;
-		if (Xposition) {
+		if (xPosition) {
 			size++;
 		}
-		if (Yposition) {
+		if (yPosition) {
 			size++;
 		}
-		if (Zposition) {
+		if (zPosition) {
 			size++;
 		}
-		if (Xrotation) {
+		if (xRotation) {
 			size++;
 		}
-		if (Yrotation) {
+		if (yRotation) {
 			size++;
 		}
-		if (Zrotation) {
+		if (zRotation) {
 			size++;
 		}
 		return size;

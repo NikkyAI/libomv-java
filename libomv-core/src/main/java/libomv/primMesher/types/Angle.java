@@ -31,12 +31,12 @@ package libomv.primMesher.types;
 
 public class Angle {
 	float angle;
-	float X;
-	float Y;
+	float x;
+	float y;
 
 	public Angle(float angle, float x, float y) {
 		this.angle = angle;
-		this.X = x;
-		this.Y = y;
+		this.x = x;
+		this.y = y;
 	}
 }

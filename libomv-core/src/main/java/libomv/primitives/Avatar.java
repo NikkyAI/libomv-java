@@ -338,8 +338,8 @@ public class Avatar extends Primitive {
 	// First name
 	public final String getFirstName() {
 		for (int i = 0; i < nameValues.length; i++) {
-			if (nameValues[i].Name.equals("FirstName") && nameValues[i].Type == NameValue.ValueType.String) {
-				return (String) nameValues[i].Value;
+			if (nameValues[i].name.equals("FirstName") && nameValues[i].type == NameValue.ValueType.String) {
+				return (String) nameValues[i].valueObject;
 			}
 		}
 		return Helpers.EmptyString;
@@ -348,8 +348,8 @@ public class Avatar extends Primitive {
 	// Last name
 	public final String getLastName() {
 		for (int i = 0; i < nameValues.length; i++) {
-			if (nameValues[i].Name.equals("LastName") && nameValues[i].Type == NameValue.ValueType.String) {
-				return (String) nameValues[i].Value;
+			if (nameValues[i].name.equals("LastName") && nameValues[i].type == NameValue.ValueType.String) {
+				return (String) nameValues[i].valueObject;
 			}
 		}
 		return Helpers.EmptyString;
@@ -365,11 +365,11 @@ public class Avatar extends Primitive {
 				String lastName = Helpers.EmptyString;
 
 				for (int i = 0; i < nameValues.length; i++) {
-					if (nameValues[i].Name.equals("FirstName") && nameValues[i].Type == NameValue.ValueType.String) {
-						firstName = (String) nameValues[i].Value;
-					} else if (nameValues[i].Name.equals("LastName")
-							&& nameValues[i].Type == NameValue.ValueType.String) {
-						lastName = (String) nameValues[i].Value;
+					if (nameValues[i].name.equals("FirstName") && nameValues[i].type == NameValue.ValueType.String) {
+						firstName = (String) nameValues[i].valueObject;
+					} else if (nameValues[i].name.equals("LastName")
+							&& nameValues[i].type == NameValue.ValueType.String) {
+						lastName = (String) nameValues[i].valueObject;
 					}
 				}
 
@@ -392,11 +392,11 @@ public class Avatar extends Primitive {
 		if (nameValues != null && nameValues.length > 0) {
 			synchronized (nameValues) {
 				for (int i = 0; i < nameValues.length; i++) {
-					if (nameValues[i].Name.equals("FirstName") && nameValues[i].Type == NameValue.ValueType.String) {
-						nameValues[i].Value = firstName;
-					} else if (nameValues[i].Name.equals("LastName")
-							&& nameValues[i].Type == NameValue.ValueType.String) {
-						nameValues[i].Value = lastName;
+					if (nameValues[i].name.equals("FirstName") && nameValues[i].type == NameValue.ValueType.String) {
+						nameValues[i].valueObject = firstName;
+					} else if (nameValues[i].name.equals("LastName")
+							&& nameValues[i].type == NameValue.ValueType.String) {
+						nameValues[i].valueObject = lastName;
 					}
 				}
 			}
@@ -420,8 +420,8 @@ public class Avatar extends Primitive {
 		if (nameValues != null || nameValues.length > 0) {
 			synchronized (nameValues) {
 				for (int i = 0; i < nameValues.length; i++) {
-					if (nameValues[i].Name.equals("Title") && nameValues[i].Type == NameValue.ValueType.String) {
-						groupName = (String) nameValues[i].Value;
+					if (nameValues[i].name.equals("Title") && nameValues[i].type == NameValue.ValueType.String) {
+						groupName = (String) nameValues[i].valueObject;
 						return groupName;
 					}
 				}
@@ -468,9 +468,9 @@ public class Avatar extends Primitive {
 		super();
 	}
 
-	public Avatar(UUID ID) {
+	public Avatar(UUID id) {
 		super();
-		this.id = ID;
+		this.id = id;
 	}
 
 	public Avatar(OSD osd) {
@@ -499,16 +499,16 @@ public class Avatar extends Primitive {
 		nameValues = new NameValue[3];
 
 		NameValue First = new NameValue("FirstName");
-		First.Type = NameValue.ValueType.String;
-		First.Value = tex.get("first_name").asString();
+		First.type = NameValue.ValueType.String;
+		First.valueObject = tex.get("first_name").asString();
 
 		NameValue Last = new NameValue("LastName");
-		Last.Type = NameValue.ValueType.String;
-		Last.Value = tex.get("last_name").asString();
+		Last.type = NameValue.ValueType.String;
+		Last.valueObject = tex.get("last_name").asString();
 
 		NameValue Group = new NameValue("Title");
-		Group.Type = NameValue.ValueType.String;
-		Group.Value = tex.get("group_name").asString();
+		Group.type = NameValue.ValueType.String;
+		Group.valueObject = tex.get("group_name").asString();
 
 		nameValues[0] = First;
 		nameValues[1] = Last;

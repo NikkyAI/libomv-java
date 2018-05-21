@@ -152,7 +152,7 @@ public final class LoginResponseData {
 		startLocation = reply.get("start_location").asString();
 
 		circuitCode = reply.get("circuit_code").asUInteger();
-		region = Helpers.UIntsToLong(reply.get("region_x").asUInteger(), reply.get("region_y").asUInteger());
+		region = Helpers.uintsToLong(reply.get("region_x").asUInteger(), reply.get("region_y").asUInteger());
 		simPort = (short) reply.get("sim_port").asUInteger();
 		simIP = reply.get("sim_ip").asInetAddress();
 
@@ -161,8 +161,8 @@ public final class LoginResponseData {
 
 		// Home
 		homeRegion = 0;
-		homePosition = Vector3.Zero;
-		homeLookAt = Vector3.Zero;
+		homePosition = Vector3.ZERO;
+		homeLookAt = Vector3.ZERO;
 		try {
 			if (reply.containsKey("home")) {
 				parseHome(reply.get("home").asString());
@@ -258,13 +258,13 @@ public final class LoginResponseData {
 
 					UUID itemId = null;
 					RefObject<UUID> refItemId = new RefObject<>(itemId);
-					if (!UUID.TryParse(map.get("item_id").toString(), refItemId)) {
+					if (!UUID.tryParse(map.get("item_id").toString(), refItemId)) {
 						continue;
 					}
 
 					UUID assetId = null;
 					RefObject<UUID> refAssetId = new RefObject<>(assetId);
-					if (!UUID.TryParse(map.get("asset_id").toString(), refAssetId)) {
+					if (!UUID.tryParse(map.get("asset_id").toString(), refAssetId)) {
 						continue;
 					}
 
@@ -296,7 +296,7 @@ public final class LoginResponseData {
 			if (homeRegionOSD != null && homeRegionOSD.getType().equals(OSDType.Array)) {
 				OSDArray homeArray = (OSDArray) homeRegionOSD;
 				if (homeArray.size() == 2) {
-					homeRegion = Helpers.UIntsToLong(homeArray.get(0).asInteger(), homeArray.get(1).asInteger());
+					homeRegion = Helpers.uintsToLong(homeArray.get(0).asInteger(), homeArray.get(1).asInteger());
 				}
 			}
 			homePosition = parseVector3("position", home);
@@ -411,7 +411,7 @@ public final class LoginResponseData {
 		if (reply.containsKey(key)) {
 			return reply.get(key).asVector3();
 		}
-		return Vector3.Zero;
+		return Vector3.ZERO;
 	}
 
 	private UUID parseMappedUUID(String key, String key2, OSDMap reply) {
@@ -426,6 +426,6 @@ public final class LoginResponseData {
 				}
 			}
 		}
-		return UUID.Zero;
+		return UUID.ZERO;
 	}
 }

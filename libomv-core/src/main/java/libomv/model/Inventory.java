@@ -21,7 +21,7 @@ public class Inventory {
 	 */
 	public static UUID decryptShadowID(UUID shadowID) {
 		UUID uuid = new UUID(shadowID);
-		uuid.XOr(MAGIC_ID);
+		uuid.xor(MAGIC_ID);
 		return uuid;
 	}
 
@@ -34,7 +34,7 @@ public class Inventory {
 	 */
 	public static UUID encryptAssetID(UUID assetID) {
 		UUID uuid = new UUID(assetID);
-		uuid.XOr(MAGIC_ID);
+		uuid.xor(MAGIC_ID);
 		return uuid;
 	}
 

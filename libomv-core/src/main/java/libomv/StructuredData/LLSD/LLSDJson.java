@@ -204,17 +204,17 @@ public final class LLSDJson extends OSDParser {
 
 		switch ((char) character) {
 		case 'n':
-			if (BufferCharactersEqual(reader, nullNotationValue, 1) == nullNotationValue.length) {
+			if (bufferCharactersEqual(reader, nullNotationValue, 1) == nullNotationValue.length) {
 				return new OSD();
 			}
 			break;
 		case 'f':
-			if (BufferCharactersEqual(reader, falseNotationValue, 1) == falseNotationValue.length) {
+			if (bufferCharactersEqual(reader, falseNotationValue, 1) == falseNotationValue.length) {
 				return OSD.fromBoolean(false);
 			}
 			break;
 		case 't':
-			if (BufferCharactersEqual(reader, trueNotationValue, 1) == trueNotationValue.length) {
+			if (bufferCharactersEqual(reader, trueNotationValue, 1) == trueNotationValue.length) {
 				return OSD.fromBoolean(true);
 			}
 			break;
@@ -367,9 +367,11 @@ public final class LLSDJson extends OSDParser {
 	private static void serializeString(Writer writer, String string) throws IOException {
 		writer.write(doubleQuotesNotationMarker);
 		if (string != null && string.length() > 0) {
-			char b, c = 0;
+			char b;
+			char c = 0;
 			String hhhh;
-			int i, len = string.length();
+			int i;
+			int len = string.length();
 
 			for (i = 0; i < len; i += 1) {
 				b = c;
@@ -534,7 +536,7 @@ public final class LLSDJson extends OSDParser {
 		writer.write(mapEndNotationMarker);
 	}
 
-	private static int BufferCharactersEqual(PushbackReader reader, char[] buffer, int offset) throws IOException {
+	protected static int bufferCharactersEqual(PushbackReader reader, char[] buffer, int offset) throws IOException {
 
 		boolean charactersEqual = true;
 		int character;

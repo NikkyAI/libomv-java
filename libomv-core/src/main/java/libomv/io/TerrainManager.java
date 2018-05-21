@@ -89,7 +89,8 @@ public class TerrainManager implements PacketCallback {
 	}
 
 	private void decompressLand(SimulatorManager simulator, BitPack bitpack, GroupHeader group) {
-		int x, y;
+		int x;
+		int y;
 		int[] patches = new int[32 * 32];
 		int count = 0;
 

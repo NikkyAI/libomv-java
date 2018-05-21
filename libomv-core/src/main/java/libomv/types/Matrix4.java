@@ -33,19 +33,38 @@ import libomv.utils.Helpers;
 import libomv.utils.RefObject;
 
 public final class Matrix4 {
-	public float M11, M12, M13, M14;
-	public float M21, M22, M23, M24;
-	public float M31, M32, M33, M34;
-	public float M41, M42, M43, M44;
+
+	/** A 4x4 matrix containing all zeroes */
+	public static final Matrix4 ZERO = new Matrix4();
+
+	/** A 4x4 identity matrix */
+	public static final Matrix4 IDENTITY = new Matrix4(1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f);
+
+	public float M11;
+	public float M12;
+	public float M13;
+	public float M14;
+	public float M21;
+	public float M22;
+	public float M23;
+	public float M24;
+	public float M31;
+	public float M32;
+	public float M33;
+	public float M34;
+	public float M41;
+	public float M42;
+	public float M43;
+	public float M44;
 
 	public Vector3 getAtAxis() {
 		return new Vector3(M11, M21, M31);
 	}
 
 	public void setAtAxis(Vector3 value) {
-		M11 = value.X;
-		M21 = value.Y;
-		M31 = value.Z;
+		M11 = value.x;
+		M21 = value.y;
+		M31 = value.z;
 	}
 
 	public Vector3 getLeftAxis() {
@@ -53,9 +72,9 @@ public final class Matrix4 {
 	}
 
 	public void setLeftAxis(Vector3 value) {
-		M12 = value.X;
-		M22 = value.Y;
-		M32 = value.Z;
+		M12 = value.x;
+		M22 = value.y;
+		M32 = value.z;
 	}
 
 	public Vector3 getUpAxis() {
@@ -63,9 +82,9 @@ public final class Matrix4 {
 	}
 
 	public void setUpAxis(Vector3 value) {
-		M13 = value.X;
-		M23 = value.Y;
-		M33 = value.Z;
+		M13 = value.x;
+		M23 = value.y;
+		M33 = value.z;
 	}
 
 	public Matrix4() {
@@ -182,9 +201,14 @@ public final class Matrix4 {
 	 *            Z euler angle
 	 */
 	public void getEulerAngles(RefObject<Float> roll, RefObject<Float> pitch, RefObject<Float> yaw) {
-		double angleX, angleY, angleZ;
-		double cx, cy, cz; // cosines
-		double sx, sz; // sines
+		double angleX;
+		double angleY;
+		double angleZ;
+		double cx;
+		double cy;
+		double cz; // cosines
+		double sx;
+		double sz; // sines
 
 		angleY = Math.asin(Helpers.clamp(M13, -1f, 1f));
 		cy = Math.cos(angleY);
@@ -248,32 +272,32 @@ public final class Matrix4 {
 		if (trace > Helpers.FLOAT_MAG_THRESHOLD) {
 			float s = 0.5f / (float) Math.sqrt(trace);
 
-			quaternion.X = (M32 - M23) * s;
-			quaternion.Y = (M13 - M31) * s;
-			quaternion.Z = (M21 - M12) * s;
-			quaternion.W = 0.25f / s;
+			quaternion.x = (M32 - M23) * s;
+			quaternion.y = (M13 - M31) * s;
+			quaternion.z = (M21 - M12) * s;
+			quaternion.w = 0.25f / s;
 		} else {
 			if (M11 > M22 && M11 > M33) {
 				float s = 2.0f * (float) Math.sqrt(1.0f + M11 - M22 - M33);
 
-				quaternion.X = 0.25f * s;
-				quaternion.Y = (M12 + M21) / s;
-				quaternion.Z = (M13 + M31) / s;
-				quaternion.W = (M23 - M32) / s;
+				quaternion.x = 0.25f * s;
+				quaternion.y = (M12 + M21) / s;
+				quaternion.z = (M13 + M31) / s;
+				quaternion.w = (M23 - M32) / s;
 			} else if (M22 > M33) {
 				float s = 2.0f * (float) Math.sqrt(1.0f + M22 - M11 - M33);
 
-				quaternion.X = (M12 + M21) / s;
-				quaternion.Y = 0.25f * s;
-				quaternion.Z = (M23 + M32) / s;
-				quaternion.W = (M13 - M31) / s;
+				quaternion.x = (M12 + M21) / s;
+				quaternion.y = 0.25f * s;
+				quaternion.z = (M23 + M32) / s;
+				quaternion.w = (M13 - M31) / s;
 			} else {
 				float s = 2.0f * (float) Math.sqrt(1.0f + M33 - M11 - M22);
 
-				quaternion.X = (M13 + M31) / s;
-				quaternion.Y = (M23 + M32) / s;
-				quaternion.Z = 0.25f * s;
-				quaternion.W = (M12 - M21) / s;
+				quaternion.x = (M13 + M31) / s;
+				quaternion.y = (M23 + M32) / s;
+				quaternion.z = 0.25f * s;
+				quaternion.w = (M12 - M21) / s;
 			}
 		}
 		return quaternion;
@@ -284,25 +308,25 @@ public final class Matrix4 {
 	}
 
 	public boolean decompose(Vector3 scale, Quaternion rotation, Vector3 translation) {
-		translation.X = M41;
-		translation.Y = M42;
-		translation.Z = M43;
+		translation.x = M41;
+		translation.y = M42;
+		translation.z = M43;
 
 		float xs = (Math.signum(M11 * M12 * M13 * M14) < 0) ? -1 : 1;
 		float ys = (Math.signum(M21 * M22 * M23 * M24) < 0) ? -1 : 1;
 		float zs = (Math.signum(M31 * M32 * M33 * M34) < 0) ? -1 : 1;
 
-		scale.X = xs * (float) Math.sqrt(M11 * M11 + M12 * M12 + M13 * M13);
-		scale.Y = ys * (float) Math.sqrt(M21 * M21 + M22 * M22 + M23 * M23);
-		scale.Z = zs * (float) Math.sqrt(M31 * M31 + M32 * M32 + M33 * M33);
+		scale.x = xs * (float) Math.sqrt(M11 * M11 + M12 * M12 + M13 * M13);
+		scale.y = ys * (float) Math.sqrt(M21 * M21 + M22 * M22 + M23 * M23);
+		scale.z = zs * (float) Math.sqrt(M31 * M31 + M32 * M32 + M33 * M33);
 
-		if (scale.X == 0.0 || scale.Y == 0.0 || scale.Z == 0.0) {
-			rotation = Quaternion.Identity;
+		if (scale.x == 0.0 || scale.y == 0.0 || scale.z == 0.0) {
+			rotation = Quaternion.IDENTITY;
 			return false;
 		}
 
-		Matrix4 m1 = new Matrix4(M11 / scale.X, M12 / scale.X, M13 / scale.X, 0, M21 / scale.Y, M22 / scale.Y,
-				M23 / scale.Y, 0, M31 / scale.Z, M32 / scale.Z, M33 / scale.Z, 0, 0, 0, 0, 1);
+		Matrix4 m1 = new Matrix4(M11 / scale.x, M12 / scale.x, M13 / scale.x, 0, M21 / scale.y, M22 / scale.y,
+				M23 / scale.y, 0, M31 / scale.z, M32 / scale.z, M33 / scale.z, 0, 0, 0, 0, 1);
 
 		rotation.setFromRotationMatrix(m1);
 		return true;
@@ -314,9 +338,9 @@ public final class Matrix4 {
 	public static Matrix4 createFromAxisAngle(Vector3 axis, float angle) {
 		Matrix4 matrix = new Matrix4();
 
-		float x = axis.X;
-		float y = axis.Y;
-		float z = axis.Z;
+		float x = axis.x;
+		float y = axis.y;
+		float z = axis.z;
 		float sin = (float) Math.sin(angle);
 		float cos = (float) Math.cos(angle);
 		float xx = x * x;
@@ -360,18 +384,14 @@ public final class Matrix4 {
 	public static Matrix4 createFromEulers(float roll, float pitch, float yaw) {
 		Matrix4 m = new Matrix4();
 
-		float a, b, c, d, e, f;
-		float ad, bd;
-
-		a = (float) Math.cos(roll);
-		b = (float) Math.sin(roll);
-		c = (float) Math.cos(pitch);
-		d = (float) Math.sin(pitch);
-		e = (float) Math.cos(yaw);
-		f = (float) Math.sin(yaw);
-
-		ad = a * d;
-		bd = b * d;
+		float a = (float) Math.cos(roll);
+		float b = (float) Math.sin(roll);
+		float c = (float) Math.cos(pitch);
+		float d = (float) Math.sin(pitch);
+		float e = (float) Math.cos(yaw);
+		float f = (float) Math.sin(yaw);
+		float ad = a * d;
+		float bd = b * d;
 
 		m.M11 = c * e;
 		m.M12 = -c * f;
@@ -395,15 +415,15 @@ public final class Matrix4 {
 	}
 
 	public static Matrix4 createFromQuaternion(Quaternion quaternion) {
-		float xx = quaternion.X * quaternion.X;
-		float yy = quaternion.Y * quaternion.Y;
-		float zz = quaternion.Z * quaternion.Z;
-		float xy = quaternion.X * quaternion.Y;
-		float zw = quaternion.Z * quaternion.W;
-		float zx = quaternion.Z * quaternion.X;
-		float yw = quaternion.Y * quaternion.W;
-		float yz = quaternion.Y * quaternion.Z;
-		float xw = quaternion.X * quaternion.W;
+		float xx = quaternion.x * quaternion.x;
+		float yy = quaternion.y * quaternion.y;
+		float zz = quaternion.z * quaternion.z;
+		float xy = quaternion.x * quaternion.y;
+		float zw = quaternion.z * quaternion.w;
+		float zx = quaternion.z * quaternion.x;
+		float yw = quaternion.y * quaternion.w;
+		float yz = quaternion.y * quaternion.z;
+		float xw = quaternion.x * quaternion.w;
 
 		return new Matrix4(1f - (2f * (yy + zz)), 2f * (xy + zw), 2f * (zx - yw), 0f, 2f * (xy - zw),
 				1f - (2f * (zz + xx)), 2f * (yz + xw), 0f, 2f * (zx + yw), 2f * (yz - xw), 1f - (2f * (yy + xx)), 0f,
@@ -416,7 +436,7 @@ public final class Matrix4 {
 		Vector3 x = Vector3.normalize(Vector3.cross(cameraUpVector, z));
 		Vector3 y = Vector3.cross(z, x);
 
-		return new Matrix4(x.X, y.X, z.X, 0f, x.Y, y.Y, z.Y, 0f, x.Z, y.Z, z.Z, 0f, -Vector3.dot(x, cameraPosition),
+		return new Matrix4(x.x, y.x, z.x, 0f, x.y, y.y, z.y, 0f, x.z, y.z, z.z, 0f, -Vector3.dot(x, cameraPosition),
 				-Vector3.dot(y, cameraPosition), -Vector3.dot(z, cameraPosition), 1f);
 	}
 
@@ -488,19 +508,19 @@ public final class Matrix4 {
 	public static Matrix4 createScale(Vector3 scale) {
 		Matrix4 matrix = new Matrix4();
 
-		matrix.M11 = scale.X;
+		matrix.M11 = scale.x;
 		matrix.M12 = 0f;
 		matrix.M13 = 0f;
 		matrix.M14 = 0f;
 
 		matrix.M21 = 0f;
-		matrix.M22 = scale.Y;
+		matrix.M22 = scale.y;
 		matrix.M23 = 0f;
 		matrix.M24 = 0f;
 
 		matrix.M31 = 0f;
 		matrix.M32 = 0f;
-		matrix.M33 = scale.Z;
+		matrix.M33 = scale.z;
 		matrix.M34 = 0f;
 
 		matrix.M41 = 0f;
@@ -529,9 +549,9 @@ public final class Matrix4 {
 		matrix.M33 = 1f;
 		matrix.M34 = 0f;
 
-		matrix.M41 = position.X;
-		matrix.M42 = position.Y;
-		matrix.M43 = position.Z;
+		matrix.M41 = position.x;
+		matrix.M42 = position.y;
+		matrix.M43 = position.z;
 		matrix.M44 = 1f;
 
 		return matrix;
@@ -551,24 +571,24 @@ public final class Matrix4 {
 		up = Vector3.cross(right, forward);
 		up.normalize();
 
-		result.M11 = right.X;
-		result.M12 = right.Y;
-		result.M13 = right.Z;
+		result.M11 = right.x;
+		result.M12 = right.y;
+		result.M13 = right.z;
 		result.M14 = 0.0f;
 
-		result.M21 = up.X;
-		result.M22 = up.Y;
-		result.M23 = up.Z;
+		result.M21 = up.x;
+		result.M22 = up.y;
+		result.M23 = up.z;
 		result.M24 = 0.0f;
 
-		result.M31 = -forward.X;
-		result.M32 = -forward.Y;
-		result.M33 = -forward.Z;
+		result.M31 = -forward.x;
+		result.M32 = -forward.y;
+		result.M33 = -forward.z;
 		result.M34 = 0.0f;
 
-		result.M41 = position.X;
-		result.M42 = position.Y;
-		result.M43 = position.Z;
+		result.M41 = position.x;
+		result.M42 = position.y;
+		result.M43 = position.z;
 		result.M44 = 1.0f;
 
 		return result;
@@ -684,19 +704,19 @@ public final class Matrix4 {
 	}
 
 	public static Matrix4 transform(Matrix4 value, Quaternion rotation) {
-		float x2 = rotation.X + rotation.X;
-		float y2 = rotation.Y + rotation.Y;
-		float z2 = rotation.Z + rotation.Z;
+		float x2 = rotation.x + rotation.x;
+		float y2 = rotation.y + rotation.y;
+		float z2 = rotation.z + rotation.z;
 
-		float a = (1f - rotation.Y * y2) - rotation.Z * z2;
-		float b = rotation.X * y2 - rotation.W * z2;
-		float c = rotation.X * z2 + rotation.W * y2;
-		float d = rotation.X * y2 + rotation.W * z2;
-		float e = (1f - rotation.X * x2) - rotation.Z * z2;
-		float f = rotation.Y * z2 - rotation.W * x2;
-		float g = rotation.X * z2 - rotation.W * y2;
-		float h = rotation.Y * z2 + rotation.W * x2;
-		float i = (1f - rotation.X * x2) - rotation.Y * y2;
+		float a = (1f - rotation.y * y2) - rotation.z * z2;
+		float b = rotation.x * y2 - rotation.w * z2;
+		float c = rotation.x * z2 + rotation.w * y2;
+		float d = rotation.x * y2 + rotation.w * z2;
+		float e = (1f - rotation.x * x2) - rotation.z * z2;
+		float f = rotation.y * z2 - rotation.w * x2;
+		float g = rotation.x * z2 - rotation.w * y2;
+		float h = rotation.y * z2 + rotation.w * x2;
+		float i = (1f - rotation.x * x2) - rotation.y * y2;
 
 		return new Matrix4(((value.M11 * a) + (value.M12 * b)) + (value.M13 * c),
 				((value.M11 * d) + (value.M12 * e)) + (value.M13 * f),
@@ -759,7 +779,8 @@ public final class Matrix4 {
 
 	public static Matrix4 minor(Matrix4 matrix, int row, int col) {
 		Matrix4 minor = new Matrix4();
-		int m = 0, n = 0;
+		int m = 0;
+		int n = 0;
 
 		for (int i = 0; i < 4; i++) {
 			if (i == row) {
@@ -843,28 +864,28 @@ public final class Matrix4 {
 	public void setItem(int row, Vector4 value) throws IndexOutOfBoundsException {
 		switch (row) {
 		case 0:
-			M11 = value.X;
-			M12 = value.Y;
-			M13 = value.Z;
-			M14 = value.S;
+			M11 = value.x;
+			M12 = value.y;
+			M13 = value.z;
+			M14 = value.s;
 			break;
 		case 1:
-			M21 = value.X;
-			M22 = value.Y;
-			M23 = value.Z;
-			M24 = value.S;
+			M21 = value.x;
+			M22 = value.y;
+			M23 = value.z;
+			M24 = value.s;
 			break;
 		case 2:
-			M31 = value.X;
-			M32 = value.Y;
-			M33 = value.Z;
-			M34 = value.S;
+			M31 = value.x;
+			M32 = value.y;
+			M33 = value.z;
+			M34 = value.s;
 			break;
 		case 3:
-			M41 = value.X;
-			M42 = value.Y;
-			M43 = value.Z;
-			M44 = value.S;
+			M41 = value.x;
+			M42 = value.y;
+			M43 = value.z;
+			M44 = value.s;
 			break;
 		default:
 			throw new IndexOutOfBoundsException("Matrix4 row index must be from 0-3");
@@ -1005,9 +1026,4 @@ public final class Matrix4 {
 		}
 	}
 
-	/** A 4x4 matrix containing all zeroes */
-	public static final Matrix4 Zero = new Matrix4();
-
-	/** A 4x4 identity matrix */
-	public static final Matrix4 Identity = new Matrix4(1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f);
 }

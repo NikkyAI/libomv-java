@@ -33,7 +33,7 @@ import libomv.types.Color4;
 
 public class ModelMaterial {
 	public String id;
-	public Color4 diffuseColor = Color4.White;
+	public Color4 diffuseColor = Color4.WHITE;
 	public String texture;
 	public byte[] textureData;
 }

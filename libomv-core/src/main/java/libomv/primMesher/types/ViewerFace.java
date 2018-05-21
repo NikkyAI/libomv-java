@@ -71,31 +71,31 @@ public class ViewerFace {
 	}
 
 	public void scale(float x, float y, float z) {
-		this.v1.X *= x;
-		this.v1.Y *= y;
-		this.v1.Z *= z;
+		this.v1.x *= x;
+		this.v1.y *= y;
+		this.v1.z *= z;
 
-		this.v2.X *= x;
-		this.v2.Y *= y;
-		this.v2.Z *= z;
+		this.v2.x *= x;
+		this.v2.y *= y;
+		this.v2.z *= z;
 
-		this.v3.X *= x;
-		this.v3.Y *= y;
-		this.v3.Z *= z;
+		this.v3.x *= x;
+		this.v3.y *= y;
+		this.v3.z *= z;
 	}
 
 	public void addPos(float x, float y, float z) {
-		this.v1.X += x;
-		this.v2.X += x;
-		this.v3.X += x;
+		this.v1.x += x;
+		this.v2.x += x;
+		this.v3.x += x;
 
-		this.v1.Y += y;
-		this.v2.Y += y;
-		this.v3.Y += y;
+		this.v1.y += y;
+		this.v2.y += y;
+		this.v3.y += y;
 
-		this.v1.Z += z;
-		this.v2.Z += z;
-		this.v3.Z += z;
+		this.v1.z += z;
+		this.v2.z += z;
+		this.v3.z += z;
 	}
 
 	public void addRot(Quaternion rot) {
@@ -110,8 +110,8 @@ public class ViewerFace {
 
 	public void calcSurfaceNormal() {
 
-		Vector3 edge1 = new Vector3(this.v2.X - this.v1.X, this.v2.Y - this.v1.Y, this.v2.Z - this.v1.Z);
-		Vector3 edge2 = new Vector3(this.v3.X - this.v1.X, this.v3.Y - this.v1.Y, this.v3.Z - this.v1.Z);
+		Vector3 edge1 = new Vector3(this.v2.x - this.v1.x, this.v2.y - this.v1.y, this.v2.z - this.v1.z);
+		Vector3 edge2 = new Vector3(this.v3.x - this.v1.x, this.v3.y - this.v1.y, this.v3.z - this.v1.z);
 
 		this.n1 = edge1.cross(edge2).normalize();
 		this.n2 = new Vector3(this.n1);

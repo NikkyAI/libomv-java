@@ -202,7 +202,7 @@ public abstract class AssetWearable extends AssetItem {
 			return false;
 
 		try {
-			String data = Helpers.BytesToString(assetData);
+			String data = Helpers.bytesToString(assetData);
 
 			data = data.replace("\r", Helpers.EmptyString);
 			String[] lines = data.split("\n");
@@ -264,29 +264,29 @@ public abstract class AssetWearable extends AssetItem {
 								line = lines[stri].trim();
 								fields = line.split(" ");
 
-								AvatarTextureIndex id = AvatarTextureIndex.setValue(Helpers.TryParseInt(fields[0]));
+								AvatarTextureIndex id = AvatarTextureIndex.setValue(Helpers.tryParseInt(fields[0]));
 								UUID texture = new UUID(fields[1]);
 
 								textures.put(id, texture);
 							}
 						} else if (fields[0].equals("type")) {
-							wearableType = WearableType.setValue(Helpers.TryParseInt(fields[1]));
+							wearableType = WearableType.setValue(Helpers.tryParseInt(fields[1]));
 						}
 
 					} else if (fields.length == 2) {
 						if (fields[0].equals("creator_mask")) {
 							// Deprecated, apply this as the base mask
-							permissions.BaseMask = (int) Helpers.TryParseHex(fields[1]);
+							permissions.baseMask = (int) Helpers.tryParseHex(fields[1]);
 						} else if (fields[0].equals("base_mask")) {
-							permissions.BaseMask = (int) Helpers.TryParseHex(fields[1]);
+							permissions.baseMask = (int) Helpers.tryParseHex(fields[1]);
 						} else if (fields[0].equals("owner_mask")) {
-							permissions.OwnerMask = (int) Helpers.TryParseHex(fields[1]);
+							permissions.ownerMask = (int) Helpers.tryParseHex(fields[1]);
 						} else if (fields[0].equals("group_mask")) {
-							permissions.GroupMask = (int) Helpers.TryParseHex(fields[1]);
+							permissions.groupMask = (int) Helpers.tryParseHex(fields[1]);
 						} else if (fields[0].equals("everyone_mask")) {
-							permissions.EveryoneMask = (int) Helpers.TryParseHex(fields[1]);
+							permissions.everyoneMask = (int) Helpers.tryParseHex(fields[1]);
 						} else if (fields[0].equals("next_owner_mask")) {
-							permissions.NextOwnerMask = (int) Helpers.TryParseHex(fields[1]);
+							permissions.nextOwnerMask = (int) Helpers.tryParseHex(fields[1]);
 						} else if (fields[0].equals("creator_id")) {
 							creator = new UUID(fields[1]);
 						} else if (fields[0].equals("owner_id")) {
@@ -305,7 +305,7 @@ public abstract class AssetWearable extends AssetItem {
 							// Container for sale_type and sale_price, ignore
 						} else if (fields[0].equals("perm_mask")) {
 							// Deprecated, apply this as the next owner mask
-							permissions.NextOwnerMask = (int) Helpers.TryParseHex(fields[1]);
+							permissions.nextOwnerMask = (int) Helpers.tryParseHex(fields[1]);
 						} else
 							return false;
 					}
@@ -325,11 +325,11 @@ public abstract class AssetWearable extends AssetItem {
 		StringBuilder data = new StringBuilder("LLWearable version 22\n");
 		data.append(name + "\n\n");
 		data.append("\tpermissions 0\n\t{\n");
-		data.append("\t\tbase_mask\t" + Helpers.UInt32ToHexString(permissions.BaseMask) + "\n");
-		data.append("\t\towner_mask\t" + Helpers.UInt32ToHexString(permissions.OwnerMask) + "\n");
-		data.append("\t\tgroup_mask\t" + Helpers.UInt32ToHexString(permissions.GroupMask) + "\n");
-		data.append("\t\teveryone_mask\t" + Helpers.UInt32ToHexString(permissions.EveryoneMask) + "\n");
-		data.append("\t\tnext_owner_mask\t" + Helpers.UInt32ToHexString(permissions.NextOwnerMask) + "\n");
+		data.append("\t\tbase_mask\t" + Helpers.uint32ToHexString(permissions.baseMask) + "\n");
+		data.append("\t\towner_mask\t" + Helpers.uint32ToHexString(permissions.ownerMask) + "\n");
+		data.append("\t\tgroup_mask\t" + Helpers.uint32ToHexString(permissions.groupMask) + "\n");
+		data.append("\t\teveryone_mask\t" + Helpers.uint32ToHexString(permissions.everyoneMask) + "\n");
+		data.append("\t\tnext_owner_mask\t" + Helpers.uint32ToHexString(permissions.nextOwnerMask) + "\n");
 		data.append("\t\tcreator_id\t" + creator.toString() + "\n");
 		data.append("\t\towner_id\t" + owner.toString() + "\n");
 		data.append("\t\tlast_owner_id\t" + lastOwner.toString() + "\n");

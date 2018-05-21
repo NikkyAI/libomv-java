@@ -45,29 +45,47 @@ import libomv.utils.RefObject;
 
 /** A two-dimensional vector with floating-point values */
 public final class Vector2 {
+
+	/**
+	 * A vector with a value of 0,0
+	 */
+	public final static Vector2 ZERO = new Vector2();
+	/**
+	 * A vector with a value of 1,1
+	 */
+	public final static Vector2 ONE = new Vector2(1f, 1f);
+	/**
+	 * A vector with a value of 1,0
+	 */
+	public final static Vector2 UNIT_X = new Vector2(1f, 0f);
+	/**
+	 * A vector with a value of 0,1
+	 */
+	public final static Vector2 UNIT_Y = new Vector2(0f, 1f);
+
 	/** X value */
-	public float X;
+	public float x;
 	/** Y value */
-	public float Y;
+	public float y;
 
 	/** Simple Constructors */
 	public Vector2() {
-		X = Y = 0.0f;
+		x = y = 0.0f;
 	}
 
 	public Vector2(float x, float y) {
-		X = x;
-		Y = y;
+		this.x = x;
+		this.y = y;
 	}
 
 	public Vector2(float value) {
-		X = value;
-		Y = value;
+		x = value;
+		y = value;
 	}
 
 	public Vector2(Vector2 vector) {
-		X = vector.X;
-		Y = vector.Y;
+		x = vector.x;
+		y = vector.y;
 	}
 
 	/**
@@ -86,9 +104,9 @@ public final class Vector2 {
 		while (parser.nextTag() == XmlPullParser.START_TAG) {
 			String name = parser.getName();
 			if (name.equals("X")) {
-				X = Helpers.TryParseFloat(parser.nextText().trim());
+				x = Helpers.tryParseFloat(parser.nextText().trim());
 			} else if (name.equals("Y")) {
-				Y = Helpers.TryParseFloat(parser.nextText().trim());
+				y = Helpers.tryParseFloat(parser.nextText().trim());
 			} else {
 				Helpers.skipElement(parser);
 			}
@@ -103,12 +121,12 @@ public final class Vector2 {
 	 * @throws IOException
 	 */
 	public Vector2(DataInputStream is) throws IOException {
-		X = Y = 0f;
+		x = y = 0f;
 		fromBytes(is);
 	}
 
 	public Vector2(SwappedDataInputStream is) throws IOException {
-		X = Y = 0f;
+		x = y = 0f;
 		fromBytes(is);
 	}
 
@@ -121,12 +139,12 @@ public final class Vector2 {
 	 *            Beginning position in the byte array
 	 */
 	public Vector2(byte[] byteArray, int pos) {
-		X = Y = 0f;
+		x = y = 0f;
 		fromBytes(byteArray, pos, false);
 	}
 
 	public Vector2(byte[] byteArray, int pos, boolean le) {
-		X = Y = 0f;
+		x = y = 0f;
 		fromBytes(byteArray, pos, le);
 	}
 
@@ -137,8 +155,8 @@ public final class Vector2 {
 	 *            ByteBuffer containing three four-byte floats
 	 */
 	public Vector2(ByteBuffer byteArray) {
-		X = byteArray.getFloat();
-		Y = byteArray.getFloat();
+		x = byteArray.getFloat();
+		y = byteArray.getFloat();
 	}
 
 	/**
@@ -159,8 +177,8 @@ public final class Vector2 {
 	 *            Buffer to copy the 8 bytes for X and Y
 	 */
 	public void write(ByteBuffer byteArray) {
-		byteArray.putFloat(X);
-		byteArray.putFloat(Y);
+		byteArray.putFloat(x);
+		byteArray.putFloat(y);
 	}
 
 	/**
@@ -174,11 +192,11 @@ public final class Vector2 {
 	 */
 	public void write(OutputStream stream, boolean le) throws IOException {
 		if (le) {
-			stream.write(Helpers.floatToBytesL(X));
-			stream.write(Helpers.floatToBytesL(Y));
+			stream.write(Helpers.floatToBytesL(x));
+			stream.write(Helpers.floatToBytesL(y));
 		} else {
-			stream.write(Helpers.floatToBytesB(X));
-			stream.write(Helpers.floatToBytesB(Y));
+			stream.write(Helpers.floatToBytesB(x));
+			stream.write(Helpers.floatToBytesB(y));
 		}
 	}
 
@@ -189,16 +207,16 @@ public final class Vector2 {
 	public void serializeXml(XmlSerializer writer, String namespace, String name)
 			throws IllegalArgumentException, IllegalStateException, IOException {
 		writer.startTag(namespace, name);
-		writer.startTag(namespace, "X").text(Float.toString(X)).endTag(namespace, "X");
-		writer.startTag(namespace, "Y").text(Float.toString(Y)).endTag(namespace, "Y");
+		writer.startTag(namespace, "X").text(Float.toString(x)).endTag(namespace, "X");
+		writer.startTag(namespace, "Y").text(Float.toString(y)).endTag(namespace, "Y");
 		writer.endTag(namespace, name);
 	}
 
 	public void serializeXml(XmlSerializer writer, String namespace, String name, Locale locale)
 			throws IllegalArgumentException, IllegalStateException, IOException {
 		writer.startTag(namespace, name);
-		writer.startTag(namespace, "X").text(String.format(locale, "%f", X)).endTag(namespace, "X");
-		writer.startTag(namespace, "Y").text(String.format(locale, "%f", Y)).endTag(namespace, "Y");
+		writer.startTag(namespace, "X").text(String.format(locale, "%f", x)).endTag(namespace, "X");
+		writer.startTag(namespace, "Y").text(String.format(locale, "%f", y)).endTag(namespace, "Y");
 		writer.endTag(namespace, name);
 	}
 
@@ -209,7 +227,7 @@ public final class Vector2 {
 	 */
 	@Override
 	public String toString() {
-		return String.format(Helpers.EnUsCulture, "<%f, %f>", X, Y);
+		return String.format(Helpers.EnUsCulture, "<%f, %f>", x, y);
 	}
 
 	/**
@@ -219,13 +237,13 @@ public final class Vector2 {
 	 * @return Raw string representation of the vector
 	 */
 	public String toRawString() {
-		return String.format(Helpers.EnUsCulture, "%.3f, %.3f", X, Y);
+		return String.format(Helpers.EnUsCulture, "%.3f, %.3f", x, y);
 	}
 
 	/** Creates a hash code for the vector */
 	@Override
 	public int hashCode() {
-		return ((Float) X).hashCode() * 31 + ((Float) Y).hashCode();
+		return ((Float) x).hashCode() * 31 + ((Float) y).hashCode();
 	}
 
 	/**
@@ -241,11 +259,11 @@ public final class Vector2 {
 	public void fromBytes(byte[] bytes, int pos, boolean le) {
 		if (le) {
 			/* Little endian architecture */
-			X = Helpers.BytesToFloatL(bytes, pos + 0);
-			Y = Helpers.BytesToFloatL(bytes, pos + 4);
+			x = Helpers.bytesToFloatL(bytes, pos + 0);
+			y = Helpers.bytesToFloatL(bytes, pos + 4);
 		} else {
-			X = Helpers.BytesToFloatB(bytes, pos + 0);
-			Y = Helpers.BytesToFloatB(bytes, pos + 4);
+			x = Helpers.bytesToFloatB(bytes, pos + 0);
+			y = Helpers.bytesToFloatB(bytes, pos + 4);
 		}
 	}
 
@@ -257,13 +275,13 @@ public final class Vector2 {
 	 * @throws IOException
 	 */
 	public void fromBytes(DataInputStream is) throws IOException {
-		X = is.readFloat();
-		Y = is.readFloat();
+		x = is.readFloat();
+		y = is.readFloat();
 	}
 
 	public void fromBytes(SwappedDataInputStream is) throws IOException {
-		X = is.readFloat();
-		Y = is.readFloat();
+		x = is.readFloat();
+		y = is.readFloat();
 	}
 
 	/**
@@ -277,20 +295,20 @@ public final class Vector2 {
 	 */
 	public void toBytes(byte[] dest, int pos, boolean le) {
 		if (le) {
-			Helpers.floatToBytesL(X, dest, pos + 0);
-			Helpers.floatToBytesL(Y, dest, pos + 4);
+			Helpers.floatToBytesL(x, dest, pos + 0);
+			Helpers.floatToBytesL(y, dest, pos + 4);
 		} else {
-			Helpers.floatToBytesB(X, dest, pos + 0);
-			Helpers.floatToBytesB(Y, dest, pos + 4);
+			Helpers.floatToBytesB(x, dest, pos + 0);
+			Helpers.floatToBytesB(y, dest, pos + 4);
 		}
 	}
 
 	public float length() {
-		return (float) Math.sqrt(distanceSquared(this, Zero));
+		return (float) Math.sqrt(distanceSquared(this, ZERO));
 	}
 
 	public float lengthSquared() {
-		return distanceSquared(this, Zero);
+		return distanceSquared(this, ZERO);
 	}
 
 	public Vector2 normalize() {
@@ -298,8 +316,8 @@ public final class Vector2 {
 		if (length > Helpers.FLOAT_MAG_THRESHOLD) {
 			return divide(length);
 		}
-		X = 0f;
-		Y = 0f;
+		x = 0f;
+		y = 0f;
 		return this;
 	}
 
@@ -325,27 +343,27 @@ public final class Vector2 {
 
 	/** Test if this vector is composed of all finite numbers */
 	public boolean isFinite() {
-		return Helpers.isFinite(X) && Helpers.isFinite(Y);
+		return Helpers.isFinite(x) && Helpers.isFinite(y);
 	}
 
 	public boolean isZero() {
-		return equals(Zero);
+		return equals(ZERO);
 	}
 
 	public static boolean isZero(Vector2 v) {
 		if (v != null)
-			return v.equals(Zero);
+			return v.equals(ZERO);
 		return false;
 	}
 
 	public static boolean isZeroOrNull(Vector2 v) {
 		if (v != null)
-			return v.equals(Zero);
+			return v.equals(ZERO);
 		return true;
 	}
 
 	public static Vector2 clamp(Vector2 value1, Vector2 min, Vector2 max) {
-		return new Vector2(Helpers.clamp(value1.X, min.X, max.X), Helpers.clamp(value1.Y, min.Y, max.Y));
+		return new Vector2(Helpers.clamp(value1.x, min.x, max.x), Helpers.clamp(value1.y, min.y, max.y));
 	}
 
 	public static float distance(Vector2 value1, Vector2 value2) {
@@ -353,23 +371,23 @@ public final class Vector2 {
 	}
 
 	public static float distanceSquared(Vector2 value1, Vector2 value2) {
-		return (value1.X - value2.X) * (value1.X - value2.X) + (value1.Y - value2.Y) * (value1.Y - value2.Y);
+		return (value1.x - value2.x) * (value1.x - value2.x) + (value1.y - value2.y) * (value1.y - value2.y);
 	}
 
 	public static float dot(Vector2 value1, Vector2 value2) {
-		return value1.X * value2.X + value1.Y * value2.Y;
+		return value1.x * value2.x + value1.y * value2.y;
 	}
 
 	public static Vector2 lerp(Vector2 value1, Vector2 value2, float amount) {
-		return new Vector2(Helpers.lerp(value1.X, value2.X, amount), Helpers.lerp(value1.Y, value2.Y, amount));
+		return new Vector2(Helpers.lerp(value1.x, value2.x, amount), Helpers.lerp(value1.y, value2.y, amount));
 	}
 
 	public static Vector2 max(Vector2 value1, Vector2 value2) {
-		return new Vector2(Math.max(value1.X, value2.X), Math.max(value1.Y, value2.Y));
+		return new Vector2(Math.max(value1.x, value2.x), Math.max(value1.y, value2.y));
 	}
 
 	public static Vector2 min(Vector2 value1, Vector2 value2) {
-		return new Vector2(Math.min(value1.X, value2.X), Math.min(value1.Y, value2.Y));
+		return new Vector2(Math.min(value1.x, value2.x), Math.min(value1.y, value2.y));
 	}
 
 	public static Vector2 normalize(Vector2 value) {
@@ -378,18 +396,18 @@ public final class Vector2 {
 
 	/** Interpolates between two vectors using a cubic equation */
 	public static Vector2 smoothStep(Vector2 value1, Vector2 value2, float amount) {
-		return new Vector2(Helpers.smoothStep(value1.X, value2.X, amount),
-				Helpers.smoothStep(value1.Y, value2.Y, amount));
+		return new Vector2(Helpers.smoothStep(value1.x, value2.x, amount),
+				Helpers.smoothStep(value1.y, value2.y, amount));
 	}
 
 	public static Vector2 transform(Vector2 position, Matrix4 matrix) {
-		return new Vector2((position.X * matrix.M11) + (position.Y * matrix.M21) + matrix.M41,
-				(position.X * matrix.M12) + (position.Y * matrix.M22) + matrix.M42);
+		return new Vector2((position.x * matrix.M11) + (position.y * matrix.M21) + matrix.M41,
+				(position.x * matrix.M12) + (position.y * matrix.M22) + matrix.M42);
 	}
 
 	public static Vector2 transformNormal(Vector2 position, Matrix4 matrix) {
-		return new Vector2((position.X * matrix.M11) + (position.Y * matrix.M21),
-				(position.X * matrix.M12) + (position.Y * matrix.M22));
+		return new Vector2((position.x * matrix.M11) + (position.y * matrix.M21),
+				(position.x * matrix.M12) + (position.y * matrix.M22));
 	}
 
 	/**
@@ -399,24 +417,24 @@ public final class Vector2 {
 	 *            A string representation of a 2D vector, enclosed in arrow brackets
 	 *            and separated by commas
 	 */
-	public static Vector2 Parse(String val) {
+	public static Vector2 parse(String val) {
 		String splitChar = ",";
 		String[] split = val.replace("<", "").replace(">", "").split(splitChar);
 		return new Vector2(Float.parseFloat(split[0].trim()), Float.parseFloat(split[1].trim()));
 	}
 
-	public static boolean TryParse(String val, RefObject<Vector2> result) {
+	public static boolean tryParse(String val, RefObject<Vector2> result) {
 		try {
-			result.argvalue = Parse(val);
+			result.argvalue = parse(val);
 			return true;
 		} catch (Throwable t) {
-			result.argvalue = Vector2.Zero;
+			result.argvalue = Vector2.ZERO;
 			return false;
 		}
 	}
 
 	public boolean equals(Vector3 val) {
-		return val != null && X == val.X && Y == val.Y;
+		return val != null && x == val.x && y == val.y;
 	}
 
 	@Override
@@ -425,55 +443,55 @@ public final class Vector2 {
 	}
 
 	public boolean equals(Vector2 o) {
-		return o != null && o.X == X && o.Y == Y;
+		return o != null && o.x == x && o.y == y;
 	}
 
 	public Vector2 flip() {
-		X = 1.0f - X;
-		Y = 1.0f - Y;
+		x = 1.0f - x;
+		y = 1.0f - y;
 		return this;
 	}
 
 	public Vector2 negate() {
-		X = -X;
-		Y = -Y;
+		x = -x;
+		y = -y;
 		return this;
 	}
 
 	public Vector2 add(Vector2 value) {
-		X += value.X;
-		Y += value.Y;
+		x += value.x;
+		y += value.y;
 		return this;
 	}
 
 	public Vector2 subtract(Vector2 value) {
-		X -= value.X;
-		Y -= value.X;
+		x -= value.x;
+		y -= value.x;
 		return this;
 	}
 
 	public Vector2 multiply(Vector2 value) {
-		X *= value.X;
-		Y *= value.Y;
+		x *= value.x;
+		y *= value.y;
 		return this;
 	}
 
 	public Vector2 multiply(float scaleFactor) {
-		X *= scaleFactor;
-		Y *= scaleFactor;
+		x *= scaleFactor;
+		y *= scaleFactor;
 		return this;
 	}
 
 	public Vector2 divide(Vector2 value) {
-		X /= value.X;
-		Y /= value.Y;
+		x /= value.x;
+		y /= value.y;
 		return this;
 	}
 
 	public Vector2 divide(float divider) {
 		float factor = 1 / divider;
-		X *= factor;
-		Y *= factor;
+		x *= factor;
+		y *= factor;
 		return this;
 	}
 
@@ -505,20 +523,4 @@ public final class Vector2 {
 		return new Vector2(value1).divide(divider);
 	}
 
-	/**
-	 * A vector with a value of 0,0
-	 */
-	public final static Vector2 Zero = new Vector2();
-	/**
-	 * A vector with a value of 1,1
-	 */
-	public final static Vector2 One = new Vector2(1f, 1f);
-	/**
-	 * A vector with a value of 1,0
-	 */
-	public final static Vector2 UnitX = new Vector2(1f, 0f);
-	/**
-	 * A vector with a value of 0,1
-	 */
-	public final static Vector2 UnitY = new Vector2(0f, 1f);
 }

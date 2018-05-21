@@ -289,7 +289,7 @@ public class XmlLLSDTest extends TestCase {
 
 		assertEquals(OSDType.UUID, array.get(1).getType());
 		tempUUID = (OSDUUID) array.get(1);
-		assertEquals(UUID.Zero, tempUUID.asUUID());
+		assertEquals(UUID.ZERO, tempUUID.asUUID());
 	}
 
 	/// Test that various date representations are parsed correctly.

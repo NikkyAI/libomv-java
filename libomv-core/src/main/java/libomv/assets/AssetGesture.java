@@ -326,7 +326,7 @@ public class AssetGesture extends AssetItem {
 			return false;
 
 		try {
-			String[] lines = Helpers.BytesToString(assetData).split("\n");
+			String[] lines = Helpers.bytesToString(assetData).split("\n");
 			sequence = new ArrayList<>();
 
 			int i = 0;

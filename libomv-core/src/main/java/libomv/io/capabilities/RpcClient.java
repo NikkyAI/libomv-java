@@ -4,7 +4,7 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * - Redistributions of source code must retain the above copyright notice, this
  *   list of conditions and the following disclaimer.
  * - Redistributions in binary form must reproduce the above copyright notice,
@@ -299,7 +299,8 @@ public class RpcClient extends AsyncHTTPClient<OSD> {
 		OSD ret = null;
 		try {
 			parser.nextTag();
-			String value = null, name = parser.getName();
+			String value;
+			String name = parser.getName();
 			if (name.equals(TAG_VALUE) && parser.getEventType() == XmlPullParser.END_TAG) {
 				// empty <value></value>, return empty string
 				return new OSDString("");
@@ -311,19 +312,19 @@ public class RpcClient extends AsyncHTTPClient<OSD> {
 			if (name.equals(TYPE_INT) || name.equals(TYPE_I4)) {
 				int num = 0;
 				if (notEmpty) {
-					num = Helpers.TryParseInt(parser.nextText());
+					num = Helpers.tryParseInt(parser.nextText());
 				}
 				ret = OSD.fromInteger(num);
 			} else if (name.equals(TYPE_I8)) {
 				long num = 0;
 				if (notEmpty) {
-					num = Helpers.TryParseLong(parser.nextText());
+					num = Helpers.tryParseLong(parser.nextText());
 				}
 				ret = OSD.fromLong(num);
 			} else if (name.equals(TYPE_DOUBLE)) {
 				double num = 0d;
 				if (notEmpty) {
-					num = Helpers.TryParseDouble(parser.nextText());
+					num = Helpers.tryParseDouble(parser.nextText());
 				}
 				ret = OSD.fromReal(num);
 			} else if (name.equals(TYPE_BOOLEAN)) {

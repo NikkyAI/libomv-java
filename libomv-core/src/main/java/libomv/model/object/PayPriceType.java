@@ -9,6 +9,12 @@ public enum PayPriceType {
 	// Indicates that this pay option should have the default value
 	Default(-2);
 
+	private final byte value;
+
+	private PayPriceType(int value) {
+		this.value = (byte) value;
+	}
+
 	public static PayPriceType setValue(int value) {
 		if (value >= 0 && value < values().length)
 			return values()[value];
@@ -16,12 +22,7 @@ public enum PayPriceType {
 	}
 
 	public byte getValue() {
-		return _value;
+		return value;
 	}
 
-	private final byte _value;
-
-	private PayPriceType(int value) {
-		_value = (byte) value;
-	}
 }

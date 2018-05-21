@@ -190,19 +190,19 @@ public class AgentThrottle {
 	 *            throttle packet to the client
 	 */
 	public AgentThrottle(byte[] data, int pos) {
-		resend = Helpers.BytesToFloatL(data, pos);
+		resend = Helpers.bytesToFloatL(data, pos);
 		pos += 4;
-		land = Helpers.BytesToFloatL(data, pos);
+		land = Helpers.bytesToFloatL(data, pos);
 		pos += 4;
-		wind = Helpers.BytesToFloatL(data, pos);
+		wind = Helpers.bytesToFloatL(data, pos);
 		pos += 4;
-		cloud = Helpers.BytesToFloatL(data, pos);
+		cloud = Helpers.bytesToFloatL(data, pos);
 		pos += 4;
-		task = Helpers.BytesToFloatL(data, pos);
+		task = Helpers.bytesToFloatL(data, pos);
 		pos += 4;
-		texture = Helpers.BytesToFloatL(data, pos);
+		texture = Helpers.bytesToFloatL(data, pos);
 		pos += 4;
-		asset = Helpers.BytesToFloatL(data, pos);
+		asset = Helpers.bytesToFloatL(data, pos);
 	}
 
 	/**

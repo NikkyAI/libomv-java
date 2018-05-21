@@ -89,7 +89,7 @@ public class TypeTest extends TestCase {
 		assertTrue(a.toString().equals(zeroonetwo2));
 
 		// CRC test
-		long crc = b.CRC();
+		long crc = b.crc();
 		assertTrue("CRC calculatoin error", crc == 606084120);
 
 		// From XML
@@ -239,19 +239,19 @@ public class TypeTest extends TestCase {
 						+ " cast to float (" + kvp.getKey() + ").");
 			} else {
 				assertFalse(String.format("Vector casting failed, precision loss should" + " have occurred. %s: %f, %f",
-						kvp.getKey(), a.X, b.X), a.equals(b));
+						kvp.getKey(), a.x, b.x), a.equals(b));
 				assertFalse(String.format("Vector casting failed, explicit cast of double"
 						+ " to float should result in precision loss whichwas should not magically disappear when"
-						+ " Vector3 is implicitly cast to Vector3d. %s: %f, %f", kvp.getKey(), b.X, d.X), b.equals(d));
+						+ " Vector3 is implicitly cast to Vector3d. %s: %f, %f", kvp.getKey(), b.x, d.x), b.equals(d));
 			}
 			assertTrue(String.format("Vector casting failed, Vector3 compared to"
 					+ " explicit cast of Vector3d to Vector3 should result in identical precision loss."
-					+ " %s: %f, %f", kvp.getKey(), a.X, c.X), a.equals(c));
+					+ " %s: %f, %f", kvp.getKey(), a.x, c.x), a.equals(c));
 			assertTrue(
 					String.format(
 							"Vector casting failed, implicit cast of Vector3"
 									+ " to Vector3d should not result in precision loss. %s: %f, %f",
-							kvp.getKey(), a.X, d.X),
+							kvp.getKey(), a.x, d.x),
 					a.equals(d));
 		}
 	}
@@ -569,7 +569,7 @@ public class TypeTest extends TestCase {
 			assertTrue("Unexpected tag name", parser.getName().equals("Color"));
 			test = new Color4(parser);
 			assertTrue("Color4 xml constructor with empty inner tags failed, should have been Color4.Black, but we got "
-					+ test.toString(), test.equals(Color4.Black));
+					+ test.toString(), test.equals(Color4.BLACK));
 
 			assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
 			assertTrue("Unexpected tag name", parser.getName().equals("Color"));
@@ -577,13 +577,13 @@ public class TypeTest extends TestCase {
 			assertTrue(
 					"Color4 xml constructor with short-form empty inner tags failed, should have been Color4.Black, but we got "
 							+ test.toString(),
-					test.equals(Color4.Black));
+					test.equals(Color4.BLACK));
 
 			assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
 			assertTrue("Unexpected tag name", parser.getName().equals("Color"));
 			test = new Color4(parser);
 			assertTrue("Color4 xml constructor with empty outer tag failed, should have been Color4.Black, but we got "
-					+ test.toString(), test.equals(Color4.Black));
+					+ test.toString(), test.equals(Color4.BLACK));
 
 			assertTrue("Unexpected tag type", parser.nextTag() == XmlPullParser.START_TAG);
 			assertTrue("Unexpected tag name", parser.getName().equals("Color"));
@@ -591,7 +591,7 @@ public class TypeTest extends TestCase {
 			assertTrue(
 					"Color4 xml constructor with short-form empty outer tag failed, should have been Color4.Black, but we got "
 							+ test.toString(),
-					test.equals(Color4.Black));
+					test.equals(Color4.BLACK));
 
 			assertTrue("Should be END_TAG",
 					parser.nextTag() == XmlPullParser.END_TAG && parser.getName().equals("Test"));
@@ -632,7 +632,7 @@ public class TypeTest extends TestCase {
 
 		/* inverse of identity matrix is the identity matrix */
 		assertTrue("Inverse of identity matrix should be the identity matrix",
-				Matrix4.Identity.equals(Matrix4.inverse(Matrix4.Identity)));
+				Matrix4.IDENTITY.equals(Matrix4.inverse(Matrix4.IDENTITY)));
 
 		/* inverse of non-singular matrix test */
 		matrix = new Matrix4(1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1);

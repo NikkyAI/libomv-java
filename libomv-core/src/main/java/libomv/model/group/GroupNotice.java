@@ -21,7 +21,7 @@ public final class GroupNotice {
 	public UUID ownerID;
 
 	public byte[] serializeAttachment() throws IOException {
-		if (ownerID.equals(UUID.Zero) || attachmentID.equals(UUID.Zero)) {
+		if (ownerID.equals(UUID.ZERO) || attachmentID.equals(UUID.ZERO)) {
 			return Helpers.EmptyBytes;
 		}
 

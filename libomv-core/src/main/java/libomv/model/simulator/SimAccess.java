@@ -17,21 +17,22 @@ public enum SimAccess {
 	/* Simulator does not exist */
 	NonExistent(0xFF);
 
+	private byte value;
+
+	private SimAccess(int value) {
+		this.value = (byte) value;
+	}
+
 	public static SimAccess setValue(int value) {
 		for (SimAccess e : values()) {
-			if (e._value == value)
+			if (e.value == value)
 				return e;
 		}
 		return Min;
 	}
 
 	public byte getValue() {
-		return _value;
+		return value;
 	}
 
-	private byte _value;
-
-	private SimAccess(int value) {
-		_value = (byte) value;
-	}
 }

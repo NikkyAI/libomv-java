@@ -251,7 +251,8 @@ public final class LLSDXml extends OSDParser {
 
 	private static OSD parseElement(XmlPullParser parser) throws IOException, XmlPullParserException {
 		parser.require(XmlPullParser.START_TAG, null, null);
-		String s = null, name = parser.getName();
+		String s = null;
+		String name = parser.getName();
 		boolean notEmpty = !parser.isEmptyElementTag();
 		OSD ret = null;
 
@@ -265,17 +266,17 @@ public final class LLSDXml extends OSDParser {
 		} else if (name.equals(INTEGER_TAG)) {
 			int value = 0;
 			if (notEmpty) {
-				value = Helpers.TryParseInt(parser.nextText());
+				value = Helpers.tryParseInt(parser.nextText());
 			}
 			ret = OSD.fromInteger(value);
 		} else if (name.equals(REAL_TAG)) {
 			double real = 0d;
 			if (notEmpty) {
-				real = Helpers.TryParseDouble(parser.nextText());
+				real = Helpers.tryParseDouble(parser.nextText());
 			}
 			ret = OSD.fromReal(real);
 		} else if (name.equals(UUID_TAG)) {
-			UUID uuid = UUID.Zero;
+			UUID uuid = UUID.ZERO;
 			if (notEmpty) {
 				uuid = new UUID(parser.nextText());
 			}

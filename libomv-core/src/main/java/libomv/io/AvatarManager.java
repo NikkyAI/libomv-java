@@ -360,10 +360,10 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 
 		gmp.AgentData.AgentID = client.agent.getAgentID();
 		gmp.AgentData.SessionID = client.agent.getSessionID();
-		gmp.AgentData.TransactionID = UUID.Zero;
+		gmp.AgentData.TransactionID = UUID.ZERO;
 
 		gmp.MethodData.setMethod(Helpers.stringToBytes("avatarpicksrequest"));
-		gmp.MethodData.Invoice = UUID.Zero;
+		gmp.MethodData.Invoice = UUID.ZERO;
 		gmp.ParamList = new GenericMessagePacket.ParamListBlock[1];
 		gmp.ParamList[0] = gmp.new ParamListBlock();
 		gmp.ParamList[0].setParameter(Helpers.stringToBytes(avatarid.toString()));
@@ -383,10 +383,10 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 
 		gmp.AgentData.AgentID = client.agent.getAgentID();
 		gmp.AgentData.SessionID = client.agent.getSessionID();
-		gmp.AgentData.TransactionID = UUID.Zero;
+		gmp.AgentData.TransactionID = UUID.ZERO;
 
 		gmp.MethodData.setMethod(Helpers.stringToBytes("avatarclassifiedsrequest"));
-		gmp.MethodData.Invoice = UUID.Zero;
+		gmp.MethodData.Invoice = UUID.ZERO;
 		gmp.ParamList = new GenericMessagePacket.ParamListBlock[1];
 		gmp.ParamList[0] = gmp.new ParamListBlock();
 		gmp.ParamList[0].setParameter(Helpers.stringToBytes(avatarid.toString()));
@@ -408,10 +408,10 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 
 		gmp.AgentData.AgentID = client.agent.getAgentID();
 		gmp.AgentData.SessionID = client.agent.getSessionID();
-		gmp.AgentData.TransactionID = UUID.Zero;
+		gmp.AgentData.TransactionID = UUID.ZERO;
 
 		gmp.MethodData.setMethod(Helpers.stringToBytes("pickinforequest"));
-		gmp.MethodData.Invoice = UUID.Zero;
+		gmp.MethodData.Invoice = UUID.ZERO;
 		gmp.ParamList = new GenericMessagePacket.ParamListBlock[2];
 		gmp.ParamList[0] = gmp.new ParamListBlock();
 		gmp.ParamList[0].setParameter(Helpers.stringToBytes(avatarid.toString()));
@@ -435,10 +435,10 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 
 		gmp.AgentData.AgentID = client.agent.getAgentID();
 		gmp.AgentData.SessionID = client.agent.getSessionID();
-		gmp.AgentData.TransactionID = UUID.Zero;
+		gmp.AgentData.TransactionID = UUID.ZERO;
 
 		gmp.MethodData.setMethod(Helpers.stringToBytes("classifiedinforequest"));
-		gmp.MethodData.Invoice = UUID.Zero;
+		gmp.MethodData.Invoice = UUID.ZERO;
 		gmp.ParamList = new GenericMessagePacket.ParamListBlock[2];
 		gmp.ParamList[0] = gmp.new ParamListBlock();
 		gmp.ParamList[0].setParameter(Helpers.stringToBytes(avatarid.toString()));
@@ -461,7 +461,7 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 		synchronized (avatars) {
 			// Fire callbacks for the ones we already have cached
 			if (avatars.containsKey(id)) {
-				HashMap<UUID, String> map = new HashMap<UUID, String>(1);
+				Map<UUID, String> map = new HashMap<>(1);
 				map.put(id, avatars.get(id).getName());
 				anc.callback(new AgentNamesCallbackArgs(map));
 				return;
@@ -565,7 +565,7 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 	 * @throws Exception
 	 */
 	private void handleUUIDNameReply(Packet packet, Simulator simulator) throws Exception {
-		HashMap<UUID, String> names = new HashMap<UUID, String>();
+		Map<UUID, String> names = new HashMap<>();
 		UUIDNameReplyPacket reply = (UUIDNameReplyPacket) packet;
 
 		synchronized (avatars) {
@@ -574,8 +574,8 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 					avatars.put(block.ID, new Avatar(block.ID));
 				}
 
-				avatars.get(block.ID).setNames(Helpers.BytesToString(block.getFirstName()),
-						Helpers.BytesToString(block.getLastName()));
+				avatars.get(block.ID).setNames(Helpers.bytesToString(block.getFirstName()),
+						Helpers.bytesToString(block.getLastName()));
 				names.put(block.ID, avatars.get(block.ID).getName());
 			}
 		}
@@ -584,7 +584,7 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 
 	private void handleAvatarAnimation(Packet packet, Simulator simulator) throws Exception {
 		AvatarAnimationPacket data = (AvatarAnimationPacket) packet;
-		ArrayList<Animation> signaledAnimations = new ArrayList<Animation>(data.AnimationList.length);
+		List<Animation> signaledAnimations = new ArrayList<>(data.AnimationList.length);
 
 		for (int i = 0; i < data.AnimationList.length; i++) {
 			Animation animation = new Animation();
@@ -614,12 +614,12 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 			TextureEntry.TextureEntryFace[] faceTextures = textureEntry.faceTextures;
 
 			byte appearanceVersion = 0;
-			int COFVersion = 0;
+			int cofVersion = 0;
 			AppearanceFlags appearanceFlags = AppearanceFlags.None;
 
 			if (appearance.AppearanceData != null && appearance.AppearanceData.length > 0) {
 				appearanceVersion = appearance.AppearanceData[0].AppearanceVersion;
-				COFVersion = appearance.AppearanceData[0].CofVersion;
+				cofVersion = appearance.AppearanceData[0].CofVersion;
 				// used in the future
 				// appearanceFlags =
 				// AppearanceManager.AppearanceFlags.setValue(appearance.AppearanceData[0].Flags);
@@ -630,13 +630,13 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 				av.textures = textureEntry;
 				av.visualParameters = appearance.ParamValue;
 				av.appearanceVersion = appearanceVersion;
-				av.cofVersion = COFVersion;
+				av.cofVersion = cofVersion;
 				av.appearanceFlags = appearanceFlags;
 			}
 
 			onAvatarAppearance.dispatch(new AvatarAppearanceCallbackArgs(simulator, appearance.Sender.ID,
 					appearance.Sender.IsTrial, defaultTexture, faceTextures, appearance.ParamValue, appearanceVersion,
-					COFVersion, appearanceFlags));
+					cofVersion, appearanceFlags));
 		}
 	}
 
@@ -649,10 +649,10 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 			av.profileProperties.profileImage = reply.PropertiesData.ImageID;
 			av.profileProperties.firstLifeImage = reply.PropertiesData.FLImageID;
 			av.profileProperties.partner = reply.PropertiesData.PartnerID;
-			av.profileProperties.aboutText = Helpers.BytesToString(reply.PropertiesData.getAboutText());
-			av.profileProperties.firstLifeText = Helpers.BytesToString(reply.PropertiesData.getFLAboutText());
-			av.profileProperties.bornOn = Helpers.BytesToString(reply.PropertiesData.getBornOn());
-			long charter = Helpers.BytesToUInt32L(reply.PropertiesData.getCharterMember());
+			av.profileProperties.aboutText = Helpers.bytesToString(reply.PropertiesData.getAboutText());
+			av.profileProperties.firstLifeText = Helpers.bytesToString(reply.PropertiesData.getFLAboutText());
+			av.profileProperties.bornOn = Helpers.bytesToString(reply.PropertiesData.getBornOn());
+			long charter = Helpers.bytesToUInt32L(reply.PropertiesData.getCharterMember());
 			if (charter == 0) {
 				av.profileProperties.charterMember = "Resident";
 			} else if (charter == 2) {
@@ -660,10 +660,10 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 			} else if (charter == 3) {
 				av.profileProperties.charterMember = "Linden";
 			} else {
-				av.profileProperties.charterMember = Helpers.BytesToString(reply.PropertiesData.getCharterMember());
+				av.profileProperties.charterMember = Helpers.bytesToString(reply.PropertiesData.getCharterMember());
 			}
 			av.profileProperties.flags = ProfileFlags.setValue(reply.PropertiesData.Flags);
-			av.profileProperties.profileURL = Helpers.BytesToString(reply.PropertiesData.getProfileURL());
+			av.profileProperties.profileURL = Helpers.bytesToString(reply.PropertiesData.getProfileURL());
 
 			onAvatarPropertiesReply.dispatch(new AvatarPropertiesReplyCallbackArgs(av));
 		}
@@ -676,10 +676,10 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 			av.profileInterests = av.new Interests();
 
 			av.profileInterests.wantToMask = airp.PropertiesData.WantToMask;
-			av.profileInterests.wantToText = Helpers.BytesToString(airp.PropertiesData.getWantToText());
+			av.profileInterests.wantToText = Helpers.bytesToString(airp.PropertiesData.getWantToText());
 			av.profileInterests.skillsMask = airp.PropertiesData.SkillsMask;
-			av.profileInterests.skillsText = Helpers.BytesToString(airp.PropertiesData.getSkillsText());
-			av.profileInterests.languagesText = Helpers.BytesToString(airp.PropertiesData.getLanguagesText());
+			av.profileInterests.skillsText = Helpers.bytesToString(airp.PropertiesData.getSkillsText());
+			av.profileInterests.languagesText = Helpers.bytesToString(airp.PropertiesData.getLanguagesText());
 
 			onAvatarInterestsReply.dispatch(new AvatarInterestsReplyCallbackArgs(av));
 		}
@@ -703,7 +703,7 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 	private void handleAvatarGroupsReply(IMessage message, SimulatorManager simulator) {
 		if (onAvatarGroupsReply.count() > 0) {
 			AgentGroupDataUpdateMessage msg = (AgentGroupDataUpdateMessage) message;
-			ArrayList<AvatarGroup> avatarGroups = new ArrayList<AvatarGroup>(msg.groupDataBlock.length);
+			List<AvatarGroup> avatarGroups = new ArrayList<>(msg.groupDataBlock.length);
 			for (int i = 0; i < msg.groupDataBlock.length; i++) {
 				AvatarGroup avatarGroup = new AvatarGroup();
 				avatarGroup.acceptNotices = msg.groupDataBlock[i].acceptNotices;
@@ -724,7 +724,7 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 	private void handleAvatarGroupsReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
 		if (onAvatarGroupsReply.count() > 0) {
 			AvatarGroupsReplyPacket groups = (AvatarGroupsReplyPacket) packet;
-			ArrayList<AvatarGroup> avatarGroups = new ArrayList<AvatarGroup>(groups.GroupData.length);
+			List<AvatarGroup> avatarGroups = new ArrayList<>(groups.GroupData.length);
 
 			for (int i = 0; i < groups.GroupData.length; i++) {
 				AvatarGroup avatarGroup = new AvatarGroup();
@@ -732,9 +732,9 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 				avatarGroup.acceptNotices = groups.GroupData[i].AcceptNotices;
 				avatarGroup.groupID = groups.GroupData[i].GroupID;
 				avatarGroup.groupInsigniaID = groups.GroupData[i].GroupInsigniaID;
-				avatarGroup.groupName = Helpers.BytesToString(groups.GroupData[i].getGroupName());
+				avatarGroup.groupName = Helpers.bytesToString(groups.GroupData[i].getGroupName());
 				avatarGroup.groupPowers = groups.GroupData[i].GroupPowers;
-				avatarGroup.groupTitle = Helpers.BytesToString(groups.GroupData[i].getGroupTitle());
+				avatarGroup.groupTitle = Helpers.bytesToString(groups.GroupData[i].getGroupTitle());
 				avatarGroup.listInProfile = groups.ListInProfile;
 
 				avatarGroups.add(avatarGroup);
@@ -746,11 +746,11 @@ public class AvatarManager implements PacketCallback, CapsCallback {
 	private void handleAvatarPickerReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
 		if (onAvatarPickerReply.count() > 0) {
 			AvatarPickerReplyPacket reply = (AvatarPickerReplyPacket) packet;
-			HashMap<UUID, String> avatars = new HashMap<UUID, String>();
+			Map<UUID, String> avatars = new HashMap<>();
 
 			for (AvatarPickerReplyPacket.DataBlock block : reply.Data) {
 				avatars.put(block.AvatarID,
-						Helpers.BytesToString(block.getFirstName()) + " " + Helpers.BytesToString(block.getLastName()));
+						Helpers.bytesToString(block.getFirstName()) + " " + Helpers.bytesToString(block.getLastName()));
 			}
 			onAvatarPickerReply.dispatch(new AvatarPickerReplyCallbackArgs(reply.AgentData.QueryID, avatars));
 		}

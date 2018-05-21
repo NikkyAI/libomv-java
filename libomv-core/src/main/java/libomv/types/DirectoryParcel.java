@@ -32,32 +32,32 @@ package libomv.types;
 
 /* A parcel retrieved from the dataserver such as results from the "For-Sale" listings */
 public class DirectoryParcel {
-	public UUID ID;
+	public UUID id;
 
-	public UUID OwnerID;
+	public UUID ownerID;
 
-	public UUID SnapshotID;
+	public UUID snapshotID;
 
-	public long RegionHandle;
+	public long regionHandle;
 
-	public String Name;
+	public String name;
 
-	public String SimName;
+	public String simName;
 
-	public String Desc;
+	public String desc;
 
-	public int SalePrice;
+	public int salePrice;
 
-	public int ActualArea;
+	public int actualArea;
 
-	public Vector3 GlobalPosition;
+	public Vector3 globalPosition;
 
-	public Vector3 SimPosition;
+	public Vector3 simPosition;
 
-	public float Dwell;
+	public float dwell;
 
 	public DirectoryParcel() {
-		GlobalPosition = new Vector3(0.0f);
-		SimPosition = new Vector3(0.0f);
+		globalPosition = new Vector3(0.0f);
+		simPosition = new Vector3(0.0f);
 	}
 }

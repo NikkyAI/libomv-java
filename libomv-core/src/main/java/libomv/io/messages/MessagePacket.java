@@ -186,7 +186,7 @@ public class MessagePacket extends AbstractMessage {
 		MapField field = client.protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);
 		if (field.type != FieldType.I16)
 			throw new Exception("Expected I16, got " + field.type);
-		return Helpers.BytesToInt16L(message, field.offset);
+		return Helpers.bytesToInt16L(message, field.offset);
 	}
 
 	@Override
@@ -194,7 +194,7 @@ public class MessagePacket extends AbstractMessage {
 		MapField field = client.protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);
 		if (field.type != FieldType.U16)
 			throw new Exception("Expected U16, got " + field.type);
-		return Helpers.BytesToUInt16L(message, field.offset);
+		return Helpers.bytesToUInt16L(message, field.offset);
 	}
 
 	@Override
@@ -202,7 +202,7 @@ public class MessagePacket extends AbstractMessage {
 		MapField field = client.protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);
 		if (field.type != FieldType.I32)
 			throw new Exception("Expected I32, got " + field.type);
-		return Helpers.BytesToInt32L(message, field.offset);
+		return Helpers.bytesToInt32L(message, field.offset);
 	}
 
 	@Override
@@ -210,7 +210,7 @@ public class MessagePacket extends AbstractMessage {
 		MapField field = client.protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);
 		if (field.type != FieldType.U32)
 			throw new Exception("Expected U32, got " + field.type);
-		return Helpers.BytesToUInt32L(message, field.offset);
+		return Helpers.bytesToUInt32L(message, field.offset);
 	}
 
 	@Override
@@ -218,7 +218,7 @@ public class MessagePacket extends AbstractMessage {
 		MapField field = client.protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);
 		if (field.type != FieldType.I64)
 			throw new Exception("Expected I64, got " + field.type);
-		return Helpers.BytesToInt64L(message, field.offset);
+		return Helpers.bytesToInt64L(message, field.offset);
 	}
 
 	@Override
@@ -226,7 +226,7 @@ public class MessagePacket extends AbstractMessage {
 		MapField field = client.protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);
 		if (field.type != FieldType.U64)
 			throw new Exception("Expected U64, got " + field.type);
-		return Helpers.BytesToUInt64L(message, field.offset);
+		return Helpers.bytesToUInt64L(message, field.offset);
 	}
 
 	@Override
@@ -234,7 +234,7 @@ public class MessagePacket extends AbstractMessage {
 		MapField field = client.protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);
 		if (field.type != FieldType.F32)
 			throw new Exception("Expected F32, got " + field.type);
-		return Helpers.BytesToFloatL(message, field.offset);
+		return Helpers.bytesToFloatL(message, field.offset);
 	}
 
 	@Override
@@ -242,7 +242,7 @@ public class MessagePacket extends AbstractMessage {
 		MapField field = client.protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);
 		if (field.type != FieldType.F64)
 			throw new Exception("Expected F64, got " + field.type);
-		return Helpers.BytesToDoubleL(message, field.offset);
+		return Helpers.bytesToDoubleL(message, field.offset);
 	}
 
 	@Override
@@ -254,8 +254,8 @@ public class MessagePacket extends AbstractMessage {
 		if (field.count == 1)
 			length = message[field.offset] & 0xFF;
 		else if (field.count == 2)
-			length = Helpers.BytesToUInt16L(message, field.offset);
-		return Helpers.BytesToString(message, field.offset, length);
+			length = Helpers.bytesToUInt16L(message, field.offset);
+		return Helpers.bytesToString(message, field.offset, length);
 	}
 
 	@Override
@@ -271,8 +271,8 @@ public class MessagePacket extends AbstractMessage {
 		MapField field = client.protocol.getFieldOffset(packet, message, blockName, fieldName, blockNumber);
 		if (field.type != FieldType.U32)
 			throw new Exception("Expected U32, got " + field.type);
-		long date = Helpers.BytesToUInt32L(message, field.offset);
-		return Helpers.UnixTimeToDateTime(date);
+		long date = Helpers.bytesToUInt32L(message, field.offset);
+		return Helpers.unixTimeToDateTime(date);
 	}
 
 	@Override
