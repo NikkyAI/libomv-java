@@ -160,18 +160,24 @@
 						<goals>
 							<goal>xjc</goal>
 						</goals>
+						<configuration>
+							<packageName>libomv.ImportExport.collada</packageName>
+							<sources>
+								<source>src/main/resources/collada/collada_schema_1_4_1.xsd</source>
+							</sources>
+							<arguments>
+								<argument>-extension</argument>
+								<argument>src/main/resources/collada/simpleMode.xsd</argument>
+							</arguments>
+							<outputDirectory>target/generated-sources/src/main/java</outputDirectory>
+							<clearOutputDir>false</clearOutputDir>
+						</configuration>
 					</execution>
 				</executions>
 				<configuration>
-					<!-- TODO Currently disabled as generating the classes -->
-					<!-- does not seem to work yet :( -->
+					<!-- TODO Currently disabled as the generated classes -->
+					<!-- are not compatible with existing code yet :( -->
 					<skipXjc>true</skipXjc>
-					<packageName>libomv.collada</packageName>
-					<sources>
-						<source>src/main/resources/collada/collada_schema_1_5.xsd</source>
-					</sources>
-					<extension>src/main/resources/collada/simpleMode.xsd</extension>
-					<outputDirectory>target/generated-sources/src/main/java</outputDirectory>
 				</configuration>
 			</plugin>
 			<plugin>
