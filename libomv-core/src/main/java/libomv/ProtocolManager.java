@@ -264,7 +264,7 @@ public class ProtocolManager {
 		if (data[6] == (byte) 0xFF) {
 			if (data[7] == (byte) 0xFF) {
 				// Low frequency
-				command = (data[8] * 256 + data[9]);
+				command = data[8] * 256 + data[9];
 				return command(command, PacketFrequency.LOW);
 			}
 
@@ -412,7 +412,6 @@ public class ProtocolManager {
 							// ignore comment lines
 						} else {
 							// The packet header
-							// #region ParsePacketHeader
 
 							// Splice the String in to tokens
 							String[] tokens = trimmedline.split("\\s+");
@@ -516,7 +515,6 @@ public class ProtocolManager {
 							inBlock = false;
 						} else if (trimmedline.length() != 0 && trimmedline.substring(0, 2).equals("//") == false) {
 							// The block header
-							// #region ParseBlockHeader
 
 							currentBlock = new MapBlock();
 

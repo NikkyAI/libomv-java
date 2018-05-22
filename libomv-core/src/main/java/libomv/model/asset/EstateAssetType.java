@@ -1,6 +1,5 @@
 package libomv.model.asset;
 
-// #region Enums
 public enum EstateAssetType {
 	None, Covenant;
 

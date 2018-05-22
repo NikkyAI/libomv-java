@@ -90,8 +90,6 @@ public class SoundManager implements PacketCallback {
 		}
 	}
 
-	// #region public methods
-
 	/**
 	 * Plays a sound in the current region at full volume from avatar position
 	 *
@@ -176,9 +174,7 @@ public class SoundManager implements PacketCallback {
 
 		client.network.sendPacket(soundtrigger);
 	}
-	// #endregion
 
-	// #region Packet Handlers
 	/**
 	 * Process an incoming packet and raise the appropriate events
 	 */
@@ -223,5 +219,5 @@ public class SoundManager implements PacketCallback {
 				trigger.SoundData.OwnerID, trigger.SoundData.ObjectID, trigger.SoundData.ParentID,
 				trigger.SoundData.Gain, trigger.SoundData.Handle, trigger.SoundData.Position));
 	}
-	// #endregion
+
 }

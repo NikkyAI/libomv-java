@@ -244,7 +244,7 @@ public class KeyFrameMotion {
 		i += 4;
 		outPoint = Helpers.bytesToFloatL(animationdata, i);
 		i += 4;
-		loop = (Helpers.bytesToInt32L(animationdata, i) != 0);
+		loop = Helpers.bytesToInt32L(animationdata, i) != 0;
 		i += 4;
 		easeInTime = Helpers.bytesToFloatL(animationdata, i);
 		i += 4;

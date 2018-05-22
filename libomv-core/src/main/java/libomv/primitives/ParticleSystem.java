@@ -54,15 +54,16 @@ public class ParticleSystem {
 		// defined
 		public static final byte AngleConeEmpty = 0x10;
 
+		private static byte MASK = 0x1F;
+
 		public static byte setValue(int value) {
-			return (byte) (value & _mask);
+			return (byte) (value & MASK);
 		}
 
 		public static byte getValue(byte value) {
-			return (byte) (value & _mask);
+			return (byte) (value & MASK);
 		}
 
-		private static byte _mask = 0x1F;
 	}
 
 	// Particle Data Flags
@@ -97,15 +98,16 @@ public class ParticleSystem {
 		// particle data contains blend functions</summary>
 		public static final int DataBlend = 0x20000;
 
+		private static final int MASK = 0x3FF;
+
 		public static int setValue(int value) {
-			return (value & _mask);
+			return value & MASK;
 		}
 
 		public static int getValue(int value) {
-			return (value & _mask);
+			return value & MASK;
 		}
 
-		private static final int _mask = 0x3FF;
 	}
 
 	// Particle Flags Enum
@@ -119,15 +121,16 @@ public class ParticleSystem {
 		// Particles use new 'correct' angle parameters
 		public static final byte UseNewAngle = 0x02;
 
+		private static final byte MASK = 3;
+
 		public static byte setValue(int value) {
-			return (byte) (value & _mask);
+			return (byte) (value & MASK);
 		}
 
 		public static byte getValue(byte value) {
-			return (byte) (value & _mask);
+			return (byte) (value & MASK);
 		}
 
-		private static final byte _mask = 3;
 	}
 
 	public enum BlendFunc {
@@ -228,21 +231,6 @@ public class ParticleSystem {
 	public final byte sysDataSize = 68;
 	public final byte partDataSize = 18;
 
-	// Can this particle system be packed in a legacy compatible way
-	// True if the particle system doesn't use new particle system features
-	public boolean isLegacyCompatible() {
-		return !hasGlow() && !hasBlendFunc();
-	}
-
-	public boolean hasGlow() {
-		return partStartGlow > 0f || partEndGlow > 0f;
-	}
-
-	public boolean hasBlendFunc() {
-		return blendFuncSource != BlendFunc.SourceAlpha.ordinal()
-				|| blendFuncDest != BlendFunc.OneMinusSourceAlpha.ordinal();
-	}
-
 	public ParticleSystem() {
 		init();
 	}
@@ -311,6 +299,48 @@ public class ParticleSystem {
 		}
 	}
 
+	public ParticleSystem(ParticleSystem particleSys) {
+		crc = particleSys.crc;
+		partFlags = particleSys.partFlags;
+		pattern = particleSys.pattern;
+		maxAge = particleSys.maxAge;
+		startAge = particleSys.startAge;
+		innerAngle = particleSys.innerAngle;
+		outerAngle = particleSys.outerAngle;
+		burstRate = particleSys.burstRate;
+		burstRadius = particleSys.burstRadius;
+		burstSpeedMin = particleSys.burstSpeedMin;
+		burstSpeedMax = particleSys.burstSpeedMax;
+		burstPartCount = particleSys.burstPartCount;
+		angularVelocity = new Vector3(particleSys.angularVelocity);
+		partAcceleration = new Vector3(particleSys.partAcceleration);
+		texture = particleSys.texture;
+		target = particleSys.target;
+		partDataFlags = particleSys.partDataFlags;
+		partMaxAge = particleSys.partMaxAge;
+		partStartColor = new Color4(particleSys.partStartColor);
+		partEndColor = new Color4(particleSys.partEndColor);
+		partStartScaleX = particleSys.partStartScaleX;
+		partStartScaleY = particleSys.partStartScaleY;
+		partEndScaleX = particleSys.partEndScaleX;
+		partEndScaleY = particleSys.partEndScaleY;
+	}
+
+	// Can this particle system be packed in a legacy compatible way
+	// True if the particle system doesn't use new particle system features
+	public boolean isLegacyCompatible() {
+		return !hasGlow() && !hasBlendFunc();
+	}
+
+	public boolean hasGlow() {
+		return partStartGlow > 0f || partEndGlow > 0f;
+	}
+
+	public boolean hasBlendFunc() {
+		return blendFuncSource != BlendFunc.SourceAlpha.ordinal()
+				|| blendFuncDest != BlendFunc.OneMinusSourceAlpha.ordinal();
+	}
+
 	private int unpackSystem(byte[] bytes, int pos) {
 		crc = (int) Helpers.bytesToUInt32L(bytes, pos);
 		pos += 4;
@@ -369,33 +399,6 @@ public class ParticleSystem {
 		partEndScaleX = Helpers.bytesToFixedL(bytes, pos++, false, 3, 5);
 		partEndScaleY = Helpers.bytesToFixedL(bytes, pos++, false, 3, 5);
 		return pos;
-	}
-
-	public ParticleSystem(ParticleSystem particleSys) {
-		crc = particleSys.crc;
-		partFlags = particleSys.partFlags;
-		pattern = particleSys.pattern;
-		maxAge = particleSys.maxAge;
-		startAge = particleSys.startAge;
-		innerAngle = particleSys.innerAngle;
-		outerAngle = particleSys.outerAngle;
-		burstRate = particleSys.burstRate;
-		burstRadius = particleSys.burstRadius;
-		burstSpeedMin = particleSys.burstSpeedMin;
-		burstSpeedMax = particleSys.burstSpeedMax;
-		burstPartCount = particleSys.burstPartCount;
-		angularVelocity = new Vector3(particleSys.angularVelocity);
-		partAcceleration = new Vector3(particleSys.partAcceleration);
-		texture = particleSys.texture;
-		target = particleSys.target;
-		partDataFlags = particleSys.partDataFlags;
-		partMaxAge = particleSys.partMaxAge;
-		partStartColor = new Color4(particleSys.partStartColor);
-		partEndColor = new Color4(particleSys.partEndColor);
-		partStartScaleX = particleSys.partStartScaleX;
-		partStartScaleY = particleSys.partStartScaleY;
-		partEndScaleX = particleSys.partEndScaleX;
-		partEndScaleY = particleSys.partEndScaleY;
 	}
 
 	private void init() {

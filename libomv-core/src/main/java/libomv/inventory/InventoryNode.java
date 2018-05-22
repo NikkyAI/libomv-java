@@ -155,18 +155,6 @@ public abstract class InventoryNode implements Serializable {
 	// parent of item/folder in tree hierarchy
 	public InventoryFolder parent;
 
-	public abstract InventoryType getType();
-
-	public abstract Date getModifyTime();
-
-	public UUID getParentID() {
-		return parent.itemID;
-	}
-
-	public UUID getOwnerID() {
-		return ownerID;
-	}
-
 	protected InventoryNode() {
 	}
 
@@ -178,6 +166,18 @@ public abstract class InventoryNode implements Serializable {
 	 */
 	protected InventoryNode(UUID itemID) {
 		this.itemID = itemID;
+	}
+
+	public abstract InventoryType getType();
+
+	public abstract Date getModifyTime();
+
+	public UUID getParentID() {
+		return parent.itemID;
+	}
+
+	public UUID getOwnerID() {
+		return ownerID;
 	}
 
 	public static InventoryNode create(InventoryType type, UUID id, UUID parentID, UUID ownerID) {

@@ -54,7 +54,7 @@ public class TimeoutEvent<T> {
 
 	public synchronized void set(T object) {
 		this.object = object;
-		this.fired = (object != null);
+		this.fired = object != null;
 		this.notifyAll();
 	}
 

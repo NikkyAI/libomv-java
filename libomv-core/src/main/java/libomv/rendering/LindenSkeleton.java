@@ -239,7 +239,7 @@ public class LindenSkeleton {
 	 * @return the loaded skeleton object or null
 	 * @throws Exception
 	 */
-	static public LindenSkeleton load() throws Exception {
+	public static LindenSkeleton load() throws Exception {
 		return load(null);
 	}
 
@@ -255,7 +255,7 @@ public class LindenSkeleton {
 	 * @return the loaded skeleton object or null
 	 * @throws Exception
 	 */
-	static public LindenSkeleton load(String fileName) throws Exception {
+	public static LindenSkeleton load(String fileName) throws Exception {
 		File charFile = null;
 		FileInputStream skeletonData = null;
 		LindenSkeleton skeleton = null;

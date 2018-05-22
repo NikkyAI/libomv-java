@@ -50,15 +50,15 @@ import libomv.utils.RefObject;
 public class Vector3 {
 
 	/** A vector with a value of 0,0,0 */
-	public final static Vector3 ZERO = new Vector3(0f);
+	public static final Vector3 ZERO = new Vector3(0f);
 	/** A vector with a value of 1,1,1 */
-	public final static Vector3 ONE = new Vector3(1f, 1f, 1f);
+	public static final Vector3 ONE = new Vector3(1f, 1f, 1f);
 	/** A unit vector facing forward (X axis), value 1,0,0 */
-	public final static Vector3 UNIT_X = new Vector3(1f, 0f, 0f);
+	public static final Vector3 UNIT_X = new Vector3(1f, 0f, 0f);
 	/** A unit vector facing left (Y axis), value 0,1,0 */
-	public final static Vector3 UNIT_Y = new Vector3(0f, 1f, 0f);
+	public static final Vector3 UNIT_Y = new Vector3(0f, 1f, 0f);
 	/** A unit vector facing up (Z axis), value 0,0,1 */
-	public final static Vector3 UNIT_Z = new Vector3(0f, 0f, 1f);
+	public static final Vector3 UNIT_Z = new Vector3(0f, 0f, 1f);
 
 	public float x;
 
@@ -218,7 +218,7 @@ public class Vector3 {
 		}
 	}
 
-	static public Vector3 parse(XmlPullParser parser) throws XmlPullParserException, IOException {
+	public static Vector3 parse(XmlPullParser parser) throws XmlPullParserException, IOException {
 		return new Vector3(parser);
 	}
 
@@ -369,7 +369,7 @@ public class Vector3 {
 	 */
 	public boolean approxEquals(Vector3 vec, float tolerance) {
 		Vector3 diff = subtract(this, vec);
-		return (diff.lengthSquared() <= tolerance * tolerance);
+		return diff.lengthSquared() <= tolerance * tolerance;
 	}
 
 	public int compareTo(Vector3 vector) {
@@ -378,7 +378,7 @@ public class Vector3 {
 
 	/** Test if this vector is composed of all finite numbers */
 	public boolean isFinite() {
-		return (Helpers.isFinite(x) && Helpers.isFinite(y) && Helpers.isFinite(z));
+		return Helpers.isFinite(x) && Helpers.isFinite(y) && Helpers.isFinite(z);
 	}
 
 	public boolean isZero() {

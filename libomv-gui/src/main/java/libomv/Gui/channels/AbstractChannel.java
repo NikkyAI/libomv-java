@@ -248,7 +248,7 @@ public abstract class AbstractChannel extends JPanel {
 	abstract protected void triggerTyping(boolean start) throws Exception;
 
 	/* this must be implemented by all channels to receive messages */
-	abstract public void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style)
+	public abstract void receiveMessage(Date timestamp, UUID fromId, String fromName, String message, String style)
 			throws BadLocationException;
 
 	public void receiveStatus(UUID sourceID, String message, String style) throws BadLocationException {

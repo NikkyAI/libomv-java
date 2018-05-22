@@ -45,17 +45,17 @@ import libomv.utils.Helpers;
 
 public class Vector4 {
 	/** A vector with a value of 0,0,0,0 */
-	public final static Vector4 ZERO = new Vector4(0f);
+	public static final Vector4 ZERO = new Vector4(0f);
 	/** A vector with a value of 1,1,1 */
-	public final static Vector4 ONE = new Vector4(1f, 1f, 1f, 1f);
+	public static final Vector4 ONE = new Vector4(1f, 1f, 1f, 1f);
 	/** A unit vector facing forward (X axis), value 1,0,0,0 */
-	public final static Vector4 UNIT_X = new Vector4(1f, 0f, 0f, 0f);
+	public static final Vector4 UNIT_X = new Vector4(1f, 0f, 0f, 0f);
 	/** A unit vector facing left (Y axis), value 0,1,0,0 */
-	public final static Vector4 UNIT_Y = new Vector4(0f, 1f, 0f, 0f);
+	public static final Vector4 UNIT_Y = new Vector4(0f, 1f, 0f, 0f);
 	/** A unit vector facing up (Z axis), value 0,0,1,0 */
-	public final static Vector4 UNIT_Z = new Vector4(0f, 0f, 1f, 0f);
+	public static final Vector4 UNIT_Z = new Vector4(0f, 0f, 1f, 0f);
 	/** A unit vector facing up (S axis), value 0,0,0,1 */
-	public final static Vector4 UNIT_S = new Vector4(0f, 0f, 0f, 1f);
+	public static final Vector4 UNIT_S = new Vector4(0f, 0f, 0f, 1f);
 
 	public float x;
 
@@ -289,7 +289,7 @@ public class Vector4 {
 		return 16;
 	}
 
-	static public Vector4 parse(XmlPullParser parser) throws XmlPullParserException, IOException {
+	public static Vector4 parse(XmlPullParser parser) throws XmlPullParserException, IOException {
 		return new Vector4(parser);
 	}
 

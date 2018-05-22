@@ -37,16 +37,6 @@ import libomv.types.UUID;
 public class BitPack {
 	public byte[] data;
 
-	public int getBytePos() {
-		if (bytePos != 0 && bitPos == 0)
-			return bytePos - 1;
-		return bytePos;
-	}
-
-	public int getBitPos() {
-		return bitPos;
-	}
-
 	private static final int MAX_BITS = 8;
 	private static byte[] ON = new byte[] { 1 };
 	private static byte[] OFF = new byte[] { 0 };
@@ -78,6 +68,16 @@ public class BitPack {
 	public BitPack(byte[] data, int pos) {
 		this.data = data;
 		bytePos = pos;
+	}
+
+	public int getBytePos() {
+		if (bytePos != 0 && bitPos == 0)
+			return bytePos - 1;
+		return bytePos;
+	}
+
+	public int getBitPos() {
+		return bitPos;
 	}
 
 	public byte[] getData() {

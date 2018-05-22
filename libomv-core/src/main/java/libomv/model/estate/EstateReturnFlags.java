@@ -11,6 +11,12 @@ public enum EstateReturnFlags {
 	/// parcels</summary>
 	ReturnScriptedAndOnOthers(7);
 
+	private int val;
+
+	private EstateReturnFlags(int value) {
+		val = value;
+	}
+
 	public static EstateReturnFlags setValue(int value) {
 		for (EstateReturnFlags e : values()) {
 			if (e.val == value)
@@ -23,10 +29,4 @@ public enum EstateReturnFlags {
 		return val;
 	}
 
-	private int val;
-
-	private EstateReturnFlags(int value) {
-		val = value;
-	}
 }
-// #endregion

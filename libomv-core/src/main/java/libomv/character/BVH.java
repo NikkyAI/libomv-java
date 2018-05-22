@@ -26,6 +26,7 @@ public class BVH {
 	private int skips = 1;
 
 	public static final double FPS_30 = 0.033;
+	public List<NameAndChannel> nameAndChannels = new ArrayList<>();
 
 	public int getSkips() {
 		return skips;
@@ -50,8 +51,6 @@ public class BVH {
 	public void setHiearchy(BVHNode hiearchy) {
 		this.hiearchy = hiearchy;
 	}
-
-	public List<NameAndChannel> nameAndChannels = new ArrayList<>();
 
 	public List<NameAndChannel> getNameAndChannels() {
 		return nameAndChannels;

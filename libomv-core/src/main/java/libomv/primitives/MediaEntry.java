@@ -35,7 +35,7 @@ import libomv.StructuredData.OSDArray;
 import libomv.StructuredData.OSDMap;
 
 public class MediaEntry {
-	// #region enums
+
 	// Permissions for control of object media
 	// [Flags]
 	public static class MediaPermission {
@@ -45,15 +45,16 @@ public class MediaEntry {
 		public static final byte Anyone = 4;
 		public static final byte All = Owner | Group | Anyone;
 
+		private static final byte MASK = All;
+
 		public static byte setValue(int value) {
-			return (byte) (value & _mask);
+			return (byte) (value & MASK);
 		}
 
 		public static byte getValue(byte value) {
-			return (byte) (value & _mask);
+			return (byte) (value & MASK);
 		}
 
-		private static final byte _mask = All;
 	}
 
 	// Style of cotrols that shold be displayed to the user
@@ -71,8 +72,6 @@ public class MediaEntry {
 		}
 
 	}
-
-	// #endregion enums
 
 	// Is display of the alternative image enabled
 	public boolean enableAlterntiveImage;

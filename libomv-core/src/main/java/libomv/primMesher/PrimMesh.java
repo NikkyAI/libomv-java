@@ -309,6 +309,43 @@ public class PrimMesh {
 
 	public int numPrimFaces = 0;
 
+	/**
+	 * Constructs a PrimMesh object and creates the profile for extrusion.
+	 *
+	 * @param sides
+	 * @param profileStart
+	 * @param profileEnd
+	 * @param hollow
+	 * @param hollowSides
+	 */
+	public PrimMesh(int sides, float profileStart, float profileEnd, float hollow, int hollowSides) {
+		this.coords = new ArrayList<>();
+		this.faces = new ArrayList<>();
+
+		this.sides = sides;
+		this.profileStart = profileStart;
+		this.profileEnd = profileEnd;
+		this.hollow = hollow;
+		this.hollowSides = hollowSides;
+
+		if (sides < 3)
+			this.sides = 3;
+		if (hollowSides < 3)
+			this.hollowSides = 3;
+		if (profileStart < 0.0f)
+			this.profileStart = 0.0f;
+		if (profileEnd > 1.0f)
+			this.profileEnd = 1.0f;
+		if (profileEnd < 0.02f)
+			this.profileEnd = 0.02f;
+		if (profileStart >= profileEnd)
+			this.profileStart = profileEnd - 0.02f;
+		if (hollow > 0.99f)
+			this.hollow = 0.99f;
+		if (hollow < 0.0f)
+			this.hollow = 0.0f;
+	}
+
 	/// <summary>
 	/// Human readable string representation of the parameters used to create a
 	/// mesh.
@@ -348,43 +385,6 @@ public class PrimMesh {
 	}
 
 	/**
-	 * Constructs a PrimMesh object and creates the profile for extrusion.
-	 *
-	 * @param sides
-	 * @param profileStart
-	 * @param profileEnd
-	 * @param hollow
-	 * @param hollowSides
-	 */
-	public PrimMesh(int sides, float profileStart, float profileEnd, float hollow, int hollowSides) {
-		this.coords = new ArrayList<>();
-		this.faces = new ArrayList<>();
-
-		this.sides = sides;
-		this.profileStart = profileStart;
-		this.profileEnd = profileEnd;
-		this.hollow = hollow;
-		this.hollowSides = hollowSides;
-
-		if (sides < 3)
-			this.sides = 3;
-		if (hollowSides < 3)
-			this.hollowSides = 3;
-		if (profileStart < 0.0f)
-			this.profileStart = 0.0f;
-		if (profileEnd > 1.0f)
-			this.profileEnd = 1.0f;
-		if (profileEnd < 0.02f)
-			this.profileEnd = 0.02f;
-		if (profileStart >= profileEnd)
-			this.profileStart = profileEnd - 0.02f;
-		if (hollow > 0.99f)
-			this.hollow = 0.99f;
-		if (hollow < 0.0f)
-			this.hollow = 0.0f;
-	}
-
-	/**
 	 * Extrudes a profile along a path.
 	 *
 	 * @param pathType
@@ -419,7 +419,7 @@ public class PrimMesh {
 			this.hasProfileCut = this.profileEnd - this.profileStart < 0.4999f;
 		else
 			this.hasProfileCut = this.profileEnd - this.profileStart < 0.9999f;
-		this.hasHollow = (this.hollow > 0.001f);
+		this.hasHollow = this.hollow > 0.001f;
 
 		float twistBegin = this.twistBegin / 360.0f * Helpers.TWO_PI;
 		float twistEnd = this.twistEnd / 360.0f * Helpers.TWO_PI;

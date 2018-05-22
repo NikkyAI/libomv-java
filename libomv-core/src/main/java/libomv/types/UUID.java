@@ -51,7 +51,7 @@ public class UUID implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/** An UUID with a value of all zeroes */
-	public final static UUID ZERO = new UUID(false);
+	public static final UUID ZERO = new UUID(false);
 
 	/** A cache of UUID.Zero as a string to optimize a common path */
 	private static final String ZERO_STRING = ZERO.toString();

@@ -45,7 +45,7 @@ public class SLDump implements PacketCallback
 	static SLDump _Dump = null;
 
 	// The main entry point for the application.
-	static public void main(String[] args)
+	public static void main(String[] args)
 	{
 		if (args.length == 0 || (args.length < 3 && !args[0].equals("--printmap")))
 		{

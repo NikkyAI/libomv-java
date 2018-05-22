@@ -51,6 +51,6 @@ public class GridRegion {
 	}
 
 	private boolean equals(GridRegion region) {
-		return (this.x == region.x && this.y == region.y);
+		return this.x == region.x && this.y == region.y;
 	}
 }

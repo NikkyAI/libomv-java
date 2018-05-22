@@ -44,15 +44,15 @@ import libomv.utils.Helpers;
 public class Vector3d {
 
 	/** A vector with a value of 0,0,0 */
-	public final static Vector3d ZERO = new Vector3d(0f);
+	public static final Vector3d ZERO = new Vector3d(0f);
 	/** A vector with a value of 1,1,1 */
-	public final static Vector3d ONE = new Vector3d(1d, 1d, 1d);
+	public static final Vector3d ONE = new Vector3d(1d, 1d, 1d);
 	/** A unit vector facing forward (X axis), value 1,0,0 */
-	public final static Vector3d UNIT_X = new Vector3d(1d, 0d, 0d);
+	public static final Vector3d UNIT_X = new Vector3d(1d, 0d, 0d);
 	/** A unit vector facing left (Y axis), value 0,1,0 */
-	public final static Vector3d UNIT_Y = new Vector3d(0d, 1d, 0d);
+	public static final Vector3d UNIT_Y = new Vector3d(0d, 1d, 0d);
 	/** A unit vector facing up (Z axis), value 0,0,1 */
-	public final static Vector3d UNIT_Z = new Vector3d(0d, 0d, 1d);
+	public static final Vector3d UNIT_Z = new Vector3d(0d, 0d, 1d);
 
 	public double x;
 
@@ -242,7 +242,7 @@ public class Vector3d {
 		return 24;
 	}
 
-	static public Vector3d parse(XmlPullParser parser) throws XmlPullParserException, IOException {
+	public static Vector3d parse(XmlPullParser parser) throws XmlPullParserException, IOException {
 		return new Vector3d(parser);
 	}
 

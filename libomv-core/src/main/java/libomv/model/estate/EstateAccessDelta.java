@@ -8,6 +8,12 @@ public enum EstateAccessDelta {
 							10), AddGroupAsAllowed(16), AddGroupAllowedAllEstates(
 									18), RemoveGroupAsAllowed(32), RemoveGroupAllowedAllEstates(34);
 
+	private int val;
+
+	private EstateAccessDelta(int value) {
+		val = value;
+	}
+
 	public static EstateAccessDelta setValue(int value) {
 		for (EstateAccessDelta e : values()) {
 			if (e.val == value)
@@ -20,9 +26,4 @@ public enum EstateAccessDelta {
 		return val;
 	}
 
-	private int val;
-
-	private EstateAccessDelta(int value) {
-		val = value;
-	}
 }

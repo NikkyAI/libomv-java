@@ -48,8 +48,8 @@ import org.apache.commons.io.input.SwappedDataInputStream;
  *          reason is implemented as a full mesh.
  */
 public class ReferenceMesh {
-	static final protected String MESH_HEADER = "Linden Binary Mesh 1.0";
-	static final protected String MORPH_FOOTER = "End Morphs";
+	protected static final String MESH_HEADER = "Linden Binary Mesh 1.0";
+	protected static final String MORPH_FOOTER = "End Morphs";
 
 	public class Face {
 		public short indices1;

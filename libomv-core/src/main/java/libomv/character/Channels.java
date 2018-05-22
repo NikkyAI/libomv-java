@@ -34,6 +34,8 @@ public class Channels {
 	private boolean zPosition;
 
 	private int rotOffset;
+	private String order = "";
+	private String text = "";
 
 	public Channels(int rotOffset) {
 		this.rotOffset = -rotOffset;
@@ -42,9 +44,6 @@ public class Channels {
 	public int getRotOffset() {
 		return rotOffset;
 	}
-
-	private String order = "";
-	private String text = "";
 
 	public String getOrder() {
 		return order;

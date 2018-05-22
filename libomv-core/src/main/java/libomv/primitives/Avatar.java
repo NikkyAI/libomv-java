@@ -45,7 +45,6 @@ import libomv.utils.Helpers;
 
 /* Basic class to hold other Avatar's data. */
 public class Avatar extends Primitive {
-	// #region Enums
 
 	// Avatar profile flags
 	// [Flags]
@@ -58,20 +57,17 @@ public class Avatar extends Primitive {
 		public static final byte Online = 16;
 		public static final byte AgeVerified = 32;
 
+		private static final byte MASK = 0x3F;
+
 		public static byte setValue(int value) {
-			return (byte) (value & _mask);
+			return (byte) (value & MASK);
 		}
 
 		public static byte getValue(byte value) {
-			return (byte) (value & _mask);
+			return (byte) (value & MASK);
 		}
 
-		private static final byte _mask = 0x3F;
 	}
-
-	// #endregion Enums
-
-	// #region Subclasses
 
 	// Positive and negative ratings
 	public final class Statistics {
@@ -145,11 +141,26 @@ public class Avatar extends Primitive {
 		// Web URL for this profile
 		public String profileURL;
 
-		// #region Properties
+		public AvatarProperties() {
+		}
+
+		public AvatarProperties(OSD osd) {
+			OSDMap tex = (OSDMap) osd;
+
+			firstLifeText = tex.get("first_life_text").asString();
+			firstLifeImage = tex.get("first_life_image").asUUID();
+			partner = tex.get("partner").asUUID();
+			aboutText = tex.get("about_text").asString();
+			bornOn = tex.get("born_on").asString();
+			charterMember = tex.get("chart_member").asString();
+			profileImage = tex.get("profile_image").asUUID();
+			flags = ProfileFlags.setValue(tex.get("flags").asInteger());
+			profileURL = tex.get("profile_url").asString();
+		}
 
 		// Should this profile be published on the web
 		public boolean getAllowPublish() {
-			return ((flags & ProfileFlags.AllowPublish) != 0);
+			return (flags & ProfileFlags.AllowPublish) != 0;
 		}
 
 		public void setAllowPublish(boolean value) {
@@ -162,7 +173,7 @@ public class Avatar extends Primitive {
 
 		// Avatar Online Status
 		public boolean getOnline() {
-			return ((flags & ProfileFlags.Online) != 0);
+			return (flags & ProfileFlags.Online) != 0;
 		}
 
 		public void setOnline(boolean value) {
@@ -175,7 +186,7 @@ public class Avatar extends Primitive {
 
 		// Is this a mature profile
 		public boolean getMaturePublish() {
-			return ((flags & ProfileFlags.MaturePublish) != 0);
+			return (flags & ProfileFlags.MaturePublish) != 0;
 		}
 
 		public void setMaturePublish(boolean value) {
@@ -186,9 +197,8 @@ public class Avatar extends Primitive {
 			}
 		}
 
-		//
 		public boolean getIdentified() {
-			return ((flags & ProfileFlags.Identified) != 0);
+			return (flags & ProfileFlags.Identified) != 0;
 		}
 
 		public void setIdentified(boolean value) {
@@ -199,9 +209,8 @@ public class Avatar extends Primitive {
 			}
 		}
 
-		//
 		public boolean getTransacted() {
-			return ((flags & ProfileFlags.Transacted) != 0);
+			return (flags & ProfileFlags.Transacted) != 0;
 		}
 
 		public void setTransacted(boolean value) {
@@ -213,7 +222,7 @@ public class Avatar extends Primitive {
 		}
 
 		public boolean getAgeVerified() {
-			return ((flags & ProfileFlags.AgeVerified) != 0);
+			return (flags & ProfileFlags.AgeVerified) != 0;
 		}
 
 		public void setAgeVerified(boolean value) {
@@ -222,9 +231,6 @@ public class Avatar extends Primitive {
 			} else {
 				flags &= ~ProfileFlags.AgeVerified;
 			}
-		}
-
-		public AvatarProperties() {
 		}
 
 		public OSD serialize() {
@@ -241,19 +247,6 @@ public class Avatar extends Primitive {
 			return tex;
 		}
 
-		public AvatarProperties(OSD osd) {
-			OSDMap tex = (OSDMap) osd;
-
-			firstLifeText = tex.get("first_life_text").asString();
-			firstLifeImage = tex.get("first_life_image").asUUID();
-			partner = tex.get("partner").asUUID();
-			aboutText = tex.get("about_text").asString();
-			bornOn = tex.get("born_on").asString();
-			charterMember = tex.get("chart_member").asString();
-			profileImage = tex.get("profile_image").asUUID();
-			flags = ProfileFlags.setValue(tex.get("flags").asInteger());
-			profileURL = tex.get("profile_url").asString();
-		}
 	}
 
 	// Avatar interests including spoken languages, skills, and "want to"
@@ -273,6 +266,16 @@ public class Avatar extends Primitive {
 		public Interests() {
 		}
 
+		public Interests(OSD osd) {
+			OSDMap tex = (OSDMap) osd;
+
+			languagesText = tex.get("languages_text").asString();
+			skillsMask = tex.get("skills_mask").asUInteger();
+			skillsText = tex.get("skills_text").asString();
+			wantToMask = tex.get("want_to_mask").asUInteger();
+			wantToText = tex.get("want_to_text").asString();
+		}
+
 		public OSD serialize() {
 			OSDMap InterestsOSD = new OSDMap(5);
 			InterestsOSD.put("languages_text", OSD.fromString(languagesText));
@@ -283,20 +286,7 @@ public class Avatar extends Primitive {
 			return InterestsOSD;
 		}
 
-		public Interests(OSD osd) {
-			OSDMap tex = (OSDMap) osd;
-
-			languagesText = tex.get("languages_text").asString();
-			skillsMask = tex.get("skills_mask").asUInteger();
-			skillsText = tex.get("skills_text").asString();
-			wantToMask = tex.get("want_to_mask").asUInteger();
-			wantToText = tex.get("want_to_text").asString();
-		}
 	}
-
-	// #endregion Subclasses
-
-	// #region Public Members
 
 	// Groups that this avatar is a member of
 	public List<UUID> groups = new ArrayList<>();
@@ -327,13 +317,63 @@ public class Avatar extends Primitive {
 	// List of current avatar animations
 	public List<Animation> animations;
 
-	// #endregion Public Members
-
 	protected String name;
 	protected String displayName;
 	protected String groupName;
 
 	// /#region Properties
+
+	// Default constructor
+	public Avatar() {
+		super();
+	}
+
+	public Avatar(UUID id) {
+		super();
+		this.id = id;
+	}
+
+	public Avatar(OSD osd) {
+		super(osd);
+
+		OSDMap tex = (OSDMap) osd;
+
+		groups = new ArrayList<>();
+
+		for (OSD U : (OSDArray) tex.get("groups")) {
+			groups.add(U.asUUID());
+		}
+
+		profileStatistics = new Statistics(tex.get("profile_statistics"));
+		profileProperties = new AvatarProperties(tex.get("profile_properties"));
+		profileInterests = new Interests(tex.get("profile_interest"));
+		controlFlags = ControlFlags.setValue(tex.get("control_flags").asInteger());
+
+		OSDArray vp = (OSDArray) tex.get("visual_parameters");
+		visualParameters = new byte[vp.size()];
+
+		for (int i = 0; i < vp.size(); i++) {
+			visualParameters[i] = (byte) vp.get(i).asInteger();
+		}
+
+		nameValues = new NameValue[3];
+
+		NameValue First = new NameValue("FirstName");
+		First.type = NameValue.ValueType.String;
+		First.valueObject = tex.get("first_name").asString();
+
+		NameValue Last = new NameValue("LastName");
+		Last.type = NameValue.ValueType.String;
+		Last.valueObject = tex.get("last_name").asString();
+
+		NameValue Group = new NameValue("Title");
+		Group.type = NameValue.ValueType.String;
+		Group.valueObject = tex.get("group_name").asString();
+
+		nameValues[0] = First;
+		nameValues[1] = Last;
+		nameValues[2] = Group;
+	}
 
 	// First name
 	public final String getFirstName() {
@@ -459,60 +499,4 @@ public class Avatar extends Primitive {
 
 	}
 
-	// #endregion Properties
-
-	// #region Constructors
-
-	// Default constructor
-	public Avatar() {
-		super();
-	}
-
-	public Avatar(UUID id) {
-		super();
-		this.id = id;
-	}
-
-	public Avatar(OSD osd) {
-		super(osd);
-
-		OSDMap tex = (OSDMap) osd;
-
-		groups = new ArrayList<>();
-
-		for (OSD U : (OSDArray) tex.get("groups")) {
-			groups.add(U.asUUID());
-		}
-
-		profileStatistics = new Statistics(tex.get("profile_statistics"));
-		profileProperties = new AvatarProperties(tex.get("profile_properties"));
-		profileInterests = new Interests(tex.get("profile_interest"));
-		controlFlags = ControlFlags.setValue(tex.get("control_flags").asInteger());
-
-		OSDArray vp = (OSDArray) tex.get("visual_parameters");
-		visualParameters = new byte[vp.size()];
-
-		for (int i = 0; i < vp.size(); i++) {
-			visualParameters[i] = (byte) vp.get(i).asInteger();
-		}
-
-		nameValues = new NameValue[3];
-
-		NameValue First = new NameValue("FirstName");
-		First.type = NameValue.ValueType.String;
-		First.valueObject = tex.get("first_name").asString();
-
-		NameValue Last = new NameValue("LastName");
-		Last.type = NameValue.ValueType.String;
-		Last.valueObject = tex.get("last_name").asString();
-
-		NameValue Group = new NameValue("Title");
-		Group.type = NameValue.ValueType.String;
-		Group.valueObject = tex.get("group_name").asString();
-
-		nameValues[0] = First;
-		nameValues[1] = Last;
-		nameValues[2] = Group;
-	}
-	// #endregion Constructors
 }

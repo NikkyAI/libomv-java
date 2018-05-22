@@ -240,8 +240,6 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 		}
 	}
 
-	// #region Public Methods
-
 	/**
 	 * Request basic information for a single parcel
 	 *
@@ -949,8 +947,6 @@ public class ParcelManager implements PacketCallback, CapsCallback {
 			callback.callback(false, null);
 		}
 	}
-
-	// #endregion Public Methods
 
 	private final void handleParcelDwellReply(Packet packet, Simulator simulator) {
 		ParcelDwellReplyPacket dwell = (ParcelDwellReplyPacket) packet;

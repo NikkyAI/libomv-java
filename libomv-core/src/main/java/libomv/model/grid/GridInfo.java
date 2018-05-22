@@ -2,7 +2,6 @@ package libomv.model.grid;
 
 import libomv.utils.Helpers;
 
-// #region gridlist definitions
 public class GridInfo implements Cloneable {
 	public String gridnick; // gridnick
 	public String gridname; // gridname

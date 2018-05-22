@@ -333,7 +333,7 @@ public class Helpers {
 	// <returns>A 64-bit integer containing the two 32-bit input
 	// values</returns>
 	public static long intsToLong(int a, int b) {
-		return (((long) a << 32) + b);
+		return ((long) a << 32) + b;
 	}
 
 	// // Unpacks two 32-bit unsigned integers from a 64-bit unsigned integer//
@@ -748,8 +748,8 @@ public class Helpers {
 		if (bytes.length < pos + 4) {
 			return 0;
 		}
-		return ((bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16)
-				+ ((bytes[pos + 3] & 0xff) << 24));
+		return (bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16)
+				+ ((bytes[pos + 3] & 0xff) << 24);
 	}
 
 	public static int bytesToInt32B(byte[] bytes) {
@@ -760,8 +760,8 @@ public class Helpers {
 		if (bytes.length < pos + 4) {
 			return 0;
 		}
-		return (((bytes[pos + 0] & 0xff) << 24) + ((bytes[pos + 1] & 0xff) << 16) + ((bytes[pos + 2] & 0xff) << 8)
-				+ (bytes[pos + 3] & 0xff));
+		return ((bytes[pos + 0] & 0xff) << 24) + ((bytes[pos + 1] & 0xff) << 16) + ((bytes[pos + 2] & 0xff) << 8)
+				+ (bytes[pos + 3] & 0xff);
 	}
 
 	/**
@@ -792,10 +792,10 @@ public class Helpers {
 		if (bytes.length < 8) {
 			return 0;
 		}
-		long low = ((bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16)
-				+ ((bytes[pos + 3] & 0xff) << 24));
-		long high = ((bytes[pos + 4] & 0xff) + ((bytes[pos + 5] & 0xff) << 8) + ((bytes[pos + 6] & 0xff) << 16)
-				+ ((bytes[pos + 7] & 0xff) << 24));
+		long low = (bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16)
+				+ ((bytes[pos + 3] & 0xff) << 24);
+		long high = (bytes[pos + 4] & 0xff) + ((bytes[pos + 5] & 0xff) << 8) + ((bytes[pos + 6] & 0xff) << 16)
+				+ ((bytes[pos + 7] & 0xff) << 24);
 		return (high << 32) + (low & 0xffffffffL);
 	}
 
@@ -807,10 +807,10 @@ public class Helpers {
 		if (bytes.length < 8) {
 			return 0;
 		}
-		long high = (((bytes[pos + 0] & 0xff) << 24) + ((bytes[pos + 1] & 0xff) << 16) + ((bytes[pos + 2] & 0xff) << 8)
-				+ (bytes[pos + 3] & 0xff));
-		long low = (((bytes[pos + 4] & 0xff) << 24) + ((bytes[pos + 5] & 0xff) << 16) + ((bytes[pos + 6] & 0xff) << 8)
-				+ (bytes[pos + 7] & 0xff));
+		long high = ((bytes[pos + 0] & 0xff) << 24) + ((bytes[pos + 1] & 0xff) << 16) + ((bytes[pos + 2] & 0xff) << 8)
+				+ (bytes[pos + 3] & 0xff);
+		long low = ((bytes[pos + 4] & 0xff) << 24) + ((bytes[pos + 5] & 0xff) << 16) + ((bytes[pos + 6] & 0xff) << 8)
+				+ (bytes[pos + 7] & 0xff);
 		return (high << 32) + (low & 0xffffffffL);
 	}
 
@@ -839,7 +839,7 @@ public class Helpers {
 		if (bytes.length < pos + 2) {
 			return 0;
 		}
-		return ((bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8));
+		return (bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8);
 	}
 
 	public static int bytesToUInt16B(byte[] bytes) {
@@ -850,7 +850,7 @@ public class Helpers {
 		if (bytes.length < pos + 2) {
 			return 0;
 		}
-		return (((bytes[pos + 0] & 0xff) << 8) + (bytes[pos + 1] & 0xff));
+		return ((bytes[pos + 0] & 0xff) << 8) + (bytes[pos + 1] & 0xff);
 	}
 
 	/**
@@ -881,7 +881,7 @@ public class Helpers {
 		if (bytes.length < pos + 4) {
 			return 0;
 		}
-		long low = ((bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16));
+		long low = (bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16);
 		long high = bytes[pos + 3] & 0xff;
 		return (high << 24) + (0xffffffffL & low);
 	}
@@ -894,7 +894,7 @@ public class Helpers {
 		if (bytes.length < pos + 4) {
 			return 0;
 		}
-		long low = ((bytes[pos + 3] & 0xff) + ((bytes[pos + 2] & 0xff) << 8) + ((bytes[pos + 1] & 0xff) << 16));
+		long low = (bytes[pos + 3] & 0xff) + ((bytes[pos + 2] & 0xff) << 8) + ((bytes[pos + 1] & 0xff) << 16);
 		long high = bytes[pos + 0] & 0xff;
 		return (high << 24) + (0xffffffffL & low);
 	}
@@ -930,10 +930,10 @@ public class Helpers {
 		if ((bytes[pos + 7] & 0xff) < 0) {
 			return 0x7fffffff;
 		}
-		long low = ((bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16)
-				+ ((bytes[pos + 3] & 0xff) << 24));
-		long high = ((bytes[pos + 4] & 0xff) + ((bytes[pos + 5] & 0xff) << 8) + ((bytes[pos + 6] & 0xff) << 16)
-				+ ((bytes[pos + 7] & 0xff) << 24));
+		long low = (bytes[pos + 0] & 0xff) + ((bytes[pos + 1] & 0xff) << 8) + ((bytes[pos + 2] & 0xff) << 16)
+				+ ((bytes[pos + 3] & 0xff) << 24);
+		long high = (bytes[pos + 4] & 0xff) + ((bytes[pos + 5] & 0xff) << 8) + ((bytes[pos + 6] & 0xff) << 16)
+				+ ((bytes[pos + 7] & 0xff) << 24);
 		return (high << 32) + (low & 0xffffffff);
 	}
 
@@ -949,10 +949,10 @@ public class Helpers {
 		if ((bytes[pos + 0] & 0xff) < 0) {
 			return 0x7fffffff;
 		}
-		long high = (((bytes[pos + 0] & 0xff) << 24) + ((bytes[pos + 1] & 0xff) << 16) + ((bytes[pos + 2] & 0xff) << 8)
-				+ (bytes[pos + 3] & 0xff));
-		long low = (((bytes[pos + 4] & 0xff) << 24) + ((bytes[pos + 5] & 0xff) << 16) + ((bytes[pos + 6] & 0xff) << 8)
-				+ (bytes[pos + 7] & 0xff));
+		long high = ((bytes[pos + 0] & 0xff) << 24) + ((bytes[pos + 1] & 0xff) << 16) + ((bytes[pos + 2] & 0xff) << 8)
+				+ (bytes[pos + 3] & 0xff);
+		long low = ((bytes[pos + 4] & 0xff) << 24) + ((bytes[pos + 5] & 0xff) << 16) + ((bytes[pos + 6] & 0xff) << 8)
+				+ (bytes[pos + 7] & 0xff);
 		return (high << 32) + (low & 0xffffffff);
 	}
 
@@ -1710,7 +1710,7 @@ public class Helpers {
 	 */
 	public static float byteToFloat(int val, float lower, float upper) {
 		float fval = val / 255.0f;
-		float delta = (upper - lower);
+		float delta = upper - lower;
 		fval *= delta;
 		fval += lower;
 
@@ -2000,7 +2000,7 @@ public class Helpers {
 	 * @return <code>true</code> if the array is empty or <code>null</code>
 	 */
 	public static boolean isEmpty(char[] array) {
-		return ((array == null) || (array.length == 0));
+		return (array == null) || (array.length == 0);
 	}
 
 	/**
@@ -2012,7 +2012,7 @@ public class Helpers {
 	 * @return <code>true</code> if the String is empty or null
 	 */
 	public static boolean isEmpty(String str) {
-		return ((str == null) || str.isEmpty());
+		return (str == null) || str.isEmpty();
 	}
 
 	/**

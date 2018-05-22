@@ -89,7 +89,7 @@ public class OSDString extends OSD {
 	@Override
 	public int asUInteger() {
 		try {
-			return ((int) Math.floor(Double.parseDouble(value)) & 0xffffffff);
+			return (int) Math.floor(Double.parseDouble(value)) & 0xffffffff;
 		} catch (NumberFormatException ex) {
 			return 0;
 		}
@@ -107,7 +107,7 @@ public class OSDString extends OSD {
 	@Override
 	public long asULong() {
 		try {
-			return ((long) Math.floor(Double.parseDouble(value)) & 0xffffffffffffffffl);
+			return (long) Math.floor(Double.parseDouble(value)) & 0xffffffffffffffffl;
 		} catch (NumberFormatException ex) {
 			return 0;
 		}

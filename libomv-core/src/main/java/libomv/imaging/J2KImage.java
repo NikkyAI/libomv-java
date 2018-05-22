@@ -234,7 +234,7 @@ public class J2KImage extends ManagedImage {
 
 			for (i = blk.uly; i < mi; i++) {
 				for (k = (i - blk.uly) * blk.w + blk.w - 1, j = blk.w - 1; j >= 0; k--)
-					barr[k] = ((buf[j--] & 0xFF) - levShift);
+					barr[k] = (buf[j--] & 0xFF) - levShift;
 			}
 
 			// Turn off the progressive attribute

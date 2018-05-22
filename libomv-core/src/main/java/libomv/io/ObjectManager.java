@@ -187,7 +187,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 						// Iterate through all of this sims avatars
 						synchronized (sim.getObjectsAvatars()) {
 							for (Avatar avatar : sim.getObjectsAvatars().values()) {
-								// #region Linear Motion
+
 								// Only do movement interpolation (extrapolation) when there is a non-zero
 								// velocity and/or acceleration
 								if (!Vector3.isZeroOrNull(avatar.acceleration)) {
@@ -198,14 +198,14 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 											.add(Vector3.multiply(
 													Vector3.add(avatar.velocity,
 															Vector3.multiply(avatar.acceleration,
-																	(0.5f * (adjSeconds - HAVOK_TIMESTEP)))),
+																	0.5f * (adjSeconds - HAVOK_TIMESTEP))),
 													adjSeconds));
 									avatar.velocity.add(Vector3.multiply(avatar.acceleration, adjSeconds));
 								} else if (!Vector3.isZeroOrNull(avatar.velocity)) {
 									// avatar.Position += avatar.Velocity * adjSeconds;
 									avatar.position.add(Vector3.multiply(avatar.velocity, adjSeconds));
 								}
-								// #endregion Linear Motion
+
 							}
 						}
 
@@ -214,7 +214,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 							for (Primitive prim : sim.getObjectsPrimitives().values()) {
 								if (prim.joint != null) {
 									if (prim.joint == JointType.Invalid) {
-										// #region Angular Velocity
+
 										if (prim.angularVelocity != null) {
 											Vector3 angVel = prim.angularVelocity;
 											float omega = angVel.lengthSquared();
@@ -226,9 +226,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 												prim.rotation.multiply(dQ);
 											}
 										}
-										// #endregion Angular Velocity
 
-										// #region Linear Motion
 										// Only do movement interpolation (extrapolation) when there is a non-zero
 										// velocity and/or acceleration
 										if (!Vector3.isZeroOrNull(prim.acceleration)) {
@@ -239,15 +237,15 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 													.add(Vector3
 															.multiply(
 																	Vector3.add(prim.velocity,
-																			Vector3.multiply(prim.acceleration, (0.5f
-																					* (adjSeconds - HAVOK_TIMESTEP)))),
+																			Vector3.multiply(prim.acceleration, 0.5f
+																					* (adjSeconds - HAVOK_TIMESTEP))),
 																	adjSeconds));
 											prim.velocity.add(Vector3.multiply(prim.acceleration, adjSeconds));
 										} else if (!Vector3.isZeroOrNull(prim.velocity)) {
 											// prim.Position += prim.Velocity * adjSeconds;
 											prim.position.add(Vector3.multiply(prim.velocity, adjSeconds));
 										}
-										// #endregion Linear Motion
+
 									} else if (prim.joint == JointType.Hinge) {
 										// FIXME: Hinge movement extrapolation
 									} else if (prim.joint == JointType.Point) {
@@ -1001,8 +999,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 	 * @throws Exception
 	 * @throws IOException
 	 */
-	public final void setTextures(Simulator simulator, int localID, TextureEntry textures)
-			throws IOException, Exception {
+	public final void setTextures(Simulator simulator, int localID, TextureEntry textures) throws Exception {
 		setTextures(simulator, localID, textures, Helpers.EmptyString);
 	}
 
@@ -1760,7 +1757,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 		updateDilation(simulator, update.RegionData.TimeDilation);
 
 		for (ObjectUpdatePacket.ObjectDataBlock block : update.ObjectData) {
-			// #region Relevance check
+
 			// Check if we are interested in this object
 			Primitive.PCode pcode = PCode.setValue(block.PCode);
 			if (!alwaysDecodeObjects) {
@@ -1785,9 +1782,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 					break;
 				}
 			}
-			// #endregion Relevance check
 
-			// #region NameValue parsing
 			NameValue[] nameValues;
 			boolean attachment = false;
 			String nameValue = Helpers.EmptyString;
@@ -1812,7 +1807,6 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 			} else {
 				nameValues = new NameValue[0];
 			}
-			// #endregion NameValue parsing
 
 			// /#region Decode Additional packed parameters in ObjectData
 			ObjectMovementUpdate objectupdate = new ObjectMovementUpdate();
@@ -1915,13 +1909,12 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 						client));
 				continue;
 			}
-			// #endregion
 
 			// Determine the object type and create the appropriate class
 			ConstructionData data;
 			RefObject<Boolean> isNewObject = new RefObject<>(false);
 			switch (pcode) {
-			// #region Prim and Foliage
+
 			case Grass:
 			case Tree:
 			case NewTree:
@@ -1939,7 +1932,6 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				onObjectDataBlockUpdate.dispatch(
 						new ObjectDataBlockUpdateCallbackArgs(simulator, prim, data, block, objectupdate, nameValues));
 
-				// #region Update Prim Info with decoded data
 				prim.flags = PrimFlags.setValue(block.UpdateFlags);
 				if ((prim.flags & PrimFlags.ZlibCompressed) != 0) {
 					logger.warn(GridClient.Log("Got a ZlibCompressed ObjectUpdate, implement me!", client));
@@ -2022,7 +2014,6 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				prim.acceleration = objectupdate.acceleration;
 				prim.rotation = objectupdate.rotation;
 				prim.angularVelocity = objectupdate.angularVelocity;
-				// #endregion
 
 				onObjectUpdate.dispatch(
 						new PrimCallbackArgs(simulator, prim, update.RegionData.TimeDilation, isNewObject.argvalue));
@@ -2033,9 +2024,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 					onParticleUpdate.dispatch(new ParticleUpdateCallbackArgs(simulator, prim.particleSys, prim));
 				}
 				break;
-			// #endregion Prim and Foliage
 
-			// #region Avatar
 			case Avatar:
 				// Update some internals if this is our avatar
 				if (block.FullID.equals(client.agent.getAgentID())
@@ -2052,10 +2041,8 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 					client.agent.setAcceleration(objectupdate.acceleration);
 					client.agent.setRelativeRotation(objectupdate.rotation);
 					client.agent.setAngularVelocity(objectupdate.angularVelocity);
-					// #endregion
-				}
 
-				// #region Create an Avatar from the decoded data
+				}
 
 				Avatar avatar = getAvatar(simulator, block.ID, block.FullID, isNewObject);
 				data = createConstructionData(avatar, pcode, block);
@@ -2094,12 +2081,10 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				// Textures
 				avatar.textures = objectupdate.textures;
 
-				// #endregion Create an Avatar from the decoded data
-
 				onAvatarUpdate.dispatch(new AvatarUpdateCallbackArgs(simulator, avatar, update.RegionData.TimeDilation,
 						isNewObject.argvalue));
 				break;
-			// #endregion Avatar
+
 			case ParticleSystem:
 				/* Obselete */
 				break;
@@ -2134,8 +2119,6 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 					continue;
 				}
 
-				// #region Decode update data
-
 				ObjectMovementUpdate update = new ObjectMovementUpdate();
 
 				// LocalID
@@ -2143,7 +2126,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				// State
 				update.state = data[pos++];
 				// Avatar boolean
-				update.avatar = (data[pos++] != 0);
+				update.avatar = data[pos++] != 0;
 				// Collision normal for avatar
 				if (update.avatar) {
 					update.collisionPlane = new Vector4(data, pos, true);
@@ -2181,7 +2164,6 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				if (block.getTextureEntry().length > 4) {
 					update.textures = new TextureEntry(block.getTextureEntry(), 4, block.getTextureEntry().length - 4);
 				}
-				// #endregion Decode update data
 
 				Primitive obj = null;
 				if (objectTracking) {
@@ -2349,7 +2331,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 				i += 4;
 			}
 
-			prim.isAttachment = (((flags & CompressedFlags.HasNameValues) != 0) && prim.parentID != 0);
+			prim.isAttachment = (flags & CompressedFlags.HasNameValues) != 0 && prim.parentID != 0;
 
 			// Media URL
 			prim.mediaURL = Helpers.EmptyString;
@@ -2466,7 +2448,6 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 			if (data.length > i) {
 				logger.debug("CompressedUpdate has extra data of " + (data.length - i) + " bytes.");
 			}
-			// #endregion
 
 			onObjectUpdate.dispatch(
 					new PrimCallbackArgs(simulator, prim, update.RegionData.TimeDilation, isNewObject.argvalue));
@@ -2724,9 +2705,7 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 			}
 		}
 	}
-	// #endregion Packet Handlers
 
-	// #region Utility Functions
 	/**
 	 *
 	 *
@@ -2819,9 +2798,6 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 
 		simulator.sendPacket(matPacket);
 	}
-	// #endregion Utility Functions
-
-	// #region Object Tracking Link
 
 	/**
 	 * Find the object with localID in the simulator and add it with fullID if it is
@@ -2906,5 +2882,5 @@ public class ObjectManager implements PacketCallback, CapsCallback {
 		}
 		return new Avatar();
 	}
-	// #endregion Object Tracking Link
+
 }

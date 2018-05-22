@@ -44,6 +44,11 @@ public class Group {
 	// Show this group in agent's profile
 	public boolean listInProfile;
 
+	public Group(UUID id) {
+		this.id = id;
+		this.insigniaID = new UUID();
+	}
+
 	public UUID getID() {
 		return id;
 	}
@@ -70,11 +75,6 @@ public class Group {
 	@Override
 	public String toString() {
 		return name;
-	}
-
-	public Group(UUID id) {
-		this.id = id;
-		this.insigniaID = new UUID();
 	}
 
 }

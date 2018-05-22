@@ -66,7 +66,7 @@ public class OSDDate extends OSD {
 
 	@Override
 	public long asLong() {
-		return (value / 1000);
+		return value / 1000;
 	}
 
 	@Override

@@ -43,17 +43,17 @@ public class TeleportFlags {
 	/* Finished, Same Sim */
 	public static final int FinishedViaSameSim = 1 << 29;
 
-	private static final int _mask = 0x3400FFFF;
+	private static final int MASK = 0x3400FFFF;
 
 	private TeleportFlags() {
 	}
 
 	public static int setValue(int value) {
-		return (value & _mask);
+		return value & MASK;
 	}
 
 	public static int getValue(int value) {
-		return (value & _mask);
+		return value & MASK;
 	}
 
 }

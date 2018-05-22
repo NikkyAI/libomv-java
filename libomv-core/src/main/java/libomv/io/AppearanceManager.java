@@ -134,7 +134,6 @@ public class AppearanceManager implements PacketCallback {
 		}
 	}
 
-	// #region Constants
 	// Maximum number of concurrent downloads for wearable assets and textures
 	private static final int MAX_CONCURRENT_DOWNLOADS = 5;
 	// Maximum number of concurrent uploads for baked textures
@@ -227,7 +226,6 @@ public class AppearanceManager implements PacketCallback {
 	private Thread appearanceThread;
 	// Is server baking complete. It needs doing only once
 	private boolean serverBakingDone = false;
-	// #endregion Private Members
 
 	private boolean sendAppearanceUpdates;
 
@@ -801,9 +799,6 @@ public class AppearanceManager implements PacketCallback {
 		else
 			addToOutfit(wearableItems);
 	}
-	// #endregion Publics Methods
-
-	// #region Attachments
 
 	/**
 	 * Adds a list of attachments to our agent
@@ -1009,9 +1004,6 @@ public class AppearanceManager implements PacketCallback {
 
 		client.network.sendPacket(detach);
 	}
-	// #endregion Attachments
-
-	// #region Appearance Helpers
 
 	/**
 	 * Inform the sim which wearables are part of our current outfit
@@ -1743,7 +1735,6 @@ public class AppearanceManager implements PacketCallback {
 		float agentSizeVPHipLength = 0.0f;
 
 		synchronized (wearables) {
-			// #region VisualParam
 
 			int vpIndex = 0;
 			int nrParams;
@@ -1819,9 +1810,6 @@ public class AppearanceManager implements PacketCallback {
 
 			myVisualParameters = new byte[set.ParamValue.length];
 			System.arraycopy(myVisualParameters, 0, set.ParamValue, 0, set.ParamValue.length);
-			// #endregion VisualParam
-
-			// #region TextureEntry
 
 			TextureEntry te = new TextureEntry(DEFAULT_AVATAR_TEXTURE);
 
@@ -1840,10 +1828,6 @@ public class AppearanceManager implements PacketCallback {
 
 			set.ObjectData.setTextureEntry(te.getBytes());
 			myTextures = te;
-
-			// #endregion TextureEntry
-
-			// #region WearableData
 
 			set.WearableData = new AgentSetAppearancePacket.WearableDataBlock[BakeType.getNumValues()];
 
@@ -1877,10 +1861,6 @@ public class AppearanceManager implements PacketCallback {
 				logger.debug(GridClient.Log("Sending TextureIndex " + bakeType + " with CacheID " + hash, client));
 			}
 
-			// #endregion WearableData
-
-			// #region Agent Size
-
 			// Takes into account the Shoe Heel/Platform offsets but not the HeadSize
 			// offset. Seems to work.
 			double agentSizeBase = 1.706;
@@ -1892,8 +1872,6 @@ public class AppearanceManager implements PacketCallback {
 					+ (agentSizeVPHeelHeight * .08) + (agentSizeVPPlatformHeight * .07);
 
 			set.AgentData.Size = new Vector3(0.45f, 0.6f, (float) agentHeight);
-
-			// #endregion Agent Size
 
 			if (client.settings.getBool(LibSettings.AVATAR_TRACKING)) {
 				Avatar me = client.network.getCurrentSim().getObjectsAvatars().get(client.agent.getLocalID());
@@ -1918,9 +1896,6 @@ public class AppearanceManager implements PacketCallback {
 			}
 		}, REBAKE_DELAY);
 	}
-	// #endregion Appearance Helpers
-
-	// #region Inventory Helpers
 
 	public boolean getFolderWearables(String[] folderPath, List<InventoryWearable> wearables,
 			List<InventoryItem> attachments) throws Exception {
@@ -1967,7 +1942,7 @@ public class AppearanceManager implements PacketCallback {
 		AgentWearablesUpdatePacket update = (AgentWearablesUpdatePacket) packet;
 
 		synchronized (wearables) {
-			// #region Test if anything changed in this update
+
 			for (AgentWearablesUpdatePacket.WearableDataBlock block : update.WearableData) {
 				WearableType type = WearableType.setValue(block.WearableType);
 
@@ -1997,7 +1972,6 @@ public class AppearanceManager implements PacketCallback {
 				}
 			}
 		}
-		// #endregion Test if anything changed in this update
 
 		if (changed) {
 			logger.debug(GridClient.Log("New wearables received in AgentWearablesUpdate", client));
@@ -2095,9 +2069,6 @@ public class AppearanceManager implements PacketCallback {
 			return true;
 		}
 	}
-	// #endregion Callbacks
-
-	// #region Static Helpers
 
 	/**
 	 * Converts a WearableType to a bodypart or clothing WearableType
@@ -2242,5 +2213,5 @@ public class AppearanceManager implements PacketCallback {
 		}
 		return textures;
 	}
-	// #endregion Static Helpers
+
 }

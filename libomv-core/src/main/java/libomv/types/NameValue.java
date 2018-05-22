@@ -172,7 +172,8 @@ public final class NameValue {
 			if (value.valueObject != null) {
 				String newLine = (i < values.length - 1) ? "\n" : "";
 				output.append(String.format("%s %s %s %s %s%s", value.name, TYPE_STRINGS[value.type.val],
-						CLASS_STRINGS[value.classType.val], SENDTO_STRINGS[value.sendto.val], value.valueObject, newLine));
+						CLASS_STRINGS[value.classType.val], SENDTO_STRINGS[value.sendto.val], value.valueObject,
+						newLine));
 			}
 		}
 
@@ -207,7 +208,7 @@ public final class NameValue {
 			break;
 		}
 		case VEC3: {
-			RefObject<Vector3> temp = new RefObject<Vector3>((Vector3) valueObject);
+			RefObject<Vector3> temp = new RefObject<>((Vector3) valueObject);
 			Vector3.tryParse(value, temp);
 			break;
 		}

@@ -28,13 +28,12 @@
  */
 package libomv.imaging;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import libomv.imaging.ManagedImage.ImageChannels;
-
 import org.apache.commons.io.input.SwappedDataInputStream;
+
+import libomv.imaging.ManagedImage.ImageChannels;
 
 public class TGAHeader {
 	protected class TGAColorMap {
@@ -61,7 +60,7 @@ public class TGAHeader {
 		public TGAColorMap() {
 		}
 
-		public TGAColorMap(SwappedDataInputStream is) throws EOFException, IOException {
+		public TGAColorMap(SwappedDataInputStream is) throws IOException {
 			offset = is.readUnsignedShort();
 			length = is.readUnsignedShort();
 			bits = is.readByte();
@@ -86,9 +85,9 @@ public class TGAHeader {
 			if (!gray) {
 				colorBits /= 3;
 
-				bMask = ((2 ^ colorBits) - 1);
+				bMask = (2 ^ colorBits) - 1;
 				gShift = bShift + colorBits;
-				gMask = ((2 ^ colorBits) - 1);
+				gMask = (2 ^ colorBits) - 1;
 				rShift = gShift + colorBits;
 
 				if (gMask > 0)
@@ -97,9 +96,9 @@ public class TGAHeader {
 					blueM = new byte[length];
 			}
 
-			rMask = ((2 ^ colorBits) - 1);
+			rMask = (2 ^ colorBits) - 1;
 			aShift = rShift + colorBits;
-			aMask = ((2 ^ alphaBits) - 1);
+			aMask = (2 ^ alphaBits) - 1;
 
 			if (rMask > 0)
 				redM = new byte[length];
@@ -135,14 +134,14 @@ public class TGAHeader {
 			if (!gray) {
 				colorBits /= 3;
 
-				bMask = ((2 ^ Math.round(colorBits)) - 1);
+				bMask = (2 ^ Math.round(colorBits)) - 1;
 				gShift = bShift + Math.round(colorBits);
-				gMask = ((2 ^ (int) Math.ceil(colorBits)) - 1);
+				gMask = (2 ^ (int) Math.ceil(colorBits)) - 1;
 				rShift = gShift + (int) Math.ceil(colorBits);
 			}
-			rMask = ((2 ^ (int) Math.floor(colorBits)) - 1);
+			rMask = (2 ^ (int) Math.floor(colorBits)) - 1;
 			aShift = rShift + (int) Math.floor(colorBits);
-			aMask = ((2 ^ alphaBits) - 1);
+			aMask = (2 ^ alphaBits) - 1;
 		}
 	}
 
@@ -169,7 +168,7 @@ public class TGAHeader {
 			}
 		}
 
-		public TGAImageSpec(SwappedDataInputStream is) throws EOFException, IOException {
+		public TGAImageSpec(SwappedDataInputStream is) throws IOException {
 			xOrigin = is.readUnsignedShort();
 			yOrigin = is.readUnsignedShort();
 			width = is.readUnsignedShort();
@@ -220,7 +219,7 @@ public class TGAHeader {
 		imageSpec = new TGAImageSpec(image);
 	}
 
-	public TGAHeader(SwappedDataInputStream is) throws EOFException, IOException {
+	public TGAHeader(SwappedDataInputStream is) throws IOException {
 		idLength = is.readByte();
 		colorMapType = is.readByte();
 		imageType = is.readByte();

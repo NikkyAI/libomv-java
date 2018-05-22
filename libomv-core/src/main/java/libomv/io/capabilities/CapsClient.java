@@ -284,11 +284,10 @@ public class CapsClient extends AsyncHTTPClient<OSD> {
 		if (encoding != null)
 			entity.setContentEncoding(encoding);
 
-		// #region Stats Tracking
 		if (client != null && trackUtilization) {
 			client.stats.updateNetStats(name, Type.Message, entity.getContentLength(), 0);
 		}
-		// #endregion
+
 		return executeHttpPost(address, entity, callback, timeout);
 	}
 

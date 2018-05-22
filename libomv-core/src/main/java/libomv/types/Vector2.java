@@ -49,19 +49,19 @@ public final class Vector2 {
 	/**
 	 * A vector with a value of 0,0
 	 */
-	public final static Vector2 ZERO = new Vector2();
+	public static final Vector2 ZERO = new Vector2();
 	/**
 	 * A vector with a value of 1,1
 	 */
-	public final static Vector2 ONE = new Vector2(1f, 1f);
+	public static final Vector2 ONE = new Vector2(1f, 1f);
 	/**
 	 * A vector with a value of 1,0
 	 */
-	public final static Vector2 UNIT_X = new Vector2(1f, 0f);
+	public static final Vector2 UNIT_X = new Vector2(1f, 0f);
 	/**
 	 * A vector with a value of 0,1
 	 */
-	public final static Vector2 UNIT_Y = new Vector2(0f, 1f);
+	public static final Vector2 UNIT_Y = new Vector2(0f, 1f);
 
 	/** X value */
 	public float x;
@@ -200,7 +200,7 @@ public final class Vector2 {
 		}
 	}
 
-	static public Vector2 parse(XmlPullParser parser) throws XmlPullParserException, IOException {
+	public static Vector2 parse(XmlPullParser parser) throws XmlPullParserException, IOException {
 		return new Vector2(parser);
 	}
 
@@ -334,7 +334,7 @@ public final class Vector2 {
 	 */
 	public boolean approxEquals(Vector2 vec, float tolerance) {
 		Vector2 diff = subtract(vec);
-		return (diff.lengthSquared() <= tolerance * tolerance);
+		return diff.lengthSquared() <= tolerance * tolerance;
 	}
 
 	public int compareTo(Vector2 vector) {

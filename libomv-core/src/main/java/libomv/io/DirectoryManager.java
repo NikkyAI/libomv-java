@@ -703,6 +703,10 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 			private List<AgentSearchData> people = null;
 			private UUID uuid;
 
+			public DirPeopleCallbackHandler(UUID uuid) {
+				this.uuid = uuid;
+			}
+
 			public List<AgentSearchData> getPeople() {
 				return people;
 			}
@@ -715,9 +719,6 @@ public class DirectoryManager implements PacketCallback, CapsCallback {
 				return false;
 			}
 
-			public DirPeopleCallbackHandler(UUID uuid) {
-				this.uuid = uuid;
-			}
 		}
 
 		DirPeopleCallbackHandler callback = new DirPeopleCallbackHandler(UUID.generateUUID());

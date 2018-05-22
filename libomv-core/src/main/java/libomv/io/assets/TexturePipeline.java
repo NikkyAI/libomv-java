@@ -127,11 +127,6 @@ public class TexturePipeline implements PacketCallback {
 	// A refresh timer used to increase the priority of stalled requests
 	private Timer refreshDownloadsTimer;
 
-	// Current number of pending and in-process transfers
-	public final int getTransferCount() {
-		return texTransfers.size();
-	}
-
 	/**
 	 * Default constructor, Instantiates a new copy of the TexturePipeline class
 	 *
@@ -152,6 +147,11 @@ public class TexturePipeline implements PacketCallback {
 		// Handle client connected and disconnected events
 		client.login.onLoginProgress.add(new Network_LoginProgress());
 		client.network.onDisconnected.add(new Network_Disconnected());
+	}
+
+	// Current number of pending and in-process transfers
+	public final int getTransferCount() {
+		return texTransfers.size();
 	}
 
 	@Override
@@ -600,8 +600,6 @@ public class TexturePipeline implements PacketCallback {
 		return packet;
 	}
 
-	// #region Raw Packet Handlers
-
 	/**
 	 * Handle responses from the simulator that tell us a texture we have requested
 	 * is unable to be located or no longer exists. This will remove the request
@@ -738,8 +736,6 @@ public class TexturePipeline implements PacketCallback {
 	private int getNetworkThroughput(long bytes, long duration) {
 		return duration != 0 ? Math.round(bytes / duration) : 0;
 	}
-
-	// #endregion
 
 	private TaskInfo getTransferValue(UUID textureID) {
 		synchronized (texTransfers) {

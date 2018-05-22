@@ -242,7 +242,7 @@ public class Parcel {
 			request.ParcelData.setDesc(Helpers.stringToBytes(this.desc));
 			request.ParcelData.GroupID = this.groupID;
 			request.ParcelData.LandingType = this.landing.getValue();
-			request.ParcelData.MediaAutoScale = (this.media.mediaAutoScale) ? (byte) 0x1 : (byte) 0x0;
+			request.ParcelData.MediaAutoScale = this.media.mediaAutoScale ? (byte) 0x1 : (byte) 0x0;
 			request.ParcelData.MediaID = this.media.mediaID;
 			request.ParcelData.setMediaURL(Helpers.stringToBytes(this.media.mediaURL.toString()));
 			request.ParcelData.setMusicURL(Helpers.stringToBytes(this.musicURL.toString()));

@@ -260,7 +260,7 @@ public final class LLSDXml extends OSDParser {
 			boolean bool = false;
 			if (notEmpty) {
 				s = parser.nextText().trim();
-				bool = (s != null && !s.isEmpty() && (s.toLowerCase().equals("true") || s.equals("1")));
+				bool = s != null && !s.isEmpty() && (s.toLowerCase().equals("true") || s.equals("1"));
 			}
 			ret = OSD.fromBoolean(bool);
 		} else if (name.equals(INTEGER_TAG)) {

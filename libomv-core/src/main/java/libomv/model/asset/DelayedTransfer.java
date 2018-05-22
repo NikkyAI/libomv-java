@@ -1,6 +1,5 @@
 package libomv.model.asset;
 
-// #region Transfer Classes
 public class DelayedTransfer {
 	public StatusCode status;
 	public byte[] data;

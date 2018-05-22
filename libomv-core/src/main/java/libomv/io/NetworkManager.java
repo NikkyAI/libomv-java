@@ -609,7 +609,7 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 
 	public boolean getIsEventQueueRunning() {
 		synchronized (simulators) {
-			return (currentSim != null && currentSim.getIsEventQueueRunning());
+			return currentSim != null && currentSim.getIsEventQueueRunning();
 		}
 	}
 
@@ -1016,7 +1016,7 @@ public class NetworkManager implements PacketCallback, CapsCallback {
 
 		// Send a CloseCircuit packet to simulators if we are initiating the
 		// disconnect
-		boolean sendCloseCircuit = (type == DisconnectType.ClientInitiated || type == DisconnectType.NetworkTimeout);
+		boolean sendCloseCircuit = type == DisconnectType.ClientInitiated || type == DisconnectType.NetworkTimeout;
 
 		synchronized (simulators) {
 			// Disconnect all simulators except the current one

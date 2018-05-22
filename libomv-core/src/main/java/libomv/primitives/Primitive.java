@@ -646,8 +646,6 @@ public class Primitive {
 
 	}
 
-	// #region Subclasses
-
 	// Parameters used to construct a visual representation of a primitive
 	public class ConstructionData {
 		public ProfileCurve profileCurve;
@@ -704,8 +702,6 @@ public class Primitive {
 		public ConstructionData(OSD osd) {
 			fromOSD(osd);
 		}
-
-		// #region Properties
 
 		public ConstructionData(ConstructionData primData) {
 			profileCurve = primData.profileCurve;
@@ -874,8 +870,6 @@ public class Primitive {
 				end.y = pathScaleY;
 			return end;
 		}
-
-		// #endregion Properties
 
 		public OSD serialize() {
 			OSDMap path = new OSDMap(14);
@@ -1197,28 +1191,6 @@ public class Primitive {
 		public UUID sculptTexture;
 		private byte type;
 
-		public SculptType getType() {
-			return SculptType.values()[type & 7];
-		}
-
-		public void setType(SculptType value) {
-			type = value.getValue();
-		}
-
-		public void setType(int value) {
-			type = (byte) (value & 0x7);
-		}
-
-		// Render inside out (inverts the normals).
-		public boolean getInvert() {
-			return (type & SculptType.Invert.getValue()) != 0;
-		}
-
-		// Render an X axis mirror of the sculpty.
-		public boolean getMirror() {
-			return (type & SculptType.Mirror.getValue()) != 0;
-		}
-
 		// Default constructor
 		public SculptData() {
 		}
@@ -1240,6 +1212,28 @@ public class Primitive {
 		public SculptData(SculptData value) {
 			sculptTexture = value.sculptTexture;
 			this.type = value.getType().getValue();
+		}
+
+		public SculptType getType() {
+			return SculptType.values()[type & 7];
+		}
+
+		public void setType(SculptType value) {
+			type = value.getValue();
+		}
+
+		public void setType(int value) {
+			type = (byte) (value & 0x7);
+		}
+
+		// Render inside out (inverts the normals).
+		public boolean getInvert() {
+			return (type & SculptType.Invert.getValue()) != 0;
+		}
+
+		// Render an X axis mirror of the sculpty.
+		public boolean getMirror() {
+			return (type & SculptType.Mirror.getValue()) != 0;
 		}
 
 		public byte[] getBytes() {
@@ -1281,7 +1275,7 @@ public class Primitive {
 
 		public boolean equals(SculptData obj) {
 			return obj != null && (sculptTexture == null ? (sculptTexture == obj.sculptTexture)
-					: (sculptTexture.equals(obj.sculptTexture))) && type == obj.type;
+					: sculptTexture.equals(obj.sculptTexture)) && type == obj.type;
 		}
 	}
 
@@ -1362,12 +1356,9 @@ public class Primitive {
 		public boolean equals(LightImage obj) {
 			return obj != null && lightTexture == null ? (lightTexture == obj.lightTexture)
 					: (lightTexture.equals(obj.lightTexture)) && params == null ? (params == obj.params)
-							: (params.equals(obj.params));
+							: params.equals(obj.params);
 		}
 	}
-	// #endregion Subclasses
-
-	// #region Public Members
 
 	// The Object's UUID, asset server
 	public UUID id;
@@ -1428,68 +1419,6 @@ public class Primitive {
 
 	// Array of media entries indexed by face number
 	public MediaEntry[] faceMedia;
-
-	// #endregion Public Members
-
-	// #region Properties
-
-	// Uses basic heuristics to estimate the primitive shape
-	public PrimType getType() {
-		if (sculpt != null && sculpt.getType() != SculptType.None && !sculpt.sculptTexture.equals(UUID.ZERO)) {
-			if (sculpt.getType() == SculptType.Mesh)
-				return PrimType.Mesh;
-			return PrimType.Sculpt;
-		}
-
-		boolean linearPath = (primData.pathCurve == PathCurve.Line || primData.pathCurve == PathCurve.Flexible);
-		float scaleY = primData.pathScaleY;
-
-		if (linearPath) {
-			switch (primData.profileCurve) {
-			case Circle:
-				return PrimType.Cylinder;
-			case Square:
-				return PrimType.Box;
-			case IsometricTriangle:
-			case EquilateralTriangle:
-			case RightTriangle:
-				return PrimType.Prism;
-			case HalfCircle:
-			default:
-				return PrimType.Unknown;
-			}
-		}
-
-		switch (primData.pathCurve) {
-		case Flexible:
-			return PrimType.Unknown;
-		case Circle:
-			switch (primData.profileCurve) {
-			case Circle:
-				if (scaleY > 0.75f)
-					return PrimType.Sphere;
-				return PrimType.Torus;
-			case HalfCircle:
-				return PrimType.Sphere;
-			case EquilateralTriangle:
-				return PrimType.Ring;
-			case Square:
-				if (scaleY <= 0.75f)
-					return PrimType.Tube;
-			default:
-				return PrimType.Unknown;
-			}
-		case Circle2:
-			if (primData.profileCurve == ProfileCurve.Circle)
-				return PrimType.Sphere;
-		default:
-			return PrimType.Unknown;
-		}
-	}
-
-	// #endregion Properties
-
-	// #region Constructors
 
 	// Default constructor
 	public Primitive() {
@@ -1552,9 +1481,59 @@ public class Primitive {
 		particleSys = new ParticleSystem(prim.particleSys);
 	}
 
-	// #endregion Constructors
+	// Uses basic heuristics to estimate the primitive shape
+	public PrimType getType() {
+		if (sculpt != null && sculpt.getType() != SculptType.None && !sculpt.sculptTexture.equals(UUID.ZERO)) {
+			if (sculpt.getType() == SculptType.Mesh)
+				return PrimType.Mesh;
+			return PrimType.Sculpt;
+		}
 
-	// #region Public Methods
+		boolean linearPath = primData.pathCurve == PathCurve.Line || primData.pathCurve == PathCurve.Flexible;
+		float scaleY = primData.pathScaleY;
+
+		if (linearPath) {
+			switch (primData.profileCurve) {
+			case Circle:
+				return PrimType.Cylinder;
+			case Square:
+				return PrimType.Box;
+			case IsometricTriangle:
+			case EquilateralTriangle:
+			case RightTriangle:
+				return PrimType.Prism;
+			case HalfCircle:
+			default:
+				return PrimType.Unknown;
+			}
+		}
+
+		switch (primData.pathCurve) {
+		case Flexible:
+			return PrimType.Unknown;
+		case Circle:
+			switch (primData.profileCurve) {
+			case Circle:
+				if (scaleY > 0.75f)
+					return PrimType.Sphere;
+				return PrimType.Torus;
+			case HalfCircle:
+				return PrimType.Sphere;
+			case EquilateralTriangle:
+				return PrimType.Ring;
+			case Square:
+				if (scaleY <= 0.75f)
+					return PrimType.Tube;
+			default:
+				return PrimType.Unknown;
+			}
+		case Circle2:
+			if (primData.profileCurve == ProfileCurve.Circle)
+				return PrimType.Sphere;
+		default:
+			return PrimType.Unknown;
+		}
+	}
 
 	public OSD serialize() {
 
@@ -1730,10 +1709,6 @@ public class Primitive {
 		return buffer;
 	}
 
-	// #endregion Public Methods
-
-	// #region Overrides
-
 	@Override
 	public boolean equals(Object obj) {
 		return (obj instanceof Primitive) ? equals(this, (Primitive) obj) : false;
@@ -1747,7 +1722,7 @@ public class Primitive {
 		if (lhs == null || rhs == null) {
 			return rhs == lhs;
 		}
-		return (lhs.id == rhs.id);
+		return lhs.id == rhs.id;
 	}
 
 	@Override
@@ -1772,10 +1747,6 @@ public class Primitive {
 				^ (scale != null ? scale.hashCode() : 0) ^ soundID.hashCode() ^ text.hashCode()
 				^ treeSpecies.hashCode();
 	}
-
-	// #endregion Overrides
-
-	// #region Parameter Packing Methods
 
 	public static short packBeginCut(float beginCut) {
 		return (short) Helpers.roundFromZero(beginCut / CUT_QUANTA);
@@ -1816,10 +1787,6 @@ public class Primitive {
 	public static short packProfileHollow(float profileHollow) {
 		return (short) Helpers.roundFromZero(profileHollow / HOLLOW_QUANTA);
 	}
-
-	// #endregion Parameter Packing Methods
-
-	// #region Parameter Unpacking Methods
 
 	public static float unpackBeginCut(short beginCut) {
 		return beginCut * CUT_QUANTA;

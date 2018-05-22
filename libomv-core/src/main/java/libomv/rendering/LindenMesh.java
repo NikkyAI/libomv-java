@@ -47,8 +47,6 @@ import libomv.utils.Helpers;
 
 public class LindenMesh extends ReferenceMesh {
 
-	// #region Mesh Structs
-
 	public class Vertex {
 		public Vector3 position;
 		public Vector3 normal;
@@ -98,7 +96,9 @@ public class LindenMesh extends ReferenceMesh {
 			return String.format("%d -> %d", remapSource, remapDestination);
 		}
 	}
-	// #endregion Mesh Structs
+
+	// List of skinweights, in the same order as the mesh vertices
+	public List<SkinWeightElement> skinWeights = new ArrayList<>();
 
 	public FloatBuffer vertices;
 	public FloatBuffer normals;
@@ -408,9 +408,6 @@ public class LindenMesh extends ReferenceMesh {
 		public float weight2; // Weight with whitch the second bone influences the vertex
 	}
 
-	// List of skinweights, in the same order as the mesh vertices
-	public List<SkinWeightElement> skinWeights = new ArrayList<>();
-
 	/**
 	 * Decompress the skinweights
 	 *
@@ -421,7 +418,7 @@ public class LindenMesh extends ReferenceMesh {
 	private void expandCompressedSkinWeights(List<String> expandedJointList) {
 		for (int i = 0; i < numVertices; i++) {
 			int boneIndex = (int) Math.floor(weights.get(i)); // Whole number part is the index
-			float boneWeight = (weights.get(i) - boneIndex); // fractional part is the weight
+			float boneWeight = weights.get(i) - boneIndex; // fractional part is the weight
 			SkinWeightElement elm = new SkinWeightElement();
 
 			if (boneIndex == 0) // Special case for dealing with eye meshes, which doesn't have any weights
@@ -444,5 +441,5 @@ public class LindenMesh extends ReferenceMesh {
 			skinWeights.add(elm);
 		}
 	}
-	// #endregion Skin weight
+
 }

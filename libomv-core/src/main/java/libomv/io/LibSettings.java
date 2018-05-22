@@ -63,8 +63,6 @@ public class LibSettings extends Settings implements PacketCallback {
 	/* Beta grid login server */
 	public static String ADITI_LOGIN_SERVER = "https://login.aditi.lindenlab.com/cgi-bin/login.cgi";
 
-	// #region Application Settings
-
 	/* Application name */
 	public static final String LIBRARY_NAME = "libomv-java";
 
@@ -79,8 +77,6 @@ public class LibSettings extends Settings implements PacketCallback {
 
 	/* The relative directory where cached data are kept, default "libomv" */
 	public static final String RESOURCE_DIR = "resourceDir";
-
-	// #region manager control
 
 	/* Initialize Appearncew Manager */
 	public static final String ENABLE_APPEARANCE_MANAGER = "enableAppearanceMgr";
@@ -134,8 +130,6 @@ public class LibSettings extends Settings implements PacketCallback {
 	// Use Caps for fetching inventory where available
 	public static final String HTTP_INVENTORY = "httpInventory";
 
-	// #region Timeouts and Intervals
-
 	/* Number of milliseconds before an asset transfer will time out */
 	public int TRANSFER_TIMEOUT = 90 * 1000;
 
@@ -169,7 +163,7 @@ public class LibSettings extends Settings implements PacketCallback {
 	public int MAP_REQUEST_TIMEOUT = 5 * 1000;
 
 	/* Number of milliseconds between sending pings to each sim */
-	public final static int PING_INTERVAL = 2200;
+	public static final int PING_INTERVAL = 2200;
 
 	/* Number of milliseconds between sending camera updates */
 	public static final int DEFAULT_AGENT_UPDATE_INTERVAL = 500;
@@ -330,7 +324,6 @@ public class LibSettings extends Settings implements PacketCallback {
 	 * CPU time for enabling this option.
 	 */
 	public static final String TRACK_UTILIZATION = "trackUtilization";
-	// #region Parcel Tracking
 
 	/*
 	 * If true, parcel details will be stored in the <code>Simulator.Parcels</code>
@@ -350,8 +343,6 @@ public class LibSettings extends Settings implements PacketCallback {
 	 */
 	public boolean ALWAYS_REQUEST_PARCEL_DWELL = true;
 
-	// #region Asset Cache
-
 	/*
 	 * If true, images, and other assets downloaded from the server will be cached
 	 * in a local directory
@@ -364,8 +355,6 @@ public class LibSettings extends Settings implements PacketCallback {
 	/* Maximum size cached files are allowed to take on disk (bytes) */
 	public static final String ASSET_CACHE_MAX_SIZE = "assetCacheMaxSize";
 
-	// #region Misc
-
 	/* Default color used for viewer particle effects */
 	public Color4 DEFAULT_EFFECT_COLOR = new Color4(1, 0, 0, 1);
 
@@ -377,8 +366,6 @@ public class LibSettings extends Settings implements PacketCallback {
 
 	/* UUID of a texture used by some viewers to identify type of client used */
 	public UUID CLIENT_IDENTIFICATION_TAG = UUID.ZERO;
-
-	// #region Texture Pipeline
 
 	/*
 	 * The maximum number of concurrent texture downloads allowed Increasing this
@@ -408,18 +395,12 @@ public class LibSettings extends Settings implements PacketCallback {
 	/* Log packet retransmission info */
 	public boolean LOG_RESENDS = true;
 
-	// #region Private Fields
 	/*
 	 * Cost of uploading an asset, Read-only since this value is dynamically fetched
 	 * at login
 	 */
 	private int priceUpload = 0;
 
-	public int getUploadPrice() {
-		return priceUpload;
-	}
-
-	// #region Default settings
 	private DefaultSetting[] defaults = { new DefaultSetting(ENABLE_APPEARANCE_MANAGER, false),
 			new DefaultSetting(ENABLE_AVATAR_MANAGER, true), new DefaultSetting(ENABLE_INVENTORY_MANAGER, true),
 			new DefaultSetting(ENABLE_DIRECTORY_MANAGER, false), new DefaultSetting(ENABLE_SOUND_MANAGER, true),
@@ -450,6 +431,10 @@ public class LibSettings extends Settings implements PacketCallback {
 	public LibSettings() {
 		super("_libomv/settings.lib");
 		setDefaults(defaults);
+	}
+
+	public int getUploadPrice() {
+		return priceUpload;
 	}
 
 	public LibSettings initialize() {

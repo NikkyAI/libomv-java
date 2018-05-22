@@ -209,6 +209,14 @@ public class LoginManager {
 
 	private Map<Callback<LoginProgressCallbackArgs>, String[]> callbackOptions = new HashMap<>();
 
+	private GridClient client;
+	private TimeoutEventQueue<LoginStatus> loginEvents = new TimeoutEventQueue<>();
+	private AsyncHTTPClient<OSD> httpClient;
+
+	public LoginManager(GridClient client) {
+		this.client = client;
+	}
+
 	public final void registerLoginProgressCallback(Callback<LoginProgressCallbackArgs> callback, String[] options,
 			boolean autoremove) {
 		if (options != null)
@@ -219,15 +227,6 @@ public class LoginManager {
 	public final void unregisterLoginProgressCallback(Callback<LoginProgressCallbackArgs> callback) {
 		callbackOptions.remove(callback);
 		onLoginProgress.remove(callback);
-	}
-
-	// #region Private Members
-	private GridClient client;
-	private TimeoutEventQueue<LoginStatus> loginEvents = new TimeoutEventQueue<>();
-	private AsyncHTTPClient<OSD> httpClient;
-
-	public LoginManager(GridClient client) {
-		this.client = client;
 	}
 
 	/**
@@ -411,7 +410,7 @@ public class LoginManager {
 			updateLoginStatus(LoginStatus.Failed, "Logon timed out", "timeout", null);
 			return false;
 		}
-		return (status == LoginStatus.Success);
+		return status == LoginStatus.Success;
 	}
 
 	/**
@@ -445,7 +444,7 @@ public class LoginManager {
 
 	public void requestLogin(final LoginParams loginParams, Callback<LoginProgressCallbackArgs> callback)
 			throws Exception {
-		// #region Sanity Check loginParams
+
 		if (loginParams.options == null)
 			loginParams.options = new String[] {};
 
@@ -481,7 +480,6 @@ public class LoginManager {
 
 		if (loginParams.author == null)
 			loginParams.author = Helpers.EmptyString;
-		// #endregion
 
 		if (callback != null)
 			registerLoginProgressCallback(callback, loginParams.options, false);
@@ -557,10 +555,6 @@ public class LoginManager {
 			throw ex;
 		}
 	}
-
-	// #endregion
-
-	// #region Private Methods
 
 	private void updateLoginStatus(LoginStatus status, String message, String reason, LoginResponseData reply) {
 		// Fire the login status callback
@@ -686,5 +680,5 @@ public class LoginManager {
 			updateLoginStatus(LoginStatus.Failed, reply.message, reply.reason, reply);
 		}
 	}
-	// #endregion
+
 }

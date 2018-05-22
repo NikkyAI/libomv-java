@@ -33,7 +33,7 @@ import libomv.utils.Callback;
 
 public class Bot implements Callback<DisconnectedCallbackArgs>
 {
-	public final static String LOGIN_SERVER = "https://login.agni.lindenlab.com/cgi-bin/login.cgi";
+	public static final String LOGIN_SERVER = "https://login.agni.lindenlab.com/cgi-bin/login.cgi";
 
 	public GridClient Client;
 

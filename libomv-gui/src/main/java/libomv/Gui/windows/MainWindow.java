@@ -117,28 +117,28 @@ public class MainWindow extends JFrame implements MainControl {
 	}
 
 	/* Convinience methods */
-	static public void setAction(AbstractButton comp, ActionListener actionListener, String actionCommand) {
+	public static void setAction(AbstractButton comp, ActionListener actionListener, String actionCommand) {
 		if (actionCommand != null) {
 			comp.setActionCommand(actionCommand);
 		}
 		comp.addActionListener(actionListener);
 	}
 
-	static public void setAction(JTextField comp, ActionListener actionListener, String actionCommand) {
+	public static void setAction(JTextField comp, ActionListener actionListener, String actionCommand) {
 		if (actionCommand != null) {
 			comp.setActionCommand(actionCommand);
 		}
 		comp.addActionListener(actionListener);
 	}
 
-	static public void setAction(JComboBox<?> comp, ActionListener actionListener, String actionCommand) {
+	public static void setAction(JComboBox<?> comp, ActionListener actionListener, String actionCommand) {
 		if (actionCommand != null) {
 			comp.setActionCommand(actionCommand);
 		}
 		comp.addActionListener(actionListener);
 	}
 
-	static public JMenuItem newMenuItem(String label, ActionListener actionListener, String actionCommand) {
+	public static JMenuItem newMenuItem(String label, ActionListener actionListener, String actionCommand) {
 		JMenuItem item = new JMenuItem(label);
 		setAction(item, actionListener, actionCommand);
 		return item;

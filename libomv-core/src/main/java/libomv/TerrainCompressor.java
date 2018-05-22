@@ -163,7 +163,7 @@ public class TerrainCompressor {
 
 		TerrainHeader header = prescanPatch(patchData);
 		header.quantWBits = 136;
-		header.patchIDs = (y & 0x1F);
+		header.patchIDs = y & 0x1F;
 		header.patchIDs += (x << 5);
 
 		// NOTE: No idea what prequant and postquant should be or what they do
@@ -193,7 +193,7 @@ public class TerrainCompressor {
 
 		TerrainHeader header = prescanPatch(heightmap, x, y);
 		header.quantWBits = 136;
-		header.patchIDs = (y & 0x1F);
+		header.patchIDs = y & 0x1F;
 		header.patchIDs += (x << 5);
 
 		// NOTE: No idea what prequant and postquant should be or what they do
@@ -262,7 +262,7 @@ public class TerrainCompressor {
 		header.patchIDs = bitpack.unpackBits(10);
 
 		// Word bits
-		header.wordBits = ((header.quantWBits & 0x0f) + 2);
+		header.wordBits = (header.quantWBits & 0x0f) + 2;
 
 		return header;
 	}
@@ -455,13 +455,13 @@ public class TerrainCompressor {
 					temp *= -1;
 
 					if (temp > (1 << wbits))
-						temp = (1 << wbits);
+						temp = 1 << wbits;
 
 					output.packBits(NEGATIVE_VALUE, 3);
 					output.packBits(temp, wbits);
 				} else {
 					if (temp > (1 << wbits))
-						temp = (1 << wbits);
+						temp = 1 << wbits;
 
 					output.packBits(POSITIVE_VALUE, 3);
 					output.packBits(temp, wbits);
@@ -509,7 +509,7 @@ public class TerrainCompressor {
 		float[] block = new float[16 * 16];
 		int wordsize = prequant;
 		float oozrange = 1.0f / header.range;
-		float range = (1 << prequant);
+		float range = 1 << prequant;
 		float premult = oozrange * range;
 		float sub = (1 << (prequant - 1)) + header.dcOffset * premult;
 
@@ -537,7 +537,7 @@ public class TerrainCompressor {
 		float[] block = new float[16 * 16];
 		int wordsize = prequant;
 		float oozrange = 1.0f / header.range;
-		float range = (1 << prequant);
+		float range = 1 << prequant;
 		float premult = oozrange * range;
 		float sub = (1 << (prequant - 1)) + header.dcOffset * premult;
 
@@ -560,8 +560,6 @@ public class TerrainCompressor {
 
 		return itemp;
 	}
-
-	// #region Initialization
 
 	private static void buildDequantizeTable16() {
 		for (int j = 0; j < 16; j++) {
@@ -633,5 +631,4 @@ public class TerrainCompressor {
 		}
 	}
 
-	// #endregion Initialization
 }

@@ -296,7 +296,7 @@ public abstract class AssetWearable extends AssetItem {
 						} else if (fields[0].equals("group_id")) {
 							group = new UUID(fields[1]);
 						} else if (fields[0].equals("group_owned")) {
-							groupOwned = (Integer.parseInt(fields[1]) != 0);
+							groupOwned = Integer.parseInt(fields[1]) != 0;
 						} else if (fields[0].equals("sale_type")) {
 							forSale = SaleType.setValue(fields[1]);
 						} else if (fields[0].equals("sale_price")) {

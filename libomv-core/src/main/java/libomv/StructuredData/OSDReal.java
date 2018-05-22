@@ -45,7 +45,7 @@ public class OSDReal extends OSD {
 
 	@Override
 	public boolean asBoolean() {
-		return (!Double.isNaN(value) && value != 0d);
+		return !Double.isNaN(value) && value != 0d;
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class OSDReal extends OSD {
 			return 0;
 		}
 		if (value > (2 * (double) Integer.MAX_VALUE + 1)) {
-			return (0xffffffff);
+			return 0xffffffff;
 		}
 		if (value < 0.0f) {
 			return 0;

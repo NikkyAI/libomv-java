@@ -52,9 +52,9 @@ public class Quaternion {
 	}
 
 	/** A quaternion with a value of 0,0,0,0 */
-	public final static Quaternion ZERO = new Quaternion(0f, 0f, 0f, 0f);
+	public static final Quaternion ZERO = new Quaternion(0f, 0f, 0f, 0f);
 	/** A quaternion with a value of 0,0,0,1 */
-	public final static Quaternion IDENTITY = new Quaternion(0f, 0f, 0f, 1f);
+	public static final Quaternion IDENTITY = new Quaternion(0f, 0f, 0f, 1f);
 
 	private static float DEG_TO_RAD = 0.017453292519943295769236907684886f;
 
@@ -179,7 +179,7 @@ public class Quaternion {
 
 	public boolean approxEquals(Quaternion quat, float tolerance) {
 		Quaternion diff = subtract(quat);
-		return (diff.lengthSquared() <= tolerance * tolerance);
+		return diff.lengthSquared() <= tolerance * tolerance;
 	}
 
 	public float length() {
@@ -187,7 +187,7 @@ public class Quaternion {
 	}
 
 	public float lengthSquared() {
-		return (x * x + y * y + z * z + w * w);
+		return x * x + y * y + z * z + w * w;
 	}
 
 	/** Normalizes the quaternion */
@@ -282,7 +282,7 @@ public class Quaternion {
 		}
 	}
 
-	static public Quaternion parse(XmlPullParser parser) throws XmlPullParserException, IOException {
+	public static Quaternion parse(XmlPullParser parser) throws XmlPullParserException, IOException {
 		return new Quaternion(parser);
 	}
 
@@ -640,7 +640,7 @@ public class Quaternion {
 	}
 
 	public boolean isIdentity() {
-		return (x == 0f && y == 0f && z == 0f && w == 1f);
+		return x == 0f && y == 0f && z == 0f && w == 1f;
 	}
 
 	public boolean isZero() {

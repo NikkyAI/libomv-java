@@ -35,6 +35,49 @@ import libomv.utils.Helpers;
 // Throttles the network traffic for various different traffic types.
 // Access this class through GridClient.Throttle
 public class AgentThrottle {
+
+	private GridClient client;
+	private float resend;
+	private float land;
+	private float wind;
+	private float cloud;
+	private float task;
+	private float texture;
+	private float asset;
+
+	// Default constructor, uses a default high total of 1500 KBps (1536000)
+	public AgentThrottle(GridClient client) {
+		this.client = client;
+		setTotal(1536000.0f);
+	}
+
+	/**
+	 * Constructor that decodes an existing AgentThrottle packet in to individual
+	 * values
+	 *
+	 * @param data
+	 *            Reference to the throttle data in an AgentThrottle packet
+	 * @param pos
+	 *            Offset position to start reading at in the throttle data This is
+	 *            generally not needed in clients as the server will never send a
+	 *            throttle packet to the client
+	 */
+	public AgentThrottle(byte[] data, int pos) {
+		resend = Helpers.bytesToFloatL(data, pos);
+		pos += 4;
+		land = Helpers.bytesToFloatL(data, pos);
+		pos += 4;
+		wind = Helpers.bytesToFloatL(data, pos);
+		pos += 4;
+		cloud = Helpers.bytesToFloatL(data, pos);
+		pos += 4;
+		task = Helpers.bytesToFloatL(data, pos);
+		pos += 4;
+		texture = Helpers.bytesToFloatL(data, pos);
+		pos += 4;
+		asset = Helpers.bytesToFloatL(data, pos);
+	}
+
 	// Maximum bits per second for resending unacknowledged packets
 	public final float getResend() {
 		return resend;
@@ -154,55 +197,13 @@ public class AgentThrottle {
 
 	public final void setTotal(float value) {
 		// Sane initial values
-		resend = (value * 0.1f);
-		land = (value * 0.52f / 3f);
-		wind = (value * 0.05f);
-		cloud = (value * 0.05f);
-		task = (value * 0.704f / 3f);
-		texture = (value * 0.704f / 3f);
-		asset = (value * 0.484f / 3f);
-	}
-
-	private GridClient client;
-	private float resend;
-	private float land;
-	private float wind;
-	private float cloud;
-	private float task;
-	private float texture;
-	private float asset;
-
-	// Default constructor, uses a default high total of 1500 KBps (1536000)
-	public AgentThrottle(GridClient client) {
-		this.client = client;
-		setTotal(1536000.0f);
-	}
-
-	/**
-	 * Constructor that decodes an existing AgentThrottle packet in to individual
-	 * values
-	 *
-	 * @param data
-	 *            Reference to the throttle data in an AgentThrottle packet
-	 * @param pos
-	 *            Offset position to start reading at in the throttle data This is
-	 *            generally not needed in clients as the server will never send a
-	 *            throttle packet to the client
-	 */
-	public AgentThrottle(byte[] data, int pos) {
-		resend = Helpers.bytesToFloatL(data, pos);
-		pos += 4;
-		land = Helpers.bytesToFloatL(data, pos);
-		pos += 4;
-		wind = Helpers.bytesToFloatL(data, pos);
-		pos += 4;
-		cloud = Helpers.bytesToFloatL(data, pos);
-		pos += 4;
-		task = Helpers.bytesToFloatL(data, pos);
-		pos += 4;
-		texture = Helpers.bytesToFloatL(data, pos);
-		pos += 4;
-		asset = Helpers.bytesToFloatL(data, pos);
+		resend = value * 0.1f;
+		land = value * 0.52f / 3f;
+		wind = value * 0.05f;
+		cloud = value * 0.05f;
+		task = value * 0.704f / 3f;
+		texture = value * 0.704f / 3f;
+		asset = value * 0.484f / 3f;
 	}
 
 	/**

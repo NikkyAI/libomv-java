@@ -707,8 +707,6 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		}
 	}
 
-	// #region Fetch
-
 	/**
 	 * Fetch an inventory item from the dataserver Items will also be sent to the
 	 * {@link InventoryManager.OnItemReceived} event
@@ -1109,10 +1107,6 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		}
 	}
 
-	// #endregion Fetch
-
-	// #region Find
-
 	/**
 	 * Returns the UUID of the folder (category) that defaults to containing 'type'.
 	 * The folder is not necessarily only for that type
@@ -1259,8 +1253,6 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		}
 	}
 
-	// #endregion Find
-
 	// #region Move/Rename
 
 	/**
@@ -1292,8 +1284,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 	 * @throws Exception
 	 * @throws UnsupportedEncodingException
 	 */
-	public final void move(InventoryNode item, InventoryFolder newParent, String newName)
-			throws UnsupportedEncodingException, Exception {
+	public final void move(InventoryNode item, InventoryFolder newParent, String newName) throws Exception {
 		if (item instanceof InventoryFolder) {
 			moveFolder(item.itemID, newParent.itemID, newName);
 		} else {
@@ -1313,8 +1304,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 	 * @throws Exception
 	 * @throws UnsupportedEncodingException
 	 */
-	public final void moveFolder(UUID folderID, UUID newparentID, String newName)
-			throws UnsupportedEncodingException, Exception {
+	public final void moveFolder(UUID folderID, UUID newparentID, String newName) throws Exception {
 		updateFolderProperties(folderID, newparentID, newName, FolderType.None);
 	}
 
@@ -1431,7 +1421,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 	 * @throws Exception
 	 * @throws UnsupportedEncodingException
 	 */
-	public final void moveItem(UUID itemID, UUID folderID) throws UnsupportedEncodingException, Exception {
+	public final void moveItem(UUID itemID, UUID folderID) throws Exception {
 		moveItem(itemID, folderID, Helpers.EmptyString);
 	}
 
@@ -1510,10 +1500,6 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		}
 	}
 
-	// #endregion Move
-
-	// #region Remove
-
 	/**
 	 * Remove descendants of a folder, basically emptying the folder
 	 *
@@ -1522,7 +1508,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 	 * @throws Exception
 	 * @throws InventoryException
 	 */
-	public final void removeDescendants(UUID folderID) throws Exception, InventoryException {
+	public final void removeDescendants(UUID folderID) throws Exception {
 		PurgeInventoryDescendentsPacket purge = new PurgeInventoryDescendentsPacket();
 		purge.AgentData.AgentID = client.agent.getAgentID();
 		purge.AgentData.SessionID = client.agent.getSessionID();
@@ -1632,7 +1618,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 	 * @throws Exception
 	 * @throws InventoryException
 	 */
-	public final void emptyLostAndFound() throws InventoryException, Exception {
+	public final void emptyLostAndFound() throws Exception {
 		emptySystemFolder(FolderType.LostAndFound);
 	}
 
@@ -1682,8 +1668,6 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 			}
 		}
 	}
-
-	// #endregion Remove
 
 	// /#region Create
 
@@ -1991,10 +1975,6 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		client.network.sendPacket(create);
 	}
 
-	// #endregion Create
-
-	// #region Copy
-
 	/**
 	 * Copy an item to a new location (folder)
 	 *
@@ -2164,8 +2144,6 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 			client.network.sendPacket(copy);
 		}
 	}
-
-	// #endregion Copy
 
 	// /#region Update
 
@@ -2387,8 +2365,6 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 			throw new Exception("UpdateScriptTask capability is not currently available");
 		}
 	}
-
-	// #endregion Update
 
 	// #region Rez/Give
 
@@ -3014,10 +2990,6 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		client.network.sendPacket(request);
 	}
 
-	// #endregion Task
-
-	// #region Helper Functions
-
 	private int registerItemCreatedCallback(Callback<ItemCreatedCallbackArgs> callback) {
 		return registerItemCreatedCallback(callback, -1);
 	}
@@ -3285,7 +3257,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 										} else if (key.equals("group_owned")) {
 											long i = Helpers.tryParseLong(val);
 											if (i != 0) {
-												perms.isGroupOwned = (i != 0);
+												perms.isGroupOwned = i != 0;
 											}
 										}
 									}
@@ -3353,9 +3325,7 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 	// /#endregion Helper Functions
 
 	// /#region Internal Callbacks
-	// #endregion Internal Handlers
 
-	// #region Packet Handlers
 	private final void handleSaveAssetIntoInventory(Packet packet, Simulator simulator) throws Exception {
 		SaveAssetIntoInventoryPacket save = (SaveAssetIntoInventoryPacket) packet;
 		onSaveAssetToInventory.dispatch(
@@ -3448,8 +3418,6 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 			// if we didn't request items and folders
 			parent.descendentCount = reply.AgentData.Descendents;
 
-			// #region FindObjectByPath Handling
-
 			if (searches.size() > 0) {
 				List<InventorySearch> remaining = new ArrayList<>();
 
@@ -3500,7 +3468,6 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 					searches = remaining;
 				}
 			}
-			// #endregion FindObjectByPath Handling
 
 			// Callback for inventory folder contents being updated
 			onFolderUpdated.dispatch(new FolderUpdatedCallbackArgs(parent.itemID, true));
@@ -3799,7 +3766,5 @@ public class InventoryManager implements PacketCallback, CapsCallback {
 		onScriptRunningReply
 				.dispatch(new ScriptRunningReplyCallbackArgs(msg.objectID, msg.itemID, msg.mono, msg.running));
 	}
-
-	// #endregion Packet Handlers
 
 }

@@ -52,10 +52,6 @@ public class PushbackInputStream extends FilterInputStream {
 	 */
 	private long bytesRead;
 
-	public long getBytePosition() {
-		return bytesRead;
-	}
-
 	/**
 	 * Constructs a new {@code PushbackInputStream} with {@code in} as source
 	 * stream. The size of the pushback buffer is set to 1.
@@ -110,6 +106,10 @@ public class PushbackInputStream extends FilterInputStream {
 		this.bufStart = 0;
 		this.bufEnd = 0;
 		this.bytesRead = offset;
+	}
+
+	public long getBytePosition() {
+		return bytesRead;
 	}
 
 	@Override

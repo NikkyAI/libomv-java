@@ -391,8 +391,6 @@ public class Baker {
 		}
 	}
 
-	// #region Private layer compositing methods
-
 	private boolean maskBelongsToBake(String mask) {
 		if ((bakeType == BakeType.LowerBody && mask.contains("upper"))
 				|| (bakeType == BakeType.LowerBody && mask.contains("shirt"))
@@ -411,12 +409,12 @@ public class Baker {
 		boolean sourceHasBump;
 		int i = 0;
 
-		sourceHasColor = ((source.getChannels() & ManagedImage.ImageChannels.Color) != 0 && source.getRed() != null
-				&& source.getGreen() != null && source.getBlue() != null);
-		sourceHasAlpha = ((source.getChannels() & ManagedImage.ImageChannels.Alpha) != 0 && source.getAlpha() != null);
-		sourceHasBump = ((source.getChannels() & ManagedImage.ImageChannels.Bump) != 0 && source.getBump() != null);
+		sourceHasColor = (source.getChannels() & ManagedImage.ImageChannels.Color) != 0 && source.getRed() != null
+				&& source.getGreen() != null && source.getBlue() != null;
+		sourceHasAlpha = (source.getChannels() & ManagedImage.ImageChannels.Alpha) != 0 && source.getAlpha() != null;
+		sourceHasBump = (source.getChannels() & ManagedImage.ImageChannels.Bump) != 0 && source.getBump() != null;
 
-		addSourceAlpha = (addSourceAlpha && sourceHasAlpha);
+		addSourceAlpha = addSourceAlpha && sourceHasAlpha;
 
 		byte alpha = (byte) 0xFF;
 		byte alphaInv = (byte) 0x00;

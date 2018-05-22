@@ -7,6 +7,12 @@ public enum GroupBanAction {
 	// Remove restriction on agent jointing a group
 	Unban(2);
 
+	private int val;
+
+	private GroupBanAction(int value) {
+		val = value;
+	}
+
 	public static GroupBanAction setValue(int value) {
 		for (GroupBanAction e : values()) {
 			if (e.val == value)
@@ -19,9 +25,4 @@ public enum GroupBanAction {
 		return val;
 	}
 
-	private int val;
-
-	private GroupBanAction(int value) {
-		val = value;
-	}
 }

@@ -1212,7 +1212,6 @@ public class AssetManager implements PacketCallback {
 		return false;
 	}
 
-	// #region Helpers
 	public static AssetItem createAssetItem(AssetType type, UUID assetID, byte[] assetData) {
 		try {
 			switch (type) {
@@ -1250,9 +1249,6 @@ public class AssetManager implements PacketCallback {
 		}
 		return new AssetMutable(type, assetID, assetData);
 	}
-	// #endregion Helpers
-
-	// #region old asset transfer system
 
 	private boolean processDelayedData(AssetDownload download, DelayedTransfer data) {
 		while (data != null) {
@@ -1599,5 +1595,5 @@ public class AssetManager implements PacketCallback {
 			onXferReceived.dispatch(download);
 		}
 	}
-	// #endregion Xfer Callbacks
+
 }

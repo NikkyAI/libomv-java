@@ -62,6 +62,11 @@ public class Settings {
 		private String name;
 		private OSD value;
 
+		public SettingsUpdateCallbackArgs(String name, OSD value) {
+			this.name = name;
+			this.value = value;
+		}
+
 		public String getName() {
 			return name;
 		}
@@ -70,10 +75,6 @@ public class Settings {
 			return value;
 		}
 
-		public SettingsUpdateCallbackArgs(String name, OSD value) {
-			this.name = name;
-			this.value = value;
-		}
 	}
 
 	protected File settingsPath;

@@ -10,6 +10,6 @@ public final class GridLayer {
 	public UUID imageID;
 
 	public boolean containsRegion(int x, int y) {
-		return (x >= left && x <= right && y >= bottom && y <= top);
+		return x >= left && x <= right && y >= bottom && y <= top;
 	}
 }

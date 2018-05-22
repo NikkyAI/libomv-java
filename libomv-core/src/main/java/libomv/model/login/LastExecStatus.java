@@ -16,4 +16,3 @@ public enum LastExecStatus {
 	// Application crashed during logout
 	LogoutCrash;
 }
-// #endregion Enums

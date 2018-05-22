@@ -45,10 +45,6 @@ public class PushbackReader extends FilterReader {
 
 	int bytes;
 
-	public int getBytePosition() {
-		return bytes;
-	}
-
 	/**
 	 * Constructs a new {@code PushbackReader} with {@code in} as source reader. The
 	 * size of the pushback buffer is set to the default value of 1 character.
@@ -100,6 +96,10 @@ public class PushbackReader extends FilterReader {
 		buf = new char[size];
 		pos = size;
 		bytes = offset;
+	}
+
+	public int getBytePosition() {
+		return bytes;
 	}
 
 	/**
@@ -265,7 +265,7 @@ public class PushbackReader extends FilterReader {
 			if (buf == null) {
 				throw new IOException("Reader closed");
 			}
-			return (buf.length - pos > 0 || super.ready());
+			return buf.length - pos > 0 || super.ready();
 		}
 	}
 

@@ -167,12 +167,6 @@ public class AssetGesture extends AssetItem {
 		}
 	}
 
-	/* Returns asset type */
-	@Override
-	public AssetType getAssetType() {
-		return AssetType.Gesture;
-	}
-
 	/* Keyboard key that triggers the gesture */
 	private byte triggerKey;
 	/* Modifier to the trigger key */
@@ -194,6 +188,12 @@ public class AssetGesture extends AssetItem {
 	 */
 	public AssetGesture(UUID assetID, byte[] assetData) {
 		super(assetID, assetData);
+	}
+
+	/* Returns asset type */
+	@Override
+	public AssetType getAssetType() {
+		return AssetType.Gesture;
 	}
 
 	public byte getTriggerKey() {

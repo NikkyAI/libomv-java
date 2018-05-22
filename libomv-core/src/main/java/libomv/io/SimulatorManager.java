@@ -421,22 +421,22 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 
 	// Provides access to an internal thread-safe multidimensional array
 	// containing a x,y grid mapped to each 64x64 parcel's LocalID.
-	public synchronized final int[] getParcelMap() {
+	public final synchronized int[] getParcelMap() {
 		return parcelMap;
 	}
 
-	public synchronized final int getParcelMap(int x, int y) {
+	public final synchronized int getParcelMap(int x, int y) {
 		if (x < 0 || x >= 64 || y < 0 || y >= 64)
 			throw new IllegalArgumentException(
 					"Simulator.getParcelMap() parameters need to be in the range 0 - 63. x = " + x + "; y = " + y);
 		return parcelMap[y * 64 + x];
 	}
 
-	public synchronized final void setParcelMap(int x, int y, int value) {
+	public final synchronized void setParcelMap(int x, int y, int value) {
 		parcelMap[y * 64 + x] = value;
 	}
 
-	public synchronized final void clearParcelMap() {
+	public final synchronized void clearParcelMap() {
 		for (int y = 0; y < 64; y++) {
 			for (int x = 0; x < 64; x++) {
 				parcelMap[x * 64 + y] = 0;
@@ -446,11 +446,11 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 
 	// Provides access to an internal thread-safe multidimensional array
 	// containing a x,y grid mapped to each 64x64 parcel's LocalID.
-	public synchronized final boolean getDownloadingParcelMap() {
+	public final synchronized boolean getDownloadingParcelMap() {
 		return downloadingParcelMap;
 	}
 
-	public synchronized final void setDownloadingParcelMap(boolean value) {
+	public final synchronized void setDownloadingParcelMap(boolean value) {
 		downloadingParcelMap = value;
 	}
 
@@ -1023,7 +1023,6 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 			}
 		}
 
-		// #region Queue or Send
 		OutgoingPacket outgoingPacket = new OutgoingPacket(this, type, data);
 
 		// Send ACK and logout packets directly, everything else goes through
@@ -1033,9 +1032,7 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 		} else {
 			client.network.queuePacket(outgoingPacket);
 		}
-		// #endregion Queue or Send
 
-		// #region Stats Tracking
 		if (trackUtilization) {
 			client.stats.updateNetStats(type.toString(), Type.Packet, data.capacity(), 0);
 		}
@@ -1125,7 +1122,6 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 		// Keep track of when this packet was sent out (right now)
 		outgoingPacket.tickCount = System.currentTimeMillis();
 
-		// #region ACK Appending
 		int dataLength = buffer.limit();
 
 		// Keep appending ACKs until there is no room left in the packet or
@@ -1147,7 +1143,6 @@ public class SimulatorManager extends Thread implements libomv.model.Simulator {
 			// Increase the byte buffer limit to the new length
 			buffer.limit(dataLength);
 		}
-		// #endregion ACK Appending
 
 		if (!isResend) {
 			// Not a resend, assign a new sequence number

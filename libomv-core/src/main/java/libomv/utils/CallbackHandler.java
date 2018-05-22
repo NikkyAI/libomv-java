@@ -69,7 +69,7 @@ public class CallbackHandler<T> {
 			if (callbackHandlers == null)
 				callbackHandlers = new LinkedHashMap<>();
 
-			return (callbackHandlers.put(handler, autoremove) != null);
+			return callbackHandlers.put(handler, autoremove) != null;
 		}
 		return false;
 	}
@@ -87,7 +87,7 @@ public class CallbackHandler<T> {
 	 */
 	public synchronized boolean remove(Callback<T> handler) {
 		if (handler != null && callbackHandlers != null) {
-			return (callbackHandlers.remove(handler) != null);
+			return callbackHandlers.remove(handler) != null;
 		}
 		return false;
 	}

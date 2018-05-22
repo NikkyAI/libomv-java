@@ -57,22 +57,18 @@ public final class LoginResponseData {
 	public int secondsSinceEpoch;
 	public String udpBlacklist;
 
-	// #region Inventory
 	public UUID inventoryRoot;
 	public UUID libraryRoot;
 	public InventoryFolder[] inventorySkeleton;
 	public InventoryFolder[] librarySkeleton;
 	public UUID libraryOwner;
-	// #endregion
 
 	public GridInfo grid;
 
-	// #region Redirection
 	public String nextMethod;
 	public String nextUrl;
 	public String[] nextOptions;
 	public int nextDuration;
-	// #endregion
 
 	// These aren't currently being utilized by the library
 	public boolean aoTransition;

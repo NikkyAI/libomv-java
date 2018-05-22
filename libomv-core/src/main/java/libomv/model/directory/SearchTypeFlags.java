@@ -14,17 +14,17 @@ public class SearchTypeFlags {
 	// Parcels which are on privately owned simulators
 	public static final byte Estate = 1 << 4;
 
-	private static final byte _mask = 0x1B;
+	private static final byte MASK = 0x1B;
 
 	private SearchTypeFlags() {
 	}
 
 	public static final byte setValue(int value) {
-		return (byte) (value & _mask);
+		return (byte) (value & MASK);
 	}
 
 	public static final int getValue(byte value) {
-		return (value & _mask);
+		return value & MASK;
 	}
 
 }

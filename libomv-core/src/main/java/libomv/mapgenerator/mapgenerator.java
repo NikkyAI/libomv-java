@@ -1038,7 +1038,7 @@ public class mapgenerator {
 		writer.println("    }\n");
 	}
 
-	static public void writeToString(PrintWriter writer, ProtocolManager protocol, MapPacket packet) {
+	public static void writeToString(PrintWriter writer, ProtocolManager protocol, MapPacket packet) {
 		String blockName;
 		String sanitizedName;
 
@@ -1095,7 +1095,7 @@ public class mapgenerator {
 		writer.println("        return output;\n    }");
 	}
 
-	static public void main(String[] args) {
+	public static void main(String[] args) {
 		ProtocolManager protocol;
 		PrintWriter writer;
 

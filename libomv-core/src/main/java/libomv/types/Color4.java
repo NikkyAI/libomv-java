@@ -508,7 +508,7 @@ public final class Color4 {
 				Helpers.lerp(value1.b, value2.b, amount), Helpers.lerp(value1.a, value2.a, amount));
 	}
 
-	static public Color4 parse(XmlPullParser parser) throws XmlPullParserException, IOException {
+	public static Color4 parse(XmlPullParser parser) throws XmlPullParserException, IOException {
 		return new Color4(parser);
 	}
 

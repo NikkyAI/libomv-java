@@ -105,9 +105,9 @@ public class Profile {
 			this.cut2CoordIndices = new ArrayList<>();
 		}
 
-		boolean hasHollow = (hollow > 0.0f);
+		boolean hasHollow = hollow > 0.0f;
 
-		boolean hasProfileCut = (profileStart > 0.0f || profileEnd < 1.0f);
+		boolean hasProfileCut = profileStart > 0.0f || profileEnd < 1.0f;
 
 		AngleList angles = new AngleList();
 		AngleList hollowAngles = new AngleList();
@@ -134,7 +134,7 @@ public class Profile {
 		this.numOuterVerts = angles.angles.size();
 
 		// flag to create as few triangles as possible for 3 or 4 side profile
-		boolean simpleFace = (sides < 5 && !hasHollow && !hasProfileCut);
+		boolean simpleFace = sides < 5 && !hasHollow && !hasProfileCut;
 
 		if (hasHollow) {
 			if (sides == hollowSides)
@@ -414,7 +414,7 @@ public class Profile {
 	}
 
 	public void makeFaceUVs() {
-		this.faceUVs = new ArrayList<Vector2>();
+		this.faceUVs = new ArrayList<>();
 		for (Vector3 c : this.coords)
 			this.faceUVs.add(new Vector2(1.0f - (0.5f + c.x), 1.0f - (0.5f - c.y)));
 	}
@@ -439,10 +439,10 @@ public class Profile {
 			copy.us.addAll(this.us);
 			copy.faceNumbers.addAll(this.faceNumbers);
 
-			copy.cut1CoordIndices = new ArrayList<Integer>(this.cut1CoordIndices);
-			copy.cut2CoordIndices = new ArrayList<Integer>(this.cut2CoordIndices);
-			copy.hollowCoordIndices = new ArrayList<Integer>(this.hollowCoordIndices);
-			copy.outerCoordIndices = new ArrayList<Integer>(this.outerCoordIndices);
+			copy.cut1CoordIndices = new ArrayList<>(this.cut1CoordIndices);
+			copy.cut2CoordIndices = new ArrayList<>(this.cut2CoordIndices);
+			copy.hollowCoordIndices = new ArrayList<>(this.hollowCoordIndices);
+			copy.outerCoordIndices = new ArrayList<>(this.outerCoordIndices);
 		}
 		copy.numOuterVerts = this.numOuterVerts;
 		copy.numHollowVerts = this.numHollowVerts;

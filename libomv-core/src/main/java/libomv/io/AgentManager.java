@@ -239,6 +239,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 	 * finer grained control of movements can be done using the Nudge properties
 	 */
 	public class AgentMovement {
+
 		public class CoordinateFrame {
 
 			protected Vector3 origin;
@@ -472,6 +473,162 @@ public class AgentManager implements PacketCallback, CapsCallback {
 				yAxis.normalize();
 				zAxis = Vector3.cross(xAxis, yAxis);
 			}
+		}
+
+		/*
+		 * Camera controls for the agent, mostly a thin wrapper around CoordinateFrame.
+		 * This class is only responsible for state tracking and math, it does not send
+		 * any packets
+		 */
+		public class AgentCamera {
+			public float far;
+
+			// The camera is a local frame of reference inside of
+			// the larger grid space. This is where the math happens
+			private CoordinateFrame frame;
+
+			// Default constructor
+			public AgentCamera() {
+				try {
+					frame = new CoordinateFrame(new Vector3(128f, 128f, 20f));
+				} catch (Exception e) {
+				}
+				far = 128f;
+			}
+
+			public final Vector3 getPosition() {
+				return frame.getOrigin();
+			}
+
+			public final void setPosition(Vector3 value) throws Exception {
+				frame.setOrigin(value);
+			}
+
+			public final Vector3 getAtAxis() {
+				return frame.getYAxis();
+			}
+
+			public final void setAtAxis(Vector3 value) throws Exception {
+				frame.setYAxis(value);
+			}
+
+			public final Vector3 getLeftAxis() {
+				return frame.getXAxis();
+			}
+
+			public final void setLeftAxis(Vector3 value) throws Exception {
+				frame.setXAxis(value);
+			}
+
+			public final Vector3 getUpAxis() {
+				return frame.getZAxis();
+			}
+
+			public final void setUpAxis(Vector3 value) throws Exception {
+				frame.setZAxis(value);
+			}
+
+			public final void roll(float angle) throws Exception {
+				frame.roll(angle);
+			}
+
+			public final void pitch(float angle) throws Throwable {
+				frame.pitch(angle);
+			}
+
+			public final void yaw(float angle) throws Throwable {
+				frame.yaw(angle);
+			}
+
+			public final void lookDirection(Vector3 target) {
+				frame.lookDirection(target);
+			}
+
+			public final void lookDirection(Vector3 target, Vector3 upDirection) {
+				frame.lookDirection(target, upDirection);
+			}
+
+			public final void lookDirection(double heading) {
+				frame.lookDirection(heading);
+			}
+
+			public final void lookAt(Vector3 position, Vector3 target) {
+				frame.lookAt(position, target);
+			}
+
+			public final void lookAt(Vector3 position, Vector3 target, Vector3 upDirection) {
+				frame.lookAt(position, target, upDirection);
+			}
+
+			public final void setPositionOrientation(Vector3 position, float roll, float pitch, float yaw)
+					throws Throwable {
+				frame.setOrigin(position);
+
+				frame.resetAxes();
+
+				frame.roll(roll);
+				frame.pitch(pitch);
+				frame.yaw(yaw);
+			}
+		}
+
+		private class Network_OnDisconnected implements Callback<DisconnectedCallbackArgs> {
+			@Override
+			public boolean callback(DisconnectedCallbackArgs e) {
+				cleanupTimer();
+				return true;
+			}
+		}
+
+		private class UpdateTimerTask extends TimerTask {
+			@Override
+			public void run() {
+				if (client.network.getConnected() && sendAgentUpdates && client.network.getCurrentSim() != null) {
+					// Send an AgentUpdate packet
+					try {
+						sendUpdate(false, client.network.getCurrentSim());
+					} catch (Exception e) {
+					}
+				}
+			}
+		}
+
+		// Agent camera controls
+		public AgentCamera camera;
+		// Currently only used for hiding your group title
+		public AgentFlags flags = AgentFlags.None;
+		// Action state of the avatar, which can currently be typing and editing
+		public byte state;
+		public Quaternion bodyRotation = Quaternion.IDENTITY;
+		public Quaternion headRotation = Quaternion.IDENTITY;
+
+		// /#region Change tracking
+		private Quaternion lastBodyRotation;
+		private Quaternion lastHeadRotation;
+		private Vector3 lastCameraCenter;
+		private Vector3 lastCameraXAxis;
+		private Vector3 lastCameraYAxis;
+		private Vector3 lastCameraZAxis;
+		private float lastFar;
+
+		private boolean alwaysRun;
+		private GridClient client;
+
+		private int agentControls;
+		private int duplicateCount;
+		private int lastState;
+		/* Timer for sending AgentUpdate packets */
+		private Timer updateTimer;
+		private TimerTask updateTask;
+		private int updateInterval;
+		private boolean autoResetControls;
+
+		/* Default constructor */
+		public AgentMovement(GridClient client) {
+			this.client = client;
+			this.camera = new AgentCamera();
+			client.network.onDisconnected.add(new Network_OnDisconnected());
+			this.updateInterval = LibSettings.DEFAULT_AGENT_UPDATE_INTERVAL;
 		}
 
 		/* Move agent positive along the X axis */
@@ -801,7 +958,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		 * Gets or sets whether AgentUpdate packets are sent to the current simulator
 		 */
 		public final boolean getUpdateEnabled() {
-			return (updateInterval != 0);
+			return updateInterval != 0;
 		}
 
 		/* Reset movement controls every time we send an update */
@@ -813,72 +970,11 @@ public class AgentManager implements PacketCallback, CapsCallback {
 			autoResetControls = value;
 		}
 
-		// #endregion Properties
-
-		// Agent camera controls
-		public AgentCamera camera;
-		// Currently only used for hiding your group title
-		public AgentFlags flags = AgentFlags.None;
-		// Action state of the avatar, which can currently be typing and editing
-		public byte state;
-		public Quaternion bodyRotation = Quaternion.IDENTITY;
-		public Quaternion headRotation = Quaternion.IDENTITY;
-
-		// /#region Change tracking
-		private Quaternion lastBodyRotation;
-		private Quaternion lastHeadRotation;
-		private Vector3 lastCameraCenter;
-		private Vector3 lastCameraXAxis;
-		private Vector3 lastCameraYAxis;
-		private Vector3 lastCameraZAxis;
-		private float lastFar;
-
-		private boolean alwaysRun;
-		private GridClient client;
-
-		private int agentControls;
-		private int duplicateCount;
-		private int lastState;
-		/* Timer for sending AgentUpdate packets */
-		private Timer updateTimer;
-		private TimerTask updateTask;
-		private int updateInterval;
-		private boolean autoResetControls;
-
-		/* Default constructor */
-		public AgentMovement(GridClient client) {
-			this.client = client;
-			this.camera = new AgentCamera();
-			client.network.onDisconnected.add(new Network_OnDisconnected());
-			this.updateInterval = LibSettings.DEFAULT_AGENT_UPDATE_INTERVAL;
-		}
-
 		private void cleanupTimer() {
 			if (updateTimer != null) {
 				updateTimer.cancel();
 				updateTimer = null;
 				updateTask = null;
-			}
-		}
-
-		private class Network_OnDisconnected implements Callback<DisconnectedCallbackArgs> {
-			@Override
-			public boolean callback(DisconnectedCallbackArgs e) {
-				cleanupTimer();
-				return true;
-			}
-		}
-
-		private class UpdateTimerTask extends TimerTask {
-			@Override
-			public void run() {
-				if (client.network.getConnected() && sendAgentUpdates && client.network.getCurrentSim() != null) {
-					// Send an AgentUpdate packet
-					try {
-						sendUpdate(false, client.network.getCurrentSim());
-					} catch (Exception e) {
-					}
-				}
 			}
 		}
 
@@ -1096,7 +1192,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		}
 
 		private boolean getControlFlag(int flag) {
-			return ((agentControls & flag) != 0);
+			return (agentControls & flag) != 0;
 		}
 
 		private void setControlFlag(int flag, boolean value) {
@@ -1131,102 +1227,6 @@ public class AgentManager implements PacketCallback, CapsCallback {
 			client.network.sendPacket(msg);
 		}
 
-		/*
-		 * Camera controls for the agent, mostly a thin wrapper around CoordinateFrame.
-		 * This class is only responsible for state tracking and math, it does not send
-		 * any packets
-		 */
-		public class AgentCamera {
-			public float far;
-
-			// The camera is a local frame of reference inside of
-			// the larger grid space. This is where the math happens
-			private CoordinateFrame frame;
-
-			// Default constructor
-			public AgentCamera() {
-				try {
-					frame = new CoordinateFrame(new Vector3(128f, 128f, 20f));
-				} catch (Exception e) {
-				}
-				far = 128f;
-			}
-
-			public final Vector3 getPosition() {
-				return frame.getOrigin();
-			}
-
-			public final void setPosition(Vector3 value) throws Exception {
-				frame.setOrigin(value);
-			}
-
-			public final Vector3 getAtAxis() {
-				return frame.getYAxis();
-			}
-
-			public final void setAtAxis(Vector3 value) throws Exception {
-				frame.setYAxis(value);
-			}
-
-			public final Vector3 getLeftAxis() {
-				return frame.getXAxis();
-			}
-
-			public final void setLeftAxis(Vector3 value) throws Exception {
-				frame.setXAxis(value);
-			}
-
-			public final Vector3 getUpAxis() {
-				return frame.getZAxis();
-			}
-
-			public final void setUpAxis(Vector3 value) throws Exception {
-				frame.setZAxis(value);
-			}
-
-			public final void roll(float angle) throws Exception {
-				frame.roll(angle);
-			}
-
-			public final void pitch(float angle) throws Throwable {
-				frame.pitch(angle);
-			}
-
-			public final void yaw(float angle) throws Throwable {
-				frame.yaw(angle);
-			}
-
-			public final void lookDirection(Vector3 target) {
-				frame.lookDirection(target);
-			}
-
-			public final void lookDirection(Vector3 target, Vector3 upDirection) {
-				frame.lookDirection(target, upDirection);
-			}
-
-			public final void lookDirection(double heading) {
-				frame.lookDirection(heading);
-			}
-
-			public final void lookAt(Vector3 position, Vector3 target) {
-				frame.lookAt(position, target);
-			}
-
-			public final void lookAt(Vector3 position, Vector3 target, Vector3 upDirection) {
-				frame.lookAt(position, target, upDirection);
-			}
-
-			public final void setPositionOrientation(Vector3 position, float roll, float pitch, float yaw)
-					throws Throwable {
-				frame.setOrigin(position);
-
-				frame.resetAxes();
-
-				frame.roll(roll);
-				frame.pitch(pitch);
-				frame.yaw(yaw);
-			}
-		}
 	}
 
 	/**
@@ -2281,8 +2281,6 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		}
 	}
 
-	// #endregion
-
 	// /#region Viewer Effects
 
 	/**
@@ -2483,10 +2481,6 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		client.network.sendPacket(effect);
 	}
 
-	// #endregion Viewer Effects
-
-	// #region Movement Actions
-
 	/**
 	 * Sends a request to sit on the specified object
 	 *
@@ -2665,7 +2659,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 	public final void autoPilotLocal(int localX, int localY, float z) throws Exception {
 		int[] coord = new int[2];
 		Helpers.longToUInts(client.getCurrentRegionHandle(), coord);
-		autoPilot((coord[0] + localX), (coord[1] + localY), z);
+		autoPilot(coord[0] + localX, coord[1] + localY, z);
 	}
 
 	/**
@@ -2687,10 +2681,6 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		logger.warn(GridClient.Log("Attempted to AutoPilotCancel() but agent updates are disabled", client));
 		return false;
 	}
-
-	// #endregion Movement actions
-
-	// #region Touch and grab
 
 	/**
 	 * Grabs an object
@@ -2879,7 +2869,6 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		client.agent.grab(objectLocalID);
 		client.agent.deGrab(objectLocalID);
 	}
-	// #endregion Touch and grab
 
 	/**
 	 * Update agent profile
@@ -2944,8 +2933,6 @@ public class AgentManager implements PacketCallback, CapsCallback {
 
 		client.network.sendPacket(heightwidth);
 	}
-
-	// #region Money
 
 	/**
 	 * Request the current L$ balance
@@ -3089,9 +3076,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 
 		client.network.sendPacket(money);
 	}
-	// #endregion Money
 
-	// #region Gestures
 	/**
 	 * Plays a gesture
 	 *
@@ -3258,10 +3243,6 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		activeGestures.remove(invID);
 	}
 
-	// #endregion
-
-	// #region Animations
-
 	/**
 	 * Send an AgentAnimation packet that toggles a single animation on
 	 *
@@ -3336,10 +3317,6 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		client.network.sendPacket(animate);
 	}
 
-	// #endregion Animations
-
-	// #region Teleport
-
 	/**
 	 * Teleports agent to their stored home location
 	 *
@@ -3371,7 +3348,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 			teleportStat = TeleportStatus.Failed;
 			onTeleport.dispatch(new TeleportCallbackArgs("Teleport timed out.", teleportStat, 0));
 		}
-		return (teleportStat == TeleportStatus.Finished);
+		return teleportStat == TeleportStatus.Finished;
 	}
 
 	/**
@@ -3552,7 +3529,7 @@ public class AgentManager implements PacketCallback, CapsCallback {
 			teleportStat = TeleportStatus.Failed;
 			onTeleport.dispatch(new TeleportCallbackArgs("Teleport timed out.", teleportStat, 0));
 		}
-		return (teleportStat == TeleportStatus.Finished);
+		return teleportStat == TeleportStatus.Finished;
 	}
 
 	/**
@@ -4256,7 +4233,6 @@ public class AgentManager implements PacketCallback, CapsCallback {
 		}
 
 	}
-	// #endregion Misc
 
 	public void updateCamera(boolean reliable) throws Exception {
 		AgentUpdatePacket update = new AgentUpdatePacket();

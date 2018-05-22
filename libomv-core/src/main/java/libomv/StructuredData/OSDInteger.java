@@ -55,7 +55,7 @@ public class OSDInteger extends OSD {
 
 	@Override
 	public int asUInteger() {
-		return (value & 0xFFFFFFFF);
+		return value & 0xFFFFFFFF;
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class OSDInteger extends OSD {
 
 	@Override
 	public long asULong() {
-		return (value & 0xFFFFFFFF);
+		return value & 0xFFFFFFFF;
 	}
 
 	@Override

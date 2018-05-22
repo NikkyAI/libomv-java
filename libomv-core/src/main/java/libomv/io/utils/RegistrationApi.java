@@ -114,10 +114,6 @@ public class RegistrationApi {
 	private Map<Integer, ErrorCode> errors;
 	private Map<String, Integer> lastNames;
 
-	public boolean getInitializing() {
-		return (initializing < 0);
-	}
-
 	public RegistrationApi(String firstName, String lastName, String password)
 			throws IOReactorException, UnsupportedEncodingException, URISyntaxException, InterruptedException,
 			ExecutionException, TimeoutException {
@@ -130,6 +126,10 @@ public class RegistrationApi {
 		userInfo.password = password;
 
 		getCapabilities();
+	}
+
+	public boolean getInitializing() {
+		return initializing < 0;
 	}
 
 	public void waitForInitialization() throws InterruptedException {

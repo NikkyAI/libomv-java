@@ -85,17 +85,17 @@ public class DirFindFlags {
 	//
 	public static final int AdultOnly = 1 << 27;
 
-	private static final int _mask = 0x0FFFFFDB;
+	private static final int MASK = 0x0FFFFFDB;
 
 	private DirFindFlags() {
 	}
 
 	public static final int setValue(int value) {
-		return (value & _mask);
+		return value & MASK;
 	}
 
 	public static final int getValue(int value) {
-		return (value & _mask);
+		return value & MASK;
 	}
 
 }

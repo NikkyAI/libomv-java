@@ -43,7 +43,7 @@ public class jOMVMain {
 	}
 
 	// The main entry point for the application.
-	static public void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 		System.setProperty("teamdev.license.info", "true");
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			@Override

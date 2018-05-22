@@ -288,20 +288,20 @@ public class SculptMesh implements Cloneable {
 			calcVertexNormals(sculptType, coordsAcross, coordsDown);
 	}
 
-	/**
-	 * Duplicates a SculptMesh object. All object properties are copied by value,
-	 * including lists.
-	 */
-	public SculptMesh copy() {
-		return new SculptMesh(this);
-	}
-
 	public SculptMesh(SculptMesh sm) {
 		coords = new ArrayList<>(sm.coords);
 		faces = new ArrayList<>(sm.faces);
 		viewerFaces = new ArrayList<>(sm.viewerFaces);
 		normals = new ArrayList<>(sm.normals);
 		uvs = new ArrayList<>(sm.uvs);
+	}
+
+	/**
+	 * Duplicates a SculptMesh object. All object properties are copied by value,
+	 * including lists.
+	 */
+	public SculptMesh copy() {
+		return new SculptMesh(this);
 	}
 
 	private void calcVertexNormals(SculptType sculptType, int xSize, int ySize) {

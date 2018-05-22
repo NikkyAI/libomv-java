@@ -103,6 +103,12 @@ public enum MoneyTransactionType {
 	/* */
 	StipendDelta(10005);
 
+	private int val;
+
+	private MoneyTransactionType(int val) {
+		this.val = val;
+	}
+
 	public static MoneyTransactionType setValue(byte value) {
 		for (MoneyTransactionType e : values()) {
 			if (e.val == value)
@@ -115,9 +121,4 @@ public enum MoneyTransactionType {
 		return val;
 	}
 
-	private int val;
-
-	private MoneyTransactionType(int val) {
-		this.val = val;
-	}
 }

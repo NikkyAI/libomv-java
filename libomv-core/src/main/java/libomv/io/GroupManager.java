@@ -1741,8 +1741,6 @@ public class GroupManager implements PacketCallback, CapsCallback {
 		onGroupMemberEjected.dispatch(new GroupOperationCallbackArgs(reply.GroupID, reply.Success));
 	}
 
-	// #endregion Packet Handlers
-
 	private final void handleGroupAccountDetails(Packet packet, Simulator simulator) throws Exception {
 		GroupAccountDetailsReplyPacket details = (GroupAccountDetailsReplyPacket) packet;
 

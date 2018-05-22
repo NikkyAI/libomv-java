@@ -331,7 +331,7 @@ public class RpcClient extends AsyncHTTPClient<OSD> {
 				boolean bool = false;
 				if (notEmpty) {
 					value = parser.nextText().trim();
-					bool = (value != null && !value.isEmpty() && value.equals("1"));
+					bool = value != null && !value.isEmpty() && value.equals("1");
 				}
 				ret = OSD.fromBoolean(bool);
 			} else if (name.equals(TYPE_STRING)) {

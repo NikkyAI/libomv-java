@@ -49,15 +49,16 @@ public class Permissions implements Serializable {
 		// All does not contain Export, which is special and must be explicitly given
 		public static final int All = Transfer | Modify | Copy | Move | Damage;
 
+		private static final int MASK = Transfer | Modify | Copy | Export | Move | Damage;
+
 		public static int setValue(int value) {
-			return value & _mask;
+			return value & MASK;
 		}
 
 		public static int getValue(int value) {
 			return value;
 		}
 
-		private static final int _mask = Transfer | Modify | Copy | Export | Move | Damage;
 	}
 
 	// [Flags]
@@ -69,15 +70,16 @@ public class Permissions implements Serializable {
 		public static final byte NextOwner = 0x10;
 		public static final byte All = 0x1F;
 
+		private static final byte MASK = All;
+
 		public static byte setValue(int value) {
-			return (byte) (value & _mask);
+			return (byte) (value & MASK);
 		}
 
 		public static int getValue(int value) {
 			return value;
 		}
 
-		private static final byte _mask = All;
 	}
 
 	public static final Permissions NoPermissions = new Permissions();

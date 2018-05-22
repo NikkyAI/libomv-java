@@ -33,7 +33,7 @@ public class GridSelector
 	static GridSelector _GridSel = null;
 
 	// The main entry point for the application.
-	static public void main(String[] args)
+	public static void main(String[] args)
 	{
 		try
 		{

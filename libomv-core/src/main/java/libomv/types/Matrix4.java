@@ -57,36 +57,6 @@ public final class Matrix4 {
 	public float M43;
 	public float M44;
 
-	public Vector3 getAtAxis() {
-		return new Vector3(M11, M21, M31);
-	}
-
-	public void setAtAxis(Vector3 value) {
-		M11 = value.x;
-		M21 = value.y;
-		M31 = value.z;
-	}
-
-	public Vector3 getLeftAxis() {
-		return new Vector3(M12, M22, M32);
-	}
-
-	public void setLeftAxis(Vector3 value) {
-		M12 = value.x;
-		M22 = value.y;
-		M32 = value.z;
-	}
-
-	public Vector3 getUpAxis() {
-		return new Vector3(M13, M23, M33);
-	}
-
-	public void setUpAxis(Vector3 value) {
-		M13 = value.x;
-		M23 = value.y;
-		M33 = value.z;
-	}
-
 	public Matrix4() {
 		M11 = M12 = M13 = M14 = 0.0f;
 		M21 = M22 = M23 = M24 = 0.0f;
@@ -160,6 +130,36 @@ public final class Matrix4 {
 		M42 = m.M42;
 		M43 = m.M43;
 		M44 = m.M44;
+	}
+
+	public Vector3 getAtAxis() {
+		return new Vector3(M11, M21, M31);
+	}
+
+	public void setAtAxis(Vector3 value) {
+		M11 = value.x;
+		M21 = value.y;
+		M31 = value.z;
+	}
+
+	public Vector3 getLeftAxis() {
+		return new Vector3(M12, M22, M32);
+	}
+
+	public void setLeftAxis(Vector3 value) {
+		M12 = value.x;
+		M22 = value.y;
+		M32 = value.z;
+	}
+
+	public Vector3 getUpAxis() {
+		return new Vector3(M13, M23, M33);
+	}
+
+	public void setUpAxis(Vector3 value) {
+		M13 = value.x;
+		M23 = value.y;
+		M33 = value.z;
 	}
 
 	public float determinant() {
@@ -332,9 +332,6 @@ public final class Matrix4 {
 		return true;
 	}
 
-	// #endregion Public Methods
-
-	// #region Static Methods
 	public static Matrix4 createFromAxisAngle(Vector3 axis, float angle) {
 		Matrix4 matrix = new Matrix4();
 
@@ -745,7 +742,7 @@ public final class Matrix4 {
 		if (matrix.determinant3x3() == 0f) {
 			throw new Exception("Singular matrix inverse not possible");
 		}
-		return (Matrix4.divide(adjoint3x3(matrix), matrix.determinant3x3()));
+		return Matrix4.divide(adjoint3x3(matrix), matrix.determinant3x3());
 	}
 
 	public static Matrix4 adjoint3x3(Matrix4 matrix) {
@@ -763,7 +760,7 @@ public final class Matrix4 {
 		if (matrix.determinant() == 0f) {
 			throw new Exception("Singular matrix inverse not possible");
 		}
-		return (Matrix4.divide(adjoint(matrix), matrix.determinant()));
+		return Matrix4.divide(adjoint(matrix), matrix.determinant());
 	}
 
 	public static Matrix4 adjoint(Matrix4 matrix) {
@@ -806,10 +803,10 @@ public final class Matrix4 {
 	}
 
 	public boolean equals(Matrix4 other) {
-		return (other != null && M11 == other.M11 && M12 == other.M12 && M13 == other.M13 && M14 == other.M14
+		return other != null && M11 == other.M11 && M12 == other.M12 && M13 == other.M13 && M14 == other.M14
 				&& M21 == other.M21 && M22 == other.M22 && M23 == other.M23 && M24 == other.M24 && M31 == other.M31
 				&& M32 == other.M32 && M33 == other.M33 && M34 == other.M34 && M41 == other.M41 && M42 == other.M42
-				&& M43 == other.M43 && M44 == other.M44);
+				&& M43 == other.M43 && M44 == other.M44;
 	}
 
 	@Override

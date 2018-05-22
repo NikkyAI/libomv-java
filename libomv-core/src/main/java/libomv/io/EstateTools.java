@@ -736,9 +736,7 @@ public class EstateTools implements PacketCallback, CapsCallback {
 		listParams.add(groupID.toString());
 		estateOwnerMessage("estateaccessdelta", listParams);
 	}
-	// #endregion
 
-	// #region Packet Handlers
 	private void handleEstateCovenantReply(Packet packet, Simulator simulator) throws UnsupportedEncodingException {
 		EstateCovenantReplyPacket reply = (EstateCovenantReplyPacket) packet;
 		onEstateCovenantReply
@@ -937,5 +935,5 @@ public class EstateTools implements PacketCallback, CapsCallback {
 			onTopCollidersReply.dispatch(new TopCollidersReplyCallbackArgs(m.totalObjectCount, tasks));
 		}
 	}
-	// #endregion
+
 }

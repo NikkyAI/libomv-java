@@ -131,7 +131,6 @@ public class OarFile {
 			this.settings = settings;
 		}
 	}
-	// #region Archive Loading
 
 	public static void unpackageArchive(File filename, Callback<AssetLoadedData> assetCallback,
 			Callback<TerrainLoadedData> terrainCallback, Callback<SceneObjectLoadedData> objectCallback,
@@ -726,5 +725,5 @@ public class OarFile {
 			throws IllegalArgumentException, IllegalStateException, IOException {
 		writer.startTag(null, tag).text(value).endTag(null, tag);
 	}
-	// #endregion Archive Saving
+
 }

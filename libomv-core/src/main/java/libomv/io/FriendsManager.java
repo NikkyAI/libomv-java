@@ -95,7 +95,6 @@ public class FriendsManager implements PacketCallback {
 	public CallbackHandler<FriendshipResponseCallbackArgs> onFriendshipResponse = new CallbackHandler<>();
 
 	public CallbackHandler<FriendshipTerminatedCallbackArgs> onFriendshipTerminated = new CallbackHandler<>();
-	// #endregion callback handlers
 
 	private GridClient client;
 
@@ -208,7 +207,7 @@ public class FriendsManager implements PacketCallback {
 	 * @throws Exception
 	 * @throws InventoryException
 	 */
-	public final void acceptFriendship(UUID fromAgentID, UUID imSessionID) throws Exception, InventoryException {
+	public final void acceptFriendship(UUID fromAgentID, UUID imSessionID) throws Exception {
 		if (client.inventory == null)
 			throw new InventoryException(
 					"Inventory not instantiated. Need to lookup CallingCard folder in order to accept a friendship request.");

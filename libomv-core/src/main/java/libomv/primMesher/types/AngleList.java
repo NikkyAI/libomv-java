@@ -30,12 +30,15 @@
 package libomv.primMesher.types;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import libomv.types.Vector3;
 
 public class AngleList {
 	private float iX;
 	private float iY; // intersection point
+	List<Angle> angles;
+	List<Vector3> normals;
 
 	private static Angle[] angles3 = new Angle[] { new Angle(0.0f, 1.0f, 0.0f),
 			new Angle(0.33333333333333333f, -0.5f, 0.86602540378443871f),
@@ -91,12 +94,9 @@ public class AngleList {
 		}
 	}
 
-	ArrayList<Angle> angles;
-	ArrayList<Vector3> normals;
-
 	protected void makeAngles(int sides, float startAngle, float stopAngle) throws Exception {
-		angles = new ArrayList<Angle>();
-		normals = new ArrayList<Vector3>();
+		angles = new ArrayList<>();
+		normals = new ArrayList<>();
 
 		double twoPi = Math.PI * 2.0;
 		float twoPiInv = 1.0f / (float) twoPi;
@@ -106,7 +106,7 @@ public class AngleList {
 		if (stopAngle <= startAngle)
 			throw new Exception("stopAngle not greater than startAngle");
 
-		if ((sides == 3 || sides == 4 || sides == 24)) {
+		if (sides == 3 || sides == 4 || sides == 24) {
 			startAngle *= twoPiInv;
 			stopAngle *= twoPiInv;
 

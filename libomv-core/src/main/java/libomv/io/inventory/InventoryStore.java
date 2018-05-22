@@ -81,10 +81,14 @@ public class InventoryStore extends InventoryFolder {
 
 	private static final long serialVersionUID = 1L;
 
-	// #region CallbackArgs classes
 	public class InventoryObjectUpdatedCallbackArgs implements CallbackArgs {
 		private final InventoryNode oldObject;
 		private final InventoryNode newObject;
+
+		public InventoryObjectUpdatedCallbackArgs(InventoryNode oldObject, InventoryNode newObject) {
+			this.oldObject = oldObject;
+			this.newObject = newObject;
+		}
 
 		public final InventoryNode getOldObject() {
 			return oldObject;
@@ -94,37 +98,33 @@ public class InventoryStore extends InventoryFolder {
 			return newObject;
 		}
 
-		public InventoryObjectUpdatedCallbackArgs(InventoryNode oldObject, InventoryNode newObject) {
-			this.oldObject = oldObject;
-			this.newObject = newObject;
-		}
 	}
 
 	public class InventoryObjectRemovedCallbackArgs implements CallbackArgs {
 		private final InventoryNode obj;
 
+		public InventoryObjectRemovedCallbackArgs(InventoryNode obj) {
+			this.obj = obj;
+		}
+
 		public final InventoryNode getObj() {
 			return obj;
 		}
 
-		public InventoryObjectRemovedCallbackArgs(InventoryNode obj) {
-			this.obj = obj;
-		}
 	}
 
 	public class InventoryObjectAddedCallbackArgs implements CallbackArgs {
 		private final InventoryNode obj;
 
+		public InventoryObjectAddedCallbackArgs(InventoryNode obj) {
+			this.obj = obj;
+		}
+
 		public final InventoryNode getObj() {
 			return obj;
 		}
 
-		public InventoryObjectAddedCallbackArgs(InventoryNode obj) {
-			this.obj = obj;
-		}
 	}
-
-	// #endregion CallbackArgs classes
 
 	public CallbackHandler<InventoryObjectUpdatedCallbackArgs> onInventoryObjectUpdated = new CallbackHandler<>();
 

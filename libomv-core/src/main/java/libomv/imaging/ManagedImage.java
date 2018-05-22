@@ -64,6 +64,8 @@ public class ManagedImage implements Cloneable {
 		public static final byte Alpha = 4;
 		public static final byte Bump = 8;
 
+		private byte value;
+
 		public void setValue(int value) {
 			this.value = (byte) value;
 		}
@@ -72,7 +74,6 @@ public class ManagedImage implements Cloneable {
 			return value;
 		}
 
-		private byte value;
 	};
 
 	public enum ImageResizeAlgorithm {
@@ -81,111 +82,22 @@ public class ManagedImage implements Cloneable {
 
 	// Image width
 	private int width;
-
-	public int getWidth() {
-		return width;
-	}
-
 	// Image height
 	private int height;
-
-	public int getHeight() {
-		return height;
-	}
-
 	// Image channel flags
 	private byte channels;
-
-	public byte getChannels() {
-		return channels;
-	}
-
 	// BitDepth per channel
 	private int bitDepth;
-
-	public int getBitDepth() {
-		return bitDepth;
-	}
-
 	// Red channel data
 	protected byte[] red;
-
-	public byte[] getRed() {
-		return red;
-	}
-
-	public byte getRed(int index) {
-		return red[index];
-	}
-
-	public void setRed(int pixelIdx, byte val) {
-		if (red != null)
-			red[pixelIdx] = val;
-	}
-
 	// Green channel data
 	protected byte[] green;
-
-	public byte[] getGreen() {
-		return green;
-	}
-
-	public byte getGreen(int index) {
-		return green[index];
-	}
-
-	public void setGreen(int pixelIdx, byte val) {
-		if (green != null)
-			green[pixelIdx] = val;
-	}
-
 	// Blue channel data
 	protected byte[] blue;
-
-	public byte[] getBlue() {
-		return blue;
-	}
-
-	public byte getBlue(int index) {
-		return blue[index];
-	}
-
-	public void setBlue(int pixelIdx, byte val) {
-		if (blue != null)
-			blue[pixelIdx] = val;
-	}
-
 	// Alpha channel data
 	protected byte[] alpha;
-
-	public byte[] getAlpha() {
-		return alpha;
-	}
-
-	public byte getAlpha(int index) {
-		return alpha[index];
-	}
-
-	public void setAlpha(int pixelIdx, byte val) {
-		if (alpha != null)
-			alpha[pixelIdx] = val;
-	}
-
 	// Bump channel data
 	protected byte[] bump;
-
-	public byte[] getBump() {
-		return bump;
-	}
-
-	public void setBump(byte[] array) {
-		bump = array;
-	}
-
-	public void setBump(int pixelIdx, byte val) {
-		if (bump != null)
-			bump[pixelIdx] = val;
-	}
 
 	public ManagedImage() {
 
@@ -219,6 +131,87 @@ public class ManagedImage implements Cloneable {
 		this.height = height;
 		this.channels = channels;
 		initialize();
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public byte getChannels() {
+		return channels;
+	}
+
+	public int getBitDepth() {
+		return bitDepth;
+	}
+
+	public byte[] getRed() {
+		return red;
+	}
+
+	public byte getRed(int index) {
+		return red[index];
+	}
+
+	public void setRed(int pixelIdx, byte val) {
+		if (red != null)
+			red[pixelIdx] = val;
+	}
+
+	public byte[] getGreen() {
+		return green;
+	}
+
+	public byte getGreen(int index) {
+		return green[index];
+	}
+
+	public void setGreen(int pixelIdx, byte val) {
+		if (green != null)
+			green[pixelIdx] = val;
+	}
+
+	public byte[] getBlue() {
+		return blue;
+	}
+
+	public byte getBlue(int index) {
+		return blue[index];
+	}
+
+	public void setBlue(int pixelIdx, byte val) {
+		if (blue != null)
+			blue[pixelIdx] = val;
+	}
+
+	public byte[] getAlpha() {
+		return alpha;
+	}
+
+	public byte getAlpha(int index) {
+		return alpha[index];
+	}
+
+	public void setAlpha(int pixelIdx, byte val) {
+		if (alpha != null)
+			alpha[pixelIdx] = val;
+	}
+
+	public byte[] getBump() {
+		return bump;
+	}
+
+	public void setBump(byte[] array) {
+		bump = array;
+	}
+
+	public void setBump(int pixelIdx, byte val) {
+		if (bump != null)
+			bump[pixelIdx] = val;
 	}
 
 	public void clear() {
@@ -338,7 +331,7 @@ public class ManagedImage implements Cloneable {
 			List<Vector3> row = new ArrayList<>(width);
 			for (colNdx = 0; colNdx < width; colNdx++) {
 				if (mirror)
-					row.add(new Vector3(-(red[smNdx] * pixScale - 0.5f), (green[smNdx] * pixScale - 0.5f),
+					row.add(new Vector3(-(red[smNdx] * pixScale - 0.5f), green[smNdx] * pixScale - 0.5f,
 							blue[smNdx] * pixScale - 0.5f));
 				else
 					row.add(new Vector3(red[smNdx] * pixScale - 0.5f, green[smNdx] * pixScale - 0.5f,

@@ -92,10 +92,6 @@ public abstract class Mesh {
 		Low, Medium, High, Highest
 	}
 
-	// #endregion Enums
-
-	// #region Structs
-
 	public class Vertex {
 		public Vector3 position;
 		public Vector3 normal;
@@ -166,8 +162,6 @@ public abstract class Mesh {
 			return mask.toString();
 		}
 	}
-
-	// #endregion Structs
 
 	public Primitive prim;
 	public Path path;

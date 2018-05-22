@@ -42,17 +42,17 @@ public class ScriptPermission {
 	// Script wants the ability to teleport you
 	public static final int Teleport = 1 << 12;
 
-	private static final int _mask = 0xFFF;
+	private static final int MASK = 0xFFF;
 
 	private ScriptPermission() {
 	}
 
 	public static int setValue(int value) {
-		return (value & _mask);
+		return value & MASK;
 	}
 
 	public static int getValue(int value) {
-		return (value & _mask);
+		return value & MASK;
 	}
 
 }

@@ -97,15 +97,16 @@ public class InventoryItem extends InventoryNode {
 		 */
 		public static final int SharedSingleReference = 0x40000000;
 
+		private static final int MASK = 0x7F1100;
+
 		public static int setValue(int value) {
-			return value & _mask;
+			return value & MASK;
 		}
 
 		public static int getValue(int value) {
 			return value;
 		}
 
-		private static final int _mask = 0x7F1100;
 	}
 
 	/* The {@link OpenMetaverse.UUID} of this item */
@@ -145,6 +146,27 @@ public class InventoryItem extends InventoryNode {
 	public UUID transactionID;
 	/* The {@link OpenMetaverse.UUID} of the previous owner of the item */
 	// public UUID LastOwnerID;
+
+	public InventoryItem() {
+		super();
+	}
+
+	/**
+	 * Construct a new InventoryItem object of a specific Type
+	 *
+	 * @param type
+	 *            The type of item from {@link OpenMetaverse.InventoryType}
+	 * @param itemID
+	 *            {@link OpenMetaverse.UUID} of the item
+	 */
+	public InventoryItem(UUID itemID) {
+		super(itemID);
+	}
+
+	public InventoryItem(OSDMap map) {
+		super();
+		fromOSD(map);
+	}
 
 	/**
 	 * Wrapper for creating a new {@link InventoryItem} object
@@ -214,27 +236,6 @@ public class InventoryItem extends InventoryNode {
 			item.ownerID = ownerID;
 		}
 		return item;
-	}
-
-	public InventoryItem() {
-		super();
-	}
-
-	/**
-	 * Construct a new InventoryItem object of a specific Type
-	 *
-	 * @param type
-	 *            The type of item from {@link OpenMetaverse.InventoryType}
-	 * @param itemID
-	 *            {@link OpenMetaverse.UUID} of the item
-	 */
-	public InventoryItem(UUID itemID) {
-		super(itemID);
-	}
-
-	public InventoryItem(OSDMap map) {
-		super();
-		fromOSD(map);
 	}
 
 	@Override

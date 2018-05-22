@@ -555,8 +555,6 @@ public class CapsMessage implements IMessage {
 		}
 	}
 
-	// #region Parcel Messages
-
 	/**
 	 * Contains a list of prim owner information for a specific parcel in a
 	 * simulator
@@ -1126,7 +1124,7 @@ public class CapsMessage implements IMessage {
 			name = map.get("name").asString();
 			obscureMedia = map.get("obscure_media").asBoolean();
 			obscureMusic = map.get("obscure_music").asBoolean();
-			parcelFlags = ParcelFlags.setValue((map.get("parcel_flags").asUInteger()));
+			parcelFlags = ParcelFlags.setValue(map.get("parcel_flags").asUInteger());
 			passHours = (float) map.get("pass_hours").asReal();
 			passPrice = map.get("pass_price").asUInteger();
 			privacy = map.get("privacy").asBoolean();
@@ -1285,10 +1283,6 @@ public class CapsMessage implements IMessage {
 						+ map.asString());
 		}
 	}
-
-	// #endregion
-
-	// #region Inventory Messages
 
 	public class NewFileAgentInventoryMessage implements IMessage {
 		public UUID folderID;
@@ -1465,7 +1459,6 @@ public class CapsMessage implements IMessage {
 		// {
 
 		// }
-		// #region CapsMessage Members
 
 		/**
 		 * @return the type of message
@@ -1485,10 +1478,6 @@ public class CapsMessage implements IMessage {
 			throw new UnsupportedOperationException();
 		}
 	}
-
-	// #endregion
-
-	// #region Agent Messages
 
 	// A message sent from the simulator to an agent which contains the groups
 	// the agent is in
@@ -1948,10 +1937,6 @@ public class CapsMessage implements IMessage {
 		}
 	}
 
-	// #endregion
-
-	// #region Voice Messages
-
 	// A message sent from the simulator which indicates the minimum version
 	// required for using voice chat
 	public class RequiredVoiceVersionMessage implements IMessage {
@@ -2095,8 +2080,6 @@ public class CapsMessage implements IMessage {
 		}
 	}
 
-	// #endregion
-
 	// #region Script/Notecards Messages
 
 	// A message sent by the viewer to the simulator to request a temporary
@@ -2104,6 +2087,15 @@ public class CapsMessage implements IMessage {
 	public class UploadScriptTaskMessage implements IMessage {
 		// Object containing request or response
 		public AssetUploaderBlock request;
+
+		public UploadScriptTaskMessage(String value) {
+			if (value.equals("upload"))
+				request = new UploaderRequestUpload();
+			else if (value.equals("complete"))
+				request = new UploaderRequestComplete();
+			else
+				logger.warn("Unable to deserialize UploadScriptTask: No message handler exists for state " + value);
+		}
 
 		/**
 		 * @return the type of message
@@ -2121,15 +2113,6 @@ public class CapsMessage implements IMessage {
 		@Override
 		public OSDMap serialize() {
 			return request.serialize();
-		}
-
-		public UploadScriptTaskMessage(String value) {
-			if (value.equals("upload"))
-				request = new UploaderRequestUpload();
-			else if (value.equals("complete"))
-				request = new UploaderRequestComplete();
-			else
-				logger.warn("Unable to deserialize UploadScriptTask: No message handler exists for state " + value);
 		}
 
 		/**
@@ -2786,8 +2769,6 @@ public class CapsMessage implements IMessage {
 		}
 	}
 
-	// #endregion
-
 	// #region Grid/Maps
 
 	// Base class for Map Layers via Capabilities
@@ -2943,8 +2924,6 @@ public class CapsMessage implements IMessage {
 		}
 	}
 
-	// #endregion
-
 	// #region Session/Communication
 
 	// New as of 1.23 RC1, no details yet.
@@ -2979,7 +2958,6 @@ public class CapsMessage implements IMessage {
 		}
 	}
 
-	// #region ChatSessionRequestMessage
 	// TODO:FIXME
 	// Why does this class exist?
 	public abstract class SearchStatRequestBlock {
@@ -3342,8 +3320,6 @@ public class CapsMessage implements IMessage {
 						+ map.asString());
 		}
 	}
-
-	// #endregion
 
 	public class ChatterBoxSessionEventReplyMessage implements IMessage {
 		public UUID sessionID;
@@ -3840,9 +3816,6 @@ public class CapsMessage implements IMessage {
 		}
 	}
 
-	// #endregion
-
-	// #region CapsEventQueue
 	// TODO: FIXME
 	// Why does this class exist?
 	public abstract class EventMessageBlock {
@@ -3977,10 +3950,6 @@ public class CapsMessage implements IMessage {
 				logger.warn("Unable to deserialize EventQueueGetMessage: No message handler exists for event");
 		}
 	}
-
-	// #endregion
-
-	// #region Stats Messages
 
 	public class ViewerStatsMessage implements IMessage {
 		public int agentsInView;
@@ -4461,10 +4430,6 @@ public class CapsMessage implements IMessage {
 		}
 	}
 
-	// #endregion
-
-	// #region Object Messages
-
 	public class UploadObjectAssetMessage implements IMessage {
 		public class Object {
 			public class Face {
@@ -4479,6 +4444,20 @@ public class CapsMessage implements IMessage {
 				public float offsetT;
 				public float scaleS;
 				public float scaleT;
+
+				public Face(OSDMap map) {
+					bump = Bumpiness.setValue(map.get("bump").asInteger());
+					color = map.get("colors").asColor4();
+					fullbright = map.get("fullbright").asBoolean();
+					glow = (float) map.get("glow").asReal();
+					imageID = map.get("imageid").asUUID();
+					imageRot = (float) map.get("imagerot").asReal();
+					mediaFlags = map.get("media_flags").asInteger();
+					offsetS = (float) map.get("offsets").asReal();
+					offsetT = (float) map.get("offsett").asReal();
+					scaleS = (float) map.get("scales").asReal();
+					scaleT = (float) map.get("scalet").asReal();
+				}
 
 				public OSDMap serialize() {
 					OSDMap map = new OSDMap();
@@ -4497,19 +4476,6 @@ public class CapsMessage implements IMessage {
 					return map;
 				}
 
-				public Face(OSDMap map) {
-					bump = Bumpiness.setValue(map.get("bump").asInteger());
-					color = map.get("colors").asColor4();
-					fullbright = map.get("fullbright").asBoolean();
-					glow = (float) map.get("glow").asReal();
-					imageID = map.get("imageid").asUUID();
-					imageRot = (float) map.get("imagerot").asReal();
-					mediaFlags = map.get("media_flags").asInteger();
-					offsetS = (float) map.get("offsets").asReal();
-					offsetT = (float) map.get("offsett").asReal();
-					scaleS = (float) map.get("scales").asReal();
-					scaleT = (float) map.get("scalet").asReal();
-				}
 			}
 
 			// TODO:FIXME
@@ -4517,6 +4483,11 @@ public class CapsMessage implements IMessage {
 			public class ExtraParam {
 				public ExtraParamType type;
 				public byte[] extraParamData;
+
+				public ExtraParam(OSDMap map) {
+					type = ExtraParamType.setValue(map.get("extra_parameter").asInteger());
+					extraParamData = map.get("param_data").asBinary();
+				}
 
 				public OSDMap serialize() {
 					OSDMap map = new OSDMap();
@@ -4526,10 +4497,6 @@ public class CapsMessage implements IMessage {
 					return map;
 				}
 
-				public ExtraParam(OSDMap map) {
-					type = ExtraParamType.setValue(map.get("extra_parameter").asInteger());
-					extraParamData = map.get("param_data").asBinary();
-				}
 			}
 
 			public Face[] faces;
@@ -4560,65 +4527,6 @@ public class CapsMessage implements IMessage {
 			public float profileHollow;
 			public UUID sculptID;
 			public SculptType sculptType;
-
-			public OSDMap serialize() {
-				OSDMap map = new OSDMap();
-
-				map.put("group-id", OSD.fromUUID(groupID));
-				map.put("material", OSD.fromInteger(material.getValue()));
-				map.put("name", OSD.fromString(name));
-				map.put("pos", OSD.fromVector3(position));
-				map.put("rotation", OSD.fromQuaternion(rotation));
-				map.put("scale", OSD.fromVector3(scale));
-
-				// Extra params
-				OSDArray extraParameters = new OSDArray();
-				if (extraParams != null) {
-					for (int i = 0; i < extraParams.length; i++)
-						extraParameters.add(extraParams[i].serialize());
-				}
-				map.put("extra_parameters", extraParameters);
-
-				// Faces
-				OSDArray facelist = new OSDArray();
-				if (faces != null) {
-					for (int i = 0; i < faces.length; i++)
-						facelist.add(faces[i].serialize());
-				}
-				map.put("facelist", facelist);
-
-				// Shape
-				OSDMap shape = new OSDMap();
-				OSDMap path = new OSDMap();
-				path.put("begin", OSD.fromReal(pathBegin));
-				path.put("curve", OSD.fromInteger(pathCurve));
-				path.put("end", OSD.fromReal(pathEnd));
-				path.put("radius_offset", OSD.fromReal(radiusOffset));
-				path.put("revolutions", OSD.fromReal(revolutions));
-				path.put("scale_x", OSD.fromReal(scaleX));
-				path.put("scale_y", OSD.fromReal(scaleY));
-				path.put("shear_x", OSD.fromReal(shearX));
-				path.put("shear_y", OSD.fromReal(shearY));
-				path.put("skew", OSD.fromReal(skew));
-				path.put("taper_x", OSD.fromReal(taperX));
-				path.put("taper_y", OSD.fromReal(taperY));
-				path.put("twist", OSD.fromReal(twist));
-				path.put("twist_begin", OSD.fromReal(twistBegin));
-				shape.put("path", path);
-				OSDMap profile = new OSDMap();
-				profile.put("begin", OSD.fromReal(profileBegin));
-				profile.put("curve", OSD.fromInteger(profileCurve));
-				profile.put("end", OSD.fromReal(profileEnd));
-				profile.put("hollow", OSD.fromReal(profileHollow));
-				shape.put("profile", profile);
-				OSDMap sculpt = new OSDMap();
-				sculpt.put("id", OSD.fromUUID(sculptID));
-				sculpt.put("type", OSD.fromInteger(sculptType.getValue()));
-				shape.put("sculpt", sculpt);
-				map.put("shape", shape);
-
-				return map;
-			}
 
 			public Object(OSDMap map) {
 				if (map != null) {
@@ -4686,6 +4594,66 @@ public class CapsMessage implements IMessage {
 					}
 				}
 			}
+
+			public OSDMap serialize() {
+				OSDMap map = new OSDMap();
+
+				map.put("group-id", OSD.fromUUID(groupID));
+				map.put("material", OSD.fromInteger(material.getValue()));
+				map.put("name", OSD.fromString(name));
+				map.put("pos", OSD.fromVector3(position));
+				map.put("rotation", OSD.fromQuaternion(rotation));
+				map.put("scale", OSD.fromVector3(scale));
+
+				// Extra params
+				OSDArray extraParameters = new OSDArray();
+				if (extraParams != null) {
+					for (int i = 0; i < extraParams.length; i++)
+						extraParameters.add(extraParams[i].serialize());
+				}
+				map.put("extra_parameters", extraParameters);
+
+				// Faces
+				OSDArray facelist = new OSDArray();
+				if (faces != null) {
+					for (int i = 0; i < faces.length; i++)
+						facelist.add(faces[i].serialize());
+				}
+				map.put("facelist", facelist);
+
+				// Shape
+				OSDMap shape = new OSDMap();
+				OSDMap path = new OSDMap();
+				path.put("begin", OSD.fromReal(pathBegin));
+				path.put("curve", OSD.fromInteger(pathCurve));
+				path.put("end", OSD.fromReal(pathEnd));
+				path.put("radius_offset", OSD.fromReal(radiusOffset));
+				path.put("revolutions", OSD.fromReal(revolutions));
+				path.put("scale_x", OSD.fromReal(scaleX));
+				path.put("scale_y", OSD.fromReal(scaleY));
+				path.put("shear_x", OSD.fromReal(shearX));
+				path.put("shear_y", OSD.fromReal(shearY));
+				path.put("skew", OSD.fromReal(skew));
+				path.put("taper_x", OSD.fromReal(taperX));
+				path.put("taper_y", OSD.fromReal(taperY));
+				path.put("twist", OSD.fromReal(twist));
+				path.put("twist_begin", OSD.fromReal(twistBegin));
+				shape.put("path", path);
+				OSDMap profile = new OSDMap();
+				profile.put("begin", OSD.fromReal(profileBegin));
+				profile.put("curve", OSD.fromInteger(profileCurve));
+				profile.put("end", OSD.fromReal(profileEnd));
+				profile.put("hollow", OSD.fromReal(profileHollow));
+				shape.put("profile", profile);
+				OSDMap sculpt = new OSDMap();
+				sculpt.put("id", OSD.fromUUID(sculptID));
+				sculpt.put("type", OSD.fromInteger(sculptType.getValue()));
+				shape.put("sculpt", sculpt);
+				map.put("shape", shape);
+
+				return map;
+			}
+
 		}
 
 		public Object[] objects;
@@ -4787,9 +4755,6 @@ public class CapsMessage implements IMessage {
 		}
 	}
 
-	// #endregion Object Messages
-
-	// #region Object Media Messages
 	// A message sent from the viewer to the simulator which specifies that the
 	// user has changed current URL
 	// of the specific media on a prim face
@@ -5283,10 +5248,6 @@ public class CapsMessage implements IMessage {
 		}
 	}
 
-	// #endregion Object Media Messages
-
-	// #region Resource usage
-
 	// Details about object resource usage
 	// TODO:FIXME
 	// No interface, but has the methods ?!?
@@ -5621,10 +5582,6 @@ public class CapsMessage implements IMessage {
 		}
 	}
 
-	// #endregion Resource usage
-
-	// #region Display names
-
 	// Reply to request for bunch if display names
 	public class GetDisplayNamesMessage implements IMessage {
 		// Current display name
@@ -5802,8 +5759,6 @@ public class CapsMessage implements IMessage {
 			oldDisplayName = agent.get("old_display_name").asString();
 		}
 	}
-
-	// #endregion Display names
 
 	public IMessage decodeEvent(String eventName, OSDMap map) {
 		try {

@@ -36,22 +36,23 @@ import libomv.utils.Helpers;
 
 public class PacketHeader {
 	// This header flag signals that ACKs are appended to the packet
-	public final static byte MSG_APPENDED_ACKS = 0x10;
+	public static final byte MSG_APPENDED_ACKS = 0x10;
 
 	// This header flag signals that this packet has been sent before
-	public final static byte MSG_RESENT = 0x20;
+	public static final byte MSG_RESENT = 0x20;
 
 	// This header flags signals that an ACK is expected for this packet
-	public final static byte MSG_RELIABLE = 0x40;
+	public static final byte MSG_RELIABLE = 0x40;
 
 	// This header flag signals that the message is compressed using zerocoding
-	public final static byte MSG_ZEROCODED = (byte) 0x80;
+	public static final byte MSG_ZEROCODED = (byte) 0x80;
 
 	public byte[] data = null;
 	public byte[] extra = null;
 	private final byte fixedLen = 6;
 	private byte frequency;
 	private byte length;
+	public int[] ackList = null;
 
 	// Constructors
 	public PacketHeader(byte frequency) {
@@ -145,8 +146,7 @@ public class PacketHeader {
 	}
 
 	public int getSequence() {
-		return (((data[1] & 0xff) >> 24) + ((data[2] & 0xff) << 16) + ((data[3] & 0xff) << 8)
-				+ ((data[4] & 0xff) << 0));
+		return ((data[1] & 0xff) >> 24) + ((data[2] & 0xff) << 16) + ((data[3] & 0xff) << 8) + ((data[4] & 0xff) << 0);
 	}
 
 	public int getExtraLength() {
@@ -293,8 +293,6 @@ public class PacketHeader {
 		}
 		return zerolen;
 	}
-
-	public int[] ackList = null;
 
 	private void createAckList(ByteBuffer bytes) {
 		if (getAppendedAcks()) {
